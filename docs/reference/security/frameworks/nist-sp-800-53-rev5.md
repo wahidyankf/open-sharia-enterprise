@@ -468,1205 +468,244 @@ are either editorial or substantive in nature. Any potential updates for this do
 not yet published in an errata update or revision—including additional issues and potential
 corrections—will be posted as they are identified; see the SP 800-53, Revision 5 publication
 details.
-DATE
-TYPE
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-REVISION
-Acknowledgements (ODNI): Add “Matthew A. Kozma, Chief
-Information Officer”
-Acknowledgements (ODNI): Add “Michael E. Waschull, Deputy Chief
-Information Officer”
-Acknowledgements (ODNI): Add “Clifford M. Conner, Cybersecurity
-Group and IC CISO”
-Call Out Box: Change “Special Publication 800-53B contains control
-baselines” to “SP 800-53B contains security and privacy control
-baselines”
-Chapter One (Footnote 7): Add “[SP 800-53A]”
-Section 1.4: Delete “The controls have also been mapped to the
-requirements for federal information systems included in [OMB A130].”
-Section 1.4 (Footnote 23): Delete “[OMB A-130] establishes policy
-for the planning, budgeting, governance, acquisition, and
-management of federal information, personnel, equipment, funds,
-IT resources, and supporting infrastructure and services.”
-Section 2.4 (first paragraph): Change “personally identifiable
-information (PII)” to “PII”
-Control AC-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control AC-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control Enhancement AC-3(2) Discussion: Change “authorization
-duties to other individuals” to “authorization duties”
-Control Enhancement AC-3(9) Discussion: Change “mitigating
-control” to “mitigation measure”
-Control Enhancement AC-3(14) Related Controls: Add “, PT-6”
-Control Enhancement AC-4(17): Change “organization, system,
-application, service, individual” to “organization; system;
-application; service; individual”
-Control Enhancement AC-4(25): Change “Selection (one or more:” to
-“Selection (one or more):”
-Control AC-12: Change “conditions,” to “conditions”
-Control AC-14 Discussion: Change “assignment” to “assignment
-operation”
-Control AC-19 Discussion: Change “the organizational network” to
-“its network”
-xvii
-PAGE
-iii
-iii
-iii
-x
-1
-5
-5
-13
-18
-18
-23
-26
-28
-33
-34
-43
-44
-52
-DATE
-TYPE
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-REVISION
-Control AC-19 Discussion: Change “Many controls for mobile
-devices are reflected in other controls allocated to the initial control
-baselines as starting points for the development of security plans
-and overlays using the tailoring process. There may also be some
-overlap by the security controls within the different families of
-controls.” to “Many safeguards for mobile devices are reflected in
-other controls.”
-Control AC-20 Discussion: Change “organizational systems” to
-“organizational systems,”
-Control Enhancement AC-20(3) Discussion: Change “AC-20(6)” to
-“AC-20 b.”
-Control AT-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control AT-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control AT-2d.: Change “security or privacy incidents” to “security
-incidents or breaches”
-Control AT-2 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control AT-3c.: Change “security or privacy incidents” to “security
-incidents or breaches”
-Control AT-3 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control AT-3 Related Controls: Change “IR-10” to “IR-4”
-Control AT-6 Discussion: Change “assessment and update” to
-“evaluation and update”
-Control AT-6 Discussion: Change “organization training” to
-“organizational training”
-Control AU-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control AU-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control CA-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control CA-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control CA-1 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control CA-1 References: Add “[SP 800-137A],”
-Control Enhancement CA-2(2): Change “data loss assessment” to
-“data loss assessment;”
-Control CA-3 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control CA-7 Discussion: Change “SC-18c” to “SC-18b”
-Control CM-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control CM-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control CM-2b.2.: Change “Assignment” to “Assignment:”
-Control Enhancement CM-7(4) Title: Change “UNAUTHORIZED
-SOFTWARE” to “UNAUTHORIZED SOFTWARE – DENY-BYEXCEPTION”
-xviii
-PAGE
-52
-53
-54
-59
-59
-60
-60
-62
-63
-63
-64
-64
-65
-65
-83
-83
-84
-84
-86
-88
-91
-96
-96
-97
-106
-DATE
-TYPE
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-REVISION
-Control Enhancement CM-7(5) Title: Change “AUTHORIZED
-SOFTWARE” to “AUTHORIZED SOFTWARE – ALLOW-BY-EXCEPTION”
-Control CM-8 Related Controls: Add “CP-9,”
-Control CP-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control CP-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control CP-3 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control Enhancement CP-9(7) Title: Change “DUAL
-AUTHORIZATION” to “DUAL AUTHORIZATION FOR DELETION OR
-DESTRUCTION”
-Control Enhancement CP-10(3): Change “tailoring procedures” to
-“tailoring”
-Control IA-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control IA-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control Enhancement IA-2(1) Discussion: Change “Common Access
-Card” to “Common Access Card (CAC)”
-Control Enhancement IA-2(7) Title: Change “ACCESS” to “NETWORK
-ACCESS”
-Control Enhancement IA-8(5) Discussion: Change “Personal Identity
-Verification (PIV)” to “PIV”
-Control IR-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control IR-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control Enhancement IR-2(1) Discussion: Delete “Incident response
-training includes tabletop exercises that simulate a breach. See IR2(3).”
-Control IR-4 Related Controls: Add “IR-5,”
-Control IR-5 Related Controls: Add “IR-4, IR-6,”
-Control Enhancement IR-5(1) Related Controls: Change “AU-7, IR-4”
-to “None”
-Control IR-10: Change “Incident Analysis” to “Integrated
-Information Security Analysis Team”
-Control IR-10: Change “Incorporated into” to “Moved to”
-Control MA-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control MA-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control Enhancement MA-4(2): Change “MA-1, MA-4” to “MA-1 and
-MA-4”
-Control MP-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control MP-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control MP-3 References: Add “[EO 13556],”
-xix
-PAGE
-106
-108
-115
-115
-119
-127
-128
-131
-131
-132
-134
-145
-149
-149
-150
-152
-156
-156
-161
-161
-162
-162
-166
-171
-171
-172
-DATE
-TYPE
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-REVISION
-Control PE-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control PE-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control Enhancement PE-3(8) Discussion: Delete “, or mantrap,”
-Control Enhancement PE-3(8) Discussion: Change “Mantraps” to
-“Vestibules”
-Control Enhancement PE-19(1) Title: Delete ”AND TEMPEST”
-Control PL-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control PL-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control PL-2 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control PL-7 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control PL-11 Discussion: Change “[FISMA] and [PRIVACT]” to
-“[FISMA], [PRIVACT], and [OMB A-130]”
-Control PM-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control PM-2 References: Add “, [SP 800-181]”
-Control PM-5 References: Add “[OMB A-130],”
-Control PM-8 References: Add “[EO 13636],”
-Control PM-10 References: Add “, [SP 800-181]”
-Control PM-11 Related Controls: Add “RA-9,”
-Control PM-12 References: Add “[NITP12],”
-Control PM-17 References: Add “[SP 800-172],”
-Control PM-19 Related Controls: Add “, PM-27”
-Control PM-22 References: Add “[OMB M-19-15],”
-Control PM-24 Related Controls: Add “PT-2,”
-Control PM-24 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control PM-25 Related Controls: Add “, SI-12”
-Control PM-25 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control PM-29 References: Add “, [SP 800-181]”
-Control PM-30 References: Add “[CNSSD 505],”
-Control PM-31 Discussion: Change “SC-18c” to “SC-18b”
-Control PM-31 References: Add “, [SP 800-137A]”
-Control PM-32 References: Change “[SP 800-137]” to “[SP 800-1601], [SP 800-160-2]”
-Control PS-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control PS-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control Enhancement PS-3(3) Title: Change “WITH” to “REQUIRING”
-Control PT-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control PT-1 Discussion: Change “privacy breaches” to “breaches”
-xx
-PAGE
-179
-179
-183
-183
-192
-194
-194
-196
-198
-201
-204
-204
-206
-207
-208
-209
-210
-212
-213
-216
-216
-217
-217
-217
-219
-220
-220
-221
-221
-222
-222
-224
-229
-229
-DATE
-TYPE
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-REVISION
-Control Enhancement PT-2(1): Change “permissible” to
-“authorized”
-Control PT-2 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control PT-3a.: Change “[Assignment organization-defined
-purpose(s)]” to “[Assignment: organization-defined purpose(s)]”
-Control PT-3 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control PT-5 Related Controls: Add “SC-42,”
-Control Enhancement PT-6(2): Change “[Assignment: organizationdefined frequency]” to “[Assignment: organization-defined
-frequency]”
-Control PT-7 References: Add “, [NARA CUI]”
-Control PT-8 References: Add “[CMPPA],”
-Control RA-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control RA-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control RA-2 References: Add “, [NARA CUI]”
-Control RA-3 Related Controls: Add “PT-2,”
-Control RA-8 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control RA-9 Related Controls: Add “PM-11,”
-Control SA-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control SA-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control SA-2 References: Add “[SP 800-37], ”
-Control SA-4 References: Add “[ISO 29148], ”
-Control Enhancement SA-9(5) Discussion: Change “security or
-privacy incidents” to “security incidents or breaches”
-Control Enhancement SA-10(2) Title: Change “ALTERNATIVE
-CONFIGURATION MANAGEMENT” to “ALTERNATIVE
-CONFIGURATION MANAGEMENT PROCESSES”
-Control SA-11a.: Change “assessments” to “control assessments”
-Control Enhancement SA-12(13): Change “MA-6, RA-9” to “MA-6
-and RA-9”
-Control Enhancement SA-12(14): Change “SR-4(1), SR-4(2)” to “SR4(1) and SR-4(2)”
-Control Enhancement SA-17(4)(b): Change “informal
-demonstration,” to “informal demonstration;”
-Control SA-23: Change “design modification, augmentation,
-reconfiguration” to “design; modification; augmentation;
-reconfiguration”
-Control SC-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control SC-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control SC-6: Change “Selection (one or more);” to “Selection (one
-or more):”
-xxi
-PAGE
-230
-231
-231
-232
-234
-235
-236
-237
-238
-238
-240
-240
-247
-247
-249
-249
-250
-255
-273
-274
-276
-280
-280
-286
-291
-292
-292
-297
-DATE
-TYPE
-12-10-2020
-Substantive
-12-10-2020
-Substantive
-12-10-2020
-Substantive
-12-10-2020
-Substantive
-12-10-2020
-Substantive
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-REVISION
-Control SC-7 Discussion: Add “[SP 800-189] provides additional
-information on source address validation techniques to prevent
-ingress and egress of traffic with spoofed addresses.”
-Control Enhancement SC-7(4) Discussion: Delete “Unauthorized
-control plane traffic can occur through a technique known as
-spoofing.”
-Control Enhancement SC-7(4) Discussion: Change “routing” to
-“Border Gateway Protocol (BGP) routing“
-Control Enhancement SC-7(4) Discussion: Change “management” to
-“management protocols“
-Control Enhancement SC-7(4) Discussion: Add “See [SP 800-189] for
-additional information on the use of the resource public key
-infrastructure (RPKI) to protect BGP routes and detect unauthorized
-BGP announcements.”
-Control Enhancement SC-7(4) Related Controls: Add “, SC-20, SC-21,
-SC-22”
-Control Enhancement SC-7(5): Change “Selection (one or more);” to
-“Selection (one or more):”
-Control SC-14: Change “SI-7,” to “SI-7, and”
-Control SC-17 Discussion: Change “Public Key Infrastructure” to
-“Public Key Infrastructure (PKI)”
-Control SC-19: Change “addressed by other controls for protocols”
-to “addressed as any other technology or protocol”
-Control Enhancement SC-30(4) Related Controls: Change “SC-26” to
-“None”
-Control Enhancement SC-31(2): Change “Selection (one or more);”
-to “Selection (one or more):”
-Control SC-42b.: Change “class of users” to “group of users”
-Control SI-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control SI-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control SI-3c.1.: Change “Selection (one or more);” to “Selection
-(one or more):”
-Control SI-9: Change “AC-5,” to “AC-5, and”
-Control SI-10 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control Enhancement SI-12(1): Change “PII” to “personally
-identifiable information”
-Control Enhancement SI-12(1) Related Controls: Delete “PT-2, PT-3,
-RA-3”
-Control Enhancement SI-12(3) Related Controls: Change “MP-6” to
-“None”
-Control SI-12 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control SI-18 Related Controls: Add “PT-2,”
-Control Enhancement SI-18(1) Related Controls: Delete “PM-22,”
-Control Enhancement SI-18(4) Related Controls: Change “PM-22” to
-“None”
-Control SI-18 References: Add “[OMB M-19-15],”
-Control SI-19 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-Control SI-20 References: Change “[OMB A-130, Appendix II]” to
-“[OMB A-130]”
-xxii
-PAGE
-297
-298
-298
-298
-298
-298
-298
-309
-311
-313
-319
-320
-326
-332
-332
-334
-349
-351
-352
-352
-353
-353
-356
-357
-358
-358
-360
-361
-DATE
-TYPE
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-REVISION
-Control SR-1a.1.: Change “organization-level; mission/business
-process-level; system-level” to “Organization-level; Mission/business
-process-level; System-level”
-Control SR-1 Discussion: Change “security or privacy incidents” to
-“security incidents or breaches”
-Control SR-1 References: Add “[CNSSD 505],”
-Control SR-2 References: Add “[SP 800-181],”
-Control SR-2 References: Add “[CNSSD 505],”
-Control Enhancement SR-5(2) Related Controls: Delete “SR-9”
-Control Enhancement SR-6(1): Change “organizational analysis,
-independent third-party analysis, organizational testing,
-independent third-party testing” to “organizational analysis;
-independent third-party analysis; organizational testing;
-independent third-party testing”
-References [ATOM54]: Change “Atomic Energy Act (P.L. 107)” to
-“Atomic Energy Act (P.L. 83-703)”
-References [ISO 15026-1]: Change “International Organization for
-Standardization/International Electrotechnical Commission
-(ISO/IEC) 15026-1:2013, Systems and software engineering —
-Systems and software assurance — Part 1: Concepts and
-vocabulary, November 2013.
-https://www.iso.org/standard/62526.html” to “International
-Organization for Standardization/International Electrotechnical
-Commission/Institute of Electrical and Electronics Engineers
-(ISO/IEC/IEEE) 15026-1:2019, Systems and software engineering —
-Systems and software assurance — Part 1: Concepts and
-vocabulary, March 2019.
-https://www.iso.org/standard/73567.html”
-References: Delete “[ISO 28001]”
-References [ISO 29148]: Change “International Organization for
-Standardization/International Electrotechnical
-Commission/Institute of Electrical and Electronics Engineers
-(ISO/IEC/IEEE) 29148:2011, Systems and software engineering—Life
-cycle processes—Requirements engineering, December 2011.
-https://www.iso.org/standard/45171.html” to “International
-Organization for Standardization/International Electrotechnical
-Commission/Institute of Electrical and Electronics Engineers
-(ISO/IEC/IEEE) 29148:2018, Systems and software engineering—Life
-cycle processes—Requirements engineering, November 2018.
-https://www.iso.org/standard/72089.html”
-References [SP 800-53B]: Change “Draft NIST” to “NIST”
-References [SP 800-53B]: Change
-“https://doi.org/10.6028/NIST.SP.800-53B-draft” to
-“https://doi.org/10.6028/NIST.SP.800-53B”
-References: Delete “[SP 800-58]”
-References: Add “[SP 800-137A] Dempsey KL, Pillitteri VY, Baer C,
-Niemeyer R, Rudman R, Urban S (2020) Assessing Information
-Security Continuous Monitoring (ISCM) Programs: Developing an
-ISCM Program Assessment. (National Institute of Standards and
-Technology, Gaithersburg, MD), NIST Special Publication (SP) 800137A. https://doi.org/10.6028/NIST.SP.800-137A”
-References: Delete “[SP 800-161-1]”
-xxiii
-PAGE
-363
-363
-364
-365
-365
-369
-370
-374
-377
-378
-379
-381
-381
-382
-387
-387
-DATE
-TYPE
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-12-10-2020
-Editorial
-REVISION
-References [SP 800-181]: Change “Newhouse WD, Witte GA,
-Scribner B, Keith S (2017) National Initiative for Cybersecurity
-Education (NICE) Cybersecurity Workforce Framework. (National
-Institute of Standards and Technology, Gaithersburg, MD), NIST
-Special Publication (SP) 800-181.
-https://doi.org/10.6028/NIST.SP.800-181” to “Petersen R, Santos D,
-Smith MC, Wetzel KA, Witte G (2020) Workforce Framework for
-Cybersecurity (NICE Framework). (National Institute of Standards
-and Technology, Gaithersburg, MD), NIST Special Publication (SP)
-800-181, Rev. 1.
-https://doi.org/10.6028/NIST.SP.800-181r1”
-References [DODTERMS]: Change
-“http://www.dtic.mil/dtic/tr/fulltext/u2/a485800.pdf” to
-“https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/diction
-ary.pdf”
-Appendix A Glossary (counterfeit): Change “[SP 800-161-1]” to [SP
-800-161]”
-Appendix A Glossary (supplier): Delete “[SP 800-161-1]”
-Appendix A Glossary (supply chain): Delete “[SP 800-161-1]”
-Appendix A Glossary (supply chain risk): Delete “[SP 800-161-1]”
-Appendix A Glossary (supply chain risk assessment): Delete “[SP
-800-161-1]”
-Appendix A Glossary (supply chain risk management): Delete “[SP
-800-161-1]”
-Appendix B Acronyms: Add “BGP Border Gateway Protocol”
-Appendix B Acronyms: Add “CAC Common Access Card”
-Appendix B Acronyms: Add “CONOPS Concept of Operations”
-Appendix B Acronyms: Add “DSB Defense Science Board”
-Appendix B Acronyms: Add “FICAM Federal Identity, Credential, and
-Access Management”
-Appendix B Acronyms: Add “IEEE Institute of Electrical and
-Electronics Engineers”
-Appendix B Acronyms: Add “ISAC Information Sharing and Analysis
-Centers”
-Appendix B Acronyms: Add “ISAO Information Sharing and Analysis
-Organizations”
-Appendix B Acronyms: Add “ITL Information Technology
-Laboratory”
-Appendix B Acronyms: Add “MLS Multilevel Secure”
-Appendix B Acronyms: Add “NDA Non-Disclosure Agreement”
-Appendix B Acronyms: Add “ODNI Office of the Director of National
-Intelligence”
-Appendix B Acronyms: Add “OPM Office of Personnel Management”
-Appendix B Acronyms: Add “PDS Position Designation System”
-Appendix B Acronyms: Add “RPKI Resource Public Key
-Infrastructure”
-Appendix B Acronyms: Add “SCRM Supply Chain Risk Management”
-Appendix B Acronyms: Add “SDLC System Development Life Cycle”
-Appendix B Acronyms: Add “SIEM Security Information and Event
-Management”
-Appendix B Acronyms: Add “SWID Software Identification”
-Appendix B Acronyms: Add “TIC Trusted Internet Connections”
-Appendix B Acronyms: Add “UEFI Unified Extensible Firmware
-Interface”
-xxiv
-PAGE
-388
-391
-400
-419
-419
-420
-420
-420
-424
-424
-424
-424
-425
-425
-425
-425
-425
-425
-426
-426
-426
-426
-426
-426
-426
-426
-427
-427
-427
-DATE
-TYPE
-REVISION
-PAGE
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-427
-428
-429
-429
-431
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-12-10-2020
-12-10-2020
-Editorial
-Editorial
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-12-10-2020
-Editorial
-Appendix B Acronyms: Add “UPS Uninterruptible Power Supply”
-Appendix C Control Summaries: Change “w” to “W”
-Table C-1 (AC-3(1)) Title: Change “FUNCTION” to “FUNCTIONS”
-Table C-1 (AC-3(6)): Change “MP-4, SC-28” to “MP-4 and SC-28”
-Table C-1 (AC-13): Change “AC-2, AU-6” to “AC-2 and AU-6”
-Table C-3 (AU-7(2)) Title: Change “SEARCH AND SORT” to “SORT
-AND SEARCH”
-Table C-3 AU-15: Change “Incorporated into” to “Moved to”
-Table C-4 (CA-3(1)) Title: Change “CONNECTIONS” to “SYSTEM
-CONNECTIONS”
-Table C-5 (CM-7(4)) Title: Change “UNAUTHORIZED SOFTWARE” to
-“UNAUTHORIZED SOFTWARE – DENY-BY-EXCEPTION”
-Table C-5 (CM-7(5)) Title: Change “AUTHORIZED SOFTWARE” to
-“AUTHORIZED SOFTWARE – ALLOW-BY-EXCEPTION”
-Table C-5: Delete duplicate row CM-8(5).
-Table C-6 (CP-9(7)) Title: Change “DUAL AUTHORIZATION” to “DUAL
-AUTHORIZATION FOR DELETION OR DESTRUCTION”
-Table C-7 (IA-5(11)): Change “IA-2(1)(2)” to “IA-2(1) and IA-2(2)”
-Table C-8 (IR-10) Title: Change “Integrated Information Security
-Analysis” to “Integrated Information Security Analysis Team”
-Table C-9 (MA-4(2)): Change “MA-1, MA-4” to “MA-1 and MA-4”
-Table C-11 (PE-7): Change “PE-2, PE-3” to “PE-2 and PE-3”
-Table C-11 (PE-19(1)) Title: Delete ”AND TEMPEST”
-Table C-14 (PS-3(1)) Title: Change “INFORMATION” to “INFORMATION”
-Table C-14 (PS-3(3)) Title: Change “WITH” to “REQUIRING”
-Table C-17 (SA-6): Change “CM-10, SI-7” to “CM-10 and SI-7”
-Table C-17 (SA-7): Change “CM-11, SI-7” to “CM-11 and SI-7”
-Table C-17 (SA-12(13)): Change “MA-6, RA-9” to “MA-6 and RA-9”
-Table C-17 (SA-12(14)): Change “SR-4(1)(2)” to “SR-4(1) and SR-4(2)”
-Table C-17 (SA-12(15)) Title: Change “PROCESS” to “PROCESSES”
-Table C-18 (SC-7(25)) Title: Change “CONNECTIONS” to “SYSTEM
-CONNECTIONS”
-Table C-18 (SC-12(4)): Change “SC-12” to “SC-12(3)”
-Table C-18 (SC-12(5)): Change “SC-12” to “SC-12(3)”
-Table C-18 (SC-14): Change “SI-7,” to “SI-7, and”
-Table C-18 (SC-19): Change “addressed by other controls for
-protocols” to “addressed as any other technology or protocol.”
-Table C-19 (SI-9): Change “AC-5,” to “AC-5, and”
-Table C-19 (SI-19(7)) Title: Change “SOFTWARE” to “AND
-SOFTWARE”
-xxv
-434
-435
-436
-437
-437
-438
-440
-441
-444
-445
-447
-448
-451
-451
-454
-454
-456
-456
-456
-459
-459
-459
-459
-460
-463
-464
+
+| DATE       | TYPE        | REVISION                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | PAGE |
+| ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| 12-10-2020 | Editorial   | Acknowledgements (ODNI): Add "Matthew A. Kozma, Chief Information Officer"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | iii  |
+| 12-10-2020 | Editorial   | Acknowledgements (ODNI): Add "Michael E. Waschull, Deputy Chief Information Officer"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | iii  |
+| 12-10-2020 | Editorial   | Acknowledgements (ODNI): Add "Clifford M. Conner, Cybersecurity Group and IC CISO"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | iii  |
+| 12-10-2020 | Editorial   | Call Out Box: Change "Special Publication 800-53B contains control baselines" to "SP 800-53B contains security and privacy control baselines"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | x    |
+| 12-10-2020 | Editorial   | Chapter One (Footnote 7): Add "[SP 800-53A]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 1    |
+| 12-10-2020 | Editorial   | Section 1.4: Delete "The controls have also been mapped to the requirements for federal information systems included in [OMB A-130]."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 5    |
+| 12-10-2020 | Editorial   | Section 1.4 (Footnote 23): Delete "[OMB A-130] establishes policy for the planning, budgeting, governance, acquisition, and management of federal information, personnel, equipment, funds, IT resources, and supporting infrastructure and services."                                                                                                                                                                                                                                                                                                                                                                                                          | 5    |
+| 12-10-2020 | Editorial   | Section 2.4 (first paragraph): Change "personally identifiable information (PII)" to "PII"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 13   |
+| 12-10-2020 | Editorial   | Control AC-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 18   |
+| 12-10-2020 | Editorial   | Control AC-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 18   |
+| 12-10-2020 | Editorial   | Control Enhancement AC-3(2) Discussion: Change "authorization duties to other individuals" to "authorization duties"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 23   |
+| 12-10-2020 | Editorial   | Control Enhancement AC-3(9) Discussion: Change "mitigating control" to "mitigation measure"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 26   |
+| 12-10-2020 | Editorial   | Control Enhancement AC-3(14) Related Controls: Add ", PT-6"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 28   |
+| 12-10-2020 | Editorial   | Control Enhancement AC-4(17): Change "organization, system, application, service, individual" to "organization; system; application; service; individual"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 33   |
+| 12-10-2020 | Editorial   | Control Enhancement AC-4(25): Change "Selection (one or more:" to "Selection (one or more):"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 34   |
+| 12-10-2020 | Editorial   | Control AC-12: Change "conditions," to "conditions"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 43   |
+| 12-10-2020 | Editorial   | Control AC-14 Discussion: Change "assignment" to "assignment operation"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 44   |
+| 12-10-2020 | Editorial   | Control AC-19 Discussion: Change "the organizational network" to "its network"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 52   |
+| 12-10-2020 | Editorial   | Control AC-19 Discussion: Change "Many controls for mobile devices are reflected in other controls allocated to the initial control baselines as starting points for the development of security plans and overlays using the tailoring process. There may also be some overlap by the security controls within the different families of controls." to "Many safeguards for mobile devices are reflected in other controls."                                                                                                                                                                                                                                   | 52   |
+| 12-10-2020 | Editorial   | Control AC-20 Discussion: Change "organizational systems" to "organizational systems,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 53   |
+| 12-10-2020 | Editorial   | Control Enhancement AC-20(3) Discussion: Change "AC-20(6)" to "AC-20 b."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 54   |
+| 12-10-2020 | Editorial   | Control AT-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 59   |
+| 12-10-2020 | Editorial   | Control AT-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 59   |
+| 12-10-2020 | Editorial   | Control AT-2d.: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 60   |
+| 12-10-2020 | Editorial   | Control AT-2 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 60   |
+| 12-10-2020 | Editorial   | Control AT-3c.: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 62   |
+| 12-10-2020 | Editorial   | Control AT-3 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 63   |
+| 12-10-2020 | Editorial   | Control AT-3 Related Controls: Change "IR-10" to "IR-4"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 63   |
+| 12-10-2020 | Editorial   | Control AT-6 Discussion: Change "assessment and update" to "evaluation and update"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 64   |
+| 12-10-2020 | Editorial   | Control AT-6 Discussion: Change "organization training" to "organizational training"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 64   |
+| 12-10-2020 | Editorial   | Control AU-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 65   |
+| 12-10-2020 | Editorial   | Control AU-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 65   |
+| 12-10-2020 | Editorial   | Control CA-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 83   |
+| 12-10-2020 | Editorial   | Control CA-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 83   |
+| 12-10-2020 | Editorial   | Control CA-1 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 84   |
+| 12-10-2020 | Editorial   | Control CA-1 References: Add "[SP 800-137A],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 84   |
+| 12-10-2020 | Editorial   | Control Enhancement CA-2(2): Change "data loss assessment" to "data loss assessment;"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 86   |
+| 12-10-2020 | Editorial   | Control CA-3 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 88   |
+| 12-10-2020 | Editorial   | Control CA-7 Discussion: Change "SC-18c" to "SC-18b"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 91   |
+| 12-10-2020 | Editorial   | Control CM-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 96   |
+| 12-10-2020 | Editorial   | Control CM-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 96   |
+| 12-10-2020 | Editorial   | Control CM-2b.2.: Change "Assignment" to "Assignment:"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 97   |
+| 12-10-2020 | Editorial   | Control Enhancement CM-7(4) Title: Change "UNAUTHORIZED SOFTWARE" to "UNAUTHORIZED SOFTWARE – DENY-BY-EXCEPTION"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 106  |
+| 12-10-2020 | Editorial   | Control Enhancement CM-7(5) Title: Change "AUTHORIZED SOFTWARE" to "AUTHORIZED SOFTWARE – ALLOW-BY-EXCEPTION"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 106  |
+| 12-10-2020 | Editorial   | Control CM-8 Related Controls: Add "CP-9,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 108  |
+| 12-10-2020 | Editorial   | Control CP-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 115  |
+| 12-10-2020 | Editorial   | Control CP-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 115  |
+| 12-10-2020 | Editorial   | Control CP-3 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 119  |
+| 12-10-2020 | Editorial   | Control Enhancement CP-9(7) Title: Change "DUAL AUTHORIZATION" to "DUAL AUTHORIZATION FOR DELETION OR DESTRUCTION"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 127  |
+| 12-10-2020 | Editorial   | Control Enhancement CP-10(3): Change "tailoring procedures" to "tailoring"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 128  |
+| 12-10-2020 | Editorial   | Control IA-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 131  |
+| 12-10-2020 | Editorial   | Control IA-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 131  |
+| 12-10-2020 | Editorial   | Control Enhancement IA-2(1) Discussion: Change "Common Access Card" to "Common Access Card (CAC)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 132  |
+| 12-10-2020 | Editorial   | Control Enhancement IA-2(7) Title: Change "ACCESS" to "NETWORK ACCESS"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 134  |
+| 12-10-2020 | Editorial   | Control Enhancement IA-8(5) Discussion: Change "Personal Identity Verification (PIV)" to "PIV"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 145  |
+| 12-10-2020 | Editorial   | Control IR-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 149  |
+| 12-10-2020 | Editorial   | Control IR-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 149  |
+| 12-10-2020 | Editorial   | Control Enhancement IR-2(1) Discussion: Delete "Incident response training includes tabletop exercises that simulate a breach. See IR-2(3)."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 150  |
+| 12-10-2020 | Editorial   | Control IR-4 Related Controls: Add "IR-5,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 152  |
+| 12-10-2020 | Editorial   | Control IR-5 Related Controls: Add "IR-4, IR-6,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 156  |
+| 12-10-2020 | Editorial   | Control Enhancement IR-5(1) Related Controls: Change "AU-7, IR-4" to "None"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 156  |
+| 12-10-2020 | Editorial   | Control IR-10: Change "Incident Analysis" to "Integrated Information Security Analysis Team"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 161  |
+| 12-10-2020 | Editorial   | Control IR-10: Change "Incorporated into" to "Moved to"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 161  |
+| 12-10-2020 | Editorial   | Control MA-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 162  |
+| 12-10-2020 | Editorial   | Control MA-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 162  |
+| 12-10-2020 | Editorial   | Control Enhancement MA-4(2): Change "MA-1, MA-4" to "MA-1 and MA-4"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 166  |
+| 12-10-2020 | Editorial   | Control MP-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 171  |
+| 12-10-2020 | Editorial   | Control MP-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 171  |
+| 12-10-2020 | Editorial   | Control MP-3 References: Add "[EO 13556],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 172  |
+| 12-10-2020 | Editorial   | Control PE-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 179  |
+| 12-10-2020 | Editorial   | Control PE-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 179  |
+| 12-10-2020 | Editorial   | Control Enhancement PE-3(8) Discussion: Delete ", or mantrap,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 183  |
+| 12-10-2020 | Editorial   | Control Enhancement PE-3(8) Discussion: Change "Mantraps" to "Vestibules"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 183  |
+| 12-10-2020 | Editorial   | Control Enhancement PE-19(1) Title: Delete "AND TEMPEST"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 192  |
+| 12-10-2020 | Editorial   | Control PL-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 194  |
+| 12-10-2020 | Editorial   | Control PL-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 194  |
+| 12-10-2020 | Editorial   | Control PL-2 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 196  |
+| 12-10-2020 | Editorial   | Control PL-7 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 198  |
+| 12-10-2020 | Editorial   | Control PL-11 Discussion: Change "[FISMA] and [PRIVACT]" to "[FISMA], [PRIVACT], and [OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 201  |
+| 12-10-2020 | Editorial   | Control PM-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 204  |
+| 12-10-2020 | Editorial   | Control PM-2 References: Add ", [SP 800-181]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 204  |
+| 12-10-2020 | Editorial   | Control PM-5 References: Add "[OMB A-130],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 206  |
+| 12-10-2020 | Editorial   | Control PM-8 References: Add "[EO 13636],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 207  |
+| 12-10-2020 | Editorial   | Control PM-10 References: Add ", [SP 800-181]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 208  |
+| 12-10-2020 | Editorial   | Control PM-11 Related Controls: Add "RA-9,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 209  |
+| 12-10-2020 | Editorial   | Control PM-12 References: Add "[NITP12],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 210  |
+| 12-10-2020 | Editorial   | Control PM-17 References: Add "[SP 800-172],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 212  |
+| 12-10-2020 | Editorial   | Control PM-19 Related Controls: Add ", PM-27"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 213  |
+| 12-10-2020 | Editorial   | Control PM-22 References: Add "[OMB M-19-15],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 216  |
+| 12-10-2020 | Editorial   | Control PM-24 Related Controls: Add "PT-2,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 216  |
+| 12-10-2020 | Editorial   | Control PM-24 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 217  |
+| 12-10-2020 | Editorial   | Control PM-25 Related Controls: Add ", SI-12"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 217  |
+| 12-10-2020 | Editorial   | Control PM-25 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 217  |
+| 12-10-2020 | Editorial   | Control PM-29 References: Add ", [SP 800-181]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 219  |
+| 12-10-2020 | Editorial   | Control PM-30 References: Add "[CNSSD 505],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 220  |
+| 12-10-2020 | Editorial   | Control PM-31 Discussion: Change "SC-18c" to "SC-18b"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 220  |
+| 12-10-2020 | Editorial   | Control PM-31 References: Add ", [SP 800-137A]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 221  |
+| 12-10-2020 | Editorial   | Control PM-32 References: Change "[SP 800-137]" to "[SP 800-160-1], [SP 800-160-2]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 221  |
+| 12-10-2020 | Editorial   | Control PS-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 222  |
+| 12-10-2020 | Editorial   | Control PS-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 222  |
+| 12-10-2020 | Editorial   | Control Enhancement PS-3(3) Title: Change "WITH" to "REQUIRING"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 224  |
+| 12-10-2020 | Editorial   | Control PT-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 229  |
+| 12-10-2020 | Editorial   | Control PT-1 Discussion: Change "privacy breaches" to "breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 229  |
+| 12-10-2020 | Editorial   | Control Enhancement PT-2(1): Change "permissible" to "authorized"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 230  |
+| 12-10-2020 | Editorial   | Control PT-2 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 231  |
+| 12-10-2020 | Editorial   | Control PT-3a.: Change "[Assignment organization-defined purpose(s)]" to "[Assignment: organization-defined purpose(s)]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 231  |
+| 12-10-2020 | Editorial   | Control PT-3 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 232  |
+| 12-10-2020 | Editorial   | Control PT-5 Related Controls: Add "SC-42,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 234  |
+| 12-10-2020 | Editorial   | Control Enhancement PT-6(2): Change "[Assignment: organization-defined frequency]" to "[Assignment: organization-defined frequency]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 235  |
+| 12-10-2020 | Editorial   | Control PT-7 References: Add ", [NARA CUI]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 236  |
+| 12-10-2020 | Editorial   | Control PT-8 References: Add "[CMPPA],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 237  |
+| 12-10-2020 | Editorial   | Control RA-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 238  |
+| 12-10-2020 | Editorial   | Control RA-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 238  |
+| 12-10-2020 | Editorial   | Control RA-2 References: Add ", [NARA CUI]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 240  |
+| 12-10-2020 | Editorial   | Control RA-3 Related Controls: Add "PT-2,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 240  |
+| 12-10-2020 | Editorial   | Control RA-8 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 247  |
+| 12-10-2020 | Editorial   | Control RA-9 Related Controls: Add "PM-11,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 247  |
+| 12-10-2020 | Editorial   | Control SA-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 249  |
+| 12-10-2020 | Editorial   | Control SA-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 249  |
+| 12-10-2020 | Editorial   | Control SA-2 References: Add "[SP 800-37],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 250  |
+| 12-10-2020 | Editorial   | Control SA-4 References: Add "[ISO 29148],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 255  |
+| 12-10-2020 | Editorial   | Control Enhancement SA-9(5) Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 273  |
+| 12-10-2020 | Editorial   | Control Enhancement SA-10(2) Title: Change "ALTERNATIVE CONFIGURATION MANAGEMENT" to "ALTERNATIVE CONFIGURATION MANAGEMENT PROCESSES"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 274  |
+| 12-10-2020 | Editorial   | Control SA-11a.: Change "assessments" to "control assessments"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 276  |
+| 12-10-2020 | Editorial   | Control Enhancement SA-12(13): Change "MA-6, RA-9" to "MA-6 and RA-9"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 280  |
+| 12-10-2020 | Editorial   | Control Enhancement SA-12(14): Change "SR-4(1), SR-4(2)" to "SR-4(1) and SR-4(2)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 280  |
+| 12-10-2020 | Editorial   | Control Enhancement SA-17(4)(b): Change "informal demonstration," to "informal demonstration;"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 286  |
+| 12-10-2020 | Editorial   | Control SA-23: Change "design modification, augmentation, reconfiguration" to "design; modification; augmentation; reconfiguration"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 291  |
+| 12-10-2020 | Editorial   | Control SC-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 292  |
+| 12-10-2020 | Editorial   | Control SC-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 292  |
+| 12-10-2020 | Editorial   | Control SC-6: Change "Selection (one or more);" to "Selection (one or more):"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 297  |
+| 12-10-2020 | Substantive | Control SC-7 Discussion: Add "[SP 800-189] provides additional information on source address validation techniques to prevent ingress and egress of traffic with spoofed addresses."                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 297  |
+| 12-10-2020 | Substantive | Control Enhancement SC-7(4) Discussion: Delete "Unauthorized control plane traffic can occur through a technique known as spoofing."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 298  |
+| 12-10-2020 | Substantive | Control Enhancement SC-7(4) Discussion: Change "routing" to "Border Gateway Protocol (BGP) routing"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 298  |
+| 12-10-2020 | Substantive | Control Enhancement SC-7(4) Discussion: Change "management" to "management protocols"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 298  |
+| 12-10-2020 | Substantive | Control Enhancement SC-7(4) Discussion: Add "See [SP 800-189] for additional information on the use of the resource public key infrastructure (RPKI) to protect BGP routes and detect unauthorized BGP announcements."                                                                                                                                                                                                                                                                                                                                                                                                                                          | 298  |
+| 12-10-2020 | Editorial   | Control Enhancement SC-7(4) Related Controls: Add ", SC-20, SC-21, SC-22"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 298  |
+| 12-10-2020 | Editorial   | Control Enhancement SC-7(5): Change "Selection (one or more);" to "Selection (one or more):"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 298  |
+| 12-10-2020 | Editorial   | Control SC-14: Change "SI-7," to "SI-7, and"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 309  |
+| 12-10-2020 | Editorial   | Control SC-17 Discussion: Change "Public Key Infrastructure" to "Public Key Infrastructure (PKI)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 311  |
+| 12-10-2020 | Editorial   | Control SC-19: Change "addressed by other controls for protocols" to "addressed as any other technology or protocol"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 313  |
+| 12-10-2020 | Editorial   | Control Enhancement SC-30(4) Related Controls: Change "SC-26" to "None"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 319  |
+| 12-10-2020 | Editorial   | Control Enhancement SC-31(2): Change "Selection (one or more);" to "Selection (one or more):"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 320  |
+| 12-10-2020 | Editorial   | Control SC-42b.: Change "class of users" to "group of users"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 326  |
+| 12-10-2020 | Editorial   | Control SI-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 332  |
+| 12-10-2020 | Editorial   | Control SI-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 332  |
+| 12-10-2020 | Editorial   | Control SI-3c.1.: Change "Selection (one or more);" to "Selection (one or more):"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 334  |
+| 12-10-2020 | Editorial   | Control SI-9: Change "AC-5," to "AC-5, and"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 349  |
+| 12-10-2020 | Editorial   | Control SI-10 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 351  |
+| 12-10-2020 | Editorial   | Control Enhancement SI-12(1): Change "PII" to "personally identifiable information"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 352  |
+| 12-10-2020 | Editorial   | Control Enhancement SI-12(1) Related Controls: Delete "PT-2, PT-3, RA-3"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 352  |
+| 12-10-2020 | Editorial   | Control Enhancement SI-12(3) Related Controls: Change "MP-6" to "None"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 353  |
+| 12-10-2020 | Editorial   | Control SI-12 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 353  |
+| 12-10-2020 | Editorial   | Control SI-18 Related Controls: Add "PT-2,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 356  |
+| 12-10-2020 | Editorial   | Control Enhancement SI-18(1) Related Controls: Delete "PM-22,"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 357  |
+| 12-10-2020 | Editorial   | Control Enhancement SI-18(4) Related Controls: Change "PM-22" to "None"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 358  |
+| 12-10-2020 | Editorial   | Control SI-18 References: Add "[OMB M-19-15],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 358  |
+| 12-10-2020 | Editorial   | Control SI-19 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 360  |
+| 12-10-2020 | Editorial   | Control SI-20 References: Change "[OMB A-130, Appendix II]" to "[OMB A-130]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 361  |
+| 12-10-2020 | Editorial   | Control SR-1a.1.: Change "organization-level; mission/business process-level; system-level" to "Organization-level; Mission/business process-level; System-level"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 363  |
+| 12-10-2020 | Editorial   | Control SR-1 Discussion: Change "security or privacy incidents" to "security incidents or breaches"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 363  |
+| 12-10-2020 | Editorial   | Control SR-1 References: Add "[CNSSD 505],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 364  |
+| 12-10-2020 | Editorial   | Control SR-2 References: Add "[SP 800-181],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 365  |
+| 12-10-2020 | Editorial   | Control SR-2 References: Add "[CNSSD 505],"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 365  |
+| 12-10-2020 | Editorial   | Control Enhancement SR-5(2) Related Controls: Delete "SR-9"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 369  |
+| 12-10-2020 | Editorial   | Control Enhancement SR-6(1): Change "organizational analysis, independent third-party analysis, organizational testing, independent third-party testing" to "organizational analysis; independent third-party analysis; organizational testing; independent third-party testing"                                                                                                                                                                                                                                                                                                                                                                                | 370  |
+| 12-10-2020 | Editorial   | References [ATOM54]: Change "Atomic Energy Act (P.L. 107)" to "Atomic Energy Act (P.L. 83-703)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 374  |
+| 12-10-2020 | Editorial   | References [ISO 15026-1]: Change "International Organization for Standardization/International Electrotechnical Commission (ISO/IEC) 15026-1:2013, Systems and software engineering — Systems and software assurance — Part 1: Concepts and vocabulary, November 2013. https://www.iso.org/standard/62526.html" to "International Organization for Standardization/International Electrotechnical Commission/Institute of Electrical and Electronics Engineers (ISO/IEC/IEEE) 15026-1:2019, Systems and software engineering — Systems and software assurance — Part 1: Concepts and vocabulary, March 2019. https://www.iso.org/standard/73567.html"           | 377  |
+| 12-10-2020 | Editorial   | References: Delete "[ISO 28001]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 378  |
+| 12-10-2020 | Editorial   | References [ISO 29148]: Change "International Organization for Standardization/International Electrotechnical Commission/Institute of Electrical and Electronics Engineers (ISO/IEC/IEEE) 29148:2011, Systems and software engineering—Life cycle processes—Requirements engineering, December 2011. https://www.iso.org/standard/45171.html" to "International Organization for Standardization/International Electrotechnical Commission/Institute of Electrical and Electronics Engineers (ISO/IEC/IEEE) 29148:2018, Systems and software engineering—Life cycle processes—Requirements engineering, November 2018. https://www.iso.org/standard/72089.html" | 379  |
+| 12-10-2020 | Editorial   | References [SP 800-53B]: Change "Draft NIST" to "NIST"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 381  |
+| 12-10-2020 | Editorial   | References [SP 800-53B]: Change "https://doi.org/10.6028/NIST.SP.800-53B-draft" to "https://doi.org/10.6028/NIST.SP.800-53B"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 381  |
+| 12-10-2020 | Editorial   | References: Delete "[SP 800-58]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 382  |
+| 12-10-2020 | Editorial   | References: Add "[SP 800-137A] Dempsey KL, Pillitteri VY, Baer C, Niemeyer R, Rudman R, Urban S (2020) Assessing Information Security Continuous Monitoring (ISCM) Programs: Developing an ISCM Program Assessment. (National Institute of Standards and Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-137A. https://doi.org/10.6028/NIST.SP.800-137A"                                                                                                                                                                                                                                                                                       | 387  |
+| 12-10-2020 | Editorial   | References: Delete "[SP 800-161-1]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 387  |
+| 12-10-2020 | Editorial   | References [SP 800-181]: Change "Newhouse WD, Witte GA, Scribner B, Keith S (2017) National Initiative for Cybersecurity Education (NICE) Cybersecurity Workforce Framework. (National Institute of Standards and Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-181. https://doi.org/10.6028/NIST.SP.800-181" to "Petersen R, Santos D, Smith MC, Wetzel KA, Witte G (2020) Workforce Framework for Cybersecurity (NICE Framework). (National Institute of Standards and Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-181, Rev. 1. https://doi.org/10.6028/NIST.SP.800-181r1"                                            | 388  |
+| 12-10-2020 | Editorial   | References [DODTERMS]: Change "http://www.dtic.mil/dtic/tr/fulltext/u2/a485800.pdf" to "https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/dictionary.pdf"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 391  |
+| 12-10-2020 | Editorial   | Appendix A Glossary (counterfeit): Change "[SP 800-161-1]" to "[SP 800-161]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 400  |
+| 12-10-2020 | Editorial   | Appendix A Glossary (supplier): Delete "[SP 800-161-1]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 419  |
+| 12-10-2020 | Editorial   | Appendix A Glossary (supply chain): Delete "[SP 800-161-1]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 419  |
+| 12-10-2020 | Editorial   | Appendix A Glossary (supply chain risk): Delete "[SP 800-161-1]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 420  |
+| 12-10-2020 | Editorial   | Appendix A Glossary (supply chain risk assessment): Delete "[SP 800-161-1]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 420  |
+| 12-10-2020 | Editorial   | Appendix A Glossary (supply chain risk management): Delete "[SP 800-161-1]"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 420  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "BGP Border Gateway Protocol"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 424  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "CAC Common Access Card"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 424  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "CONOPS Concept of Operations"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 424  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "DSB Defense Science Board"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 424  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "FICAM Federal Identity, Credential, and Access Management"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 425  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "IEEE Institute of Electrical and Electronics Engineers"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 425  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "ISAC Information Sharing and Analysis Centers"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 425  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "ISAO Information Sharing and Analysis Organizations"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 425  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "ITL Information Technology Laboratory"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 425  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "MLS Multilevel Secure"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 425  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "NDA Non-Disclosure Agreement"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "ODNI Office of the Director of National Intelligence"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "OPM Office of Personnel Management"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "PDS Position Designation System"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "RPKI Resource Public Key Infrastructure"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "SCRM Supply Chain Risk Management"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "SDLC System Development Life Cycle"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "SIEM Security Information and Event Management"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 426  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "SWID Software Identification"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 427  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "TIC Trusted Internet Connections"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 427  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "UEFI Unified Extensible Firmware Interface"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 427  |
+| 12-10-2020 | Editorial   | Appendix B Acronyms: Add "UPS Uninterruptible Power Supply"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 427  |
+| 12-10-2020 | Editorial   | Appendix C Control Summaries: Change "w" to "W"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 428  |
+| 12-10-2020 | Editorial   | Table C-1 (AC-3(1)) Title: Change "FUNCTION" to "FUNCTIONS"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 429  |
+| 12-10-2020 | Editorial   | Table C-1 (AC-3(6)): Change "MP-4, SC-28" to "MP-4 and SC-28"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 429  |
+| 12-10-2020 | Editorial   | Table C-1 (AC-13): Change "AC-2, AU-6" to "AC-2 and AU-6"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 431  |
+| 12-10-2020 | Editorial   | Table C-3 (AU-7(2)) Title: Change "SEARCH AND SORT" to "SORT AND SEARCH"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 434  |
+| 12-10-2020 | Editorial   | Table C-3 AU-15: Change "Incorporated into" to "Moved to"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 435  |
+| 12-10-2020 | Editorial   | Table C-4 (CA-3(1)) Title: Change "CONNECTIONS" to "SYSTEM CONNECTIONS"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 436  |
+| 12-10-2020 | Editorial   | Table C-5 (CM-7(4)) Title: Change "UNAUTHORIZED SOFTWARE" to "UNAUTHORIZED SOFTWARE – DENY-BY-EXCEPTION"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 437  |
+| 12-10-2020 | Editorial   | Table C-5 (CM-7(5)) Title: Change "AUTHORIZED SOFTWARE" to "AUTHORIZED SOFTWARE – ALLOW-BY-EXCEPTION"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 437  |
+| 12-10-2020 | Editorial   | Table C-5: Delete duplicate row CM-8(5).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 438  |
+| 12-10-2020 | Editorial   | Table C-6 (CP-9(7)) Title: Change "DUAL AUTHORIZATION" to "DUAL AUTHORIZATION FOR DELETION OR DESTRUCTION"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 440  |
+| 12-10-2020 | Editorial   | Table C-7 (IA-5(11)): Change "IA-2(1)(2)" to "IA-2(1) and IA-2(2)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 441  |
+| 12-10-2020 | Editorial   | Table C-8 (IR-10) Title: Change "Integrated Information Security Analysis" to "Integrated Information Security Analysis Team"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 444  |
+| 12-10-2020 | Editorial   | Table C-9 (MA-4(2)): Change "MA-1, MA-4" to "MA-1 and MA-4"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 445  |
+| 12-10-2020 | Editorial   | Table C-11 (PE-7): Change "PE-2, PE-3" to "PE-2 and PE-3"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 447  |
+| 12-10-2020 | Editorial   | Table C-11 (PE-19(1)) Title: Delete "AND TEMPEST"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 448  |
+| 12-10-2020 | Editorial   | Table C-14 (PS-3(1)) Title: Change "INFORMATION" to "INFORMATION"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 451  |
+| 12-10-2020 | Editorial   | Table C-14 (PS-3(3)) Title: Change "WITH" to "REQUIRING"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 451  |
+| 12-10-2020 | Editorial   | Table C-17 (SA-6): Change "CM-10, SI-7" to "CM-10 and SI-7"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 454  |
+| 12-10-2020 | Editorial   | Table C-17 (SA-7): Change "CM-11, SI-7" to "CM-11 and SI-7"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 454  |
+| 12-10-2020 | Editorial   | Table C-17 (SA-12(13)): Change "MA-6, RA-9" to "MA-6 and RA-9"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 456  |
+| 12-10-2020 | Editorial   | Table C-17 (SA-12(14)): Change "SR-4(1)(2)" to "SR-4(1) and SR-4(2)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 456  |
+| 12-10-2020 | Editorial   | Table C-17 (SA-12(15)) Title: Change "PROCESS" to "PROCESSES"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 456  |
+| 12-10-2020 | Editorial   | Table C-18 (SC-7(25)) Title: Change "CONNECTIONS" to "SYSTEM CONNECTIONS"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 459  |
+| 12-10-2020 | Editorial   | Table C-18 (SC-12(4)): Change "SC-12" to "SC-12(3)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 459  |
+| 12-10-2020 | Editorial   | Table C-18 (SC-12(5)): Change "SC-12" to "SC-12(3)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 459  |
+| 12-10-2020 | Editorial   | Table C-18 (SC-14): Change "SI-7," to "SI-7, and"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 459  |
+| 12-10-2020 | Editorial   | Table C-18 (SC-19): Change "addressed by other controls for protocols" to "addressed as any other technology or protocol."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 460  |
+| 12-10-2020 | Editorial   | Table C-19 (SI-9): Change "AC-5," to "AC-5, and"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 463  |
+| 12-10-2020 | Editorial   | Table C-19 (SI-19(7)) Title: Change "SOFTWARE" to "AND SOFTWARE"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 464  |
 
 ## CHAPTER ONE
 
@@ -2023,7 +1062,9 @@ storage capacity reduces the likelihood of such capacity being exceeded and resu
 potential loss or reduction of auditing capability.
 Related Controls: AU-2, AU-5, AU-6, AU-7, AU-9, AU-11, AU-12, AU-14, SI-4.
 Control Enhancements:
-(1) AUDIT STORAGE CAPACITY | TRANSFER TO ALTERNATE STORAGE
+
+##### (1) AUDIT STORAGE CAPACITY | TRANSFER TO ALTERNATE STORAGE
+
 Organization-defined Parameter
 Off-load audit records [Assignment: organization-defined frequency] onto a different
 system or media than the system being audited.
@@ -2039,9 +1080,28 @@ Related Controls: None.
 References: None.
 Sources for additional information related to the control
 
-FIGURE 1
+FIGURE 1: CONTROL STRUCTURE
 
-[FIGURE 1: Control Structure — Box diagram showing the structure of a security/privacy control, including Control Identifier, Control Name, Organization-defined Parameters, Base Control section (Control text), Discussion section, Related Controls, Control Enhancements section (with Enhancement Identifier, Enhancement Name, Organization-defined Parameters, Control Enhancement text, Discussion), and References. The diagram uses AU-4 AUDIT STORAGE CAPACITY as an example control. Mermaid conversion requires manual review due to complex box-and-annotation layout.]
+```mermaid
+graph TD
+    A["<b>Control Identifier</b> | <b>Control Name</b><br/>Organization-defined Parameter(s)"]
+    A --> B["<b>Base Control</b><br/>Control text with [Assignment: org-defined parameters]"]
+    B --> C["<b>Discussion</b><br/>Additional information about the control"]
+    C --> D["<b>Related Controls</b><br/>List of related control identifiers"]
+    D --> E["<b>Control Enhancements</b>"]
+    E --> F["<b>(N) Enhancement Name</b><br/>Organization-defined Parameter(s)<br/>Enhancement text<br/>Discussion<br/>Related Controls"]
+    B --> G["<b>References</b><br/>List of applicable standards and guidelines"]
+
+    style A fill:#d0e8ff,stroke:#336699
+    style B fill:#e8f5e9,stroke:#2e7d32
+    style C fill:#fff8e1,stroke:#f9a825
+    style D fill:#fce4ec,stroke:#c62828
+    style E fill:#f3e5f5,stroke:#6a1b9a
+    style F fill:#ede7f6,stroke:#4527a0
+    style G fill:#e0f2f1,stroke:#00695c
+```
+
+Example control: **AU-4 AUDIT STORAGE CAPACITY** — Control: Allocate audit record storage capacity to accommodate [Assignment: organization-defined audit record retention requirements].
 The control section prescribes a security or privacy capability to be implemented. Security and
 privacy capabilities are achieved by the activities or actions, automated or nonautomated,
 carried out by information systems and organizations. Organizations designate the responsibility
@@ -2388,7 +1448,7 @@ c.
 Require [Assignment: organization-defined prerequisites and criteria] for group and role
 membership;
 d.
-Specify: 5. Authorized users of the system; 6. Group and role membership; and 7. Access authorizations (i.e., privileges) and [Assignment: organization-defined attributes
+Specify: 1. Authorized users of the system; 2. Group and role membership; and 3. Access authorizations (i.e., privileges) and [Assignment: organization-defined attributes
 (as required)] for each account;
 e.
 Require approvals by [Assignment: organization-defined personnel or roles] for requests to
@@ -2400,10 +1460,10 @@ g.
 Monitor the use of accounts;
 h.
 Notify account managers and [Assignment: organization-defined personnel or roles] within:
-i. 8. [Assignment: organization-defined time period] when accounts are no longer required; 9. [Assignment: organization-defined time period] when users are terminated or
-transferred; and 10. [Assignment: organization-defined time period] when system usage or need-to-know
+i. 1. [Assignment: organization-defined time period] when accounts are no longer required; 2. [Assignment: organization-defined time period] when users are terminated or
+transferred; and 3. [Assignment: organization-defined time period] when system usage or need-to-know
 changes for an individual;
-Authorize access to the system based on: 11. A valid access authorization; 12. Intended system usage; and 13. [Assignment: organization-defined attributes (as required)];
+Authorize access to the system based on: 1. A valid access authorization; 2. Intended system usage; and 3. [Assignment: organization-defined attributes (as required)];
 j.
 Review accounts for compliance with account management requirements [Assignment:
 organization-defined frequency];
@@ -2448,7 +1508,9 @@ to the shared or group account. Some types of system accounts may require specia
 Related Controls: AC-3, AC-5, AC-6, AC-17, AC-18, AC-20, AC-24, AU-2, AU-12, CM-5, IA-2, IA-4,
 IA-5, IA-8, MA-3, MA-5, PE-2, PL-4, PS-2, PS-4, PS-5, PS-7, PT-2, PT-3, SC-7, SC-12, SC-13, SC-37.
 Control Enhancements:
-(1) ACCOUNT MANAGEMENT | AUTOMATED SYSTEM ACCOUNT MANAGEMENT
+
+##### (1) ACCOUNT MANAGEMENT | AUTOMATED SYSTEM ACCOUNT MANAGEMENT
+
 Support the management of system accounts using [Assignment: organization-defined
 automated mechanisms].
 Discussion: Automated system account management includes using automated mechanisms
@@ -2458,7 +1520,9 @@ or transferred; monitor system account usage; and report atypical system account
 Automated mechanisms can include internal system functions and email, telephonic, and
 text messaging notifications.
 Related Controls: None.
-(2) ACCOUNT MANAGEMENT | AUTOMATED TEMPORARY AND EMERGENCY ACCOUNT MANAGEMENT
+
+##### (2) ACCOUNT MANAGEMENT | AUTOMATED TEMPORARY AND EMERGENCY ACCOUNT MANAGEMENT
+
 Automatically [Selection: remove; disable] temporary and emergency accounts after
 [Assignment: organization-defined time period for each type of account].
 Discussion: Management of temporary and emergency accounts includes the removal or
@@ -2466,7 +1530,9 @@ disabling of such accounts automatically after a predefined time period rather t
 convenience of the system administrator. Automatic removal or disabling of accounts
 provides a more consistent implementation.
 Related Controls: None.
-(3) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS
+
+##### (3) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS
+
 Disable accounts within [Assignment: organization-defined time period] when the
 accounts:
 (a) Have expired;
@@ -2477,20 +1543,26 @@ Discussion: Disabling expired, inactive, or otherwise anomalous accounts support
 concepts of least privilege and least functionality which reduce the attack surface of the
 system.
 Related Controls: None.
-(4) ACCOUNT MANAGEMENT | AUTOMATED AUDIT ACTIONS
+
+##### (4) ACCOUNT MANAGEMENT | AUTOMATED AUDIT ACTIONS
+
 Automatically audit account creation, modification, enabling, disabling, and removal
 actions.
 Discussion: Account management audit records are defined in accordance with AU-2 and
 reviewed, analyzed, and reported in accordance with AU-6.
 Related Controls: AU-2, AU-6.
-(5) ACCOUNT MANAGEMENT | INACTIVITY LOGOUT
+
+##### (5) ACCOUNT MANAGEMENT | INACTIVITY LOGOUT
+
 Require that users log out when [Assignment: organization-defined time period of
 expected inactivity or description of when to log out].
 Discussion: Inactivity logout is behavior- or policy-based and requires users to take physical
 action to log out when they are expecting inactivity longer than the defined period.
 Automatic enforcement of inactivity logout is addressed by AC-11.
 Related Controls: AC-11.
-(6) ACCOUNT MANAGEMENT | DYNAMIC PRIVILEGE MANAGEMENT
+
+##### (6) ACCOUNT MANAGEMENT | DYNAMIC PRIVILEGE MANAGEMENT
+
 Implement [Assignment: organization-defined dynamic privilege management
 capabilities].
 Discussion: In contrast to access control approaches that employ static accounts and
@@ -2508,7 +1580,9 @@ changes, or if systems are under duress or in emergency situations. Dynamic priv
 management includes the effects of privilege changes, for example, when there are changes
 to encryption keys used for communications.
 Related Controls: AC-16.
-(7) ACCOUNT MANAGEMENT | PRIVILEGED USER ACCOUNTS
+
+##### (7) ACCOUNT MANAGEMENT | PRIVILEGED USER ACCOUNTS
+
 (a) Establish and administer privileged user accounts in accordance with [Selection: a rolebased access scheme; an attribute-based access scheme];
 (b) Monitor privileged role or attribute assignments;
 (c) Monitor changes to roles or attributes; and
@@ -2522,7 +1596,9 @@ role-based access scheme organizes permitted system access and privileges into r
 contrast, an attribute-based access scheme specifies allowed system access and privileges
 based on attributes.
 Related Controls: None.
-(8) ACCOUNT MANAGEMENT | DYNAMIC ACCOUNT MANAGEMENT
+
+##### (8) ACCOUNT MANAGEMENT | DYNAMIC ACCOUNT MANAGEMENT
+
 Create, activate, manage, and deactivate [Assignment: organization-defined system
 accounts] dynamically.
 Discussion: Approaches for dynamically creating, activating, managing, and deactivating
@@ -2532,14 +1608,20 @@ activation, and deactivation of system accounts by establishing trust relationsh
 rules, and mechanisms with appropriate authorities to validate related authorizations and
 privileges.
 Related Controls: AC-16.
-(9) ACCOUNT MANAGEMENT | RESTRICTIONS ON USE OF SHARED AND GROUP ACCOUNTS
+
+##### (9) ACCOUNT MANAGEMENT | RESTRICTIONS ON USE OF SHARED AND GROUP ACCOUNTS
+
 Only permit the use of shared and group accounts that meet [Assignment: organizationdefined conditions for establishing shared and group accounts].
 Discussion: Before permitting the use of shared or group accounts, organizations consider
 the increased risk due to the lack of accountability with such accounts.
 Related Controls: None.
-(10) ACCOUNT MANAGEMENT | SHARED AND GROUP ACCOUNT CREDENTIAL CHANGE
+
+##### (10) ACCOUNT MANAGEMENT | SHARED AND GROUP ACCOUNT CREDENTIAL CHANGE
+
 [Withdrawn: Incorporated into AC-2k.]
-(11) ACCOUNT MANAGEMENT | USAGE CONDITIONS
+
+##### (11) ACCOUNT MANAGEMENT | USAGE CONDITIONS
+
 Enforce [Assignment: organization-defined circumstances and/or usage conditions] for
 [Assignment: organization-defined system accounts].
 Discussion: Specifying and enforcing usage conditions helps to enforce the principle of least
@@ -2549,7 +1631,9 @@ parameters. Organizations can describe specific conditions or circumstances unde
 system accounts can be used, such as by restricting usage to certain days of the week, time
 of day, or specific durations of time.
 Related Controls: None.
-(12) ACCOUNT MANAGEMENT | ACCOUNT MONITORING FOR ATYPICAL USAGE
+
+##### (12) ACCOUNT MANAGEMENT | ACCOUNT MONITORING FOR ATYPICAL USAGE
+
 (a) Monitor system accounts for [Assignment: organization-defined atypical usage]; and
 (b) Report atypical usage of system accounts to [Assignment: organization-defined
 personnel or roles].
@@ -2562,7 +1646,9 @@ Organizations assess and document privacy risks from monitoring accounts for aty
 usage in their privacy impact assessment and make determinations that are in alignment
 with their privacy program plan.
 Related Controls: AU-6, AU-7, CA-7, IR-8, SI-4.
-(13) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS FOR HIGH-RISK INDIVIDUALS
+
+##### (13) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS FOR HIGH-RISK INDIVIDUALS
+
 Disable accounts of individuals within [Assignment: organization-defined time period] of
 discovery of [Assignment: organization-defined significant risks].
 Discussion: Users who pose a significant security and/or privacy risk include individuals for
@@ -2591,9 +1677,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-2, AC-4, AC-5, AC-6, AC-16, AC-17, AC-18, AC-19, AC-20, AC-21, AC-22, AC24, AC-25, AT-2, AT-3, AU-9, CA-9, CM-5, CM-11, IA-2, IA-5, IA-6, IA-7, IA-11, MA-3, MA-4, MA-5,
     MP-4, PM-2, PS-3, PT-2, PT-3, SA-17, SC-2, SC-3, SC-4, SC-12, SC-13, SC-28, SC-31, SC-34, SI-4, SI-8.
     Control Enhancements:
-    (1) ACCESS ENFORCEMENT | RESTRICTED ACCESS TO PRIVILEGED FUNCTIONS
+
+##### (1) ACCESS ENFORCEMENT | RESTRICTED ACCESS TO PRIVILEGED FUNCTIONS
+
     [Withdrawn: Incorporated into AC-6.]
-    (2) ACCESS ENFORCEMENT | DUAL AUTHORIZATION
+
+##### (2) ACCESS ENFORCEMENT | DUAL AUTHORIZATION
+
     Enforce dual authorization for [Assignment: organization-defined privileged commands
     and/or other organization-defined actions].
     Discussion: Dual authorization, also known as two-person control, reduces risk related to
@@ -2603,7 +1693,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     authorization mechanisms when immediate responses are necessary to ensure public and
     environmental safety.
     Related Controls: CP-9, MP-6.
-    (3) ACCESS ENFORCEMENT | MANDATORY ACCESS CONTROL
+
+##### (3) ACCESS ENFORCEMENT | MANDATORY ACCESS CONTROL
+
     Enforce [Assignment: organization-defined mandatory access control policy] over the set
     of covered subjects and objects specified in the policy, and where the policy:
     (a) Is uniformly enforced across the covered subjects and objects within the system;
@@ -2648,7 +1740,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     policy to protect confidentiality of information and the Biba policy to protect the integrity of
     information.
     Related Controls: SC-7.
-    (4) ACCESS ENFORCEMENT | DISCRETIONARY ACCESS CONTROL
+
+##### (4) ACCESS ENFORCEMENT | DISCRETIONARY ACCESS CONTROL
+
     Enforce [Assignment: organization-defined discretionary access control policy] over the set
     of covered subjects and objects specified in the policy, and where the policy specifies that
     a subject that has been granted access to information can do one or more of the following:
@@ -2675,7 +1769,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     access control require identity-based access control, that limitation is not required for this
     particular use of discretionary access control.
     Related Controls: None.
-    (5) ACCESS ENFORCEMENT | SECURITY-RELEVANT INFORMATION
+
+##### (5) ACCESS ENFORCEMENT | SECURITY-RELEVANT INFORMATION
+
     Prevent access to [Assignment: organization-defined security-relevant information] except
     during secure, non-operable system states.
     Discussion: Security-relevant information is information within systems that can potentially
@@ -2687,9 +1783,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     times in which systems are not performing mission or business-related processing, such as
     when the system is offline for maintenance, boot-up, troubleshooting, or shut down.
     Related Controls: CM-6, SC-39.
-    (6) ACCESS ENFORCEMENT | PROTECTION OF USER AND SYSTEM INFORMATION
+
+##### (6) ACCESS ENFORCEMENT | PROTECTION OF USER AND SYSTEM INFORMATION
+
     [Withdrawn: Incorporated into MP-4 and SC-28.]
-    (7) ACCESS ENFORCEMENT | ROLE-BASED ACCESS CONTROL
+
+##### (7) ACCESS ENFORCEMENT | ROLE-BASED ACCESS CONTROL
+
     Enforce a role-based access control policy over defined subjects and objects and control
     access based upon [Assignment: organization-defined roles and users authorized to
     assume such roles].
@@ -2706,7 +1806,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     implementing RBAC with mandatory access controls, the requirements in AC-3(3) define the
     scope of the subjects and objects covered by the policy.
     Related Controls: None.
-    (8) ACCESS ENFORCEMENT | REVOCATION OF ACCESS AUTHORIZATIONS
+
+##### (8) ACCESS ENFORCEMENT | REVOCATION OF ACCESS AUTHORIZATIONS
+
     Enforce the revocation of access authorizations resulting from changes to the security
     attributes of subjects and objects based on [Assignment: organization-defined rules
     governing the timing of revocations of access authorizations].
@@ -2718,7 +1820,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     revocations immediate if systems cannot provide such capability and immediate revocation
     is necessary.
     Related Controls: None.
-    (9) ACCESS ENFORCEMENT | CONTROLLED RELEASE
+
+##### (9) ACCESS ENFORCEMENT | CONTROLLED RELEASE
+
     Release information outside of the system only if:
     (a) The receiving [Assignment: organization-defined system or system component]
     provides [Assignment: organization-defined controls]; and
@@ -2744,7 +1848,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     passes information to a printer in organization-controlled space, procedural means can be
     employed to ensure that only authorized individuals gain access to the printer.
     Related Controls: CA-3, PT-7, PT-8, SA-9, SC-16.
-    (10) ACCESS ENFORCEMENT | AUDITED OVERRIDE OF ACCESS CONTROL MECHANISMS
+
+##### (10) ACCESS ENFORCEMENT | AUDITED OVERRIDE OF ACCESS CONTROL MECHANISMS
+
     Employ an audited override of automated access control mechanisms under [Assignment:
     organization-defined conditions] by [Assignment: organization-defined roles].
     Discussion: In certain situations, such as when there is a threat to human life or an event
@@ -2753,7 +1859,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     are defined by organizations and used only in those limited circumstances. Audit events are
     defined in AU-2. Audit records are generated in AU-12.
     Related Controls: AU-2, AU-6, AU-10, AU-12, AU-14.
-    (11) ACCESS ENFORCEMENT | RESTRICT ACCESS TO SPECIFIC INFORMATION TYPES
+
+##### (11) ACCESS ENFORCEMENT | RESTRICT ACCESS TO SPECIFIC INFORMATION TYPES
+
     Restrict access to data repositories containing [Assignment: organization-defined
     information types].
     Discussion: Restricting access to specific information is intended to provide flexibility
@@ -2762,7 +1870,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     entirety. Other examples include restricting access to cryptographic keys, authentication
     information, and selected system information.
     Related Controls: CM-8, CM-12, CM-13, PM-5.
-    (12) ACCESS ENFORCEMENT | ASSERT AND ENFORCE APPLICATION ACCESS
+
+##### (12) ACCESS ENFORCEMENT | ASSERT AND ENFORCE APPLICATION ACCESS
+
     (a) Require applications to assert, as part of the installation process, the access needed to
     the following system applications and functions: [Assignment: organization-defined
     system applications and functions];
@@ -2773,7 +1883,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     global positioning systems, cameras, keyboards, microphones, networks, phones, or other
     files.
     Related Controls: CM-7.
-    (13) ACCESS ENFORCEMENT | ATTRIBUTE-BASED ACCESS CONTROL
+
+##### (13) ACCESS ENFORCEMENT | ATTRIBUTE-BASED ACCESS CONTROL
+
     Enforce attribute-based access control policy over defined subjects and objects and control
     access based upon [Assignment: organization-defined attributes to assume access
     permissions].
@@ -2790,7 +1902,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     access controls, the requirements in AC-3(3) define the scope of the subjects and objects
     covered by the policy.
     Related Controls: None.
-    (14) ACCESS ENFORCEMENT | INDIVIDUAL ACCESS
+
+##### (14) ACCESS ENFORCEMENT | INDIVIDUAL ACCESS
+
     Provide [Assignment: organization-defined mechanisms] to enable individuals to have
     access to the following elements of their personally identifiable information: [Assignment:
     organization-defined elements].
@@ -2806,7 +1920,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Organizational personnel consult with the senior agency official for privacy and legal counsel
     to determine appropriate mechanisms and access rights or limitations.
     Related Controls: IA-8, PM-22, PM-20, PM-21, PT-6.
-    (15) ACCESS ENFORCEMENT | DISCRETIONARY AND MANDATORY ACCESS CONTROL
+
+##### (15) ACCESS ENFORCEMENT | DISCRETIONARY AND MANDATORY ACCESS CONTROL
+
     (a) Enforce [Assignment: organization-defined mandatory access control policy] over the
     set of covered subjects and objects specified in the policy; and
     (b) Enforce [Assignment: organization-defined discretionary access control policy] over
@@ -2858,7 +1974,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-3, AC-6, AC-16, AC-17, AC-19, AC-21, AU-10, CA-3, CA-9, CM-7, PL-9, PM-24,
     SA-17, SC-4, SC-7, SC-16, SC-31.
     Control Enhancements:
-    (1) INFORMATION FLOW ENFORCEMENT | OBJECT SECURITY AND PRIVACY ATTRIBUTES
+
+##### (1) INFORMATION FLOW ENFORCEMENT | OBJECT SECURITY AND PRIVACY ATTRIBUTES
+
     Use [Assignment: organization-defined security and privacy attributes] associated with
     [Assignment: organization-defined information, source, and destination objects] to enforce
     [Assignment: organization-defined information flow control policies] as a basis for flow
@@ -2876,7 +1994,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     enforcement using explicit security or privacy attributes can be used, for example, to control
     the release of certain types of information.
     Related Controls: None.
-    (2) INFORMATION FLOW ENFORCEMENT | PROCESSING DOMAINS
+
+##### (2) INFORMATION FLOW ENFORCEMENT | PROCESSING DOMAINS
+
     Use protected processing domains to enforce [Assignment: organization-defined
     information flow control policies] as a basis for flow control decisions.
     Discussion: Protected processing domains within systems are processing spaces that have
@@ -2888,7 +2008,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     determined by domain and type), allowed signaling among domains, and allowed process
     transitions to other domains.
     Related Controls: SC-39.
-    (3) INFORMATION FLOW ENFORCEMENT | DYNAMIC INFORMATION FLOW CONTROL
+
+##### (3) INFORMATION FLOW ENFORCEMENT | DYNAMIC INFORMATION FLOW CONTROL
+
     Enforce [Assignment: organization-defined information flow control policies].
     Discussion: Organizational policies regarding dynamic information flow control include
     allowing or disallowing information flows based on changing conditions or mission or
@@ -2896,7 +2018,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     changes in the immediacy of mission or business needs, changes in the threat environment,
     and detection of potentially harmful or adverse events.
     Related Controls: SI-4.
-    (4) INFORMATION FLOW ENFORCEMENT | FLOW CONTROL OF ENCRYPTED INFORMATION
+
+##### (4) INFORMATION FLOW ENFORCEMENT | FLOW CONTROL OF ENCRYPTED INFORMATION
+
     Prevent encrypted information from bypassing [Assignment: organization-defined
     information flow control mechanisms] by [Selection (one or more): decrypting the
     information; blocking the flow of the encrypted information; terminating communications
@@ -2906,7 +2030,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     data type identifiers. The term encryption is extended to cover encoded data not recognized
     by filtering mechanisms.
     Related Controls: SI-4.
-    (5) INFORMATION FLOW ENFORCEMENT | EMBEDDED DATA TYPES
+
+##### (5) INFORMATION FLOW ENFORCEMENT | EMBEDDED DATA TYPES
+
     Enforce [Assignment: organization-defined limitations] on embedding data types within
     other data types.
     Discussion: Embedding data types within other data types may result in reduced flow
@@ -2915,7 +2041,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     types. Limitations on data type embedding consider the levels of embedding and prohibit
     levels of data type embedding that are beyond the capability of the inspection tools.
     Related Controls: None.
-    (6) INFORMATION FLOW ENFORCEMENT | METADATA
+
+##### (6) INFORMATION FLOW ENFORCEMENT | METADATA
+
     Enforce information flow control based on [Assignment: organization-defined metadata].
     Discussion: Metadata is information that describes the characteristics of data. Metadata can
     include structural metadata describing data structures or descriptive metadata describing
@@ -2926,14 +2054,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and the binding of metadata to the data payload (i.e., employing sufficiently strong binding
     techniques with appropriate assurance).
     Related Controls: AC-16, SI-7.
-    (7) INFORMATION FLOW ENFORCEMENT | ONE-WAY FLOW MECHANISMS
+
+##### (7) INFORMATION FLOW ENFORCEMENT | ONE-WAY FLOW MECHANISMS
+
     Enforce one-way information flows through hardware-based flow control mechanisms.
     Discussion: One-way flow mechanisms may also be referred to as a unidirectional network,
     unidirectional security gateway, or data diode. One-way flow mechanisms can be used to
     prevent data from being exported from a higher impact or classified domain or system while
     permitting data from a lower impact or unclassified domain or system to be imported.
     Related Controls: None.
-    (8) INFORMATION FLOW ENFORCEMENT | SECURITY AND PRIVACY POLICY FILTERS
+
+##### (8) INFORMATION FLOW ENFORCEMENT | SECURITY AND PRIVACY POLICY FILTERS
+
     (a) Enforce information flow control using [Assignment: organization-defined security or
     privacy policy filters] as a basis for flow control decisions for [Assignment:
     organization-defined information flows]; and
@@ -2953,7 +2085,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     textual objects that are based on written or printed languages. Organizations can implement
     more than one security or privacy policy filter to meet information flow control objectives.
     Related Controls: None.
-    (9) INFORMATION FLOW ENFORCEMENT | HUMAN REVIEWS
+
+##### (9) INFORMATION FLOW ENFORCEMENT | HUMAN REVIEWS
+
     Enforce the use of human reviews for [Assignment: organization-defined information
     flows] under the following conditions: [Assignment: organization-defined conditions].
     Discussion: Organizations define security or privacy policy filters for all situations where
@@ -2962,7 +2096,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     automated security or privacy policy filtering. Human reviews may also be employed as
     deemed necessary by organizations.
     Related Controls: None.
-    (10) INFORMATION FLOW ENFORCEMENT | ENABLE AND DISABLE SECURITY OR PRIVACY POLICY FILTERS
+
+##### (10) INFORMATION FLOW ENFORCEMENT | ENABLE AND DISABLE SECURITY OR PRIVACY POLICY FILTERS
+
     Provide the capability for privileged administrators to enable and disable [Assignment:
     organization-defined security or privacy policy filters] under the following conditions:
     [Assignment: organization-defined conditions].
@@ -2972,7 +2108,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     type of data that is being transferred, the source and destination security domains, and
     other security or privacy relevant features, as needed.
     Related Controls: None.
-    (11) INFORMATION FLOW ENFORCEMENT | CONFIGURATION OF SECURITY OR PRIVACY POLICY FILTERS
+
+##### (11) INFORMATION FLOW ENFORCEMENT | CONFIGURATION OF SECURITY OR PRIVACY POLICY FILTERS
+
     Provide the capability for privileged administrators to configure [Assignment:
     organization-defined security or privacy policy filters] to support different security or
     privacy policies.
@@ -2981,7 +2119,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     include the list of inappropriate words that security or privacy policy mechanisms check in
     accordance with the definitions provided by organizations.
     Related Controls: None.
-    (12) INFORMATION FLOW ENFORCEMENT | DATA TYPE IDENTIFIERS
+
+##### (12) INFORMATION FLOW ENFORCEMENT | DATA TYPE IDENTIFIERS
+
     When transferring information between different security domains, use [Assignment:
     organization-defined data type identifiers] to validate data essential for information flow
     decisions.
@@ -2992,7 +2132,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     number alone are not used for data type identification. Content is validated syntactically and
     semantically against its specification to ensure that it is the proper data type.
     Related Controls: None.
-    (13) INFORMATION FLOW ENFORCEMENT | DECOMPOSITION INTO POLICY-RELEVANT SUBCOMPONENTS
+
+##### (13) INFORMATION FLOW ENFORCEMENT | DECOMPOSITION INTO POLICY-RELEVANT SUBCOMPONENTS
+
     When transferring information between different security domains, decompose
     information into [Assignment: organization-defined policy-relevant subcomponents] for
     submission to policy enforcement mechanisms.
@@ -3003,7 +2145,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     policy-relevant subcomponents of information to facilitate flow enforcement prior to
     transferring such information to different security domains.
     Related Controls: None.
-    (14) INFORMATION FLOW ENFORCEMENT | SECURITY OR PRIVACY POLICY FILTER CONSTRAINTS
+
+##### (14) INFORMATION FLOW ENFORCEMENT | SECURITY OR PRIVACY POLICY FILTER CONSTRAINTS
+
     When transferring information between different security domains, implement
     [Assignment: organization-defined security or privacy policy filters] requiring fully
     enumerated formats that restrict data structure and content.
@@ -3014,7 +2158,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     contain alpha-numeric characters, prohibiting special characters, and validating schema
     structures.
     Related Controls: None.
-    (15) INFORMATION FLOW ENFORCEMENT | DETECTION OF UNSANCTIONED INFORMATION
+
+##### (15) INFORMATION FLOW ENFORCEMENT | DETECTION OF UNSANCTIONED INFORMATION
+
     When transferring information between different security domains, examine the
     information for the presence of [Assignment: organization-defined unsanctioned
     information] and prohibit the transfer of such information in accordance with the
@@ -3023,9 +2169,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     inappropriate for release from the source network, or executable code that could disrupt or
     harm the services or systems on the destination network.
     Related Controls: SI-3.
-    (16) INFORMATION FLOW ENFORCEMENT | INFORMATION TRANSFERS ON INTERCONNECTED SYSTEMS
+
+##### (16) INFORMATION FLOW ENFORCEMENT | INFORMATION TRANSFERS ON INTERCONNECTED SYSTEMS
+
     [Withdrawn: Incorporated into AC-4.]
-    (17) INFORMATION FLOW ENFORCEMENT | DOMAIN AUTHENTICATION
+
+##### (17) INFORMATION FLOW ENFORCEMENT | DOMAIN AUTHENTICATION
+
     Uniquely identify and authenticate source and destination points by [Selection (one or
     more): organization; system; application; service; individual] for information transfer.
     Discussion: Attribution is a critical component of a security and privacy concept of
@@ -3038,9 +2188,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     information processing as it flows through systems and can facilitate consent tracking, as
     well as correction, deletion, or access requests from individuals.
     Related Controls: IA-2, IA-3, IA-9.
-    (18) INFORMATION FLOW ENFORCEMENT | SECURITY ATTRIBUTE BINDING
+
+##### (18) INFORMATION FLOW ENFORCEMENT | SECURITY ATTRIBUTE BINDING
+
     [Withdrawn: Incorporated into AC-16.]
-    (19) INFORMATION FLOW ENFORCEMENT | VALIDATION OF METADATA
+
+##### (19) INFORMATION FLOW ENFORCEMENT | VALIDATION OF METADATA
+
     When transferring information between different security domains, implement
     [Assignment: organization-defined security or privacy policy filters] on metadata.
     Discussion: All information (including metadata and the data to which the metadata applies)
@@ -3049,7 +2203,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     not make such distinctions and consider metadata and the data to which the metadata
     applies to be part of the payload.
     Related Controls: None.
-    (20) INFORMATION FLOW ENFORCEMENT | APPROVED SOLUTIONS
+
+##### (20) INFORMATION FLOW ENFORCEMENT | APPROVED SOLUTIONS
+
     Employ [Assignment: organization-defined solutions in approved configurations] to control
     the flow of [Assignment: organization-defined information] across security domains.
     Discussion: Organizations define approved solutions and configurations in cross-domain
@@ -3058,7 +2214,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Management Office provides a listing of approved cross-domain solutions. Contact
     ncdsmo@nsa.gov for more information.
     Related Controls: None.
-    (21) INFORMATION FLOW ENFORCEMENT | PHYSICAL OR LOGICAL SEPARATION OF INFORMATION FLOWS
+
+##### (21) INFORMATION FLOW ENFORCEMENT | PHYSICAL OR LOGICAL SEPARATION OF INFORMATION FLOWS
+
     Separate information flows logically or physically using [Assignment: organization-defined
     mechanisms and/or techniques] to accomplish [Assignment: organization-defined required
     separations by types of information].
@@ -3068,7 +2226,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     of separable information include inbound and outbound communications traffic, service
     requests and responses, and information of differing security impact or classification levels.
     Related Controls: SC-32.
-    (22) INFORMATION FLOW ENFORCEMENT | ACCESS ONLY
+
+##### (22) INFORMATION FLOW ENFORCEMENT | ACCESS ONLY
+
     Provide access from a single device to computing platforms, applications, or data residing
     in multiple different security domains, while preventing information flow between the
     different security domains.
@@ -3078,21 +2238,27 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     that provides a user access to information with different security classifications while
     assuredly keeping the information separate.
     Related Controls: None.
-    (23) INFORMATION FLOW ENFORCEMENT | MODIFY NON-RELEASABLE INFORMATION
+
+##### (23) INFORMATION FLOW ENFORCEMENT | MODIFY NON-RELEASABLE INFORMATION
+
     When transferring information between different security domains, modify non-releasable
     information by implementing [Assignment: organization-defined modification action].
     Discussion: Modifying non-releasable information can help prevent a data spill or attack
     when information is transferred across security domains. Modification actions include
     masking, permutation, alteration, removal, or redaction.
     Related Controls: None.
-    (24) INFORMATION FLOW ENFORCEMENT | INTERNAL NORMALIZED FORMAT
+
+##### (24) INFORMATION FLOW ENFORCEMENT | INTERNAL NORMALIZED FORMAT
+
     When transferring information between different security domains, parse incoming data
     into an internal normalized format and regenerate the data to be consistent with its
     intended specification.
     Discussion: Converting data into normalized forms is one of most of effective mechanisms
     to stop malicious attacks and large classes of data exfiltration.
     Related Controls: None.
-    (25) INFORMATION FLOW ENFORCEMENT | DATA SANITIZATION
+
+##### (25) INFORMATION FLOW ENFORCEMENT | DATA SANITIZATION
+
     When transferring information between different security domains, sanitize data to
     minimize [Selection (one or more): delivery of malicious content, command and control of
     malicious code, malicious code augmentation, and steganography encoded data; spillage
@@ -3101,7 +2267,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     stored on a memory device (e.g., hard drives, flash memory/solid state drives, mobile
     devices, CDs, and DVDs) or in hard copy form.
     Related Controls: MP-6.
-    (26) INFORMATION FLOW ENFORCEMENT | AUDIT FILTERING ACTIONS
+
+##### (26) INFORMATION FLOW ENFORCEMENT | AUDIT FILTERING ACTIONS
+
     When transferring information between different security domains, record and audit
     content filtering actions and results for the information being filtered.
     Discussion: Content filtering is the process of inspecting information as it traverses a crossdomain solution and determines if the information meets a predefined policy. Content
@@ -3111,7 +2279,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and/or why it failed the filtering process. Audit events are defined in AU-2. Audit records are
     generated in AU-12.
     Related Controls: AU-2, AU-3, AU-12.
-    (27) INFORMATION FLOW ENFORCEMENT | REDUNDANT/INDEPENDENT FILTERING MECHANISMS
+
+##### (27) INFORMATION FLOW ENFORCEMENT | REDUNDANT/INDEPENDENT FILTERING MECHANISMS
+
     When transferring information between different security domains, implement content
     filtering solutions that provide redundant and independent filtering mechanisms for each
     data type.
@@ -3121,7 +2291,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     base and supporting libraries (e.g., two JPEG filters using different vendors’ JPEG libraries)
     and multiple, independent system processes.
     Related Controls: None.
-    (28) INFORMATION FLOW ENFORCEMENT | LINEAR FILTER PIPELINES
+
+##### (28) INFORMATION FLOW ENFORCEMENT | LINEAR FILTER PIPELINES
+
     When transferring information between different security domains, implement a linear
     content filter pipeline that is enforced with discretionary and mandatory access controls.
     Discussion: Content filtering is the process of inspecting information as it traverses a crossdomain solution and determines if the information meets a predefined policy. The use of
@@ -3129,7 +2301,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     invoked. In general, the use of parallel filtering architectures for content filtering of a single
     data type introduces bypass and non-invocation issues.
     Related Controls: None.
-    (29) INFORMATION FLOW ENFORCEMENT | FILTER ORCHESTRATION ENGINES
+
+##### (29) INFORMATION FLOW ENFORCEMENT | FILTER ORCHESTRATION ENGINES
+
     When transferring information between different security domains, employ content filter
     orchestration engines to ensure that:
     (a) Content filtering mechanisms successfully complete execution without errors; and
@@ -3142,19 +2316,25 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     to non-compliance with policy. Content filter reports are a commonly used mechanism to
     ensure that expected filtering actions are completed successfully.
     Related Controls: None.
-    (30) INFORMATION FLOW ENFORCEMENT | FILTER MECHANISMS USING MULTIPLE PROCESSES
+
+##### (30) INFORMATION FLOW ENFORCEMENT | FILTER MECHANISMS USING MULTIPLE PROCESSES
+
     When transferring information between different security domains, implement content
     filtering mechanisms using multiple processes.
     Discussion: The use of multiple processes to implement content filtering mechanisms
     reduces the likelihood of a single point of failure.
     Related Controls: None.
-    (31) INFORMATION FLOW ENFORCEMENT | FAILED CONTENT TRANSFER PREVENTION
+
+##### (31) INFORMATION FLOW ENFORCEMENT | FAILED CONTENT TRANSFER PREVENTION
+
     When transferring information between different security domains, prevent the transfer
     of failed content to the receiving domain.
     Discussion: Content that failed filtering checks can corrupt the system if transferred to the
     receiving domain.
     Related Controls: None.
-    (32) INFORMATION FLOW ENFORCEMENT | PROCESS REQUIREMENTS FOR INFORMATION TRANSFER
+
+##### (32) INFORMATION FLOW ENFORCEMENT | PROCESS REQUIREMENTS FOR INFORMATION TRANSFER
+
     When transferring information between different security domains, the process that
     transfers information between filter pipelines:
     (a) Does not filter message content;
@@ -3204,7 +2384,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     development, implementation, and operation of organizational systems.
     Related Controls: AC-2, AC-3, AC-5, AC-16, CM-5, CM-11, PL-2, PM-12, SA-8, SA-15, SA-17, SC-38.
     Control Enhancements:
-    (1) LEAST PRIVILEGE | AUTHORIZE ACCESS TO SECURITY FUNCTIONS
+
+##### (1) LEAST PRIVILEGE | AUTHORIZE ACCESS TO SECURITY FUNCTIONS
+
     Authorize access for [Assignment: organization-defined individuals or roles] to:
     (a) [Assignment: organization-defined security functions (deployed in hardware, software,
     and firmware)]; and
@@ -3217,7 +2399,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     include security administrators, system administrators, system security officers, system
     programmers, and other privileged users.
     Related Controls: AC-17, AC-18, AC-19, AU-9, PE-2.
-    (2) LEAST PRIVILEGE | NON-PRIVILEGED ACCESS FOR NONSECURITY FUNCTIONS
+
+##### (2) LEAST PRIVILEGE | NON-PRIVILEGED ACCESS FOR NONSECURITY FUNCTIONS
+
     Require that users of system accounts (or roles) with access to [Assignment: organizationdefined security functions or security-relevant information] use non-privileged accounts or
     roles, when accessing nonsecurity functions.
     Discussion: Requiring the use of non-privileged accounts when accessing nonsecurity
@@ -3227,14 +2411,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     degree of assurance in the change of access authorizations for the user and the processes
     acting on behalf of the user as would be provided by a change between a privileged and nonprivileged account.
     Related Controls: AC-17, AC-18, AC-19, PL-4.
-    (3) LEAST PRIVILEGE | NETWORK ACCESS TO PRIVILEGED COMMANDS
+
+##### (3) LEAST PRIVILEGE | NETWORK ACCESS TO PRIVILEGED COMMANDS
+
     Authorize network access to [Assignment: organization-defined privileged commands]
     only for [Assignment: organization-defined compelling operational needs] and document
     the rationale for such access in the security plan for the system.
     Discussion: Network access is any access across a network connection in lieu of local access
     (i.e., user being physically present at the device).
     Related Controls: AC-17, AC-18, AC-19.
-    (4) LEAST PRIVILEGE | SEPARATE PROCESSING DOMAINS
+
+##### (4) LEAST PRIVILEGE | SEPARATE PROCESSING DOMAINS
+
     Provide separate processing domains to enable finer-grained allocation of user privileges.
     Discussion: Providing separate processing domains for finer-grained allocation of user
     privileges includes using virtualization techniques to permit additional user privileges within
@@ -3242,7 +2430,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     physical machine, implementing separate physical domains, and employing hardware or
     software domain separation mechanisms.
     Related Controls: AC-4, SC-2, SC-3, SC-30, SC-32, SC-39.
-    (5) LEAST PRIVILEGE | PRIVILEGED ACCOUNTS
+
+##### (5) LEAST PRIVILEGE | PRIVILEGED ACCOUNTS
+
     Restrict privileged accounts on the system to [Assignment: organization-defined personnel
     or roles].
     Discussion: Privileged accounts, including super user accounts, are typically described as
@@ -3253,7 +2443,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     accounts and for domain accounts provided that they retain the ability to control system
     configurations for key parameters and as otherwise necessary to sufficiently mitigate risk.
     Related Controls: IA-2, MA-3, MA-4.
-    (6) LEAST PRIVILEGE | PRIVILEGED ACCESS BY NON-ORGANIZATIONAL USERS
+
+##### (6) LEAST PRIVILEGE | PRIVILEGED ACCESS BY NON-ORGANIZATIONAL USERS
+
     Prohibit privileged access to the system by non-organizational users.
     Discussion: An organizational user is an employee or an individual considered by the
     organization to have the equivalent status of an employee. Organizational users include
@@ -3261,7 +2453,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     granting equivalent status of employees to individuals include a need-to-know, citizenship,
     and the relationship to the organization.
     Related Controls: AC-18, AC-19, IA-2, IA-8.
-    (7) LEAST PRIVILEGE | REVIEW OF USER PRIVILEGES
+
+##### (7) LEAST PRIVILEGE | REVIEW OF USER PRIVILEGES
+
     (a) Review [Assignment: organization-defined frequency] the privileges assigned to
     [Assignment: organization-defined roles or classes of users] to validate the need for
     such privileges; and
@@ -3273,7 +2467,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     determine if the rationale for assigning such privileges remains valid. If the need cannot be
     revalidated, organizations take appropriate corrective actions.
     Related Controls: CA-7.
-    (8) LEAST PRIVILEGE | PRIVILEGE LEVELS FOR CODE EXECUTION
+
+##### (8) LEAST PRIVILEGE | PRIVILEGE LEVELS FOR CODE EXECUTION
+
     Prevent the following software from executing at higher privilege levels than users
     executing the software: [Assignment: organization-defined software].
     Discussion: In certain situations, software applications or programs need to execute with
@@ -3282,7 +2478,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     than the privileges assigned to organizational users invoking such applications or programs,
     those users may indirectly be provided with greater privileges than assigned.
     Related Controls: None.
-    (9) LEAST PRIVILEGE | LOG USE OF PRIVILEGED FUNCTIONS
+
+##### (9) LEAST PRIVILEGE | LOG USE OF PRIVILEGED FUNCTIONS
+
     Log the execution of privileged functions.
     Discussion: The misuse of privileged functions, either intentionally or unintentionally by
     authorized users or by unauthorized external entities that have compromised system
@@ -3291,7 +2489,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     such misuse and, in doing so, help mitigate the risk from insider threats and the advanced
     persistent threat.
     Related Controls: AU-2, AU-3, AU-12.
-    (10) LEAST PRIVILEGE | PROHIBIT NON-PRIVILEGED USERS FROM EXECUTING PRIVILEGED FUNCTIONS
+
+##### (10) LEAST PRIVILEGE | PROHIBIT NON-PRIVILEGED USERS FROM EXECUTING PRIVILEGED FUNCTIONS
+
     Prevent non-privileged users from executing privileged functions.
     Discussion: Privileged functions include disabling, circumventing, or altering implemented
     security or privacy controls, establishing system accounts, performing system integrity
@@ -3336,9 +2536,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     permitted. However, exceptions may be required based on operational mission or need.
     Related Controls: AC-2, AC-9, AU-2, AU-6, IA-5.
     Control Enhancements:
-    (1) UNSUCCESSFUL LOGON ATTEMPTS | AUTOMATIC ACCOUNT LOCK
+
+##### (1) UNSUCCESSFUL LOGON ATTEMPTS | AUTOMATIC ACCOUNT LOCK
+
     [Withdrawn: Incorporated into AC-7.]
-    (2) UNSUCCESSFUL LOGON ATTEMPTS | PURGE OR WIPE MOBILE DEVICE
+
+##### (2) UNSUCCESSFUL LOGON ATTEMPTS | PURGE OR WIPE MOBILE DEVICE
+
     Purge or wipe information from [Assignment: organization-defined mobile devices] based
     on [Assignment: organization-defined purging or wiping requirements and techniques]
     after [Assignment: organization-defined number] consecutive, unsuccessful device logon
@@ -3352,14 +2556,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     devices reset the unsuccessful logon count to zero. Purging or wiping may be unnecessary if
     the information on the device is protected with sufficiently strong encryption mechanisms.
     Related Controls: AC-19, MP-5, MP-6.
-    (3) UNSUCCESSFUL LOGON ATTEMPTS | BIOMETRIC ATTEMPT LIMITING
+
+##### (3) UNSUCCESSFUL LOGON ATTEMPTS | BIOMETRIC ATTEMPT LIMITING
+
     Limit the number of unsuccessful biometric logon attempts to [Assignment: organizationdefined number].
     Discussion: Biometrics are probabilistic in nature. The ability to successfully authenticate
     can be impacted by many factors, including matching performance and presentation attack
     detection mechanisms. Organizations select the appropriate number of attempts for users
     based on organizationally-defined factors.
     Related Controls: IA-3.
-    (4) UNSUCCESSFUL LOGON ATTEMPTS | USE OF ALTERNATE AUTHENTICATION FACTOR
+
+##### (4) UNSUCCESSFUL LOGON ATTEMPTS | USE OF ALTERNATE AUTHENTICATION FACTOR
+
     (a) Allow the use of [Assignment: organization-defined authentication factors] that are
     different from the primary authentication factors after the number of organizationdefined consecutive invalid logon attempts have been exceeded; and
     (b) Enforce a limit of [Assignment: organization-defined number] consecutive invalid
@@ -3381,34 +2589,34 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     consistent with applicable laws, executive orders, directives, regulations, policies, standards,
     and guidelines and state that:
 
-14. Users are accessing a U.S. Government system;
-15. System usage may be monitored, recorded, and subject to audit;
-16. Unauthorized use of the system is prohibited and subject to criminal and civil penalties;
-    and
-17. Use of the system indicates consent to monitoring and recording;
-    b.
-    Retain the notification message or banner on the screen until users acknowledge the usage
-    conditions and take explicit actions to log on to or further access the system; and
-    c.
-    For publicly accessible systems:
-18. Display system use information [Assignment: organization-defined conditions], before
-    granting further access to the publicly accessible system;
-19. Display references, if any, to monitoring, recording, or auditing that are consistent with
-    privacy accommodations for such systems that generally prohibit those activities; and
-20. Include a description of the authorized uses of the system.
-    Discussion: System use notifications can be implemented using messages or warning banners
-    displayed before individuals log in to systems. System use notifications are used only for access
-    via logon interfaces with human users. Notifications are not required when human interfaces do
-    not exist. Based on an assessment of risk, organizations consider whether or not a secondary
-    system use notification is needed to access applications or other system resources after the
-    initial network logon. Organizations consider system use notification messages or banners
-    displayed in multiple languages based on organizational needs and the demographics of system
-    users. Organizations consult with the privacy office for input regarding privacy messaging and the
-    Office of the General Counsel or organizational equivalent for legal review and approval of
-    warning banner content.
-    Related Controls: AC-14, PL-4, SI-4.
-    Control Enhancements: None.
-    References: None.
+1. Users are accessing a U.S. Government system;
+2. System usage may be monitored, recorded, and subject to audit;
+3. Unauthorized use of the system is prohibited and subject to criminal and civil penalties;
+   and
+4. Use of the system indicates consent to monitoring and recording;
+   b.
+   Retain the notification message or banner on the screen until users acknowledge the usage
+   conditions and take explicit actions to log on to or further access the system; and
+   c.
+   For publicly accessible systems:
+5. Display system use information [Assignment: organization-defined conditions], before
+   granting further access to the publicly accessible system;
+6. Display references, if any, to monitoring, recording, or auditing that are consistent with
+   privacy accommodations for such systems that generally prohibit those activities; and
+7. Include a description of the authorized uses of the system.
+   Discussion: System use notifications can be implemented using messages or warning banners
+   displayed before individuals log in to systems. System use notifications are used only for access
+   via logon interfaces with human users. Notifications are not required when human interfaces do
+   not exist. Based on an assessment of risk, organizations consider whether or not a secondary
+   system use notification is needed to access applications or other system resources after the
+   initial network logon. Organizations consider system use notification messages or banners
+   displayed in multiple languages based on organizational needs and the demographics of system
+   users. Organizations consult with the privacy office for input regarding privacy messaging and the
+   Office of the General Counsel or organizational equivalent for legal review and approval of
+   warning banner content.
+   Related Controls: AC-14, PL-4, SI-4.
+   Control Enhancements: None.
+   References: None.
 
 #### AC-9
 
@@ -3421,21 +2629,27 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     the user’s last access.
     Related Controls: AC-7, PL-4.
     Control Enhancements:
-    (1) PREVIOUS LOGON NOTIFICATION | UNSUCCESSFUL LOGONS
+
+##### (1) PREVIOUS LOGON NOTIFICATION | UNSUCCESSFUL LOGONS
+
     Notify the user, upon successful logon, of the number of unsuccessful logon attempts since
     the last successful logon.
     Discussion: Information about the number of unsuccessful logon attempts since the last
     successful logon allows the user to recognize if the number of unsuccessful logon attempts is
     consistent with the user’s actual logon attempts.
     Related Controls: None.
-    (2) PREVIOUS LOGON NOTIFICATION | SUCCESSFUL AND UNSUCCESSFUL LOGONS
+
+##### (2) PREVIOUS LOGON NOTIFICATION | SUCCESSFUL AND UNSUCCESSFUL LOGONS
+
     Notify the user, upon successful logon, of the number of [Selection: successful logons;
     unsuccessful logon attempts; both] during [Assignment: organization-defined time period].
     Discussion: Information about the number of successful and unsuccessful logon attempts
     within a specified time period allows the user to recognize if the number and type of logon
     attempts are consistent with the user’s actual logon attempts.
     Related Controls: None.
-    (3) PREVIOUS LOGON NOTIFICATION | NOTIFICATION OF ACCOUNT CHANGES
+
+##### (3) PREVIOUS LOGON NOTIFICATION | NOTIFICATION OF ACCOUNT CHANGES
+
     Notify the user, upon successful logon, of changes to [Assignment: organization-defined
     security-related characteristics or parameters of the user’s account] during [Assignment:
     organization-defined time period].
@@ -3443,7 +2657,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     specified time period allows users to recognize if changes were made without their
     knowledge.
     Related Controls: None.
-    (4) PREVIOUS LOGON NOTIFICATION | ADDITIONAL LOGON INFORMATION
+
+##### (4) PREVIOUS LOGON NOTIFICATION | ADDITIONAL LOGON INFORMATION
+
     Notify the user, upon successful logon, of the following additional information:
     [Assignment: organization-defined additional information].
     Discussion: Organizations can specify additional information to be provided to users upon
@@ -3487,7 +2703,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     such as when organizations require users to log out at the end of workdays.
     Related Controls: AC-2, AC-7, IA-11, PL-4.
     Control Enhancements:
-    (1) DEVICE LOCK | PATTERN-HIDING DISPLAYS
+
+##### (1) DEVICE LOCK | PATTERN-HIDING DISPLAYS
+
     Conceal, via the device lock, information previously visible on the display with a publicly
     viewable image.
     Discussion: The pattern-hiding display can include static or dynamic images, such as
@@ -3513,14 +2731,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     types of incidents, or time-of-day restrictions on system use.
     Related Controls: MA-4, SC-10, SC-23.
     Control Enhancements:
-    (1) SESSION TERMINATION | USER-INITIATED LOGOUTS
+
+##### (1) SESSION TERMINATION | USER-INITIATED LOGOUTS
+
     Provide a logout capability for user-initiated communications sessions whenever
     authentication is used to gain access to [Assignment: organization-defined information
     resources].
     Discussion: Information resources to which users gain access via authentication include local
     workstations, databases, and password-protected websites or web-based services.
     Related Controls: None.
-    (2) SESSION TERMINATION | TERMINATION MESSAGE
+
+##### (2) SESSION TERMINATION | TERMINATION MESSAGE
+
     Display an explicit logout message to users indicating the termination of authenticated
     communications sessions.
     Discussion: Logout messages for web access can be displayed after authenticated sessions
@@ -3528,7 +2750,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     (FTP) sessions, systems typically send logout messages as final messages prior to terminating
     sessions.
     Related Controls: None.
-    (3) SESSION TERMINATION | TIMEOUT WARNING MESSAGE
+
+##### (3) SESSION TERMINATION | TIMEOUT WARNING MESSAGE
+
     Display an explicit message to users indicating that the session will end in [Assignment:
     organization-defined time until end of session].
     Discussion: To increase usability, notify users of pending session termination and prompt
@@ -3568,7 +2792,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     “none.”
     Related Controls: AC-8, IA-2, PL-2.
     Control Enhancements: None.
-    (1) PERMITTED ACTIONS WITHOUT IDENTIFICATION OR AUTHENTICATION | NECESSARY USES
+
+##### (1) PERMITTED ACTIONS WITHOUT IDENTIFICATION OR AUTHENTICATION | NECESSARY USES
+
     [Withdrawn: Incorporated into AC-14.]
     References: None.
 
@@ -3641,7 +2867,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-3, AC-4, AC-6, AC-21, AC-25, AU-2, AU-10, MP-3, PE-22, PT-2, PT-3, PT-4,
     SC-11, SC-16, SI-12, SI-18.
     Control Enhancements:
-    (1) SECURITY AND PRIVACY ATTRIBUTES | DYNAMIC ATTRIBUTE ASSOCIATION
+
+##### (1) SECURITY AND PRIVACY ATTRIBUTES | DYNAMIC ATTRIBUTE ASSOCIATION
+
     Dynamically associate security and privacy attributes with [Assignment: organizationdefined subjects and objects] in accordance with the following security and privacy policies
     as information is created and combined: [Assignment: organization-defined security and
     privacy policies].
@@ -3652,14 +2880,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     changes in the security category of information, or changes in security or privacy policies.
     Attributes may also change situationally.
     Related Controls: None.
-    (2) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE VALUE CHANGES BY AUTHORIZED INDIVIDUALS
+
+##### (2) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE VALUE CHANGES BY AUTHORIZED INDIVIDUALS
+
     Provide authorized individuals (or processes acting on behalf of individuals) the capability
     to define or change the value of associated security and privacy attributes.
     Discussion: The content or assigned values of attributes can directly affect the ability of
     individuals to access organizational information. Therefore, it is important for systems to be
     able to limit the ability to create or modify attributes to authorized individuals.
     Related Controls: None.
-    (3) SECURITY AND PRIVACY ATTRIBUTES | MAINTENANCE OF ATTRIBUTE ASSOCIATIONS BY SYSTEM
+
+##### (3) SECURITY AND PRIVACY ATTRIBUTES | MAINTENANCE OF ATTRIBUTE ASSOCIATIONS BY SYSTEM
+
     Maintain the association and integrity of [Assignment: organization-defined security and
     privacy attributes] to [Assignment: organization-defined subjects and objects].
     Discussion: Maintaining the association and integrity of security and privacy attributes to
@@ -3670,7 +2902,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Automated policy actions include retention date expirations, access control decisions,
     information flow control decisions, and information disclosure decisions.
     Related Controls: None.
-    (4) SECURITY AND PRIVACY ATTRIBUTES | ASSOCIATION OF ATTRIBUTES BY AUTHORIZED INDIVIDUALS
+
+##### (4) SECURITY AND PRIVACY ATTRIBUTES | ASSOCIATION OF ATTRIBUTES BY AUTHORIZED INDIVIDUALS
+
     Provide the capability to associate [Assignment: organization-defined security and privacy
     attributes] with [Assignment: organization-defined subjects and objects] by authorized
     individuals (or processes acting on behalf of individuals).
@@ -3685,7 +2919,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     the security or privacy attributes selected is valid. Organizations consider the creation,
     deletion, or modification of attributes when defining auditable events.
     Related Controls: None.
-    (5) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE DISPLAYS ON OBJECTS TO BE OUTPUT
+
+##### (5) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE DISPLAYS ON OBJECTS TO BE OUTPUT
+
     Display security and privacy attributes in human-readable form on each object that the
     system transmits to output devices to identify [Assignment: organization-defined special
     dissemination, handling, or distribution instructions] using [Assignment: organizationdefined human-readable, standard naming conventions].
@@ -3694,7 +2930,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     tablets. To mitigate the risk of unauthorized exposure of information (e.g., shoulder surfing),
     the outputs display full attribute values when unmasked by the subscriber.
     Related Controls: None.
-    (6) SECURITY AND PRIVACY ATTRIBUTES | MAINTENANCE OF ATTRIBUTE ASSOCIATION
+
+##### (6) SECURITY AND PRIVACY ATTRIBUTES | MAINTENANCE OF ATTRIBUTE ASSOCIATION
+
     Require personnel to associate and maintain the association of [Assignment: organizationdefined security and privacy attributes] with [Assignment: organization-defined subjects
     and objects] in accordance with [Assignment: organization-defined security and privacy
     policies].
@@ -3702,7 +2940,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     system) to maintain associations of defined security and privacy attributes with subjects and
     objects.
     Related Controls: None.
-    (7) SECURITY AND PRIVACY ATTRIBUTES | CONSISTENT ATTRIBUTE INTERPRETATION
+
+##### (7) SECURITY AND PRIVACY ATTRIBUTES | CONSISTENT ATTRIBUTE INTERPRETATION
+
     Provide a consistent interpretation of security and privacy attributes transmitted between
     distributed system components.
     Discussion: To enforce security and privacy policies across multiple system components in
@@ -3712,7 +2952,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     implement attributes with consistent interpretations in automated access enforcement and
     flow enforcement actions.
     Related Controls: None.
-    (8) SECURITY AND PRIVACY ATTRIBUTES | ASSOCIATION TECHNIQUES AND TECHNOLOGIES
+
+##### (8) SECURITY AND PRIVACY ATTRIBUTES | ASSOCIATION TECHNIQUES AND TECHNOLOGIES
+
     Implement [Assignment: organization-defined techniques and technologies] in associating
     security and privacy attributes to information.
     Discussion: The association of security and privacy attributes to information within systems
@@ -3723,7 +2965,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     cryptographic keys protected by hardware devices (sometimes known as hardware roots of
     trust).
     Related Controls: SC-12, SC-13.
-    (9) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE REASSIGNMENT — REGRADING MECHANISMS
+
+##### (9) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE REASSIGNMENT — REGRADING MECHANISMS
+
     Change security and privacy attributes associated with information only via regrading
     mechanisms validated using [Assignment: organization-defined techniques or procedures].
     Discussion: A regrading mechanism is a trusted process authorized to re-classify and re-label
@@ -3735,7 +2979,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     necessary to help ensure that such mechanisms perform in a consistent and correct mode of
     operation.
     Related Controls: None.
-    (10) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE CONFIGURATION BY AUTHORIZED INDIVIDUALS
+
+##### (10) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE CONFIGURATION BY AUTHORIZED INDIVIDUALS
+
     Provide authorized individuals the capability to define or change the type and value of
     security and privacy attributes available for association with subjects and objects.
     Discussion: The content or assigned values of security and privacy attributes can directly
@@ -3771,7 +3017,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     access restrictions for remote access is addressed via AC-3.
     Related Controls: AC-2, AC-3, AC-4, AC-18, AC-19, AC-20, CA-3, CM-10, IA-2, IA-3, IA-8, MA-4, PE17, PL-2, PL-4, SC-10, SC-12, SC-13, SI-4.
     Control Enhancements:
-    (1) REMOTE ACCESS | MONITORING AND CONTROL
+
+##### (1) REMOTE ACCESS | MONITORING AND CONTROL
+
     Employ automated mechanisms to monitor and control remote access methods.
     Discussion: Monitoring and control of remote access methods allows organizations to
     detect attacks and help ensure compliance with remote access policies by auditing the
@@ -3779,7 +3027,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     notebook computers, workstations, smart phones, and tablets. Audit logging for remote
     access is enforced by AU-2. Audit events are defined in AU-2a.
     Related Controls: AU-2, AU-6, AU-12, AU-14.
-    (2) REMOTE ACCESS | PROTECTION OF CONFIDENTIALITY AND INTEGRITY USING ENCRYPTION
+
+##### (2) REMOTE ACCESS | PROTECTION OF CONFIDENTIALITY AND INTEGRITY USING ENCRYPTION
+
     Implement cryptographic mechanisms to protect the confidentiality and integrity of
     remote access sessions.
     Discussion: Virtual private networks can be used to protect the confidentiality and integrity
@@ -3787,13 +3037,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     protocol that provides end-to-end communications security over networks and is used for
     Internet communications and online transactions.
     Related Controls: SC-8, SC-12, SC-13.
-    (3) REMOTE ACCESS | MANAGED ACCESS CONTROL POINTS
+
+##### (3) REMOTE ACCESS | MANAGED ACCESS CONTROL POINTS
+
     Route remote accesses through authorized and managed network access control points.
     Discussion: Organizations consider the Trusted Internet Connections (TIC) initiative [DHS
     TIC] requirements for external network connections since limiting the number of access
     control points for remote access reduces attack surfaces.
     Related Controls: SC-7.
-    (4) REMOTE ACCESS | PRIVILEGED COMMANDS AND ACCESS
+
+##### (4) REMOTE ACCESS | PRIVILEGED COMMANDS AND ACCESS
+
     (a) Authorize the execution of privileged commands and access to security-relevant
     information via remote access only in a format that provides assessable evidence and
     for the following needs: [Assignment: organization-defined needs]; and
@@ -3803,9 +3057,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and access to security-relevant information via remote access reduces the exposure of the
     organization and the susceptibility to threats by adversaries to the remote access capability.
     Related Controls: AC-6, SC-12, SC-13.
-    (5) REMOTE ACCESS | MONITORING FOR UNAUTHORIZED CONNECTIONS
+
+##### (5) REMOTE ACCESS | MONITORING FOR UNAUTHORIZED CONNECTIONS
+
     [Withdrawn: Incorporated into SI-4.]
-    (6) REMOTE ACCESS | PROTECTION OF MECHANISM INFORMATION
+
+##### (6) REMOTE ACCESS | PROTECTION OF MECHANISM INFORMATION
+
     Protect information about remote access mechanisms from unauthorized use and
     disclosure.
     Discussion: Remote access to organizational information by non-organizational entities can
@@ -3814,18 +3072,26 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     agreements with other organizations, as applicable. Remote access requirements can also be
     included in rules of behavior (see PL-4) and access agreements (see PS-6).
     Related Controls: AT-2, AT-3, PS-6.
-    (7) REMOTE ACCESS | ADDITIONAL PROTECTION FOR SECURITY FUNCTION ACCESS
+
+##### (7) REMOTE ACCESS | ADDITIONAL PROTECTION FOR SECURITY FUNCTION ACCESS
+
     [Withdrawn: Incorporated into AC-3(10).]
-    (8) REMOTE ACCESS | DISABLE NONSECURE NETWORK PROTOCOLS
+
+##### (8) REMOTE ACCESS | DISABLE NONSECURE NETWORK PROTOCOLS
+
     [Withdrawn: Incorporated into CM-7.]
-    (9) REMOTE ACCESS | DISCONNECT OR DISABLE ACCESS
+
+##### (9) REMOTE ACCESS | DISCONNECT OR DISABLE ACCESS
+
     Provide the capability to disconnect or disable remote access to the system within
     [Assignment: organization-defined time period].
     Discussion: The speed of system disconnect or disablement varies based on the criticality of
     missions or business functions and the need to eliminate immediate or future remote access
     to systems.
     Related Controls: None.
-    (10) REMOTE ACCESS | AUTHENTICATE REMOTE COMMANDS
+
+##### (10) REMOTE ACCESS | AUTHENTICATE REMOTE COMMANDS
+
     Implement [Assignment: organization-defined mechanisms] to authenticate [Assignment:
     organization-defined remote commands].
     Discussion: Authenticating remote commands protects against unauthorized commands and
@@ -3853,7 +3119,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     provide authenticator protection and mutual authentication.
     Related Controls: AC-2, AC-3, AC-17, AC-19, CA-9, CM-7, IA-2, IA-3, IA-8, PL-4, SC-40, SC-43, SI-4.
     Control Enhancements:
-    (1) WIRELESS ACCESS | AUTHENTICATION AND ENCRYPTION
+
+##### (1) WIRELESS ACCESS | AUTHENTICATION AND ENCRYPTION
+
     Protect wireless access to the system using authentication of [Selection (one or more):
     users; devices] and encryption.
     Discussion: Wireless networking capabilities represent a significant potential vulnerability
@@ -3861,9 +3129,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     authentication of users and devices along with strong encryption can reduce susceptibility to
     threats by adversaries involving wireless technologies.
     Related Controls: SC-8, SC-12, SC-13.
-    (2) WIRELESS ACCESS | MONITORING UNAUTHORIZED CONNECTIONS
+
+##### (2) WIRELESS ACCESS | MONITORING UNAUTHORIZED CONNECTIONS
+
     [Withdrawn: Incorporated into SI-4.]
-    (3) WIRELESS ACCESS | DISABLE WIRELESS NETWORKING
+
+##### (3) WIRELESS ACCESS | DISABLE WIRELESS NETWORKING
+
     Disable, when not intended for use, wireless networking capabilities embedded within
     system components prior to issuance and deployment.
     Discussion: Wireless networking capabilities that are embedded within system components
@@ -3871,14 +3143,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     wireless capabilities when not needed for essential organizational missions or functions can
     reduce susceptibility to threats by adversaries involving wireless technologies.
     Related Controls: None.
-    (4) WIRELESS ACCESS | RESTRICT CONFIGURATIONS BY USERS
+
+##### (4) WIRELESS ACCESS | RESTRICT CONFIGURATIONS BY USERS
+
     Identify and explicitly authorize users allowed to independently configure wireless
     networking capabilities.
     Discussion: Organizational authorizations to allow selected users to configure wireless
     networking capabilities are enforced, in part, by the access enforcement mechanisms
     employed within organizational systems.
     Related Controls: SC-7, SC-15.
-    (5) WIRELESS ACCESS | ANTENNAS AND TRANSMISSION POWER LEVELS
+
+##### (5) WIRELESS ACCESS | ANTENNAS AND TRANSMISSION POWER LEVELS
+
     Select radio antennas and calibrate transmission power levels to reduce the probability
     that signals from wireless access points can be received outside of organization-controlled
     boundaries.
@@ -3933,14 +3209,22 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-3, AC-4, AC-7, AC-11, AC-17, AC-18, AC-20, CA-9, CM-2, CM-6, IA-2, IA-3,
     MP-2, MP-4, MP-5, MP-7, PL-4, SC-7, SC-34, SC-43, SI-3, SI-4.
     Control Enhancements:
-    (1) ACCESS CONTROL FOR MOBILE DEVICES | USE OF WRITABLE AND PORTABLE STORAGE DEVICES
+
+##### (1) ACCESS CONTROL FOR MOBILE DEVICES | USE OF WRITABLE AND PORTABLE STORAGE DEVICES
+
     [Withdrawn: Incorporated into MP-7.]
-    (2) ACCESS CONTROL FOR MOBILE DEVICES | USE OF PERSONALLY OWNED PORTABLE STORAGE DEVICES
+
+##### (2) ACCESS CONTROL FOR MOBILE DEVICES | USE OF PERSONALLY OWNED PORTABLE STORAGE DEVICES
+
     [Withdrawn: Incorporated into MP-7.]
-    (3) ACCESS CONTROL FOR MOBILE DEVICES | USE OF PORTABLE STORAGE DEVICES WITH NO
+
+##### (3) ACCESS CONTROL FOR MOBILE DEVICES | USE OF PORTABLE STORAGE DEVICES WITH NO
+
     IDENTIFIABLE OWNER
     [Withdrawn: Incorporated into MP-7.]
-    (4) ACCESS CONTROL FOR MOBILE DEVICES | RESTRICTIONS FOR CLASSIFIED INFORMATION
+
+##### (4) ACCESS CONTROL FOR MOBILE DEVICES | RESTRICTIONS FOR CLASSIFIED INFORMATION
+
     (a) Prohibit the use of unclassified mobile devices in facilities containing systems
     processing, storing, or transmitting classified information unless specifically permitted
     by the authorizing official; and
@@ -3960,7 +3244,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     with [Assignment: organization-defined security policies].
     Discussion: None.
     Related Controls: CM-8, IR-4.
-    (5) ACCESS CONTROL FOR MOBILE DEVICES | FULL DEVICE OR CONTAINER-BASED ENCRYPTION
+
+##### (5) ACCESS CONTROL FOR MOBILE DEVICES | FULL DEVICE OR CONTAINER-BASED ENCRYPTION
+
     Employ [Selection: full-device encryption; container-based encryption] to protect the
     confidentiality and integrity of information on [Assignment: organization-defined mobile
     devices].
@@ -3980,46 +3266,48 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     systems]], consistent with the trust relationships established with other organizations
     owning, operating, and/or maintaining external systems, allowing authorized individuals to:
 
-21. Access the system from external systems; and
-22. Process, store, or transmit organization-controlled information using external systems;
-    or
-    Prohibit the use of [Assignment: organizationally-defined types of external systems].
-    Discussion: External systems are systems that are used by but not part of organizational systems,
-    and for which the organization has no direct control over the implementation of required
-    controls or the assessment of control effectiveness. External systems include personally owned
-    systems, components, or devices; privately owned computing and communications devices in
-    commercial or public facilities; systems owned or controlled by nonfederal organizations;
-    systems managed by contractors; and federal information systems that are not owned by,
-    operated by, or under the direct supervision or authority of the organization. External systems
-    also include systems owned or operated by other components within the same organization and
-    systems within the organization with different authorization boundaries. Organizations have the
-    option to prohibit the use of any type of external system or prohibit the use of specified types of
-    external systems, (e.g., prohibit the use of any external system that is not organizationally owned
-    or prohibit the use of personally-owned systems).
-    For some external systems (i.e., systems operated by other organizations), the trust relationships
-    that have been established between those organizations and the originating organization may be
-    such that no explicit terms and conditions are required. Systems within these organizations may
-    not be considered external. These situations occur when, for example, there are pre-existing
-    information exchange agreements (either implicit or explicit) established between organizations
-    or components or when such agreements are specified by applicable laws, executive orders,
-    directives, regulations, policies, or standards. Authorized individuals include organizational
-    personnel, contractors, or other individuals with authorized access to organizational systems and
-    over which organizations have the authority to impose specific rules of behavior regarding
-    system access. Restrictions that organizations impose on authorized individuals need not be
-    uniform, as the restrictions may vary depending on trust relationships between organizations.
-    Therefore, organizations may choose to impose different security restrictions on contractors
-    than on state, local, or tribal governments.
-    External systems used to access public interfaces to organizational systems are outside the scope
-    of AC-20. Organizations establish specific terms and conditions for the use of external systems in
-    accordance with organizational security policies and procedures. At a minimum, terms and
-    conditions address the specific types of applications that can be accessed on organizational
-    systems from external systems and the highest security category of information that can be
-    processed, stored, or transmitted on external systems. If the terms and conditions with the
-    owners of the external systems cannot be established, organizations may impose restrictions on
-    organizational personnel using those external systems.
-    Related Controls: AC-2, AC-3, AC-17, AC-19, CA-3, PL-2, PL-4, SA-9, SC-7.
-    Control Enhancements:
-    (1) USE OF EXTERNAL SYSTEMS | LIMITS ON AUTHORIZED USE
+1. Access the system from external systems; and
+2. Process, store, or transmit organization-controlled information using external systems;
+   or
+   Prohibit the use of [Assignment: organizationally-defined types of external systems].
+   Discussion: External systems are systems that are used by but not part of organizational systems,
+   and for which the organization has no direct control over the implementation of required
+   controls or the assessment of control effectiveness. External systems include personally owned
+   systems, components, or devices; privately owned computing and communications devices in
+   commercial or public facilities; systems owned or controlled by nonfederal organizations;
+   systems managed by contractors; and federal information systems that are not owned by,
+   operated by, or under the direct supervision or authority of the organization. External systems
+   also include systems owned or operated by other components within the same organization and
+   systems within the organization with different authorization boundaries. Organizations have the
+   option to prohibit the use of any type of external system or prohibit the use of specified types of
+   external systems, (e.g., prohibit the use of any external system that is not organizationally owned
+   or prohibit the use of personally-owned systems).
+   For some external systems (i.e., systems operated by other organizations), the trust relationships
+   that have been established between those organizations and the originating organization may be
+   such that no explicit terms and conditions are required. Systems within these organizations may
+   not be considered external. These situations occur when, for example, there are pre-existing
+   information exchange agreements (either implicit or explicit) established between organizations
+   or components or when such agreements are specified by applicable laws, executive orders,
+   directives, regulations, policies, or standards. Authorized individuals include organizational
+   personnel, contractors, or other individuals with authorized access to organizational systems and
+   over which organizations have the authority to impose specific rules of behavior regarding
+   system access. Restrictions that organizations impose on authorized individuals need not be
+   uniform, as the restrictions may vary depending on trust relationships between organizations.
+   Therefore, organizations may choose to impose different security restrictions on contractors
+   than on state, local, or tribal governments.
+   External systems used to access public interfaces to organizational systems are outside the scope
+   of AC-20. Organizations establish specific terms and conditions for the use of external systems in
+   accordance with organizational security policies and procedures. At a minimum, terms and
+   conditions address the specific types of applications that can be accessed on organizational
+   systems from external systems and the highest security category of information that can be
+   processed, stored, or transmitted on external systems. If the terms and conditions with the
+   owners of the external systems cannot be established, organizations may impose restrictions on
+   organizational personnel using those external systems.
+   Related Controls: AC-2, AC-3, AC-17, AC-19, CA-3, PL-2, PL-4, SA-9, SC-7.
+   Control Enhancements:
+
+##### (1) USE OF EXTERNAL SYSTEMS | LIMITS ON AUTHORIZED USE
+
     Permit authorized individuals to use an external system to access the system or to process,
     store, or transmit organization-controlled information only after:
     (a) Verification of the implementation of controls on the external system as specified in
@@ -4033,14 +3321,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     implemented can be achieved by external, independent assessments, attestations, or other
     means, depending on the confidence level required by organizations.
     Related Controls: CA-2.
-    (2) USE OF EXTERNAL SYSTEMS | PORTABLE STORAGE DEVICES — RESTRICTED USE
+
+##### (2) USE OF EXTERNAL SYSTEMS | PORTABLE STORAGE DEVICES — RESTRICTED USE
+
     Restrict the use of organization-controlled portable storage devices by authorized
     individuals on external systems using [Assignment: organization-defined restrictions].
     Discussion: Limits on the use of organization-controlled portable storage devices in external
     systems include restrictions on how the devices may be used and under what conditions the
     devices may be used.
     Related Controls: MP-7, SC-41.
-    (3) USE OF EXTERNAL SYSTEMS | NON-ORGANIZATIONALLY OWNED SYSTEMS — RESTRICTED USE
+
+##### (3) USE OF EXTERNAL SYSTEMS | NON-ORGANIZATIONALLY OWNED SYSTEMS — RESTRICTED USE
+
     Restrict the use of non-organizationally owned systems or system components to process,
     store, or transmit organizational information using [Assignment: organization-defined
     restrictions].
@@ -4058,13 +3350,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     owned devices, including requirements for conducting forensic analyses during
     investigations after an incident.
     Related Controls: None.
-    (4) USE OF EXTERNAL SYSTEMS | NETWORK ACCESSIBLE STORAGE DEVICES — PROHIBITED USE
+
+##### (4) USE OF EXTERNAL SYSTEMS | NETWORK ACCESSIBLE STORAGE DEVICES — PROHIBITED USE
+
     Prohibit the use of [Assignment: organization-defined network accessible storage devices]
     in external systems.
     Discussion: Network-accessible storage devices in external systems include online storage
     devices in public, hybrid, or community cloud-based systems.
     Related Controls: None.
-    (5) USE OF EXTERNAL SYSTEMS | PORTABLE STORAGE DEVICES — PROHIBITED USE
+
+##### (5) USE OF EXTERNAL SYSTEMS | PORTABLE STORAGE DEVICES — PROHIBITED USE
+
     Prohibit the use of organization-controlled portable storage devices by authorized
     individuals on external systems.
     Discussion: Limits on the use of organization-controlled portable storage devices in external
@@ -4095,13 +3391,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and collaboration decisions.
     Related Controls: AC-3, AC-4, AC-16, PT-2, PT-7, RA-3, SC-15.
     Control Enhancements:
-    (1) INFORMATION SHARING | AUTOMATED DECISION SUPPORT
+
+##### (1) INFORMATION SHARING | AUTOMATED DECISION SUPPORT
+
     Employ [Assignment: organization-defined automated mechanisms] to enforce
     information-sharing decisions by authorized users based on access authorizations of
     sharing partners and access restrictions on information to be shared.
     Discussion: Automated mechanisms are used to enforce information sharing decisions.
     Related Controls: None.
-    (2) INFORMATION SHARING | INFORMATION SEARCH AND RETRIEVAL
+
+##### (2) INFORMATION SHARING | INFORMATION SEARCH AND RETRIEVAL
+
     Implement information search and retrieval services that enforce [Assignment:
     organization-defined information sharing restrictions].
     Discussion: Information search and retrieval services identify information system resources
@@ -4182,7 +3482,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     different entities may make access control decisions and enforce access.
     Related Controls: AC-2, AC-3.
     Control Enhancements:
-    (1) ACCESS CONTROL DECISIONS | TRANSMIT ACCESS AUTHORIZATION INFORMATION
+
+##### (1) ACCESS CONTROL DECISIONS | TRANSMIT ACCESS AUTHORIZATION INFORMATION
+
     Transmit [Assignment: organization-defined access authorization information] using
     [Assignment: organization-defined controls] to [Assignment: organization-defined
     systems] that enforce access control decisions.
@@ -4197,7 +3499,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Protecting access authorization information ensures that such information cannot be
     altered, spoofed, or compromised during transmission.
     Related Controls: AU-10.
-    (2) ACCESS CONTROL DECISIONS | NO USER OR PROCESS IDENTITY
+
+##### (2) ACCESS CONTROL DECISIONS | NO USER OR PROCESS IDENTITY
+
     Enforce access control decisions based on [Assignment: organization-defined security or
     privacy attributes] that do not include the identity of the user or process acting on behalf
     of the user.
@@ -4250,42 +3554,42 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-23. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] awareness and training policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-24. Procedures to facilitate the implementation of the awareness and training policy and
-    the associated awareness and training controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the awareness and training policy and procedures; and
-    c.
-    Review and update the current awareness and training:
-25. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-26. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Awareness and training policy and procedures address the controls in the AT family
-    that are implemented within systems and organizations. The risk management strategy is an
-    important factor in establishing such policies and procedures. Policies and procedures contribute
-    to security and privacy assurance. Therefore, it is important that security and privacy programs
-    collaborate on the development of awareness and training policy and procedures. Security and
-    privacy program policies and procedures at the organization level are preferable, in general, and
-    may obviate the need for mission- or system-specific policies and procedures. The policy can be
-    included as part of the general security and privacy policy or be represented by multiple policies
-    that reflect the complex nature of organizations. Procedures can be established for security and
-    privacy programs, for mission or business processes, and for systems, if needed. Procedures
-    describe how the policies or controls are implemented and can be directed at the individual or
-    role that is the object of the procedure. Procedures can be documented in system security and
-    privacy plans or in one or more separate documents. Events that may precipitate an update to
-    awareness and training policy and procedures include assessment or audit findings, security
-    incidents or breaches, or changes in applicable laws, executive orders, directives, regulations,
-    policies, standards, and guidelines. Simply restating controls does not constitute an
-    organizational policy or procedure.
-    Related Controls: PM-9, PS-8, SI-12.
-    Control Enhancements: None.
-    References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-50], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] awareness and training policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the awareness and training policy and
+   the associated awareness and training controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the awareness and training policy and procedures; and
+   c.
+   Review and update the current awareness and training:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Awareness and training policy and procedures address the controls in the AT family
+   that are implemented within systems and organizations. The risk management strategy is an
+   important factor in establishing such policies and procedures. Policies and procedures contribute
+   to security and privacy assurance. Therefore, it is important that security and privacy programs
+   collaborate on the development of awareness and training policy and procedures. Security and
+   privacy program policies and procedures at the organization level are preferable, in general, and
+   may obviate the need for mission- or system-specific policies and procedures. The policy can be
+   included as part of the general security and privacy policy or be represented by multiple policies
+   that reflect the complex nature of organizations. Procedures can be established for security and
+   privacy programs, for mission or business processes, and for systems, if needed. Procedures
+   describe how the policies or controls are implemented and can be directed at the individual or
+   role that is the object of the procedure. Procedures can be documented in system security and
+   privacy plans or in one or more separate documents. Events that may precipitate an update to
+   awareness and training policy and procedures include assessment or audit findings, security
+   incidents or breaches, or changes in applicable laws, executive orders, directives, regulations,
+   policies, standards, and guidelines. Simply restating controls does not constitute an
+   organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-50], [SP 800-100].
 
 #### AT-2
 
@@ -4295,49 +3599,53 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Provide security and privacy literacy training to system users (including managers, senior
     executives, and contractors):
 
-27. As part of initial training for new users and [Assignment: organization-defined
-    frequency] thereafter; and
-28. When required by system changes or following [Assignment: organization-defined
-    events];
-    b.
-    Employ the following techniques to increase the security and privacy awareness of system
-    users [Assignment: organization-defined awareness techniques];
-    c.
-    Update literacy training and awareness content [Assignment: organization-defined
-    frequency] and following [Assignment: organization-defined events]; and
-    d.
-    Incorporate lessons learned from internal or external security incidents or breaches into
-    literacy training and awareness techniques.
-    Discussion: Organizations provide basic and advanced levels of literacy training to system users,
-    including measures to test the knowledge level of users. Organizations determine the content of
-    literacy training and awareness based on specific organizational requirements, the systems to
-    which personnel have authorized access, and work environments (e.g., telework). The content
-    includes an understanding of the need for security and privacy as well as actions by users to
-    maintain security and personal privacy and to respond to suspected incidents. The content
-    addresses the need for operations security and the handling of personally identifiable
-    information.
-    Awareness techniques include displaying posters, offering supplies inscribed with security and
-    privacy reminders, displaying logon screen messages, generating email advisories or notices from
-    organizational officials, and conducting awareness events. Literacy training after the initial
-    training described in AT-2a.1 is conducted at a minimum frequency consistent with applicable
-    laws, directives, regulations, and policies. Subsequent literacy training may be satisfied by one or
-    more short ad hoc sessions and include topical information on recent attack schemes, changes to
-    organizational security and privacy policies, revised security and privacy expectations, or a subset
-    of topics from the initial training. Updating literacy training and awareness content on a regular
-    basis helps to ensure that the content remains relevant. Events that may precipitate an update to
-    literacy training and awareness content include, but are not limited to, assessment or audit
-    findings, security incidents or breaches, or changes in applicable laws, executive orders,
-    directives, regulations, policies, standards, and guidelines.
-    Related Controls: AC-3, AC-17, AC-22, AT-3, AT-4, CP-3, IA-4, IR-2, IR-7, IR-9, PL-4, PM-13, PM-21,
-    PS-7, PT-2, SA-8, SA-16.
-    Control Enhancements:
-    (1) LITERACY TRAINING AND AWARENESS | PRACTICAL EXERCISES
+1. As part of initial training for new users and [Assignment: organization-defined
+   frequency] thereafter; and
+2. When required by system changes or following [Assignment: organization-defined
+   events];
+   b.
+   Employ the following techniques to increase the security and privacy awareness of system
+   users [Assignment: organization-defined awareness techniques];
+   c.
+   Update literacy training and awareness content [Assignment: organization-defined
+   frequency] and following [Assignment: organization-defined events]; and
+   d.
+   Incorporate lessons learned from internal or external security incidents or breaches into
+   literacy training and awareness techniques.
+   Discussion: Organizations provide basic and advanced levels of literacy training to system users,
+   including measures to test the knowledge level of users. Organizations determine the content of
+   literacy training and awareness based on specific organizational requirements, the systems to
+   which personnel have authorized access, and work environments (e.g., telework). The content
+   includes an understanding of the need for security and privacy as well as actions by users to
+   maintain security and personal privacy and to respond to suspected incidents. The content
+   addresses the need for operations security and the handling of personally identifiable
+   information.
+   Awareness techniques include displaying posters, offering supplies inscribed with security and
+   privacy reminders, displaying logon screen messages, generating email advisories or notices from
+   organizational officials, and conducting awareness events. Literacy training after the initial
+   training described in AT-2a.1 is conducted at a minimum frequency consistent with applicable
+   laws, directives, regulations, and policies. Subsequent literacy training may be satisfied by one or
+   more short ad hoc sessions and include topical information on recent attack schemes, changes to
+   organizational security and privacy policies, revised security and privacy expectations, or a subset
+   of topics from the initial training. Updating literacy training and awareness content on a regular
+   basis helps to ensure that the content remains relevant. Events that may precipitate an update to
+   literacy training and awareness content include, but are not limited to, assessment or audit
+   findings, security incidents or breaches, or changes in applicable laws, executive orders,
+   directives, regulations, policies, standards, and guidelines.
+   Related Controls: AC-3, AC-17, AC-22, AT-3, AT-4, CP-3, IA-4, IR-2, IR-7, IR-9, PL-4, PM-13, PM-21,
+   PS-7, PT-2, SA-8, SA-16.
+   Control Enhancements:
+
+##### (1) LITERACY TRAINING AND AWARENESS | PRACTICAL EXERCISES
+
     Provide practical exercises in literacy training that simulate events and incidents.
     Discussion: Practical exercises include no-notice social engineering attempts to collect
     information, gain unauthorized access, or simulate the adverse impact of opening malicious
     email attachments or invoking, via spear phishing attacks, malicious web links.
     Related Controls: CA-2, CA-7, CP-4, IR-3.
-    (2) LITERACY TRAINING AND AWARENESS | INSIDER THREAT
+
+##### (2) LITERACY TRAINING AND AWARENESS | INSIDER THREAT
+
     Provide literacy training on recognizing and reporting potential indicators of insider threat.
     Discussion: Potential indicators and possible precursors of insider threat can include
     behaviors such as inordinate, long-term job dissatisfaction; attempts to gain access to
@@ -4351,7 +3659,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     focused on changes in the behavior of team members, while training for employees may be
     focused on more general observations.
     Related Controls: PM-12.
-    (3) LITERACY TRAINING AND AWARENESS | SOCIAL ENGINEERING AND MINING
+
+##### (3) LITERACY TRAINING AND AWARENESS | SOCIAL ENGINEERING AND MINING
+
     Provide literacy training on recognizing and reporting potential and actual instances of
     social engineering and social mining.
     Discussion: Social engineering is an attempt to trick an individual into revealing information
@@ -4363,7 +3673,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and management regarding potential and actual instances of social engineering and data
     mining through organizational channels based on established policies and procedures.
     Related Controls: None.
-    (4) LITERACY TRAINING AND AWARENESS | SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM
+
+##### (4) LITERACY TRAINING AND AWARENESS | SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM
+
     BEHAVIOR
     Provide literacy training on recognizing suspicious communications and anomalous
     behavior in organizational systems using [Assignment: organization-defined indicators of
@@ -4381,7 +3693,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     anomalous behavior by organizational personnel can supplement malicious code detection
     and protection tools and systems employed by organizations.
     Related Controls: None.
-    (5) LITERACY TRAINING AND AWARENESS | ADVANCED PERSISTENT THREAT
+
+##### (5) LITERACY TRAINING AND AWARENESS | ADVANCED PERSISTENT THREAT
+
     Provide literacy training on the advanced persistent threat.
     Discussion: An effective way to detect advanced persistent threats (APT) and to preclude
     successful attacks is to provide specific literacy training for individuals. Threat literacy
@@ -4391,7 +3705,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     removable systems in non-secure settings, and the potential targeting of individuals at
     home.
     Related Controls: None.
-    (6) LITERACY TRAINING AND AWARENESS | CYBER THREAT ENVIRONMENT
+
+##### (6) LITERACY TRAINING AND AWARENESS | CYBER THREAT ENVIRONMENT
+
     (a) Provide literacy training on the cyber threat environment; and
     (b) Reflect current cyber threat information in system operations.
     Discussion: Since threats continue to change over time, threat literacy training by the
@@ -4408,45 +3724,47 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Provide role-based security and privacy training to personnel with the following roles and
     responsibilities: [Assignment: organization-defined roles and responsibilities]:
 
-29. Before authorizing access to the system, information, or performing assigned duties,
-    and [Assignment: organization-defined frequency] thereafter; and
-30. When required by system changes;
-    b.
-    Update role-based training content [Assignment: organization-defined frequency] and
-    following [Assignment: organization-defined events]; and
-    c.
-    Incorporate lessons learned from internal or external security incidents or breaches into
-    role-based training.
-    Discussion: Organizations determine the content of training based on the assigned roles and
-    responsibilities of individuals as well as the security and privacy requirements of organizations
-    and the systems to which personnel have authorized access, including technical training
-    specifically tailored for assigned duties. Roles that may require role-based training include senior
-    leaders or management officials (e.g., head of agency/chief executive officer, chief information
-    officer, senior accountable official for risk management, senior agency information security
-    officer, senior agency official for privacy), system owners; authorizing officials; system security
-    officers; privacy officers; acquisition and procurement officials; enterprise architects; systems
-    engineers; software developers; systems security engineers; privacy engineers; system, network,
-    and database administrators; auditors; personnel conducting configuration management
-    activities; personnel performing verification and validation activities; personnel with access to
-    system-level software; control assessors; personnel with contingency planning and incident
-    response duties; personnel with privacy management responsibilities; and personnel with access
-    to personally identifiable information.
-    Comprehensive role-based training addresses management, operational, and technical roles and
-    responsibilities covering physical, personnel, and technical controls. Role-based training also
-    includes policies, procedures, tools, methods, and artifacts for the security and privacy roles
-    defined. Organizations provide the training necessary for individuals to fulfill their responsibilities
-    related to operations and supply chain risk management within the context of organizational
-    security and privacy programs. Role-based training also applies to contractors who provide
-    services to federal agencies. Types of training include web-based and computer-based training,
-    classroom-style training, and hands-on training (including micro-training). Updating role-based
-    training on a regular basis helps to ensure that the content remains relevant and effective.
-    Events that may precipitate an update to role-based training content include, but are not limited
-    to, assessment or audit findings, security incidents or breaches, or changes in applicable laws,
-    executive orders, directives, regulations, policies, standards, and guidelines.
-    Related Controls: AC-3, AC-17, AC-22, AT-2, AT-4, CP-3, IR-2, IR-4, IR-7, IR-9, PL-4, PM-13, PM-23,
-    PS-7, PS-9, SA-3, SA-8, SA-11, SA-16, SR-5, SR-6, SR-11.
-    Control Enhancements:
-    (1) ROLE-BASED TRAINING | ENVIRONMENTAL CONTROLS
+1. Before authorizing access to the system, information, or performing assigned duties,
+   and [Assignment: organization-defined frequency] thereafter; and
+2. When required by system changes;
+   b.
+   Update role-based training content [Assignment: organization-defined frequency] and
+   following [Assignment: organization-defined events]; and
+   c.
+   Incorporate lessons learned from internal or external security incidents or breaches into
+   role-based training.
+   Discussion: Organizations determine the content of training based on the assigned roles and
+   responsibilities of individuals as well as the security and privacy requirements of organizations
+   and the systems to which personnel have authorized access, including technical training
+   specifically tailored for assigned duties. Roles that may require role-based training include senior
+   leaders or management officials (e.g., head of agency/chief executive officer, chief information
+   officer, senior accountable official for risk management, senior agency information security
+   officer, senior agency official for privacy), system owners; authorizing officials; system security
+   officers; privacy officers; acquisition and procurement officials; enterprise architects; systems
+   engineers; software developers; systems security engineers; privacy engineers; system, network,
+   and database administrators; auditors; personnel conducting configuration management
+   activities; personnel performing verification and validation activities; personnel with access to
+   system-level software; control assessors; personnel with contingency planning and incident
+   response duties; personnel with privacy management responsibilities; and personnel with access
+   to personally identifiable information.
+   Comprehensive role-based training addresses management, operational, and technical roles and
+   responsibilities covering physical, personnel, and technical controls. Role-based training also
+   includes policies, procedures, tools, methods, and artifacts for the security and privacy roles
+   defined. Organizations provide the training necessary for individuals to fulfill their responsibilities
+   related to operations and supply chain risk management within the context of organizational
+   security and privacy programs. Role-based training also applies to contractors who provide
+   services to federal agencies. Types of training include web-based and computer-based training,
+   classroom-style training, and hands-on training (including micro-training). Updating role-based
+   training on a regular basis helps to ensure that the content remains relevant and effective.
+   Events that may precipitate an update to role-based training content include, but are not limited
+   to, assessment or audit findings, security incidents or breaches, or changes in applicable laws,
+   executive orders, directives, regulations, policies, standards, and guidelines.
+   Related Controls: AC-3, AC-17, AC-22, AT-2, AT-4, CP-3, IR-2, IR-4, IR-7, IR-9, PL-4, PM-13, PM-23,
+   PS-7, PS-9, SA-3, SA-8, SA-11, SA-16, SR-5, SR-6, SR-11.
+   Control Enhancements:
+
+##### (1) ROLE-BASED TRAINING | ENVIRONMENTAL CONTROLS
+
     Provide [Assignment: organization-defined personnel or roles] with initial and
     [Assignment: organization-defined frequency] training in the employment and operation
     of environmental controls.
@@ -4454,7 +3772,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     systems, sprinkler systems, handheld fire extinguishers, fixed fire hoses, smoke detectors,
     temperature or humidity, heating, ventilation, air conditioning, and power within the facility.
     Related Controls: PE-1, PE-11, PE-13, PE-14, PE-15.
-    (2) ROLE-BASED TRAINING | PHYSICAL SECURITY CONTROLS
+
+##### (2) ROLE-BASED TRAINING | PHYSICAL SECURITY CONTROLS
+
     Provide [Assignment: organization-defined personnel or roles] with initial and
     [Assignment: organization-defined frequency] training in the employment and operation
     of physical security controls.
@@ -4462,7 +3782,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     intrusion and detection alarms, operating procedures for facility security guards, and
     monitoring or surveillance equipment.
     Related Controls: PE-2, PE-3, PE-4.
-    (3) ROLE-BASED TRAINING | PRACTICAL EXERCISES
+
+##### (3) ROLE-BASED TRAINING | PRACTICAL EXERCISES
+
     Provide practical exercises in security and privacy training that reinforce training
     objectives.
     Discussion: Practical exercises for security include training for software developers that
@@ -4471,9 +3793,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     include modules with quizzes on identifying and processing personally identifiable
     information in various scenarios or scenarios on conducting privacy impact assessments.
     Related Controls: None.
-    (4) ROLE-BASED TRAINING | SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM BEHAVIOR
+
+##### (4) ROLE-BASED TRAINING | SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM BEHAVIOR
+
     [Withdrawn: Moved to AT-2(4)].
-    (5) ROLE-BASED TRAINING | PROCESSING PERSONALLY IDENTIFIABLE INFORMATION
+
+##### (5) ROLE-BASED TRAINING | PROCESSING PERSONALLY IDENTIFIABLE INFORMATION
+
     Provide [Assignment: organization-defined personnel or roles] with initial and
     [Assignment: organization-defined frequency] training in the employment and operation
     of personally identifiable information processing and transparency controls.
@@ -4536,43 +3862,43 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-31. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] audit and accountability policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-32. Procedures to facilitate the implementation of the audit and accountability policy and
-    the associated audit and accountability controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the audit and accountability policy and procedures;
-    and
-    c.
-    Review and update the current audit and accountability:
-33. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-34. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Audit and accountability policy and procedures address the controls in the AU family
-    that are implemented within systems and organizations. The risk management strategy is an
-    important factor in establishing such policies and procedures. Policies and procedures contribute
-    to security and privacy assurance. Therefore, it is important that security and privacy programs
-    collaborate on the development of audit and accountability policy and procedures. Security and
-    privacy program policies and procedures at the organization level are preferable, in general, and
-    may obviate the need for mission- or system-specific policies and procedures. The policy can be
-    included as part of the general security and privacy policy or be represented by multiple policies
-    that reflect the complex nature of organizations. Procedures can be established for security and
-    privacy programs, for mission or business processes, and for systems, if needed. Procedures
-    describe how the policies or controls are implemented and can be directed at the individual or
-    role that is the object of the procedure. Procedures can be documented in system security and
-    privacy plans or in one or more separate documents. Events that may precipitate an update to
-    audit and accountability policy and procedures include assessment or audit findings, security
-    incidents or breaches, or changes in applicable laws, executive orders, directives, regulations,
-    policies, standards, and guidelines. Simply restating controls does not constitute an
-    organizational policy or procedure.
-    Related Controls: PM-9, PS-8, SI-12.
-    Control Enhancements: None.
-    References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] audit and accountability policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the audit and accountability policy and
+   the associated audit and accountability controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the audit and accountability policy and procedures;
+   and
+   c.
+   Review and update the current audit and accountability:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Audit and accountability policy and procedures address the controls in the AU family
+   that are implemented within systems and organizations. The risk management strategy is an
+   important factor in establishing such policies and procedures. Policies and procedures contribute
+   to security and privacy assurance. Therefore, it is important that security and privacy programs
+   collaborate on the development of audit and accountability policy and procedures. Security and
+   privacy program policies and procedures at the organization level are preferable, in general, and
+   may obviate the need for mission- or system-specific policies and procedures. The policy can be
+   included as part of the general security and privacy policy or be represented by multiple policies
+   that reflect the complex nature of organizations. Procedures can be established for security and
+   privacy programs, for mission or business processes, and for systems, if needed. Procedures
+   describe how the policies or controls are implemented and can be directed at the individual or
+   role that is the object of the procedure. Procedures can be documented in system security and
+   privacy plans or in one or more separate documents. Events that may precipitate an update to
+   audit and accountability policy and procedures include assessment or audit findings, security
+   incidents or breaches, or changes in applicable laws, executive orders, directives, regulations,
+   policies, standards, and guidelines. Simply restating controls does not constitute an
+   organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### AU-2
 
@@ -4626,13 +3952,21 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     architectures.
     Related Controls: AC-2, AC-3, AC-6, AC-7, AC-8, AC-16, AC-17, AU-3, AU-4, AU-5, AU-6, AU-7, AU11, AU-12, CM-3, CM-5, CM-6, CM-13, IA-3, MA-4, MP-4, PE-3, PM-21, PT-2, PT-7, RA-8, SA-8, SC7, SC-18, SI-3, SI-4, SI-7, SI-10, SI-11.
     Control Enhancements:
-    (1) EVENT LOGGING | COMPILATION OF AUDIT RECORDS FROM MULTIPLE SOURCES
+
+##### (1) EVENT LOGGING | COMPILATION OF AUDIT RECORDS FROM MULTIPLE SOURCES
+
     [Withdrawn: Incorporated into AU-12.]
-    (2) EVENT LOGGING | SELECTION OF AUDIT EVENTS BY COMPONENT
+
+##### (2) EVENT LOGGING | SELECTION OF AUDIT EVENTS BY COMPONENT
+
     [Withdrawn: Incorporated into AU-12.]
-    (3) EVENT LOGGING | REVIEWS AND UPDATES
+
+##### (3) EVENT LOGGING | REVIEWS AND UPDATES
+
     [Withdrawn: Incorporated into AU-2.]
-    (4) EVENT LOGGING | PRIVILEGED FUNCTIONS
+
+##### (4) EVENT LOGGING | PRIVILEGED FUNCTIONS
+
     [Withdrawn: Incorporated into AC-6(9).]
     References: [OMB A-130], [SP 800-92].
 
@@ -4663,7 +3997,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     records inputs or is based on patterns or time of usage.
     Related Controls: AU-2, AU-8, AU-12, AU-14, MA-4, PL-9, SA-8, SI-7, SI-11.
     Control Enhancements:
-    (1) CONTENT OF AUDIT RECORDS | ADDITIONAL AUDIT INFORMATION
+
+##### (1) CONTENT OF AUDIT RECORDS | ADDITIONAL AUDIT INFORMATION
+
     Generate audit records containing the following additional information: [Assignment:
     organization-defined additional information].
     Discussion: The ability to add information generated in audit records is dependent on
@@ -4675,9 +4011,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     by not including information in audit records that could potentially be misleading, make it
     more difficult to locate information of interest, or increase the risk to individuals' privacy.
     Related Controls: None.
-    (2) CONTENT OF AUDIT RECORDS | CENTRALIZED MANAGEMENT OF PLANNED AUDIT RECORD CONTENT
+
+##### (2) CONTENT OF AUDIT RECORDS | CENTRALIZED MANAGEMENT OF PLANNED AUDIT RECORD CONTENT
+
     [Withdrawn: Incorporated into PL-9.]
-    (3) CONTENT OF AUDIT RECORDS | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
+
+##### (3) CONTENT OF AUDIT RECORDS | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
+
     Limit personally identifiable information contained in audit records to the following
     elements identified in the privacy risk assessment: [Assignment: organization-defined
     elements].
@@ -4698,7 +4038,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     potential loss or reduction of audit logging capability.
     Related Controls: AU-2, AU-5, AU-6, AU-7, AU-9, AU-11, AU-12, AU-14, SI-4.
     Control Enhancements:
-    (1) AUDIT LOG STORAGE CAPACITY | TRANSFER TO ALTERNATE STORAGE
+
+##### (1) AUDIT LOG STORAGE CAPACITY | TRANSFER TO ALTERNATE STORAGE
+
     Transfer audit logs [Assignment: organization-defined frequency] to a different system,
     system component, or media other than the system or system component conducting the
     logging.
@@ -4734,7 +4076,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     or personnel.
     Related Controls: AU-2, AU-4, AU-7, AU-9, AU-11, AU-12, AU-14, SI-4, SI-12.
     Control Enhancements:
-    (1) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | STORAGE CAPACITY WARNING
+
+##### (1) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | STORAGE CAPACITY WARNING
+
     Provide a warning to [Assignment: organization-defined personnel, roles, and/or locations]
     within [Assignment: organization-defined time period] when allocated audit log storage
     volume reaches [Assignment: organization-defined percentage] of repository maximum
@@ -4743,7 +4087,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     across multiple system components with each repository having different storage volume
     capacities.
     Related Controls: None.
-    (2) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | REAL-TIME ALERTS
+
+##### (2) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | REAL-TIME ALERTS
+
     Provide an alert within [Assignment: organization-defined real-time period] to
     [Assignment: organization-defined personnel, roles, and/or locations] when the following
     audit failure events occur: [Assignment: organization-defined audit logging failure events
@@ -4752,7 +4098,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     these messages at information technology speed (i.e., the time from event detection to alert
     occurs in seconds or less).
     Related Controls: None.
-    (3) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | CONFIGURABLE TRAFFIC VOLUME THRESHOLDS
+
+##### (3) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | CONFIGURABLE TRAFFIC VOLUME THRESHOLDS
+
     Enforce configurable network communications traffic volume thresholds reflecting limits
     on audit log storage capacity and [Selection: reject; delay] network traffic above those
     thresholds.
@@ -4762,7 +4110,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     response is triggered by the established organizational traffic volume thresholds that can be
     adjusted based on changes to audit log storage capacity.
     Related Controls: None.
-    (4) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | SHUTDOWN ON FAILURE
+
+##### (4) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | SHUTDOWN ON FAILURE
+
     Invoke a [Selection: full system shutdown; partial system shutdown; degraded operational
     mode with limited mission or business functionality available] in the event of [Assignment:
     organization-defined audit logging failures], unless an alternate audit logging capability
@@ -4775,7 +4125,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     system shutdowns or operating in a degraded mode with reduced capability may be viable
     alternatives.
     Related Controls: AU-15.
-    (5) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | ALTERNATE AUDIT LOGGING CAPABILITY
+
+##### (5) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | ALTERNATE AUDIT LOGGING CAPABILITY
+
     Provide an alternate audit logging capability in the event of a failure in primary audit
     logging capability that implements [Assignment: organization-defined alternate audit
     logging functionality].
@@ -4815,29 +4167,39 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     CM-6, CM-10, CM-11, IA-2, IA-3, IA-5, IA-8, IR-5, MA-4, MP-4, PE-3, PE-6, RA-5, SA-8, SC-7, SI-3,
     SI-4, SI-7.
     Control Enhancements:
-    (1) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUTOMATED PROCESS INTEGRATION
+
+##### (1) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUTOMATED PROCESS INTEGRATION
+
     Integrate audit record review, analysis, and reporting processes using [Assignment:
     organization-defined automated mechanisms].
     Discussion: Organizational processes that benefit from integrated audit record review,
     analysis, and reporting include incident response, continuous monitoring, contingency
     planning, investigation and response to suspicious activities, and Inspector General audits.
     Related Controls: PM-7.
-    (2) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUTOMATED SECURITY ALERTS
+
+##### (2) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUTOMATED SECURITY ALERTS
+
     [Withdrawn: Incorporated into SI-4.]
-    (3) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CORRELATE AUDIT RECORD REPOSITORIES
+
+##### (3) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CORRELATE AUDIT RECORD REPOSITORIES
+
     Analyze and correlate audit records across different repositories to gain organization-wide
     situational awareness.
     Discussion: Organization-wide situational awareness includes awareness across all three
     levels of risk management (i.e., organizational level, mission/business process level, and
     information system level) and supports cross-organization awareness.
     Related Controls: AU-12, IR-4.
-    (4) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CENTRAL REVIEW AND ANALYSIS
+
+##### (4) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CENTRAL REVIEW AND ANALYSIS
+
     Provide and implement the capability to centrally review and analyze audit records from
     multiple components within the system.
     Discussion: Automated mechanisms for centralized reviews and analyses include Security
     Information and Event Management products.
     Related Controls: AU-2, AU-12.
-    (5) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | INTEGRATED ANALYSIS OF AUDIT RECORDS
+
+##### (5) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | INTEGRATED ANALYSIS OF AUDIT RECORDS
+
     Integrate analysis of audit records with analysis of [Selection (one or more): vulnerability
     scanning information; performance data; system monitoring information; [Assignment:
     organization-defined data/information collected from other sources]] to further enhance
@@ -4857,7 +4219,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     in the unauthorized use of resources. Correlation with system monitoring information can
     assist in uncovering attacks and in better relating audit information to operational situations.
     Related Controls: AU-12, IR-4.
-    (6) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CORRELATION WITH PHYSICAL MONITORING
+
+##### (6) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CORRELATION WITH PHYSICAL MONITORING
+
     Correlate information from audit records with information obtained from monitoring
     physical access to further enhance the ability to identify suspicious, inappropriate,
     unusual, or malevolent activity.
@@ -4867,7 +4231,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     certain systems with the additional physical security information that the individual was
     present at the facility when the logical access occurred may be useful in investigations.
     Related Controls: None.
-    (7) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | PERMITTED ACTIONS
+
+##### (7) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | PERMITTED ACTIONS
+
     Specify the permitted actions for each [Selection (one or more): system process; role; user]
     associated with the review, analysis, and reporting of audit record information.
     Discussion: Organizations specify permitted actions for system processes, roles, and users
@@ -4876,7 +4242,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     enforce the principle of least privilege. Permitted actions are enforced by the system and
     include read, write, execute, append, and delete.
     Related Controls: None.
-    (8) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | FULL TEXT ANALYSIS OF PRIVILEGED
+
+##### (8) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | FULL TEXT ANALYSIS OF PRIVILEGED
+
     COMMANDS
     Perform a full text analysis of logged privileged commands in a physically distinct
     component or subsystem of the system, or other system that is dedicated to that analysis.
@@ -4888,7 +4256,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     considers only the name of the command. Full text analysis includes the use of pattern
     matching and heuristics.
     Related Controls: AU-3, AU-9, AU-11, AU-12.
-    (9) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CORRELATION WITH INFORMATION FROM
+
+##### (9) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CORRELATION WITH INFORMATION FROM
+
     NONTECHNICAL SOURCES
     Correlate information from nontechnical sources with audit record information to enhance
     organization-wide situational awareness.
@@ -4902,7 +4272,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     only when individuals are suspected of being involved in an incident. Organizations obtain
     legal advice prior to initiating such actions.
     Related Controls: PM-12.
-    (10) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUDIT LEVEL ADJUSTMENT
+
+##### (10) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUDIT LEVEL ADJUSTMENT
+
     [Withdrawn: Incorporated into AU-6.]
     References: [SP 800-86], [SP 800-101].
 
@@ -4924,7 +4296,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     granularity of the timestamp in the record is insufficient.
     Related Controls: AC-2, AU-2, AU-3, AU-4, AU-5, AU-6, AU-12, AU-16, CM-5, IA-5, IR-4, PM-12, SI4.
     Control Enhancements:
-    (1) AUDIT RECORD REDUCTION AND REPORT GENERATION | AUTOMATIC PROCESSING
+
+##### (1) AUDIT RECORD REDUCTION AND REPORT GENERATION | AUTOMATIC PROCESSING
+
     Provide and implement the capability to process, sort, and search audit records for events
     of interest based on the following content: [Assignment: organization-defined fields within
     audit records].
@@ -4935,7 +4309,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     required, such as locations selectable by a general networking location or by specific system
     component.
     Related Controls: None.
-    (2) AUDIT RECORD REDUCTION AND REPORT GENERATION | AUTOMATIC SORT AND SEARCH
+
+##### (2) AUDIT RECORD REDUCTION AND REPORT GENERATION | AUTOMATIC SORT AND SEARCH
+
     [Withdrawn: Incorporated into AU-7(1).]
     References: None.
 
@@ -4960,9 +4336,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     nature of the mechanisms used to support those capabilities.
     Related Controls: AU-3, AU-12, AU-14, SC-45.
     Control Enhancements:
-    (1) TIME STAMPS | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
+
+##### (1) TIME STAMPS | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
+
     [Withdrawn: Moved to SC-45(1).]
-    (2) TIME STAMPS | SECONDARY AUTHORITATIVE TIME SOURCE
+
+##### (2) TIME STAMPS | SECONDARY AUTHORITATIVE TIME SOURCE
+
     [Withdrawn: Moved to SC-45(2).]
     References: None.
 
@@ -4986,7 +4366,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-3, AC-6, AU-6, AU-11, AU-14, AU-15, MP-2, MP-4, PE-2, PE-3, PE-6, SA-8,
     SC-8, SI-4.
     Control Enhancements:
-    (1) PROTECTION OF AUDIT INFORMATION | HARDWARE WRITE-ONCE MEDIA
+
+##### (1) PROTECTION OF AUDIT INFORMATION | HARDWARE WRITE-ONCE MEDIA
+
     Write audit trails to hardware-enforced, write-once media.
     Discussion: Writing audit trails to hardware-enforced, write-once media applies to the initial
     generation of audit trails (i.e., the collection of audit records that represents the information
@@ -4997,7 +4379,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     write-protection media, such as tape cartridges, Universal Serial Bus (USB) drives, Compact
     Disc Re-Writeable (CD-RW), and Digital Versatile Disc-Read Write (DVD-RW) results in writeprotected but not write-once media.
     Related Controls: AU-4, AU-5.
-    (2) PROTECTION OF AUDIT INFORMATION | STORE ON SEPARATE PHYSICAL SYSTEMS OR COMPONENTS
+
+##### (2) PROTECTION OF AUDIT INFORMATION | STORE ON SEPARATE PHYSICAL SYSTEMS OR COMPONENTS
+
     Store audit records [Assignment: organization-defined frequency] in a repository that is
     part of a physically different system or system component than the system or component
     being audited.
@@ -5009,7 +4393,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     records on separate systems or components applies to initial generation as well as backup or
     long-term storage of audit records.
     Related Controls: AU-4, AU-5.
-    (3) PROTECTION OF AUDIT INFORMATION | CRYPTOGRAPHIC PROTECTION
+
+##### (3) PROTECTION OF AUDIT INFORMATION | CRYPTOGRAPHIC PROTECTION
+
     Implement cryptographic mechanisms to protect the integrity of audit information and
     audit tools.
     Discussion: Cryptographic mechanisms used for protecting the integrity of audit information
@@ -5017,7 +4403,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     of the public key to verify the hash information while maintaining the confidentiality of the
     secret key used to generate the hash.
     Related Controls: AU-10, SC-12, SC-13.
-    (4) PROTECTION OF AUDIT INFORMATION | ACCESS BY SUBSET OF PRIVILEGED USERS
+
+##### (4) PROTECTION OF AUDIT INFORMATION | ACCESS BY SUBSET OF PRIVILEGED USERS
+
     Authorize access to management of audit logging functionality to only [Assignment:
     organization-defined subset of privileged users or roles].
     Discussion: Individuals or roles with privileged access to a system and who are also the
@@ -5026,7 +4414,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     further defined between audit-related privileges and other privileges limits the number of
     users or roles with audit-related privileges.
     Related Controls: AC-5.
-    (5) PROTECTION OF AUDIT INFORMATION | DUAL AUTHORIZATION
+
+##### (5) PROTECTION OF AUDIT INFORMATION | DUAL AUTHORIZATION
+
     Enforce dual authorization for [Selection (one or more): movement; deletion] of
     [Assignment: organization-defined audit information].
     Discussion: Organizations may choose different selection options for different types of audit
@@ -5036,14 +4426,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Organizations do not require dual authorization mechanisms when immediate responses are
     necessary to ensure public and environmental safety.
     Related Controls: AC-3.
-    (6) PROTECTION OF AUDIT INFORMATION | READ-ONLY ACCESS
+
+##### (6) PROTECTION OF AUDIT INFORMATION | READ-ONLY ACCESS
+
     Authorize read-only access to audit information to [Assignment: organization-defined
     subset of privileged users or roles].
     Discussion: Restricting privileged user or role authorizations to read-only helps to limit the
     potential damage to organizations that could be initiated by such users or roles, such as
     deleting audit records to cover up malicious activity.
     Related Controls: None.
-    (7) PROTECTION OF AUDIT INFORMATION | STORE ON COMPONENT WITH DIFFERENT OPERATING
+
+##### (7) PROTECTION OF AUDIT INFORMATION | STORE ON COMPONENT WITH DIFFERENT OPERATING
+
     SYSTEM
     Store audit information on a component running a different operating system than the
     system or component being audited.
@@ -5067,7 +4461,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and digital message receipts.
     Related Controls: AU-9, PM-12, SA-8, SC-8, SC-12, SC-13, SC-16, SC-17, SC-23.
     Control Enhancements:
-    (1) NON-REPUDIATION | ASSOCIATION OF IDENTITIES
+
+##### (1) NON-REPUDIATION | ASSOCIATION OF IDENTITIES
+
     (a) Bind the identity of the information producer with the information to [Assignment:
     organization-defined strength of binding]; and
     (b) Provide the means for authorized individuals to determine the identity of the
@@ -5078,7 +4474,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     attribute binding between the information producer and the information based on the
     security category of the information and other relevant risk factors.
     Related Controls: AC-4, AC-16.
-    (2) NON-REPUDIATION | VALIDATE BINDING OF INFORMATION PRODUCER IDENTITY
+
+##### (2) NON-REPUDIATION | VALIDATE BINDING OF INFORMATION PRODUCER IDENTITY
+
     (a) Validate the binding of the information producer identity to the information at
     [Assignment: organization-defined frequency]; and
     (b) Perform [Assignment: organization-defined actions] in the event of a validation error.
@@ -5087,7 +4485,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     bindings can be achieved by, for example, using cryptographic checksums. Organizations
     determine if validations are in response to user requests or generated automatically.
     Related Controls: AC-3, AC-4, AC-16.
-    (3) NON-REPUDIATION | CHAIN OF CUSTODY
+
+##### (3) NON-REPUDIATION | CHAIN OF CUSTODY
+
     Maintain reviewer or releaser credentials within the established chain of custody for
     information reviewed or released.
     Discussion: Chain of custody is a process that tracks the movement of evidence through its
@@ -5100,7 +4500,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     the organization with the means to identify who reviewed and released the information. In
     the case of automated reviews, it ensures that only approved review functions are used.
     Related Controls: AC-4, AC-16.
-    (4) NON-REPUDIATION | VALIDATE BINDING OF INFORMATION REVIEWER IDENTITY
+
+##### (4) NON-REPUDIATION | VALIDATE BINDING OF INFORMATION REVIEWER IDENTITY
+
     (a) Validate the binding of the information reviewer identity to the information at the
     transfer or release points prior to release or transfer between [Assignment:
     organization-defined security domains]; and
@@ -5111,7 +4513,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     cryptographic checksums. Organizations determine if validations are in response to user
     requests or generated automatically.
     Related Controls: AC-4, AC-16.
-    (5) NON-REPUDIATION | DIGITAL SIGNATURES
+
+##### (5) NON-REPUDIATION | DIGITAL SIGNATURES
+
     [Withdrawn: Incorporated into SI-7.]
     References: [FIPS 140-3], [FIPS 180-4], [FIPS 186-4], [FIPS 202], [SP 800-177].
 
@@ -5129,7 +4533,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     federal policy on records retention.
     Related Controls: AU-2, AU-4, AU-5, AU-6, AU-9, AU-14, MP-6, RA-5, SI-12.
     Control Enhancements:
-    (1) AUDIT RECORD RETENTION | LONG-TERM RETRIEVAL CAPABILITY
+
+##### (1) AUDIT RECORD RETENTION | LONG-TERM RETRIEVAL CAPABILITY
+
     Employ [Assignment: organization-defined measures] to ensure that long-term audit
     records generated by the system can be retrieved.
     Discussion: Organizations need to access and read audit records requiring long-term storage
@@ -5158,7 +4564,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-6, AC-17, AU-2, AU-3, AU-4, AU-5, AU-6, AU-7, AU-14, CM-5, MA-4, MP-4,
     PM-12, SA-8, SC-18, SI-3, SI-4, SI-7, SI-10.
     Control Enhancements:
-    (1) AUDIT RECORD GENERATION | SYSTEM-WIDE AND TIME-CORRELATED AUDIT TRAIL
+
+##### (1) AUDIT RECORD GENERATION | SYSTEM-WIDE AND TIME-CORRELATED AUDIT TRAIL
+
     Compile audit records from [Assignment: organization-defined system components] into a
     system-wide (logical or physical) audit trail that is time-correlated to within [Assignment:
     organization-defined level of tolerance for the relationship between time stamps of
@@ -5167,7 +4575,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     can be reliably related to the time stamps in other audit records to achieve a time ordering
     of the records within organizational tolerances.
     Related Controls: AU-8, SC-45.
-    (2) AUDIT RECORD GENERATION | STANDARDIZED FORMATS
+
+##### (2) AUDIT RECORD GENERATION | STANDARDIZED FORMATS
+
     Produce a system-wide (logical or physical) audit trail composed of audit records in a
     standardized format.
     Discussion: Audit records that follow common standards promote interoperability and
@@ -5177,7 +4587,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     systems may convert individual audit records into standardized formats when compiling
     system-wide audit trails.
     Related Controls: None.
-    (3) AUDIT RECORD GENERATION | CHANGES BY AUTHORIZED INDIVIDUALS
+
+##### (3) AUDIT RECORD GENERATION | CHANGES BY AUTHORIZED INDIVIDUALS
+
     Provide and implement the capability for [Assignment: organization-defined individuals or
     roles] to change the logging to be performed on [Assignment: organization-defined system
     components] based on [Assignment: organization-defined selectable event criteria] within
@@ -5190,7 +4602,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     can establish time thresholds in which logging actions are changed (e.g., near real-time,
     within minutes, or within hours).
     Related Controls: AC-3.
-    (4) AUDIT RECORD GENERATION | QUERY PARAMETER AUDITS OF PERSONALLY IDENTIFIABLE
+
+##### (4) AUDIT RECORD GENERATION | QUERY PARAMETER AUDITS OF PERSONALLY IDENTIFIABLE
+
     INFORMATION
     Provide and implement the capability for auditing the parameters of user query events for
     data sets containing personally identifiable information.
@@ -5212,21 +4626,25 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     b.
     If an information disclosure is discovered:
 
-35. Notify [Assignment: organization-defined personnel or roles]; and
-36. Take the following additional actions: [Assignment: organization-defined additional
-    actions].
-    Discussion: Unauthorized disclosure of information is a form of data leakage. Open-source
-    information includes social networking sites and code-sharing platforms and repositories.
-    Examples of organizational information include personally identifiable information retained by
-    the organization or proprietary information generated by the organization.
-    Related Controls: AC-22, PE-3, PM-12, RA-5, SC-7, SI-20.
-    Control Enhancements:
-    (1) MONITORING FOR INFORMATION DISCLOSURE | USE OF AUTOMATED TOOLS
+1. Notify [Assignment: organization-defined personnel or roles]; and
+2. Take the following additional actions: [Assignment: organization-defined additional
+   actions].
+   Discussion: Unauthorized disclosure of information is a form of data leakage. Open-source
+   information includes social networking sites and code-sharing platforms and repositories.
+   Examples of organizational information include personally identifiable information retained by
+   the organization or proprietary information generated by the organization.
+   Related Controls: AC-22, PE-3, PM-12, RA-5, SC-7, SI-20.
+   Control Enhancements:
+
+##### (1) MONITORING FOR INFORMATION DISCLOSURE | USE OF AUTOMATED TOOLS
+
     Monitor open-source information and information sites using [Assignment: organizationdefined automated mechanisms].
     Discussion: Automated mechanisms include commercial services that provide notifications
     and alerts to organizations and automated scripts to monitor new posts on websites.
     Related Controls: None.
-    (2) MONITORING FOR INFORMATION DISCLOSURE | REVIEW OF MONITORED SITES
+
+##### (2) MONITORING FOR INFORMATION DISCLOSURE | REVIEW OF MONITORED SITES
+
     Review the list of open-source information sites being monitored [Assignment:
     organization-defined frequency].
     Discussion: Reviewing the current list of open-source information sites being monitored on
@@ -5236,7 +4654,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     monitored can be guided and informed by threat intelligence of other credible sources of
     information.
     Related Controls: None.
-    (3) MONITORING FOR INFORMATION DISCLOSURE | UNAUTHORIZED REPLICATION OF INFORMATION
+
+##### (3) MONITORING FOR INFORMATION DISCLOSURE | UNAUTHORIZED REPLICATION OF INFORMATION
+
     Employ discovery techniques, processes, and tools to determine if external entities are
     replicating organizational information in an unauthorized manner.
     Discussion: The unauthorized use or replication of organizational information by external
@@ -5272,15 +4692,21 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     information, are appropriately addressed.
     Related Controls: AC-3, AC-8, AU-2, AU-3, AU-4, AU-5, AU-8, AU-9, AU-11, AU-12.
     Control Enhancements:
-    (1) SESSION AUDIT | SYSTEM START-UP
+
+##### (1) SESSION AUDIT | SYSTEM START-UP
+
     Initiate session audits automatically at system start-up.
     Discussion: The automatic initiation of session audits at startup helps to ensure that the
     information being captured on selected individuals is complete and not subject to
     compromise through tampering by malicious threat actors.
     Related Controls: None.
-    (2) SESSION AUDIT | CAPTURE AND RECORD CONTENT
+
+##### (2) SESSION AUDIT | CAPTURE AND RECORD CONTENT
+
     [Withdrawn: Incorporated into AU-14.]
-    (3) SESSION AUDIT | REMOTE VIEWING AND LISTENING
+
+##### (3) SESSION AUDIT | REMOTE VIEWING AND LISTENING
+
     Provide and implement the capability for authorized users to remotely view and hear
     content related to an established user session in real time.
     Discussion: None.
@@ -5307,12 +4733,16 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     information in information exchange agreements.
     Related Controls: AU-3, AU-6, AU-7, CA-3, PT-7.
     Control Enhancements:
-    (1) CROSS-ORGANIZATIONAL AUDIT LOGGING | IDENTITY PRESERVATION
+
+##### (1) CROSS-ORGANIZATIONAL AUDIT LOGGING | IDENTITY PRESERVATION
+
     Preserve the identity of individuals in cross-organizational audit trails.
     Discussion: Identity preservation is applied when there is a need to be able to trace actions
     that are performed across organizational boundaries to a specific individual.
     Related Controls: IA-2, IA-4, IA-5, IA-8.
-    (2) CROSS-ORGANIZATIONAL AUDIT LOGGING | SHARING OF AUDIT INFORMATION
+
+##### (2) CROSS-ORGANIZATIONAL AUDIT LOGGING | SHARING OF AUDIT INFORMATION
+
     Provide cross-organizational audit information to [Assignment: organization-defined
     organizations] based on [Assignment: organization-defined cross-organizational sharing
     agreements].
@@ -5324,7 +4754,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     organizations have the appropriate knowledge to make such determinations, thus requiring
     the sharing of audit information among organizations.
     Related Controls: IR-4, SI-4.
-    (3) CROSS-ORGANIZATIONAL AUDITING | DISASSOCIABILITY
+
+##### (3) CROSS-ORGANIZATIONAL AUDITING | DISASSOCIABILITY
+
     Implement [Assignment: organization-defined measures] to disassociate individuals from
     audit information transmitted across organizational boundaries.
     Discussion: Preserving identities in audit trails could have privacy ramifications, such as
@@ -5347,44 +4779,44 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-37. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] assessment, authorization, and monitoring policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-38. Procedures to facilitate the implementation of the assessment, authorization, and
-    monitoring policy and the associated assessment, authorization, and monitoring
-    controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the assessment, authorization, and monitoring policy
-    and procedures; and
-    c.
-    Review and update the current assessment, authorization, and monitoring:
-39. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-40. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Assessment, authorization, and monitoring policy and procedures address the
-    controls in the CA family that are implemented within systems and organizations. The risk
-    management strategy is an important factor in establishing such policies and procedures. Policies
-    and procedures contribute to security and privacy assurance. Therefore, it is important that
-    security and privacy programs collaborate on the development of assessment, authorization, and
-    monitoring policy and procedures. Security and privacy program policies and procedures at the
-    organization level are preferable, in general, and may obviate the need for mission- or systemspecific policies and procedures. The policy can be included as part of the general security and
-    privacy policy or be represented by multiple policies that reflect the complex nature of
-    organizations. Procedures can be established for security and privacy programs, for mission or
-    business processes, and for systems, if needed. Procedures describe how the policies or controls
-    are implemented and can be directed at the individual or role that is the object of the procedure.
-    Procedures can be documented in system security and privacy plans or in one or more separate
-    documents. Events that may precipitate an update to assessment, authorization, and monitoring
-    policy and procedures include assessment or audit findings, security incidents or breaches, or
-    changes in applicable laws, executive orders, directives, regulations, policies, standards, and
-    guidelines. Simply restating controls does not constitute an organizational policy or procedure.
-    Related Controls: PM-9, PS-8, SI-12.
-    Control Enhancements: None.
-    References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-53A], [SP
-    800-100], [SP 800-137], [SP 800-137A], [IR 8062].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] assessment, authorization, and monitoring policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the assessment, authorization, and
+   monitoring policy and the associated assessment, authorization, and monitoring
+   controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the assessment, authorization, and monitoring policy
+   and procedures; and
+   c.
+   Review and update the current assessment, authorization, and monitoring:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Assessment, authorization, and monitoring policy and procedures address the
+   controls in the CA family that are implemented within systems and organizations. The risk
+   management strategy is an important factor in establishing such policies and procedures. Policies
+   and procedures contribute to security and privacy assurance. Therefore, it is important that
+   security and privacy programs collaborate on the development of assessment, authorization, and
+   monitoring policy and procedures. Security and privacy program policies and procedures at the
+   organization level are preferable, in general, and may obviate the need for mission- or systemspecific policies and procedures. The policy can be included as part of the general security and
+   privacy policy or be represented by multiple policies that reflect the complex nature of
+   organizations. Procedures can be established for security and privacy programs, for mission or
+   business processes, and for systems, if needed. Procedures describe how the policies or controls
+   are implemented and can be directed at the individual or role that is the object of the procedure.
+   Procedures can be documented in system security and privacy plans or in one or more separate
+   documents. Events that may precipitate an update to assessment, authorization, and monitoring
+   policy and procedures include assessment or audit findings, security incidents or breaches, or
+   changes in applicable laws, executive orders, directives, regulations, policies, standards, and
+   guidelines. Simply restating controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-53A], [SP
+   800-100], [SP 800-137], [SP 800-137A], [IR 8062].
 
 #### CA-2
 
@@ -5396,69 +4828,71 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     b.
     Develop a control assessment plan that describes the scope of the assessment including:
 
-41. Controls and control enhancements under assessment;
-42. Assessment procedures to be used to determine control effectiveness; and
-43. Assessment environment, assessment team, and assessment roles and responsibilities;
-    c.
-    Ensure the control assessment plan is reviewed and approved by the authorizing official or
-    designated representative prior to conducting the assessment;
-    d.
-    Assess the controls in the system and its environment of operation [Assignment:
-    organization-defined frequency] to determine the extent to which the controls are
-    implemented correctly, operating as intended, and producing the desired outcome with
-    respect to meeting established security and privacy requirements;
-    e.
-    Produce a control assessment report that document the results of the assessment; and
-    f.
-    Provide the results of the control assessment to [Assignment: organization-defined
-    individuals or roles].
-    Discussion: Organizations ensure that control assessors possess the required skills and technical
-    expertise to develop effective assessment plans and to conduct assessments of system-specific,
-    hybrid, common, and program management controls, as appropriate. The required skills include
-    general knowledge of risk management concepts and approaches as well as comprehensive
-    knowledge of and experience with the hardware, software, and firmware system components
-    implemented.
-    Organizations assess controls in systems and the environments in which those systems operate
-    as part of initial and ongoing authorizations, continuous monitoring, FISMA annual assessments,
-    system design and development, systems security engineering, privacy engineering, and the
-    system development life cycle. Assessments help to ensure that organizations meet information
-    security and privacy requirements, identify weaknesses and deficiencies in the system design and
-    development process, provide essential information needed to make risk-based decisions as part
-    of authorization processes, and comply with vulnerability mitigation procedures. Organizations
-    conduct assessments on the implemented controls as documented in security and privacy plans.
-    Assessments can also be conducted throughout the system development life cycle as part of
-    systems engineering and systems security engineering processes. The design for controls can be
-    assessed as RFPs are developed, responses assessed, and design reviews conducted. If a design
-    to implement controls and subsequent implementation in accordance with the design are
-    assessed during development, the final control testing can be a simple confirmation utilizing
-    previously completed control assessment and aggregating the outcomes.
-    Organizations may develop a single, consolidated security and privacy assessment plan for the
-    system or maintain separate plans. A consolidated assessment plan clearly delineates the roles
-    and responsibilities for control assessment. If multiple organizations participate in assessing a
-    system, a coordinated approach can reduce redundancies and associated costs.
-    Organizations can use other types of assessment activities, such as vulnerability scanning and
-    system monitoring, to maintain the security and privacy posture of systems during the system
-    life cycle. Assessment reports document assessment results in sufficient detail, as deemed
-    necessary by organizations, to determine the accuracy and completeness of the reports and
-    whether the controls are implemented correctly, operating as intended, and producing the
-    desired outcome with respect to meeting requirements. Assessment results are provided to the
-    individuals or roles appropriate for the types of assessments being conducted. For example,
-    assessments conducted in support of authorization decisions are provided to authorizing
-    officials, senior agency officials for privacy, senior agency information security officers, and
-    authorizing official designated representatives.
-    To satisfy annual assessment requirements, organizations can use assessment results from the
-    following sources: initial or ongoing system authorizations, continuous monitoring, systems
-    engineering processes, or system development life cycle activities. Organizations ensure that
-    assessment results are current, relevant to the determination of control effectiveness, and
-    obtained with the appropriate level of assessor independence. Existing control assessment
-    results can be reused to the extent that the results are still valid and can also be supplemented
-    with additional assessments as needed. After the initial authorizations, organizations assess
-    controls during continuous monitoring. Organizations also establish the frequency for ongoing
-    assessments in accordance with organizational continuous monitoring strategies. External audits,
-    including audits by external entities such as regulatory agencies, are outside of the scope of CA-2.
-    Related Controls: AC-20, CA-5, CA-6, CA-7, PM-9, RA-5, RA-10, SA-11, SC-38, SI-3, SI-12, SR-2, SR3.
-    Control Enhancements:
-    (1) CONTROL ASSESSMENTS | INDEPENDENT ASSESSORS
+1. Controls and control enhancements under assessment;
+2. Assessment procedures to be used to determine control effectiveness; and
+3. Assessment environment, assessment team, and assessment roles and responsibilities;
+   c.
+   Ensure the control assessment plan is reviewed and approved by the authorizing official or
+   designated representative prior to conducting the assessment;
+   d.
+   Assess the controls in the system and its environment of operation [Assignment:
+   organization-defined frequency] to determine the extent to which the controls are
+   implemented correctly, operating as intended, and producing the desired outcome with
+   respect to meeting established security and privacy requirements;
+   e.
+   Produce a control assessment report that document the results of the assessment; and
+   f.
+   Provide the results of the control assessment to [Assignment: organization-defined
+   individuals or roles].
+   Discussion: Organizations ensure that control assessors possess the required skills and technical
+   expertise to develop effective assessment plans and to conduct assessments of system-specific,
+   hybrid, common, and program management controls, as appropriate. The required skills include
+   general knowledge of risk management concepts and approaches as well as comprehensive
+   knowledge of and experience with the hardware, software, and firmware system components
+   implemented.
+   Organizations assess controls in systems and the environments in which those systems operate
+   as part of initial and ongoing authorizations, continuous monitoring, FISMA annual assessments,
+   system design and development, systems security engineering, privacy engineering, and the
+   system development life cycle. Assessments help to ensure that organizations meet information
+   security and privacy requirements, identify weaknesses and deficiencies in the system design and
+   development process, provide essential information needed to make risk-based decisions as part
+   of authorization processes, and comply with vulnerability mitigation procedures. Organizations
+   conduct assessments on the implemented controls as documented in security and privacy plans.
+   Assessments can also be conducted throughout the system development life cycle as part of
+   systems engineering and systems security engineering processes. The design for controls can be
+   assessed as RFPs are developed, responses assessed, and design reviews conducted. If a design
+   to implement controls and subsequent implementation in accordance with the design are
+   assessed during development, the final control testing can be a simple confirmation utilizing
+   previously completed control assessment and aggregating the outcomes.
+   Organizations may develop a single, consolidated security and privacy assessment plan for the
+   system or maintain separate plans. A consolidated assessment plan clearly delineates the roles
+   and responsibilities for control assessment. If multiple organizations participate in assessing a
+   system, a coordinated approach can reduce redundancies and associated costs.
+   Organizations can use other types of assessment activities, such as vulnerability scanning and
+   system monitoring, to maintain the security and privacy posture of systems during the system
+   life cycle. Assessment reports document assessment results in sufficient detail, as deemed
+   necessary by organizations, to determine the accuracy and completeness of the reports and
+   whether the controls are implemented correctly, operating as intended, and producing the
+   desired outcome with respect to meeting requirements. Assessment results are provided to the
+   individuals or roles appropriate for the types of assessments being conducted. For example,
+   assessments conducted in support of authorization decisions are provided to authorizing
+   officials, senior agency officials for privacy, senior agency information security officers, and
+   authorizing official designated representatives.
+   To satisfy annual assessment requirements, organizations can use assessment results from the
+   following sources: initial or ongoing system authorizations, continuous monitoring, systems
+   engineering processes, or system development life cycle activities. Organizations ensure that
+   assessment results are current, relevant to the determination of control effectiveness, and
+   obtained with the appropriate level of assessor independence. Existing control assessment
+   results can be reused to the extent that the results are still valid and can also be supplemented
+   with additional assessments as needed. After the initial authorizations, organizations assess
+   controls during continuous monitoring. Organizations also establish the frequency for ongoing
+   assessments in accordance with organizational continuous monitoring strategies. External audits,
+   including audits by external entities such as regulatory agencies, are outside of the scope of CA-2.
+   Related Controls: AC-20, CA-5, CA-6, CA-7, PM-9, RA-5, RA-10, SA-11, SC-38, SI-3, SI-12, SR-2, SR3.
+   Control Enhancements:
+
+##### (1) CONTROL ASSESSMENTS | INDEPENDENT ASSESSORS
+
     Employ independent assessors or assessment teams to conduct control assessments.
     Discussion: Independent assessors or assessment teams are individuals or groups who
     conduct impartial assessments of systems. Impartiality means that assessors are free from
@@ -5488,7 +4922,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     authorization decisions are more likely to be useable for such decisions when performed by
     assessors with sufficient independence, thereby reducing the need to repeat assessments.
     Related Controls: None.
-    (2) CONTROL ASSESSMENTS | SPECIALIZED ASSESSMENTS
+
+##### (2) CONTROL ASSESSMENTS | SPECIALIZED ASSESSMENTS
+
     Include as part of control assessments, [Assignment: organization-defined frequency],
     [Selection: announced; unannounced], [Selection (one or more): in-depth monitoring;
     security instrumentation; automated security test cases; vulnerability scanning; malicious
@@ -5506,7 +4942,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     also be conducted early in the system development life cycle (e.g., during initial design,
     development, and unit testing).
     Related Controls: PE-3, SI-2.
-    (3) CONTROL ASSESSMENTS | LEVERAGING RESULTS FROM EXTERNAL ORGANIZATIONS
+
+##### (3) CONTROL ASSESSMENTS | LEVERAGING RESULTS FROM EXTERNAL ORGANIZATIONS
+
     Leverage the results of control assessments performed by [Assignment: organizationdefined external organization] on [Assignment: organization-defined system] when the
     assessment meets [Assignment: organization-defined requirements].
     Discussion: Organizations may rely on control assessments of organizational systems by
@@ -5572,17 +5010,29 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     same networks.
     Related Controls: AC-4, AC-20, AU-16, CA-6, IA-3, IR-4, PL-2, PT-7, RA-3, SA-9, SC-7, SI-12.
     Control Enhancements:
-    (1) SYSTEM CONNECTIONS | UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
+##### (1) SYSTEM CONNECTIONS | UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
     [Withdrawn: Moved to SC-7(25).]
-    (2) SYSTEM CONNECTIONS | CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
+##### (2) SYSTEM CONNECTIONS | CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
     [Withdrawn: Moved to SC-7(26).]
-    (3) SYSTEM CONNECTIONS | UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS
+
+##### (3) SYSTEM CONNECTIONS | UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS
+
     [Withdrawn: Moved to SC-7(27).]
-    (4) SYSTEM CONNECTIONS | CONNECTIONS TO PUBLIC NETWORKS
+
+##### (4) SYSTEM CONNECTIONS | CONNECTIONS TO PUBLIC NETWORKS
+
     [Withdrawn: Moved to SC-7(28).]
-    (5) SYSTEM CONNECTIONS | RESTRICTIONS ON EXTERNAL SYSTEM CONNECTIONS
+
+##### (5) SYSTEM CONNECTIONS | RESTRICTIONS ON EXTERNAL SYSTEM CONNECTIONS
+
     [Withdrawn: Moved to SC-7(5).]
-    (6) INFORMATION EXCHANGE | TRANSFER AUTHORIZATIONS
+
+##### (6) INFORMATION EXCHANGE | TRANSFER AUTHORIZATIONS
+
     Verify that individuals or systems transferring data between interconnecting systems have
     the requisite authorizations (i.e., write permissions or privileges) prior to accepting such
     data.
@@ -5634,7 +5084,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and subject to federal reporting requirements established by OMB.
     Related Controls: CA-2, CA-7, PM-4, PM-9, RA-7, SI-2, SI-12.
     Control Enhancements:
-    (1) PLAN OF ACTION AND MILESTONES | AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY
+
+##### (1) PLAN OF ACTION AND MILESTONES | AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY
+
     Ensure the accuracy, currency, and availability of the plan of action and milestones for the
     system using [Assignment: organization-defined automated mechanisms].
     Discussion: Using automated tools helps maintain the accuracy, currency, and availability of
@@ -5658,37 +5110,39 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     c.
     Ensure that the authorizing official for the system, before commencing operations:
 
-44. Accepts the use of common controls inherited by the system; and
-45. Authorizes the system to operate;
-    d.
-    Ensure that the authorizing official for common controls authorizes the use of those controls
-    for inheritance by organizational systems;
-    e.
-    Update the authorizations [Assignment: organization-defined frequency].
-    Discussion: Authorizations are official management decisions by senior officials to authorize
-    operation of systems, authorize the use of common controls for inheritance by organizational
-    systems, and explicitly accept the risk to organizational operations and assets, individuals, other
-    organizations, and the Nation based on the implementation of agreed-upon controls. Authorizing
-    officials provide budgetary oversight for organizational systems and common controls or assume
-    responsibility for the mission and business functions supported by those systems or common
-    controls. The authorization process is a federal responsibility, and therefore, authorizing officials
-    must be federal employees. Authorizing officials are both responsible and accountable for
-    security and privacy risks associated with the operation and use of organizational systems.
-    Nonfederal organizations may have similar processes to authorize systems and senior officials
-    that assume the authorization role and associated responsibilities.
-    Authorizing officials issue ongoing authorizations of systems based on evidence produced from
-    implemented continuous monitoring programs. Robust continuous monitoring programs reduce
-    the need for separate reauthorization processes. Through the employment of comprehensive
-    continuous monitoring processes, the information contained in authorization packages (i.e.,
-    security and privacy plans, assessment reports, and plans of action and milestones) is updated on
-    an ongoing basis. This provides authorizing officials, common control providers, and system
-    owners with an up-to-date status of the security and privacy posture of their systems, controls,
-    and operating environments. To reduce the cost of reauthorization, authorizing officials can
-    leverage the results of continuous monitoring processes to the maximum extent possible as the
-    basis for rendering reauthorization decisions.
-    Related Controls: CA-2, CA-3, CA-7, PM-9, PM-10, RA-3, SA-10, SI-12.
-    Control Enhancements:
-    (1) AUTHORIZATION | JOINT AUTHORIZATION — INTRA-ORGANIZATION
+1. Accepts the use of common controls inherited by the system; and
+2. Authorizes the system to operate;
+   d.
+   Ensure that the authorizing official for common controls authorizes the use of those controls
+   for inheritance by organizational systems;
+   e.
+   Update the authorizations [Assignment: organization-defined frequency].
+   Discussion: Authorizations are official management decisions by senior officials to authorize
+   operation of systems, authorize the use of common controls for inheritance by organizational
+   systems, and explicitly accept the risk to organizational operations and assets, individuals, other
+   organizations, and the Nation based on the implementation of agreed-upon controls. Authorizing
+   officials provide budgetary oversight for organizational systems and common controls or assume
+   responsibility for the mission and business functions supported by those systems or common
+   controls. The authorization process is a federal responsibility, and therefore, authorizing officials
+   must be federal employees. Authorizing officials are both responsible and accountable for
+   security and privacy risks associated with the operation and use of organizational systems.
+   Nonfederal organizations may have similar processes to authorize systems and senior officials
+   that assume the authorization role and associated responsibilities.
+   Authorizing officials issue ongoing authorizations of systems based on evidence produced from
+   implemented continuous monitoring programs. Robust continuous monitoring programs reduce
+   the need for separate reauthorization processes. Through the employment of comprehensive
+   continuous monitoring processes, the information contained in authorization packages (i.e.,
+   security and privacy plans, assessment reports, and plans of action and milestones) is updated on
+   an ongoing basis. This provides authorizing officials, common control providers, and system
+   owners with an up-to-date status of the security and privacy posture of their systems, controls,
+   and operating environments. To reduce the cost of reauthorization, authorizing officials can
+   leverage the results of continuous monitoring processes to the maximum extent possible as the
+   basis for rendering reauthorization decisions.
+   Related Controls: CA-2, CA-3, CA-7, PM-9, PM-10, RA-3, SA-10, SI-12.
+   Control Enhancements:
+
+##### (1) AUTHORIZATION | JOINT AUTHORIZATION — INTRA-ORGANIZATION
+
     Employ a joint authorization process for the system that includes multiple authorizing
     officials from the same organization conducting the authorization.
     Discussion: Assigning multiple authorizing officials from the same organization to serve as
@@ -5698,7 +5152,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     authorization process is most relevant for connected systems, shared systems, and systems
     with multiple information owners.
     Related Controls: AC-6.
-    (2) AUTHORIZATION | JOINT AUTHORIZATION — INTER-ORGANIZATION
+
+##### (2) AUTHORIZATION | JOINT AUTHORIZATION — INTER-ORGANIZATION
+
     Employ a joint authorization process for the system that includes multiple authorizing
     officials with at least one authorizing official from an organization external to the
     organization conducting the authorization.
@@ -5763,7 +5219,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     PM-10, PM-12, PM-14, PM-23, PM-28, PM-31, PS-7, PT-7, RA-3, RA-5, RA-7, RA-10, SA-8, SA-9,
     SA-11, SC-5, SC-7, SC-18, SC-38, SC-43, SI-3, SI-4, SI-12, SR-6.
     Control Enhancements:
-    (1) CONTINUOUS MONITORING | INDEPENDENT ASSESSMENT
+
+##### (1) CONTINUOUS MONITORING | INDEPENDENT ASSESSMENT
+
     Employ independent assessors or assessment teams to monitor the controls in the system
     on an ongoing basis.
     Discussion: Organizations maximize the value of control assessments by requiring that
@@ -5775,9 +5233,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     management or employees of the organizations they are serving, or place themselves in
     advocacy positions for the organizations acquiring their services.
     Related Controls: None.
-    (2) CONTINUOUS MONITORING | TYPES OF ASSESSMENTS
+
+##### (2) CONTINUOUS MONITORING | TYPES OF ASSESSMENTS
+
     [Withdrawn: Incorporated into CA-2.]
-    (3) CONTINUOUS MONITORING | TREND ANALYSES
+
+##### (3) CONTINUOUS MONITORING | TREND ANALYSES
+
     Employ trend analyses to determine if control implementations, the frequency of
     continuous monitoring activities, and the types of activities used in the continuous
     monitoring process need to be modified based on empirical data.
@@ -5787,7 +5249,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     social engineering techniques, the effectiveness of configuration settings, results from
     multiple control assessments, and findings from Inspectors General or auditors.
     Related Controls: None.
-    (4) CONTINUOUS MONITORING | RISK MONITORING
+
+##### (4) CONTINUOUS MONITORING | RISK MONITORING
+
     Ensure risk monitoring is an integral part of the continuous monitoring strategy that
     includes the following:
     (a)
@@ -5803,7 +5267,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     monitoring identifies changes to organizational systems and environments of operation that
     may affect security and privacy risk.
     Related Controls: None.
-    (5) CONTINUOUS MONITORING | CONSISTENCY ANALYSIS
+
+##### (5) CONTINUOUS MONITORING | CONSISTENCY ANALYSIS
+
     Employ the following actions to validate that policies are established and implemented
     controls are operating in a consistent manner: [Assignment: organization-defined actions].
     Discussion: Security and privacy controls are often added incrementally to a system. As a
@@ -5818,7 +5284,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     It is important to validate—through testing, monitoring, and analysis—that the implemented
     controls are operating in a consistent, coordinated, non-interfering manner.
     Related Controls: None.
-    (6) CONTINUOUS MONITORING | AUTOMATION SUPPORT FOR MONITORING
+
+##### (6) CONTINUOUS MONITORING | AUTOMATION SUPPORT FOR MONITORING
+
     Ensure the accuracy, currency, and availability of monitoring results for the system using
     [Assignment: organization-defined automated mechanisms].
     Discussion: Using automated tools for monitoring helps to maintain the accuracy, currency,
@@ -5861,7 +5329,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     testing.
     Related Controls: RA-5, RA-10, SA-11, SR-5, SR-6.
     Control Enhancements:
-    (1) PENETRATION TESTING | INDEPENDENT PENETRATION TESTING AGENT OR TEAM
+
+##### (1) PENETRATION TESTING | INDEPENDENT PENETRATION TESTING AGENT OR TEAM
+
     Employ an independent penetration testing agent or team to perform penetration testing
     on the system or system components.
     Discussion: Independent penetration testing agents or teams are individuals or groups who
@@ -5871,7 +5341,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     targets of the penetration testing. CA-2(1) provides additional information on independent
     assessments that can be applied to penetration testing.
     Related Controls: CA-2.
-    (2) PENETRATION TESTING | RED TEAM EXERCISES
+
+##### (2) PENETRATION TESTING | RED TEAM EXERCISES
+
     Employ the following red-team exercises to simulate attempts by adversaries to
     compromise organizational systems in accordance with applicable rules of engagement:
     [Assignment: organization-defined red team exercises].
@@ -5891,7 +5363,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     exercises can be used by organizations to improve security and privacy awareness and
     training and to assess control effectiveness.
     Related Controls: None.
-    (3) PENETRATION TESTING | FACILITY PENETRATION TESTING
+
+##### (3) PENETRATION TESTING | FACILITY PENETRATION TESTING
+
     Employ a penetration testing process that includes [Assignment: organization-defined
     frequency] [Selection: announced; unannounced] attempts to bypass or circumvent
     controls associated with physical access points to the facility.
@@ -5931,7 +5405,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     organizational missions or business functions.
     Related Controls: AC-3, AC-4, AC-18, AC-19, CM-2, IA-3, SC-7, SI-12.
     Control Enhancements:
-    (1) INTERNAL SYSTEM CONNECTIONS | COMPLIANCE CHECKS
+
+##### (1) INTERNAL SYSTEM CONNECTIONS | COMPLIANCE CHECKS
+
     Perform security and privacy compliance checks on constituent system components prior
     to the establishment of the internal connection.
     Discussion: Compliance checks include verification of the relevant baseline configuration.
@@ -5950,43 +5426,43 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-46. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] configuration management policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-47. Procedures to facilitate the implementation of the configuration management policy
-    and the associated configuration management controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the configuration management policy and procedures;
-    and
-    c.
-    Review and update the current configuration management:
-48. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-49. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Configuration management policy and procedures address the controls in the CM
-    family that are implemented within systems and organizations. The risk management strategy is
-    an important factor in establishing such policies and procedures. Policies and procedures
-    contribute to security and privacy assurance. Therefore, it is important that security and privacy
-    programs collaborate on the development of configuration management policy and procedures.
-    Security and privacy program policies and procedures at the organization level are preferable, in
-    general, and may obviate the need for mission- or system-specific policies and procedures. The
-    policy can be included as part of the general security and privacy policy or be represented by
-    multiple policies that reflect the complex nature of organizations. Procedures can be established
-    for security and privacy programs, for mission/business processes, and for systems, if needed.
-    Procedures describe how the policies or controls are implemented and can be directed at the
-    individual or role that is the object of the procedure. Procedures can be documented in system
-    security and privacy plans or in one or more separate documents. Events that may precipitate an
-    update to configuration management policy and procedures include, but are not limited to,
-    assessment or audit findings, security incidents or breaches, or changes in applicable laws,
-    executive orders, directives, regulations, policies, standards, and guidelines. Simply restating
-    controls does not constitute an organizational policy or procedure.
-    Related Controls: PM-9, PS-8, SA-8, SI-12.
-    Control Enhancements: None.
-    References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] configuration management policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the configuration management policy
+   and the associated configuration management controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the configuration management policy and procedures;
+   and
+   c.
+   Review and update the current configuration management:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Configuration management policy and procedures address the controls in the CM
+   family that are implemented within systems and organizations. The risk management strategy is
+   an important factor in establishing such policies and procedures. Policies and procedures
+   contribute to security and privacy assurance. Therefore, it is important that security and privacy
+   programs collaborate on the development of configuration management policy and procedures.
+   Security and privacy program policies and procedures at the organization level are preferable, in
+   general, and may obviate the need for mission- or system-specific policies and procedures. The
+   policy can be included as part of the general security and privacy policy or be represented by
+   multiple policies that reflect the complex nature of organizations. Procedures can be established
+   for security and privacy programs, for mission/business processes, and for systems, if needed.
+   Procedures describe how the policies or controls are implemented and can be directed at the
+   individual or role that is the object of the procedure. Procedures can be documented in system
+   security and privacy plans or in one or more separate documents. Events that may precipitate an
+   update to configuration management policy and procedures include, but are not limited to,
+   assessment or audit findings, security incidents or breaches, or changes in applicable laws,
+   executive orders, directives, regulations, policies, standards, and guidelines. Simply restating
+   controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SA-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### CM-2
 
@@ -5998,24 +5474,28 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     b.
     Review and update the baseline configuration of the system:
 
-50. [Assignment: organization-defined frequency];
-51. When required due to [Assignment: organization-defined circumstances]; and
-52. When system components are installed or upgraded.
-    Discussion: Baseline configurations for systems and system components include connectivity,
-    operational, and communications aspects of systems. Baseline configurations are documented,
-    formally reviewed, and agreed-upon specifications for systems or configuration items within
-    those systems. Baseline configurations serve as a basis for future builds, releases, or changes to
-    systems and include security and privacy control implementations, operational procedures,
-    information about system components, network topology, and logical placement of components
-    in the system architecture. Maintaining baseline configurations requires creating new baselines
-    as organizational systems change over time. Baseline configurations of systems reflect the
-    current enterprise architecture.
-    Related Controls: AC-19, AU-6, CA-9, CM-1, CM-3, CM-5, CM-6, CM-8, CM-9, CP-9, CP-10, CP-12,
-    MA-2, PL-8, PM-5, SA-8, SA-10, SA-15, SC-18.
-    Control Enhancements:
-    (1) BASELINE CONFIGURATION | REVIEWS AND UPDATES
+1. [Assignment: organization-defined frequency];
+2. When required due to [Assignment: organization-defined circumstances]; and
+3. When system components are installed or upgraded.
+   Discussion: Baseline configurations for systems and system components include connectivity,
+   operational, and communications aspects of systems. Baseline configurations are documented,
+   formally reviewed, and agreed-upon specifications for systems or configuration items within
+   those systems. Baseline configurations serve as a basis for future builds, releases, or changes to
+   systems and include security and privacy control implementations, operational procedures,
+   information about system components, network topology, and logical placement of components
+   in the system architecture. Maintaining baseline configurations requires creating new baselines
+   as organizational systems change over time. Baseline configurations of systems reflect the
+   current enterprise architecture.
+   Related Controls: AC-19, AU-6, CA-9, CM-1, CM-3, CM-5, CM-6, CM-8, CM-9, CP-9, CP-10, CP-12,
+   MA-2, PL-8, PM-5, SA-8, SA-10, SA-15, SC-18.
+   Control Enhancements:
+
+##### (1) BASELINE CONFIGURATION | REVIEWS AND UPDATES
+
     [Withdrawn: Incorporated into CM-2.]
-    (2) BASELINE CONFIGURATION | AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY
+
+##### (2) BASELINE CONFIGURATION | AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY
+
     Maintain the currency, completeness, accuracy, and availability of the baseline
     configuration of the system using [Assignment: organization-defined automated
     mechanisms].
@@ -6029,18 +5509,26 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     implementation of CM-8(2) for organizations that combine system component inventory and
     baseline configuration activities.
     Related Controls: CM-7, IA-3, RA-5.
-    (3) BASELINE CONFIGURATION | RETENTION OF PREVIOUS CONFIGURATIONS
+
+##### (3) BASELINE CONFIGURATION | RETENTION OF PREVIOUS CONFIGURATIONS
+
     Retain [Assignment: organization-defined number] of previous versions of baseline
     configurations of the system to support rollback.
     Discussion: Retaining previous versions of baseline configurations to support rollback
     include hardware, software, firmware, configuration files, configuration records, and
     associated documentation.
     Related Controls: None.
-    (4) BASELINE CONFIGURATION | UNAUTHORIZED SOFTWARE
+
+##### (4) BASELINE CONFIGURATION | UNAUTHORIZED SOFTWARE
+
     [Withdrawn: Incorporated into CM-7(4).]
-    (5) BASELINE CONFIGURATION | AUTHORIZED SOFTWARE
+
+##### (5) BASELINE CONFIGURATION | AUTHORIZED SOFTWARE
+
     [Withdrawn: Incorporated into CM-7(5).]
-    (6) BASELINE CONFIGURATION | DEVELOPMENT AND TEST ENVIRONMENTS
+
+##### (6) BASELINE CONFIGURATION | DEVELOPMENT AND TEST ENVIRONMENTS
+
     Maintain a baseline configuration for system development and test environments that is
     managed separately from the operational baseline configuration.
     Discussion: Establishing separate baseline configurations for development, testing, and
@@ -6054,7 +5542,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     the proposed changes to the operational systems. Separate baseline configurations do not
     necessarily require separate physical environments.
     Related Controls: CM-4, SC-3, SC-7.
-    (7) BASELINE CONFIGURATION | CONFIGURE SYSTEMS AND COMPONENTS FOR HIGH-RISK AREAS
+
+##### (7) BASELINE CONFIGURATION | CONFIGURE SYSTEMS AND COMPONENTS FOR HIGH-RISK AREAS
+
     (a) Issue [Assignment: organization-defined systems or system components] with
     [Assignment: organization-defined configurations] to individuals traveling to locations
     that the organization deems to be of significant risk; and
@@ -6114,7 +5604,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: CA-7, CM-2, CM-4, CM-5, CM-6, CM-9, CM-11, IA-3, MA-2, PE-16, PT-6, RA-8,
     SA-8, SA-10, SC-28, SC-34, SC-37, SI-2, SI-3, SI-4, SI-7, SI-10, SR-11.
     Control Enhancements:
-    (1) CONFIGURATION CHANGE CONTROL | AUTOMATED DOCUMENTATION, NOTIFICATION, AND
+
+##### (1) CONFIGURATION CHANGE CONTROL | AUTOMATED DOCUMENTATION, NOTIFICATION, AND
+
     PROHIBITION OF CHANGES
     Use [Assignment: organization-defined automated mechanisms] to:
     (a) Document proposed changes to the system;
@@ -6128,7 +5620,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     system are completed.
     Discussion: None.
     Related Controls: None.
-    (2) CONFIGURATION CHANGE CONTROL | TESTING, VALIDATION, AND DOCUMENTATION OF CHANGES
+
+##### (2) CONFIGURATION CHANGE CONTROL | TESTING, VALIDATION, AND DOCUMENTATION OF CHANGES
+
     Test, validate, and document changes to the system before finalizing the implementation
     of the changes.
     Discussion: Changes to systems include modifications to hardware, software, or firmware
@@ -6142,7 +5636,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     during planned system outages whenever possible. If the testing cannot be conducted on
     operational systems, organizations employ compensating controls.
     Related Controls: None.
-    (3) CONFIGURATION CHANGE CONTROL | AUTOMATED CHANGE IMPLEMENTATION
+
+##### (3) CONFIGURATION CHANGE CONTROL | AUTOMATED CHANGE IMPLEMENTATION
+
     Implement changes to the current system baseline and deploy the updated baseline across
     the installed base using [Assignment: organization-defined automated mechanisms].
     Discussion: Automated tools can improve the accuracy, consistency, and availability of
@@ -6150,7 +5646,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     correlation capabilities, alerting mechanisms, and dashboards to support risk-based
     decision-making within the organization.
     Related Controls: None.
-    (4) CONFIGURATION CHANGE CONTROL | SECURITY AND PRIVACY REPRESENTATIVES
+
+##### (4) CONFIGURATION CHANGE CONTROL | SECURITY AND PRIVACY REPRESENTATIVES
+
     Require [Assignment: organization-defined security and privacy representatives] to be
     members of the [Assignment: organization-defined configuration change control element].
     Discussion: Information security and privacy representatives include system security
@@ -6163,7 +5661,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     referred to in the second organization-defined parameter reflects the change control
     elements defined by organizations in CM-3g.
     Related Controls: None.
-    (5) CONFIGURATION CHANGE CONTROL | AUTOMATED SECURITY RESPONSE
+
+##### (5) CONFIGURATION CHANGE CONTROL | AUTOMATED SECURITY RESPONSE
+
     Implement the following security responses automatically if baseline configurations are
     changed in an unauthorized manner: [Assignment: organization-defined security
     responses].
@@ -6171,7 +5671,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     system processing, and issuing alerts or notifications to organizational personnel when there
     is an unauthorized modification of a configuration item.
     Related Controls: None.
-    (6) CONFIGURATION CHANGE CONTROL | CRYPTOGRAPHY MANAGEMENT
+
+##### (6) CONFIGURATION CHANGE CONTROL | CRYPTOGRAPHY MANAGEMENT
+
     Ensure that cryptographic mechanisms used to provide the following controls are under
     configuration management: [Assignment: organization-defined controls].
     Discussion: The controls referenced in the control enhancement refer to security and
@@ -6180,7 +5682,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     example, if system components use certificates for identification and authentication, a
     process is implemented to address the expiration of those certificates.
     Related Controls: SC-12.
-    (7) CONFIGURATION CHANGE CONTROL | REVIEW SYSTEM CHANGES
+
+##### (7) CONFIGURATION CHANGE CONTROL | REVIEW SYSTEM CHANGES
+
     Review changes to the system [Assignment: organization-defined frequency] or when
     [Assignment: organization-defined circumstances] to determine whether unauthorized
     changes have occurred.
@@ -6188,7 +5692,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     circumstances justifying such reviews may be obtained from activities carried out by
     organizations during the configuration change process or continuous monitoring process.
     Related Controls: AU-6, AU-7, CM-3.
-    (8) CONFIGURATION CHANGE CONTROL | PREVENT OR RESTRICT CONFIGURATION CHANGES
+
+##### (8) CONFIGURATION CHANGE CONTROL | PREVENT OR RESTRICT CONFIGURATION CHANGES
+
     Prevent or restrict changes to the configuration of the system under the following
     circumstances: [Assignment: organization-defined circumstances].
     Discussion: System configuration changes can adversely affect critical system security and
@@ -6214,7 +5720,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     additional controls are required.
     Related Controls: CA-7, CM-3, CM-8, CM-9, MA-2, RA-3, RA-5, RA-8, SA-5, SA-8, SA-10, SI-2.
     Control Enhancements:
-    (1) IMPACT ANALYSES | SEPARATE TEST ENVIRONMENTS
+
+##### (1) IMPACT ANALYSES | SEPARATE TEST ENVIRONMENTS
+
     Analyze changes to the system in a separate test environment before implementation in
     an operational environment, looking for security and privacy impacts due to flaws,
     weaknesses, incompatibility, or intentional malice.
@@ -6226,7 +5734,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     logical means. If physically separate test environments are not implemented, organizations
     determine the strength of mechanism required when implementing logical separation.
     Related Controls: SA-11, SC-7.
-    (2) IMPACT ANALYSES | VERIFICATION OF CONTROLS
+
+##### (2) IMPACT ANALYSES | VERIFICATION OF CONTROLS
+
     After system changes, verify that the impacted controls are implemented correctly,
     operating as intended, and producing the desired outcome with regard to meeting the
     security and privacy requirements for the system.
@@ -6250,18 +5760,26 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     times).
     Related Controls: AC-3, AC-5, AC-6, CM-9, PE-3, SC-28, SC-34, SC-37, SI-2, SI-10.
     Control Enhancements:
-    (1) ACCESS RESTRICTIONS FOR CHANGE | AUTOMATED ACCESS ENFORCEMENT AND AUDIT RECORDS
+
+##### (1) ACCESS RESTRICTIONS FOR CHANGE | AUTOMATED ACCESS ENFORCEMENT AND AUDIT RECORDS
+
     (a) Enforce access restrictions using [Assignment: organization-defined automated
     mechanisms]; and
     (b) Automatically generate audit records of the enforcement actions.
     Discussion: Organizations log system accesses associated with applying configuration
     changes to ensure that configuration change control is implemented and to support afterthe-fact actions should organizations discover any unauthorized changes.
     Related Controls: AU-2, AU-6, AU-7, AU-12, CM-6, CM-11, SI-12.
-    (2) ACCESS RESTRICTIONS FOR CHANGE | REVIEW SYSTEM CHANGES
+
+##### (2) ACCESS RESTRICTIONS FOR CHANGE | REVIEW SYSTEM CHANGES
+
     [Withdrawn: Incorporated into CM-3(7).]
-    (3) ACCESS RESTRICTIONS FOR CHANGE | SIGNED COMPONENTS
+
+##### (3) ACCESS RESTRICTIONS FOR CHANGE | SIGNED COMPONENTS
+
     [Withdrawn: Moved to CM-14.]
-    (4) ACCESS RESTRICTIONS FOR CHANGE | DUAL AUTHORIZATION
+
+##### (4) ACCESS RESTRICTIONS FOR CHANGE | DUAL AUTHORIZATION
+
     Enforce dual authorization for implementing changes to [Assignment: organizationdefined system components and system-level information].
     Discussion: Organizations employ dual authorization to help ensure that any changes to
     selected system components and information cannot occur unless two qualified individuals
@@ -6272,7 +5790,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     authorization duties to other individuals. System-level information includes operational
     procedures.
     Related Controls: AC-2, AC-5, CM-3.
-    (5) ACCESS RESTRICTIONS FOR CHANGE | PRIVILEGE LIMITATION FOR PRODUCTION AND OPERATION
+
+##### (5) ACCESS RESTRICTIONS FOR CHANGE | PRIVILEGE LIMITATION FOR PRODUCTION AND OPERATION
+
     (a) Limit privileges to change system components and system-related information within
     a production or operational environment; and
     (b) Review and reevaluate privileges [Assignment: organization-defined frequency].
@@ -6283,11 +5803,15 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     mission/business processes are, in some cases, unknown to developers. System-related
     information includes operational procedures.
     Related Controls: AC-2.
-    (6) ACCESS RESTRICTIONS FOR CHANGE | LIMIT LIBRARY PRIVILEGES
+
+##### (6) ACCESS RESTRICTIONS FOR CHANGE | LIMIT LIBRARY PRIVILEGES
+
     Limit privileges to change software resident within software libraries.
     Discussion: Software libraries include privileged programs.
     Related Controls: AC-2.
-    (7) ACCESS RESTRICTIONS FOR CHANGE | AUTOMATIC IMPLEMENTATION OF SECURITY SAFEGUARDS
+
+##### (7) ACCESS RESTRICTIONS FOR CHANGE | AUTOMATIC IMPLEMENTATION OF SECURITY SAFEGUARDS
+
     [Withdrawn: Incorporated into SI-7.]
     References: [FIPS 140-3]; [FIPS 186-4].
 
@@ -6337,7 +5861,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-3, AC-19, AU-2, AU-6, CA-9, CM-2, CM-3, CM-5, CM-7, CM-11, CP-7, CP-9,
     CP-10, IA-3, IA-5, PL-8, PL-9, RA-5, SA-4, SA-5, SA-8, SA-9, SC-18, SC-28, SC-43, SI-2, SI-4, SI-6.
     Control Enhancements:
-    (1) CONFIGURATION SETTINGS | AUTOMATED MANAGEMENT, APPLICATION, AND VERIFICATION
+
+##### (1) CONFIGURATION SETTINGS | AUTOMATED MANAGEMENT, APPLICATION, AND VERIFICATION
+
     Manage, apply, and verify configuration settings for [Assignment: organization-defined
     system components] using [Assignment: organization-defined automated mechanisms].
     Discussion: Automated tools (e.g., hardening tools, baseline configuration tools) can
@@ -6345,16 +5871,22 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Automation can also provide data aggregation and data correlation capabilities, alerting
     mechanisms, and dashboards to support risk-based decision-making within the organization.
     Related Controls: CA-7.
-    (2) CONFIGURATION SETTINGS | RESPOND TO UNAUTHORIZED CHANGES
+
+##### (2) CONFIGURATION SETTINGS | RESPOND TO UNAUTHORIZED CHANGES
+
     Take the following actions in response to unauthorized changes to [Assignment:
     organization-defined configuration settings]: [Assignment: organization-defined actions].
     Discussion: Responses to unauthorized changes to configuration settings include alerting
     designated organizational personnel, restoring established configuration settings, or—in
     extreme cases—halting affected system processing.
     Related Controls: IR-4, IR-6, SI-7.
-    (3) CONFIGURATION SETTINGS | UNAUTHORIZED CHANGE DETECTION
+
+##### (3) CONFIGURATION SETTINGS | UNAUTHORIZED CHANGE DETECTION
+
     [Withdrawn: Incorporated into SI-7.]
-    (4) CONFIGURATION SETTINGS | CONFORMANCE DEMONSTRATION
+
+##### (4) CONFIGURATION SETTINGS | CONFORMANCE DEMONSTRATION
+
     [Withdrawn: Incorporated into CM-4.]
     References: [SP 800-70], [SP 800-126], [SP 800-128], [USGCB], [NCPR], [DOD STIG].
 
@@ -6383,7 +5915,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     can also be achieved as part of the fundamental design and development of the system (see SA8, SC-2, and SC-3).
     Related Controls: AC-3, AC-4, CM-2, CM-5, CM-6, CM-11, RA-5, SA-4, SA-5, SA-8, SA-9, SA-15, SC2, SC-3, SC-7, SC-37, SI-4.
     Control Enhancements:
-    (1) LEAST FUNCTIONALITY | PERIODIC REVIEW
+
+##### (1) LEAST FUNCTIONALITY | PERIODIC REVIEW
+
     (a) Review the system [Assignment: organization-defined frequency] to identify
     unnecessary and/or nonsecure functions, ports, protocols, software, and services; and
     (b) Disable or remove [Assignment: organization-defined functions, ports, protocols,
@@ -6400,7 +5934,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     assessment of other entities. Unsecure protocols include Bluetooth, FTP, and peer-to-peer
     networking.
     Related Controls: AC-18.
-    (2) LEAST FUNCTIONALITY | PREVENT PROGRAM EXECUTION
+
+##### (2) LEAST FUNCTIONALITY | PREVENT PROGRAM EXECUTION
+
     Prevent program execution in accordance with [Selection (one or more): [Assignment:
     organization-defined policies, rules of behavior, and/or access agreements regarding
     software program usage and restrictions]; rules authorizing the terms and conditions of
@@ -6412,13 +5948,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     to approve program execution, permitting or prohibiting specific software programs, or
     restricting the number of program instances executed at the same time.
     Related Controls: CM-8, PL-4, PL-9, PM-5, PS-6.
-    (3) LEAST FUNCTIONALITY | REGISTRATION COMPLIANCE
+
+##### (3) LEAST FUNCTIONALITY | REGISTRATION COMPLIANCE
+
     Ensure compliance with [Assignment: organization-defined registration requirements for
     functions, ports, protocols, and services].
     Discussion: Organizations use the registration process to manage, track, and provide
     oversight for systems and implemented functions, ports, protocols, and services.
     Related Controls: None.
-    (4) LEAST FUNCTIONALITY | UNAUTHORIZED SOFTWARE — DENY-BY-EXCEPTION
+
+##### (4) LEAST FUNCTIONALITY | UNAUTHORIZED SOFTWARE — DENY-BY-EXCEPTION
+
     (a) Identify [Assignment: organization-defined software programs not authorized to
     execute on the system];
     (b) Employ an allow-all, deny-by-exception policy to prohibit the execution of
@@ -6430,7 +5970,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     be applied to user actions, system ports and protocols, IP addresses/ranges, websites, and
     MAC addresses.
     Related Controls: CM-6, CM-8, CM-10, PL-9, PM-5.
-    (5) LEAST FUNCTIONALITY | AUTHORIZED SOFTWARE — ALLOW-BY-EXCEPTION
+
+##### (5) LEAST FUNCTIONALITY | AUTHORIZED SOFTWARE — ALLOW-BY-EXCEPTION
+
     (a) Identify [Assignment: organization-defined software programs authorized to execute
     on the system];
     (b) Employ a deny-all, permit-by-exception policy to allow the execution of authorized
@@ -6450,7 +5992,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     authorized software can occur either prior to execution or at system startup. The
     identification of authorized URLs for websites is addressed in CA-3(5) and SC-7.
     Related Controls: CM-2, CM-6, CM-8, CM-10, PL-9, PM-5, SA-10, SC-34, SI-7.
-    (6) LEAST FUNCTIONALITY | CONFINED ENVIRONMENTS WITH LIMITED PRIVILEGES
+
+##### (6) LEAST FUNCTIONALITY | CONFINED ENVIRONMENTS WITH LIMITED PRIVILEGES
+
     Require that the following user-installed software execute in a confined physical or virtual
     machine environment with limited privileges: [Assignment: organization-defined userinstalled software].
     Discussion: Organizations identify software that may be of concern regarding its origin or
@@ -6458,7 +6002,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     confined environments of operation to limit or contain damage from malicious code that
     may be executed.
     Related Controls: CM-11, SC-44.
-    (7) LEAST FUNCTIONALITY | CODE EXECUTION IN PROTECTED ENVIRONMENTS
+
+##### (7) LEAST FUNCTIONALITY | CODE EXECUTION IN PROTECTED ENVIRONMENTS
+
     Allow execution of binary or machine-executable code only in confined physical or virtual
     machine environments and with the explicit approval of [Assignment: organizationdefined personnel or roles] when such code is:
     (a) Obtained from sources with limited or no warranty; and/or
@@ -6467,7 +6013,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     machine-executable code, including commercial software and firmware and open-source
     software.
     Related Controls: CM-10, SC-44.
-    (8) LEAST FUNCTIONALITY | BINARY OR MACHINE EXECUTABLE CODE
+
+##### (8) LEAST FUNCTIONALITY | BINARY OR MACHINE EXECUTABLE CODE
+
     (a) Prohibit the use of binary or machine-executable code from sources with limited or no
     warranty or without the provision of source code; and
     (b) Allow exceptions only for compelling mission or operational requirements and with
@@ -6481,7 +6029,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     no warranty, the open-source software could contain back doors or malware, and there may
     be no support available.
     Related Controls: SA-5, SA-22.
-    (9) LEAST FUNCTIONALITY | PROHIBITING THE USE OF UNAUTHORIZED HARDWARE
+
+##### (9) LEAST FUNCTIONALITY | PROHIBITING THE USE OF UNAUTHORIZED HARDWARE
+
     (a) Identify [Assignment: organization-defined hardware components authorized for
     system use];
     (b) Prohibit the use or connection of unauthorized hardware components;
@@ -6502,42 +6052,44 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     a.
     Develop and document an inventory of system components that:
 
-53. Accurately reflects the system;
-54. Includes all components within the system;
-55. Does not include duplicate accounting of components or components assigned to any
-    other system;
-    b.
-56. Is at the level of granularity deemed necessary for tracking and reporting; and
-57. Includes the following information to achieve system component accountability:
-    [Assignment: organization-defined information deemed necessary to achieve effective
-    system component accountability]; and
-    Review and update the system component inventory [Assignment: organization-defined
-    frequency].
-    Discussion: System components are discrete, identifiable information technology assets that
-    include hardware, software, and firmware. Organizations may choose to implement centralized
-    system component inventories that include components from all organizational systems. In such
-    situations, organizations ensure that the inventories include system-specific information required
-    for component accountability. The information necessary for effective accountability of system
-    components includes the system name, software owners, software version numbers, hardware
-    inventory specifications, software license information, and for networked components, the
-    machine names and network addresses across all implemented protocols (e.g., IPv4, IPv6).
-    Inventory specifications include date of receipt, cost, model, serial number, manufacturer,
-    supplier information, component type, and physical location.
-    Preventing duplicate accounting of system components addresses the lack of accountability that
-    occurs when component ownership and system association is not known, especially in large or
-    complex connected systems. Effective prevention of duplicate accounting of system components
-    necessitates use of a unique identifier for each component. For software inventory, centrally
-    managed software that is accessed via other systems is addressed as a component of the system
-    on which it is installed and managed. Software installed on multiple organizational systems and
-    managed at the system level is addressed for each individual system and may appear more than
-    once in a centralized component inventory, necessitating a system association for each software
-    instance in the centralized inventory to avoid duplicate accounting of components. Scanning
-    systems implementing multiple network protocols (e.g., IPv4 and IPv6) can result in duplicate
-    components being identified in different address spaces. The implementation of CM-8(7) can
-    help to eliminate duplicate accounting of components.
-    Related Controls: CM-2, CM-7, CM-9, CM-10, CM-11, CM-13, CP-2, CP-9, MA-2, MA-6, PE-20, PL9, PM-5, SA-4, SA-5, SI-2, SR-4.
-    Control Enhancements:
-    (1) SYSTEM COMPONENT INVENTORY | UPDATES DURING INSTALLATION AND REMOVAL
+1. Accurately reflects the system;
+2. Includes all components within the system;
+3. Does not include duplicate accounting of components or components assigned to any
+   other system;
+   b.
+4. Is at the level of granularity deemed necessary for tracking and reporting; and
+5. Includes the following information to achieve system component accountability:
+   [Assignment: organization-defined information deemed necessary to achieve effective
+   system component accountability]; and
+   Review and update the system component inventory [Assignment: organization-defined
+   frequency].
+   Discussion: System components are discrete, identifiable information technology assets that
+   include hardware, software, and firmware. Organizations may choose to implement centralized
+   system component inventories that include components from all organizational systems. In such
+   situations, organizations ensure that the inventories include system-specific information required
+   for component accountability. The information necessary for effective accountability of system
+   components includes the system name, software owners, software version numbers, hardware
+   inventory specifications, software license information, and for networked components, the
+   machine names and network addresses across all implemented protocols (e.g., IPv4, IPv6).
+   Inventory specifications include date of receipt, cost, model, serial number, manufacturer,
+   supplier information, component type, and physical location.
+   Preventing duplicate accounting of system components addresses the lack of accountability that
+   occurs when component ownership and system association is not known, especially in large or
+   complex connected systems. Effective prevention of duplicate accounting of system components
+   necessitates use of a unique identifier for each component. For software inventory, centrally
+   managed software that is accessed via other systems is addressed as a component of the system
+   on which it is installed and managed. Software installed on multiple organizational systems and
+   managed at the system level is addressed for each individual system and may appear more than
+   once in a centralized component inventory, necessitating a system association for each software
+   instance in the centralized inventory to avoid duplicate accounting of components. Scanning
+   systems implementing multiple network protocols (e.g., IPv4 and IPv6) can result in duplicate
+   components being identified in different address spaces. The implementation of CM-8(7) can
+   help to eliminate duplicate accounting of components.
+   Related Controls: CM-2, CM-7, CM-9, CM-10, CM-11, CM-13, CP-2, CP-9, MA-2, MA-6, PE-20, PL9, PM-5, SA-4, SA-5, SI-2, SR-4.
+   Control Enhancements:
+
+##### (1) SYSTEM COMPONENT INVENTORY | UPDATES DURING INSTALLATION AND REMOVAL
+
     Update the inventory of system components as part of component installations, removals,
     and system updates.
     Discussion: Organizations can improve the accuracy, completeness, and consistency of
@@ -6547,7 +6099,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     captured and documented. System updates include hardware, software, and firmware
     components.
     Related Controls: PM-16.
-    (2) SYSTEM COMPONENT INVENTORY | AUTOMATED MAINTENANCE
+
+##### (2) SYSTEM COMPONENT INVENTORY | AUTOMATED MAINTENANCE
+
     Maintain the currency, completeness, accuracy, and availability of the inventory of system
     components using [Assignment: organization-defined automated mechanisms].
     Discussion: Organizations maintain system inventories to the extent feasible. For example,
@@ -6557,7 +6111,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     the implementation of CM-2(2) for organizations that combine system component inventory
     and baseline configuration activities.
     Related Controls: None.
-    (3) SYSTEM COMPONENT INVENTORY | AUTOMATED UNAUTHORIZED COMPONENT DETECTION
+
+##### (3) SYSTEM COMPONENT INVENTORY | AUTOMATED UNAUTHORIZED COMPONENT DETECTION
+
     (a) Detect the presence of unauthorized hardware, software, and firmware components
     within the system using [Assignment: organization-defined automated mechanisms]
     [Assignment: organization-defined frequency]; and
@@ -6577,7 +6133,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     components in separate domains or subnets or quarantining such components. This type of
     component isolation is commonly referred to as “sandboxing.”
     Related Controls: AC-19, CA-7, RA-5, SC-3, SC-39, SC-44, SI-3, SI-4, SI-7.
-    (4) SYSTEM COMPONENT INVENTORY | ACCOUNTABILITY INFORMATION
+
+##### (4) SYSTEM COMPONENT INVENTORY | ACCOUNTABILITY INFORMATION
+
     Include in the system component inventory information, a means for identifying by
     [Selection (one or more): name; position; role], individuals responsible and accountable for
     administering those components.
@@ -6587,9 +6145,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     component is determined to be the source of a breach, needs to be recalled or replaced, or
     needs to be relocated).
     Related Controls: AC-3.
-    (5) SYSTEM COMPONENT INVENTORY | NO DUPLICATE ACCOUNTING OF COMPONENTS
+
+##### (5) SYSTEM COMPONENT INVENTORY | NO DUPLICATE ACCOUNTING OF COMPONENTS
+
     [Withdrawn: Incorporated into CM-8.]
-    (6) SYSTEM COMPONENT INVENTORY | ASSESSED CONFIGURATIONS AND APPROVED DEVIATIONS
+
+##### (6) SYSTEM COMPONENT INVENTORY | ASSESSED CONFIGURATIONS AND APPROVED DEVIATIONS
+
     Include assessed component configurations and any approved deviations to current
     deployed configurations in the system component inventory.
     Discussion: Assessed configurations and approved deviations focus on configuration settings
@@ -6597,7 +6159,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     been assessed to determine compliance with the required configuration settings, and any
     approved deviations from established configuration settings.
     Related Controls: None.
-    (7) SYSTEM COMPONENT INVENTORY | CENTRALIZED REPOSITORY
+
+##### (7) SYSTEM COMPONENT INVENTORY | CENTRALIZED REPOSITORY
+
     Provide a centralized repository for the inventory of system components.
     Discussion: Organizations may implement centralized system component inventories that
     include components from all organizational systems. Centralized repositories of component
@@ -6608,7 +6172,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     resulting centralized inventories include system-specific information required for proper
     component accountability.
     Related Controls: None.
-    (8) SYSTEM COMPONENT INVENTORY | AUTOMATED LOCATION TRACKING
+
+##### (8) SYSTEM COMPONENT INVENTORY | AUTOMATED LOCATION TRACKING
+
     Support the tracking of system components by geographic location using [Assignment:
     organization-defined automated mechanisms].
     Discussion: The use of automated mechanisms to track the location of system components
@@ -6618,7 +6184,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     tracking mechanisms can be coordinated with senior agency officials for privacy if there are
     implications that affect individual privacy.
     Related Controls: None.
-    (9) SYSTEM COMPONENT INVENTORY | ASSIGNMENT OF COMPONENTS TO SYSTEMS
+
+##### (9) SYSTEM COMPONENT INVENTORY | ASSIGNMENT OF COMPONENTS TO SYSTEMS
+
     (a) Assign system components to a system; and
     (b) Receive an acknowledgement from [Assignment: organization-defined personnel or
     roles] of this assignment.
@@ -6670,7 +6238,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     existing configuration items may no longer need to be under configuration control.
     Related Controls: CM-2, CM-3, CM-4, CM-5, CM-8, PL-2, RA-8, SA-10, SI-12.
     Control Enhancements:
-    (1) CONFIGURATION MANAGEMENT PLAN | ASSIGNMENT OF RESPONSIBILITY
+
+##### (1) CONFIGURATION MANAGEMENT PLAN | ASSIGNMENT OF RESPONSIBILITY
+
     Assign responsibility for developing the configuration management process to
     organizational personnel that are not directly involved in system development.
     Discussion: In the absence of dedicated configuration management teams assigned within
@@ -6701,7 +6271,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     agreements and non-disclosure agreements.
     Related Controls: AC-17, AU-6, CM-7, CM-8, PM-30, SC-7.
     Control Enhancements:
-    (1) SOFTWARE USAGE RESTRICTIONS | OPEN-SOURCE SOFTWARE
+
+##### (1) SOFTWARE USAGE RESTRICTIONS | OPEN-SOURCE SOFTWARE
+
     Establish the following restrictions on the use of open-source software: [Assignment:
     organization-defined restrictions].
     Discussion: Open-source software refers to software that is available in source code form.
@@ -6740,14 +6312,20 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     automated methods.
     Related Controls: AC-3, AU-6, CM-2, CM-3, CM-5, CM-6, CM-7, CM-8, PL-4, SI-4, SI-7.
     Control Enhancements:
-    (1) USER-INSTALLED SOFTWARE | ALERTS FOR UNAUTHORIZED INSTALLATIONS
+
+##### (1) USER-INSTALLED SOFTWARE | ALERTS FOR UNAUTHORIZED INSTALLATIONS
+
     [Withdrawn: Incorporated into CM-8(3).]
-    (2) USER-INSTALLED SOFTWARE | SOFTWARE INSTALLATION WITH PRIVILEGED STATUS
+
+##### (2) USER-INSTALLED SOFTWARE | SOFTWARE INSTALLATION WITH PRIVILEGED STATUS
+
     Allow user installation of software only with explicit privileged status.
     Discussion: Privileged status can be obtained, for example, by serving in the role of system
     administrator.
     Related Controls: AC-5, AC-6.
-    (3) USER-INSTALLED SOFTWARE | AUTOMATED ENFORCEMENT AND MONITORING
+
+##### (3) USER-INSTALLED SOFTWARE | AUTOMATED ENFORCEMENT AND MONITORING
+
     Enforce and monitor compliance with software installation policies using [Assignment:
     organization-defined automated mechanisms].
     Discussion: Organizations enforce and monitor compliance with software installation
@@ -6779,7 +6357,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     SA-17).
     Related Controls: AC-2, AC-3, AC-4, AC-6, AC-23, CM-8, PM-5, RA-2, SA-4, SA-8, SA-17, SC-4, SC16, SC-28, SI-4, SI-7.
     Control Enhancements:
-    (1) INFORMATION LOCATION | AUTOMATED TOOLS TO SUPPORT INFORMATION LOCATION
+
+##### (1) INFORMATION LOCATION | AUTOMATED TOOLS TO SUPPORT INFORMATION LOCATION
+
     Use automated tools to identify [Assignment: organization-defined information by
     information type] on [Assignment: organization-defined system components] to ensure
     controls are in place to protect organizational information and individual privacy.
@@ -6838,42 +6418,42 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-58. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] contingency planning policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-59. Procedures to facilitate the implementation of the contingency planning policy and the
-    associated contingency planning controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the contingency planning policy and procedures; and
-    c.
-    Review and update the current contingency planning:
-60. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-61. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Contingency planning policy and procedures address the controls in the CP family
-    that are implemented within systems and organizations. The risk management strategy is an
-    important factor in establishing such policies and procedures. Policies and procedures contribute
-    to security and privacy assurance. Therefore, it is important that security and privacy programs
-    collaborate on the development of contingency planning policy and procedures. Security and
-    privacy program policies and procedures at the organization level are preferable, in general, and
-    may obviate the need for mission- or system-specific policies and procedures. The policy can be
-    included as part of the general security and privacy policy or be represented by multiple policies
-    that reflect the complex nature of organizations. Procedures can be established for security and
-    privacy programs, for mission or business processes, and for systems, if needed. Procedures
-    describe how the policies or controls are implemented and can be directed at the individual or
-    role that is the object of the procedure. Procedures can be documented in system security and
-    privacy plans or in one or more separate documents. Events that may precipitate an update to
-    contingency planning policy and procedures include assessment or audit findings, security
-    incidents or breaches, or changes in laws, executive orders, directives, regulations, policies,
-    standards, and guidelines. Simply restating controls does not constitute an organizational policy
-    or procedure.
-    Related Controls: PM-9, PS-8, SI-12.
-    Control Enhancements: None.
-    References: [SP 800-12], [SP 800-30], [SP 800-34], [SP 800-39], [SP 800-50], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] contingency planning policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the contingency planning policy and the
+   associated contingency planning controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the contingency planning policy and procedures; and
+   c.
+   Review and update the current contingency planning:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Contingency planning policy and procedures address the controls in the CP family
+   that are implemented within systems and organizations. The risk management strategy is an
+   important factor in establishing such policies and procedures. Policies and procedures contribute
+   to security and privacy assurance. Therefore, it is important that security and privacy programs
+   collaborate on the development of contingency planning policy and procedures. Security and
+   privacy program policies and procedures at the organization level are preferable, in general, and
+   may obviate the need for mission- or system-specific policies and procedures. The policy can be
+   included as part of the general security and privacy policy or be represented by multiple policies
+   that reflect the complex nature of organizations. Procedures can be established for security and
+   privacy programs, for mission or business processes, and for systems, if needed. Procedures
+   describe how the policies or controls are implemented and can be directed at the individual or
+   role that is the object of the procedure. Procedures can be documented in system security and
+   privacy plans or in one or more separate documents. Events that may precipitate an update to
+   contingency planning policy and procedures include assessment or audit findings, security
+   incidents or breaches, or changes in laws, executive orders, directives, regulations, policies,
+   standards, and guidelines. Simply restating controls does not constitute an organizational policy
+   or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [SP 800-12], [SP 800-30], [SP 800-34], [SP 800-39], [SP 800-50], [SP 800-100].
 
 #### CP-2
 
@@ -6882,58 +6462,60 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     a.
     Develop a contingency plan for the system that:
 
-62. Identifies essential mission and business functions and associated contingency
-    requirements;
-63. Provides recovery objectives, restoration priorities, and metrics;
-64. Addresses contingency roles, responsibilities, assigned individuals with contact
-    information;
-65. Addresses maintaining essential mission and business functions despite a system
-    disruption, compromise, or failure;
-66. Addresses eventual, full system restoration without deterioration of the controls
-    originally planned and implemented;
-67. Addresses the sharing of contingency information; and
-68. Is reviewed and approved by [Assignment: organization-defined personnel or roles];
-    b.
-    Distribute copies of the contingency plan to [Assignment: organization-defined key
-    contingency personnel (identified by name and/or by role) and organizational elements];
-    c.
-    Coordinate contingency planning activities with incident handling activities;
-    d.
-    Review the contingency plan for the system [Assignment: organization-defined frequency];
-    e.
-    Update the contingency plan to address changes to the organization, system, or
-    environment of operation and problems encountered during contingency plan
-    implementation, execution, or testing;
-    f.
-    Communicate contingency plan changes to [Assignment: organization-defined key
-    contingency personnel (identified by name and/or by role) and organizational elements];
-    g.
-    Incorporate lessons learned from contingency plan testing, training, or actual contingency
-    activities into contingency testing and training; and
-    h.
-    Protect the contingency plan from unauthorized disclosure and modification.
-    Discussion: Contingency planning for systems is part of an overall program for achieving
-    continuity of operations for organizational mission and business functions. Contingency planning
-    addresses system restoration and implementation of alternative mission or business processes
-    when systems are compromised or breached. Contingency planning is considered throughout the
-    system development life cycle and is a fundamental part of the system design. Systems can be
-    designed for redundancy, to provide backup capabilities, and for resilience. Contingency plans
-    reflect the degree of restoration required for organizational systems since not all systems need
-    to fully recover to achieve the level of continuity of operations desired. System recovery
-    objectives reflect applicable laws, executive orders, directives, regulations, policies, standards,
-    guidelines, organizational risk tolerance, and system impact level.
-    Actions addressed in contingency plans include orderly system degradation, system shutdown,
-    fallback to a manual mode, alternate information flows, and operating in modes reserved for
-    when systems are under attack. By coordinating contingency planning with incident handling
-    activities, organizations ensure that the necessary planning activities are in place and activated in
-    the event of an incident. Organizations consider whether continuity of operations during an
-    incident conflicts with the capability to automatically disable the system, as specified in IR-4(5).
-    Incident response planning is part of contingency planning for organizations and is addressed in
-    the IR (Incident Response) family.
-    Related Controls: CP-3, CP-4, CP-6, CP-7, CP-8, CP-9, CP-10, CP-11, CP-13, IR-4, IR-6, IR-8, IR-9,
-    MA-6, MP-2, MP-4, MP-5, PL-2, PM-8, PM-11, SA-15, SA-20, SC-7, SC-23, SI-12.
-    Control Enhancements:
-    (1) CONTINGENCY PLAN | COORDINATE WITH RELATED PLANS
+1. Identifies essential mission and business functions and associated contingency
+   requirements;
+2. Provides recovery objectives, restoration priorities, and metrics;
+3. Addresses contingency roles, responsibilities, assigned individuals with contact
+   information;
+4. Addresses maintaining essential mission and business functions despite a system
+   disruption, compromise, or failure;
+5. Addresses eventual, full system restoration without deterioration of the controls
+   originally planned and implemented;
+6. Addresses the sharing of contingency information; and
+7. Is reviewed and approved by [Assignment: organization-defined personnel or roles];
+   b.
+   Distribute copies of the contingency plan to [Assignment: organization-defined key
+   contingency personnel (identified by name and/or by role) and organizational elements];
+   c.
+   Coordinate contingency planning activities with incident handling activities;
+   d.
+   Review the contingency plan for the system [Assignment: organization-defined frequency];
+   e.
+   Update the contingency plan to address changes to the organization, system, or
+   environment of operation and problems encountered during contingency plan
+   implementation, execution, or testing;
+   f.
+   Communicate contingency plan changes to [Assignment: organization-defined key
+   contingency personnel (identified by name and/or by role) and organizational elements];
+   g.
+   Incorporate lessons learned from contingency plan testing, training, or actual contingency
+   activities into contingency testing and training; and
+   h.
+   Protect the contingency plan from unauthorized disclosure and modification.
+   Discussion: Contingency planning for systems is part of an overall program for achieving
+   continuity of operations for organizational mission and business functions. Contingency planning
+   addresses system restoration and implementation of alternative mission or business processes
+   when systems are compromised or breached. Contingency planning is considered throughout the
+   system development life cycle and is a fundamental part of the system design. Systems can be
+   designed for redundancy, to provide backup capabilities, and for resilience. Contingency plans
+   reflect the degree of restoration required for organizational systems since not all systems need
+   to fully recover to achieve the level of continuity of operations desired. System recovery
+   objectives reflect applicable laws, executive orders, directives, regulations, policies, standards,
+   guidelines, organizational risk tolerance, and system impact level.
+   Actions addressed in contingency plans include orderly system degradation, system shutdown,
+   fallback to a manual mode, alternate information flows, and operating in modes reserved for
+   when systems are under attack. By coordinating contingency planning with incident handling
+   activities, organizations ensure that the necessary planning activities are in place and activated in
+   the event of an incident. Organizations consider whether continuity of operations during an
+   incident conflicts with the capability to automatically disable the system, as specified in IR-4(5).
+   Incident response planning is part of contingency planning for organizations and is addressed in
+   the IR (Incident Response) family.
+   Related Controls: CP-3, CP-4, CP-6, CP-7, CP-8, CP-9, CP-10, CP-11, CP-13, IR-4, IR-6, IR-8, IR-9,
+   MA-6, MP-2, MP-4, MP-5, PL-2, PM-8, PM-11, SA-15, SA-20, SC-7, SC-23, SI-12.
+   Control Enhancements:
+
+##### (1) CONTINGENCY PLAN | COORDINATE WITH RELATED PLANS
+
     Coordinate contingency plan development with organizational elements responsible for
     related plans.
     Discussion: Plans that are related to contingency plans include Business Continuity Plans,
@@ -6941,7 +6523,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Communications Plans, Insider Threat Implementation Plans, Data Breach Response Plans,
     Cyber Incident Response Plans, Breach Response Plans, and Occupant Emergency Plans.
     Related Controls: None.
-    (2) CONTINGENCY PLAN | CAPACITY PLANNING
+
+##### (2) CONTINGENCY PLAN | CAPACITY PLANNING
+
     Conduct capacity planning so that necessary capacity for information processing,
     telecommunications, and environmental support exists during contingency operations.
     Discussion: Capacity planning is needed because different threats can result in a reduction
@@ -6953,7 +6537,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     in a degraded state. Such determinations are based on an organizational assessment of risk,
     system categorization (impact level), and organizational risk tolerance.
     Related Controls: PE-11, PE-12, PE-13, PE-14, PE-18, SC-5.
-    (3) CONTINGENCY PLAN | RESUME MISSION AND BUSINESS FUNCTIONS
+
+##### (3) CONTINGENCY PLAN | RESUME MISSION AND BUSINESS FUNCTIONS
+
     Plan for the resumption of [Selection: all; essential] mission and business functions within
     [Assignment: organization-defined time period] of contingency plan activation.
     Discussion: Organizations may choose to conduct contingency planning activities to resume
@@ -6962,9 +6548,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     The time period for resuming mission and business functions may be dependent on the
     severity and extent of the disruptions to the system and its supporting infrastructure.
     Related Controls: None.
-    (4) CONTINGENCY PLAN | RESUME ALL MISSION AND BUSINESS FUNCTIONS
+
+##### (4) CONTINGENCY PLAN | RESUME ALL MISSION AND BUSINESS FUNCTIONS
+
     [Withdrawn: Incorporated into CP-2(3).]
-    (5) CONTINGENCY PLAN | CONTINUE MISSION AND BUSINESS FUNCTIONS
+
+##### (5) CONTINGENCY PLAN | CONTINUE MISSION AND BUSINESS FUNCTIONS
+
     Plan for the continuance of [Selection: all; essential] mission and business functions with
     minimal or no loss of operational continuity and sustains that continuity until full system
     restoration at primary processing and/or storage sites.
@@ -6974,7 +6564,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     contingency planning may change depending on the circumstances associated with the
     contingency.
     Related Controls: None.
-    (6) CONTINGENCY PLAN | ALTERNATE PROCESSING AND STORAGE SITES
+
+##### (6) CONTINGENCY PLAN | ALTERNATE PROCESSING AND STORAGE SITES
+
     Plan for the transfer of [Selection: all; essential] mission and business functions to
     alternate processing and/or storage sites with minimal or no loss of operational continuity
     and sustain that continuity through system restoration to primary processing and/or
@@ -6985,7 +6577,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     contingency planning may change depending on the circumstances associated with the
     contingency.
     Related Controls: None.
-    (7) CONTINGENCY PLAN | COORDINATE WITH EXTERNAL SERVICE PROVIDERS
+
+##### (7) CONTINGENCY PLAN | COORDINATE WITH EXTERNAL SERVICE PROVIDERS
+
     Coordinate the contingency plan with the contingency plans of external service providers
     to ensure that contingency requirements can be satisfied.
     Discussion: When the capability of an organization to carry out its mission and business
@@ -6995,7 +6589,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     planning activities with the external entities to ensure that the individual plans reflect the
     overall contingency needs of the organization.
     Related Controls: SA-9.
-    (8) CONTINGENCY PLAN | IDENTIFY CRITICAL ASSETS
+
+##### (8) CONTINGENCY PLAN | IDENTIFY CRITICAL ASSETS
+
     Identify critical system assets supporting [Selection: all; essential] mission and business
     functions.
     Discussion: Organizations may choose to identify critical assets as part of criticality analysis,
@@ -7022,31 +6618,33 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Provide contingency training to system users consistent with assigned roles and
     responsibilities:
 
-69. Within [Assignment: organization-defined time period] of assuming a contingency role
-    or responsibility;
-70. When required by system changes; and
-71. b.
-    [Assignment: organization-defined frequency] thereafter; and
-    Review and update contingency training content [Assignment: organization-defined
-    frequency] and following [Assignment: organization-defined events].
-    Discussion: Contingency training provided by organizations is linked to the assigned roles and
-    responsibilities of organizational personnel to ensure that the appropriate content and level of
-    detail is included in such training. For example, some individuals may only need to know when
-    and where to report for duty during contingency operations and if normal duties are affected;
-    system administrators may require additional training on how to establish systems at alternate
-    processing and storage sites; and organizational officials may receive more specific training on
-    how to conduct mission-essential functions in designated off-site locations and how to establish
-    communications with other governmental entities for purposes of coordination on contingencyrelated activities. Training for contingency roles or responsibilities reflects the specific continuity
-    requirements in the contingency plan. Events that may precipitate an update to contingency
-    training content include, but are not limited to, contingency plan testing or an actual contingency
-    (lessons learned), assessment or audit findings, security incidents or breaches, or changes in
-    laws, executive orders, directives, regulations, policies, standards, and guidelines. At the
-    discretion of the organization, participation in a contingency plan test or exercise, including
-    lessons learned sessions subsequent to the test or exercise, may satisfy contingency plan training
-    requirements.
-    Related Controls: AT-2, AT-3, AT-4, CP-2, CP-4, CP-8, IR-2, IR-4, IR-9.
-    Control Enhancements:
-    (1) CONTINGENCY TRAINING | SIMULATED EVENTS
+1. Within [Assignment: organization-defined time period] of assuming a contingency role
+   or responsibility;
+2. When required by system changes; and
+3. b.
+   [Assignment: organization-defined frequency] thereafter; and
+   Review and update contingency training content [Assignment: organization-defined
+   frequency] and following [Assignment: organization-defined events].
+   Discussion: Contingency training provided by organizations is linked to the assigned roles and
+   responsibilities of organizational personnel to ensure that the appropriate content and level of
+   detail is included in such training. For example, some individuals may only need to know when
+   and where to report for duty during contingency operations and if normal duties are affected;
+   system administrators may require additional training on how to establish systems at alternate
+   processing and storage sites; and organizational officials may receive more specific training on
+   how to conduct mission-essential functions in designated off-site locations and how to establish
+   communications with other governmental entities for purposes of coordination on contingencyrelated activities. Training for contingency roles or responsibilities reflects the specific continuity
+   requirements in the contingency plan. Events that may precipitate an update to contingency
+   training content include, but are not limited to, contingency plan testing or an actual contingency
+   (lessons learned), assessment or audit findings, security incidents or breaches, or changes in
+   laws, executive orders, directives, regulations, policies, standards, and guidelines. At the
+   discretion of the organization, participation in a contingency plan test or exercise, including
+   lessons learned sessions subsequent to the test or exercise, may satisfy contingency plan training
+   requirements.
+   Related Controls: AT-2, AT-3, AT-4, CP-2, CP-4, CP-8, IR-2, IR-4, IR-9.
+   Control Enhancements:
+
+##### (1) CONTINGENCY TRAINING | SIMULATED EVENTS
+
     Incorporate simulated events into contingency training to facilitate effective response by
     personnel in crisis situations.
     Discussion: The use of simulated events creates an environment for personnel to experience
@@ -7054,7 +6652,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     encrypt organizational data on servers, hurricanes that damage or destroy organizational
     facilities, or hardware or software failures.
     Related Controls: None.
-    (2) CONTINGENCY TRAINING | MECHANISMS USED IN TRAINING ENVIRONMENTS
+
+##### (2) CONTINGENCY TRAINING | MECHANISMS USED IN TRAINING ENVIRONMENTS
+
     Employ mechanisms used in operations to provide a more thorough and realistic
     contingency training environment.
     Discussion: Operational mechanisms refer to processes that have been established to
@@ -7086,7 +6686,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     actions.
     Related Controls: AT-3, CP-2, CP-3, CP-8, CP-9, IR-3, IR-4, PL-2, PM-14, SR-2.
     Control Enhancements:
-    (1) CONTINGENCY PLAN TESTING | COORDINATE WITH RELATED PLANS
+
+##### (1) CONTINGENCY PLAN TESTING | COORDINATE WITH RELATED PLANS
+
     Coordinate contingency plan testing with organizational elements responsible for related
     plans.
     Discussion: Plans related to contingency planning for organizational systems include
@@ -7097,7 +6699,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     elements with specific plans. However, it does require that if such organizational elements
     are responsible for related plans, organizations coordinate with those elements.
     Related Controls: IR-8, PM-8.
-    (2) CONTINGENCY PLAN TESTING | ALTERNATE PROCESSING SITE
+
+##### (2) CONTINGENCY PLAN TESTING | ALTERNATE PROCESSING SITE
+
     Test the contingency plan at the alternate processing site:
     (a) To familiarize contingency personnel with the facility and available resources; and
     (b) To evaluate the capabilities of the alternate processing site to support contingency
@@ -7109,7 +6713,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     functions. The on-site visit can also provide an opportunity to refine the contingency plan to
     address the vulnerabilities discovered during testing.
     Related Controls: CP-7.
-    (3) CONTINGENCY PLAN TESTING | AUTOMATED TESTING
+
+##### (3) CONTINGENCY PLAN TESTING | AUTOMATED TESTING
+
     Test the contingency plan using [Assignment: organization-defined automated
     mechanisms].
     Discussion: Automated mechanisms facilitate thorough and effective testing of contingency
@@ -7117,7 +6723,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     test scenarios and environments, and effectively stressing the system and supported mission
     and business functions.
     Related Controls: None.
-    (4) CONTINGENCY PLAN TESTING | FULL RECOVERY AND RECONSTITUTION
+
+##### (4) CONTINGENCY PLAN TESTING | FULL RECOVERY AND RECONSTITUTION
+
     Include a full recovery and reconstitution of the system to a known state as part of
     contingency plan testing.
     Discussion: Recovery is executing contingency plan activities to restore organizational
@@ -7127,7 +6735,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and data. Preserving system state information facilitates system restart and return to the
     operational mode of organizations with less disruption of mission and business processes.
     Related Controls: CP-10, SC-24.
-    (5) CONTINGENCY PLAN TESTING | SELF-CHALLENGE
+
+##### (5) CONTINGENCY PLAN TESTING | SELF-CHALLENGE
+
     Employ [Assignment: organization-defined mechanisms] to [Assignment: organizationdefined system or system component] to disrupt and adversely affect the system or system
     component.
     Discussion: Often, the best method of assessing system resilience is to disrupt the system in
@@ -7167,7 +6777,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     or disruption in organizational systems.
     Related Controls: CP-2, CP-7, CP-8, CP-9, CP-10, MP-4, MP-5, PE-3, SC-36, SI-13.
     Control Enhancements:
-    (1) ALTERNATE STORAGE SITE | SEPARATION FROM PRIMARY SITE
+
+##### (1) ALTERNATE STORAGE SITE | SEPARATION FROM PRIMARY SITE
+
     Identify an alternate storage site that is sufficiently separated from the primary storage
     site to reduce susceptibility to the same threats.
     Discussion: Threats that affect alternate storage sites are defined in organizational risk
@@ -7177,7 +6789,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     are of concern. For threats such as hostile attacks, the degree of separation between sites is
     less relevant.
     Related Controls: RA-3.
-    (2) ALTERNATE STORAGE SITE | RECOVERY TIME AND RECOVERY POINT OBJECTIVES
+
+##### (2) ALTERNATE STORAGE SITE | RECOVERY TIME AND RECOVERY POINT OBJECTIVES
+
     Configure the alternate storage site to facilitate recovery operations in accordance with
     recovery time and recovery point objectives.
     Discussion: Organizations establish recovery time and recovery point objectives as part of
@@ -7185,7 +6799,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and the systems supporting recovery operations that ensure accessibility and correct
     execution.
     Related Controls: None.
-    (3) ALTERNATE STORAGE SITE | ACCESSIBILITY
+
+##### (3) ALTERNATE STORAGE SITE | ACCESSIBILITY
+
     Identify potential accessibility problems to the alternate storage site in the event of an
     area-wide disruption or disaster and outline explicit mitigation actions.
     Discussion: Area-wide disruptions refer to those types of disruptions that are broad in
@@ -7227,7 +6843,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     functions despite disruption, compromise, or failure in organizational systems.
     Related Controls: CP-2, CP-6, CP-8, CP-9, CP-10, MA-6, PE-3, PE-11, PE-12, PE-17, SC-36, SI-13.
     Control Enhancements:
-    (1) ALTERNATE PROCESSING SITE | SEPARATION FROM PRIMARY SITE
+
+##### (1) ALTERNATE PROCESSING SITE | SEPARATION FROM PRIMARY SITE
+
     Identify an alternate processing site that is sufficiently separated from the primary
     processing site to reduce susceptibility to the same threats.
     Discussion: Threats that affect alternate processing sites are defined in organizational
@@ -7237,14 +6855,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     threats that are of concern. For threats such as hostile attacks, the degree of separation
     between sites is less relevant.
     Related Controls: RA-3.
-    (2) ALTERNATE PROCESSING SITE | ACCESSIBILITY
+
+##### (2) ALTERNATE PROCESSING SITE | ACCESSIBILITY
+
     Identify potential accessibility problems to alternate processing sites in the event of an
     area-wide disruption or disaster and outlines explicit mitigation actions.
     Discussion: Area-wide disruptions refer to those types of disruptions that are broad in
     geographic scope with such determinations made by organizations based on organizational
     assessments of risk.
     Related Controls: RA-3.
-    (3) ALTERNATE PROCESSING SITE | PRIORITY OF SERVICE
+
+##### (3) ALTERNATE PROCESSING SITE | PRIORITY OF SERVICE
+
     Develop alternate processing site agreements that contain priority-of-service provisions in
     accordance with availability requirements (including recovery time objectives).
     Discussion: Priority of service agreements refer to negotiated agreements with service
@@ -7253,16 +6875,22 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     processing and/or at the physical alternate processing site. Organizations establish recovery
     time objectives as part of contingency planning.
     Related Controls: None.
-    (4) ALTERNATE PROCESSING SITE | PREPARATION FOR USE
+
+##### (4) ALTERNATE PROCESSING SITE | PREPARATION FOR USE
+
     Prepare the alternate processing site so that the site can serve as the operational site
     supporting essential mission and business functions.
     Discussion: Site preparation includes establishing configuration settings for systems at the
     alternate processing site consistent with the requirements for such settings at the primary
     site and ensuring that essential supplies and logistical considerations are in place.
     Related Controls: CM-2, CM-6, CP-4.
-    (5) ALTERNATE PROCESSING SITE | EQUIVALENT INFORMATION SECURITY SAFEGUARDS
+
+##### (5) ALTERNATE PROCESSING SITE | EQUIVALENT INFORMATION SECURITY SAFEGUARDS
+
     [Withdrawn: Incorporated into CP-7.]
-    (6) ALTERNATE PROCESSING SITE | INABILITY TO RETURN TO PRIMARY SITE
+
+##### (6) ALTERNATE PROCESSING SITE | INABILITY TO RETURN TO PRIMARY SITE
+
     Plan and prepare for circumstances that preclude returning to the primary processing site.
     Discussion: There may be situations that preclude an organization from returning to the
     primary processing site such as if a natural disaster (e.g., flood or a hurricane) damaged or
@@ -7290,7 +6918,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     agreements.
     Related Controls: CP-2, CP-6, CP-7, CP-11, SC-7.
     Control Enhancements:
-    (1) TELECOMMUNICATIONS SERVICES | PRIORITY OF SERVICE PROVISIONS
+
+##### (1) TELECOMMUNICATIONS SERVICES | PRIORITY OF SERVICE PROVISIONS
+
     (a) Develop primary and alternate telecommunications service agreements that contain
     priority-of-service provisions in accordance with availability requirements (including
     recovery time objectives); and
@@ -7308,7 +6938,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     The TSP program is always in effect and not contingent on a major disaster or attack taking
     place. Federal sponsorship is required to enroll in the TSP program.
     Related Controls: None.
-    (2) TELECOMMUNICATIONS SERVICES | SINGLE POINTS OF FAILURE
+
+##### (2) TELECOMMUNICATIONS SERVICES | SINGLE POINTS OF FAILURE
+
     Obtain alternate telecommunications services to reduce the likelihood of sharing a single
     point of failure with primary telecommunications services.
     Discussion: In certain circumstances, telecommunications service providers or services may
@@ -7316,7 +6948,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     important to have provider transparency for the actual physical transmission capability for
     telecommunication services.
     Related Controls: None.
-    (3) TELECOMMUNICATIONS SERVICES | SEPARATION OF PRIMARY AND ALTERNATE PROVIDERS
+
+##### (3) TELECOMMUNICATIONS SERVICES | SEPARATION OF PRIMARY AND ALTERNATE PROVIDERS
+
     Obtain alternate telecommunications services from providers that are separated from
     primary service providers to reduce susceptibility to the same threats.
     Discussion: Threats that affect telecommunications services are defined in organizational
@@ -7328,7 +6962,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     provide alternate telecommunications services that meet the separation needs addressed in
     the risk assessment.
     Related Controls: None.
-    (4) TELECOMMUNICATIONS SERVICES | PROVIDER CONTINGENCY PLAN
+
+##### (4) TELECOMMUNICATIONS SERVICES | PROVIDER CONTINGENCY PLAN
+
     (a) Require primary and alternate telecommunications service providers to have
     contingency plans;
     (b) Review provider contingency plans to ensure that the plans meet organizational
@@ -7343,7 +6979,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     use these types of activities to satisfy evidentiary requirements related to service provider
     contingency plan reviews, testing, and training.
     Related Controls: CP-3, CP-4.
-    (5) TELECOMMUNICATIONS SERVICES | ALTERNATE TELECOMMUNICATION SERVICE TESTING
+
+##### (5) TELECOMMUNICATIONS SERVICES | ALTERNATE TELECOMMUNICATION SERVICE TESTING
+
     Test alternate telecommunication services [Assignment: organization-defined frequency].
     Discussion: Alternate telecommunications services testing is arranged through contractual
     agreements with service providers. The testing may occur in parallel with normal operations
@@ -7380,7 +7018,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     legal counsel regarding such requirements.
     Related Controls: CP-2, CP-6, CP-10, MP-4, MP-5, SC-8, SC-12, SC-13, SI-4, SI-13.
     Control Enhancements:
-    (1) SYSTEM BACKUP | TESTING FOR RELIABILITY AND INTEGRITY
+
+##### (1) SYSTEM BACKUP | TESTING FOR RELIABILITY AND INTEGRITY
+
     Test backup information [Assignment: organization-defined frequency] to verify media
     reliability and information integrity.
     Discussion: Organizations need assurance that backup information can be reliably retrieved.
@@ -7391,7 +7031,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     backup files from the alternate storage or backup site and comparing the information to the
     same information at the primary processing site can provide such assurance.
     Related Controls: CP-4.
-    (2) SYSTEM BACKUP | TEST RESTORATION USING SAMPLING
+
+##### (2) SYSTEM BACKUP | TEST RESTORATION USING SAMPLING
+
     Use a sample of backup information in the restoration of selected system functions as part
     of contingency plan testing.
     Discussion: Organizations need assurance that system functions can be restored correctly
@@ -7401,7 +7043,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Organizations can determine the sample size for the functions and backup information
     based on the level of assurance needed.
     Related Controls: CP-4.
-    (3) SYSTEM BACKUP | SEPARATE STORAGE FOR CRITICAL INFORMATION
+
+##### (3) SYSTEM BACKUP | SEPARATE STORAGE FOR CRITICAL INFORMATION
+
     Store backup copies of [Assignment: organization-defined critical system software and
     other security-related information] in a separate facility or in a fire rated container that is
     not collocated with the operational system.
@@ -7415,16 +7059,22 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     storage sites (e.g., data centers). The General Services Administration (GSA) establishes
     standards and specifications for security and fire rated containers.
     Related Controls: CM-2, CM-6, CM-8.
-    (4) SYSTEM BACKUP | PROTECTION FROM UNAUTHORIZED MODIFICATION
+
+##### (4) SYSTEM BACKUP | PROTECTION FROM UNAUTHORIZED MODIFICATION
+
     [Withdrawn: Incorporated into CP-9.]
-    (5) SYSTEM BACKUP | TRANSFER TO ALTERNATE STORAGE SITE
+
+##### (5) SYSTEM BACKUP | TRANSFER TO ALTERNATE STORAGE SITE
+
     Transfer system backup information to the alternate storage site [Assignment:
     organization-defined time period and transfer rate consistent with the recovery time and
     recovery point objectives].
     Discussion: System backup information can be transferred to alternate storage sites either
     electronically or by the physical shipment of storage media.
     Related Controls: CP-7, MP-3, MP-4, MP-5.
-    (6) SYSTEM BACKUP | REDUNDANT SECONDARY SYSTEM
+
+##### (6) SYSTEM BACKUP | REDUNDANT SECONDARY SYSTEM
+
     Conduct system backup by maintaining a redundant secondary system that is not
     collocated with the primary system and that can be activated without loss of information
     or disruption to operations.
@@ -7433,7 +7083,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     If this type of redundancy is in place and there is sufficient geographic separation between
     the two systems, the secondary system can also serve as the alternate processing site.
     Related Controls: CP-7.
-    (7) SYSTEM BACKUP | DUAL AUTHORIZATION FOR DELETION OR DESTRUCTION
+
+##### (7) SYSTEM BACKUP | DUAL AUTHORIZATION FOR DELETION OR DESTRUCTION
+
     Enforce dual authorization for the deletion or destruction of [Assignment: organizationdefined backup information].
     Discussion: Dual authorization ensures that deletion or destruction of backup information
     cannot occur unless two qualified individuals carry out the task. Individuals deleting or
@@ -7442,7 +7094,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     authorization may also be known as two-person control. To reduce the risk of collusion,
     organizations consider rotating dual authorization duties to other individuals.
     Related Controls: AC-3, AC-5, MP-2.
-    (8) SYSTEM BACKUP | CRYPTOGRAPHIC PROTECTION
+
+##### (8) SYSTEM BACKUP | CRYPTOGRAPHIC PROTECTION
+
     Implement cryptographic mechanisms to prevent unauthorized disclosure and
     modification of [Assignment: organization-defined backup information].
     Discussion: The selection of cryptographic mechanisms is based on the need to protect the
@@ -7473,25 +7127,37 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     of contingency planning.
     Related Controls: CP-2, CP-4, CP-6, CP-7, CP-9, IR-4, SA-8, SC-24, SI-13.
     Control Enhancements:
-    (1) SYSTEM RECOVERY AND RECONSTITUTION | CONTINGENCY PLAN TESTING
+
+##### (1) SYSTEM RECOVERY AND RECONSTITUTION | CONTINGENCY PLAN TESTING
+
     [Withdrawn: Incorporated into CP-4.]
-    (2) SYSTEM RECOVERY AND RECONSTITUTION | TRANSACTION RECOVERY
+
+##### (2) SYSTEM RECOVERY AND RECONSTITUTION | TRANSACTION RECOVERY
+
     Implement transaction recovery for systems that are transaction-based.
     Discussion: Transaction-based systems include database management systems and
     transaction processing systems. Mechanisms supporting transaction recovery include
     transaction rollback and transaction journaling.
     Related Controls: None.
-    (3) SYSTEM RECOVERY AND RECONSTITUTION | COMPENSATING SECURITY CONTROLS
+
+##### (3) SYSTEM RECOVERY AND RECONSTITUTION | COMPENSATING SECURITY CONTROLS
+
     [Withdrawn: Addressed through tailoring.]
-    (4) SYSTEM RECOVERY AND RECONSTITUTION | RESTORE WITHIN TIME PERIOD
+
+##### (4) SYSTEM RECOVERY AND RECONSTITUTION | RESTORE WITHIN TIME PERIOD
+
     Provide the capability to restore system components within [Assignment: organizationdefined restoration time periods] from configuration-controlled and integrity-protected
     information representing a known, operational state for the components.
     Discussion: Restoration of system components includes reimaging, which restores the
     components to known, operational states.
     Related Controls: CM-2, CM-6.
-    (5) SYSTEM RECOVERY AND RECONSTITUTION | FAILOVER CAPABILITY
+
+##### (5) SYSTEM RECOVERY AND RECONSTITUTION | FAILOVER CAPABILITY
+
     [Withdrawn: Incorporated into SI-13.]
-    (6) SYSTEM RECOVERY AND RECONSTITUTION | COMPONENT PROTECTION
+
+##### (6) SYSTEM RECOVERY AND RECONSTITUTION | COMPONENT PROTECTION
+
     Protect system components used for recovery and reconstitution.
     Discussion: Protection of system recovery and reconstitution components (i.e., hardware,
     firmware, and software) includes physical and technical controls. Backup and restoration
@@ -7562,44 +7228,44 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-72. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] identification and authentication policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-73. Procedures to facilitate the implementation of the identification and authentication
-    policy and the associated identification and authentication controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the identification and authentication policy and
-    procedures; and
-    c.
-    Review and update the current identification and authentication:
-74. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-75. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Identification and authentication policy and procedures address the controls in the
-    IA family that are implemented within systems and organizations. The risk management strategy
-    is an important factor in establishing such policies and procedures. Policies and procedures
-    contribute to security and privacy assurance. Therefore, it is important that security and privacy
-    programs collaborate on the development of identification and authentication policy and
-    procedures. Security and privacy program policies and procedures at the organization level are
-    preferable, in general, and may obviate the need for mission- or system-specific policies and
-    procedures. The policy can be included as part of the general security and privacy policy or be
-    represented by multiple policies that reflect the complex nature of organizations. Procedures can
-    be established for security and privacy programs, for mission or business processes, and for
-    systems, if needed. Procedures describe how the policies or controls are implemented and can
-    be directed at the individual or role that is the object of the procedure. Procedures can be
-    documented in system security and privacy plans or in one or more separate documents. Events
-    that may precipitate an update to identification and authentication policy and procedures
-    include assessment or audit findings, security incidents or breaches, or changes in applicable
-    laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
-    restating controls does not constitute an organizational policy or procedure.
-    Related Controls: AC-1, PM-9, PS-8, SI-12.
-    Control Enhancements: None.
-    References: [OMB A-130], [FIPS 201-2], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-63-3], [SP
-    800-73-4], [SP 800-76-2], [SP 800-78-4], [SP 800-100], [IR 7874].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] identification and authentication policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the identification and authentication
+   policy and the associated identification and authentication controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the identification and authentication policy and
+   procedures; and
+   c.
+   Review and update the current identification and authentication:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Identification and authentication policy and procedures address the controls in the
+   IA family that are implemented within systems and organizations. The risk management strategy
+   is an important factor in establishing such policies and procedures. Policies and procedures
+   contribute to security and privacy assurance. Therefore, it is important that security and privacy
+   programs collaborate on the development of identification and authentication policy and
+   procedures. Security and privacy program policies and procedures at the organization level are
+   preferable, in general, and may obviate the need for mission- or system-specific policies and
+   procedures. The policy can be included as part of the general security and privacy policy or be
+   represented by multiple policies that reflect the complex nature of organizations. Procedures can
+   be established for security and privacy programs, for mission or business processes, and for
+   systems, if needed. Procedures describe how the policies or controls are implemented and can
+   be directed at the individual or role that is the object of the procedure. Procedures can be
+   documented in system security and privacy plans or in one or more separate documents. Events
+   that may precipitate an update to identification and authentication policy and procedures
+   include assessment or audit findings, security incidents or breaches, or changes in applicable
+   laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
+   restating controls does not constitute an organizational policy or procedure.
+   Related Controls: AC-1, PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [FIPS 201-2], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-63-3], [SP
+   800-73-4], [SP 800-76-2], [SP 800-78-4], [SP 800-100], [IR 7874].
 
 #### IA-2
 
@@ -7772,7 +7438,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     devices based on mission or business needs.
     Related Controls: AC-17, AC-18, AC-19, AU-6, CA-3, CA-9, IA-4, IA-5, IA-9, IA-11, SI-4.
     Control Enhancements:
-    (1) DEVICE IDENTIFICATION AND AUTHENTICATION | CRYPTOGRAPHIC BIDIRECTIONAL AUTHENTICATION
+
+##### (1) DEVICE IDENTIFICATION AND AUTHENTICATION | CRYPTOGRAPHIC BIDIRECTIONAL AUTHENTICATION
+
     Authenticate [Assignment: organization-defined devices and/or types of devices] before
     establishing [Selection (one or more): local; remote; network] connection using
     bidirectional authentication that is cryptographically based.
@@ -7782,10 +7450,14 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     through an external network. Bidirectional authentication provides stronger protection to
     validate the identity of other devices for connections that are of greater risk.
     Related Controls: SC-8, SC-12, SC-13.
-    (2) DEVICE IDENTIFICATION AND AUTHENTICATION | CRYPTOGRAPHIC BIDIRECTIONAL NETWORK
+
+##### (2) DEVICE IDENTIFICATION AND AUTHENTICATION | CRYPTOGRAPHIC BIDIRECTIONAL NETWORK
+
     AUTHENTICATION
     [Withdrawn: Incorporated into IA-3(1).]
-    (3) DEVICE IDENTIFICATION AND AUTHENTICATION | DYNAMIC ADDRESS ALLOCATION
+
+##### (3) DEVICE IDENTIFICATION AND AUTHENTICATION | DYNAMIC ADDRESS ALLOCATION
+
     (a) Where addresses are allocated dynamically, standardize dynamic address allocation
     lease information and the lease duration assigned to devices in accordance with
     [Assignment: organization-defined lease information and lease duration]; and
@@ -7793,7 +7465,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Discussion: The Dynamic Host Configuration Protocol (DHCP) is an example of a means by
     which clients can dynamically receive network address assignments.
     Related Controls: AU-2.
-    (4) DEVICE IDENTIFICATION AND AUTHENTICATION | DEVICE ATTESTATION
+
+##### (4) DEVICE IDENTIFICATION AND AUTHENTICATION | DEVICE ATTESTATION
+
     Handle device identification and authentication based on attestation by [Assignment:
     organization-defined configuration management process].
     Discussion: Device attestation refers to the identification and authentication of a device
@@ -7828,7 +7502,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     service, or device identifiers to different individuals, groups, roles, services, or devices.
     Related Controls: AC-5, IA-2, IA-3, IA-5, IA-8, IA-9, IA-12, MA-4, PE-2, PE-3, PE-4, PL-4, PM-12, PS3, PS-4, PS-5, SC-37.
     Control Enhancements:
-    (1) IDENTIFIER MANAGEMENT | PROHIBIT ACCOUNT IDENTIFIERS AS PUBLIC IDENTIFIERS
+
+##### (1) IDENTIFIER MANAGEMENT | PROHIBIT ACCOUNT IDENTIFIERS AS PUBLIC IDENTIFIERS
+
     Prohibit the use of system account identifiers that are the same as public identifiers for
     individual accounts.
     Discussion: Prohibiting account identifiers as public identifiers applies to any publicly
@@ -7840,11 +7516,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     guessing of identifiers. Additional protections are required for authenticators and credentials
     to protect the account.
     Related Controls: AT-2, PT-7.
-    (2) IDENTIFIER MANAGEMENT | SUPERVISOR AUTHORIZATION
+
+##### (2) IDENTIFIER MANAGEMENT | SUPERVISOR AUTHORIZATION
+
     [Withdrawn: Incorporated into IA-12(1).]
-    (3) IDENTIFIER MANAGEMENT | MULTIPLE FORMS OF CERTIFICATION
+
+##### (3) IDENTIFIER MANAGEMENT | MULTIPLE FORMS OF CERTIFICATION
+
     [Withdrawn: Incorporated into IA-12(2).]
-    (4) IDENTIFIER MANAGEMENT | IDENTIFY USER STATUS
+
+##### (4) IDENTIFIER MANAGEMENT | IDENTIFY USER STATUS
+
     Manage individual identifiers by uniquely identifying each individual as [Assignment:
     organization-defined characteristic identifying individual status].
     Discussion: Characteristics that identify the status of individuals include contractors, foreign
@@ -7853,7 +7535,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     personnel are communicating. For example, it might be useful for a government employee
     to know that one of the individuals on an email message is a contractor.
     Related Controls: None.
-    (5) IDENTIFIER MANAGEMENT | DYNAMIC MANAGEMENT
+
+##### (5) IDENTIFIER MANAGEMENT | DYNAMIC MANAGEMENT
+
     Manage individual identifiers dynamically in accordance with [Assignment: organizationdefined dynamic identifier policy].
     Discussion: In contrast to conventional approaches to identification that presume static
     accounts for preregistered users, many distributed systems establish identifiers at runtime
@@ -7862,16 +7546,22 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     establishment of identifiers. Pre-established trust relationships and mechanisms with
     appropriate authorities to validate credentials and related identifiers are essential.
     Related Controls: AC-16.
-    (6) IDENTIFIER MANAGEMENT | CROSS-ORGANIZATION MANAGEMENT
+
+##### (6) IDENTIFIER MANAGEMENT | CROSS-ORGANIZATION MANAGEMENT
+
     Coordinate with the following external organizations for cross-organization management
     of identifiers: [Assignment: organization-defined external organizations].
     Discussion: Cross-organization identifier management provides the capability to identify
     individuals, groups, roles, or devices when conducting cross-organization activities involving
     the processing, storage, or transmission of information.
     Related Controls: AU-16, IA-2, IA-5.
-    (7) IDENTIFIER MANAGEMENT | IN-PERSON REGISTRATION
+
+##### (7) IDENTIFIER MANAGEMENT | IN-PERSON REGISTRATION
+
     [Withdrawn: Incorporated into IA-12(4).]
-    (8) IDENTIFIER MANAGEMENT | PAIRWISE PSEUDONYMOUS IDENTIFIERS
+
+##### (8) IDENTIFIER MANAGEMENT | PAIRWISE PSEUDONYMOUS IDENTIFIERS
+
     Generate pairwise pseudonymous identifiers.
     Discussion: A pairwise pseudonymous identifier is an opaque unguessable subscriber
     identifier generated by an identity provider for use at a specific individual relying party.
@@ -7882,7 +7572,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     demonstrable relationship justifying an operational need for correlation, or all parties
     consent to being correlated in such a manner.
     Related Controls: IA-5.
-    (9) IDENTIFIER MANAGEMENT | ATTRIBUTE MAINTENANCE AND PROTECTION
+
+##### (9) IDENTIFIER MANAGEMENT | ATTRIBUTE MAINTENANCE AND PROTECTION
+
     Maintain the attributes for each uniquely identified individual, device, or service in
     [Assignment: organization-defined protected central storage].
     Discussion: For each of the entities covered in IA-2, IA-3, IA-8, and IA-9, it is important to
@@ -7940,7 +7632,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     includes issuing and revoking authenticators for temporary access when no longer needed.
     Related Controls: AC-3, AC-6, CM-6, IA-2, IA-4, IA-7, IA-8, IA-9, MA-4, PE-2, PL-4, SC-12, SC-13.
     Control Enhancements:
-    (1) AUTHENTICATOR MANAGEMENT | PASSWORD-BASED AUTHENTICATION
+
+##### (1) AUTHENTICATOR MANAGEMENT | PASSWORD-BASED AUTHENTICATION
+
     For password-based authentication:
     (a) Maintain a list of commonly-used, expected, or compromised passwords and update
     the list [Assignment: organization-defined frequency] and when organizational
@@ -7968,7 +7662,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     breach corpuses, dictionary words, and repetitive or sequential characters. The list includes
     context-specific words, such as the name of the service, username, and derivatives thereof.
     Related Controls: IA-6.
-    (2) AUTHENTICATOR MANAGEMENT | PUBLIC KEY-BASED AUTHENTICATION
+
+##### (2) AUTHENTICATOR MANAGEMENT | PUBLIC KEY-BASED AUTHENTICATION
+
     (a) For public key-based authentication:
     (1) Enforce authorized access to the corresponding private key; and
     (2) Map the authenticated identity to the account of the individual or group; and
@@ -7986,12 +7682,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     availability in situations where organizations are unable to access revocation information via
     the network.
     Related Controls: IA-3, SC-17.
-    (3) AUTHENTICATOR MANAGEMENT | IN-PERSON OR TRUSTED EXTERNAL PARTY REGISTRATION
+
+##### (3) AUTHENTICATOR MANAGEMENT | IN-PERSON OR TRUSTED EXTERNAL PARTY REGISTRATION
+
     [Withdrawn: Incorporated into IA-12(4).]
-    (4) AUTHENTICATOR MANAGEMENT | AUTOMATED SUPPORT FOR PASSWORD STRENGTH
+
+##### (4) AUTHENTICATOR MANAGEMENT | AUTOMATED SUPPORT FOR PASSWORD STRENGTH
+
     DETERMINATION
     [Withdrawn: Incorporated into IA-5(1).]
-    (5) AUTHENTICATOR MANAGEMENT | CHANGE AUTHENTICATORS PRIOR TO DELIVERY
+
+##### (5) AUTHENTICATOR MANAGEMENT | CHANGE AUTHENTICATORS PRIOR TO DELIVERY
+
     Require developers and installers of system components to provide unique authenticators
     or change default authenticators prior to delivery and installation.
     Discussion: Changing authenticators prior to the delivery and installation of system
@@ -8002,7 +7704,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     included in acquisition documents prepared by organizations when procuring systems or
     system components.
     Related Controls: None.
-    (6) AUTHENTICATOR MANAGEMENT | PROTECTION OF AUTHENTICATORS
+
+##### (6) AUTHENTICATOR MANAGEMENT | PROTECTION OF AUTHENTICATORS
+
     Protect authenticators commensurate with the security category of the information to
     which use of the authenticator permits access.
     Discussion: For systems that contain multiple security categories of information without
@@ -8011,7 +7715,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     information on the systems. Security categories of information are determined as part of the
     security categorization process.
     Related Controls: RA-2.
-    (7) AUTHENTICATOR MANAGEMENT | NO EMBEDDED UNENCRYPTED STATIC AUTHENTICATORS
+
+##### (7) AUTHENTICATOR MANAGEMENT | NO EMBEDDED UNENCRYPTED STATIC AUTHENTICATORS
+
     Ensure that unencrypted static authenticators are not embedded in applications or other
     forms of static storage.
     Discussion: In addition to applications, other forms of static storage include access scripts
@@ -8019,7 +7725,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     stored authenticators are in encrypted or unencrypted form. If authenticators are used in
     the manner stored, then those representations are considered unencrypted authenticators.
     Related Controls: None.
-    (8) AUTHENTICATOR MANAGEMENT | MULTIPLE SYSTEM ACCOUNTS
+
+##### (8) AUTHENTICATOR MANAGEMENT | MULTIPLE SYSTEM ACCOUNTS
+
     Implement [Assignment: organization-defined security controls] to manage the risk of
     compromise due to individuals having accounts on multiple systems.
     Discussion: When individuals have accounts on multiple systems and use the same
@@ -8030,7 +7738,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     also use rules of behavior (see PL-4) and access agreements (see PS-6) to mitigate the risk of
     multiple system accounts.
     Related Controls: PS-6.
-    (9) AUTHENTICATOR MANAGEMENT | FEDERATED CREDENTIAL MANAGEMENT
+
+##### (9) AUTHENTICATOR MANAGEMENT | FEDERATED CREDENTIAL MANAGEMENT
+
     Use the following external organizations to federate credentials: [Assignment:
     organization-defined external organizations].
     Discussion: Federation provides organizations with the capability to authenticate individuals
@@ -8038,7 +7748,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     or transmission of information. Using a specific list of approved external organizations for
     authentication helps to ensure that those organizations are vetted and trusted.
     Related Controls: AU-7, AU-16.
-    (10) AUTHENTICATOR MANAGEMENT | DYNAMIC CREDENTIAL BINDING
+
+##### (10) AUTHENTICATOR MANAGEMENT | DYNAMIC CREDENTIAL BINDING
+
     Bind identities and authenticators dynamically using the following rules: [Assignment:
     organization-defined binding rules].
     Discussion: Authentication requires some form of binding between an identity and the
@@ -8054,9 +7766,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     provisioning of identities. Pre-established trust relationships and mechanisms with
     appropriate authorities to validate identities and related credentials are essential.
     Related Controls: AU-16, IA-5.
-    (11) AUTHENTICATOR MANAGEMENT | HARDWARE TOKEN-BASED AUTHENTICATION
+
+##### (11) AUTHENTICATOR MANAGEMENT | HARDWARE TOKEN-BASED AUTHENTICATION
+
     [Withdrawn: Incorporated into IA-2(1) and IA-2(2).]
-    (12) AUTHENTICATOR MANAGEMENT | BIOMETRIC AUTHENTICATION PERFORMANCE
+
+##### (12) AUTHENTICATOR MANAGEMENT | BIOMETRIC AUTHENTICATION PERFORMANCE
+
     For biometric-based authentication, employ mechanisms that satisfy the following
     biometric quality requirements [Assignment: organization-defined biometric quality
     requirements].
@@ -8068,14 +7784,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     performance requirements include the match rate, which reflects the accuracy of the
     biometric matching algorithm used by a system.
     Related Controls: AC-7.
-    (13) AUTHENTICATOR MANAGEMENT | EXPIRATION OF CACHED AUTHENTICATORS
+
+##### (13) AUTHENTICATOR MANAGEMENT | EXPIRATION OF CACHED AUTHENTICATORS
+
     Prohibit the use of cached authenticators after [Assignment: organization-defined time
     period].
     Discussion: Cached authenticators are used to authenticate to the local machine when the
     network is not available. If cached authentication information is out of date, the validity of
     the authentication information may be questionable.
     Related Controls: None.
-    (14) AUTHENTICATOR MANAGEMENT | MANAGING CONTENT OF PKI TRUST STORES
+
+##### (14) AUTHENTICATOR MANAGEMENT | MANAGING CONTENT OF PKI TRUST STORES
+
     For PKI-based authentication, employ an organization-wide methodology for managing the
     content of PKI trust stores installed across all platforms, including networks, operating
     systems, browsers, and applications.
@@ -8083,7 +7803,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     helps improve the accuracy and currency of PKI-based authentication credentials across the
     organization.
     Related Controls: None.
-    (15) AUTHENTICATOR MANAGEMENT | GSA-APPROVED PRODUCTS AND SERVICES
+
+##### (15) AUTHENTICATOR MANAGEMENT | GSA-APPROVED PRODUCTS AND SERVICES
+
     Use only General Services Administration-approved products and services for identity,
     credential, and access management.
     Discussion: General Services Administration (GSA)-approved products and services are
@@ -8093,7 +7815,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Credential, and Access Management (FICAM) policies, technologies, and implementation
     patterns.
     Related Controls: None.
-    (16) AUTHENTICATOR MANAGEMENT | IN-PERSON OR TRUSTED EXTERNAL PARTY AUTHENTICATOR
+
+##### (16) AUTHENTICATOR MANAGEMENT | IN-PERSON OR TRUSTED EXTERNAL PARTY AUTHENTICATOR
+
     ISSUANCE
     Require that the issuance of [Assignment: organization-defined types of and/or specific
     authenticators] be conducted [Selection: in person; by a trusted external party] before
@@ -8102,7 +7826,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Discussion: Issuing authenticators in person or by a trusted external party enhances and
     reinforces the trustworthiness of the identity proofing process.
     Related Controls: IA-12.
-    (17) AUTHENTICATOR MANAGEMENT | PRESENTATION ATTACK DETECTION FOR BIOMETRIC
+
+##### (17) AUTHENTICATOR MANAGEMENT | PRESENTATION ATTACK DETECTION FOR BIOMETRIC
+
     AUTHENTICATORS
     Employ presentation attack detection mechanisms for biometric-based authentication.
     Discussion: Biometric characteristics do not constitute secrets. Such characteristics can be
@@ -8113,7 +7839,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     mitigate the risk of these types of attacks by making it difficult to produce artifacts intended
     to defeat the biometric sensor.
     Related Controls: AC-7.
-    (18) AUTHENTICATOR MANAGEMENT | PASSWORD MANAGERS
+
+##### (18) AUTHENTICATOR MANAGEMENT | PASSWORD MANAGERS
+
     (a) Employ [Assignment: organization-defined password managers] to generate and
     manage passwords; and
     (b) Protect the passwords using [Assignment: organization-defined controls].
@@ -8254,9 +7982,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     decisions.
     Related Controls: IA-3, IA-4, IA-5, SC-8.
     Control Enhancements:
-    (1) SERVICE IDENTIFICATION AND AUTHENTICATION | INFORMATION EXCHANGE
+
+##### (1) SERVICE IDENTIFICATION AND AUTHENTICATION | INFORMATION EXCHANGE
+
     [Withdrawn: Incorporated into IA-9.]
-    (2) SERVICE IDENTIFICATION AND AUTHENTICATION | TRANSMISSION OF DECISIONS
+
+##### (2) SERVICE IDENTIFICATION AND AUTHENTICATION | TRANSMISSION OF DECISIONS
+
     [Withdrawn: Incorporated into IA-9.]
     References: None.
 
@@ -8316,7 +8048,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     requirements.
     Related Controls: AC-5, IA-1, IA-2, IA-3, IA-4, IA-5, IA-6, IA-8.
     Control Enhancements:
-    (1) IDENTITY PROOFING | SUPERVISOR AUTHORIZATION
+
+##### (1) IDENTITY PROOFING | SUPERVISOR AUTHORIZATION
+
     Require that the registration process to receive an account for logical access includes
     supervisor or sponsor authorization.
     Discussion: Including supervisor or sponsor authorization as part of the registration process
@@ -8325,7 +8059,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and the user’s privileges are appropriate for the anticipated responsibilities and authorities
     within the organization.
     Related Controls: None.
-    (2) IDENTITY PROOFING | IDENTITY EVIDENCE
+
+##### (2) IDENTITY PROOFING | IDENTITY EVIDENCE
+
     Require evidence of individual identification be presented to the registration authority.
     Discussion: Identity evidence, such as documentary evidence or a combination of
     documents and biometrics, reduces the likelihood of individuals using fraudulent
@@ -8333,7 +8069,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     adversaries. The forms of acceptable evidence are consistent with the risks to the systems,
     roles, and privileges associated with the user’s account.
     Related Controls: None.
-    (3) IDENTITY PROOFING | IDENTITY EVIDENCE VALIDATION AND VERIFICATION
+
+##### (3) IDENTITY PROOFING | IDENTITY EVIDENCE VALIDATION AND VERIFICATION
+
     Require that the presented identity evidence be validated and verified through
     [Assignment: organizational defined methods of validation and verification].
     Discussion: Validation and verification of identity evidence increases the assurance that
@@ -8345,14 +8083,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     for validating and verifying identity evidence are consistent with the risks to the systems,
     roles, and privileges associated with the users account.
     Related Controls: None.
-    (4) IDENTITY PROOFING | IN-PERSON VALIDATION AND VERIFICATION
+
+##### (4) IDENTITY PROOFING | IN-PERSON VALIDATION AND VERIFICATION
+
     Require that the validation and verification of identity evidence be conducted in person
     before a designated registration authority.
     Discussion: In-person proofing reduces the likelihood of fraudulent credentials being issued
     because it requires the physical presence of individuals, the presentation of physical identity
     documents, and actual face-to-face interactions with designated registration authorities.
     Related Controls: None.
-    (5) IDENTITY PROOFING | ADDRESS CONFIRMATION
+
+##### (5) IDENTITY PROOFING | ADDRESS CONFIRMATION
+
     Require that a [Selection: registration code; notice of proofing] be delivered through an
     out-of-band channel to verify the users address (physical or digital) of record.
     Discussion: To make it more difficult for adversaries to pose as legitimate users during the
@@ -8363,7 +8105,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     an example of a physical address. Email addresses and telephone numbers are examples of
     digital addresses.
     Related Controls: IA-12.
-    (6) IDENTITY PROOFING | ACCEPT EXTERNALLY-PROOFED IDENTITIES
+
+##### (6) IDENTITY PROOFING | ACCEPT EXTERNALLY-PROOFED IDENTITIES
+
     Accept externally-proofed identities at [Assignment: organization-defined identity
     assurance level].
     Discussion: To limit unnecessary re-proofing of identities, particularly of non-PIV users,
@@ -8387,42 +8131,42 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-76. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] incident response policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-77. Procedures to facilitate the implementation of the incident response policy and the
-    associated incident response controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the incident response policy and procedures; and
-    c.
-    Review and update the current incident response:
-78. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-79. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Incident response policy and procedures address the controls in the IR family that
-    are implemented within systems and organizations. The risk management strategy is an
-    important factor in establishing such policies and procedures. Policies and procedures contribute
-    to security and privacy assurance. Therefore, it is important that security and privacy programs
-    collaborate on the development of incident response policy and procedures. Security and privacy
-    program policies and procedures at the organization level are preferable, in general, and may
-    obviate the need for mission- or system-specific policies and procedures. The policy can be
-    included as part of the general security and privacy policy or be represented by multiple policies
-    that reflect the complex nature of organizations. Procedures can be established for security and
-    privacy programs, for mission or business processes, and for systems, if needed. Procedures
-    describe how the policies or controls are implemented and can be directed at the individual or
-    role that is the object of the procedure. Procedures can be documented in system security and
-    privacy plans or in one or more separate documents. Events that may precipitate an update to
-    incident response policy and procedures include assessment or audit findings, security incidents
-    or breaches, or changes in laws, executive orders, directives, regulations, policies, standards, and
-    guidelines. Simply restating controls does not constitute an organizational policy or procedure.
-    Related Controls: PM-9, PS-8, SI-12.
-    Control Enhancements: None.
-    References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-50], [SP 800-61], [SP
-    800-83], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] incident response policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the incident response policy and the
+   associated incident response controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the incident response policy and procedures; and
+   c.
+   Review and update the current incident response:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Incident response policy and procedures address the controls in the IR family that
+   are implemented within systems and organizations. The risk management strategy is an
+   important factor in establishing such policies and procedures. Policies and procedures contribute
+   to security and privacy assurance. Therefore, it is important that security and privacy programs
+   collaborate on the development of incident response policy and procedures. Security and privacy
+   program policies and procedures at the organization level are preferable, in general, and may
+   obviate the need for mission- or system-specific policies and procedures. The policy can be
+   included as part of the general security and privacy policy or be represented by multiple policies
+   that reflect the complex nature of organizations. Procedures can be established for security and
+   privacy programs, for mission or business processes, and for systems, if needed. Procedures
+   describe how the policies or controls are implemented and can be directed at the individual or
+   role that is the object of the procedure. Procedures can be documented in system security and
+   privacy plans or in one or more separate documents. Events that may precipitate an update to
+   incident response policy and procedures include assessment or audit findings, security incidents
+   or breaches, or changes in laws, executive orders, directives, regulations, policies, standards, and
+   guidelines. Simply restating controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-50], [SP 800-61], [SP
+   800-83], [SP 800-100].
 
 #### IR-2
 
@@ -8433,27 +8177,29 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Provide incident response training to system users consistent with assigned roles and
     responsibilities:
 
-80. Within [Assignment: organization-defined time period] of assuming an incident response
-    role or responsibility or acquiring system access;
-81. When required by system changes; and
-82. [Assignment: organization-defined frequency] thereafter; and
-    Review and update incident response training content [Assignment: organization-defined
-    frequency] and following [Assignment: organization-defined events].
-    Discussion: Incident response training is associated with the assigned roles and responsibilities
-    of organizational personnel to ensure that the appropriate content and level of detail are
-    included in such training. For example, users may only need to know who to call or how to
-    recognize an incident; system administrators may require additional training on how to handle
-    incidents; and incident responders may receive more specific training on forensics, data
-    collection techniques, reporting, system recovery, and system restoration. Incident response
-    training includes user training in identifying and reporting suspicious activities from external and
-    internal sources. Incident response training for users may be provided as part of AT-2 or AT-3.
-    Events that may precipitate an update to incident response training content include, but are not
-    limited to, incident response plan testing or response to an actual incident (lessons learned),
-    assessment or audit findings, or changes in applicable laws, executive orders, directives,
-    regulations, policies, standards, and guidelines.
-    Related Controls: AT-2, AT-3, AT-4, CP-3, IR-3, IR-4, IR-8, IR-9.
-    Control Enhancements:
-    (1) INCIDENT RESPONSE TRAINING | SIMULATED EVENTS
+1. Within [Assignment: organization-defined time period] of assuming an incident response
+   role or responsibility or acquiring system access;
+2. When required by system changes; and
+3. [Assignment: organization-defined frequency] thereafter; and
+   Review and update incident response training content [Assignment: organization-defined
+   frequency] and following [Assignment: organization-defined events].
+   Discussion: Incident response training is associated with the assigned roles and responsibilities
+   of organizational personnel to ensure that the appropriate content and level of detail are
+   included in such training. For example, users may only need to know who to call or how to
+   recognize an incident; system administrators may require additional training on how to handle
+   incidents; and incident responders may receive more specific training on forensics, data
+   collection techniques, reporting, system recovery, and system restoration. Incident response
+   training includes user training in identifying and reporting suspicious activities from external and
+   internal sources. Incident response training for users may be provided as part of AT-2 or AT-3.
+   Events that may precipitate an update to incident response training content include, but are not
+   limited to, incident response plan testing or response to an actual incident (lessons learned),
+   assessment or audit findings, or changes in applicable laws, executive orders, directives,
+   regulations, policies, standards, and guidelines.
+   Related Controls: AT-2, AT-3, AT-4, CP-3, IR-3, IR-4, IR-8, IR-9.
+   Control Enhancements:
+
+##### (1) INCIDENT RESPONSE TRAINING | SIMULATED EVENTS
+
     Incorporate simulated events into incident response training to facilitate the required
     response by personnel in crisis situations.
     Discussion: Organizations establish requirements for responding to incidents in incident
@@ -8461,14 +8207,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     ensure that personnel understand their individual responsibilities and what specific actions
     to take in crisis situations.
     Related Controls: None.
-    (2) INCIDENT RESPONSE TRAINING | AUTOMATED TRAINING ENVIRONMENTS
+
+##### (2) INCIDENT RESPONSE TRAINING | AUTOMATED TRAINING ENVIRONMENTS
+
     Provide an incident response training environment using [Assignment: organizationdefined automated mechanisms].
     Discussion: Automated mechanisms can provide a more thorough and realistic incident
     response training environment. This can be accomplished, for example, by providing more
     complete coverage of incident response issues, selecting more realistic training scenarios
     and environments, and stressing the response capability.
     Related Controls: None.
-    (3) INCIDENT RESPONSE TRAINING | BREACH
+
+##### (3) INCIDENT RESPONSE TRAINING | BREACH
+
     Provide incident response training on how to identify and respond to a breach, including
     the organization’s process for reporting a breach.
     Discussion: For federal agencies, an incident that involves personally identifiable
@@ -8497,7 +8247,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     in determining the effectiveness of incident response processes.
     Related Controls: CP-3, CP-4, IR-2, IR-4, IR-8, PM-14.
     Control Enhancements:
-    (1) INCIDENT RESPONSE TESTING | AUTOMATED TESTING
+
+##### (1) INCIDENT RESPONSE TESTING | AUTOMATED TESTING
+
     Test the incident response capability using [Assignment: organization-defined automated
     mechanisms].
     Discussion: Organizations use automated mechanisms to more thoroughly and effectively
@@ -8505,14 +8257,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     coverage of incident response issues, selecting realistic test scenarios and environments, and
     stressing the response capability.
     Related Controls: None.
-    (2) INCIDENT RESPONSE TESTING | COORDINATION WITH RELATED PLANS
+
+##### (2) INCIDENT RESPONSE TESTING | COORDINATION WITH RELATED PLANS
+
     Coordinate incident response testing with organizational elements responsible for related
     plans.
     Discussion: Organizational plans related to incident response testing include business
     continuity plans, disaster recovery plans, continuity of operations plans, contingency plans,
     crisis communications plans, critical infrastructure plans, and occupant emergency plans.
     Related Controls: None.
-    (3) INCIDENT RESPONSE TESTING | CONTINUOUS IMPROVEMENT
+
+##### (3) INCIDENT RESPONSE TESTING | CONTINUOUS IMPROVEMENT
+
     Use qualitative and quantitative data from testing to:
     (a) Determine the effectiveness of incident response processes;
     (b) Continuously improve incident response processes; and
@@ -8561,14 +8317,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     than authorized purposes.
     Related Controls: AC-19, AU-6, AU-7, CM-6, CP-2, CP-3, CP-4, IR-2, IR-3, IR-5, IR-6, IR-8, PE-6, PL2, PM-12, SA-8, SC-5, SC-7, SI-3, SI-4, SI-7.
     Control Enhancements:
-    (1) INCIDENT HANDLING | AUTOMATED INCIDENT HANDLING PROCESSES
+
+##### (1) INCIDENT HANDLING | AUTOMATED INCIDENT HANDLING PROCESSES
+
     Support the incident handling process using [Assignment: organization-defined automated
     mechanisms].
     Discussion: Automated mechanisms that support incident handling processes include online
     incident management systems and tools that support the collection of live response data,
     full network packet capture, and forensic analysis.
     Related Controls: None.
-    (2) INCIDENT HANDLING | DYNAMIC RECONFIGURATION
+
+##### (2) INCIDENT HANDLING | DYNAMIC RECONFIGURATION
+
     Include the following types of dynamic reconfiguration for [Assignment: organizationdefined system components] as part of the incident response capability: [Assignment:
     organization-defined types of dynamic reconfiguration].
     Discussion: Dynamic reconfiguration includes changes to router rules, access control lists,
@@ -8579,7 +8339,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     reconfiguration of systems in the definition of the reconfiguration capability, considering the
     potential need for rapid response to effectively address cyber threats.
     Related Controls: AC-2, AC-4, CM-2.
-    (3) INCIDENT HANDLING | CONTINUITY OF OPERATIONS
+
+##### (3) INCIDENT HANDLING | CONTINUITY OF OPERATIONS
+
     Identify [Assignment: organization-defined classes of incidents] and take the following
     actions in response to those incidents to ensure continuation of organizational mission and
     business functions: [Assignment: organization-defined actions to take in response to
@@ -8593,14 +8355,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     operations requirements during an incident conflict with the capability to automatically
     disable the system as specified as part of IR-4(5).
     Related Controls: None.
-    (4) INCIDENT HANDLING | INFORMATION CORRELATION
+
+##### (4) INCIDENT HANDLING | INFORMATION CORRELATION
+
     Correlate incident information and individual incident responses to achieve an
     organization-wide perspective on incident awareness and response.
     Discussion: Sometimes, a threat event, such as a hostile cyber-attack, can only be observed
     by bringing together information from different sources, including various reports and
     reporting procedures established by organizations.
     Related Controls: None.
-    (5) INCIDENT HANDLING | AUTOMATIC DISABLING OF SYSTEM
+
+##### (5) INCIDENT HANDLING | AUTOMATIC DISABLING OF SYSTEM
+
     Implement a configurable capability to automatically disable the system if [Assignment:
     organization-defined security violations] are detected.
     Discussion: Organizations consider whether the capability to automatically disable the
@@ -8609,13 +8375,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     that could adversely impact organizational missions or functions or jeopardize the safety of
     individuals.
     Related Controls: None.
-    (6) INCIDENT HANDLING | INSIDER THREATS
+
+##### (6) INCIDENT HANDLING | INSIDER THREATS
+
     Implement an incident handling capability for incidents involving insider threats.
     Discussion: Explicit focus on handling incidents involving insider threats provides additional
     emphasis on this type of threat and the need for specific incident handling capabilities to
     provide appropriate and timely responses.
     Related Controls: None.
-    (7) INCIDENT HANDLING | INSIDER THREATS — INTRA-ORGANIZATION COORDINATION
+
+##### (7) INCIDENT HANDLING | INSIDER THREATS — INTRA-ORGANIZATION COORDINATION
+
     Coordinate an incident handling capability for insider threats that includes the following
     organizational entities [Assignment: organization-defined entities].
     Discussion: Incident handling for insider threat incidents (e.g., preparation, detection and
@@ -8626,7 +8396,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     agency official for privacy, and legal counsel. In addition, organizations may require external
     support from federal, state, and local law enforcement agencies.
     Related Controls: None.
-    (8) INCIDENT HANDLING | CORRELATION WITH EXTERNAL ORGANIZATIONS
+
+##### (8) INCIDENT HANDLING | CORRELATION WITH EXTERNAL ORGANIZATIONS
+
     Coordinate with [Assignment: organization-defined external organizations] to correlate
     and share [Assignment: organization-defined incident information] to achieve a crossorganization perspective on incident awareness and more effective incident responses.
     Discussion: The coordination of incident information with external organizations—including
@@ -8636,14 +8408,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     variety of sources to effectively respond to incidents and breaches that could potentially
     affect the organization’s operations, assets, and individuals.
     Related Controls: AU-16, PM-16.
-    (9) INCIDENT HANDLING | DYNAMIC RESPONSE CAPABILITY
+
+##### (9) INCIDENT HANDLING | DYNAMIC RESPONSE CAPABILITY
+
     Employ [Assignment: organization-defined dynamic response capabilities] to respond to
     incidents.
     Discussion: The dynamic response capability addresses the timely deployment of new or
     replacement organizational capabilities in response to incidents. This includes capabilities
     implemented at the mission and business process level and at the system level.
     Related Controls: None.
-    (10) INCIDENT HANDLING | SUPPLY CHAIN COORDINATION
+
+##### (10) INCIDENT HANDLING | SUPPLY CHAIN COORDINATION
+
     Coordinate incident handling activities involving supply chain events with other
     organizations involved in the supply chain.
     Discussion: Organizations involved in supply chain activities include product developers,
@@ -8656,7 +8432,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     their obligations for reporting incidents to government oversight bodies (e.g., Federal
     Acquisition Security Council).
     Related Controls: CA-3, MA-2, SA-9, SR-8.
-    (11) INCIDENT HANDLING | INTEGRATED INCIDENT RESPONSE TEAM
+
+##### (11) INCIDENT HANDLING | INTEGRATED INCIDENT RESPONSE TEAM
+
     Establish and maintain an integrated incident response team that can be deployed to any
     location identified by the organization in [Assignment: organization-defined time period].
     Discussion: An integrated incident response team is a team of experts that assesses,
@@ -8681,7 +8459,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     disrupt those mission and business functions. Incident response teams can be distributed
     within organizations to make the capability resilient.
     Related Controls: AT-3.
-    (12) INCIDENT HANDLING | MALICIOUS CODE AND FORENSIC ANALYSIS
+
+##### (12) INCIDENT HANDLING | MALICIOUS CODE AND FORENSIC ANALYSIS
+
     Analyze malicious code and/or other residual artifacts remaining in the system after the
     incident.
     Discussion: When conducted carefully in an isolated environment, analysis of malicious code
@@ -8690,7 +8470,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     defining characteristics of the adversary. In addition, malicious code analysis can help the
     organization develop responses to future incidents.
     Related Controls: None.
-    (13) INCIDENT HANDLING | BEHAVIOR ANALYSIS
+
+##### (13) INCIDENT HANDLING | BEHAVIOR ANALYSIS
+
     Analyze anomalous or suspected adversarial behavior in or related to [Assignment:
     organization-defined environments or resources].
     Discussion: If the organization maintains a deception environment, an analysis of behaviors
@@ -8700,7 +8482,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     changes in system performance or usage patterns) or suspected behavior (e.g., changes in
     searches for the location of specific resources) can give the organization such insight.
     Related Controls: None.
-    (14) INCIDENT HANDLING | SECURITY OPERATIONS CENTER
+
+##### (14) INCIDENT HANDLING | SECURITY OPERATIONS CENTER
+
     Establish and maintain a security operations center.
     Discussion: A security operations center (SOC) is the focal point for security operations and
     computer network defense for an organization. The purpose of the SOC is to defend and
@@ -8718,7 +8502,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     dedicated SOC while smaller organizations may employ third-party organizations to provide
     such a capability.
     Related Controls: None.
-    (15) INCIDENT HANDLING | PUBLIC RELATIONS AND REPUTATION REPAIR
+
+##### (15) INCIDENT HANDLING | PUBLIC RELATIONS AND REPUTATION REPAIR
+
     (a) Manage public relations associated with an incident; and
     (b) Employ measures to repair the reputation of the organization.
     Discussion: It is important for an organization to have a strategy in place for addressing
@@ -8745,7 +8531,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     for monitoring.
     Related Controls: AU-6, AU-7, IR-4, IR-6, IR-8, PE-6, PM-5, SC-5, SC-7, SI-3, SI-4, SI-7.
     Control Enhancements:
-    (1) INCIDENT MONITORING | AUTOMATED TRACKING, DATA COLLECTION, AND ANALYSIS
+
+##### (1) INCIDENT MONITORING | AUTOMATED TRACKING, DATA COLLECTION, AND ANALYSIS
+
     Track incidents and collect and analyze incident information using [Assignment:
     organization-defined automated mechanisms].
     Discussion: Automated mechanisms for tracking incidents and collecting and analyzing
@@ -8770,13 +8558,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     technology products.
     Related Controls: CM-6, CP-2, IR-4, IR-5, IR-8, IR-9.
     Control Enhancements:
-    (1) INCIDENT REPORTING | AUTOMATED REPORTING
+
+##### (1) INCIDENT REPORTING | AUTOMATED REPORTING
+
     Report incidents using [Assignment: organization-defined automated mechanisms].
     Discussion: The recipients of incident reports are specified in IR-6b. Automated reporting
     mechanisms include email, posting on websites (with automatic updates), and automated
     incident response tools and programs.
     Related Controls: IR-7.
-    (2) INCIDENT REPORTING | VULNERABILITIES RELATED TO INCIDENTS
+
+##### (2) INCIDENT REPORTING | VULNERABILITIES RELATED TO INCIDENTS
+
     Report system vulnerabilities associated with reported incidents to [Assignment:
     organization-defined personnel or roles].
     Discussion: Reported incidents that uncover system vulnerabilities are analyzed by
@@ -8785,7 +8577,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     and the risk executive (function). The analysis can serve to prioritize and initiate mitigation
     actions to address the discovered system vulnerability.
     Related Controls: None.
-    (3) INCIDENT REPORTING | SUPPLY CHAIN COORDINATION
+
+##### (3) INCIDENT REPORTING | SUPPLY CHAIN COORDINATION
+
     Provide incident information to the provider of the product or service and other
     organizations involved in the supply chain or supply chain governance for systems or
     system components related to the incident.
@@ -8812,7 +8606,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     access to forensics services or consumer redress services, when required.
     Related Controls: AT-2, AT-3, IR-4, IR-6, IR-8, PM-22, PM-26, SA-9, SI-18.
     Control Enhancements:
-    (1) INCIDENT RESPONSE ASSISTANCE | AUTOMATION SUPPORT FOR AVAILABILITY OF INFORMATION AND
+
+##### (1) INCIDENT RESPONSE ASSISTANCE | AUTOMATION SUPPORT FOR AVAILABILITY OF INFORMATION AND
+
     SUPPORT
     Increase the availability of incident response information and support using [Assignment:
     organization-defined automated mechanisms].
@@ -8822,7 +8618,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     information to users (general distribution or targeted) as part of increasing understanding of
     current response capabilities and support.
     Related Controls: None.
-    (2) INCIDENT RESPONSE ASSISTANCE | COORDINATION WITH EXTERNAL PROVIDERS
+
+##### (2) INCIDENT RESPONSE ASSISTANCE | COORDINATION WITH EXTERNAL PROVIDERS
+
     (a) Establish a direct, cooperative relationship between its incident response capability
     and external providers of system protection capability; and
     (b) Identify organizational incident response team members to the external providers.
@@ -8842,21 +8640,21 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     a.
     Develop an incident response plan that:
 
-83. Provides the organization with a roadmap for implementing its incident response
-    capability;
-84. Describes the structure and organization of the incident response capability;
-85. Provides a high-level approach for how the incident response capability fits into the
-    overall organization;
-86. Meets the unique requirements of the organization, which relate to mission, size,
-    structure, and functions;
-87. Defines reportable incidents;
-88. Provides metrics for measuring the incident response capability within the organization;
-89. Defines the resources and management support needed to effectively maintain and
-    mature an incident response capability;
-90. Addresses the sharing of incident information;
-91. Is reviewed and approved by [Assignment: organization-defined personnel or roles]
-    [Assignment: organization-defined frequency]; and
-92. Explicitly designates responsibility for incident response to [Assignment: organizationdefined entities, personnel, or roles].
+1. Provides the organization with a roadmap for implementing its incident response
+   capability;
+2. Describes the structure and organization of the incident response capability;
+3. Provides a high-level approach for how the incident response capability fits into the
+   overall organization;
+4. Meets the unique requirements of the organization, which relate to mission, size,
+   structure, and functions;
+5. Defines reportable incidents;
+6. Provides metrics for measuring the incident response capability within the organization;
+7. Defines the resources and management support needed to effectively maintain and
+   mature an incident response capability;
+8. Addresses the sharing of incident information;
+9. Is reviewed and approved by [Assignment: organization-defined personnel or roles]
+   [Assignment: organization-defined frequency]; and
+10. Explicitly designates responsibility for incident response to [Assignment: organizationdefined entities, personnel, or roles].
     b.
     Distribute copies of the incident response plan to [Assignment: organization-defined incident
     response personnel (identified by name and/or by role) and organizational elements];
@@ -8878,7 +8676,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     notice accordingly.
     Related Controls: AC-2, CP-2, CP-4, IR-4, IR-7, IR-9, PE-6, PL-2, SA-15, SI-12, SR-8.
     Control Enhancements:
-    (1) INCIDENT RESPONSE PLAN | BREACHES
+
+##### (1) INCIDENT RESPONSE PLAN | BREACHES
+
     Include the following in the Incident Response Plan for breaches involving personally
     identifiable information:
     (a) A process to determine if notice to individuals or other organizations, including
@@ -8926,9 +8726,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     further spreading the contamination before such contamination is isolated and eradicated.
     Related Controls: CP-2, IR-6, PM-26, PM-27, PT-2, PT-3, PT-7, RA-7.
     Control Enhancements:
-    (1) INFORMATION SPILLAGE RESPONSE | RESPONSIBLE PERSONNEL
+
+##### (1) INFORMATION SPILLAGE RESPONSE | RESPONSIBLE PERSONNEL
+
     [Withdrawn: Incorporated into IR-9.]
-    (2) INFORMATION SPILLAGE RESPONSE | TRAINING
+
+##### (2) INFORMATION SPILLAGE RESPONSE | TRAINING
+
     Provide information spillage response training [Assignment: organization-defined
     frequency].
     Discussion: Organizations establish requirements for responding to information spillage
@@ -8936,7 +8740,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     ensure that organizational personnel understand their individual responsibilities and what
     specific actions to take when spillage incidents occur.
     Related Controls: AT-2, AT-3, CP-3, IR-2.
-    (3) INFORMATION SPILLAGE RESPONSE | POST-SPILL OPERATIONS
+
+##### (3) INFORMATION SPILLAGE RESPONSE | POST-SPILL OPERATIONS
+
     Implement the following procedures to ensure that organizational personnel impacted by
     information spills can continue to carry out assigned tasks while contaminated systems are
     undergoing corrective actions: [Assignment: organization-defined procedures].
@@ -8945,7 +8751,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     corrective actions are being taken, which may potentially affect their ability to conduct
     organizational business.
     Related Controls: None.
-    (4) INFORMATION SPILLAGE RESPONSE | EXPOSURE TO UNAUTHORIZED PERSONNEL
+
+##### (4) INFORMATION SPILLAGE RESPONSE | EXPOSURE TO UNAUTHORIZED PERSONNEL
+
     Employ the following controls for personnel exposed to information not within assigned
     access authorizations: [Assignment: organization-defined controls].
     Discussion: Controls include ensuring that personnel who are exposed to spilled information
@@ -8971,41 +8779,41 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-93. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] maintenance policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-94. Procedures to facilitate the implementation of the maintenance policy and the
-    associated maintenance controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the maintenance policy and procedures; and
-    c.
-    Review and update the current maintenance:
-95. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-96. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events].
-    Discussion: Maintenance policy and procedures address the controls in the MA family that are
-    implemented within systems and organizations. The risk management strategy is an important
-    factor in establishing such policies and procedures. Policies and procedures contribute to security
-    and privacy assurance. Therefore, it is important that security and privacy programs collaborate
-    on the development of maintenance policy and procedures. Security and privacy program
-    policies and procedures at the organization level are preferable, in general, and may obviate the
-    need for mission- or system-specific policies and procedures. The policy can be included as part
-    of the general security and privacy policy or be represented by multiple policies that reflect the
-    complex nature of organizations. Procedures can be established for security and privacy
-    programs, for mission or business processes, and for systems, if needed. Procedures describe
-    how the policies or controls are implemented and can be directed at the individual or role that is
-    the object of the procedure. Procedures can be documented in system security and privacy plans
-    or in one or more separate documents. Events that may precipitate an update to maintenance
-    policy and procedures assessment or audit findings, security incidents or breaches, or changes in
-    applicable laws, executive orders, directives, regulations, policies, standards, and guidelines.
-    Simply restating controls does not constitute an organizational policy or procedure.
-    Related Controls: PM-9, PS-8, SI-12.
-    Control Enhancements: None.
-    References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] maintenance policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the maintenance policy and the
+   associated maintenance controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the maintenance policy and procedures; and
+   c.
+   Review and update the current maintenance:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Maintenance policy and procedures address the controls in the MA family that are
+   implemented within systems and organizations. The risk management strategy is an important
+   factor in establishing such policies and procedures. Policies and procedures contribute to security
+   and privacy assurance. Therefore, it is important that security and privacy programs collaborate
+   on the development of maintenance policy and procedures. Security and privacy program
+   policies and procedures at the organization level are preferable, in general, and may obviate the
+   need for mission- or system-specific policies and procedures. The policy can be included as part
+   of the general security and privacy policy or be represented by multiple policies that reflect the
+   complex nature of organizations. Procedures can be established for security and privacy
+   programs, for mission or business processes, and for systems, if needed. Procedures describe
+   how the policies or controls are implemented and can be directed at the individual or role that is
+   the object of the procedure. Procedures can be documented in system security and privacy plans
+   or in one or more separate documents. Events that may precipitate an update to maintenance
+   policy and procedures assessment or audit findings, security incidents or breaches, or changes in
+   applicable laws, executive orders, directives, regulations, policies, standards, and guidelines.
+   Simply restating controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### MA-2 CONTROLLED MAINTENANCE
 
@@ -9042,9 +8850,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     associated with replacement components for systems.
     Related Controls: CM-2, CM-3, CM-4, CM-5, CM-8, MA-4, MP-6, PE-16, SI-2, SR-3, SR-4, SR-11.
     Control Enhancements:
-    (1) CONTROLLED MAINTENANCE | RECORD CONTENT
+
+##### (1) CONTROLLED MAINTENANCE | RECORD CONTENT
+
     [Withdrawn: Incorporated into MA-2.]
-    (2) CONTROLLED MAINTENANCE | AUTOMATED MAINTENANCE ACTIVITIES
+
+##### (2) CONTROLLED MAINTENANCE | AUTOMATED MAINTENANCE ACTIVITIES
+
     (a) Schedule, conduct, and document maintenance, repair, and replacement actions for
     the system using [Assignment: organization-defined automated mechanisms]; and
     (b) Produce up-to date, accurate, and complete records of all maintenance, repair, and
@@ -9079,7 +8891,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     tools.
     Related Controls: MA-2, PE-16.
     Control Enhancements:
-    (1) MAINTENANCE TOOLS | INSPECT TOOLS
+
+##### (1) MAINTENANCE TOOLS | INSPECT TOOLS
+
     Inspect the maintenance tools used by maintenance personnel for improper or
     unauthorized modifications.
     Discussion: Maintenance tools can be directly brought into a facility by maintenance
@@ -9088,14 +8902,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     the tools contain malicious code, the incident is handled consistent with organizational
     policies and procedures for incident handling.
     Related Controls: SI-7.
-    (2) MAINTENANCE TOOLS | INSPECT MEDIA
+
+##### (2) MAINTENANCE TOOLS | INSPECT MEDIA
+
     Check media containing diagnostic and test programs for malicious code before the media
     are used in the system.
     Discussion: If, upon inspection of media containing maintenance, diagnostic, and test
     programs, organizations determine that the media contains malicious code, the incident is
     handled consistent with organizational incident handling policies and procedures.
     Related Controls: SI-3.
-    (3) MAINTENANCE TOOLS | PREVENT UNAUTHORIZED REMOVAL
+
+##### (3) MAINTENANCE TOOLS | PREVENT UNAUTHORIZED REMOVAL
+
     Prevent the removal of maintenance equipment containing organizational information by:
     (a) Verifying that there is no organizational information contained on the equipment;
     (b) Sanitizing or destroying the equipment;
@@ -9106,18 +8924,24 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     any information provided to organizations for which the organizations serve as information
     stewards.
     Related Controls: MP-6.
-    (4) MAINTENANCE TOOLS | RESTRICTED TOOL USE
+
+##### (4) MAINTENANCE TOOLS | RESTRICTED TOOL USE
+
     Restrict the use of maintenance tools to authorized personnel only.
     Discussion: Restricting the use of maintenance tools to only authorized personnel applies to
     systems that are used to carry out maintenance functions.
     Related Controls: AC-3, AC-5, AC-6.
-    (5) MAINTENANCE TOOLS | EXECUTION WITH PRIVILEGE
+
+##### (5) MAINTENANCE TOOLS | EXECUTION WITH PRIVILEGE
+
     Monitor the use of maintenance tools that execute with increased privilege.
     Discussion: Maintenance tools that execute with increased system privilege can result in
     unauthorized access to organizational information and assets that would otherwise be
     inaccessible.
     Related Controls: AC-3, AC-6.
-    (6) MAINTENANCE TOOLS | SOFTWARE UPDATES AND PATCHES
+
+##### (6) MAINTENANCE TOOLS | SOFTWARE UPDATES AND PATCHES
+
     Inspect maintenance tools to ensure the latest software updates and patches are installed.
     Discussion: Maintenance tools using outdated and/or unpatched software can provide a
     threat vector for adversaries and result in a significant vulnerability for organizations.
@@ -9152,7 +8976,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Related Controls: AC-2, AC-3, AC-6, AC-17, AU-2, AU-3, IA-2, IA-4, IA-5, IA-8, MA-2, MA-5, PL-2,
     SC-7, SC-10.
     Control Enhancements:
-    (1) NONLOCAL MAINTENANCE | LOGGING AND REVIEW
+
+##### (1) NONLOCAL MAINTENANCE | LOGGING AND REVIEW
+
     (a) Log [Assignment: organization-defined audit events] for nonlocal maintenance and
     diagnostic sessions; and
     (b) Review the audit records of the maintenance and diagnostic sessions to detect
@@ -9160,9 +8986,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Discussion: Audit logging for nonlocal maintenance is enforced by AU-2. Audit events are
     defined in AU-2a.
     Related Controls: AU-6, AU-12.
-    (2) NONLOCAL MAINTENANCE | DOCUMENT NONLOCAL MAINTENANCE
+
+##### (2) NONLOCAL MAINTENANCE | DOCUMENT NONLOCAL MAINTENANCE
+
     [Withdrawn: Incorporated into MA-1 and MA-4.]
-    (3) NONLOCAL MAINTENANCE | COMPARABLE SECURITY AND SANITIZATION
+
+##### (3) NONLOCAL MAINTENANCE | COMPARABLE SECURITY AND SANITIZATION
+
     (a) Require that nonlocal maintenance and diagnostic services be performed from a
     system that implements a security capability comparable to the capability
     implemented on the system being serviced; or
@@ -9175,7 +9005,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     tools, and equipment are at least as comprehensive as the controls on the system being
     serviced.
     Related Controls: MP-6, SI-3, SI-7.
-    (4) NONLOCAL MAINTENANCE | AUTHENTICATION AND SEPARATION OF MAINTENANCE SESSIONS
+
+##### (4) NONLOCAL MAINTENANCE | AUTHENTICATION AND SEPARATION OF MAINTENANCE SESSIONS
+
     Protect nonlocal maintenance sessions by:
     (a) Employing [Assignment: organization-defined authenticators that are replay
     resistant]; and
@@ -9185,7 +9017,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     (2) Logically separated communications paths.
     Discussion: Communications paths can be logically separated using encryption.
     Related Controls: None.
-    (5) NONLOCAL MAINTENANCE | APPROVALS AND NOTIFICATIONS
+
+##### (5) NONLOCAL MAINTENANCE | APPROVALS AND NOTIFICATIONS
+
     (a) Require the approval of each nonlocal maintenance session by [Assignment:
     organization-defined personnel or roles]; and
     (b) Notify the following personnel or roles of the date and time of planned nonlocal
@@ -9194,7 +9028,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     maintenance is accomplished by personnel with sufficient information security and system
     knowledge to determine the appropriateness of the proposed maintenance.
     Related Controls: None.
-    (6) NONLOCAL MAINTENANCE | CRYPTOGRAPHIC PROTECTION
+
+##### (6) NONLOCAL MAINTENANCE | CRYPTOGRAPHIC PROTECTION
+
     Implement the following cryptographic mechanisms to protect the integrity and
     confidentiality of nonlocal maintenance and diagnostic communications: [Assignment:
     organization-defined cryptographic mechanisms].
@@ -9205,7 +9041,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     exfiltration of organizational information. Such actions can result in the loss or degradation
     of mission or business capabilities.
     Related Controls: SC-8, SC-12, SC-13.
-    (7) NONLOCAL MAINTENANCE | DISCONNECT VERIFICATION
+
+##### (7) NONLOCAL MAINTENANCE | DISCONNECT VERIFICATION
+
     Verify session and network connection termination after the completion of nonlocal
     maintenance and diagnostic sessions.
     Discussion: Verifying the termination of a connection once maintenance is completed
@@ -9240,7 +9078,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     be for one-time use or for very limited time periods.
     Related Controls: AC-2, AC-3, AC-5, AC-6, IA-2, IA-8, MA-4, MP-2, PE-2, PE-3, PS-7, RA-3.
     Control Enhancements:
-    (1) MAINTENANCE PERSONNEL | INDIVIDUALS WITHOUT APPROPRIATE ACCESS
+
+##### (1) MAINTENANCE PERSONNEL | INDIVIDUALS WITHOUT APPROPRIATE ACCESS
+
     (a) Implement procedures for the use of maintenance personnel that lack appropriate
     security clearances or are not U.S. citizens, that include the following requirements:
     (1) Maintenance personnel who do not have needed access authorizations,
@@ -9261,7 +9101,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     unclassified information contained on organizational systems. Procedures for the use of
     maintenance personnel can be documented in security plans for the systems.
     Related Controls: MP-6, PL-2.
-    (2) MAINTENANCE PERSONNEL | SECURITY CLEARANCES FOR CLASSIFIED SYSTEMS
+
+##### (2) MAINTENANCE PERSONNEL | SECURITY CLEARANCES FOR CLASSIFIED SYSTEMS
+
     Verify that personnel performing maintenance and diagnostic activities on a system
     processing, storing, or transmitting classified information possess security clearances and
     formal access approvals for at least the highest classification level and for compartments
@@ -9272,7 +9114,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     (i.e., possess security clearances) to the classification level of the information stored on the
     system.
     Related Controls: PS-3.
-    (3) MAINTENANCE PERSONNEL | CITIZENSHIP REQUIREMENTS FOR CLASSIFIED SYSTEMS
+
+##### (3) MAINTENANCE PERSONNEL | CITIZENSHIP REQUIREMENTS FOR CLASSIFIED SYSTEMS
+
     Verify that personnel performing maintenance and diagnostic activities on a system
     processing, storing, or transmitting classified information are U.S. citizens.
     Discussion: Personnel who conduct maintenance on organizational systems may be exposed
@@ -9280,7 +9124,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     classified information on organizational systems is restricted to U.S. citizens, the same
     restriction is applied to personnel performing maintenance on those systems.
     Related Controls: PS-3.
-    (4) MAINTENANCE PERSONNEL | FOREIGN NATIONALS
+
+##### (4) MAINTENANCE PERSONNEL | FOREIGN NATIONALS
+
     Ensure that:
     (a) Foreign nationals with appropriate security clearances are used to conduct
     maintenance and diagnostic activities on classified systems only when the systems are
@@ -9294,7 +9140,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     perform maintenance and diagnostics activities on classified systems, then additional vetting
     is required to ensure agreements and restrictions are not being violated.
     Related Controls: PS-3.
-    (5) MAINTENANCE PERSONNEL | NON-SYSTEM MAINTENANCE
+
+##### (5) MAINTENANCE PERSONNEL | NON-SYSTEM MAINTENANCE
+
     Ensure that non-escorted personnel performing maintenance activities not directly
     associated with the system but in the physical proximity of the system, have required
     access authorizations.
@@ -9313,7 +9161,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     maintenance support include having appropriate contracts in place.
     Related Controls: CM-8, CP-2, CP-7, RA-7, SA-15, SI-13, SR-2, SR-3, SR-4.
     Control Enhancements:
-    (1) TIMELY MAINTENANCE | PREVENTIVE MAINTENANCE
+
+##### (1) TIMELY MAINTENANCE | PREVENTIVE MAINTENANCE
+
     Perform preventive maintenance on [Assignment: organization-defined system
     components] at [Assignment: organization-defined time intervals].
     Discussion: Preventive maintenance includes proactive care and the servicing of system
@@ -9329,7 +9179,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     similar equipment; requirements of codes, laws, or regulations within a jurisdiction; or
     measured values and performance indications.
     Related Controls: None.
-    (2) TIMELY MAINTENANCE | PREDICTIVE MAINTENANCE
+
+##### (2) TIMELY MAINTENANCE | PREDICTIVE MAINTENANCE
+
     Perform predictive maintenance on [Assignment: organization-defined system
     components] at [Assignment: organization-defined time intervals].
     Discussion: Predictive maintenance evaluates the condition of equipment by performing
@@ -9343,7 +9195,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     equipment is in service, thus minimizing disruption of normal system operations. Predictive
     maintenance can result in substantial cost savings and higher system reliability.
     Related Controls: None.
-    (3) TIMELY MAINTENANCE | AUTOMATED SUPPORT FOR PREDICTIVE MAINTENANCE
+
+##### (3) TIMELY MAINTENANCE | AUTOMATED SUPPORT FOR PREDICTIVE MAINTENANCE
+
     Transfer predictive maintenance data to a maintenance management system using
     [Assignment: organization-defined automated mechanisms].
     Discussion: A computerized maintenance management system maintains a database of
@@ -9380,42 +9234,42 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
 
-97. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] media protection policy that:
-    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-    coordination among organizational entities, and compliance; and
-    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-    standards, and guidelines; and
-98. Procedures to facilitate the implementation of the media protection policy and the
-    associated media protection controls;
-    b.
-    Designate an [Assignment: organization-defined official] to manage the development,
-    documentation, and dissemination of the media protection policy and procedures; and
-    c.
-    Review and update the current media protection:
-99. Policy [Assignment: organization-defined frequency] and following [Assignment:
-    organization-defined events]; and
-100.  Procedures [Assignment: organization-defined frequency] and following [Assignment:
-      organization-defined events].
-      Discussion: Media protection policy and procedures address the controls in the MP family that
-      are implemented within systems and organizations. The risk management strategy is an
-      important factor in establishing such policies and procedures. Policies and procedures contribute
-      to security and privacy assurance. Therefore, it is important that security and privacy programs
-      collaborate on the development of media protection policy and procedures. Security and privacy
-      program policies and procedures at the organization level are preferable, in general, and may
-      obviate the need for mission- or system-specific policies and procedures. The policy can be
-      included as part of the general security and privacy policy or be represented by multiple policies
-      that reflect the complex nature of organizations. Procedures can be established for security and
-      privacy programs, for mission or business processes, and for systems, if needed. Procedures
-      describe how the policies or controls are implemented and can be directed at the individual or
-      role that is the object of the procedure. Procedures can be documented in system security and
-      privacy plans or in one or more separate documents. Events that may precipitate an update to
-      media protection policy and procedures include assessment or audit findings, security incidents
-      or breaches, or changes in applicable laws, executive orders, directives, regulations, policies,
-      standards, and guidelines. Simply restating controls does not constitute an organizational policy
-      or procedure.
-      Related Controls: PM-9, PS-8, SI-12.
-      Control Enhancements: None.
-      References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] media protection policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the media protection policy and the
+   associated media protection controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the media protection policy and procedures; and
+   c.
+   Review and update the current media protection:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Media protection policy and procedures address the controls in the MP family that
+   are implemented within systems and organizations. The risk management strategy is an
+   important factor in establishing such policies and procedures. Policies and procedures contribute
+   to security and privacy assurance. Therefore, it is important that security and privacy programs
+   collaborate on the development of media protection policy and procedures. Security and privacy
+   program policies and procedures at the organization level are preferable, in general, and may
+   obviate the need for mission- or system-specific policies and procedures. The policy can be
+   included as part of the general security and privacy policy or be represented by multiple policies
+   that reflect the complex nature of organizations. Procedures can be established for security and
+   privacy programs, for mission or business processes, and for systems, if needed. Procedures
+   describe how the policies or controls are implemented and can be directed at the individual or
+   role that is the object of the procedure. Procedures can be documented in system security and
+   privacy plans or in one or more separate documents. Events that may precipitate an update to
+   media protection policy and procedures include assessment or audit findings, security incidents
+   or breaches, or changes in applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines. Simply restating controls does not constitute an organizational policy
+   or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### MP-2
 
@@ -9433,9 +9287,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: AC-19, AU-9, CP-2, CP-9, CP-10, MA-5, MP-4, MP-6, PE-2, PE-3, SC-12, SC-13,
      SC-34, SI-12.
      Control Enhancements:
-     (1) MEDIA ACCESS | AUTOMATED RESTRICTED ACCESS
+
+##### (1) MEDIA ACCESS | AUTOMATED RESTRICTED ACCESS
+
      [Withdrawn: Incorporated into MP-4(2).]
-     (2) MEDIA ACCESS | CRYPTOGRAPHIC PROTECTION
+
+##### (2) MEDIA ACCESS | CRYPTOGRAPHIC PROTECTION
+
      [Withdrawn: Incorporated into SC-28(1).]
      References: [OMB A-130], [FIPS 199], [SP 800-111].
 
@@ -9489,9 +9347,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: AC-19, CP-2, CP-6, CP-9, CP-10, MP-2, MP-7, PE-3, PL-2, SC-12, SC-13, SC-28,
      SC-34, SI-12.
      Control Enhancements:
-     (1) MEDIA STORAGE | CRYPTOGRAPHIC PROTECTION
+
+##### (1) MEDIA STORAGE | CRYPTOGRAPHIC PROTECTION
+
      [Withdrawn: Incorporated into SC-28(1).]
-     (2) MEDIA STORAGE | AUTOMATED RESTRICTED ACCESS
+
+##### (2) MEDIA STORAGE | AUTOMATED RESTRICTED ACCESS
+
      Restrict access to media storage areas and log access attempts and access granted using
      [Assignment: organization-defined automated mechanisms].
      Discussion: Automated mechanisms include keypads, biometric readers, or card readers on
@@ -9533,18 +9395,26 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      of a system of transport-related records.
      Related Controls: AC-7, AC-19, CP-2, CP-9, MP-3, MP-4, PE-16, PL-2, SC-12, SC-13, SC-28, SC-34.
      Control Enhancements:
-     (1) MEDIA TRANSPORT | PROTECTION OUTSIDE OF CONTROLLED AREAS
+
+##### (1) MEDIA TRANSPORT | PROTECTION OUTSIDE OF CONTROLLED AREAS
+
      [Withdrawn: Incorporated into MP-5.]
-     (2) MEDIA TRANSPORT | DOCUMENTATION OF ACTIVITIES
+
+##### (2) MEDIA TRANSPORT | DOCUMENTATION OF ACTIVITIES
+
      [Withdrawn: Incorporated into MP-5.]
-     (3) MEDIA TRANSPORT | CUSTODIANS
+
+##### (3) MEDIA TRANSPORT | CUSTODIANS
+
      Employ an identified custodian during transport of system media outside of controlled
      areas.
      Discussion: Identified custodians provide organizations with specific points of contact during
      the media transport process and facilitate individual accountability. Custodial responsibilities
      can be transferred from one individual to another if an unambiguous custodian is identified.
      Related Controls: None.
-     (4) MEDIA TRANSPORT | CRYPTOGRAPHIC PROTECTION
+
+##### (4) MEDIA TRANSPORT | CRYPTOGRAPHIC PROTECTION
+
      [Withdrawn: Incorporated into SC-28(1).]
      References: [FIPS 199], [SP 800-60-1], [SP 800-60-2].
 
@@ -9579,7 +9449,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      sanitization process for controlled unclassified information.
      Related Controls: AC-3, AC-7, AU-11, MA-2, MA-3, MA-4, MA-5, PM-22, SI-12, SI-18, SI-19, SR-11.
      Control Enhancements:
-     (1) MEDIA SANITIZATION | REVIEW, APPROVE, TRACK, DOCUMENT, AND VERIFY
+
+##### (1) MEDIA SANITIZATION | REVIEW, APPROVE, TRACK, DOCUMENT, AND VERIFY
+
      Review, approve, track, document, and verify media sanitization and disposal actions.
      Discussion: Organizations review and approve media to be sanitized to ensure compliance
      with records retention policies. Tracking and documenting actions include listing personnel
@@ -9589,14 +9461,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      performed the verification, and the disposal actions taken. Organizations verify that the
      sanitization of the media was effective prior to disposal.
      Related Controls: None.
-     (2) MEDIA SANITIZATION | EQUIPMENT TESTING
+
+##### (2) MEDIA SANITIZATION | EQUIPMENT TESTING
+
      Test sanitization equipment and procedures [Assignment: organization-defined frequency]
      to ensure that the intended sanitization is being achieved.
      Discussion: Testing of sanitization equipment and procedures may be conducted by
      qualified and authorized external entities, including federal agencies or external service
      providers.
      Related Controls: None.
-     (3) MEDIA SANITIZATION | NONDESTRUCTIVE TECHNIQUES
+
+##### (3) MEDIA SANITIZATION | NONDESTRUCTIVE TECHNIQUES
+
      Apply nondestructive sanitization techniques to portable storage devices prior to
      connecting such devices to the system under the following circumstances: [Assignment:
      organization-defined circumstances requiring sanitization of portable storage devices].
@@ -9611,13 +9487,21 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      prior to initial use or when organizations cannot maintain a positive chain of custody for the
      devices.
      Related Controls: None.
-     (4) MEDIA SANITIZATION | CONTROLLED UNCLASSIFIED INFORMATION
+
+##### (4) MEDIA SANITIZATION | CONTROLLED UNCLASSIFIED INFORMATION
+
      [Withdrawn: Incorporated into MP-6.]
-     (5) MEDIA SANITIZATION | CLASSIFIED INFORMATION
+
+##### (5) MEDIA SANITIZATION | CLASSIFIED INFORMATION
+
      [Withdrawn: Incorporated into MP-6.]
-     (6) MEDIA SANITIZATION | MEDIA DESTRUCTION
+
+##### (6) MEDIA SANITIZATION | MEDIA DESTRUCTION
+
      [Withdrawn: Incorporated into MP-6.]
-     (7) MEDIA SANITIZATION | DUAL AUTHORIZATION
+
+##### (7) MEDIA SANITIZATION | DUAL AUTHORIZATION
+
      Enforce dual authorization for the sanitization of [Assignment: organization-defined
      system media].
      Discussion: Organizations employ dual authorization to help ensure that system media
@@ -9630,7 +9514,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the risk of collusion, organizations consider rotating dual authorization duties to other
      individuals.
      Related Controls: AC-3, MP-2.
-     (8) MEDIA SANITIZATION | REMOTE PURGING OR WIPING OF INFORMATION
+
+##### (8) MEDIA SANITIZATION | REMOTE PURGING OR WIPING OF INFORMATION
+
      Provide the capability to purge or wipe information from [Assignment: organizationdefined systems or system components] [Selection: remotely; under the following
      conditions: [Assignment: organization-defined conditions]].
      Discussion: Remote purging or wiping of information protects information on organizational
@@ -9674,9 +9560,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      for addressing known vulnerabilities in the devices.
      Related Controls: AC-19, AC-20, PL-4, PM-12, SC-34, SC-41.
      Control Enhancements:
-     (1) MEDIA USE | PROHIBIT USE WITHOUT OWNER
+
+##### (1) MEDIA USE | PROHIBIT USE WITHOUT OWNER
+
      [Withdrawn: Incorporated into MP-7.]
-     (2) MEDIA USE | PROHIBIT USE OF SANITIZATION-RESISTANT MEDIA
+
+##### (2) MEDIA USE | PROHIBIT USE OF SANITIZATION-RESISTANT MEDIA
+
      Prohibit the use of sanitization-resistant media in organizational systems.
      Discussion: Sanitization resistance refers to how resistant media are to non-destructive
      sanitization techniques with respect to the capability to purge information from media.
@@ -9711,25 +9601,33 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      and distribution. Downgrading ensures that empty space on the media is devoid of information.
      Related Controls: None.
      Control Enhancements:
-     (1) MEDIA DOWNGRADING | DOCUMENTATION OF PROCESS
+
+##### (1) MEDIA DOWNGRADING | DOCUMENTATION OF PROCESS
+
      Document system media downgrading actions.
      Discussion: Organizations can document the media downgrading process by providing
      information, such as the downgrading technique employed, the identification number of the
      downgraded media, and the identity of the individual that authorized and/or performed the
      downgrading action.
      Related Controls: None.
-     (2) MEDIA DOWNGRADING | EQUIPMENT TESTING
+
+##### (2) MEDIA DOWNGRADING | EQUIPMENT TESTING
+
      Test downgrading equipment and procedures [Assignment: organization-defined
      frequency] to ensure that downgrading actions are being achieved.
      Discussion: None.
      Related Controls: None.
-     (3) MEDIA DOWNGRADING | CONTROLLED UNCLASSIFIED INFORMATION
+
+##### (3) MEDIA DOWNGRADING | CONTROLLED UNCLASSIFIED INFORMATION
+
      Downgrade system media containing controlled unclassified information prior to public
      release.
      Discussion: The downgrading of controlled unclassified information uses approved
      sanitization tools, techniques, and procedures.
      Related Controls: None.
-     (4) MEDIA DOWNGRADING | CLASSIFIED INFORMATION
+
+##### (4) MEDIA DOWNGRADING | CLASSIFIED INFORMATION
+
      Downgrade system media containing classified information prior to release to individuals
      without required access authorizations.
      Discussion: Downgrading of classified information uses approved sanitization tools,
@@ -9750,43 +9648,43 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-101. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] physical and environmental protection policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-102. Procedures to facilitate the implementation of the physical and environmental
-     protection policy and the associated physical and environmental protection controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the physical and environmental protection policy and
-     procedures; and
-     c.
-     Review and update the current physical and environmental protection:
-103. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-104. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: Physical and environmental protection policy and procedures address the controls in
-     the PE family that are implemented within systems and organizations. The risk management
-     strategy is an important factor in establishing such policies and procedures. Policies and
-     procedures contribute to security and privacy assurance. Therefore, it is important that security
-     and privacy programs collaborate on the development of physical and environmental protection
-     policy and procedures. Security and privacy program policies and procedures at the organization
-     level are preferable, in general, and may obviate the need for mission- or system-specific policies
-     and procedures. The policy can be included as part of the general security and privacy policy or
-     be represented by multiple policies that reflect the complex nature of organizations. Procedures
-     can be established for security and privacy programs, for mission or business processes, and for
-     systems, if needed. Procedures describe how the policies or controls are implemented and can
-     be directed at the individual or role that is the object of the procedure. Procedures can be
-     documented in system security and privacy plans or in one or more separate documents. Events
-     that may precipitate an update to physical and environmental protection policy and procedures
-     include assessment or audit findings, security incidents or breaches, or changes in applicable
-     laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
-     restating controls does not constitute an organizational policy or procedure.
-     Related Controls: AT-3, PM-9, PS-8, SI-12.
-     Control Enhancements: None.
-     References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] physical and environmental protection policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the physical and environmental
+   protection policy and the associated physical and environmental protection controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the physical and environmental protection policy and
+   procedures; and
+   c.
+   Review and update the current physical and environmental protection:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Physical and environmental protection policy and procedures address the controls in
+   the PE family that are implemented within systems and organizations. The risk management
+   strategy is an important factor in establishing such policies and procedures. Policies and
+   procedures contribute to security and privacy assurance. Therefore, it is important that security
+   and privacy programs collaborate on the development of physical and environmental protection
+   policy and procedures. Security and privacy program policies and procedures at the organization
+   level are preferable, in general, and may obviate the need for mission- or system-specific policies
+   and procedures. The policy can be included as part of the general security and privacy policy or
+   be represented by multiple policies that reflect the complex nature of organizations. Procedures
+   can be established for security and privacy programs, for mission or business processes, and for
+   systems, if needed. Procedures describe how the policies or controls are implemented and can
+   be directed at the individual or role that is the object of the procedure. Procedures can be
+   documented in system security and privacy plans or in one or more separate documents. Events
+   that may precipitate an update to physical and environmental protection policy and procedures
+   include assessment or audit findings, security incidents or breaches, or changes in applicable
+   laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
+   restating controls does not constitute an organizational policy or procedure.
+   Related Controls: AT-3, PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### PE-2
 
@@ -9811,13 +9709,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: AT-3, AU-9, IA-4, MA-5, MP-2, PE-3, PE-4, PE-5, PE-8, PM-12, PS-3, PS-4, PS-5,
      PS-6.
      Control Enhancements:
-     (1) PHYSICAL ACCESS AUTHORIZATIONS | ACCESS BY POSITION OR ROLE
+
+##### (1) PHYSICAL ACCESS AUTHORIZATIONS | ACCESS BY POSITION OR ROLE
+
      Authorize physical access to the facility where the system resides based on position or
      role.
      Discussion: Role-based facility access includes access by authorized permanent and
      regular/routine maintenance personnel, duty officers, and emergency medical staff.
      Related Controls: AC-2, AC-3, AC-6.
-     (2) PHYSICAL ACCESS AUTHORIZATIONS | TWO FORMS OF IDENTIFICATION
+
+##### (2) PHYSICAL ACCESS AUTHORIZATIONS | TWO FORMS OF IDENTIFICATION
+
      Require two forms of identification from the following forms of identification for visitor
      access to the facility where the system resides: [Assignment: organization-defined list of
      acceptable forms of identification].
@@ -9825,7 +9727,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      licenses, and Personal Identity Verification (PIV) cards. For gaining access to facilities using
      automated mechanisms, organizations may use PIV cards, key cards, PINs, and biometrics.
      Related Controls: IA-2, IA-4, IA-5.
-     (3) PHYSICAL ACCESS AUTHORIZATIONS | RESTRICT UNESCORTED ACCESS
+
+##### (3) PHYSICAL ACCESS AUTHORIZATIONS | RESTRICT UNESCORTED ACCESS
+
      Restrict unescorted access to the facility where the system resides to personnel with
      [Selection (one or more): security clearances for all information contained within the
      system; formal access authorizations for all information contained within the system; need
@@ -9844,63 +9748,71 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Enforce physical access authorizations at [Assignment: organization-defined entry and exit
      points to the facility where the system resides] by:
 
-105. Verifying individual access authorizations before granting access to the facility; and
-106. Controlling ingress and egress to the facility using [Selection (one or more): [Assignment:
-     organization-defined physical access control systems or devices]; guards];
-     b.
-     Maintain physical access audit logs for [Assignment: organization-defined entry or exit
-     points];
-     c.
-     Control access to areas within the facility designated as publicly accessible by implementing
-     the following controls: [Assignment: organization-defined physical access controls];
-     d.
-     Escort visitors and control visitor activity [Assignment: organization-defined circumstances
-     requiring visitor escorts and control of visitor activity];
-     e.
-     Secure keys, combinations, and other physical access devices;
-     f.
-     Inventory [Assignment: organization-defined physical access devices] every [Assignment:
-     organization-defined frequency]; and
-     g.
-     Change combinations and keys [Assignment: organization-defined frequency] and/or when
-     keys are lost, combinations are compromised, or when individuals possessing the keys or
-     combinations are transferred or terminated.
-     Discussion: Physical access control applies to employees and visitors. Individuals with permanent
-     physical access authorizations are not considered visitors. Physical access controls for publicly
-     accessible areas may include physical access control logs/records, guards, or physical access
-     devices and barriers to prevent movement from publicly accessible areas to non-public areas.
-     Organizations determine the types of guards needed, including professional security staff, system
-     users, or administrative staff. Physical access devices include keys, locks, combinations, biometric
-     readers, and card readers. Physical access control systems comply with applicable laws, executive
-     orders, directives, policies, regulations, standards, and guidelines. Organizations have flexibility in
-     the types of audit logs employed. Audit logs can be procedural, automated, or some combination
-     thereof. Physical access points can include facility access points, interior access points to systems
-     that require supplemental access controls, or both. Components of systems may be in areas
-     designated as publicly accessible with organizations controlling access to the components.
-     Related Controls: AT-3, AU-2, AU-6, AU-9, AU-13, CP-10, IA-3, IA-8, MA-5, MP-2, MP-4, PE-2, PE4, PE-5, PE-8, PS-2, PS-3, PS-6, PS-7, RA-3, SC-28, SI-4, SR-3.
-     Control Enhancements:
-     (1) PHYSICAL ACCESS CONTROL | SYSTEM ACCESS
+1. Verifying individual access authorizations before granting access to the facility; and
+2. Controlling ingress and egress to the facility using [Selection (one or more): [Assignment:
+   organization-defined physical access control systems or devices]; guards];
+   b.
+   Maintain physical access audit logs for [Assignment: organization-defined entry or exit
+   points];
+   c.
+   Control access to areas within the facility designated as publicly accessible by implementing
+   the following controls: [Assignment: organization-defined physical access controls];
+   d.
+   Escort visitors and control visitor activity [Assignment: organization-defined circumstances
+   requiring visitor escorts and control of visitor activity];
+   e.
+   Secure keys, combinations, and other physical access devices;
+   f.
+   Inventory [Assignment: organization-defined physical access devices] every [Assignment:
+   organization-defined frequency]; and
+   g.
+   Change combinations and keys [Assignment: organization-defined frequency] and/or when
+   keys are lost, combinations are compromised, or when individuals possessing the keys or
+   combinations are transferred or terminated.
+   Discussion: Physical access control applies to employees and visitors. Individuals with permanent
+   physical access authorizations are not considered visitors. Physical access controls for publicly
+   accessible areas may include physical access control logs/records, guards, or physical access
+   devices and barriers to prevent movement from publicly accessible areas to non-public areas.
+   Organizations determine the types of guards needed, including professional security staff, system
+   users, or administrative staff. Physical access devices include keys, locks, combinations, biometric
+   readers, and card readers. Physical access control systems comply with applicable laws, executive
+   orders, directives, policies, regulations, standards, and guidelines. Organizations have flexibility in
+   the types of audit logs employed. Audit logs can be procedural, automated, or some combination
+   thereof. Physical access points can include facility access points, interior access points to systems
+   that require supplemental access controls, or both. Components of systems may be in areas
+   designated as publicly accessible with organizations controlling access to the components.
+   Related Controls: AT-3, AU-2, AU-6, AU-9, AU-13, CP-10, IA-3, IA-8, MA-5, MP-2, MP-4, PE-2, PE4, PE-5, PE-8, PS-2, PS-3, PS-6, PS-7, RA-3, SC-28, SI-4, SR-3.
+   Control Enhancements:
+
+##### (1) PHYSICAL ACCESS CONTROL | SYSTEM ACCESS
+
      Enforce physical access authorizations to the system in addition to the physical access
      controls for the facility at [Assignment: organization-defined physical spaces containing
      one or more components of the system].
      Discussion: Control of physical access to the system provides additional physical security for
      those areas within facilities where there is a concentration of system components.
      Related Controls: None.
-     (2) PHYSICAL ACCESS CONTROL | FACILITY AND SYSTEMS
+
+##### (2) PHYSICAL ACCESS CONTROL | FACILITY AND SYSTEMS
+
      Perform security checks [Assignment: organization-defined frequency] at the physical
      perimeter of the facility or system for exfiltration of information or removal of system
      components.
      Discussion: Organizations determine the extent, frequency, and/or randomness of security
      checks to adequately mitigate risk associated with exfiltration.
      Related Controls: AC-4, SC-7.
-     (3) PHYSICAL ACCESS CONTROL | CONTINUOUS GUARDS
+
+##### (3) PHYSICAL ACCESS CONTROL | CONTINUOUS GUARDS
+
      Employ guards to control [Assignment: organization-defined physical access points] to the
      facility where the system resides 24 hours per day, 7 days per week.
      Discussion: Employing guards at selected physical access points to the facility provides a
      more rapid response capability for organizations. Guards also provide the opportunity for
      human surveillance in areas of the facility not covered by video surveillance.
      Related Controls: CP-6, CP-7, PE-6.
-     (4) PHYSICAL ACCESS CONTROL | LOCKABLE CASINGS
+
+##### (4) PHYSICAL ACCESS CONTROL | LOCKABLE CASINGS
+
      Use lockable physical casings to protect [Assignment: organization-defined system
      components] from unauthorized physical access.
      Discussion: The greatest risk from the use of portable devices—such as smart phones,
@@ -9911,7 +9823,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      conjunction with cable locks or lockdown plates to prevent the theft of the locked casing
      containing the computer equipment.
      Related Controls: None.
-     (5) PHYSICAL ACCESS CONTROL | TAMPER PROTECTION
+
+##### (5) PHYSICAL ACCESS CONTROL | TAMPER PROTECTION
+
      Employ [Assignment: organization-defined anti-tamper technologies] to [Selection (one or
      more): detect; prevent] physical tampering or alteration of [Assignment: organizationdefined hardware components] within the system.
      Discussion: Organizations can implement tamper detection and prevention at selected
@@ -9921,14 +9835,20 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      coatings. Anti-tamper programs help to detect hardware alterations through counterfeiting
      and other supply chain-related risks.
      Related Controls: SA-16, SR-9, SR-11.
-     (6) PHYSICAL ACCESS CONTROL | FACILITY PENETRATION TESTING
+
+##### (6) PHYSICAL ACCESS CONTROL | FACILITY PENETRATION TESTING
+
      [Withdrawn: Incorporated into CA-8.]
-     (7) PHYSICAL ACCESS CONTROL | PHYSICAL BARRIERS
+
+##### (7) PHYSICAL ACCESS CONTROL | PHYSICAL BARRIERS
+
      Limit access using physical barriers.
      Discussion: Physical barriers include bollards, concrete slabs, jersey walls, and hydraulic
      active vehicle barriers.
      Related Controls: None.
-     (8) PHYSICAL ACCESS CONTROL | ACCESS CONTROL VESTIBULES
+
+##### (8) PHYSICAL ACCESS CONTROL | ACCESS CONTROL VESTIBULES
+
      Employ access control vestibules at [Assignment: organization-defined locations within the
      facility].
      Discussion: An access control vestibule is part of a physical access control system that
@@ -9972,16 +9892,22 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      devices include monitors, printers, scanners, audio devices, facsimile machines, and copiers.
      Related Controls: PE-2, PE-3, PE-4, PE-18.
      Control Enhancements:
-     (1) ACCESS CONTROL FOR OUTPUT DEVICES | ACCESS TO OUTPUT BY AUTHORIZED INDIVIDUALS
+
+##### (1) ACCESS CONTROL FOR OUTPUT DEVICES | ACCESS TO OUTPUT BY AUTHORIZED INDIVIDUALS
+
      [Withdrawn: Incorporated into PE-5.]
-     (2) ACCESS CONTROL FOR OUTPUT DEVICES | LINK TO INDIVIDUAL IDENTITY
+
+##### (2) ACCESS CONTROL FOR OUTPUT DEVICES | LINK TO INDIVIDUAL IDENTITY
+
      Link individual identity to receipt of output from output devices.
      Discussion: Methods for linking individual identity to the receipt of output from output
      devices include installing security functionality on facsimile machines, copiers, and printers.
      Such functionality allows organizations to implement authentication on output devices prior
      to the release of output to individuals.
      Related Controls: None.
-     (3) ACCESS CONTROL FOR OUTPUT DEVICES | MARKING OUTPUT DEVICES
+
+##### (3) ACCESS CONTROL FOR OUTPUT DEVICES | MARKING OUTPUT DEVICES
+
      [Withdrawn: Incorporated into PE-22.]
      References: [IR 8023].
 
@@ -10011,7 +9937,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      time, and out-of-sequence accesses.
      Related Controls: AU-2, AU-6, AU-9, AU-12, CA-7, CP-10, IR-4, IR-8.
      Control Enhancements:
-     (1) MONITORING PHYSICAL ACCESS | INTRUSION ALARMS AND SURVEILLANCE EQUIPMENT
+
+##### (1) MONITORING PHYSICAL ACCESS | INTRUSION ALARMS AND SURVEILLANCE EQUIPMENT
+
      Monitor physical access to the facility where the system resides using physical intrusion
      alarms and surveillance equipment.
      Discussion: Physical intrusion alarms can be employed to alert security personnel when
@@ -10022,7 +9950,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      contact sensors, and broken glass sensors. Surveillance equipment includes video cameras
      installed at strategic locations throughout the facility.
      Related Controls: None.
-     (2) MONITORING PHYSICAL ACCESS | AUTOMATED INTRUSION RECOGNITION AND RESPONSES
+
+##### (2) MONITORING PHYSICAL ACCESS | AUTOMATED INTRUSION RECOGNITION AND RESPONSES
+
      Recognize [Assignment: organization-defined classes or types of intrusions] and initiate
      [Assignment: organization-defined response actions] using [Assignment: organizationdefined automated mechanisms].
      Discussion: Response actions can include notifying selected organizational personnel or law
@@ -10032,7 +9962,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      systems and system monitoring capabilities to provide integrated threat coverage for the
      organization.
      Related Controls: SI-4.
-     (3) MONITORING PHYSICAL ACCESS | VIDEO SURVEILLANCE
+
+##### (3) MONITORING PHYSICAL ACCESS | VIDEO SURVEILLANCE
+
      (a) Employ video surveillance of [Assignment: organization-defined operational areas];
      (b) Review video recordings [Assignment: organization-defined frequency]; and
      (c) Retain video recordings for [Assignment: organization-defined time period].
@@ -10043,7 +9975,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      when performing and retaining video surveillance, especially if such surveillance is in a public
      location.
      Related Controls: None.
-     (4) MONITORING PHYSICAL ACCESS | MONITORING PHYSICAL ACCESS TO SYSTEMS
+
+##### (4) MONITORING PHYSICAL ACCESS | MONITORING PHYSICAL ACCESS TO SYSTEMS
+
      Monitor physical access to the system in addition to the physical access monitoring of the
      facility at [Assignment: organization-defined physical spaces containing one or more
      components of the system].
@@ -10078,7 +10012,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      business functions. Access records are not required for publicly accessible areas.
      Related Controls: PE-2, PE-3, PE-6.
      Control Enhancements:
-     (1) VISITOR ACCESS RECORDS | AUTOMATED RECORDS MAINTENANCE AND REVIEW
+
+##### (1) VISITOR ACCESS RECORDS | AUTOMATED RECORDS MAINTENANCE AND REVIEW
+
      Maintain and review visitor access records using [Assignment: organization-defined
      automated mechanisms].
      Discussion: Visitor access records may be stored and maintained in a database management
@@ -10086,9 +10022,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      facilitates record reviews on a regular basis to determine if access authorizations are current
      and still required to support organizational mission and business functions.
      Related Controls: None.
-     (2) VISITOR ACCESS RECORDS | PHYSICAL ACCESS RECORDS
+
+##### (2) VISITOR ACCESS RECORDS | PHYSICAL ACCESS RECORDS
+
      [Withdrawn: Incorporated into PE-2.]
-     (3) VISITOR ACCESS RECORDS | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
+
+##### (3) VISITOR ACCESS RECORDS | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
+
      Limit personally identifiable information contained in visitor access records to the
      following elements identified in the privacy risk assessment: [Assignment: organizationdefined elements].
      Discussion: Organizations may have requirements that specify the contents of visitor access
@@ -10111,13 +10051,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      vehicles, and other deployable systems.
      Related Controls: PE-4.
      Control Enhancements:
-     (1) POWER EQUIPMENT AND CABLING | REDUNDANT CABLING
+
+##### (1) POWER EQUIPMENT AND CABLING | REDUNDANT CABLING
+
      Employ redundant power cabling paths that are physically separated by [Assignment:
      organization-defined distance].
      Discussion: Physically separate and redundant power cables ensure that power continues to
      flow in the event that one of the cables is cut or otherwise damaged.
      Related Controls: None.
-     (2) POWER EQUIPMENT AND CABLING | AUTOMATIC VOLTAGE CONTROLS
+
+##### (2) POWER EQUIPMENT AND CABLING | AUTOMATIC VOLTAGE CONTROLS
+
      Employ automatic voltage controls for [Assignment: organization-defined critical system
      components].
      Discussion: Automatic voltage controls can monitor and control voltage. Such controls
@@ -10141,7 +10085,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      rooms, and areas with computer-controlled machinery.
      Related Controls: PE-15.
      Control Enhancements:
-     (1) EMERGENCY SHUTOFF | ACCIDENTAL AND UNAUTHORIZED ACTIVATION
+
+##### (1) EMERGENCY SHUTOFF | ACCIDENTAL AND UNAUTHORIZED ACTIVATION
+
      [Withdrawn: Incorporated into PE-10.]
      References: None.
 
@@ -10162,14 +10108,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      shut down the system.
      Related Controls: AT-3, CP-2, CP-7.
      Control Enhancements:
-     (1) EMERGENCY POWER | ALTERNATE POWER SUPPLY — MINIMAL OPERATIONAL CAPABILITY
+
+##### (1) EMERGENCY POWER | ALTERNATE POWER SUPPLY — MINIMAL OPERATIONAL CAPABILITY
+
      Provide an alternate power supply for the system that is activated [Selection: manually;
      automatically] and that can maintain minimally required operational capability in the
      event of an extended loss of the primary power source.
      Discussion: Provision of an alternate power supply with minimal operating capability can be
      satisfied by accessing a secondary commercial power supply or other external power supply.
      Related Controls: None.
-     (2) EMERGENCY POWER | ALTERNATE POWER SUPPLY — SELF-CONTAINED
+
+##### (2) EMERGENCY POWER | ALTERNATE POWER SUPPLY — SELF-CONTAINED
+
      Provide an alternate power supply for the system that is activated [Selection: manually;
      automatically] and that is:
      (a) Self-contained;
@@ -10193,7 +10143,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      provided, organizations consider alternate processing sites for power-related contingencies.
      Related Controls: CP-2, CP-7.
      Control Enhancements:
-     (1) EMERGENCY LIGHTING | ESSENTIAL MISSION AND BUSINESS FUNCTIONS
+
+##### (1) EMERGENCY LIGHTING | ESSENTIAL MISSION AND BUSINESS FUNCTIONS
+
      Provide emergency lighting for all areas within the facility supporting essential mission and
      business functions.
      Discussion: Organizations define their essential missions and functions.
@@ -10212,7 +10164,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      separated, from the energy sources providing power for the other parts of the facility.
      Related Controls: AT-3.
      Control Enhancements:
-     (1) FIRE PROTECTION | DETECTION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION
+
+##### (1) FIRE PROTECTION | DETECTION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION
+
      Employ fire detection systems that activate automatically and notify [Assignment:
      organization-defined personnel or roles] and [Assignment: organization-defined
      emergency responders] in the event of a fire.
@@ -10222,7 +10176,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information within the facility). Notification mechanisms may require independent energy
      sources to ensure that the notification capability is not adversely affected by the fire.
      Related Controls: None.
-     (2) FIRE PROTECTION | SUPPRESSION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION
+
+##### (2) FIRE PROTECTION | SUPPRESSION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION
+
      (a) Employ fire suppression systems that activate automatically and notify [Assignment:
      organization-defined personnel or roles] and [Assignment: organization-defined
      emergency responders]; and
@@ -10235,9 +10191,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      independent energy sources to ensure that the notification capability is not adversely
      affected by the fire.
      Related Controls: None.
-     (3) FIRE PROTECTION | AUTOMATIC FIRE SUPPRESSION
+
+##### (3) FIRE PROTECTION | AUTOMATIC FIRE SUPPRESSION
+
      [Withdrawn: Incorporated into PE-13(2).]
-     (4) FIRE PROTECTION | INSPECTIONS
+
+##### (4) FIRE PROTECTION | INSPECTIONS
+
      Ensure that the facility undergoes [Assignment: organization-defined frequency] fire
      protection inspections by authorized and qualified inspectors and identified deficiencies
      are resolved within [Assignment: organization-defined time period].
@@ -10264,7 +10224,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      are needed to support organizational mission and business functions.
      Related Controls: AT-3, CP-2.
      Control Enhancements:
-     (1) ENVIRONMENTAL CONTROLS | AUTOMATIC CONTROLS
+
+##### (1) ENVIRONMENTAL CONTROLS | AUTOMATIC CONTROLS
+
      Employ the following automatic environmental controls in the facility to prevent
      fluctuations potentially harmful to the system: [Assignment: organization-defined
      automatic environmental controls].
@@ -10272,7 +10234,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      immediate response to environmental conditions that can damage, degrade, or destroy
      organizational systems or systems components.
      Related Controls: None.
-     (2) ENVIRONMENTAL CONTROLS | MONITORING WITH ALARMS AND NOTIFICATIONS
+
+##### (2) ENVIRONMENTAL CONTROLS | MONITORING WITH ALARMS AND NOTIFICATIONS
+
      Employ environmental control monitoring that provides an alarm or notification of
      changes potentially harmful to personnel or equipment to [Assignment: organizationdefined personnel or roles].
      Discussion: The alarm or notification may be an audible alarm or a visual message in real
@@ -10293,7 +10257,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      entire organizations.
      Related Controls: AT-3, PE-10.
      Control Enhancements:
-     (1) WATER DAMAGE PROTECTION | AUTOMATION SUPPORT
+
+##### (1) WATER DAMAGE PROTECTION | AUTOMATION SUPPORT
+
      Detect the presence of water near the system and alert [Assignment: organization-defined
      personnel or roles] using [Assignment: organization-defined automated mechanisms].
      Discussion: Automated mechanisms include notification systems, water detection sensors,
@@ -10353,7 +10319,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      communications using wireless packet sniffers or microphones, or unauthorized disclosure of
      information.
      Related Controls: CP-2, PE-5, PE-19, PE-20, RA-3.
-     (1) LOCATION OF SYSTEM COMPONENTS | FACILITY SITE
+
+##### (1) LOCATION OF SYSTEM COMPONENTS | FACILITY SITE
+
      [Withdrawn: Moved to PE-23.]
      References: None.
 
@@ -10368,7 +10336,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      leakage due to electromagnetic signals emanations.
      Related Controls: AC-18, PE-18, PE-20.
      Control Enhancements:
-     (1) INFORMATION LEAKAGE | NATIONAL EMISSIONS POLICIES AND PROCEDURES
+
+##### (1) INFORMATION LEAKAGE | NATIONAL EMISSIONS POLICIES AND PROCEDURES
+
      Protect system components, associated data communications, and networks in accordance
      with national Emissions Security policies and procedures based on the security category or
      classification of the information.
@@ -10455,41 +10425,41 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-107. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] planning policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-108. Procedures to facilitate the implementation of the planning policy and the associated
-     planning controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the planning policy and procedures; and
-     c.
-     Review and update the current planning:
-109. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-110. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: Planning policy and procedures for the controls in the PL family implemented within
-     systems and organizations. The risk management strategy is an important factor in establishing
-     such policies and procedures. Policies and procedures contribute to security and privacy
-     assurance. Therefore, it is important that security and privacy programs collaborate on their
-     development. Security and privacy program policies and procedures at the organization level are
-     preferable, in general, and may obviate the need for mission level or system-specific policies and
-     procedures. The policy can be included as part of the general security and privacy policy or be
-     represented by multiple policies that reflect the complex nature of organizations. Procedures can
-     be established for security and privacy programs, for mission/business processes, and for
-     systems, if needed. Procedures describe how the policies or controls are implemented and can
-     be directed at the individual or role that is the object of the procedure. Procedures can be
-     documented in system security and privacy plans or in one or more separate documents. Events
-     that may precipitate an update to planning policy and procedures include, but are not limited to,
-     assessment or audit findings, security incidents or breaches, or changes in laws, executive orders,
-     directives, regulations, policies, standards, and guidelines. Simply restating controls does not
-     constitute an organizational policy or procedure.
-     Related Controls: PM-9, PS-8, SI-12.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-12], [SP 800-18], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] planning policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the planning policy and the associated
+   planning controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the planning policy and procedures; and
+   c.
+   Review and update the current planning:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Planning policy and procedures for the controls in the PL family implemented within
+   systems and organizations. The risk management strategy is an important factor in establishing
+   such policies and procedures. Policies and procedures contribute to security and privacy
+   assurance. Therefore, it is important that security and privacy programs collaborate on their
+   development. Security and privacy program policies and procedures at the organization level are
+   preferable, in general, and may obviate the need for mission level or system-specific policies and
+   procedures. The policy can be included as part of the general security and privacy policy or be
+   represented by multiple policies that reflect the complex nature of organizations. Procedures can
+   be established for security and privacy programs, for mission/business processes, and for
+   systems, if needed. Procedures describe how the policies or controls are implemented and can
+   be directed at the individual or role that is the object of the procedure. Procedures can be
+   documented in system security and privacy plans or in one or more separate documents. Events
+   that may precipitate an update to planning policy and procedures include, but are not limited to,
+   assessment or audit findings, security incidents or breaches, or changes in laws, executive orders,
+   directives, regulations, policies, standards, and guidelines. Simply restating controls does not
+   constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-18], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### PL-2
 
@@ -10498,87 +10468,93 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a.
      Develop security and privacy plans for the system that:
 
-111. Are consistent with the organization’s enterprise architecture;
-112. Explicitly define the constituent system components;
-113. Describe the operational context of the system in terms of mission and business
-     processes;
-114. Identify the individuals that fulfill system roles and responsibilities;
-115. Identify the information types processed, stored, and transmitted by the system;
-116. Provide the security categorization of the system, including supporting rationale;
-117. Describe any specific threats to the system that are of concern to the organization;
-118. Provide the results of a privacy risk assessment for systems processing personally
-     identifiable information;
-119. Describe the operational environment for the system and any dependencies on or
-     connections to other systems or system components;
-120. Provide an overview of the security and privacy requirements for the system;
-121. Identify any relevant control baselines or overlays, if applicable;
-122. Describe the controls in place or planned for meeting the security and privacy
-     requirements, including a rationale for any tailoring decisions;
-123. Include risk determinations for security and privacy architecture and design decisions;
-124. Include security- and privacy-related activities affecting the system that require planning
-     and coordination with [Assignment: organization-defined individuals or groups]; and
-125. Are reviewed and approved by the authorizing official or designated representative
-     prior to plan implementation.
-     b.
-     Distribute copies of the plans and communicate subsequent changes to the plans to
-     [Assignment: organization-defined personnel or roles];
-     c.
-     Review the plans [Assignment: organization-defined frequency];
-     d.
-     Update the plans to address changes to the system and environment of operation or
-     problems identified during plan implementation or control assessments; and
-     e.
-     Protect the plans from unauthorized disclosure and modification.
-     Discussion: System security and privacy plans are scoped to the system and system components
-     within the defined authorization boundary and contain an overview of the security and privacy
-     requirements for the system and the controls selected to satisfy the requirements. The plans
-     describe the intended application of each selected control in the context of the system with a
-     sufficient level of detail to correctly implement the control and to subsequently assess the
-     effectiveness of the control. The control documentation describes how system-specific and
-     hybrid controls are implemented and the plans and expectations regarding the functionality of
-     the system. System security and privacy plans can also be used in the design and development of
-     systems in support of life cycle-based security and privacy engineering processes. System security
-     and privacy plans are living documents that are updated and adapted throughout the system
-     development life cycle (e.g., during capability determination, analysis of alternatives, requests for
-     proposal, and design reviews). Section 2.1 describes the different types of requirements that are
-     relevant to organizations during the system development life cycle and the relationship between
-     requirements and controls.
-     Organizations may develop a single, integrated security and privacy plan or maintain separate
-     plans. Security and privacy plans relate security and privacy requirements to a set of controls and
-     control enhancements. The plans describe how the controls and control enhancements meet the
-     security and privacy requirements but do not provide detailed, technical descriptions of the
-     design or implementation of the controls and control enhancements. Security and privacy plans
-     contain sufficient information (including specifications of control parameter values for selection
-     and assignment operations explicitly or by reference) to enable a design and implementation
-     that is unambiguously compliant with the intent of the plans and subsequent determinations of
-     risk to organizational operations and assets, individuals, other organizations, and the Nation if
-     the plan is implemented.
-     Security and privacy plans need not be single documents. The plans can be a collection of various
-     documents, including documents that already exist. Effective security and privacy plans make
-     extensive use of references to policies, procedures, and additional documents, including design
-     and implementation specifications where more detailed information can be obtained. The use of
-     references helps reduce the documentation associated with security and privacy programs and
-     maintains the security- and privacy-related information in other established management and
-     operational areas, including enterprise architecture, system development life cycle, systems
-     engineering, and acquisition. Security and privacy plans need not contain detailed contingency
-     plan or incident response plan information but can instead provide—explicitly or by reference—
-     sufficient information to define what needs to be accomplished by those plans.
-     Security- and privacy-related activities that may require coordination and planning with other
-     individuals or groups within the organization include assessments, audits, inspections, hardware
-     and software maintenance, acquisition and supply chain risk management, patch management,
-     and contingency plan testing. Planning and coordination include emergency and nonemergency
-     (i.e., planned or non-urgent unplanned) situations. The process defined by organizations to plan
-     and coordinate security- and privacy-related activities can also be included in other documents,
-     as appropriate.
-     Related Controls: AC-2, AC-6, AC-14, AC-17, AC-20, CA-2, CA-3, CA-7, CM-9, CM-13, CP-2, CP-4,
-     IR-4, IR-8, MA-4, MA-5, MP-4, MP-5, PL-7, PL-8, PL-10, PL-11, PM-1, PM-7, PM-8, PM-9, PM-10,
-     PM-11, RA-3, RA-8, RA-9, SA-5, SA-17, SA-22, SI-12, SR-2, SR-4.
-     Control Enhancements:
-     (1) SYSTEM SECURITY AND PRIVACY PLANS | CONCEPT OF OPERATIONS
+1. Are consistent with the organization’s enterprise architecture;
+2. Explicitly define the constituent system components;
+3. Describe the operational context of the system in terms of mission and business
+   processes;
+4. Identify the individuals that fulfill system roles and responsibilities;
+5. Identify the information types processed, stored, and transmitted by the system;
+6. Provide the security categorization of the system, including supporting rationale;
+7. Describe any specific threats to the system that are of concern to the organization;
+8. Provide the results of a privacy risk assessment for systems processing personally
+   identifiable information;
+9. Describe the operational environment for the system and any dependencies on or
+   connections to other systems or system components;
+10. Provide an overview of the security and privacy requirements for the system;
+11. Identify any relevant control baselines or overlays, if applicable;
+12. Describe the controls in place or planned for meeting the security and privacy
+    requirements, including a rationale for any tailoring decisions;
+13. Include risk determinations for security and privacy architecture and design decisions;
+14. Include security- and privacy-related activities affecting the system that require planning
+    and coordination with [Assignment: organization-defined individuals or groups]; and
+15. Are reviewed and approved by the authorizing official or designated representative
+    prior to plan implementation.
+    b.
+    Distribute copies of the plans and communicate subsequent changes to the plans to
+    [Assignment: organization-defined personnel or roles];
+    c.
+    Review the plans [Assignment: organization-defined frequency];
+    d.
+    Update the plans to address changes to the system and environment of operation or
+    problems identified during plan implementation or control assessments; and
+    e.
+    Protect the plans from unauthorized disclosure and modification.
+    Discussion: System security and privacy plans are scoped to the system and system components
+    within the defined authorization boundary and contain an overview of the security and privacy
+    requirements for the system and the controls selected to satisfy the requirements. The plans
+    describe the intended application of each selected control in the context of the system with a
+    sufficient level of detail to correctly implement the control and to subsequently assess the
+    effectiveness of the control. The control documentation describes how system-specific and
+    hybrid controls are implemented and the plans and expectations regarding the functionality of
+    the system. System security and privacy plans can also be used in the design and development of
+    systems in support of life cycle-based security and privacy engineering processes. System security
+    and privacy plans are living documents that are updated and adapted throughout the system
+    development life cycle (e.g., during capability determination, analysis of alternatives, requests for
+    proposal, and design reviews). Section 2.1 describes the different types of requirements that are
+    relevant to organizations during the system development life cycle and the relationship between
+    requirements and controls.
+    Organizations may develop a single, integrated security and privacy plan or maintain separate
+    plans. Security and privacy plans relate security and privacy requirements to a set of controls and
+    control enhancements. The plans describe how the controls and control enhancements meet the
+    security and privacy requirements but do not provide detailed, technical descriptions of the
+    design or implementation of the controls and control enhancements. Security and privacy plans
+    contain sufficient information (including specifications of control parameter values for selection
+    and assignment operations explicitly or by reference) to enable a design and implementation
+    that is unambiguously compliant with the intent of the plans and subsequent determinations of
+    risk to organizational operations and assets, individuals, other organizations, and the Nation if
+    the plan is implemented.
+    Security and privacy plans need not be single documents. The plans can be a collection of various
+    documents, including documents that already exist. Effective security and privacy plans make
+    extensive use of references to policies, procedures, and additional documents, including design
+    and implementation specifications where more detailed information can be obtained. The use of
+    references helps reduce the documentation associated with security and privacy programs and
+    maintains the security- and privacy-related information in other established management and
+    operational areas, including enterprise architecture, system development life cycle, systems
+    engineering, and acquisition. Security and privacy plans need not contain detailed contingency
+    plan or incident response plan information but can instead provide—explicitly or by reference—
+    sufficient information to define what needs to be accomplished by those plans.
+    Security- and privacy-related activities that may require coordination and planning with other
+    individuals or groups within the organization include assessments, audits, inspections, hardware
+    and software maintenance, acquisition and supply chain risk management, patch management,
+    and contingency plan testing. Planning and coordination include emergency and nonemergency
+    (i.e., planned or non-urgent unplanned) situations. The process defined by organizations to plan
+    and coordinate security- and privacy-related activities can also be included in other documents,
+    as appropriate.
+    Related Controls: AC-2, AC-6, AC-14, AC-17, AC-20, CA-2, CA-3, CA-7, CM-9, CM-13, CP-2, CP-4,
+    IR-4, IR-8, MA-4, MA-5, MP-4, MP-5, PL-7, PL-8, PL-10, PL-11, PM-1, PM-7, PM-8, PM-9, PM-10,
+    PM-11, RA-3, RA-8, RA-9, SA-5, SA-17, SA-22, SI-12, SR-2, SR-4.
+    Control Enhancements:
+
+##### (1) SYSTEM SECURITY AND PRIVACY PLANS | CONCEPT OF OPERATIONS
+
      [Withdrawn: Incorporated into PL-7.]
-     (2) SYSTEM SECURITY AND PRIVACY PLANS | FUNCTIONAL ARCHITECTURE
+
+##### (2) SYSTEM SECURITY AND PRIVACY PLANS | FUNCTIONAL ARCHITECTURE
+
      [Withdrawn: Incorporated into PL-8.]
-     (3) SYSTEM SECURITY AND PRIVACY PLANS | PLAN AND COORDINATE WITH OTHER ORGANIZATIONAL
+
+##### (3) SYSTEM SECURITY AND PRIVACY PLANS | PLAN AND COORDINATE WITH OTHER ORGANIZATIONAL
+
      ENTITIES
      [Withdrawn: Incorporated into PL-2.]
      References: [OMB A-130], [SP 800-18], [SP 800-37], [SP 800-160-1], [SP 800-160-2].
@@ -10623,7 +10599,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: AC-2, AC-6, AC-8, AC-9, AC-17, AC-18, AC-19, AC-20, AT-2, AT-3, CM-11, IA-2,
      IA-4, IA-5, MP-7, PS-6, PS-8, SA-5, SI-12.
      Control Enhancements:
-     (1) RULES OF BEHAVIOR | SOCIAL MEDIA AND EXTERNAL SITE/APPLICATION USAGE RESTRICTIONS
+
+##### (1) RULES OF BEHAVIOR | SOCIAL MEDIA AND EXTERNAL SITE/APPLICATION USAGE RESTRICTIONS
+
      Include in the rules of behavior, restrictions on:
      (a) Use of social media, social networking sites, and external sites/applications;
      (b) Posting organizational information on public websites; and
@@ -10679,51 +10657,51 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a.
      Develop security and privacy architectures for the system that:
 
-126. Describe the requirements and approach to be taken for protecting the confidentiality,
-     integrity, and availability of organizational information;
-127. Describe the requirements and approach to be taken for processing personally
-     identifiable information to minimize privacy risk to individuals;
-128. Describe how the architectures are integrated into and support the enterprise
-     architecture; and
-129. Describe any assumptions about, and dependencies on, external systems and services;
-     b.
-     Review and update the architectures [Assignment: organization-defined frequency] to reflect
-     changes in the enterprise architecture; and
-     c.
-     Reflect planned architecture changes in security and privacy plans, Concept of Operations
-     (CONOPS), criticality analysis, organizational procedures, and procurements and acquisitions.
-     Discussion: The security and privacy architectures at the system level are consistent with the
-     organization-wide security and privacy architectures described in PM-7, which are integral to and
-     developed as part of the enterprise architecture. The architectures include an architectural
-     description, the allocation of security and privacy functionality (including controls), security- and
-     privacy-related information for external interfaces, information being exchanged across the
-     interfaces, and the protection mechanisms associated with each interface. The architectures can
-     also include other information, such as user roles and the access privileges assigned to each role;
-     security and privacy requirements; types of information processed, stored, and transmitted by
-     the system; supply chain risk management requirements; restoration priorities of information
-     and system services; and other protection needs.
-     [SP 800-160-1] provides guidance on the use of security architectures as part of the system
-     development life cycle process. [OMB M-19-03] requires the use of the systems security
-     engineering concepts described in [SP 800-160-1] for high value assets. Security and privacy
-     architectures are reviewed and updated throughout the system development life cycle, from
-     analysis of alternatives through review of the proposed architecture in the RFP responses to the
-     design reviews before and during implementation (e.g., during preliminary design reviews and
-     critical design reviews).
-     In today’s modern computing architectures, it is becoming less common for organizations to
-     control all information resources. There may be key dependencies on external information
-     services and service providers. Describing such dependencies in the security and privacy
-     architectures is necessary for developing a comprehensive mission and business protection
-     strategy. Establishing, developing, documenting, and maintaining under configuration control a
-     baseline configuration for organizational systems is critical to implementing and maintaining
-     effective architectures. The development of the architectures is coordinated with the senior
-     agency information security officer and the senior agency official for privacy to ensure that the
-     controls needed to support security and privacy requirements are identified and effectively
-     implemented. In many circumstances, there may be no distinction between the security and
-     privacy architecture for a system. In other circumstances, security objectives may be adequately
-     satisfied, but privacy objectives may only be partially satisfied by the security requirements. In
-     these cases, consideration of the privacy requirements needed to achieve satisfaction will result
-     in a distinct privacy architecture. The documentation, however, may simply reflect the combined
-     architectures.
+1. Describe the requirements and approach to be taken for protecting the confidentiality,
+   integrity, and availability of organizational information;
+2. Describe the requirements and approach to be taken for processing personally
+   identifiable information to minimize privacy risk to individuals;
+3. Describe how the architectures are integrated into and support the enterprise
+   architecture; and
+4. Describe any assumptions about, and dependencies on, external systems and services;
+   b.
+   Review and update the architectures [Assignment: organization-defined frequency] to reflect
+   changes in the enterprise architecture; and
+   c.
+   Reflect planned architecture changes in security and privacy plans, Concept of Operations
+   (CONOPS), criticality analysis, organizational procedures, and procurements and acquisitions.
+   Discussion: The security and privacy architectures at the system level are consistent with the
+   organization-wide security and privacy architectures described in PM-7, which are integral to and
+   developed as part of the enterprise architecture. The architectures include an architectural
+   description, the allocation of security and privacy functionality (including controls), security- and
+   privacy-related information for external interfaces, information being exchanged across the
+   interfaces, and the protection mechanisms associated with each interface. The architectures can
+   also include other information, such as user roles and the access privileges assigned to each role;
+   security and privacy requirements; types of information processed, stored, and transmitted by
+   the system; supply chain risk management requirements; restoration priorities of information
+   and system services; and other protection needs.
+   [SP 800-160-1] provides guidance on the use of security architectures as part of the system
+   development life cycle process. [OMB M-19-03] requires the use of the systems security
+   engineering concepts described in [SP 800-160-1] for high value assets. Security and privacy
+   architectures are reviewed and updated throughout the system development life cycle, from
+   analysis of alternatives through review of the proposed architecture in the RFP responses to the
+   design reviews before and during implementation (e.g., during preliminary design reviews and
+   critical design reviews).
+   In today’s modern computing architectures, it is becoming less common for organizations to
+   control all information resources. There may be key dependencies on external information
+   services and service providers. Describing such dependencies in the security and privacy
+   architectures is necessary for developing a comprehensive mission and business protection
+   strategy. Establishing, developing, documenting, and maintaining under configuration control a
+   baseline configuration for organizational systems is critical to implementing and maintaining
+   effective architectures. The development of the architectures is coordinated with the senior
+   agency information security officer and the senior agency official for privacy to ensure that the
+   controls needed to support security and privacy requirements are identified and effectively
+   implemented. In many circumstances, there may be no distinction between the security and
+   privacy architecture for a system. In other circumstances, security objectives may be adequately
+   satisfied, but privacy objectives may only be partially satisfied by the security requirements. In
+   these cases, consideration of the privacy requirements needed to achieve satisfaction will result
+   in a distinct privacy architecture. The documentation, however, may simply reflect the combined
+   architectures.
 
 #### PL-8 is primarily directed at organizations to ensure that architectures are developed for the
 
@@ -10735,7 +10713,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      enterprise architecture and security and privacy architectures.
      Related Controls: CM-2, CM-6, PL-2, PL-7, PL-9, PM-5, PM-7, RA-9, SA-3, SA-5, SA-8, SA-17, SC-7.
      Control Enhancements:
-     (1) SECURITY AND PRIVACY ARCHITECTURES | DEFENSE IN DEPTH
+
+##### (1) SECURITY AND PRIVACY ARCHITECTURES | DEFENSE IN DEPTH
+
      Design the security and privacy architectures for the system using a defense-in-depth
      approach that:
      (a) Allocates [Assignment: organization-defined controls] to [Assignment: organizationdefined locations and architectural layers]; and
@@ -10754,7 +10734,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      include modularity and layering (see SA-8(3)), separation of system and user functionality
      (see SC-2), and security function isolation (see SC-3).
      Related Controls: SC-2, SC-3, SC-29, SC-36.
-     (2) SECURITY AND PRIVACY ARCHITECTURES | SUPPLIER DIVERSITY
+
+##### (2) SECURITY AND PRIVACY ARCHITECTURES | SUPPLIER DIVERSITY
+
      Require that [Assignment: organization-defined controls] allocated to [Assignment:
      organization-defined locations and architectural layers] are obtained from different
      suppliers.
@@ -10878,53 +10860,53 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a.
      Develop and disseminate an organization-wide information security program plan that:
 
-130. Provides an overview of the requirements for the security program and a description of
-     the security program management controls and common controls in place or planned
-     for meeting those requirements;
-131. Includes the identification and assignment of roles, responsibilities, management
-     commitment, coordination among organizational entities, and compliance;
-132. Reflects the coordination among organizational entities responsible for information
-     security; and
-133. Is approved by a senior official with responsibility and accountability for the risk being
-     incurred to organizational operations (including mission, functions, image, and
-     reputation), organizational assets, individuals, other organizations, and the Nation;
-     b.
-     Review and update the organization-wide information security program plan [Assignment:
-     organization-defined frequency] and following [Assignment: organization-defined events];
-     and
-     c.
-     Protect the information security program plan from unauthorized disclosure and
-     modification.
-     Discussion: An information security program plan is a formal document that provides an
-     overview of the security requirements for an organization-wide information security program
-     and describes the program management controls and common controls in place or planned for
-     meeting those requirements. An information security program plan can be represented in a
-     single document or compilations of documents. Privacy program plans and supply chain risk
-     management plans are addressed separately in PM-18 and SR-2, respectively.
-     An information security program plan documents implementation details about program
-     management and common controls. The plan provides sufficient information about the controls
-     (including specification of parameters for assignment and selection operations, explicitly or by
-     reference) to enable implementations that are unambiguously compliant with the intent of the
-     plan and a determination of the risk to be incurred if the plan is implemented as intended.
-     Updates to information security program plans include organizational changes and problems
-     identified during plan implementation or control assessments.
-     Program management controls may be implemented at the organization level or the mission or
-     business process level, and are essential for managing the organization’s information security
-     program. Program management controls are distinct from common, system-specific, and hybrid
-     controls because program management controls are independent of any particular system.
-     Together, the individual system security plans and the organization-wide information security
-     program plan provide complete coverage for the security controls employed within the
-     organization.
-     Common controls available for inheritance by organizational systems are documented in an
-     appendix to the organization’s information security program plan unless the controls are
-     included in a separate security plan for a system. The organization-wide information security
-     program plan indicates which separate security plans contain descriptions of common controls.
-     Events that may precipitate an update to the information security program plan include, but are
-     not limited to, organization-wide assessment or audit findings, security incidents or breaches, or
-     changes in laws, executive orders, directives, regulations, policies, standards, and guidelines.
-     Related Controls: PL-2, PM-18, PM-30, RA-9, SI-12, SR-2.
-     Control Enhancements: None.
-     References: [FISMA], [OMB A-130], [SP 800-37], [SP 800-39].
+1. Provides an overview of the requirements for the security program and a description of
+   the security program management controls and common controls in place or planned
+   for meeting those requirements;
+2. Includes the identification and assignment of roles, responsibilities, management
+   commitment, coordination among organizational entities, and compliance;
+3. Reflects the coordination among organizational entities responsible for information
+   security; and
+4. Is approved by a senior official with responsibility and accountability for the risk being
+   incurred to organizational operations (including mission, functions, image, and
+   reputation), organizational assets, individuals, other organizations, and the Nation;
+   b.
+   Review and update the organization-wide information security program plan [Assignment:
+   organization-defined frequency] and following [Assignment: organization-defined events];
+   and
+   c.
+   Protect the information security program plan from unauthorized disclosure and
+   modification.
+   Discussion: An information security program plan is a formal document that provides an
+   overview of the security requirements for an organization-wide information security program
+   and describes the program management controls and common controls in place or planned for
+   meeting those requirements. An information security program plan can be represented in a
+   single document or compilations of documents. Privacy program plans and supply chain risk
+   management plans are addressed separately in PM-18 and SR-2, respectively.
+   An information security program plan documents implementation details about program
+   management and common controls. The plan provides sufficient information about the controls
+   (including specification of parameters for assignment and selection operations, explicitly or by
+   reference) to enable implementations that are unambiguously compliant with the intent of the
+   plan and a determination of the risk to be incurred if the plan is implemented as intended.
+   Updates to information security program plans include organizational changes and problems
+   identified during plan implementation or control assessments.
+   Program management controls may be implemented at the organization level or the mission or
+   business process level, and are essential for managing the organization’s information security
+   program. Program management controls are distinct from common, system-specific, and hybrid
+   controls because program management controls are independent of any particular system.
+   Together, the individual system security plans and the organization-wide information security
+   program plan provide complete coverage for the security controls employed within the
+   organization.
+   Common controls available for inheritance by organizational systems are documented in an
+   appendix to the organization’s information security program plan unless the controls are
+   included in a separate security plan for a system. The organization-wide information security
+   program plan indicates which separate security plans contain descriptions of common controls.
+   Events that may precipitate an update to the information security program plan include, but are
+   not limited to, organization-wide assessment or audit findings, security incidents or breaches, or
+   changes in laws, executive orders, directives, regulations, policies, standards, and guidelines.
+   Related Controls: PL-2, PM-18, PM-30, RA-9, SI-12, SR-2.
+   Control Enhancements: None.
+   References: [FISMA], [OMB A-130], [SP 800-37], [SP 800-39].
 
 #### PM-2
 
@@ -10974,26 +10956,26 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      security, privacy, and supply chain risk management programs and associated organizational
      systems:
 
-134. Are developed and maintained;
-135. Document the remedial information security, privacy, and supply chain risk
-     management actions to adequately respond to risk to organizational operations and
-     assets, individuals, other organizations, and the Nation; and
-136. Are reported in accordance with established reporting requirements.
-     Review plans of action and milestones for consistency with the organizational risk
-     management strategy and organization-wide priorities for risk response actions.
-     Discussion: The plan of action and milestones is a key organizational document and is subject to
-     reporting requirements established by the Office of Management and Budget. Organizations
-     develop plans of action and milestones with an organization-wide perspective, prioritizing risk
-     response actions and ensuring consistency with the goals and objectives of the organization. Plan
-     of action and milestones updates are based on findings from control assessments and continuous
-     monitoring activities. There can be multiple plans of action and milestones corresponding to the
-     information system level, mission/business process level, and organizational/governance level.
-     While plans of action and milestones are required for federal organizations, other types of
-     organizations can help reduce risk by documenting and tracking planned remediations. Specific
-     guidance on plans of action and milestones at the system level is provided in CA-5.
-     Related Controls: CA-5, CA-7, PM-3, RA-7, SI-12.
-     Control Enhancements: None.
-     References: [PRIVACT], [OMB A-130], [SP 800-37].
+1. Are developed and maintained;
+2. Document the remedial information security, privacy, and supply chain risk
+   management actions to adequately respond to risk to organizational operations and
+   assets, individuals, other organizations, and the Nation; and
+3. Are reported in accordance with established reporting requirements.
+   Review plans of action and milestones for consistency with the organizational risk
+   management strategy and organization-wide priorities for risk response actions.
+   Discussion: The plan of action and milestones is a key organizational document and is subject to
+   reporting requirements established by the Office of Management and Budget. Organizations
+   develop plans of action and milestones with an organization-wide perspective, prioritizing risk
+   response actions and ensuring consistency with the goals and objectives of the organization. Plan
+   of action and milestones updates are based on findings from control assessments and continuous
+   monitoring activities. There can be multiple plans of action and milestones corresponding to the
+   information system level, mission/business process level, and organizational/governance level.
+   While plans of action and milestones are required for federal organizations, other types of
+   organizations can help reduce risk by documenting and tracking planned remediations. Specific
+   guidance on plans of action and milestones at the system level is provided in CA-5.
+   Related Controls: CA-5, CA-7, PM-3, RA-7, SI-12.
+   Control Enhancements: None.
+   References: [PRIVACT], [OMB A-130], [SP 800-37].
 
 #### PM-5
 
@@ -11005,7 +10987,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      not system components as described in CM-8.
      Related Controls: None.
      Control Enhancements:
-     (1) SYSTEM INVENTORY | INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION
+
+##### (1) SYSTEM INVENTORY | INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION
+
      Establish, maintain, and update [Assignment: organization-defined frequency] an
      inventory of all systems, applications, and projects that process personally identifiable
      information.
@@ -11053,7 +11037,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Management Framework [SP 800-37] and supporting security standards and guidelines.
      Related Controls: AU-6, PL-2, PL-8, PM-11, RA-2, SA-3, SA-8, SA-17.
      Control Enhancements:
-     (1) ENTERPRISE ARCHITECTURE | OFFLOADING
+
+##### (1) ENTERPRISE ARCHITECTURE | OFFLOADING
+
      Offload [Assignment: organization-defined non-essential functions or services] to other
      systems, system components, or an external provider.
      Discussion: Not every function or service that a system provides is essential to
@@ -11086,32 +11072,32 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a.
      Develops a comprehensive strategy to manage:
 
-137. Security risk to organizational operations and assets, individuals, other organizations,
-     and the Nation associated with the operation and use of organizational systems; and
-138. Privacy risk to individuals resulting from the authorized processing of personally
-     identifiable information;
-     b.
-     Implement the risk management strategy consistently across the organization; and
-     c.
-     Review and update the risk management strategy [Assignment: organization-defined
-     frequency] or as required, to address organizational changes.
-     Discussion: An organization-wide risk management strategy includes an expression of the
-     security and privacy risk tolerance for the organization, security and privacy risk mitigation
-     strategies, acceptable risk assessment methodologies, a process for evaluating security and
-     privacy risk across the organization with respect to the organization’s risk tolerance, and
-     approaches for monitoring risk over time. The senior accountable official for risk management
-     (agency head or designated official) aligns information security management processes with
-     strategic, operational, and budgetary planning processes. The risk executive function, led by the
-     senior accountable official for risk management, can facilitate consistent application of the risk
-     management strategy organization-wide. The risk management strategy can be informed by
-     security and privacy risk-related inputs from other sources, both internal and external to the
-     organization, to ensure that the strategy is broad-based and comprehensive. The supply chain
-     risk management strategy described in PM-30 can also provide useful inputs to the organizationwide risk management strategy.
-     Related Controls: AC-1, AU-1, AT-1, CA-1, CA-2, CA-5, CA-6, CA-7, CM-1, CP-1, IA-1, IR-1, MA-1,
-     MP-1, PE-1, PL-1, PL-2, PM-2, PM-8, PM-18, PM-28, PM-30, PS-1, PT-1, PT-2, PT-3, RA-1, RA-3,
-     RA-9, SA-1, SA-4, SC-1, SC-38, SI-1, SI-12, SR-1, SR-2.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-161], [IR 8023].
+1. Security risk to organizational operations and assets, individuals, other organizations,
+   and the Nation associated with the operation and use of organizational systems; and
+2. Privacy risk to individuals resulting from the authorized processing of personally
+   identifiable information;
+   b.
+   Implement the risk management strategy consistently across the organization; and
+   c.
+   Review and update the risk management strategy [Assignment: organization-defined
+   frequency] or as required, to address organizational changes.
+   Discussion: An organization-wide risk management strategy includes an expression of the
+   security and privacy risk tolerance for the organization, security and privacy risk mitigation
+   strategies, acceptable risk assessment methodologies, a process for evaluating security and
+   privacy risk across the organization with respect to the organization’s risk tolerance, and
+   approaches for monitoring risk over time. The senior accountable official for risk management
+   (agency head or designated official) aligns information security management processes with
+   strategic, operational, and budgetary planning processes. The risk executive function, led by the
+   senior accountable official for risk management, can facilitate consistent application of the risk
+   management strategy organization-wide. The risk management strategy can be informed by
+   security and privacy risk-related inputs from other sources, both internal and external to the
+   organization, to ensure that the strategy is broad-based and comprehensive. The supply chain
+   risk management strategy described in PM-30 can also provide useful inputs to the organizationwide risk management strategy.
+   Related Controls: AC-1, AU-1, AT-1, CA-1, CA-2, CA-5, CA-6, CA-7, CM-1, CP-1, IA-1, IR-1, MA-1,
+   MP-1, PE-1, PL-1, PL-2, PM-2, PM-8, PM-18, PM-28, PM-30, PS-1, PT-1, PT-2, PT-3, RA-1, RA-3,
+   RA-9, SA-1, SA-4, SC-1, SC-38, SI-1, SI-12, SR-1, SR-2.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-161], [IR 8023].
 
 #### PM-10 AUTHORIZATION PROCESS
 
@@ -11230,23 +11216,23 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Implement a process for ensuring that organizational plans for conducting security and
      privacy testing, training, and monitoring activities associated with organizational systems:
 
-139. Are developed and maintained; and
-140. Continue to be executed; and
-     Review testing, training, and monitoring plans for consistency with the organizational risk
-     management strategy and organization-wide priorities for risk response actions.
-     Discussion: A process for organization-wide security and privacy testing, training, and monitoring
-     helps ensure that organizations provide oversight for testing, training, and monitoring activities
-     and that those activities are coordinated. With the growing importance of continuous monitoring
-     programs, the implementation of information security and privacy across the three levels of the
-     risk management hierarchy and the widespread use of common controls, organizations
-     coordinate and consolidate the testing and monitoring activities that are routinely conducted as
-     part of ongoing assessments supporting a variety of controls. Security and privacy training
-     activities, while focused on individual systems and specific roles, require coordination across all
-     organizational elements. Testing, training, and monitoring plans and activities are informed by
-     current threat and vulnerability assessments.
-     Related Controls: AT-2, AT-3, CA-7, CP-4, IR-3, PM-12, SI-4.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-37], [SP 800-39], [SP 800-53A], [SP 800-115], [SP 800-137].
+1. Are developed and maintained; and
+2. Continue to be executed; and
+   Review testing, training, and monitoring plans for consistency with the organizational risk
+   management strategy and organization-wide priorities for risk response actions.
+   Discussion: A process for organization-wide security and privacy testing, training, and monitoring
+   helps ensure that organizations provide oversight for testing, training, and monitoring activities
+   and that those activities are coordinated. With the growing importance of continuous monitoring
+   programs, the implementation of information security and privacy across the three levels of the
+   risk management hierarchy and the widespread use of common controls, organizations
+   coordinate and consolidate the testing and monitoring activities that are routinely conducted as
+   part of ongoing assessments supporting a variety of controls. Security and privacy training
+   activities, while focused on individual systems and specific roles, require coordination across all
+   organizational elements. Testing, training, and monitoring plans and activities are informed by
+   current threat and vulnerability assessments.
+   Related Controls: AT-2, AT-3, CA-7, CP-4, IR-3, PM-12, SI-4.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-37], [SP 800-39], [SP 800-53A], [SP 800-115], [SP 800-137].
 
 #### PM-15 SECURITY AND PRIVACY GROUPS AND ASSOCIATIONS
 
@@ -11287,7 +11273,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      be freely shared.
      Related Controls: IR-4, PM-12.
      Control Enhancements:
-     (1) THREAT AWARENESS PROGRAM | AUTOMATED MEANS FOR SHARING THREAT INTELLIGENCE
+
+##### (1) THREAT AWARENESS PROGRAM | AUTOMATED MEANS FOR SHARING THREAT INTELLIGENCE
+
      Employ automated mechanisms to maximize the effectiveness of sharing threat
      intelligence information.
      Discussion: To maximize the effectiveness of monitoring, it is important to know what
@@ -11324,50 +11312,50 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop and disseminate an organization-wide privacy program plan that provides an
      overview of the agency’s privacy program, and:
 
-141. Includes a description of the structure of the privacy program and the resources
-     dedicated to the privacy program;
-142. Provides an overview of the requirements for the privacy program and a description of
-     the privacy program management controls and common controls in place or planned for
-     meeting those requirements;
-143. Includes the role of the senior agency official for privacy and the identification and
-     assignment of roles of other privacy officials and staff and their responsibilities;
-144. Describes management commitment, compliance, and the strategic goals and objectives
-     of the privacy program;
-145. Reflects coordination among organizational entities responsible for the different aspects
-     of privacy; and
-146. Is approved by a senior official with responsibility and accountability for the privacy risk
-     being incurred to organizational operations (including mission, functions, image, and
-     reputation), organizational assets, individuals, other organizations, and the Nation; and
-     Update the plan [Assignment: organization-defined frequency] and to address changes in
-     federal privacy laws and policy and organizational changes and problems identified during
-     plan implementation or privacy control assessments.
-     Discussion: A privacy program plan is a formal document that provides an overview of an
-     organization’s privacy program, including a description of the structure of the privacy program,
-     the resources dedicated to the privacy program, the role of the senior agency official for privacy
-     and other privacy officials and staff, the strategic goals and objectives of the privacy program,
-     and the program management controls and common controls in place or planned for meeting
-     applicable privacy requirements and managing privacy risks. Privacy program plans can be
-     represented in single documents or compilations of documents.
-     The senior agency official for privacy is responsible for designating which privacy controls the
-     organization will treat as program management, common, system-specific, and hybrid controls.
-     Privacy program plans provide sufficient information about the privacy program management
-     and common controls (including the specification of parameters and assignment and selection
-     operations explicitly or by reference) to enable control implementations that are unambiguously
-     compliant with the intent of the plans and a determination of the risk incurred if the plans are
-     implemented as intended.
-     Program management controls are generally implemented at the organization level and are
-     essential for managing the organization’s privacy program. Program management controls are
-     distinct from common, system-specific, and hybrid controls because program management
-     controls are independent of any particular information system. Together, the privacy plans for
-     individual systems and the organization-wide privacy program plan provide complete coverage
-     for the privacy controls employed within the organization.
-     Common controls are documented in an appendix to the organization’s privacy program plan
-     unless the controls are included in a separate privacy plan for a system. The organization-wide
-     privacy program plan indicates which separate privacy plans contain descriptions of privacy
-     controls.
-     Related Controls: PM-8, PM-9, PM-19.
-     Control Enhancements: None.
-     References: [PRIVACT], [OMB A-130].
+1. Includes a description of the structure of the privacy program and the resources
+   dedicated to the privacy program;
+2. Provides an overview of the requirements for the privacy program and a description of
+   the privacy program management controls and common controls in place or planned for
+   meeting those requirements;
+3. Includes the role of the senior agency official for privacy and the identification and
+   assignment of roles of other privacy officials and staff and their responsibilities;
+4. Describes management commitment, compliance, and the strategic goals and objectives
+   of the privacy program;
+5. Reflects coordination among organizational entities responsible for the different aspects
+   of privacy; and
+6. Is approved by a senior official with responsibility and accountability for the privacy risk
+   being incurred to organizational operations (including mission, functions, image, and
+   reputation), organizational assets, individuals, other organizations, and the Nation; and
+   Update the plan [Assignment: organization-defined frequency] and to address changes in
+   federal privacy laws and policy and organizational changes and problems identified during
+   plan implementation or privacy control assessments.
+   Discussion: A privacy program plan is a formal document that provides an overview of an
+   organization’s privacy program, including a description of the structure of the privacy program,
+   the resources dedicated to the privacy program, the role of the senior agency official for privacy
+   and other privacy officials and staff, the strategic goals and objectives of the privacy program,
+   and the program management controls and common controls in place or planned for meeting
+   applicable privacy requirements and managing privacy risks. Privacy program plans can be
+   represented in single documents or compilations of documents.
+   The senior agency official for privacy is responsible for designating which privacy controls the
+   organization will treat as program management, common, system-specific, and hybrid controls.
+   Privacy program plans provide sufficient information about the privacy program management
+   and common controls (including the specification of parameters and assignment and selection
+   operations explicitly or by reference) to enable control implementations that are unambiguously
+   compliant with the intent of the plans and a determination of the risk incurred if the plans are
+   implemented as intended.
+   Program management controls are generally implemented at the organization level and are
+   essential for managing the organization’s privacy program. Program management controls are
+   distinct from common, system-specific, and hybrid controls because program management
+   controls are independent of any particular information system. Together, the privacy plans for
+   individual systems and the organization-wide privacy program plan provide complete coverage
+   for the privacy controls employed within the organization.
+   Common controls are documented in an appendix to the organization’s privacy program plan
+   unless the controls are included in a separate privacy plan for a system. The organization-wide
+   privacy program plan indicates which separate privacy plans contain descriptions of privacy
+   controls.
+   Related Controls: PM-8, PM-9, PM-19.
+   Control Enhancements: None.
+   References: [PRIVACT], [OMB A-130].
 
 #### PM-19 PRIVACY PROGRAM LEADERSHIP ROLE
 
@@ -11402,7 +11390,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      email addresses for questions/complaints, blogs, and periodic publications.
      Related Controls: AC-3, PM-19, PT-5, PT-6, PT-7, RA-8.
      Control Enhancements:
-     (1) DISSEMINATION OF PRIVACY PROGRAM INFORMATION | PRIVACY POLICIES ON WEBSITES,
+
+##### (1) DISSEMINATION OF PRIVACY PROGRAM INFORMATION | PRIVACY POLICIES ON WEBSITES
+
      APPLICATIONS, AND DIGITAL SERVICES
      Develop and post privacy policies on all external-facing websites, mobile applications, and
      other digital services, that:
@@ -11431,33 +11421,33 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop and maintain an accurate accounting of disclosures of personally identifiable
      information, including:
 
-147. Date, nature, and purpose of each disclosure; and
-148. Name and address, or other contact information of the individual or organization to
-     which the disclosure was made;
-     b.
-     Retain the accounting of disclosures for the length of the time the personally identifiable
-     information is maintained or five years after the disclosure is made, whichever is longer; and
-     c.
-     Make the accounting of disclosures available to the individual to whom the personally
-     identifiable information relates upon request.
-     Discussion: The purpose of accounting of disclosures is to allow individuals to learn to whom
-     their personally identifiable information has been disclosed, to provide a basis for subsequently
-     advising recipients of any corrected or disputed personally identifiable information, and to
-     provide an audit trail for subsequent reviews of organizational compliance with conditions for
-     disclosures. For federal agencies, keeping an accounting of disclosures is required by the
-     [PRIVACT]; agencies should consult with their senior agency official for privacy and legal counsel
-     on this requirement and be aware of the statutory exceptions and OMB guidance relating to the
-     provision.
-     Organizations can use any system for keeping notations of disclosures, if it can construct from
-     such a system, a document listing of all disclosures along with the required information.
-     Automated mechanisms can be used by organizations to determine when personally identifiable
-     information is disclosed, including commercial services that provide notifications and alerts.
-     Accounting of disclosures may also be used to help organizations verify compliance with
-     applicable privacy statutes and policies governing the disclosure or dissemination of information
-     and dissemination restrictions.
-     Related Controls: AC-3, AU-2, PT-2.
-     Control Enhancements: None.
-     References: [PRIVACT], [OMB A-130].
+1. Date, nature, and purpose of each disclosure; and
+2. Name and address, or other contact information of the individual or organization to
+   which the disclosure was made;
+   b.
+   Retain the accounting of disclosures for the length of the time the personally identifiable
+   information is maintained or five years after the disclosure is made, whichever is longer; and
+   c.
+   Make the accounting of disclosures available to the individual to whom the personally
+   identifiable information relates upon request.
+   Discussion: The purpose of accounting of disclosures is to allow individuals to learn to whom
+   their personally identifiable information has been disclosed, to provide a basis for subsequently
+   advising recipients of any corrected or disputed personally identifiable information, and to
+   provide an audit trail for subsequent reviews of organizational compliance with conditions for
+   disclosures. For federal agencies, keeping an accounting of disclosures is required by the
+   [PRIVACT]; agencies should consult with their senior agency official for privacy and legal counsel
+   on this requirement and be aware of the statutory exceptions and OMB guidance relating to the
+   provision.
+   Organizations can use any system for keeping notations of disclosures, if it can construct from
+   such a system, a document listing of all disclosures along with the required information.
+   Automated mechanisms can be used by organizations to determine when personally identifiable
+   information is disclosed, including commercial services that provide notifications and alerts.
+   Accounting of disclosures may also be used to help organizations verify compliance with
+   applicable privacy statutes and policies governing the disclosure or dissemination of information
+   and dissemination restrictions.
+   Related Controls: AC-3, AU-2, PT-2.
+   Control Enhancements: None.
+   References: [PRIVACT], [OMB A-130].
 
 #### PM-22 PERSONALLY IDENTIFIABLE INFORMATION QUALITY MANAGEMENT
 
@@ -11606,24 +11596,24 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      b.
      Develop [Assignment: organization-defined privacy reports] and disseminate to:
 
-149. [Assignment: organization-defined oversight bodies] to demonstrate accountability with
-     statutory, regulatory, and policy privacy mandates; and
-150. [Assignment: organization-defined officials] and other personnel with responsibility for
-     monitoring privacy program compliance; and
-     Review and update privacy reports [Assignment: organization-defined frequency].
-     Discussion: Through internal and external reporting, organizations promote accountability and
-     transparency in organizational privacy operations. Reporting can also help organizations to
-     determine progress in meeting privacy compliance requirements and privacy controls, compare
-     performance across the federal government, discover vulnerabilities, identify gaps in policy and
-     implementation, and identify models for success. For federal agencies, privacy reports include
-     annual senior agency official for privacy reports to OMB, reports to Congress required by
-     Implementing Regulations of the 9/11 Commission Act, and other public reports required by law,
-     regulation, or policy, including internal policies of organizations. The senior agency official for
-     privacy consults with legal counsel, where appropriate, to ensure that organizations meet all
-     applicable privacy reporting requirements.
-     Related Controls: IR-9, PM-19.
-     Control Enhancements: None.
-     References: [FISMA], [OMB A-130], [OMB A-108].
+1. [Assignment: organization-defined oversight bodies] to demonstrate accountability with
+   statutory, regulatory, and policy privacy mandates; and
+2. [Assignment: organization-defined officials] and other personnel with responsibility for
+   monitoring privacy program compliance; and
+   Review and update privacy reports [Assignment: organization-defined frequency].
+   Discussion: Through internal and external reporting, organizations promote accountability and
+   transparency in organizational privacy operations. Reporting can also help organizations to
+   determine progress in meeting privacy compliance requirements and privacy controls, compare
+   performance across the federal government, discover vulnerabilities, identify gaps in policy and
+   implementation, and identify models for success. For federal agencies, privacy reports include
+   annual senior agency official for privacy reports to OMB, reports to Congress required by
+   Implementing Regulations of the 9/11 Commission Act, and other public reports required by law,
+   regulation, or policy, including internal policies of organizations. The senior agency official for
+   privacy consults with legal counsel, where appropriate, to ensure that organizations meet all
+   applicable privacy reporting requirements.
+   Related Controls: IR-9, PM-19.
+   Control Enhancements: None.
+   References: [FISMA], [OMB A-130], [OMB A-108].
 
 #### PM-28 RISK FRAMING
 
@@ -11631,27 +11621,27 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a.
      Identify and document:
 
-151. Assumptions affecting risk assessments, risk responses, and risk monitoring;
-152. Constraints affecting risk assessments, risk responses, and risk monitoring;
-153. Priorities and trade-offs considered by the organization for managing risk; and
-154. Organizational risk tolerance;
-     b.
-     Distribute the results of risk framing activities to [Assignment: organization-defined
-     personnel]; and
-     c.
-     Review and update risk framing considerations [Assignment: organization-defined
-     frequency].
-     Discussion: Risk framing is most effective when conducted at the organization level and in
-     consultation with stakeholders throughout the organization including mission, business, and
-     system owners. The assumptions, constraints, risk tolerance, priorities, and trade-offs identified
-     as part of the risk framing process inform the risk management strategy, which in turn informs
-     the conduct of risk assessment, risk response, and risk monitoring activities. Risk framing results
-     are shared with organizational personnel, including mission and business owners, information
-     owners or stewards, system owners, authorizing officials, senior agency information security
-     officer, senior agency official for privacy, and senior accountable official for risk management.
-     Related Controls: CA-7, PM-9, RA-3, RA-7.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-39].
+1. Assumptions affecting risk assessments, risk responses, and risk monitoring;
+2. Constraints affecting risk assessments, risk responses, and risk monitoring;
+3. Priorities and trade-offs considered by the organization for managing risk; and
+4. Organizational risk tolerance;
+   b.
+   Distribute the results of risk framing activities to [Assignment: organization-defined
+   personnel]; and
+   c.
+   Review and update risk framing considerations [Assignment: organization-defined
+   frequency].
+   Discussion: Risk framing is most effective when conducted at the organization level and in
+   consultation with stakeholders throughout the organization including mission, business, and
+   system owners. The assumptions, constraints, risk tolerance, priorities, and trade-offs identified
+   as part of the risk framing process inform the risk management strategy, which in turn informs
+   the conduct of risk assessment, risk response, and risk monitoring activities. Risk framing results
+   are shared with organizational personnel, including mission and business owners, information
+   owners or stewards, system owners, authorizing officials, senior agency information security
+   officer, senior agency official for privacy, and senior accountable official for risk management.
+   Related Controls: CA-7, PM-9, RA-3, RA-7.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-39].
 
 #### PM-29 RISK MANAGEMENT PROGRAM LEADERSHIP ROLES
 
@@ -11698,7 +11688,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      SR-2) is implemented at the system level.
      Related Controls: CM-10, PM-9, SR-1, SR-2, SR-3, SR-4, SR-5, SR-6, SR-7, SR-8, SR-9, SR-11.
      Control Enhancements:
-     (1) SUPPLY CHAIN RISK MANAGEMENT STRATEGY | SUPPLIERS OF CRITICAL OR MISSION-ESSENTIAL ITEMS
+
+##### (1) SUPPLY CHAIN RISK MANAGEMENT STRATEGY | SUPPLIERS OF CRITICAL OR MISSION-ESSENTIAL ITEMS
+
      Identify, prioritize, and assess suppliers of critical or mission-essential technologies,
      products, and services.
      Discussion: The identification and prioritization of suppliers of critical or mission-essential
@@ -11783,41 +11775,41 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-155. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] personnel security policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-156. Procedures to facilitate the implementation of the personnel security policy and the
-     associated personnel security controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the personnel security policy and procedures; and
-     c.
-     Review and update the current personnel security:
-157. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-158. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: Personnel security policy and procedures for the controls in the PS family that are
-     implemented within systems and organizations. The risk management strategy is an important
-     factor in establishing such policies and procedures. Policies and procedures contribute to security
-     and privacy assurance. Therefore, it is important that security and privacy programs collaborate
-     on their development. Security and privacy program policies and procedures at the organization
-     level are preferable, in general, and may obviate the need for mission level or system-specific
-     policies and procedures. The policy can be included as part of the general security and privacy
-     policy or be represented by multiple policies reflecting the complex nature of organizations.
-     Procedures can be established for security and privacy programs, for mission/business processes,
-     and for systems, if needed. Procedures describe how the policies or controls are implemented
-     and can be directed at the individual or role that is the object of the procedure. Procedures can
-     be documented in system security and privacy plans or in one or more separate documents.
-     Events that may precipitate an update to personnel security policy and procedures include, but
-     are not limited to, assessment or audit findings, security incidents or breaches, or changes in
-     applicable laws, executive orders, directives, regulations, policies, standards, and guidelines.
-     Simply restating controls does not constitute an organizational policy or procedure.
-     Related Controls: PM-9, PS-8, SI-12.
-     Control Enhancements: None.
-     References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] personnel security policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the personnel security policy and the
+   associated personnel security controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the personnel security policy and procedures; and
+   c.
+   Review and update the current personnel security:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Personnel security policy and procedures for the controls in the PS family that are
+   implemented within systems and organizations. The risk management strategy is an important
+   factor in establishing such policies and procedures. Policies and procedures contribute to security
+   and privacy assurance. Therefore, it is important that security and privacy programs collaborate
+   on their development. Security and privacy program policies and procedures at the organization
+   level are preferable, in general, and may obviate the need for mission level or system-specific
+   policies and procedures. The policy can be included as part of the general security and privacy
+   policy or be represented by multiple policies reflecting the complex nature of organizations.
+   Procedures can be established for security and privacy programs, for mission/business processes,
+   and for systems, if needed. Procedures describe how the policies or controls are implemented
+   and can be directed at the individual or role that is the object of the procedure. Procedures can
+   be documented in system security and privacy plans or in one or more separate documents.
+   Events that may precipitate an update to personnel security policy and procedures include, but
+   are not limited to, assessment or audit findings, security incidents or breaches, or changes in
+   applicable laws, executive orders, directives, regulations, policies, standards, and guidelines.
+   Simply restating controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### PS-2
 
@@ -11865,7 +11857,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      transmitted by the systems.
      Related Controls: AC-2, IA-4, MA-5, PE-2, PM-12, PS-2, PS-6, PS-7, SA-21.
      Control Enhancements:
-     (1) PERSONNEL SCREENING | CLASSIFIED INFORMATION
+
+##### (1) PERSONNEL SCREENING | CLASSIFIED INFORMATION
+
      Verify that individuals accessing a system processing, storing, or transmitting classified
      information are cleared and indoctrinated to the highest classification level of the
      information to which they have access on the system.
@@ -11875,14 +11869,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information. Access authorizations are enforced by system access controls (see AC-3) and
      flow controls (see AC-4).
      Related Controls: AC-3, AC-4.
-     (2) PERSONNEL SCREENING | FORMAL INDOCTRINATION
+
+##### (2) PERSONNEL SCREENING | FORMAL INDOCTRINATION
+
      Verify that individuals accessing a system processing, storing, or transmitting types of
      classified information that require formal indoctrination, are formally indoctrinated for all
      the relevant types of information to which they have access on the system.
      Discussion: Types of classified information that require formal indoctrination include Special
      Access Program (SAP), Restricted Data (RD), and Sensitive Compartmented Information (SCI).
      Related Controls: AC-3, AC-4.
-     (3) PERSONNEL SCREENING | INFORMATION REQUIRING SPECIAL PROTECTIVE MEASURES
+
+##### (3) PERSONNEL SCREENING | INFORMATION REQUIRING SPECIAL PROTECTIVE MEASURES
+
      Verify that individuals accessing a system processing, storing, or transmitting information
      requiring special protection:
      (a) Have valid access authorizations that are demonstrated by assigned official
@@ -11892,7 +11890,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      unclassified information. Personnel security criteria include position sensitivity background
      screening requirements.
      Related Controls: None.
-     (4) PERSONNEL SCREENING | CITIZENSHIP REQUIREMENTS
+
+##### (4) PERSONNEL SCREENING | CITIZENSHIP REQUIREMENTS
+
      Verify that individuals accessing a system processing, storing, or transmitting [Assignment:
      organization-defined information types] meet [Assignment: organization-defined
      citizenship requirements].
@@ -11930,7 +11930,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      terminated prior to the individuals being notified.
      Related Controls: AC-2, IA-4, PE-2, PM-12, PS-6, PS-7.
      Control Enhancements:
-     (1) PERSONNEL TERMINATION | POST-EMPLOYMENT REQUIREMENTS
+
+##### (1) PERSONNEL TERMINATION | POST-EMPLOYMENT REQUIREMENTS
+
      (a) Notify terminated individuals of applicable, legally binding post-employment
      requirements for the protection of organizational information; and
      (b) Require terminated individuals to sign an acknowledgment of post-employment
@@ -11938,7 +11940,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: Organizations consult with the Office of the General Counsel regarding matters
      of post-employment requirements on terminated individuals.
      Related Controls: None.
-     (2) PERSONNEL TERMINATION | AUTOMATED ACTIONS
+
+##### (2) PERSONNEL TERMINATION | AUTOMATED ACTIONS
+
      Use [Assignment: organization-defined automated mechanisms] to [Selection (one or
      more): notify [Assignment: organization-defined personnel or roles] of individual
      termination actions; disable access to system resources].
@@ -11994,20 +11998,24 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      c.
      Verify that individuals requiring access to organizational information and systems:
 
-159. Sign appropriate access agreements prior to being granted access; and
-160. Re-sign access agreements to maintain access to organizational systems when access
-     agreements have been updated or [Assignment: organization-defined frequency].
-     Discussion: Access agreements include nondisclosure agreements, acceptable use agreements,
-     rules of behavior, and conflict-of-interest agreements. Signed access agreements include an
-     acknowledgement that individuals have read, understand, and agree to abide by the constraints
-     associated with organizational systems to which access is authorized. Organizations can use
-     electronic signatures to acknowledge access agreements unless specifically prohibited by
-     organizational policy.
-     Related Controls: AC-17, PE-2, PL-4, PS-2, PS-3, PS-6, PS-7, PS-8, SA-21, SI-12.
-     Control Enhancements:
-     (1) ACCESS AGREEMENTS | INFORMATION REQUIRING SPECIAL PROTECTION
+1. Sign appropriate access agreements prior to being granted access; and
+2. Re-sign access agreements to maintain access to organizational systems when access
+   agreements have been updated or [Assignment: organization-defined frequency].
+   Discussion: Access agreements include nondisclosure agreements, acceptable use agreements,
+   rules of behavior, and conflict-of-interest agreements. Signed access agreements include an
+   acknowledgement that individuals have read, understand, and agree to abide by the constraints
+   associated with organizational systems to which access is authorized. Organizations can use
+   electronic signatures to acknowledge access agreements unless specifically prohibited by
+   organizational policy.
+   Related Controls: AC-17, PE-2, PL-4, PS-2, PS-3, PS-6, PS-7, PS-8, SA-21, SI-12.
+   Control Enhancements:
+
+##### (1) ACCESS AGREEMENTS | INFORMATION REQUIRING SPECIAL PROTECTION
+
      [Withdrawn: Incorporated into PS-3.]
-     (2) ACCESS AGREEMENTS | CLASSIFIED INFORMATION REQUIRING SPECIAL PROTECTION
+
+##### (2) ACCESS AGREEMENTS | CLASSIFIED INFORMATION REQUIRING SPECIAL PROTECTION
+
      Verify that access to classified information requiring special protection is granted only to
      individuals who:
      (a) Have a valid access authorization that is demonstrated by assigned official
@@ -12019,7 +12027,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Information (SCI). Personnel security criteria reflect applicable laws, executive orders,
      directives, regulations, policies, standards, and guidelines.
      Related Controls: None.
-     (3) ACCESS AGREEMENTS | POST-EMPLOYMENT REQUIREMENTS
+
+##### (3) ACCESS AGREEMENTS | POST-EMPLOYMENT REQUIREMENTS
+
      (a) Notify individuals of applicable, legally binding post-employment requirements for
      protection of organizational information; and
      (b) Require individuals to sign an acknowledgment of these requirements, if applicable, as
@@ -12106,46 +12116,46 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-161. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] personally identifiable information processing and transparency policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-162. Procedures to facilitate the implementation of the personally identifiable information
-     processing and transparency policy and the associated personally identifiable
-     information processing and transparency controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the personally identifiable information processing and
-     transparency policy and procedures; and
-     c.
-     Review and update the current personally identifiable information processing and
-     transparency:
-163. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-164. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: Personally identifiable information processing and transparency policy and
-     procedures address the controls in the PT family that are implemented within systems and
-     organizations. The risk management strategy is an important factor in establishing such policies
-     and procedures. Policies and procedures contribute to security and privacy assurance. Therefore,
-     it is important that security and privacy programs collaborate on the development of personally
-     identifiable information processing and transparency policy and procedures. Security and privacy
-     program policies and procedures at the organization level are preferable, in general, and may
-     obviate the need for mission- or system-specific policies and procedures. The policy can be
-     included as part of the general security and privacy policy or be represented by multiple policies
-     that reflect the complex nature of organizations. Procedures can be established for security and
-     privacy programs, for mission or business processes, and for systems, if needed. Procedures
-     describe how the policies or controls are implemented and can be directed at the individual or
-     role that is the object of the procedure. Procedures can be documented in system security and
-     privacy plans or in one or more separate documents. Events that may precipitate an update to
-     personally identifiable information processing and transparency policy and procedures include
-     assessment or audit findings, breaches, or changes in applicable laws, executive orders,
-     directives, regulations, policies, standards, and guidelines. Simply restating controls does not
-     constitute an organizational policy or procedure.
-     Related Controls: None.
-     Control Enhancements: None.
-     References: [OMB A-130].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] personally identifiable information processing and transparency policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the personally identifiable information
+   processing and transparency policy and the associated personally identifiable
+   information processing and transparency controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the personally identifiable information processing and
+   transparency policy and procedures; and
+   c.
+   Review and update the current personally identifiable information processing and
+   transparency:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Personally identifiable information processing and transparency policy and
+   procedures address the controls in the PT family that are implemented within systems and
+   organizations. The risk management strategy is an important factor in establishing such policies
+   and procedures. Policies and procedures contribute to security and privacy assurance. Therefore,
+   it is important that security and privacy programs collaborate on the development of personally
+   identifiable information processing and transparency policy and procedures. Security and privacy
+   program policies and procedures at the organization level are preferable, in general, and may
+   obviate the need for mission- or system-specific policies and procedures. The policy can be
+   included as part of the general security and privacy policy or be represented by multiple policies
+   that reflect the complex nature of organizations. Procedures can be established for security and
+   privacy programs, for mission or business processes, and for systems, if needed. Procedures
+   describe how the policies or controls are implemented and can be directed at the individual or
+   role that is the object of the procedure. Procedures can be documented in system security and
+   privacy plans or in one or more separate documents. Events that may precipitate an update to
+   personally identifiable information processing and transparency policy and procedures include
+   assessment or audit findings, breaches, or changes in applicable laws, executive orders,
+   directives, regulations, policies, standards, and guidelines. Simply restating controls does not
+   constitute an organizational policy or procedure.
+   Related Controls: None.
+   Control Enhancements: None.
+   References: [OMB A-130].
 
 #### PT-2
 
@@ -12186,7 +12196,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      identifiable information.
      Related Controls: AC-2, AC-3, CM-13, IR-9, PM-9, PM-24, PT-1, PT-3, PT-5, PT-6, RA-3, RA-8, SI12, SI-18.
      Control Enhancements:
-     (1) AUTHORITY TO PROCESS PERSONALLY IDENTIFIABLE INFORMATION | DATA TAGGING
+
+##### (1) AUTHORITY TO PROCESS PERSONALLY IDENTIFIABLE INFORMATION | DATA TAGGING
+
      Attach data tags containing [Assignment: organization-defined authorized processing] to
      [Assignment: organization-defined elements of personally identifiable information].
      Discussion: Data tags support the tracking and enforcement of authorized processing by
@@ -12194,7 +12206,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      personally identifiable information throughout the system. Data tags may also support the
      use of automated tools.
      Related Controls: AC-16, CA-6, CM-12, PM-5, PM-22, PT-4, SC-16, SC-43, SI-10, SI-15, SI-19.
-     (2) AUTHORITY TO PROCESS PERSONALLY IDENTIFIABLE INFORMATION | AUTOMATION
+
+##### (2) AUTHORITY TO PROCESS PERSONALLY IDENTIFIABLE INFORMATION | AUTOMATION
+
      Manage enforcement of the authorized processing of personally identifiable information
      using [Assignment: organization-defined automated mechanisms].
      Discussion: Automated mechanisms augment verification that only authorized processing is
@@ -12243,7 +12257,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      identifiable information processing purposes.
      Related Controls: AC-2, AC-3, AT-3, CM-13, IR-9, PM-9, PM-25, PT-2, PT-5, PT-6, PT-7, RA-8, SC43, SI-12, SI-18.
      Control Enhancements:
-     (1) PERSONALLY IDENTIFIABLE INFORMATION PROCESSING PURPOSES | DATA TAGGING
+
+##### (1) PERSONALLY IDENTIFIABLE INFORMATION PROCESSING PURPOSES | DATA TAGGING
+
      Attach data tags containing the following purposes to [Assignment: organization-defined
      elements of personally identifiable information]: [Assignment: organization-defined
      processing purposes].
@@ -12254,7 +12270,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      can identify whether a change in processing would be compatible with the identified and
      documented purposes. Data tags may also support the use of automated tools.
      Related Controls: CA-6, CM-12, PM-5, PM-22, SC-16, SC-43, SI-10, SI-15, SI-19.
-     (2) PERSONALLY IDENTIFIABLE INFORMATION PROCESSING PURPOSES | AUTOMATION
+
+##### (2) PERSONALLY IDENTIFIABLE INFORMATION PROCESSING PURPOSES | AUTOMATION
+
      Track processing purposes of personally identifiable information using [Assignment:
      organization-defined automated mechanisms].
      Discussion: Automated mechanisms augment tracking of the processing purposes.
@@ -12286,7 +12304,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      plain language and avoiding technical jargon.
      Related Controls: AC-16, PT-2, PT-5.
      Control Enhancements:
-     (1) CONSENT | TAILORED CONSENT
+
+##### (1) CONSENT | TAILORED CONSENT
+
      Provide [Assignment: organization-defined mechanisms] to allow individuals to tailor
      processing permissions to selected elements of personally identifiable information.
      Discussion: While some processing may be necessary for the basic functionality of the
@@ -12295,7 +12315,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      processed. More tailored consent may help reduce privacy risk, increase individual
      satisfaction, and avoid adverse behaviors, such as abandonment of the product or service.
      Related Controls: PT-2.
-     (2) CONSENT | JUST-IN-TIME CONSENT
+
+##### (2) CONSENT | JUST-IN-TIME CONSENT
+
      Present [Assignment: organization-defined consent mechanisms] to individuals at
      [Assignment: organization-defined frequency] and in conjunction with [Assignment:
      organization-defined personally identifiable information processing].
@@ -12308,7 +12330,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      to use just-in-time consent and may use supporting information on demographics, focus
      groups, or surveys to learn more about individuals’ privacy interests and concerns.
      Related Controls: PT-2.
-     (3) CONSENT | REVOCATION
+
+##### (3) CONSENT | REVOCATION
+
      Implement [Assignment: organization-defined tools or mechanisms] for individuals to
      revoke consent to the processing of their personally identifiable information.
      Discussion: Revocation of consent enables individuals to exercise control over their initial
@@ -12352,7 +12376,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      being processed, organizations write materials in plain language and avoid technical jargon.
      Related Controls: PM-20, PM-22, PT-2, PT-3, PT-4, PT-7, RA-3, SC-42, SI-18.
      Control Enhancements:
-     (1) PRIVACY NOTICE | JUST-IN-TIME NOTICE
+
+##### (1) PRIVACY NOTICE | JUST-IN-TIME NOTICE
+
      Present notice of personally identifiable information processing to individuals at a time
      and location where the individual provides personally identifiable information or in
      conjunction with a data action, or [Assignment: organization-defined frequency].
@@ -12370,7 +12396,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      notice and may use supporting information on user demographics, focus groups, or surveys
      to learn about users’ privacy interests and concerns.
      Related Controls: PM-21.
-     (2) PRIVACY NOTICE | PRIVACY ACT STATEMENTS
+
+##### (2) PRIVACY NOTICE | PRIVACY ACT STATEMENTS
+
      Include Privacy Act statements on forms that collect information that will be maintained in
      a Privacy Act system of records, or provide Privacy Act statements on separate forms that
      can be retained by individuals.
@@ -12418,7 +12446,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      described in [OMB A-108].
      Related Controls: AC-3, PM-20, PT-2, PT-3, PT-5.
      Control Enhancements:
-     (1) SYSTEM OF RECORDS NOTICE | ROUTINE USES
+
+##### (1) SYSTEM OF RECORDS NOTICE | ROUTINE USES
+
      Review all routine uses published in the system of records notice at [Assignment:
      organization-defined frequency] to ensure continued accuracy, and to ensure that routine
      uses continue to be compatible with the purpose for which the information was collected.
@@ -12432,7 +12462,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      users of the records and the purpose of the use. Agencies may only establish routine uses by
      explicitly publishing them in the relevant system of records notice.
      Related Controls: None.
-     (2) SYSTEM OF RECORDS NOTICE | EXEMPTION RULES
+
+##### (2) SYSTEM OF RECORDS NOTICE | EXEMPTION RULES
+
      Review all Privacy Act exemptions claimed for the system of records at [Assignment:
      organization-defined frequency] to ensure they remain appropriate and necessary in
      accordance with law, that they have been promulgated as regulations, and that they are
@@ -12463,7 +12495,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      necessary.
      Related Controls: IR-9, PT-2, PT-3, RA-3.
      Control Enhancements:
-     (1) SPECIFIC CATEGORIES OF PERSONALLY IDENTIFIABLE INFORMATION | SOCIAL SECURITY NUMBERS
+
+##### (1) SPECIFIC CATEGORIES OF PERSONALLY IDENTIFIABLE INFORMATION | SOCIAL SECURITY NUMBERS
+
      When a system processes Social Security numbers:
      (a) Eliminate unnecessary collection, maintenance, and use of Social Security numbers,
      and explore alternatives to their use as a personal identifier;
@@ -12477,7 +12511,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      uses of Social Security numbers and other sensitive information and observe any particular
      requirements that apply.
      Related Controls: IA-4.
-     (2) SPECIFIC CATEGORIES OF PERSONALLY IDENTIFIABLE INFORMATION | FIRST AMENDMENT
+
+##### (2) SPECIFIC CATEGORIES OF PERSONALLY IDENTIFIABLE INFORMATION | FIRST AMENDMENT
+
      INFORMATION
      Prohibit the processing of information describing how any individual exercises rights
      guaranteed by the First Amendment unless expressly authorized by statute or by the
@@ -12531,41 +12567,41 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-165. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] risk assessment policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-166. Procedures to facilitate the implementation of the risk assessment policy and the
-     associated risk assessment controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the risk assessment policy and procedures; and
-     c.
-     Review and update the current risk assessment:
-167. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-168. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: Risk assessment policy and procedures address the controls in the RA family that are
-     implemented within systems and organizations. The risk management strategy is an important
-     factor in establishing such policies and procedures. Policies and procedures contribute to security
-     and privacy assurance. Therefore, it is important that security and privacy programs collaborate
-     on the development of risk assessment policy and procedures. Security and privacy program
-     policies and procedures at the organization level are preferable, in general, and may obviate the
-     need for mission- or system-specific policies and procedures. The policy can be included as part
-     of the general security and privacy policy or be represented by multiple policies reflecting the
-     complex nature of organizations. Procedures can be established for security and privacy
-     programs, for mission or business processes, and for systems, if needed. Procedures describe
-     how the policies or controls are implemented and can be directed at the individual or role that is
-     the object of the procedure. Procedures can be documented in system security and privacy plans
-     or in one or more separate documents. Events that may precipitate an update to risk assessment
-     policy and procedures include assessment or audit findings, security incidents or breaches, or
-     changes in laws, executive orders, directives, regulations, policies, standards, and guidelines.
-     Simply restating controls does not constitute an organizational policy or procedure.
-     Related Controls: PM-9, PS-8, SI-12.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] risk assessment policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the risk assessment policy and the
+   associated risk assessment controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the risk assessment policy and procedures; and
+   c.
+   Review and update the current risk assessment:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Risk assessment policy and procedures address the controls in the RA family that are
+   implemented within systems and organizations. The risk management strategy is an important
+   factor in establishing such policies and procedures. Policies and procedures contribute to security
+   and privacy assurance. Therefore, it is important that security and privacy programs collaborate
+   on the development of risk assessment policy and procedures. Security and privacy program
+   policies and procedures at the organization level are preferable, in general, and may obviate the
+   need for mission- or system-specific policies and procedures. The policy can be included as part
+   of the general security and privacy policy or be represented by multiple policies reflecting the
+   complex nature of organizations. Procedures can be established for security and privacy
+   programs, for mission or business processes, and for systems, if needed. Procedures describe
+   how the policies or controls are implemented and can be directed at the individual or role that is
+   the object of the procedure. Procedures can be documented in system security and privacy plans
+   or in one or more separate documents. Events that may precipitate an update to risk assessment
+   policy and procedures include assessment or audit findings, security incidents or breaches, or
+   changes in laws, executive orders, directives, regulations, policies, standards, and guidelines.
+   Simply restating controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
 
 #### RA-2
 
@@ -12599,7 +12635,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      development life cycle to ensure that the security categories remain accurate and relevant.
      Related Controls: CM-8, MP-4, PL-2, PL-10, PL-11, PM-7, RA-3, RA-5, RA-7, RA-8, SA-8, SC-7, SC38, SI-12.
      Control Enhancements:
-     (1) SECURITY CATEGORIZATION | IMPACT-LEVEL PRIORITIZATION
+
+##### (1) SECURITY CATEGORIZATION | IMPACT-LEVEL PRIORITIZATION
+
      Conduct an impact-level prioritization of organizational systems to obtain additional
      granularity on system impact levels.
      Discussion: Organizations apply the “high-water mark” concept to each system categorized
@@ -12627,45 +12665,47 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a.
      Conduct a risk assessment, including:
 
-169. Identifying threats to and vulnerabilities in the system;
-170. Determining the likelihood and magnitude of harm from unauthorized access, use,
-     disclosure, disruption, modification, or destruction of the system, the information it
-     processes, stores, or transmits, and any related information; and
-171. Determining the likelihood and impact of adverse effects on individuals arising from the
-     processing of personally identifiable information;
-     b.
-     Integrate risk assessment results and risk management decisions from the organization and
-     mission or business process perspectives with system-level risk assessments;
-     c.
-     Document risk assessment results in [Selection: security and privacy plans; risk assessment
-     report; [Assignment: organization-defined document]];
-     d.
-     Review risk assessment results [Assignment: organization-defined frequency];
-     e.
-     Disseminate risk assessment results to [Assignment: organization-defined personnel or
-     roles]; and
-     f.
-     Update the risk assessment [Assignment: organization-defined frequency] or when there are
-     significant changes to the system, its environment of operation, or other conditions that may
-     impact the security or privacy state of the system.
-     Discussion: Risk assessments consider threats, vulnerabilities, likelihood, and impact to
-     organizational operations and assets, individuals, other organizations, and the Nation. Risk
-     assessments also consider risk from external parties, including contractors who operate systems
-     on behalf of the organization, individuals who access organizational systems, service providers,
-     and outsourcing entities.
-     Organizations can conduct risk assessments at all three levels in the risk management hierarchy
-     (i.e., organization level, mission/business process level, or information system level) and at any
-     stage in the system development life cycle. Risk assessments can also be conducted at various
-     steps in the Risk Management Framework, including preparation, categorization, control
-     selection, control implementation, control assessment, authorization, and control monitoring.
-     Risk assessment is an ongoing activity carried out throughout the system development life cycle.
-     Risk assessments can also address information related to the system, including system design,
-     the intended use of the system, testing results, and supply chain-related information or artifacts.
-     Risk assessments can play an important role in control selection processes, particularly during
-     the application of tailoring guidance and in the earliest phases of capability determination.
-     Related Controls: CA-3, CA-6, CM-4, CM-13, CP-6, CP-7, IA-8, MA-5, PE-3, PE-8, PE-18, PL-2, PL10, PL-11, PM-8, PM-9, PM-28, PT-2, PT-7, RA-2, RA-5, RA-7, SA-8, SA-9, SC-38, SI-12.
-     Control Enhancements:
-     (1) RISK ASSESSMENT | SUPPLY CHAIN RISK ASSESSMENT
+1. Identifying threats to and vulnerabilities in the system;
+2. Determining the likelihood and magnitude of harm from unauthorized access, use,
+   disclosure, disruption, modification, or destruction of the system, the information it
+   processes, stores, or transmits, and any related information; and
+3. Determining the likelihood and impact of adverse effects on individuals arising from the
+   processing of personally identifiable information;
+   b.
+   Integrate risk assessment results and risk management decisions from the organization and
+   mission or business process perspectives with system-level risk assessments;
+   c.
+   Document risk assessment results in [Selection: security and privacy plans; risk assessment
+   report; [Assignment: organization-defined document]];
+   d.
+   Review risk assessment results [Assignment: organization-defined frequency];
+   e.
+   Disseminate risk assessment results to [Assignment: organization-defined personnel or
+   roles]; and
+   f.
+   Update the risk assessment [Assignment: organization-defined frequency] or when there are
+   significant changes to the system, its environment of operation, or other conditions that may
+   impact the security or privacy state of the system.
+   Discussion: Risk assessments consider threats, vulnerabilities, likelihood, and impact to
+   organizational operations and assets, individuals, other organizations, and the Nation. Risk
+   assessments also consider risk from external parties, including contractors who operate systems
+   on behalf of the organization, individuals who access organizational systems, service providers,
+   and outsourcing entities.
+   Organizations can conduct risk assessments at all three levels in the risk management hierarchy
+   (i.e., organization level, mission/business process level, or information system level) and at any
+   stage in the system development life cycle. Risk assessments can also be conducted at various
+   steps in the Risk Management Framework, including preparation, categorization, control
+   selection, control implementation, control assessment, authorization, and control monitoring.
+   Risk assessment is an ongoing activity carried out throughout the system development life cycle.
+   Risk assessments can also address information related to the system, including system design,
+   the intended use of the system, testing results, and supply chain-related information or artifacts.
+   Risk assessments can play an important role in control selection processes, particularly during
+   the application of tailoring guidance and in the earliest phases of capability determination.
+   Related Controls: CA-3, CA-6, CM-4, CM-13, CP-6, CP-7, IA-8, MA-5, PE-3, PE-8, PE-18, PL-2, PL10, PL-11, PM-8, PM-9, PM-28, PT-2, PT-7, RA-2, RA-5, RA-7, SA-8, SA-9, SC-38, SI-12.
+   Control Enhancements:
+
+##### (1) RISK ASSESSMENT | SUPPLY CHAIN RISK ASSESSMENT
+
      (a) Assess supply chain risks associated with [Assignment: organization-defined systems,
      system components, and system services]; and
      (b) Update the supply chain risk assessment [Assignment: organization-defined
@@ -12682,7 +12722,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      during the system life cycle. An analysis of supply chain risk can help an organization identify
      systems or components for which additional supply chain risk mitigations are required.
      Related Controls: RA-2, RA-9, PM-17, PM-30, SR-2.
-     (2) RISK ASSESSMENT | USE OF ALL-SOURCE INTELLIGENCE
+
+##### (2) RISK ASSESSMENT | USE OF ALL-SOURCE INTELLIGENCE
+
      Use all-source intelligence to assist in the analysis of risk.
      Discussion: Organizations employ all-source intelligence to inform engineering, acquisition,
      and risk management decisions. All-source intelligence consists of information derived from
@@ -12694,7 +12736,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      chain sufficient to manage risks. Organizations may develop agreements to share all-source
      intelligence information or resulting decisions with other organizations, as appropriate.
      Related Controls: None.
-     (3) RISK ASSESSMENT | DYNAMIC THREAT AWARENESS
+
+##### (3) RISK ASSESSMENT | DYNAMIC THREAT AWARENESS
+
      Determine the current cyber threat environment on an ongoing basis using [Assignment:
      organization-defined means].
      Discussion: The threat awareness information that is gathered feeds into the organization’s
@@ -12702,7 +12746,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      changing threat environment. For example, at higher threat levels, organizations may
      change the privilege or authentication thresholds required to perform certain operations.
      Related Controls: AT-2.
-     (4) RISK ASSESSMENT | PREDICTIVE CYBER ANALYTICS
+
+##### (4) RISK ASSESSMENT | PREDICTIVE CYBER ANALYTICS
+
      Employ the following advanced automation and analytics capabilities to predict and
      identify risks to [Assignment: organization-defined systems or system components]:
      [Assignment: organization-defined advanced automation and analytics capabilities].
@@ -12737,69 +12783,73 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Employ vulnerability monitoring tools and techniques that facilitate interoperability among
      tools and automate parts of the vulnerability management process by using standards for:
 
-172. Enumerating platforms, software flaws, and improper configurations;
-173. Formatting checklists and test procedures; and
-174. Measuring vulnerability impact;
-     c.
-     Analyze vulnerability scan reports and results from vulnerability monitoring;
-     d.
-     Remediate legitimate vulnerabilities [Assignment: organization-defined response times] in
-     accordance with an organizational assessment of risk;
-     e.
-     Share information obtained from the vulnerability monitoring process and control
-     assessments with [Assignment: organization-defined personnel or roles] to help eliminate
-     similar vulnerabilities in other systems; and
-     f.
-     Employ vulnerability monitoring tools that include the capability to readily update the
-     vulnerabilities to be scanned.
-     Discussion: Security categorization of information and systems guides the frequency and
-     comprehensiveness of vulnerability monitoring (including scans). Organizations determine the
-     required vulnerability monitoring for system components, ensuring that the potential sources of
-     vulnerabilities—such as infrastructure components (e.g., switches, routers, guards, sensors),
-     networked printers, scanners, and copiers—are not overlooked. The capability to readily update
-     vulnerability monitoring tools as new vulnerabilities are discovered and announced and as new
-     scanning methods are developed helps to ensure that new vulnerabilities are not missed by
-     employed vulnerability monitoring tools. The vulnerability monitoring tool update process helps
-     to ensure that potential vulnerabilities in the system are identified and addressed as quickly as
-     possible. Vulnerability monitoring and analyses for custom software may require additional
-     approaches, such as static analysis, dynamic analysis, binary analysis, or a hybrid of the three
-     approaches. Organizations can use these analysis approaches in source code reviews and in a
-     variety of tools, including web-based application scanners, static analysis tools, and binary
-     analyzers.
-     Vulnerability monitoring includes scanning for patch levels; scanning for functions, ports,
-     protocols, and services that should not be accessible to users or devices; and scanning for flow
-     control mechanisms that are improperly configured or operating incorrectly. Vulnerability
-     monitoring may also include continuous vulnerability monitoring tools that use instrumentation
-     to continuously analyze components. Instrumentation-based tools may improve accuracy and
-     may be run throughout an organization without scanning. Vulnerability monitoring tools that
-     facilitate interoperability include tools that are Security Content Automated Protocol (SCAP)validated. Thus, organizations consider using scanning tools that express vulnerabilities in the
-     Common Vulnerabilities and Exposures (CVE) naming convention and that employ the Open
-     Vulnerability Assessment Language (OVAL) to determine the presence of vulnerabilities. Sources
-     for vulnerability information include the Common Weakness Enumeration (CWE) listing and the
-     National Vulnerability Database (NVD). Control assessments, such as red team exercises, provide
-     additional sources of potential vulnerabilities for which to scan. Organizations also consider using
-     scanning tools that express vulnerability impact by the Common Vulnerability Scoring System
-     (CVSS).
-     Vulnerability monitoring includes a channel and process for receiving reports of security
-     vulnerabilities from the public at-large. Vulnerability disclosure programs can be as simple as
-     publishing a monitored email address or web form that can receive reports, including notification
-     authorizing good-faith research and disclosure of security vulnerabilities. Organizations generally
-     expect that such research is happening with or without their authorization and can use public
-     vulnerability disclosure channels to increase the likelihood that discovered vulnerabilities are
-     reported directly to the organization for remediation.
-     Organizations may also employ the use of financial incentives (also known as “bug bounties”) to
-     further encourage external security researchers to report discovered vulnerabilities. Bug bounty
-     programs can be tailored to the organization’s needs. Bounties can be operated indefinitely or
-     over a defined period of time and can be offered to the general public or to a curated group.
-     Organizations may run public and private bounties simultaneously and could choose to offer
-     partially credentialed access to certain participants in order to evaluate security vulnerabilities
-     from privileged vantage points.
-     Related Controls: CA-2, CA-7, CA-8, CM-2, CM-4, CM-6, CM-8, RA-2, RA-3, SA-11, SA-15, SC-38,
-     SI-2, SI-3, SI-4, SI-7, SR-11.
-     Control Enhancements:
-     (1) VULNERABILITY MONITORING AND SCANNING | UPDATE TOOL CAPABILITY
+1. Enumerating platforms, software flaws, and improper configurations;
+2. Formatting checklists and test procedures; and
+3. Measuring vulnerability impact;
+   c.
+   Analyze vulnerability scan reports and results from vulnerability monitoring;
+   d.
+   Remediate legitimate vulnerabilities [Assignment: organization-defined response times] in
+   accordance with an organizational assessment of risk;
+   e.
+   Share information obtained from the vulnerability monitoring process and control
+   assessments with [Assignment: organization-defined personnel or roles] to help eliminate
+   similar vulnerabilities in other systems; and
+   f.
+   Employ vulnerability monitoring tools that include the capability to readily update the
+   vulnerabilities to be scanned.
+   Discussion: Security categorization of information and systems guides the frequency and
+   comprehensiveness of vulnerability monitoring (including scans). Organizations determine the
+   required vulnerability monitoring for system components, ensuring that the potential sources of
+   vulnerabilities—such as infrastructure components (e.g., switches, routers, guards, sensors),
+   networked printers, scanners, and copiers—are not overlooked. The capability to readily update
+   vulnerability monitoring tools as new vulnerabilities are discovered and announced and as new
+   scanning methods are developed helps to ensure that new vulnerabilities are not missed by
+   employed vulnerability monitoring tools. The vulnerability monitoring tool update process helps
+   to ensure that potential vulnerabilities in the system are identified and addressed as quickly as
+   possible. Vulnerability monitoring and analyses for custom software may require additional
+   approaches, such as static analysis, dynamic analysis, binary analysis, or a hybrid of the three
+   approaches. Organizations can use these analysis approaches in source code reviews and in a
+   variety of tools, including web-based application scanners, static analysis tools, and binary
+   analyzers.
+   Vulnerability monitoring includes scanning for patch levels; scanning for functions, ports,
+   protocols, and services that should not be accessible to users or devices; and scanning for flow
+   control mechanisms that are improperly configured or operating incorrectly. Vulnerability
+   monitoring may also include continuous vulnerability monitoring tools that use instrumentation
+   to continuously analyze components. Instrumentation-based tools may improve accuracy and
+   may be run throughout an organization without scanning. Vulnerability monitoring tools that
+   facilitate interoperability include tools that are Security Content Automated Protocol (SCAP)validated. Thus, organizations consider using scanning tools that express vulnerabilities in the
+   Common Vulnerabilities and Exposures (CVE) naming convention and that employ the Open
+   Vulnerability Assessment Language (OVAL) to determine the presence of vulnerabilities. Sources
+   for vulnerability information include the Common Weakness Enumeration (CWE) listing and the
+   National Vulnerability Database (NVD). Control assessments, such as red team exercises, provide
+   additional sources of potential vulnerabilities for which to scan. Organizations also consider using
+   scanning tools that express vulnerability impact by the Common Vulnerability Scoring System
+   (CVSS).
+   Vulnerability monitoring includes a channel and process for receiving reports of security
+   vulnerabilities from the public at-large. Vulnerability disclosure programs can be as simple as
+   publishing a monitored email address or web form that can receive reports, including notification
+   authorizing good-faith research and disclosure of security vulnerabilities. Organizations generally
+   expect that such research is happening with or without their authorization and can use public
+   vulnerability disclosure channels to increase the likelihood that discovered vulnerabilities are
+   reported directly to the organization for remediation.
+   Organizations may also employ the use of financial incentives (also known as “bug bounties”) to
+   further encourage external security researchers to report discovered vulnerabilities. Bug bounty
+   programs can be tailored to the organization’s needs. Bounties can be operated indefinitely or
+   over a defined period of time and can be offered to the general public or to a curated group.
+   Organizations may run public and private bounties simultaneously and could choose to offer
+   partially credentialed access to certain participants in order to evaluate security vulnerabilities
+   from privileged vantage points.
+   Related Controls: CA-2, CA-7, CA-8, CM-2, CM-4, CM-6, CM-8, RA-2, RA-3, SA-11, SA-15, SC-38,
+   SI-2, SI-3, SI-4, SI-7, SR-11.
+   Control Enhancements:
+
+##### (1) VULNERABILITY MONITORING AND SCANNING | UPDATE TOOL CAPABILITY
+
      [Withdrawn: Incorporated into RA-5.]
-     (2) VULNERABILITY MONITORING AND SCANNING | UPDATE VULNERABILITIES TO BE SCANNED
+
+##### (2) VULNERABILITY MONITORING AND SCANNING | UPDATE VULNERABILITIES TO BE SCANNED
+
      Update the system vulnerabilities to be scanned [Selection (one or more): [Assignment:
      organization-defined frequency]; prior to a new scan; when new vulnerabilities are
      identified and reported].
@@ -12808,7 +12858,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      vulnerabilities are added to the list of vulnerabilities to be scanned to ensure that the
      organization can take steps to mitigate those vulnerabilities in a timely manner.
      Related Controls: SI-5.
-     (3) VULNERABILITY MONITORING AND SCANNING | BREADTH AND DEPTH OF COVERAGE
+
+##### (3) VULNERABILITY MONITORING AND SCANNING | BREADTH AND DEPTH OF COVERAGE
+
      Define the breadth and depth of vulnerability scanning coverage.
      Discussion: The breadth of vulnerability scanning coverage can be expressed as a
      percentage of components within the system, by the particular types of systems, by the
@@ -12821,7 +12873,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      desired depth and coverage. [SP 800-53A] provides additional information on the breadth
      and depth of coverage.
      Related Controls: None.
-     (4) VULNERABILITY MONITORING AND SCANNING | DISCOVERABLE INFORMATION
+
+##### (4) VULNERABILITY MONITORING AND SCANNING | DISCOVERABLE INFORMATION
+
      Determine information about the system that is discoverable and take [Assignment:
      organization-defined corrective actions].
      Discussion: Discoverable information includes information that adversaries could obtain
@@ -12833,7 +12887,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      part of a decoy capability (e.g., honeypots, honeynets, or deception nets) deployed by the
      organization.
      Related Controls: AU-13, SC-26.
-     (5) VULNERABILITY MONITORING AND SCANNING | PRIVILEGED ACCESS
+
+##### (5) VULNERABILITY MONITORING AND SCANNING | PRIVILEGED ACCESS
+
      Implement privileged access authorization to [Assignment: organization-defined system
      components] for [Assignment: organization-defined vulnerability scanning activities].
      Discussion: In certain situations, the nature of the vulnerability scanning may be more
@@ -12842,15 +12898,21 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      access authorization to selected system components facilitates more thorough vulnerability
      scanning and protects the sensitive nature of such scanning.
      Related Controls: None.
-     (6) VULNERABILITY MONITORING AND SCANNING | AUTOMATED TREND ANALYSES
+
+##### (6) VULNERABILITY MONITORING AND SCANNING | AUTOMATED TREND ANALYSES
+
      Compare the results of multiple vulnerability scans using [Assignment: organizationdefined automated mechanisms].
      Discussion: Using automated mechanisms to analyze multiple vulnerability scans over time
      can help determine trends in system vulnerabilities and identify patterns of attack.
      Related Controls: None.
-     (7) VULNERABILITY MONITORING AND SCANNING | AUTOMATED DETECTION AND NOTIFICATION OF
+
+##### (7) VULNERABILITY MONITORING AND SCANNING | AUTOMATED DETECTION AND NOTIFICATION OF
+
      UNAUTHORIZED COMPONENTS
      [Withdrawn: Incorporated into CM-8.]
-     (8) VULNERABILITY MONITORING AND SCANNING | REVIEW HISTORIC AUDIT LOGS
+
+##### (8) VULNERABILITY MONITORING AND SCANNING | REVIEW HISTORIC AUDIT LOGS
+
      Review historic audit logs to determine if a vulnerability identified in a [Assignment:
      organization-defined system] has been previously exploited within an [Assignment:
      organization-defined time period].
@@ -12860,9 +12922,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      intrusion, the trade craft employed during the attack, organizational information exfiltrated
      or modified, mission or business capabilities affected, and the duration of the attack.
      Related Controls: AU-6, AU-11.
-     (9) VULNERABILITY MONITORING AND SCANNING | PENETRATION TESTING AND ANALYSES
+
+##### (9) VULNERABILITY MONITORING AND SCANNING | PENETRATION TESTING AND ANALYSES
+
      [Withdrawn: Incorporated into CA-8.]
-     (10) VULNERABILITY MONITORING AND SCANNING | CORRELATE SCANNING INFORMATION
+
+##### (10) VULNERABILITY MONITORING AND SCANNING | CORRELATE SCANNING INFORMATION
+
      Correlate the output from vulnerability scanning tools to determine the presence of multivulnerability and multi-hop attack vectors.
      Discussion: An attack vector is a path or means by which an adversary can gain access to a
      system in order to deliver malicious code or exfiltrate information. Organizations can use
@@ -12875,7 +12941,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      During such transitions, some system components may inadvertently be unmanaged and
      create opportunities for adversary exploitation.
      Related Controls: None.
-     (11) VULNERABILITY MONITORING AND SCANNING | PUBLIC DISCLOSURE PROGRAM
+
+##### (11) VULNERABILITY MONITORING AND SCANNING | PUBLIC DISCLOSURE PROGRAM
+
      Establish a public reporting channel for receiving reports of vulnerabilities in
      organizational systems and system components.
      Discussion: The reporting channel is publicly discoverable and contains clear language
@@ -12932,41 +13000,41 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      b.
      Initiating a new collection of personally identifiable information that:
 
-175. Will be processed using information technology; and
-176. Includes personally identifiable information permitting the physical or virtual (online)
-     contacting of a specific individual, if identical questions have been posed to, or identical
-     reporting requirements imposed on, ten or more individuals, other than agencies,
-     instrumentalities, or employees of the federal government.
-     Discussion: A privacy impact assessment is an analysis of how personally identifiable information
-     is handled to ensure that handling conforms to applicable privacy requirements, determine the
-     privacy risks associated with an information system or activity, and evaluate ways to mitigate
-     privacy risks. A privacy impact assessment is both an analysis and a formal document that details
-     the process and the outcome of the analysis.
-     Organizations conduct and develop a privacy impact assessment with sufficient clarity and
-     specificity to demonstrate that the organization fully considered privacy and incorporated
-     appropriate privacy protections from the earliest stages of the organization’s activity and
-     throughout the information life cycle. In order to conduct a meaningful privacy impact
-     assessment, the organization’s senior agency official for privacy works closely with program
-     managers, system owners, information technology experts, security officials, counsel, and other
-     relevant organization personnel. Moreover, a privacy impact assessment is not a time-restricted
-     activity that is limited to a particular milestone or stage of the information system or personally
-     identifiable information life cycles. Rather, the privacy analysis continues throughout the system
-     and personally identifiable information life cycles. Accordingly, a privacy impact assessment is a
-     living document that organizations update whenever changes to the information technology,
-     changes to the organization’s practices, or other factors alter the privacy risks associated with
-     the use of such information technology.
-     To conduct the privacy impact assessment, organizations can use security and privacy risk
-     assessments. Organizations may also use other related processes that may have different names,
-     including privacy threshold analyses. A privacy impact assessment can also serve as notice to the
-     public regarding the organization’s practices with respect to privacy. Although conducting and
-     publishing privacy impact assessments may be required by law, organizations may develop such
-     policies in the absence of applicable laws. For federal agencies, privacy impact assessments may
-     be required by [EGOV]; agencies should consult with their senior agency official for privacy and
-     legal counsel on this requirement and be aware of the statutory exceptions and OMB guidance
-     relating to the provision.
-     Related Controls: CM-4, CM-9, CM-13, PT-2, PT-3, PT-5, RA-1, RA-2, RA-3, RA-7.
-     Control Enhancements: None.
-     References: [EGOV], [OMB A-130], [OMB M-03-22].
+1. Will be processed using information technology; and
+2. Includes personally identifiable information permitting the physical or virtual (online)
+   contacting of a specific individual, if identical questions have been posed to, or identical
+   reporting requirements imposed on, ten or more individuals, other than agencies,
+   instrumentalities, or employees of the federal government.
+   Discussion: A privacy impact assessment is an analysis of how personally identifiable information
+   is handled to ensure that handling conforms to applicable privacy requirements, determine the
+   privacy risks associated with an information system or activity, and evaluate ways to mitigate
+   privacy risks. A privacy impact assessment is both an analysis and a formal document that details
+   the process and the outcome of the analysis.
+   Organizations conduct and develop a privacy impact assessment with sufficient clarity and
+   specificity to demonstrate that the organization fully considered privacy and incorporated
+   appropriate privacy protections from the earliest stages of the organization’s activity and
+   throughout the information life cycle. In order to conduct a meaningful privacy impact
+   assessment, the organization’s senior agency official for privacy works closely with program
+   managers, system owners, information technology experts, security officials, counsel, and other
+   relevant organization personnel. Moreover, a privacy impact assessment is not a time-restricted
+   activity that is limited to a particular milestone or stage of the information system or personally
+   identifiable information life cycles. Rather, the privacy analysis continues throughout the system
+   and personally identifiable information life cycles. Accordingly, a privacy impact assessment is a
+   living document that organizations update whenever changes to the information technology,
+   changes to the organization’s practices, or other factors alter the privacy risks associated with
+   the use of such information technology.
+   To conduct the privacy impact assessment, organizations can use security and privacy risk
+   assessments. Organizations may also use other related processes that may have different names,
+   including privacy threshold analyses. A privacy impact assessment can also serve as notice to the
+   public regarding the organization’s practices with respect to privacy. Although conducting and
+   publishing privacy impact assessments may be required by law, organizations may develop such
+   policies in the absence of applicable laws. For federal agencies, privacy impact assessments may
+   be required by [EGOV]; agencies should consult with their senior agency official for privacy and
+   legal counsel on this requirement and be aware of the statutory exceptions and OMB guidance
+   relating to the provision.
+   Related Controls: CM-4, CM-9, CM-13, PT-2, PT-3, PT-5, RA-1, RA-2, RA-3, RA-7.
+   Control Enhancements: None.
+   References: [EGOV], [OMB A-130], [OMB M-03-22].
 
 #### RA-9
 
@@ -13010,23 +13078,23 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      b.
      Establish and maintain a cyber threat hunting capability to:
 
-177. Search for indicators of compromise in organizational systems; and
-178. Detect, track, and disrupt threats that evade existing controls; and
-     Employ the threat hunting capability [Assignment: organization-defined frequency].
-     Discussion: Threat hunting is an active means of cyber defense in contrast to traditional
-     protection measures, such as firewalls, intrusion detection and prevention systems, quarantining
-     malicious code in sandboxes, and Security Information and Event Management technologies and
-     systems. Cyber threat hunting involves proactively searching organizational systems, networks,
-     and infrastructure for advanced threats. The objective is to track and disrupt cyber adversaries as
-     early as possible in the attack sequence and to measurably improve the speed and accuracy of
-     organizational responses. Indications of compromise include unusual network traffic, unusual file
-     changes, and the presence of malicious code. Threat hunting teams leverage existing threat
-     intelligence and may create new threat intelligence, which is shared with peer organizations,
-     Information Sharing and Analysis Organizations (ISAO), Information Sharing and Analysis Centers
-     (ISAC), and relevant government departments and agencies.
-     Related Controls: CA-2, CA-7, CA-8, RA-3, RA-5, RA-6, SI-4.
-     Control Enhancements: None.
-     References: [SP 800-30].
+1. Search for indicators of compromise in organizational systems; and
+2. Detect, track, and disrupt threats that evade existing controls; and
+   Employ the threat hunting capability [Assignment: organization-defined frequency].
+   Discussion: Threat hunting is an active means of cyber defense in contrast to traditional
+   protection measures, such as firewalls, intrusion detection and prevention systems, quarantining
+   malicious code in sandboxes, and Security Information and Event Management technologies and
+   systems. Cyber threat hunting involves proactively searching organizational systems, networks,
+   and infrastructure for advanced threats. The objective is to track and disrupt cyber adversaries as
+   early as possible in the attack sequence and to measurably improve the speed and accuracy of
+   organizational responses. Indications of compromise include unusual network traffic, unusual file
+   changes, and the presence of malicious code. Threat hunting teams leverage existing threat
+   intelligence and may create new threat intelligence, which is shared with peer organizations,
+   Information Sharing and Analysis Organizations (ISAO), Information Sharing and Analysis Centers
+   (ISAC), and relevant government departments and agencies.
+   Related Controls: CA-2, CA-7, CA-8, RA-3, RA-5, RA-6, SI-4.
+   Control Enhancements: None.
+   References: [SP 800-30].
 
 ### 3.17 SYSTEM AND SERVICES ACQUISITION
 
@@ -13040,43 +13108,43 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-179. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and services acquisition policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-180. Procedures to facilitate the implementation of the system and services acquisition
-     policy and the associated system and services acquisition controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the system and services acquisition policy and
-     procedures; and
-     c.
-     Review and update the current system and services acquisition:
-181. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-182. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: System and services acquisition policy and procedures address the controls in the SA
-     family that are implemented within systems and organizations. The risk management strategy is
-     an important factor in establishing such policies and procedures. Policies and procedures
-     contribute to security and privacy assurance. Therefore, it is important that security and privacy
-     programs collaborate on the development of system and services acquisition policy and
-     procedures. Security and privacy program policies and procedures at the organization level are
-     preferable, in general, and may obviate the need for mission- or system-specific policies and
-     procedures. The policy can be included as part of the general security and privacy policy or be
-     represented by multiple policies that reflect the complex nature of organizations. Procedures can
-     be established for security and privacy programs, for mission or business processes, and for
-     systems, if needed. Procedures describe how the policies or controls are implemented and can
-     be directed at the individual or role that is the object of the procedure. Procedures can be
-     documented in system security and privacy plans or in one or more separate documents. Events
-     that may precipitate an update to system and services acquisition policy and procedures include
-     assessment or audit findings, security incidents or breaches, or changes in laws, executive orders,
-     directives, regulations, policies, standards, and guidelines. Simply restating controls does not
-     constitute an organizational policy or procedure.
-     Related Controls: PM-9, PS-8, SA-8, SI-12.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100], [SP 800-160-1].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and services acquisition policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the system and services acquisition
+   policy and the associated system and services acquisition controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the system and services acquisition policy and
+   procedures; and
+   c.
+   Review and update the current system and services acquisition:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: System and services acquisition policy and procedures address the controls in the SA
+   family that are implemented within systems and organizations. The risk management strategy is
+   an important factor in establishing such policies and procedures. Policies and procedures
+   contribute to security and privacy assurance. Therefore, it is important that security and privacy
+   programs collaborate on the development of system and services acquisition policy and
+   procedures. Security and privacy program policies and procedures at the organization level are
+   preferable, in general, and may obviate the need for mission- or system-specific policies and
+   procedures. The policy can be included as part of the general security and privacy policy or be
+   represented by multiple policies that reflect the complex nature of organizations. Procedures can
+   be established for security and privacy programs, for mission or business processes, and for
+   systems, if needed. Procedures describe how the policies or controls are implemented and can
+   be directed at the individual or role that is the object of the procedure. Procedures can be
+   documented in system security and privacy plans or in one or more separate documents. Events
+   that may precipitate an update to system and services acquisition policy and procedures include
+   assessment or audit findings, security incidents or breaches, or changes in laws, executive orders,
+   directives, regulations, policies, standards, and guidelines. Simply restating controls does not
+   constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SA-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100], [SP 800-160-1].
 
 #### SA-2
 
@@ -13138,7 +13206,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      management of the system during the life cycle.
      Related Controls: AT-3, PL-8, PM-7, SA-4, SA-5, SA-8, SA-11, SA-15, SA-17, SA-22, SR-3, SR-4, SR5, SR-9.
      Control Enhancements:
-     (1) SYSTEM DEVELOPMENT LIFE CYCLE | MANAGE PREPRODUCTION ENVIRONMENT
+
+##### (1) SYSTEM DEVELOPMENT LIFE CYCLE | MANAGE PREPRODUCTION ENVIRONMENT
+
      Protect system preproduction environments commensurate with risk throughout the
      system development life cycle for the system, system component, or system service.
      Discussion: The preproduction environment includes development, test, and integration
@@ -13147,7 +13217,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Criticality analysis and the application of controls on developers also contribute to a more
      secure system development environment.
      Related Controls: CM-2, CM-4, RA-3, RA-9, SA-4.
-     (2) SYSTEM DEVELOPMENT LIFE CYCLE | USE OF LIVE OR OPERATIONAL DATA
+
+##### (2) SYSTEM DEVELOPMENT LIFE CYCLE | USE OF LIVE OR OPERATIONAL DATA
+
      (a) Approve, document, and control the use of live data in preproduction environments
      for the system, system component, or system service; and
      (b) Protect preproduction environments for the system, system component, or system
@@ -13163,7 +13235,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system components, and system services. Risk assessment techniques may be used to
      determine if the risk of using live or operational data is acceptable.
      Related Controls: PM-25, RA-3.
-     (3) SYSTEM DEVELOPMENT LIFE CYCLE | TECHNOLOGY REFRESH
+
+##### (3) SYSTEM DEVELOPMENT LIFE CYCLE | TECHNOLOGY REFRESH
+
      Plan for and implement a technology refresh schedule for the system throughout the
      system development life cycle.
      Discussion: Technology refresh planning may encompass hardware, software, firmware,
@@ -13231,7 +13305,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: CM-6, CM-8, PS-7, SA-3, SA-5, SA-8, SA-11, SA-15, SA-16, SA-17, SA-21, SR-3,
      SR-5.
      Control Enhancements:
-     (1) ACQUISITION PROCESS | FUNCTIONAL PROPERTIES OF CONTROLS
+
+##### (1) ACQUISITION PROCESS | FUNCTIONAL PROPERTIES OF CONTROLS
+
      Require the developer of the system, system component, or system service to provide a
      description of the functional properties of the controls to be implemented.
      Discussion: Functional properties of security and privacy controls describe the functionality
@@ -13239,7 +13315,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      controls and specifically exclude functionality and data structures internal to the operation
      of the controls.
      Related Controls: None.
-     (2) ACQUISITION PROCESS | DESIGN AND IMPLEMENTATION INFORMATION FOR CONTROLS
+
+##### (2) ACQUISITION PROCESS | DESIGN AND IMPLEMENTATION INFORMATION FOR CONTROLS
+
      Require the developer of the system, system component, or system service to provide
      design and implementation information for the controls that includes: [Selection (one or
      more): security-relevant external system interfaces; high-level design; low-level design;
@@ -13258,7 +13336,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      used, date of purchase or download, and the vendor or download source. Source code and
      hardware schematics are referred to as the implementation representation of the system.
      Related Controls: None.
-     (3) ACQUISITION PROCESS | DEVELOPMENT METHODS, TECHNIQUES, AND PRACTICES
+
+##### (3) ACQUISITION PROCESS | DEVELOPMENT METHODS, TECHNIQUES, AND PRACTICES
+
      Require the developer of the system, system component, or system service to
      demonstrate the use of a system development life cycle process that includes:
      (a) [Assignment: organization-defined systems engineering methods];
@@ -13278,9 +13358,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      provides an increased level of assurance in the trustworthiness of the system, system
      component, or system service being acquired.
      Related Controls: None.
-     (4) ACQUISITION PROCESS | ASSIGNMENT OF COMPONENTS TO SYSTEMS
+
+##### (4) ACQUISITION PROCESS | ASSIGNMENT OF COMPONENTS TO SYSTEMS
+
      [Withdrawn: Incorporated into CM-8(9).]
-     (5) ACQUISITION PROCESS | SYSTEM, COMPONENT, AND SERVICE CONFIGURATIONS
+
+##### (5) ACQUISITION PROCESS | SYSTEM, COMPONENT, AND SERVICE CONFIGURATIONS
+
      Require the developer of the system, system component, or system service to:
      (a) Deliver the system, component, or service with [Assignment: organization-defined
      security configurations] implemented; and
@@ -13291,7 +13375,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      functions, ports, protocols, and services. Security characteristics can include requiring that
      default passwords have been changed.
      Related Controls: None.
-     (6) ACQUISITION PROCESS | USE OF INFORMATION ASSURANCE PRODUCTS
+
+##### (6) ACQUISITION PROCESS | USE OF INFORMATION ASSURANCE PRODUCTS
+
      (a) Employ only government off-the-shelf or commercial off-the-shelf information
      assurance and information assurance-enabled information technology products that
      compose an NSA-approved solution to protect classified information when the
@@ -13302,7 +13388,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: Commercial off-the-shelf IA or IA-enabled information technology products used
      to protect classified information by cryptographic means may be required to use NSAapproved key management. See [NSA CSFC].
      Related Controls: SC-8, SC-12, SC-13.
-     (7) ACQUISITION PROCESS | NIAP-APPROVED PROTECTION PROFILES
+
+##### (7) ACQUISITION PROCESS | NIAP-APPROVED PROTECTION PROFILES
+
      (a) Limit the use of commercially provided information assurance and information
      assurance-enabled information technology products to those products that have been
      successfully evaluated against a National Information Assurance partnership (NIAP)approved Protection Profile for a specific technology type, if such a profile exists; and
@@ -13312,7 +13400,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: See [NIAP CCEVS] for additional information on NIAP. See [NIST CMVP] for
      additional information on FIPS-validated cryptographic modules.
      Related Controls: IA-7, SC-12, SC-13.
-     (8) ACQUISITION PROCESS | CONTINUOUS MONITORING PLAN FOR CONTROLS
+
+##### (8) ACQUISITION PROCESS | CONTINUOUS MONITORING PLAN FOR CONTROLS
+
      Require the developer of the system, system component, or system service to produce a
      plan for continuous monitoring of control effectiveness that is consistent with the
      continuous monitoring program of the organization.
@@ -13325,7 +13415,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      activities planned, frequency of control monitoring, and actions to be taken when controls
      fail or become ineffective.
      Related Controls: CA-7.
-     (9) ACQUISITION PROCESS | FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES IN USE
+
+##### (9) ACQUISITION PROCESS | FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES IN USE
+
      Require the developer of the system, system component, or system service to identify the
      functions, ports, protocols, and services intended for organizational use.
      Discussion: The identification of functions, ports, protocols, and services early in the system
@@ -13340,14 +13432,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      external system services. Organizations identify which functions, ports, protocols, and
      services are provided from external sources.
      Related Controls: CM-7, SA-9.
-     (10) ACQUISITION PROCESS | USE OF APPROVED PIV PRODUCTS
+
+##### (10) ACQUISITION PROCESS | USE OF APPROVED PIV PRODUCTS
+
      Employ only information technology products on the FIPS 201-approved products list for
      Personal Identity Verification (PIV) capability implemented within organizational systems.
      Discussion: Products on the FIPS 201-approved products list meet NIST requirements for
      Personal Identity Verification (PIV) of Federal Employees and Contractors. PIV cards are used
      for multi-factor authentication in systems and organizations.
      Related Controls: IA-2, IA-8, PM-9.
-     (11) ACQUISITION PROCESS | SYSTEM OF RECORDS
+
+##### (11) ACQUISITION PROCESS | SYSTEM OF RECORDS
+
      Include [Assignment: organization-defined Privacy Act requirements] in the acquisition
      contract for the operation of a system of records on behalf of an organization to
      accomplish an organizational mission or function.
@@ -13356,7 +13452,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      with its authority, causes the requirements of the [PRIVACT] to be applied to the system of
      records.
      Related Controls: PT-6.
-     (12) ACQUISITION PROCESS | DATA OWNERSHIP
+
+##### (12) ACQUISITION PROCESS | DATA OWNERSHIP
+
      (a) Include organizational data ownership requirements in the acquisition contract; and
      (b) Require all data to be removed from the contractor’s system and returned to the
      organization within [Assignment: organization-defined time frame].
@@ -13378,50 +13476,60 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Obtain or develop administrator documentation for the system, system component, or
      system service that describes:
 
-183. Secure configuration, installation, and operation of the system, component, or service;
-184. Effective use and maintenance of security and privacy functions and mechanisms; and
-185. Known vulnerabilities regarding configuration and use of administrative or privileged
-     functions;
-     Obtain or develop user documentation for the system, system component, or system service
-     that describes:
-186. User-accessible security and privacy functions and mechanisms and how to effectively
-     use those functions and mechanisms;
-187. Methods for user interaction, which enables individuals to use the system, component,
-     or service in a more secure manner and protect individual privacy; and
-188. User responsibilities in maintaining the security of the system, component, or service
-     and privacy of individuals;
-     c.
-     Document attempts to obtain system, system component, or system service documentation
-     when such documentation is either unavailable or nonexistent and take [Assignment:
-     organization-defined actions] in response; and
-     d.
-     Distribute documentation to [Assignment: organization-defined personnel or roles].
-     Discussion: System documentation helps personnel understand the implementation and
-     operation of controls. Organizations consider establishing specific measures to determine the
-     quality and completeness of the content provided. System documentation may be used to
-     support the management of supply chain risk, incident response, and other functions. Personnel
-     or roles that require documentation include system owners, system security officers, and system
-     administrators. Attempts to obtain documentation include contacting manufacturers or suppliers
-     and conducting web-based searches. The inability to obtain documentation may occur due to the
-     age of the system or component or the lack of support from developers and contractors. When
-     documentation cannot be obtained, organizations may need to recreate the documentation if it
-     is essential to the implementation or operation of the controls. The protection provided for the
-     documentation is commensurate with the security category or classification of the system.
-     Documentation that addresses system vulnerabilities may require an increased level of
-     protection. Secure operation of the system includes initially starting the system and resuming
-     secure system operation after a lapse in system operation.
-     Related Controls: CM-4, CM-6, CM-7, CM-8, PL-2, PL-4, PL-8, PS-2, SA-3, SA-4, SA-8, SA-9, SA-10,
-     SA-11, SA-15, SA-16, SA-17, SI-12, SR-3.
-     Control Enhancements:
-     (1) SYSTEM DOCUMENTATION | FUNCTIONAL PROPERTIES OF SECURITY CONTROLS
+1. Secure configuration, installation, and operation of the system, component, or service;
+2. Effective use and maintenance of security and privacy functions and mechanisms; and
+3. Known vulnerabilities regarding configuration and use of administrative or privileged
+   functions;
+   Obtain or develop user documentation for the system, system component, or system service
+   that describes:
+4. User-accessible security and privacy functions and mechanisms and how to effectively
+   use those functions and mechanisms;
+5. Methods for user interaction, which enables individuals to use the system, component,
+   or service in a more secure manner and protect individual privacy; and
+6. User responsibilities in maintaining the security of the system, component, or service
+   and privacy of individuals;
+   c.
+   Document attempts to obtain system, system component, or system service documentation
+   when such documentation is either unavailable or nonexistent and take [Assignment:
+   organization-defined actions] in response; and
+   d.
+   Distribute documentation to [Assignment: organization-defined personnel or roles].
+   Discussion: System documentation helps personnel understand the implementation and
+   operation of controls. Organizations consider establishing specific measures to determine the
+   quality and completeness of the content provided. System documentation may be used to
+   support the management of supply chain risk, incident response, and other functions. Personnel
+   or roles that require documentation include system owners, system security officers, and system
+   administrators. Attempts to obtain documentation include contacting manufacturers or suppliers
+   and conducting web-based searches. The inability to obtain documentation may occur due to the
+   age of the system or component or the lack of support from developers and contractors. When
+   documentation cannot be obtained, organizations may need to recreate the documentation if it
+   is essential to the implementation or operation of the controls. The protection provided for the
+   documentation is commensurate with the security category or classification of the system.
+   Documentation that addresses system vulnerabilities may require an increased level of
+   protection. Secure operation of the system includes initially starting the system and resuming
+   secure system operation after a lapse in system operation.
+   Related Controls: CM-4, CM-6, CM-7, CM-8, PL-2, PL-4, PL-8, PS-2, SA-3, SA-4, SA-8, SA-9, SA-10,
+   SA-11, SA-15, SA-16, SA-17, SI-12, SR-3.
+   Control Enhancements:
+
+##### (1) SYSTEM DOCUMENTATION | FUNCTIONAL PROPERTIES OF SECURITY CONTROLS
+
      [Withdrawn: Incorporated into SA-4(1).]
-     (2) SYSTEM DOCUMENTATION | SECURITY-RELEVANT EXTERNAL SYSTEM INTERFACES
+
+##### (2) SYSTEM DOCUMENTATION | SECURITY-RELEVANT EXTERNAL SYSTEM INTERFACES
+
      [Withdrawn: Incorporated into SA-4(2).]
-     (3) SYSTEM DOCUMENTATION | HIGH-LEVEL DESIGN
+
+##### (3) SYSTEM DOCUMENTATION | HIGH-LEVEL DESIGN
+
      [Withdrawn: Incorporated into SA-4(2).]
-     (4) SYSTEM DOCUMENTATION | LOW-LEVEL DESIGN
+
+##### (4) SYSTEM DOCUMENTATION | LOW-LEVEL DESIGN
+
      [Withdrawn: Incorporated into SA-4(2).]
-     (5) SYSTEM DOCUMENTATION | SOURCE CODE
+
+##### (5) SYSTEM DOCUMENTATION | SOURCE CODE
+
      [Withdrawn: Incorporated into SA-4(2).]
      References: [SP 800-160-1].
 
@@ -13465,7 +13573,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      including incorporating tamper-resistant hardware into a design.
      Related Controls: PL-8, PM-7, RA-2, RA-3, RA-9, SA-3, SA-4, SA-15, SA-17, SA-20, SC-2, SC-3, SC32, SC-39, SR-2, SR-3, SR-4, SR-5.
      Control Enhancements:
-     (1) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | CLEAR ABSTRACTIONS
+
+##### (1) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | CLEAR ABSTRACTIONS
+
      Implement the security design principle of clear abstractions.
      Discussion: The principle of clear abstractions states that a system has simple, well-defined
      interfaces and functions that provide a consistent and intuitive view of the data and how the
@@ -13479,7 +13589,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      component invoking or calling the first component, such that the published abstraction is
      not influenced by how the data may be managed internally.
      Related Controls: None.
-     (2) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | LEAST COMMON MECHANISM
+
+##### (2) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | LEAST COMMON MECHANISM
+
      Implement the security design principle of least common mechanism in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of least common mechanism states that the amount of mechanism
@@ -13495,7 +13607,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      mechanism also supports the principle of simplicity of design and addresses the issue of
      covert storage channels [LAMPSON73].
      Related Controls: None.
-     (3) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MODULARITY AND LAYERING
+
+##### (3) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MODULARITY AND LAYERING
+
      Implement the security design principles of modularity and layering in [Assignment:
      organization-defined systems or system components].
      Discussion: The principles of modularity and layering are fundamental across system
@@ -13512,7 +13626,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      allocation of system policies to layers, and separation of processes into subjects with distinct
      privileges based on hardware-supported privilege domains.
      Related Controls: SC-2, SC-3.
-     (4) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PARTIALLY ORDERED DEPENDENCIES
+
+##### (4) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PARTIALLY ORDERED DEPENDENCIES
+
      Implement the security design principle of partially ordered dependencies in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of partially ordered dependencies states that the synchronization,
@@ -13527,7 +13643,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      contribute significantly to the simplicity and coherency of the system design. Partially
      ordered dependencies also facilitate system testing and analysis.
      Related Controls: None.
-     (5) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | EFFICIENTLY MEDIATED ACCESS
+
+##### (5) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | EFFICIENTLY MEDIATED ACCESS
+
      Implement the security design principle of efficiently mediated access in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of efficiently mediated access states that policy enforcement
@@ -13541,7 +13659,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      can be achieved. Once access to a low-level resource such as memory has been obtained,
      hardware protection mechanisms can ensure that out-of-bounds access does not occur.
      Related Controls: AC-25.
-     (6) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MINIMIZED SHARING
+
+##### (6) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MINIMIZED SHARING
+
      Implement the security design principle of minimized sharing in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of minimized sharing states that no computer resource is shared
@@ -13559,7 +13679,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Moreover, the use of global data to share information is carefully scrutinized. The lack of
      encapsulation may obfuscate relationships among the sharing entities.
      Related Controls: SC-31.
-     (7) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | REDUCED COMPLEXITY
+
+##### (7) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | REDUCED COMPLEXITY
+
      Implement the security design principle of reduced complexity in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of reduced complexity states that the system design is as simple
@@ -13583,7 +13705,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      transition period. This may result in a temporary increase in system complexity during the
      transition.
      Related Controls: None.
-     (8) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE EVOLVABILITY
+
+##### (8) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE EVOLVABILITY
+
      Implement the security design principle of secure evolvability in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of secure evolvability states that a system is developed to facilitate
@@ -13603,7 +13727,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      include reduced vendor life cycle costs, reduced cost of ownership, improved system
      security, more effective management of security risk, and less risk uncertainty.
      Related Controls: CM-3.
-     (9) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | TRUSTED COMPONENTS
+
+##### (9) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | TRUSTED COMPONENTS
+
      Implement the security design principle of trusted components in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of trusted components states that a component is trustworthy to
@@ -13627,7 +13753,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      defense-in-depth layering within the component or a replication of components. Defense-indepth techniques do not increase the trustworthiness of the whole above that of the least
      trustworthy component.
      Related Controls: None.
-     (10) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HIERARCHICAL TRUST
+
+##### (10) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HIERARCHICAL TRUST
+
      Implement the security design principle of hierarchical trust in [Assignment: organizationdefined systems or system components].
      Discussion: The principle of hierarchical trust for components builds on the principle of
      trusted components and states that the security dependencies in a system will form a partial
@@ -13651,7 +13779,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      trustworthy component upon a less trustworthy component does not degrade the
      trustworthiness of the resulting low-trust system.
      Related Controls: None.
-     (11) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | INVERSE MODIFICATION THRESHOLD
+
+##### (11) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | INVERSE MODIFICATION THRESHOLD
+
      Implement the security design principle of inverse modification threshold in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of inverse modification threshold builds on the principle of trusted
@@ -13663,7 +13793,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      from the protections afforded to the component from other elements or attributes of the
      security architecture (to include protections in the environment of operation).
      Related Controls: None.
-     (12) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HIERARCHICAL PROTECTION
+
+##### (12) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HIERARCHICAL PROTECTION
+
      Implement the security design principle of hierarchical protection in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of hierarchical protection states that a component need not be
@@ -13677,7 +13809,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      environments where users are highly trustworthy and where other protections are put in
      place to bound and protect the “system high” execution environment.
      Related Controls: None.
-     (13) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MINIMIZED SECURITY ELEMENTS
+
+##### (13) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MINIMIZED SECURITY ELEMENTS
+
      Implement the security design principle of minimized security elements in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of minimized security elements states that the system does not
@@ -13693,7 +13827,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      than one whose internal trust relationships are simple and elegantly constructed. In general,
      fewer trusted components result in fewer internal trust relationships and a simpler system.
      Related Controls: None.
-     (14) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | LEAST PRIVILEGE
+
+##### (14) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | LEAST PRIVILEGE
+
      Implement the security design principle of least privilege in [Assignment: organizationdefined systems or system components].
      Discussion: The principle of least privilege states that each system component is allocated
      sufficient privileges to accomplish its specified functions but no more. Applying the principle
@@ -13718,7 +13854,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      elements that are necessary for its functionality and that the access modes for the elements
      (e.g., read, write) are minimal.
      Related Controls: AC-6, CM-7.
-     (15) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PREDICATE PERMISSION
+
+##### (15) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PREDICATE PERMISSION
+
      Implement the security design principle of predicate permission in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of predicate permission states that system designers consider
@@ -13734,7 +13872,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      enabled by some prior action, but no single individual is able to enable more than one
      action.
      Related Controls: AC-5.
-     (16) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SELF-RELIANT TRUSTWORTHINESS
+
+##### (16) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SELF-RELIANT TRUSTWORTHINESS
+
      Implement the security design principle of self-reliant trustworthiness in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of self-reliant trustworthiness states that systems minimize their
@@ -13748,7 +13888,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system component) to operate in isolation and then resynchronize with other components
      when it is rejoined with them.
      Related Controls: None.
-     (17) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE DISTRIBUTED COMPOSITION
+
+##### (17) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE DISTRIBUTED COMPOSITION
+
      Implement the security design principle of secure distributed composition in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of secure distributed composition states that the composition of
@@ -13763,7 +13905,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system-wide level of assurance of correct policy enforcement, the security architecture of a
      distributed composite system is thoroughly analyzed.
      Related Controls: None.
-     (18) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | TRUSTED COMMUNICATIONS CHANNELS
+
+##### (18) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | TRUSTED COMMUNICATIONS CHANNELS
+
      Implement the security design principle of trusted communications channels in
      [Assignment: organization-defined systems or system components].
      Discussion: The principle of trusted communication channels states that when composing a
@@ -13777,7 +13921,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      channel (to protect against interception and modification and to further increase the
      assurance of proper end-to-end communication).
      Related Controls: SC-8, SC-12, SC-13.
-     (19) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | CONTINUOUS PROTECTION
+
+##### (19) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | CONTINUOUS PROTECTION
+
      Implement the security design principle of continuous protection in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of continuous protection states that components and data used to
@@ -13809,7 +13955,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the new policy. The ability to demonstrate continuous protection is rooted in the clear
      articulation of life cycle protection needs as stakeholder security requirements.
      Related Controls: AC-25.
-     (20) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE METADATA MANAGEMENT
+
+##### (20) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE METADATA MANAGEMENT
+
      Implement the security design principle of secure metadata management in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of secure metadata management states that metadata are “first
@@ -13836,7 +13984,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      specified, and allocated to metadata, as would be done for mission, business, and system
      data.
      Related Controls: None.
-     (21) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SELF-ANALYSIS
+
+##### (21) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SELF-ANALYSIS
+
      Implement the security design principle of self-analysis in [Assignment: organizationdefined systems or system components].
      Discussion: The principle of self-analysis states that a system component is able to assess its
      internal state and functionality to a limited extent at various stages of execution, and that
@@ -13854,7 +14004,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the component, detecting any potential conflicts in configuration with respect to the
      expected configuration.
      Related Controls: CA-7.
-     (22) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ACCOUNTABILITY AND TRACEABILITY
+
+##### (22) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ACCOUNTABILITY AND TRACEABILITY
+
      Implement the security design principle of accountability and traceability in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of accountability and traceability states that it is possible to trace
@@ -13875,7 +14027,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      that allowed the violation of the security policy and the actions of individuals associated with
      the violation of the security policy.
      Related Controls: AC-6, AU-2, AU-3, AU-6, AU-9, AU-10, AU-12, IA-2, IR-4.
-     (23) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE DEFAULTS
+
+##### (23) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE DEFAULTS
+
      Implement the security design principle of secure defaults in [Assignment: organizationdefined systems or system components].
      Discussion: The principle of secure defaults states that the default configuration of a system
      (including its constituent subsystems, components, and mechanisms) reflects a restrictive
@@ -13948,7 +14102,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      resource cannot be continuously protected, it is critical to detect and repair any security
      breaches before the resource is once again used in a secure context.
      Related Controls: CP-10, CP-12, SC-7, SC-8, SC-24, SI-13.
-     (25) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ECONOMIC SECURITY
+
+##### (25) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ECONOMIC SECURITY
+
      Implement the security design principle of economic security in [Assignment: organizationdefined systems or system components].
      Discussion: The principle of economic security states that security mechanisms are not
      costlier than the potential damage that could occur from a security breach. This is the
@@ -13960,7 +14116,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      relevant and credible evidence as well as the necessary analyses to assess and draw
      trustworthiness and risk conclusions from the evidence.
      Related Controls: RA-3.
-     (26) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PERFORMANCE SECURITY
+
+##### (26) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PERFORMANCE SECURITY
+
      Implement the security design principle of performance security in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of performance security states that security mechanisms are
@@ -13988,7 +14146,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system from the ground up and to incorporate simple mechanisms at the lower layers that
      can be used as building blocks for higher-level mechanisms.
      Related Controls: SC-12, SC-13, SI-2, SI-7.
-     (27) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HUMAN FACTORED SECURITY
+
+##### (27) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HUMAN FACTORED SECURITY
+
      Implement the security design principle of human factored security in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of human factored security states that the user interface for
@@ -14009,7 +14169,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      inconsistent with the security requirements and protection needs that the mechanisms were
      designed to satisfy.
      Related Controls: None.
-     (28) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ACCEPTABLE SECURITY
+
+##### (28) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ACCEPTABLE SECURITY
+
      Implement the security design principle of acceptable security in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of acceptable security requires that the level of privacy and
@@ -14020,7 +14182,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      meet privacy and performance expectations, users may either choose to completely avoid
      the system or use it in ways that may be inefficient or even insecure.
      Related Controls: None.
-     (29) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | REPEATABLE AND DOCUMENTED PROCEDURES
+
+##### (29) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | REPEATABLE AND DOCUMENTED PROCEDURES
+
      Implement the security design principle of repeatable and documented procedures in
      [Assignment: organization-defined systems or system components].
      Discussion: The principle of repeatable and documented procedures states that the
@@ -14035,7 +14199,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      development and review, procedures for the configuration management of development
      tools and system artifacts, and procedures for system delivery.
      Related Controls: CM-1, SA-1, SA-10, SA-11, SA-15, SA-17, SC-1, SI-1.
-     (30) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PROCEDURAL RIGOR
+
+##### (30) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PROCEDURAL RIGOR
+
      Implement the security design principle of procedural rigor in [Assignment: organizationdefined systems or system components].
      Discussion: The principle of procedural rigor states that the rigor of a system life cycle
      process is commensurate with its intended trustworthiness. Procedural rigor defines the
@@ -14056,7 +14222,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system is low, a high level of procedural rigor may add unnecessary cost, whereas when high
      trustworthiness is critical, the cost of high procedural rigor is merited.
      Related Controls: None.
-     (31) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE SYSTEM MODIFICATION
+
+##### (31) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE SYSTEM MODIFICATION
+
      Implement the security design principle of secure system modification in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of secure system modification states that system modification
@@ -14069,7 +14237,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      needed prior to its implementation and deployment. This principle parallels the principle of
      secure evolvability.
      Related Controls: CM-3, CM-4.
-     (32) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SUFFICIENT DOCUMENTATION
+
+##### (32) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SUFFICIENT DOCUMENTATION
+
      Implement the security design principle of sufficient documentation in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of sufficient documentation states that organizational personnel
@@ -14085,7 +14255,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Documentation is written clearly and supported by training that provides security awareness
      and understanding of security-relevant responsibilities.
      Related Controls: AT-2, AT-3, SA-5.
-     (33) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MINIMIZATION
+
+##### (33) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | MINIMIZATION
+
      Implement the privacy principle of minimization using [Assignment: organization-defined
      processes].
      Discussion: The principle of minimization states that organizations should only process
@@ -14129,7 +14301,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      instances of noncompliance.
      Related Controls: AC-20, CA-3, CP-2, IR-4, IR-7, PL-10, PL-11, PS-7, SA-2, SA-4, SR-3, SR-5.
      Control Enhancements:
-     (1) EXTERNAL SYSTEM SERVICES | RISK ASSESSMENTS AND ORGANIZATIONAL APPROVALS
+
+##### (1) EXTERNAL SYSTEM SERVICES | RISK ASSESSMENTS AND ORGANIZATIONAL APPROVALS
+
      (a) Conduct an organizational assessment of risk prior to the acquisition or outsourcing of
      information security services; and
      (b) Verify that the acquisition or outsourcing of dedicated information security services is
@@ -14139,7 +14313,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Risks assessed can include system, mission or business, security, privacy, or supply chain
      risks.
      Related Controls: CA-6, RA-3, RA-8.
-     (2) EXTERNAL SYSTEM SERVICES | IDENTIFICATION OF FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES
+
+##### (2) EXTERNAL SYSTEM SERVICES | IDENTIFICATION OF FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES
+
      Require providers of the following external system services to identify the functions, ports,
      protocols, and other services required for the use of such services: [Assignment:
      organization-defined external system services].
@@ -14148,7 +14324,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      need arises to understand the trade-offs involved in restricting certain functions and services
      or blocking certain ports and protocols.
      Related Controls: CM-6, CM-7.
-     (3) EXTERNAL SYSTEM SERVICES | ESTABLISH AND MAINTAIN TRUST RELATIONSHIP WITH PROVIDERS
+
+##### (3) EXTERNAL SYSTEM SERVICES | ESTABLISH AND MAINTAIN TRUST RELATIONSHIP WITH PROVIDERS
+
      Establish, document, and maintain trust relationships with external service providers
      based on the following requirements, properties, factors, or conditions: [Assignment:
      organization-defined security and privacy requirements, properties, factors, or conditions
@@ -14181,7 +14359,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      successful trust relationships; and conducting routine, periodic, unscheduled visits to service
      provider facilities.
      Related Controls: None.
-     (5) EXTERNAL SYSTEM SERVICES | PROCESSING, STORAGE, AND SERVICE LOCATION
+
+##### (5) EXTERNAL SYSTEM SERVICES | PROCESSING, STORAGE, AND SERVICE LOCATION
+
      Restrict the location of [Selection (one or more): information processing; information or
      data; system services] to [Assignment: organization-defined locations] based on
      [Assignment: organization-defined requirements or conditions].
@@ -14197,7 +14377,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      governing laws, policies, or protocols in the locations where processing and storage occur
      and/or the locations from which system services emanate.
      Related Controls: SA-5, SR-4.
-     (6) EXTERNAL SYSTEM SERVICES | ORGANIZATION-CONTROLLED CRYPTOGRAPHIC KEYS
+
+##### (6) EXTERNAL SYSTEM SERVICES | ORGANIZATION-CONTROLLED CRYPTOGRAPHIC KEYS
+
      Maintain exclusive control of cryptographic keys for encrypted material stored or
      transmitted through an external system.
      Discussion: Maintaining exclusive control of cryptographic keys in an external system
@@ -14207,7 +14389,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      component that permits encryption and decryption functions to be local to the external
      system but allows exclusive organizational access to the encryption keys.
      Related Controls: SC-12, SC-13, SI-4.
-     (7) EXTERNAL SYSTEM SERVICES | ORGANIZATION-CONTROLLED INTEGRITY CHECKING
+
+##### (7) EXTERNAL SYSTEM SERVICES | ORGANIZATION-CONTROLLED INTEGRITY CHECKING
+
      Provide the capability to check the integrity of information while it resides in the external
      system.
      Discussion: Storage of organizational information in an external system could limit visibility
@@ -14215,7 +14399,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      integrity of its stored data without transferring it out of the external system provides such
      visibility.
      Related Controls: SI-7.
-     (8) EXTERNAL SYSTEM SERVICES | PROCESSING AND STORAGE LOCATION — U.S. JURISDICTION
+
+##### (8) EXTERNAL SYSTEM SERVICES | PROCESSING AND STORAGE LOCATION — U.S. JURISDICTION
+
      Restrict the geographic location of information processing and data storage to facilities
      located within in the legal jurisdictional boundary of the United States.
      Discussion: The geographic location of information processing and data storage can have a
@@ -14262,7 +14448,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: CM-2, CM-3, CM-4, CM-7, CM-9, SA-4, SA-5, SA-8, SA-15, SI-2, SR-3, SR-4, SR-5,
      SR-6.
      Control Enhancements:
-     (1) DEVELOPER CONFIGURATION MANAGEMENT | SOFTWARE AND FIRMWARE INTEGRITY VERIFICATION
+
+##### (1) DEVELOPER CONFIGURATION MANAGEMENT | SOFTWARE AND FIRMWARE INTEGRITY VERIFICATION
+
      Require the developer of the system, system component, or system service to enable
      integrity verification of software and firmware components.
      Discussion: Software and firmware integrity verification allows organizations to detect
@@ -14273,7 +14461,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      by developers. Delivered software and firmware components also include any updates to
      such components.
      Related Controls: SI-7, SR-11.
-     (2) DEVELOPER CONFIGURATION MANAGEMENT | ALTERNATIVE CONFIGURATION MANAGEMENT
+
+##### (2) DEVELOPER CONFIGURATION MANAGEMENT | ALTERNATIVE CONFIGURATION MANAGEMENT
+
      PROCESSES
      Provide an alternate configuration management process using organizational personnel in
      the absence of a dedicated developer configuration management team.
@@ -14284,7 +14474,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      conduct security and privacy impact analyses prior to the implementation of changes to
      systems, components, or services.
      Related Controls: None.
-     (3) DEVELOPER CONFIGURATION MANAGEMENT | HARDWARE INTEGRITY VERIFICATION
+
+##### (3) DEVELOPER CONFIGURATION MANAGEMENT | HARDWARE INTEGRITY VERIFICATION
+
      Require the developer of the system, system component, or system service to enable
      integrity verification of hardware components.
      Discussion: Hardware integrity verification allows organizations to detect unauthorized
@@ -14293,7 +14485,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      anti-tamper technologies. Delivered hardware components also include hardware and
      firmware updates to such components.
      Related Controls: SI-7.
-     (4) DEVELOPER CONFIGURATION MANAGEMENT | TRUSTED GENERATION
+
+##### (4) DEVELOPER CONFIGURATION MANAGEMENT | TRUSTED GENERATION
+
      Require the developer of the system, system component, or system service to employ
      tools for comparing newly generated versions of security-relevant hardware descriptions,
      source code, and object code with previous versions.
@@ -14306,7 +14500,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      organizations to detect unauthorized changes to hardware, software, and firmware
      components using tools, techniques, or mechanisms provided by developers.
      Related Controls: None.
-     (5) DEVELOPER CONFIGURATION MANAGEMENT | MAPPING INTEGRITY FOR VERSION CONTROL
+
+##### (5) DEVELOPER CONFIGURATION MANAGEMENT | MAPPING INTEGRITY FOR VERSION CONTROL
+
      Require the developer of the system, system component, or system service to maintain
      the integrity of the mapping between the master build data describing the current version
      of security-relevant hardware, software, and firmware and the on-site master copy of the
@@ -14318,7 +14514,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the equivalent data in master copies in operational environments is essential to ensuring the
      availability of organizational systems that support critical mission and business functions.
      Related Controls: None.
-     (6) DEVELOPER CONFIGURATION MANAGEMENT | TRUSTED DISTRIBUTION
+
+##### (6) DEVELOPER CONFIGURATION MANAGEMENT | TRUSTED DISTRIBUTION
+
      Require the developer of the system, system component, or system service to execute
      procedures for ensuring that security-relevant hardware, software, and firmware updates
      distributed to the organization are exactly as specified by the master copies.
@@ -14326,7 +14524,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      updates help to ensure that the updates are correct representations of the master copies
      maintained by the developer and have not been tampered with during distribution.
      Related Controls: None.
-     (7) DEVELOPER CONFIGURATION MANAGEMENT | SECURITY AND PRIVACY REPRESENTATIVES
+
+##### (7) DEVELOPER CONFIGURATION MANAGEMENT | SECURITY AND PRIVACY REPRESENTATIVES
+
      Require [Assignment: organization-defined security and privacy representatives] to be
      included in the [Assignment: organization-defined configuration change management and
      control process].
@@ -14384,7 +14584,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      requirements for documentation.
      Related Controls: CA-2, CA-7, CM-4, SA-3, SA-4, SA-5, SA-8, SA-15, SA-17, SI-2, SR-5, SR-6, SR-7.
      Control Enhancements:
-     (1) DEVELOPER TESTING AND EVALUATION | STATIC CODE ANALYSIS
+
+##### (1) DEVELOPER TESTING AND EVALUATION | STATIC CODE ANALYSIS
+
      Require the developer of the system, system component, or system service to employ
      static code analysis tools to identify common flaws and document the results of the
      analysis.
@@ -14402,7 +14604,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      analysis tool. In such cases, organizations weigh the validity of the evidence against evidence
      from other sources.
      Related Controls: None.
-     (2) DEVELOPER TESTING AND EVALUATION | THREAT MODELING AND VULNERABILITY ANALYSES
+
+##### (2) DEVELOPER TESTING AND EVALUATION | THREAT MODELING AND VULNERABILITY ANALYSES
+
      Require the developer of the system, system component, or system service to perform
      threat modeling and vulnerability analyses during development and the subsequent
      testing and evaluation of the system, component, or service that:
@@ -14425,7 +14629,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      accounted for and that vulnerabilities created because of those changes have been reviewed
      and mitigated.
      Related controls: PM-15, RA-3, RA-5.
-     (3) DEVELOPER TESTING AND EVALUATION | INDEPENDENT VERIFICATION OF ASSESSMENT PLANS AND
+
+##### (3) DEVELOPER TESTING AND EVALUATION | INDEPENDENT VERIFICATION OF ASSESSMENT PLANS AND
+
      EVIDENCE
      (a) Require an independent agent satisfying [Assignment: organization-defined
      independence criteria] to verify the correct implementation of the developer security
@@ -14437,7 +14643,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      training, certifications, and experience—to verify the correct implementation of developer
      security and privacy assessment plans.
      Related Controls: AT-3, RA-5.
-     (4) DEVELOPER TESTING AND EVALUATION | MANUAL CODE REVIEWS
+
+##### (4) DEVELOPER TESTING AND EVALUATION | MANUAL CODE REVIEWS
+
      Require the developer of the system, system component, or system service to perform a
      manual code review of [Assignment: organization-defined specific code] using the
      following processes, procedures, and/or techniques: [Assignment: organization-defined
@@ -14450,7 +14658,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      against application controls and review detailed aspects of cryptographic implementations
      and controls.
      Related Controls: None.
-     (5) DEVELOPER TESTING AND EVALUATION | PENETRATION TESTING
+
+##### (5) DEVELOPER TESTING AND EVALUATION | PENETRATION TESTING
+
      Require the developer of the system, system component, or system service to perform
      penetration testing:
      (a) At the following level of rigor: [Assignment: organization-defined breadth and depth
@@ -14471,7 +14681,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      identifiable information is captured or recorded during penetration testing, such information
      is handled appropriately to protect privacy.
      Related Controls: CA-8, PM-14, PM-25, PT-2, SA-3, SI-2, SI-6.
-     (6) DEVELOPER TESTING AND EVALUATION | ATTACK SURFACE REVIEWS
+
+##### (6) DEVELOPER TESTING AND EVALUATION | ATTACK SURFACE REVIEWS
+
      Require the developer of the system, system component, or system service to perform
      attack surface reviews.
      Discussion: Attack surfaces of systems and system components are exposed areas that
@@ -14482,7 +14694,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      mitigate attack vectors generated as a result of the changes. The correction of identified
      flaws includes deprecation of unsafe functions.
      Related Controls: SA-15.
-     (7) DEVELOPER TESTING AND EVALUATION | VERIFY SCOPE OF TESTING AND EVALUATION
+
+##### (7) DEVELOPER TESTING AND EVALUATION | VERIFY SCOPE OF TESTING AND EVALUATION
+
      Require the developer of the system, system component, or system service to verify that
      the scope of testing and evaluation provides complete coverage of the required controls at
      the following level of rigor: [Assignment: organization-defined breadth and depth of
@@ -14494,7 +14708,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      highest levels of assurance can be achieved using formal modeling and analysis techniques,
      including correlation between control implementation and corresponding test cases.
      Related Controls: SA-15.
-     (8) DEVELOPER TESTING AND EVALUATION | DYNAMIC CODE ANALYSIS
+
+##### (8) DEVELOPER TESTING AND EVALUATION | DYNAMIC CODE ANALYSIS
+
      Require the developer of the system, system component, or system service to employ
      dynamic code analysis tools to identify common flaws and document the results of the
      analysis.
@@ -14512,7 +14728,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      (i.e., checking for words that are out of place in software code, such as non-English language
      words or derogatory terms).
      Related Controls: None.
-     (9) DEVELOPER TESTING AND EVALUATION | INTERACTIVE APPLICATION SECURITY TESTING
+
+##### (9) DEVELOPER TESTING AND EVALUATION | INTERACTIVE APPLICATION SECURITY TESTING
+
      Require the developer of the system, system component, or system service to employ
      interactive application security testing tools to identify flaws and document the results.
      Discussion: Interactive (also known as instrumentation-based) application security testing is
@@ -14530,36 +14748,66 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
      [Withdrawn: Incorporated into SR Family.]
      Control Enhancements:
-     (1) SUPPLY CHAIN PROTECTION | ACQUISITION STRATEGIES / TOOLS / METHODS
+
+##### (1) SUPPLY CHAIN PROTECTION | ACQUISITION STRATEGIES / TOOLS / METHODS
+
      [Withdrawn: Moved to SR-5.]
-     (2) SUPPLY CHAIN PROTECTION | SUPPLIER REVIEWS
+
+##### (2) SUPPLY CHAIN PROTECTION | SUPPLIER REVIEWS
+
      [Withdrawn: Moved to SR-6.]
-     (3) SUPPLY CHAIN PROTECTION | TRUSTED SHIPPING AND WAREHOUSING
+
+##### (3) SUPPLY CHAIN PROTECTION | TRUSTED SHIPPING AND WAREHOUSING
+
      [Withdrawn: Incorporated into SR-3.]
-     (4) SUPPLY CHAIN PROTECTION | DIVERSITY OF SUPPLIERS
+
+##### (4) SUPPLY CHAIN PROTECTION | DIVERSITY OF SUPPLIERS
+
      [Withdrawn: Moved to SR-3(1).]
-     (5) SUPPLY CHAIN PROTECTION | LIMITATION OF HARM
+
+##### (5) SUPPLY CHAIN PROTECTION | LIMITATION OF HARM
+
      [Withdrawn: Moved to SR-3(2).]
-     (6) SUPPLY CHAIN PROTECTION | MINIMIZING PROCUREMENT TIME
+
+##### (6) SUPPLY CHAIN PROTECTION | MINIMIZING PROCUREMENT TIME
+
      [Withdrawn: Incorporated into SR-5(1).]
-     (7) SUPPLY CHAIN PROTECTION | ASSESSMENTS PRIOR TO SELECTION / ACCEPTANCE / UPDATE
+
+##### (7) SUPPLY CHAIN PROTECTION | ASSESSMENTS PRIOR TO SELECTION / ACCEPTANCE / UPDATE
+
      [Withdrawn: Moved to SR-5(2).]
-     (8) SUPPLY CHAIN PROTECTION | USE OF ALL-SOURCE INTELLIGENCE
+
+##### (8) SUPPLY CHAIN PROTECTION | USE OF ALL-SOURCE INTELLIGENCE
+
      [Withdrawn: Incorporated into RA-3(2).]
-     (9) SUPPLY CHAIN PROTECTION | OPERATIONS SECURITY
+
+##### (9) SUPPLY CHAIN PROTECTION | OPERATIONS SECURITY
+
      [Withdrawn: Moved to SR-7.]
-     (10) SUPPLY CHAIN PROTECTION | VALIDATE AS GENUINE AND NOT ALTERED
+
+##### (10) SUPPLY CHAIN PROTECTION | VALIDATE AS GENUINE AND NOT ALTERED
+
      [Withdrawn: Moved to SR-4(3).]
-     (11) SUPPLY CHAIN PROTECTION | PENETRATION TESTING / ANALYSIS OF ELEMENTS, PROCESSES, AND
+
+##### (11) SUPPLY CHAIN PROTECTION | PENETRATION TESTING / ANALYSIS OF ELEMENTS, PROCESSES, AND
+
      ACTORS
      [Withdrawn: Moved to SR-6(1).]
-     (12) SUPPLY CHAIN PROTECTION | INTER-ORGANIZATIONAL AGREEMENTS
+
+##### (12) SUPPLY CHAIN PROTECTION | INTER-ORGANIZATIONAL AGREEMENTS
+
      [Withdrawn: Moved to SR-8.]
-     (13) SUPPLY CHAIN PROTECTION | CRITICAL INFORMATION SYSTEM COMPONENTS
+
+##### (13) SUPPLY CHAIN PROTECTION | CRITICAL INFORMATION SYSTEM COMPONENTS
+
      [Withdrawn: Incorporated into MA-6 and RA-9.]
-     (14) SUPPLY CHAIN PROTECTION | IDENTITY AND TRACEABILITY
+
+##### (14) SUPPLY CHAIN PROTECTION | IDENTITY AND TRACEABILITY
+
      [Withdrawn: Moved to SR-4(1) and SR-4(2).]
-     (15) SUPPLY CHAIN PROTECTION | PROCESSES TO ADDRESS WEAKNESSES OR DEFICIENCIES
+
+##### (15) SUPPLY CHAIN PROTECTION | PROCESSES TO ADDRESS WEAKNESSES OR DEFICIENCIES
+
      [Withdrawn: Incorporated into SR-3.]
 
 #### SA-13 TRUSTWORTHINESS
@@ -14570,7 +14818,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
      [Withdrawn: Incorporated into RA-9.]
      Control Enhancements:
-     (1) CRITICALITY ANALYSIS | CRITICAL COMPONENTS WITH NO VIABLE ALTERNATIVE SOURCING
+
+##### (1) CRITICALITY ANALYSIS | CRITICAL COMPONENTS WITH NO VIABLE ALTERNATIVE SOURCING
+
      [Withdrawn: Incorporated into SA-20.]
 
 #### SA-15 DEVELOPMENT PROCESS, STANDARDS, AND TOOLS
@@ -14581,26 +14831,28 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Require the developer of the system, system component, or system service to follow a
      documented development process that:
 
-189. Explicitly addresses security and privacy requirements;
-190. Identifies the standards and tools used in the development process;
-191. Documents the specific tool options and tool configurations used in the development
-     process; and
-192. Documents, manages, and ensures the integrity of changes to the process and/or tools
-     used in development; and
-     Review the development process, standards, tools, tool options, and tool configurations
-     [Assignment: organization-defined frequency] to determine if the process, standards, tools,
-     tool options and tool configurations selected and employed can satisfy the following security
-     and privacy requirements: [Assignment: organization-defined security and privacy
-     requirements].
-     Discussion: Development tools include programming languages and computer-aided design
-     systems. Reviews of development processes include the use of maturity models to determine the
-     potential effectiveness of such processes. Maintaining the integrity of changes to tools and
-     processes facilitates effective supply chain risk assessment and mitigation. Such integrity requires
-     configuration control throughout the system development life cycle to track authorized changes
-     and prevent unauthorized changes.
-     Related Controls: MA-6, SA-3, SA-4, SA-8, SA-10, SA-11, SR-3, SR-4, SR-5, SR-6, SR-9.
-     Control Enhancements:
-     (1) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | QUALITY METRICS
+1. Explicitly addresses security and privacy requirements;
+2. Identifies the standards and tools used in the development process;
+3. Documents the specific tool options and tool configurations used in the development
+   process; and
+4. Documents, manages, and ensures the integrity of changes to the process and/or tools
+   used in development; and
+   Review the development process, standards, tools, tool options, and tool configurations
+   [Assignment: organization-defined frequency] to determine if the process, standards, tools,
+   tool options and tool configurations selected and employed can satisfy the following security
+   and privacy requirements: [Assignment: organization-defined security and privacy
+   requirements].
+   Discussion: Development tools include programming languages and computer-aided design
+   systems. Reviews of development processes include the use of maturity models to determine the
+   potential effectiveness of such processes. Maintaining the integrity of changes to tools and
+   processes facilitates effective supply chain risk assessment and mitigation. Such integrity requires
+   configuration control throughout the system development life cycle to track authorized changes
+   and prevent unauthorized changes.
+   Related Controls: MA-6, SA-3, SA-4, SA-8, SA-10, SA-11, SR-3, SR-4, SR-5, SR-6, SR-9.
+   Control Enhancements:
+
+##### (1) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | QUALITY METRICS
+
      Require the developer of the system, system component, or system service to:
      (a) Define quality metrics at the beginning of the development process; and
      (b) Provide evidence of meeting the quality metrics [Selection (one or more):
@@ -14618,7 +14870,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      as requiring no known vulnerabilities in the delivered system with a Common Vulnerability
      Scoring System (CVSS) severity of medium or high.
      Related Controls: None.
-     (2) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | SECURITY AND PRIVACY TRACKING TOOLS
+
+##### (2) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | SECURITY AND PRIVACY TRACKING TOOLS
+
      Require the developer of the system, system component, or system service to select and
      employ security and privacy tracking tools for use during the development process.
      Discussion: System development teams select and deploy security and privacy tracking
@@ -14626,7 +14880,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      sorting, filtering, and tracking of completed work items or tasks associated with
      development processes.
      Related Controls: SA-11.
-     (3) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | CRITICALITY ANALYSIS
+
+##### (3) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | CRITICALITY ANALYSIS
+
      Require the developer of the system, system component, or system service to perform a
      criticality analysis:
      (a) At the following decision points in the system development life cycle: [Assignment:
@@ -14644,10 +14900,14 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the federal enterprise. Developer input is especially important when organizations conduct
      supply chain criticality analyses.
      Related Controls: RA-9.
-     (4) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | THREAT MODELING AND VULNERABILITY
+
+##### (4) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | THREAT MODELING AND VULNERABILITY
+
      ANALYSIS
      [Withdrawn: Incorporated into SA-11(2).]
-     (5) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | ATTACK SURFACE REDUCTION
+
+##### (5) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | ATTACK SURFACE REDUCTION
+
      Require the developer of the system, system component, or system service to reduce
      attack surfaces to [Assignment: organization-defined thresholds].
      Discussion: Attack surface reduction is closely aligned with threat and vulnerability analyses
@@ -14660,14 +14920,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      users, reducing the amount of code that executes, and eliminating application programming
      interfaces (APIs) that are vulnerable to attacks.
      Related Controls: AC-6, CM-7, RA-3, SA-11.
-     (6) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | CONTINUOUS IMPROVEMENT
+
+##### (6) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | CONTINUOUS IMPROVEMENT
+
      Require the developer of the system, system component, or system service to implement
      an explicit process to continuously improve the development process.
      Discussion: Developers of systems, system components, and system services consider the
      effectiveness and efficiency of their development processes for meeting quality objectives
      and addressing the security and privacy capabilities in current threat environments.
      Related Controls: None.
-     (7) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | AUTOMATED VULNERABILITY ANALYSIS
+
+##### (7) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | AUTOMATED VULNERABILITY ANALYSIS
+
      Require the developer of the system, system component, or system service [Assignment:
      organization-defined frequency] to:
      (a) Perform an automated vulnerability analysis using [Assignment: organization-defined
@@ -14680,7 +14944,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      deficiencies in large and complex systems, prioritizing vulnerabilities by severity, and
      providing recommendations for risk mitigations.
      Related Controls: RA-5, SA-11.
-     (8) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | REUSE OF THREAT AND VULNERABILITY
+
+##### (8) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | REUSE OF THREAT AND VULNERABILITY
+
      INFORMATION
      Require the developer of the system, system component, or system service to use threat
      modeling and vulnerability analyses from similar systems, components, or services to
@@ -14691,9 +14957,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      available from a variety of public and private sector sources, including the NIST National
      Vulnerability Database.
      Related Controls: None.
-     (9) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | USE OF LIVE DATA
+
+##### (9) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | USE OF LIVE DATA
+
      [Withdrawn: Incorporated into SA-3(2).]
-     (10) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | INCIDENT RESPONSE PLAN
+
+##### (10) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | INCIDENT RESPONSE PLAN
+
      Require the developer of the system, system component, or system service to provide,
      implement, and test an incident response plan.
      Discussion: The incident response plan provided by developers may provide information not
@@ -14701,7 +14971,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      plans. Developer information may also be extremely helpful, such as when organizations
      respond to vulnerabilities in commercial off-the-shelf products.
      Related Controls: IR-8.
-     (11) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | ARCHIVE SYSTEM OR COMPONENT
+
+##### (11) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | ARCHIVE SYSTEM OR COMPONENT
+
      Require the developer of the system or system component to archive the system or
      component to be released or delivered together with the corresponding evidence
      supporting the final security and privacy review.
@@ -14710,7 +14982,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      relevant documentation from the development process that can provide a readily available
      configuration baseline for system and component upgrades or modifications.
      Related Controls: CM-2.
-     (12) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | MINIMIZE PERSONALLY IDENTIFIABLE
+
+##### (12) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | MINIMIZE PERSONALLY IDENTIFIABLE
+
      INFORMATION
      Require the developer of the system or system component to minimize the use of
      personally identifiable information in development and test environments.
@@ -14767,7 +15041,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      testing.
      Related Controls: PL-2, PL-8, PM-7, SA-3, SA-4, SA-8, SC-7.
      Control Enhancements:
-     (1) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | FORMAL POLICY MODEL
+
+##### (1) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | FORMAL POLICY MODEL
+
      Require the developer of the system, system component, or system service to:
      (a) Produce, as an integral part of the development process, a formal policy model
      describing the [Assignment: organization-defined elements of organizational security
@@ -14782,7 +15058,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      access control policies. Organizations choose the formal modeling language and approach
      based on the nature of the behaviors and policies to be described and the available tools.
      Related Controls: AC-3, AC-4, AC-25.
-     (2) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | SECURITY-RELEVANT
+
+##### (2) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | SECURITY-RELEVANT
+
      COMPONENTS
      Require the developer of the system, system component, or system service to:
      (a) Define security-relevant hardware, software, and firmware; and
@@ -14792,7 +15070,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      of the system, component, or service that is trusted to perform correctly to maintain
      required security properties.
      Related Controls: AC-25, SA-5.
-     (3) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | FORMAL CORRESPONDENCE
+
+##### (3) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | FORMAL CORRESPONDENCE
+
      Require the developer of the system, system component, or system service to:
      (a) Produce, as an integral part of the development process, a formal top-level
      specification that specifies the interfaces to security-relevant hardware, software, and
@@ -14820,7 +15100,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      and firmware mechanisms internal to security-relevant components include mapping
      registers and direct memory input and output.
      Related Controls: AC-3, AC-4, AC-25, SA-4, SA-5.
-     (4) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | INFORMAL CORRESPONDENCE
+
+##### (4) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | INFORMAL CORRESPONDENCE
+
      Require the developer of the system, system component, or system service to:
      (a) Produce, as an integral part of the development process, an informal descriptive toplevel specification that specifies the interfaces to security-relevant hardware,
      software, and firmware in terms of exceptions, error messages, and effects;
@@ -14843,7 +15125,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      security-relevant hardware, software, and firmware include mapping registers and direct
      memory input and output.
      Related Controls: AC-3, AC-4, AC-25, SA-4, SA-5.
-     (5) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | CONCEPTUALLY SIMPLE DESIGN
+
+##### (5) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | CONCEPTUALLY SIMPLE DESIGN
+
      Require the developer of the system, system component, or system service to:
      (a) Design and structure the security-relevant hardware, software, and firmware to use a
      complete, conceptually simple protection mechanism with precisely defined
@@ -14868,7 +15152,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      reached with a higher degree of assurance in contrast to conclusions reached in situations
      where the system design is inherently more complex.
      Related Controls: AC-25, SA-8, SC-3.
-     (6) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | STRUCTURE FOR TESTING
+
+##### (6) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | STRUCTURE FOR TESTING
+
      Require the developer of the system, system component, or system service to structure
      security-relevant hardware, software, and firmware to facilitate testing.
      Discussion: Applying the security design principles in [SP 800-160-1] promotes complete,
@@ -14877,7 +15163,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      an effective assurance case or argument as to the trustworthiness of the system, system
      component, or service.
      Related Controls: SA-5, SA-11.
-     (7) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | STRUCTURE FOR LEAST PRIVILEGE
+
+##### (7) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | STRUCTURE FOR LEAST PRIVILEGE
+
      Require the developer of the system, system component, or system service to structure
      security-relevant hardware, software, and firmware to facilitate controlling access with
      least privilege.
@@ -14904,7 +15192,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system elements that are necessary for its functionality, and the access modes to the
      elements (e.g., read, write) are minimal.
      Related Controls: AC-5, AC-6, SA-8.
-     (8) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | ORCHESTRATION
+
+##### (8) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | ORCHESTRATION
+
      Design [Assignment: organization-defined critical systems or system components] with
      coordinated behavior to implement the following capabilities: [Assignment: organizationdefined capabilities, by system or component].
      Discussion: Security resources that are distributed, located at different layers or in different
@@ -14915,7 +15205,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      configuration change that assumes that the patch is propagated) can avert such negative
      interactions.
      Related Controls: None.
-     (9) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | DESIGN DIVERSITY
+
+##### (9) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | DESIGN DIVERSITY
+
      Use different designs for [Assignment: organization-defined critical systems or system
      components] to satisfy a common set of requirements or to provide equivalent
      functionality.
@@ -14939,22 +15231,34 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 
      [Withdrawn: Moved to SR-9.]
      Control Enhancements:
-     (1) TAMPER RESISTANCE AND DETECTION | MULTIPLE PHASES OF SYSTEM DEVELOPMENT LIFE CYCLE
+
+##### (1) TAMPER RESISTANCE AND DETECTION | MULTIPLE PHASES OF SYSTEM DEVELOPMENT LIFE CYCLE
+
      [Withdrawn: Moved to SR-9(1).]
-     (2) TAMPER RESISTANCE AND DETECTION | INSPECTION OF SYSTEMS OR COMPONENTS
+
+##### (2) TAMPER RESISTANCE AND DETECTION | INSPECTION OF SYSTEMS OR COMPONENTS
+
      [Withdrawn: Moved to SR-10.]
 
 #### SA-19 COMPONENT AUTHENTICITY
 
      [Withdrawn: Moved to SR-11.]
      Control Enhancements:
-     (1) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT TRAINING
+
+##### (1) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT TRAINING
+
      [Withdrawn: Moved to SR-11(1).]
-     (2) COMPONENT AUTHENTICITY | CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+
+##### (2) COMPONENT AUTHENTICITY | CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+
      [Withdrawn: Moved to SR-11(2).]
-     (3) COMPONENT AUTHENTICITY | COMPONENT DISPOSAL
+
+##### (3) COMPONENT AUTHENTICITY | COMPONENT DISPOSAL
+
      [Withdrawn: Moved to SR-12.]
-     (4) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT SCANNING
+
+##### (4) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT SCANNING
+
      [Withdrawn: Moved to SR-11(3).]
 
 #### SA-20 CUSTOMIZED DEVELOPMENT OF CRITICAL COMPONENTS
@@ -14999,7 +15303,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the authorization and screening requirements.
      Related Controls: PS-2, PS-3, PS-6, PS-7, SA-4, SR-6.
      Control Enhancements:
-     (1) DEVELOPER SCREENING | VALIDATION OF SCREENING
+
+##### (1) DEVELOPER SCREENING | VALIDATION OF SCREENING
+
      [Withdrawn: Incorporated into SA-21.]
      References: None.
 
@@ -15032,7 +15338,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      or implementing other forms of isolation.
      Related Controls: PL-2, SA-3.
      Control Enhancements:
-     (1) UNSUPPORTED SYSTEM COMPONENTS | ALTERNATIVE SOURCES FOR CONTINUED SUPPORT
+
+##### (1) UNSUPPORTED SYSTEM COMPONENTS | ALTERNATIVE SOURCES FOR CONTINUED SUPPORT
+
      [Withdrawn: Incorporated into SA-22.]
      References: None.
 
@@ -15062,43 +15370,43 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-193. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and communications protection policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-194. Procedures to facilitate the implementation of the system and communications
-     protection policy and the associated system and communications protection controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the system and communications protection policy and
-     procedures; and
-     c.
-     Review and update the current system and communications protection:
-195. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-196. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: System and communications protection policy and procedures address the controls
-     in the SC family that are implemented within systems and organizations. The risk management
-     strategy is an important factor in establishing such policies and procedures. Policies and
-     procedures contribute to security and privacy assurance. Therefore, it is important that security
-     and privacy programs collaborate on the development of system and communications protection
-     policy and procedures. Security and privacy program policies and procedures at the organization
-     level are preferable, in general, and may obviate the need for mission- or system-specific policies
-     and procedures. The policy can be included as part of the general security and privacy policy or
-     be represented by multiple policies that reflect the complex nature of organizations. Procedures
-     can be established for security and privacy programs, for mission or business processes, and for
-     systems, if needed. Procedures describe how the policies or controls are implemented and can
-     be directed at the individual or role that is the object of the procedure. Procedures can be
-     documented in system security and privacy plans or in one or more separate documents. Events
-     that may precipitate an update to system and communications protection policy and procedures
-     include assessment or audit findings, security incidents or breaches, or changes in applicable
-     laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
-     restating controls does not constitute an organizational policy or procedure.
-     Related Controls: PM-9, PS-8, SA-8, SI-12.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-12], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and communications protection policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the system and communications
+   protection policy and the associated system and communications protection controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the system and communications protection policy and
+   procedures; and
+   c.
+   Review and update the current system and communications protection:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: System and communications protection policy and procedures address the controls
+   in the SC family that are implemented within systems and organizations. The risk management
+   strategy is an important factor in establishing such policies and procedures. Policies and
+   procedures contribute to security and privacy assurance. Therefore, it is important that security
+   and privacy programs collaborate on the development of system and communications protection
+   policy and procedures. Security and privacy program policies and procedures at the organization
+   level are preferable, in general, and may obviate the need for mission- or system-specific policies
+   and procedures. The policy can be included as part of the general security and privacy policy or
+   be represented by multiple policies that reflect the complex nature of organizations. Procedures
+   can be established for security and privacy programs, for mission or business processes, and for
+   systems, if needed. Procedures describe how the policies or controls are implemented and can
+   be directed at the individual or role that is the object of the procedure. Procedures can be
+   documented in system security and privacy plans or in one or more separate documents. Events
+   that may precipitate an update to system and communications protection policy and procedures
+   include assessment or audit findings, security incidents or breaches, or changes in applicable
+   laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
+   restating controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SA-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-100].
 
 #### SC-2
 
@@ -15119,7 +15427,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      engineering design principles in SA-8, including SA-8(1), SA-8(3), SA-8(4), SA-8(10), SA-8(12), SA8(13), SA-8(14), and SA-8(18).
      Related Controls: AC-6, SA-4, SA-8, SC-3, SC-7, SC-22, SC-32, SC-39.
      Control Enhancements:
-     (1) SEPARATION OF SYSTEM AND USER FUNCTIONALITY | INTERFACES FOR NON-PRIVILEGED USERS
+
+##### (1) SEPARATION OF SYSTEM AND USER FUNCTIONALITY | INTERFACES FOR NON-PRIVILEGED USERS
+
      Prevent the presentation of system management functionality at interfaces to nonprivileged users.
      Discussion: Preventing the presentation of system management functionality at interfaces
      to non-privileged users ensures that system administration options, including administrator
@@ -15128,7 +15438,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information. One potential solution is to withhold system administration options until users
      establish sessions with administrator privileges.
      Related Controls: AC-3.
-     (2) SEPARATION OF SYSTEM AND USER FUNCTIONALITY | DISASSOCIABILITY
+
+##### (2) SEPARATION OF SYSTEM AND USER FUNCTIONALITY | DISASSOCIABILITY
+
      Store state information from applications and software separately.
      Discussion: If a system is compromised, storing applications and software separately from
      state information about users’ interactions with an application may better protect
@@ -15155,13 +15467,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      SA-8(4), SA-8(10), SA-8(12), SA-8(13), SA-8(14), and SA-8(18).
      Related Controls: AC-3, AC-6, AC-25, CM-2, CM-4, SA-4, SA-5, SA-8, SA-15, SA-17, SC-2, SC-7, SC32, SC-39, SI-16.
      Control Enhancements:
-     (1) SECURITY FUNCTION ISOLATION | HARDWARE SEPARATION
+
+##### (1) SECURITY FUNCTION ISOLATION | HARDWARE SEPARATION
+
      Employ hardware separation mechanisms to implement security function isolation.
      Discussion: Hardware separation mechanisms include hardware ring architectures that are
      implemented within microprocessors and hardware-enforced address segmentation used to
      support logically distinct storage objects with separate attributes (i.e., readable, writeable).
      Related Controls: None.
-     (2) SECURITY FUNCTION ISOLATION | ACCESS AND FLOW CONTROL FUNCTIONS
+
+##### (2) SECURITY FUNCTION ISOLATION | ACCESS AND FLOW CONTROL FUNCTIONS
+
      Isolate security functions enforcing access and information flow control from nonsecurity
      functions and from other security functions.
      Discussion: Security function isolation occurs because of implementation. The functions can
@@ -15169,7 +15485,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      and flow control enforcement functions include auditing, intrusion detection, and malicious
      code protection functions.
      Related Controls: None.
-     (3) SECURITY FUNCTION ISOLATION | MINIMIZE NONSECURITY FUNCTIONALITY
+
+##### (3) SECURITY FUNCTION ISOLATION | MINIMIZE NONSECURITY FUNCTIONALITY
+
      Minimize the number of nonsecurity functions included within the isolation boundary
      containing security functions.
      Discussion: Where it is not feasible to achieve strict isolation of nonsecurity functions from
@@ -15185,7 +15503,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      that is trusted to enforce security policies is significantly reduced, thus contributing to
      understandability.
      Related Controls: None.
-     (4) SECURITY FUNCTION ISOLATION | MODULE COUPLING AND COHESIVENESS
+
+##### (4) SECURITY FUNCTION ISOLATION | MODULE COUPLING AND COHESIVENESS
+
      Implement security functions as largely independent modules that maximize internal
      cohesiveness within modules and minimize coupling between modules.
      Discussion: The reduction of inter-module interactions helps to constrain security functions
@@ -15196,7 +15516,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      minimization, and modular decomposition to reduce and manage complexity. This produces
      software modules that are highly cohesive and loosely coupled.
      Related Controls: None.
-     (5) SECURITY FUNCTION ISOLATION | LAYERED STRUCTURES
+
+##### (5) SECURITY FUNCTION ISOLATION | LAYERED STRUCTURES
+
      Implement security functions as a layered structure minimizing interactions between
      layers of the design and avoiding any dependence by lower layers on the functionality or
      correctness of higher layers.
@@ -15226,9 +15548,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      systems for which there are only single users or roles.
      Related Controls: AC-3, AC-4, SA-8.
      Control Enhancements:
-     (1) INFORMATION IN SHARED SYSTEM RESOURCES | SECURITY LEVELS
+
+##### (1) INFORMATION IN SHARED SYSTEM RESOURCES | SECURITY LEVELS
+
      [Withdrawn: Incorporated into SC-4.]
-     (2) INFORMATION IN SHARED SYSTEM RESOURCES | MULTILEVEL OR PERIODS PROCESSING
+
+##### (2) INFORMATION IN SHARED SYSTEM RESOURCES | MULTILEVEL OR PERIODS PROCESSING
+
      Prevent unauthorized information transfer via shared resources in accordance with
      [Assignment: organization-defined procedures] when system processing explicitly switches
      between different information classification levels or security categories.
@@ -15260,7 +15586,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      denial-of-service events.
      Related Controls: CP-2, IR-4, SC-6, SC-7, SC-40.
      Control Enhancements:
-     (1) DENIAL-OF-SERVICE PROTECTION | RESTRICT ABILITY TO ATTACK OTHER SYSTEMS
+
+##### (1) DENIAL-OF-SERVICE PROTECTION | RESTRICT ABILITY TO ATTACK OTHER SYSTEMS
+
      Restrict the ability of individuals to launch the following denial-of-service attacks against
      other systems: [Assignment: organization-defined denial-of-service attacks].
      Discussion: Restricting the ability of individuals to launch denial-of-service attacks requires
@@ -15273,14 +15601,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      individuals having the ability to launch denial-of-service attacks may be implemented on
      specific systems or boundary devices that prohibit egress to potential target systems.
      Related Controls: None.
-     (2) DENIAL-OF-SERVICE PROTECTION | CAPACITY, BANDWIDTH, AND REDUNDANCY
+
+##### (2) DENIAL-OF-SERVICE PROTECTION | CAPACITY, BANDWIDTH, AND REDUNDANCY
+
      Manage capacity, bandwidth, or other redundancy to limit the effects of information
      flooding denial-of-service attacks.
      Discussion: Managing capacity ensures that sufficient capacity is available to counter
      flooding attacks. Managing capacity includes establishing selected usage priorities, quotas,
      partitioning, or load balancing.
      Related Controls: None.
-     (3) DENIAL-OF-SERVICE PROTECTION | DETECTION AND MONITORING
+
+##### (3) DENIAL-OF-SERVICE PROTECTION | DETECTION AND MONITORING
+
      (a) Employ the following monitoring tools to detect indicators of denial-of-service attacks
      against, or launched from, the system: [Assignment: organization-defined monitoring
      tools]; and
@@ -15343,11 +15675,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      boundary (i.e., an authorization boundary).
      Related Controls: AC-4, AC-17, AC-18, AC-19, AC-20, AU-13, CA-3, CM-2, CM-4, CM-7, CM-10, CP8, CP-10, IR-4, MA-4, PE-3, PL-8, PM-12, SA-8, SA-17, SC-5, SC-26, SC-32, SC-35, SC-43.
      Control Enhancements:
-     (1) BOUNDARY PROTECTION | PHYSICALLY SEPARATED SUBNETWORKS
+
+##### (1) BOUNDARY PROTECTION | PHYSICALLY SEPARATED SUBNETWORKS
+
      [Withdrawn: Incorporated into SC-7.]
-     (2) BOUNDARY PROTECTION | PUBLIC ACCESS
+
+##### (2) BOUNDARY PROTECTION | PUBLIC ACCESS
+
      [Withdrawn: Incorporated into SC-7.]
-     (3) BOUNDARY PROTECTION | ACCESS POINTS
+
+##### (3) BOUNDARY PROTECTION | ACCESS POINTS
+
      Limit the number of external network connections to the system.
      Discussion: Limiting the number of external network connections facilitates monitoring of
      inbound and outbound communications traffic. The Trusted Internet Connection [DHS TIC]
@@ -15358,7 +15696,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      and newer technologies simultaneously during the transition period and thus increase the
      number of access points to the system.
      Related Controls: None.
-     (4) BOUNDARY PROTECTION | EXTERNAL TELECOMMUNICATIONS SERVICES
+
+##### (4) BOUNDARY PROTECTION | EXTERNAL TELECOMMUNICATIONS SERVICES
+
      (a) Implement a managed interface for each external telecommunication service;
      (b) Establish a traffic flow policy for each managed interface;
      (c) Protect the confidentiality and integrity of the information being transmitted across
@@ -15378,7 +15718,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      for additional information on the use of the resource public key infrastructure (RPKI) to
      protect BGP routes and detect unauthorized BGP announcements.
      Related Controls: AC-3, SC-8, SC-20, SC-21, SC-22.
-     (5) BOUNDARY PROTECTION | DENY BY DEFAULT — ALLOW BY EXCEPTION
+
+##### (5) BOUNDARY PROTECTION | DENY BY DEFAULT — ALLOW BY EXCEPTION
+
      Deny network communications traffic by default and allow network communications
      traffic by exception [Selection (one or more): at managed interfaces; for [Assignment:
      organization-defined systems]].
@@ -15388,9 +15730,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      allowed. Deny by default, allow by exception also applies to a system that is connected to an
      external system.
      Related Controls: None.
-     (6) BOUNDARY PROTECTION | RESPONSE TO RECOGNIZED FAILURES
+
+##### (6) BOUNDARY PROTECTION | RESPONSE TO RECOGNIZED FAILURES
+
      [Withdrawn: Incorporated into SC-7(18).]
-     (7) BOUNDARY PROTECTION | SPLIT TUNNELING FOR REMOTE DEVICES
+
+##### (7) BOUNDARY PROTECTION | SPLIT TUNNELING FOR REMOTE DEVICES
+
      Prevent split tunneling for remote devices connecting to organizational systems unless the
      split tunnel is securely provisioned using [Assignment: organization-defined safeguards].
      Discussion: Split tunneling is the process of allowing a remote user or device to establish a
@@ -15408,7 +15754,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      can be used to securely provision a split tunnel. A securely provisioned VPN includes locking
      connectivity to exclusive, managed, and named environments, or to a specific set of preapproved addresses, without user control.
      Related Controls: None.
-     (8) BOUNDARY PROTECTION | ROUTE TRAFFIC TO AUTHENTICATED PROXY SERVERS
+
+##### (8) BOUNDARY PROTECTION | ROUTE TRAFFIC TO AUTHENTICATED PROXY SERVERS
+
      Route [Assignment: organization-defined internal communications traffic] to [Assignment:
      organization-defined external networks] through authenticated proxy servers at managed
      interfaces.
@@ -15425,7 +15773,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      websites. Note that proxy servers may inhibit the use of virtual private networks (VPNs) and
      create the potential for “man-in-the-middle” attacks (depending on the implementation).
      Related Controls: AC-3.
-     (9) BOUNDARY PROTECTION | RESTRICT THREATENING OUTGOING COMMUNICATIONS TRAFFIC
+
+##### (9) BOUNDARY PROTECTION | RESTRICT THREATENING OUTGOING COMMUNICATIONS TRAFFIC
+
      (a) Detect and deny outgoing communications traffic posing a threat to external systems;
      and
      (b) Audit the identity of internal users associated with denied communications.
@@ -15438,7 +15788,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      traffic that contains malicious code. Organizations have criteria to determine, update, and
      manage identified threats related to extrusion detection.
      Related Controls: AU-2, AU-6, SC-5, SC-38, SC-44, SI-3, SI-4.
-     (10) BOUNDARY PROTECTION | PREVENT EXFILTRATION
+
+##### (10) BOUNDARY PROTECTION | PREVENT EXFILTRATION
+
      (a) Prevent the exfiltration of information; and
      (b) Conduct exfiltration tests [Assignment: organization-defined frequency].
      Discussion: Prevention of exfiltration applies to both the intentional and unintentional
@@ -15457,7 +15809,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      prevention or data leakage prevention and is closely associated with cross-domain solutions
      and system guards that enforce information flow requirements.
      Related Controls: AC-2, CA-8, SI-3.
-     (11) BOUNDARY PROTECTION | RESTRICT INCOMING COMMUNICATIONS TRAFFIC
+
+##### (11) BOUNDARY PROTECTION | RESTRICT INCOMING COMMUNICATIONS TRAFFIC
+
      Only allow incoming communications from [Assignment: organization-defined authorized
      sources] to be routed to [Assignment: organization-defined authorized destinations].
      Discussion: General source address validation techniques are applied to restrict the use of
@@ -15472,14 +15826,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      can often be spoofed. Further, identity-based incoming traffic restriction methods can be
      employed, including router access control lists and firewall rules.
      Related Controls: AC-3.
-     (12) BOUNDARY PROTECTION | HOST-BASED PROTECTION
+
+##### (12) BOUNDARY PROTECTION | HOST-BASED PROTECTION
+
      Implement [Assignment: organization-defined host-based boundary protection
      mechanisms] at [Assignment: organization-defined system components].
      Discussion: Host-based boundary protection mechanisms include host-based firewalls.
      System components that employ host-based boundary protection mechanisms include
      servers, workstations, notebook computers, and mobile devices.
      Related Controls: None.
-     (13) BOUNDARY PROTECTION | ISOLATION OF SECURITY TOOLS, MECHANISMS, AND SUPPORT
+
+##### (13) BOUNDARY PROTECTION | ISOLATION OF SECURITY TOOLS, MECHANISMS, AND SUPPORT
+
      COMPONENTS
      Isolate [Assignment: organization-defined information security tools, mechanisms, and
      support components] from other internal system components by implementing physically
@@ -15489,7 +15847,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      adversaries from discovering the analysis and forensics techniques employed by
      organizations.
      Related Controls: SC-2, SC-3.
-     (14) BOUNDARY PROTECTION | PROTECT AGAINST UNAUTHORIZED PHYSICAL CONNECTIONS
+
+##### (14) BOUNDARY PROTECTION | PROTECT AGAINST UNAUTHORIZED PHYSICAL CONNECTIONS
+
      Protect against unauthorized physical connections at [Assignment: organization-defined
      managed interfaces].
      Discussion: Systems that operate at different security categories or classification levels may
@@ -15501,7 +15861,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      interfaces with physical access controls that enforce limited authorized access to these
      items.
      Related Controls: PE-4, PE-19.
-     (15) BOUNDARY PROTECTION | NETWORKED PRIVILEGED ACCESSES
+
+##### (15) BOUNDARY PROTECTION | NETWORKED PRIVILEGED ACCESSES
+
      Route networked, privileged accesses through a dedicated, managed interface for
      purposes of access control and auditing.
      Discussion: Privileged access provides greater accessibility to system functions, including
@@ -15511,7 +15873,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      through a dedicated, managed interface further restricts privileged access for increased
      access control and auditing.
      Related Controls: AC-2, AC-3, AU-2, SI-4.
-     (16) BOUNDARY PROTECTION | PREVENT DISCOVERY OF SYSTEM COMPONENTS
+
+##### (16) BOUNDARY PROTECTION | PREVENT DISCOVERY OF SYSTEM COMPONENTS
+
      Prevent the discovery of specific system components that represent a managed interface.
      Discussion: Preventing the discovery of system components representing a managed
      interface helps protect network addresses of those components from discovery through
@@ -15521,14 +15885,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      network address translation, or not entering the addresses in domain name systems.
      Another prevention technique is to periodically change network addresses.
      Related Controls: None.
-     (17) BOUNDARY PROTECTION | AUTOMATED ENFORCEMENT OF PROTOCOL FORMATS
+
+##### (17) BOUNDARY PROTECTION | AUTOMATED ENFORCEMENT OF PROTOCOL FORMATS
+
      Enforce adherence to protocol formats.
      Discussion: System components that enforce protocol formats include deep packet
      inspection firewalls and XML gateways. The components verify adherence to protocol
      formats and specifications at the application layer and identify vulnerabilities that cannot be
      detected by devices operating at the network or transport layers.
      Related Controls: SC-4.
-     (18) BOUNDARY PROTECTION | FAIL SECURE
+
+##### (18) BOUNDARY PROTECTION | FAIL SECURE
+
      Prevent systems from entering unsecure states in the event of an operational failure of a
      boundary protection device.
      Discussion: Fail secure is a condition achieved by employing mechanisms to ensure that in
@@ -15539,7 +15907,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      protection devices cannot lead to or cause information external to the devices to enter the
      devices nor can failures permit unauthorized information releases.
      Related Controls: CP-2, CP-12, SC-24.
-     (19) BOUNDARY PROTECTION | BLOCK COMMUNICATION FROM NON-ORGANIZATIONALLY CONFIGURED
+
+##### (19) BOUNDARY PROTECTION | BLOCK COMMUNICATION FROM NON-ORGANIZATIONALLY CONFIGURED
+
      HOSTS
      Block inbound and outbound communications traffic between [Assignment: organizationdefined communication clients] that are independently configured by end users and
      external service providers.
@@ -15548,7 +15918,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      applications. Traffic blocking does not apply to communication clients that are configured by
      organizations to perform authorized functions.
      Related Controls: None.
-     (20) BOUNDARY PROTECTION | DYNAMIC ISOLATION AND SEGREGATION
+
+##### (20) BOUNDARY PROTECTION | DYNAMIC ISOLATION AND SEGREGATION
+
      Provide the capability to dynamically isolate [Assignment: organization-defined system
      components] from other system components.
      Discussion: The capability to dynamically isolate certain internal system components is
@@ -15557,7 +15929,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the attack surface of organizational systems. Isolating selected system components can also
      limit the damage from successful attacks when such attacks occur.
      Related Controls: None.
-     (21) BOUNDARY PROTECTION | ISOLATION OF SYSTEM COMPONENTS
+
+##### (21) BOUNDARY PROTECTION | ISOLATION OF SYSTEM COMPONENTS
+
      Employ boundary protection mechanisms to isolate [Assignment: organization-defined
      system components] supporting [Assignment: organization-defined missions and/or
      business functions].
@@ -15573,20 +15947,26 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      that separate subnetworks; virtualization techniques; and the encryption of information
      flows among system components using distinct encryption keys.
      Related Controls: CA-9.
-     (22) BOUNDARY PROTECTION | SEPARATE SUBNETS FOR CONNECTING TO DIFFERENT SECURITY DOMAINS
+
+##### (22) BOUNDARY PROTECTION | SEPARATE SUBNETS FOR CONNECTING TO DIFFERENT SECURITY DOMAINS
+
      Implement separate network addresses to connect to systems in different security
      domains.
      Discussion: The decomposition of systems into subnetworks (i.e., subnets) helps to provide
      the appropriate level of protection for network connections to different security domains
      that contain information with different security categories or classification levels.
      Related Controls: None.
-     (23) BOUNDARY PROTECTION | DISABLE SENDER FEEDBACK ON PROTOCOL VALIDATION FAILURE
+
+##### (23) BOUNDARY PROTECTION | DISABLE SENDER FEEDBACK ON PROTOCOL VALIDATION FAILURE
+
      Disable feedback to senders on protocol format validation failure.
      Discussion: Disabling feedback to senders when there is a failure in protocol validation
      format prevents adversaries from obtaining information that would otherwise be
      unavailable.
      Related Controls: None.
-     (24) BOUNDARY PROTECTION | PERSONALLY IDENTIFIABLE INFORMATION
+
+##### (24) BOUNDARY PROTECTION | PERSONALLY IDENTIFIABLE INFORMATION
+
      For systems that process personally identifiable information:
      (a) Apply the following processing rules to data elements of personally identifiable
      information: [Assignment: organization-defined processing rules];
@@ -15599,7 +15979,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      exceptions to processing rules ensure that personally identifiable information is processed
      only in accordance with established privacy requirements.
      Related Controls: PT-2, SI-15.
-     (25) BOUNDARY PROTECTION | UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
+##### (25) BOUNDARY PROTECTION | UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
      Prohibit the direct connection of [Assignment: organization-defined unclassified national
      security system] to an external network without the use of [Assignment: organizationdefined boundary protection device].
      Discussion: A direct connection is a dedicated physical or virtual connection between two or
@@ -15608,7 +15990,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      mediate communications and information flows between unclassified national security
      systems and external networks.
      Related Controls: None.
-     (26) BOUNDARY PROTECTION | CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
+##### (26) BOUNDARY PROTECTION | CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
+
      Prohibit the direct connection of a classified national security system to an external
      network without the use of [Assignment: organization-defined boundary protection
      device].
@@ -15620,7 +16004,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      managed interface or cross-domain systems) provide information flow enforcement from
      systems to external networks.
      Related Controls: None.
-     (27) BOUNDARY PROTECTION | UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS
+
+##### (27) BOUNDARY PROTECTION | UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS
+
      Prohibit the direct connection of [Assignment: organization-defined unclassified nonnational security system] to an external network without the use of [Assignment:
      organization-defined boundary protection device].
      Discussion: A direct connection is a dedicated physical or virtual connection between two or
@@ -15629,14 +16015,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      mediate communications and information flows between unclassified non-national security
      systems and external networks.
      Related Controls: None.
-     (28) BOUNDARY PROTECTION | CONNECTIONS TO PUBLIC NETWORKS
+
+##### (28) BOUNDARY PROTECTION | CONNECTIONS TO PUBLIC NETWORKS
+
      Prohibit the direct connection of [Assignment: organization-defined system] to a public
      network.
      Discussion: A direct connection is a dedicated physical or virtual connection between two or
      more systems. A public network is a network accessible to the public, including the Internet
      and organizational extranets with public access.
      Related Controls: None.
-     (29) BOUNDARY PROTECTION | SEPARATE SUBNETS TO ISOLATE FUNCTIONS
+
+##### (29) BOUNDARY PROTECTION | SEPARATE SUBNETS TO ISOLATE FUNCTIONS
+
      Implement [Selection: physically; logically] separate subnetworks to isolate the following
      critical system components and functions: [Assignment: organization-defined critical
      system components and functions].
@@ -15674,7 +16064,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      controls.
      Related Controls: AC-17, AC-18, AU-10, IA-3, IA-8, IA-9, MA-4, PE-4, SA-4, SA-8, SC-7, SC-16, SC20, SC-23, SC-28.
      Control Enhancements:
-     (1) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CRYPTOGRAPHIC PROTECTION
+
+##### (1) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CRYPTOGRAPHIC PROTECTION
+
      Implement cryptographic mechanisms to [Selection (one or more): prevent unauthorized
      disclosure of information; detect changes to information] during transmission.
      Discussion: Encryption protects information from unauthorized disclosure and modification
@@ -15683,7 +16075,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      protect information integrity include cryptographic hash functions that have applications in
      digital signatures, checksums, and message authentication codes.
      Related Controls: SC-12, SC-13.
-     (2) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | PRE- AND POST-TRANSMISSION HANDLING
+
+##### (2) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | PRE- AND POST-TRANSMISSION HANDLING
+
      Maintain the [Selection (one or more): confidentiality; integrity] of information during
      preparation for transmission and during reception.
      Discussion: Information can be unintentionally or maliciously disclosed or modified during
@@ -15691,7 +16085,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      transformation points, and during packing and unpacking. Such unauthorized disclosures or
      modifications compromise the confidentiality or integrity of the information.
      Related Controls: None.
-     (3) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CRYPTOGRAPHIC PROTECTION FOR MESSAGE
+
+##### (3) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CRYPTOGRAPHIC PROTECTION FOR MESSAGE
+
      EXTERNALS
      Implement cryptographic mechanisms to protect message externals unless otherwise
      protected by [Assignment: organization-defined alternative physical controls].
@@ -15705,7 +16101,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      lower network performance or higher costs. Alternative physical controls include protected
      distribution systems.
      Related Controls: SC-12, SC-13.
-     (4) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CONCEAL OR RANDOMIZE COMMUNICATIONS
+
+##### (4) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CONCEAL OR RANDOMIZE COMMUNICATIONS
+
      Implement cryptographic mechanisms to conceal or randomize communication patterns
      unless otherwise protected by [Assignment: organization-defined alternative physical
      controls].
@@ -15720,7 +16118,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      random patterns prevents the derivation of intelligence from the system communications
      patterns. Alternative physical controls include protected distribution systems.
      Related Controls: SC-12, SC-13.
-     (5) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | PROTECTED DISTRIBUTION SYSTEM
+
+##### (5) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | PROTECTED DISTRIBUTION SYSTEM
+
      Implement [Assignment: organization-defined protected distribution system] to [Selection
      (one or more): prevent unauthorized disclosure of information; detect changes to
      information] during transmission.
@@ -15774,7 +16174,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      meets the reference monitor concept.
      Related Controls: AC-16, AC-25, SC-12, SC-23.
      Control Enhancements:
-     (1) TRUSTED PATH | IRREFUTABLE COMMUNICATIONS PATH
+
+##### (1) TRUSTED PATH | IRREFUTABLE COMMUNICATIONS PATH
+
      (a) Provide a trusted communications path that is irrefutably distinguishable from other
      communications paths; and
      (b) Initiate the trusted communications path for communications between the
@@ -15804,18 +16206,24 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      cryptographic key management and establishment.
      Related Controls: AC-17, AU-9, AU-10, CM-3, IA-3, IA-7, SA-4, SA-8, SA-9, SC-8, SC-11, SC-12, SC13, SC-17, SC-20, SC-37, SC-40, SI-3, SI-7.
      Control Enhancements:
-     (1) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | AVAILABILITY
+
+##### (1) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | AVAILABILITY
+
      Maintain availability of information in the event of the loss of cryptographic keys by users.
      Discussion: Escrowing of encryption keys is a common practice for ensuring availability in
      the event of key loss. A forgotten passphrase is an example of losing a cryptographic key.
      Related Controls: None.
-     (2) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | SYMMETRIC KEYS
+
+##### (2) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | SYMMETRIC KEYS
+
      Produce, control, and distribute symmetric cryptographic keys using [Selection: NIST FIPSvalidated; NSA-approved] key management technology and processes.
      Discussion: [SP 800-56A], [SP 800-56B], and [SP 800-56C] provide guidance on cryptographic
      key establishment schemes and key derivation methods. [SP 800-57-1], [SP 800-57-2], and
      [SP 800-57-3] provide guidance on cryptographic key management.
      Related Controls: None.
-     (3) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | ASYMMETRIC KEYS
+
+##### (3) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | ASYMMETRIC KEYS
+
      Produce, control, and distribute asymmetric cryptographic keys using [Selection: NSAapproved key management technology and processes; prepositioned keying material;
      DoD-approved or DoD-issued Medium Assurance PKI certificates; DoD-approved or DoDissued Medium Hardware Assurance PKI certificates and hardware security tokens that
      protect the user’s private key; certificates issued in accordance with organization-defined
@@ -15824,11 +16232,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      key establishment schemes and key derivation methods. [SP 800-57-1], [SP 800-57-2], and
      [SP 800-57-3] provide guidance on cryptographic key management.
      Related Controls: None.
-     (4) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | PKI CERTIFICATES
+
+##### (4) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | PKI CERTIFICATES
+
      [Withdrawn: Incorporated into SC-12(3).]
-     (5) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | PKI CERTIFICATES / HARDWARE TOKENS
+
+##### (5) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | PKI CERTIFICATES / HARDWARE TOKENS
+
      [Withdrawn: Incorporated into SC-12(3).]
-     (6) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | PHYSICAL CONTROL OF KEYS
+
+##### (6) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | PHYSICAL CONTROL OF KEYS
+
      Maintain physical control of cryptographic keys when stored information is encrypted by
      external service providers.
      Discussion: For organizations that use external service providers (e.g., cloud service or data
@@ -15861,13 +16275,21 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: AC-2, AC-3, AC-7, AC-17, AC-18, AC-19, AU-9, AU-10, CM-11, CP-9, IA-3, IA-5,
      IA-7, MA-4, MP-2, MP-4, MP-5, SA-4, SA-8, SA-9, SC-8, SC-12, SC-20, SC-23, SC-28, SC-40, SI-3, SI7.
      Control Enhancements: None.
-     (1) CRYPTOGRAPHIC PROTECTION | FIPS-VALIDATED CRYPTOGRAPHY
+
+##### (1) CRYPTOGRAPHIC PROTECTION | FIPS-VALIDATED CRYPTOGRAPHY
+
      [Withdrawn: Incorporated into SC-13.]
-     (2) CRYPTOGRAPHIC PROTECTION | NSA-APPROVED CRYPTOGRAPHY
+
+##### (2) CRYPTOGRAPHIC PROTECTION | NSA-APPROVED CRYPTOGRAPHY
+
      [Withdrawn: Incorporated into SC-13.]
-     (3) CRYPTOGRAPHIC PROTECTION | INDIVIDUALS WITHOUT FORMAL ACCESS APPROVALS
+
+##### (3) CRYPTOGRAPHIC PROTECTION | INDIVIDUALS WITHOUT FORMAL ACCESS APPROVALS
+
      [Withdrawn: Incorporated into SC-13.]
-     (4) CRYPTOGRAPHIC PROTECTION | DIGITAL SIGNATURES
+
+##### (4) CRYPTOGRAPHIC PROTECTION | DIGITAL SIGNATURES
+
      [Withdrawn: Incorporated into SC-13.]
      References: [FIPS 140-3].
 
@@ -15890,7 +16312,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      activated.
      Related Controls: AC-21, SC-42.
      Control Enhancements:
-     (1) COLLABORATIVE COMPUTING DEVICES | PHYSICAL OR LOGICAL DISCONNECT
+
+##### (1) COLLABORATIVE COMPUTING DEVICES | PHYSICAL OR LOGICAL DISCONNECT
+
      Provide [Selection (one or more): physical; logical] disconnect of collaborative computing
      devices in a manner that supports ease of use.
      Discussion: Failing to disconnect from collaborative computing devices can result in
@@ -15900,10 +16324,14 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      tedious procedures. Disconnect from collaborative computing devices can be manual or
      automatic.
      Related Controls: None.
-     (2) COLLABORATIVE COMPUTING DEVICES | BLOCKING INBOUND AND OUTBOUND COMMUNICATIONS
+
+##### (2) COLLABORATIVE COMPUTING DEVICES | BLOCKING INBOUND AND OUTBOUND COMMUNICATIONS
+
      TRAFFIC
      [Withdrawn: Incorporated into SC-7.]
-     (3) COLLABORATIVE COMPUTING DEVICES | DISABLING AND REMOVAL IN SECURE WORK AREAS
+
+##### (3) COLLABORATIVE COMPUTING DEVICES | DISABLING AND REMOVAL IN SECURE WORK AREAS
+
      Disable or remove collaborative computing devices and applications from [Assignment:
      organization-defined systems or system components] in [Assignment: organization-defined
      secure work areas].
@@ -15912,7 +16340,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      eavesdropping on conversations. A Sensitive Compartmented Information Facility (SCIF) is
      an example of a secure work area.
      Related Controls: None.
-     (4) COLLABORATIVE COMPUTING DEVICES | EXPLICITLY INDICATE CURRENT PARTICIPANTS
+
+##### (4) COLLABORATIVE COMPUTING DEVICES | EXPLICITLY INDICATE CURRENT PARTICIPANTS
+
      Provide an explicit indication of current participants in [Assignment: organization-defined
      online meetings and teleconferences].
      Discussion: Explicitly indicating current participants prevents unauthorized individuals from
@@ -15937,14 +16367,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      conjunction with security attributes.
      Related Controls: AC-3, AC-4, AC-16.
      Control Enhancements:
-     (1) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | INTEGRITY VERIFICATION
+
+##### (1) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | INTEGRITY VERIFICATION
+
      Verify the integrity of transmitted security and privacy attributes.
      Discussion: Part of verifying the integrity of transmitted information is ensuring that security
      and privacy attributes that are associated with such information have not been modified in
      an unauthorized manner. Unauthorized modification of security or privacy attributes can
      result in a loss of integrity for transmitted information.
      Related Controls: AU-10, SC-8.
-     (2) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | ANTI-SPOOFING MECHANISMS
+
+##### (2) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | ANTI-SPOOFING MECHANISMS
+
      Implement anti-spoofing mechanisms to prevent adversaries from falsifying the security
      attributes indicating the successful application of the security process.
      Discussion: Some attack vectors operate by altering the security attributes of an information
@@ -15952,7 +16386,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system. The alteration of attributes leads organizations to believe that a greater number of
      security functions are in place and operational than have actually been implemented.
      Related Controls: SI-3, SI-4, SI-7.
-     (3) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | CRYPTOGRAPHIC BINDING
+
+##### (3) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | CRYPTOGRAPHIC BINDING
+
      Implement [Assignment: organization-defined mechanisms or techniques] to bind security
      and privacy attributes to transmitted information.
      Discussion: Cryptographic mechanisms and techniques can provide strong security and
@@ -16000,7 +16436,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      by a trusted source.
      Related Controls: AU-2, AU-12, CM-2, CM-6, SI-3.
      Control Enhancements:
-     (1) MOBILE CODE | IDENTIFY UNACCEPTABLE CODE AND TAKE CORRECTIVE ACTIONS
+
+##### (1) MOBILE CODE | IDENTIFY UNACCEPTABLE CODE AND TAKE CORRECTIVE ACTIONS
+
      Identify [Assignment: organization-defined unacceptable mobile code] and take
      [Assignment: organization-defined corrective actions].
      Discussion: Corrective actions when unacceptable mobile code is detected include blocking,
@@ -16008,17 +16446,23 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      word processing files with embedded macros when such macros have been determined to
      be unacceptable mobile code.
      Related Controls: None.
-     (2) MOBILE CODE | ACQUISITION, DEVELOPMENT, AND USE
+
+##### (2) MOBILE CODE | ACQUISITION, DEVELOPMENT, AND USE
+
      Verify that the acquisition, development, and use of mobile code to be deployed in the
      system meets [Assignment: organization-defined mobile code requirements].
      Discussion: None.
      Related Controls: None.
-     (3) MOBILE CODE | PREVENT DOWNLOADING AND EXECUTION
+
+##### (3) MOBILE CODE | PREVENT DOWNLOADING AND EXECUTION
+
      Prevent the download and execution of [Assignment: organization-defined unacceptable
      mobile code].
      Discussion: None.
      Related Controls: None.
-     (4) MOBILE CODE | PREVENT AUTOMATIC EXECUTION
+
+##### (4) MOBILE CODE | PREVENT AUTOMATIC EXECUTION
+
      Prevent the automatic execution of mobile code in [Assignment: organization-defined
      software applications] and enforce [Assignment: organization-defined actions] prior to
      executing the code.
@@ -16028,7 +16472,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      portable storage devices, such as compact discs, digital versatile discs, and universal serial
      bus devices.
      Related Controls: None.
-     (5) MOBILE CODE | ALLOW EXECUTION ONLY IN CONFINED ENVIRONMENTS
+
+##### (5) MOBILE CODE | ALLOW EXECUTION ONLY IN CONFINED ENVIRONMENTS
+
      Allow execution of permitted mobile code only in confined virtual machine environments.
      Discussion: Permitting the execution of mobile code only in confined virtual machine
      environments helps prevent the introduction of malicious code into other systems and
@@ -16121,23 +16567,33 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      session hijacking, and the insertion of false information into sessions.
      Related Controls: AU-10, SC-8, SC-10, SC-11.
      Control Enhancements:
-     (1) SESSION AUTHENTICITY | INVALIDATE SESSION IDENTIFIERS AT LOGOUT
+
+##### (1) SESSION AUTHENTICITY | INVALIDATE SESSION IDENTIFIERS AT LOGOUT
+
      Invalidate session identifiers upon user logout or other session termination.
      Discussion: Invalidating session identifiers at logout curtails the ability of adversaries to
      capture and continue to employ previously valid session IDs.
      Related Controls: None.
-     (2) SESSION AUTHENTICITY | USER-INITIATED LOGOUTS AND MESSAGE DISPLAYS
+
+##### (2) SESSION AUTHENTICITY | USER-INITIATED LOGOUTS AND MESSAGE DISPLAYS
+
      [Withdrawn: Incorporated into AC-12(1).]
-     (3) SESSION AUTHENTICITY | UNIQUE SYSTEM-GENERATED SESSION IDENTIFIERS
+
+##### (3) SESSION AUTHENTICITY | UNIQUE SYSTEM-GENERATED SESSION IDENTIFIERS
+
      Generate a unique session identifier for each session with [Assignment: organizationdefined randomness requirements] and recognize only session identifiers that are systemgenerated.
      Discussion: Generating unique session identifiers curtails the ability of adversaries to reuse
      previously valid session IDs. Employing the concept of randomness in the generation of
      unique session identifiers protects against brute-force attacks to determine future session
      identifiers.
      Related Controls: AC-10, SC-12, SC-13.
-     (4) SESSION AUTHENTICITY | UNIQUE SESSION IDENTIFIERS WITH RANDOMIZATION
+
+##### (4) SESSION AUTHENTICITY | UNIQUE SESSION IDENTIFIERS WITH RANDOMIZATION
+
      [Withdrawn: Incorporated into SC-23(3).]
-     (5) SESSION AUTHENTICITY | ALLOWED CERTIFICATE AUTHORITIES
+
+##### (5) SESSION AUTHENTICITY | ALLOWED CERTIFICATE AUTHORITIES
+
      Only allow the use of [Assignment: organization-defined certificate authorities] for
      verification of the establishment of protected sessions.
      Discussion: Reliance on certificate authorities for the establishment of secure sessions
@@ -16187,7 +16643,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      deployment may be needed.
      Related Controls: RA-5, SC-7, SC-30, SC-35, SC-44, SI-3, SI-4.
      Control Enhancements: None.
-     (1) DECOYS | DETECTION OF MALICIOUS CODE
+
+##### (1) DECOYS | DETECTION OF MALICIOUS CODE
+
      [Withdrawn: Incorporated into SC-35.]
      References: None.
 
@@ -16226,7 +16684,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      in lieu of online storage.
      Related Controls: AC-3, AC-4, AC-6, AC-19, CA-7, CM-3, CM-5, CM-6, CP-9, MP-4, MP-5, PE-3, SC8, SC-12, SC-13, SC-34, SI-3, SI-7, SI-16.
      Control Enhancements:
-     (1) PROTECTION OF INFORMATION AT REST | CRYPTOGRAPHIC PROTECTION
+
+##### (1) PROTECTION OF INFORMATION AT REST | CRYPTOGRAPHIC PROTECTION
+
      Implement cryptographic mechanisms to prevent unauthorized disclosure and
      modification of the following information at rest on [Assignment: organization-defined
      system components or media]: [Assignment: organization-defined information].
@@ -16236,7 +16696,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      have the flexibility to encrypt information on system components or media or encrypt data
      structures, including files, records, or fields.
      Related Controls: AC-19, SC-12, SC-13.
-     (2) PROTECTION OF INFORMATION AT REST | OFFLINE STORAGE
+
+##### (2) PROTECTION OF INFORMATION AT REST | OFFLINE STORAGE
+
      Remove the following information from online storage and store offline in a secure
      location: [Assignment: organization-defined information].
      Discussion: Removing organizational information from online storage to offline storage
@@ -16244,7 +16706,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      through a network. Therefore, organizations may choose to move information to offline
      storage in lieu of protecting such information in online storage.
      Related Controls: None.
-     (3) PROTECTION OF INFORMATION AT REST | CRYPTOGRAPHIC KEYS
+
+##### (3) PROTECTION OF INFORMATION AT REST | CRYPTOGRAPHIC KEYS
+
      Provide protected storage for cryptographic keys [Selection: [Assignment: organizationdefined safeguards]; hardware-protected key store].
      Discussion: A Trusted Platform Module (TPM) is an example of a hardware-protected data
      store that can be used to protect cryptographic keys.
@@ -16265,7 +16729,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      ultimately lead to mistakes and unauthorized configurations.
      Related Controls: AU-9, PL-8, SC-27, SC-30, SR-3.
      Control Enhancements:
-     (1) HETEROGENEITY | VIRTUALIZATION TECHNIQUES
+
+##### (1) HETEROGENEITY | VIRTUALIZATION TECHNIQUES
+
      Employ virtualization techniques to support the deployment of a diversity of operating
      systems and applications that are changed [Assignment: organization-defined frequency].
      Discussion: While frequent changes to operating systems and applications can pose
@@ -16296,9 +16762,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      techniques may add to the complexity and management overhead required for the system.
      Related Controls: AC-6, SC-25, SC-26, SC-29, SC-44, SI-14.
      Control Enhancements:
-     (1) CONCEALMENT AND MISDIRECTION | VIRTUALIZATION TECHNIQUES
+
+##### (1) CONCEALMENT AND MISDIRECTION | VIRTUALIZATION TECHNIQUES
+
      [Withdrawn: Incorporated into SC-29(1).]
-     (2) CONCEALMENT AND MISDIRECTION | RANDOMNESS
+
+##### (2) CONCEALMENT AND MISDIRECTION | RANDOMNESS
+
      Employ [Assignment: organization-defined techniques] to introduce randomness into
      organizational operations and assets.
      Discussion: Randomness introduces increased levels of uncertainty for adversaries regarding
@@ -16310,7 +16780,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      different information technologies, using different suppliers, and rotating roles and
      responsibilities of organizational personnel.
      Related Controls: None.
-     (3) CONCEALMENT AND MISDIRECTION | CHANGE PROCESSING AND STORAGE LOCATIONS
+
+##### (3) CONCEALMENT AND MISDIRECTION | CHANGE PROCESSING AND STORAGE LOCATIONS
+
      Change the location of [Assignment: organization-defined processing and/or storage]
      [Selection: [Assignment: organization-defined time frequency]; at random time intervals]].
      Discussion: Adversaries target critical mission and business functions and the systems that
@@ -16328,7 +16800,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      It also increases the chances that adversaries may inadvertently disclose certain aspects of
      their tradecraft while attempting to locate critical organizational resources.
      Related Controls: None.
-     (4) CONCEALMENT AND MISDIRECTION | MISLEADING INFORMATION
+
+##### (4) CONCEALMENT AND MISDIRECTION | MISLEADING INFORMATION
+
      Employ realistic, but misleading information in [Assignment: organization-defined system
      components] about its security state or posture.
      Discussion: Employing misleading information is intended to confuse potential adversaries
@@ -16339,7 +16813,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      technique is the use of deception nets that mimic actual aspects of organizational systems
      but use, for example, out-of-date software configurations.
      Related Controls: None.
-     (5) CONCEALMENT AND MISDIRECTION | CONCEALMENT OF SYSTEM COMPONENTS
+
+##### (5) CONCEALMENT AND MISDIRECTION | CONCEALMENT OF SYSTEM COMPONENTS
+
      Employ the following techniques to hide or conceal [Assignment: organization-defined
      system components]: [Assignment: organization-defined techniques].
      Discussion: By hiding, disguising, or concealing critical system components, organizations
@@ -16366,18 +16842,24 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      multilevel secure systems, multiple security level systems, and cross-domain systems.
      Related Controls: AC-3, AC-4, SA-8, SI-11.
      Control Enhancements:
-     (1) COVERT CHANNEL ANALYSIS | TEST COVERT CHANNELS FOR EXPLOITABILITY
+
+##### (1) COVERT CHANNEL ANALYSIS | TEST COVERT CHANNELS FOR EXPLOITABILITY
+
      Test a subset of the identified covert channels to determine the channels that are
      exploitable.
      Discussion: None.
      Related Controls: None.
-     (2) COVERT CHANNEL ANALYSIS | MAXIMUM BANDWIDTH
+
+##### (2) COVERT CHANNEL ANALYSIS | MAXIMUM BANDWIDTH
+
      Reduce the maximum bandwidth for identified covert [Selection (one or more): storage;
      timing] channels to [Assignment: organization-defined values].
      Discussion: The complete elimination of covert channels, especially covert timing channels,
      is usually not possible without significant performance impacts.
      Related Controls: None.
-     (3) COVERT CHANNEL ANALYSIS | MEASURE BANDWIDTH IN OPERATIONAL ENVIRONMENTS
+
+##### (3) COVERT CHANNEL ANALYSIS | MEASURE BANDWIDTH IN OPERATIONAL ENVIRONMENTS
+
      Measure the bandwidth of [Assignment: organization-defined subset of identified covert
      channels] in the operational environment of the system.
      Discussion: Measuring covert channel bandwidth in specified operational environments
@@ -16401,7 +16883,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      network access and information flow among partitioned system components.
      Related Controls: AC-4, AC-6, SA-8, SC-2, SC-3, SC-7, SC-36.
      Control Enhancements:
-     (1) SYSTEM PARTITIONING | SEPARATE PHYSICAL DOMAINS FOR PRIVILEGED FUNCTIONS
+
+##### (1) SYSTEM PARTITIONING | SEPARATE PHYSICAL DOMAINS FOR PRIVILEGED FUNCTIONS
+
      Partition privileged functions into separate physical domains.
      Discussion: Privileged functions that operate in a single physical domain may represent a
      single point of failure if that domain becomes compromised or experiences a denial of
@@ -16432,7 +16916,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      reprogramming the memory while installed in organizational systems.
      Related Controls: AC-3, SI-7, SI-14.
      Control Enhancements:
-     (1) NON-MODIFIABLE EXECUTABLE PROGRAMS | NO WRITABLE STORAGE
+
+##### (1) NON-MODIFIABLE EXECUTABLE PROGRAMS | NO WRITABLE STORAGE
+
      Employ [Assignment: organization-defined system components] with no writeable storage
      that is persistent across component restart or power on/off.
      Discussion: Disallowing writeable storage eliminates the possibility of malicious code
@@ -16440,14 +16926,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      restriction applies to fixed and removable storage, with the latter being addressed either
      directly or as specific restrictions imposed through access controls for mobile devices.
      Related Controls: AC-19, MP-7.
-     (2) NON-MODIFIABLE EXECUTABLE PROGRAMS | INTEGRITY PROTECTION ON READ-ONLY MEDIA
+
+##### (2) NON-MODIFIABLE EXECUTABLE PROGRAMS | INTEGRITY PROTECTION ON READ-ONLY MEDIA
+
      Protect the integrity of information prior to storage on read-only media and control the
      media after such information has been recorded onto the media.
      Discussion: Controls prevent the substitution of media into systems or the reprogramming
      of programmable read-only media prior to installation into the systems. Integrity protection
      controls include a combination of prevention, detection, and response.
      Related Controls: CM-3, CM-5, CM-9, MP-2, MP-4, MP-5, SC-28, SI-3.
-     (3) NON-MODIFIABLE EXECUTABLE PROGRAMS | HARDWARE-BASED PROTECTION
+
+##### (3) NON-MODIFIABLE EXECUTABLE PROGRAMS | HARDWARE-BASED PROTECTION
+
      [Withdrawn: Moved to SC-51.]
 
 #### SC-35 EXTERNAL MALICIOUS CODE IDENTIFICATION
@@ -16476,7 +16966,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      primary processing or storage location. Therefore, it allows for parallel processing and storage.
      Related Controls: CP-6, CP-7, PL-8, SC-32.
      Control Enhancements:
-     (1) DISTRIBUTED PROCESSING AND STORAGE | POLLING TECHNIQUES
+
+##### (1) DISTRIBUTED PROCESSING AND STORAGE | POLLING TECHNIQUES
+
      (a) Employ polling techniques to identify potential faults, errors, or compromises to the
      following processing and storage components: [Assignment: organization-defined
      distributed processing and storage components]; and
@@ -16490,7 +16982,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      and subsequently votes on the outcomes. Polling identifies potential faults, compromises, or
      errors in the distributed processing and storage components.
      Related Controls: SI-4.
-     (2) DISTRIBUTED PROCESSING AND STORAGE | SYNCHRONIZATION
+
+##### (2) DISTRIBUTED PROCESSING AND STORAGE | SYNCHRONIZATION
+
      Synchronize the following duplicate systems or system components: [Assignment:
      organization-defined duplicate systems or system components].
      Discussion: SC-36 and CP-9(6) require the duplication of systems or system components in
@@ -16519,7 +17013,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      code protection updates.
      Related Controls: AC-2, CM-3, CM-5, CM-7, IA-2, IA-4, IA-5, MA-4, SC-12, SI-3, SI-4, SI-7.
      Control Enhancements:
-     (1) OUT-OF-BAND CHANNELS | ENSURE DELIVERY AND TRANSMISSION
+
+##### (1) OUT-OF-BAND CHANNELS | ENSURE DELIVERY AND TRANSMISSION
+
      Employ [Assignment: organization-defined controls] to ensure that only [Assignment:
      organization-defined individuals or systems] receive the following information, system
      components, or devices: [Assignment: organization-defined information, system
@@ -16568,14 +17064,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      operating systems that employ multi-state processor technologies.
      Related Controls: AC-3, AC-4, AC-6, AC-25, SA-8, SC-2, SC-3, SI-16.
      Control Enhancements:
-     (1) PROCESS ISOLATION | HARDWARE SEPARATION
+
+##### (1) PROCESS ISOLATION | HARDWARE SEPARATION
+
      Implement hardware separation mechanisms to facilitate process isolation.
      Discussion: Hardware-based separation of system processes is generally less susceptible to
      compromise than software-based separation, thus providing greater assurance that the
      separation will be enforced. Hardware separation mechanisms include hardware memory
      management.
      Related Controls: None.
-     (2) PROCESS ISOLATION | SEPARATE EXECUTION DOMAIN PER THREAD
+
+##### (2) PROCESS ISOLATION | SEPARATE EXECUTION DOMAIN PER THREAD
+
      Maintain a separate execution domain for each thread in [Assignment: organizationdefined multi-threaded processing].
      Discussion: None.
      Related Controls: None.
@@ -16597,7 +17097,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      requirements.
      Related Controls: AC-18, SC-5.
      Control Enhancements:
-     (1) WIRELESS LINK PROTECTION | ELECTROMAGNETIC INTERFERENCE
+
+##### (1) WIRELESS LINK PROTECTION | ELECTROMAGNETIC INTERFERENCE
+
      Implement cryptographic mechanisms that achieve [Assignment: organization-defined
      level of protection] against the effects of intentional electromagnetic interference.
      Discussion: The implementation of cryptographic mechanisms for electromagnetic
@@ -16609,7 +17111,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      directives, regulations, policies, and standards determine levels of wireless link availability,
      cryptography needed, and performance.
      Related Controls: PE-21, SC-12, SC-13.
-     (2) WIRELESS LINK PROTECTION | REDUCE DETECTION POTENTIAL
+
+##### (2) WIRELESS LINK PROTECTION | REDUCE DETECTION POTENTIAL
+
      Implement cryptographic mechanisms to reduce the detection potential of wireless links
      to [Assignment: organization-defined level of reduction].
      Discussion: The implementation of cryptographic mechanisms to reduce detection potential
@@ -16619,7 +17123,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      threats, concept of operations, and applicable laws, executive orders, directives, regulations,
      policies, and standards determine the levels to which wireless links are undetectable.
      Related Controls: SC-12, SC-13.
-     (3) WIRELESS LINK PROTECTION | IMITATIVE OR MANIPULATIVE COMMUNICATIONS DECEPTION
+
+##### (3) WIRELESS LINK PROTECTION | IMITATIVE OR MANIPULATIVE COMMUNICATIONS DECEPTION
+
      Implement cryptographic mechanisms to identify and reject wireless transmissions that
      are deliberate attempts to achieve imitative or manipulative communications deception
      based on signal parameters.
@@ -16629,7 +17135,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the probability of imitative or manipulative communications deception based on signal
      parameters alone.
      Related Controls: SC-12, SC-13, SI-4.
-     (4) WIRELESS LINK PROTECTION | SIGNAL PARAMETER IDENTIFICATION
+
+##### (4) WIRELESS LINK PROTECTION | SIGNAL PARAMETER IDENTIFICATION
+
      Implement cryptographic mechanisms to prevent the identification of [Assignment:
      organization-defined wireless transmitters] by using the transmitter signal parameters.
      Discussion: The implementation of cryptographic mechanisms to prevent the identification
@@ -16681,7 +17189,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      conversations are taking place.
      Related Controls: SC-15.
      Control Enhancements:
-     (1) SENSOR CAPABILITY AND DATA | REPORTING TO AUTHORIZED INDIVIDUALS OR ROLES
+
+##### (1) SENSOR CAPABILITY AND DATA | REPORTING TO AUTHORIZED INDIVIDUALS OR ROLES
+
      Verify that the system is configured so that data or information collected by the
      [Assignment: organization-defined sensors] is only reported to authorized individuals or
      roles.
@@ -16689,7 +17199,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      possible that the data or information collected by the sensors will be sent to unauthorized
      entities.
      Related Controls: None.
-     (2) SENSOR CAPABILITY AND DATA | AUTHORIZED USE
+
+##### (2) SENSOR CAPABILITY AND DATA | AUTHORIZED USE
+
      Employ the following measures so that data or information collected by [Assignment:
      organization-defined sensors] is only used for authorized purposes: [Assignment:
      organization-defined measures].
@@ -16700,9 +17212,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      do not abuse their authority and, in the case where sensor data is maintained by external
      parties, contractual restrictions on the use of such data.
      Related Controls: PT-2.
-     (3) SENSOR CAPABILITY AND DATA | PROHIBIT USE OF DEVICES
+
+##### (3) SENSOR CAPABILITY AND DATA | PROHIBIT USE OF DEVICES
+
      [Withdrawn: Incorporated into SC-42.]
-     (4) SENSOR CAPABILITY AND DATA | NOTICE OF COLLECTION
+
+##### (4) SENSOR CAPABILITY AND DATA | NOTICE OF COLLECTION
+
      Employ the following measures to facilitate an individual’s awareness that personally
      identifiable information is being collected by [Assignment: organization-defined sensors]:
      [Assignment: organization-defined measures].
@@ -16712,7 +17228,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      through other devices that the sensor is collecting information. The usability and efficacy of
      the notice are important considerations.
      Related Controls: PT-1, PT-4, PT-5.
-     (5) SENSOR CAPABILITY AND DATA | COLLECTION MINIMIZATION
+
+##### (5) SENSOR CAPABILITY AND DATA | COLLECTION MINIMIZATION
+
      Employ [Assignment: organization-defined sensors] that are configured to minimize the
      collection of information about individuals that is not needed.
      Discussion: Although policies to control for authorized use can be applied to information
@@ -16774,7 +17292,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      authentication—depending on the nature of the mechanisms used to support the capabilities.
      Related Controls: AC-3, AU-8, IA-2, IA-8.
      Control Enhancements:
-     (1) SYSTEM TIME SYNCHRONIZATION | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
+
+##### (1) SYSTEM TIME SYNCHRONIZATION | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
+
      (a) Compare the internal system clocks [Assignment: organization-defined frequency]
      with [Assignment: organization-defined authoritative time source]; and
      (b) Synchronize the internal system clocks to the authoritative time source when the time
@@ -16783,7 +17303,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      uniformity of time stamps for systems with multiple system clocks and systems connected
      over a network.
      Related Controls: None.
-     (2) SYSTEM TIME SYNCHRONIZATION | SECONDARY AUTHORITATIVE TIME SOURCE
+
+##### (2) SYSTEM TIME SYNCHRONIZATION | SECONDARY AUTHORITATIVE TIME SOURCE
+
      (a) Identify a secondary authoritative time source that is in a different geographic region
      than the primary authoritative time source; and
      (b) Synchronize the internal system clocks to the secondary authoritative time source if
@@ -16842,7 +17364,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      adversary and make its lateral transition through the system or organization more challenging.
      Related Controls: AU-2, SC-7, SI-4.
      Control Enhancements:
-     (1) SENSOR RELOCATION | DYNAMIC RELOCATION OF SENSORS OR MONITORING CAPABILITIES
+
+##### (1) SENSOR RELOCATION | DYNAMIC RELOCATION OF SENSORS OR MONITORING CAPABILITIES
+
      Dynamically relocate [Assignment: organization-defined sensors and monitoring
      capabilities] to [Assignment: organization-defined locations] under the following
      conditions or circumstances: [Assignment: organization-defined conditions or
@@ -16900,43 +17424,43 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-197. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and information integrity policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-198. Procedures to facilitate the implementation of the system and information integrity
-     policy and the associated system and information integrity controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the system and information integrity policy and
-     procedures; and
-     c.
-     Review and update the current system and information integrity:
-199. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-200. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: System and information integrity policy and procedures address the controls in the SI
-     family that are implemented within systems and organizations. The risk management strategy is
-     an important factor in establishing such policies and procedures. Policies and procedures
-     contribute to security and privacy assurance. Therefore, it is important that security and privacy
-     programs collaborate on the development of system and information integrity policy and
-     procedures. Security and privacy program policies and procedures at the organization level are
-     preferable, in general, and may obviate the need for mission- or system-specific policies and
-     procedures. The policy can be included as part of the general security and privacy policy or be
-     represented by multiple policies that reflect the complex nature of organizations. Procedures can
-     be established for security and privacy programs, for mission or business processes, and for
-     systems, if needed. Procedures describe how the policies or controls are implemented and can
-     be directed at the individual or role that is the object of the procedure. Procedures can be
-     documented in system security and privacy plans or in one or more separate documents. Events
-     that may precipitate an update to system and information integrity policy and procedures
-     include assessment or audit findings, security incidents or breaches, or changes in applicable
-     laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
-     restating controls does not constitute an organizational policy or procedure.
-     Related Controls: PM-9, PS-8, SA-8, SI-12.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-12], [SP 800-100].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and information integrity policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the system and information integrity
+   policy and the associated system and information integrity controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the system and information integrity policy and
+   procedures; and
+   c.
+   Review and update the current system and information integrity:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: System and information integrity policy and procedures address the controls in the SI
+   family that are implemented within systems and organizations. The risk management strategy is
+   an important factor in establishing such policies and procedures. Policies and procedures
+   contribute to security and privacy assurance. Therefore, it is important that security and privacy
+   programs collaborate on the development of system and information integrity policy and
+   procedures. Security and privacy program policies and procedures at the organization level are
+   preferable, in general, and may obviate the need for mission- or system-specific policies and
+   procedures. The policy can be included as part of the general security and privacy policy or be
+   represented by multiple policies that reflect the complex nature of organizations. Procedures can
+   be established for security and privacy programs, for mission or business processes, and for
+   systems, if needed. Procedures describe how the policies or controls are implemented and can
+   be directed at the individual or role that is the object of the procedure. Procedures can be
+   documented in system security and privacy plans or in one or more separate documents. Events
+   that may precipitate an update to system and information integrity policy and procedures
+   include assessment or audit findings, security incidents or breaches, or changes in applicable
+   laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply
+   restating controls does not constitute an organizational policy or procedure.
+   Related Controls: PM-9, PS-8, SA-8, SI-12.
+   Control Enhancements: None.
+   References: [OMB A-130], [SP 800-12], [SP 800-100].
 
 #### SI-2
 
@@ -16972,16 +17496,22 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      sources with appropriate digital signatures.
      Related Controls: CA-5, CM-3, CM-4, CM-5, CM-6, CM-8, MA-2, RA-5, SA-8, SA-10, SA-11, SI-3, SI5, SI-7, SI-11.
      Control Enhancements:
-     (1) FLAW REMEDIATION | CENTRAL MANAGEMENT
+
+##### (1) FLAW REMEDIATION | CENTRAL MANAGEMENT
+
      [Withdrawn: Incorporated into PL-9.]
-     (2) FLAW REMEDIATION | AUTOMATED FLAW REMEDIATION STATUS
+
+##### (2) FLAW REMEDIATION | AUTOMATED FLAW REMEDIATION STATUS
+
      Determine if system components have applicable security-relevant software and firmware
      updates installed using [Assignment: organization-defined automated mechanisms]
      [Assignment: organization-defined frequency].
      Discussion: Automated mechanisms can track and determine the status of known flaws for
      system components.
      Related Controls: CA-7, SI-4.
-     (3) FLAW REMEDIATION | TIME TO REMEDIATE FLAWS AND BENCHMARKS FOR CORRECTIVE ACTIONS
+
+##### (3) FLAW REMEDIATION | TIME TO REMEDIATE FLAWS AND BENCHMARKS FOR CORRECTIVE ACTIONS
+
      (a) Measure the time between flaw identification and flaw remediation; and
      (b) Establish the following benchmarks for taking corrective actions: [Assignment:
      organization-defined benchmarks].
@@ -16990,13 +17520,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      (i.e., time frames) for taking corrective actions. Benchmarks can be established by the type
      of flaw or the severity of the potential vulnerability if the flaw can be exploited.
      Related Controls: None.
-     (4) FLAW REMEDIATION | AUTOMATED PATCH MANAGEMENT TOOLS
+
+##### (4) FLAW REMEDIATION | AUTOMATED PATCH MANAGEMENT TOOLS
+
      Employ automated patch management tools to facilitate flaw remediation to the following
      system components: [Assignment: organization-defined system components].
      Discussion: Using automated tools to support patch management helps to ensure the
      timeliness and completeness of system patching operations.
      Related Controls: None.
-     (5) FLAW REMEDIATION | AUTOMATIC SOFTWARE AND FIRMWARE UPDATES
+
+##### (5) FLAW REMEDIATION | AUTOMATIC SOFTWARE AND FIRMWARE UPDATES
+
      Install [Assignment: organization-defined security-relevant software and firmware
      updates] automatically to [Assignment: organization-defined system components].
      Discussion: Due to system integrity and availability concerns, organizations consider the
@@ -17005,7 +17539,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      configuration management and control with any mission or operational impacts that
      automatic updates might impose.
      Related Controls: None.
-     (6) FLAW REMEDIATION | REMOVAL OF PREVIOUS VERSIONS OF SOFTWARE AND FIRMWARE
+
+##### (6) FLAW REMEDIATION | REMOVAL OF PREVIOUS VERSIONS OF SOFTWARE AND FIRMWARE
+
      Remove previous versions of [Assignment: organization-defined software and firmware
      components] after updated versions have been installed.
      Discussion: Previous versions of software or firmware components that are not removed
@@ -17030,67 +17566,83 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      c.
      Configure malicious code protection mechanisms to:
 
-201. Perform periodic scans of the system [Assignment: organization-defined frequency] and
-     real-time scans of files from external sources at [Selection (one or more): endpoint;
-     network entry and exit points] as the files are downloaded, opened, or executed in
-     accordance with organizational policy; and
-202. [Selection (one or more): block malicious code; quarantine malicious code; take
-     [Assignment: organization-defined action]]; and send alert to [Assignment: organizationdefined personnel or roles] in response to malicious code detection; and
-     d.
-     Address the receipt of false positives during malicious code detection and eradication and
-     the resulting potential impact on the availability of the system.
-     Discussion: System entry and exit points include firewalls, remote access servers, workstations,
-     electronic mail servers, web servers, proxy servers, notebook computers, and mobile devices.
-     Malicious code includes viruses, worms, Trojan horses, and spyware. Malicious code can also be
-     encoded in various formats contained within compressed or hidden files or hidden in files using
-     techniques such as steganography. Malicious code can be inserted into systems in a variety of
-     ways, including by electronic mail, the world-wide web, and portable storage devices. Malicious
-     code insertions occur through the exploitation of system vulnerabilities. A variety of technologies
-     and methods exist to limit or eliminate the effects of malicious code.
-     Malicious code protection mechanisms include both signature- and nonsignature-based
-     technologies. Nonsignature-based detection mechanisms include artificial intelligence
-     techniques that use heuristics to detect, analyze, and describe the characteristics or behavior of
-     malicious code and to provide controls against such code for which signatures do not yet exist or
-     for which existing signatures may not be effective. Malicious code for which active signatures do
-     not yet exist or may be ineffective includes polymorphic malicious code (i.e., code that changes
-     signatures when it replicates). Nonsignature-based mechanisms also include reputation-based
-     technologies. In addition to the above technologies, pervasive configuration management,
-     comprehensive software integrity controls, and anti-exploitation software may be effective in
-     preventing the execution of unauthorized code. Malicious code may be present in commercial
-     off-the-shelf software as well as custom-built software and could include logic bombs, backdoors,
-     and other types of attacks that could affect organizational mission and business functions.
-     In situations where malicious code cannot be detected by detection methods or technologies,
-     organizations rely on other types of controls, including secure coding practices, configuration
-     management and control, trusted procurement processes, and monitoring practices to ensure
-     that software does not perform functions other than the functions intended. Organizations may
-     determine that, in response to the detection of malicious code, different actions may be
-     warranted. For example, organizations can define actions in response to malicious code
-     detection during periodic scans, the detection of malicious downloads, or the detection of
-     maliciousness when attempting to open or execute files.
-     Related Controls: AC-4, AC-19, CM-3, CM-8, IR-4, MA-3, MA-4, PL-9, RA-5, SC-7, SC-23, SC-26, SC28, SC-44, SI-2, SI-4, SI-7, SI-8, SI-15.
-     Control Enhancements:
-     (1) MALICIOUS CODE PROTECTION | CENTRAL MANAGEMENT
+1. Perform periodic scans of the system [Assignment: organization-defined frequency] and
+   real-time scans of files from external sources at [Selection (one or more): endpoint;
+   network entry and exit points] as the files are downloaded, opened, or executed in
+   accordance with organizational policy; and
+2. [Selection (one or more): block malicious code; quarantine malicious code; take
+   [Assignment: organization-defined action]]; and send alert to [Assignment: organizationdefined personnel or roles] in response to malicious code detection; and
+   d.
+   Address the receipt of false positives during malicious code detection and eradication and
+   the resulting potential impact on the availability of the system.
+   Discussion: System entry and exit points include firewalls, remote access servers, workstations,
+   electronic mail servers, web servers, proxy servers, notebook computers, and mobile devices.
+   Malicious code includes viruses, worms, Trojan horses, and spyware. Malicious code can also be
+   encoded in various formats contained within compressed or hidden files or hidden in files using
+   techniques such as steganography. Malicious code can be inserted into systems in a variety of
+   ways, including by electronic mail, the world-wide web, and portable storage devices. Malicious
+   code insertions occur through the exploitation of system vulnerabilities. A variety of technologies
+   and methods exist to limit or eliminate the effects of malicious code.
+   Malicious code protection mechanisms include both signature- and nonsignature-based
+   technologies. Nonsignature-based detection mechanisms include artificial intelligence
+   techniques that use heuristics to detect, analyze, and describe the characteristics or behavior of
+   malicious code and to provide controls against such code for which signatures do not yet exist or
+   for which existing signatures may not be effective. Malicious code for which active signatures do
+   not yet exist or may be ineffective includes polymorphic malicious code (i.e., code that changes
+   signatures when it replicates). Nonsignature-based mechanisms also include reputation-based
+   technologies. In addition to the above technologies, pervasive configuration management,
+   comprehensive software integrity controls, and anti-exploitation software may be effective in
+   preventing the execution of unauthorized code. Malicious code may be present in commercial
+   off-the-shelf software as well as custom-built software and could include logic bombs, backdoors,
+   and other types of attacks that could affect organizational mission and business functions.
+   In situations where malicious code cannot be detected by detection methods or technologies,
+   organizations rely on other types of controls, including secure coding practices, configuration
+   management and control, trusted procurement processes, and monitoring practices to ensure
+   that software does not perform functions other than the functions intended. Organizations may
+   determine that, in response to the detection of malicious code, different actions may be
+   warranted. For example, organizations can define actions in response to malicious code
+   detection during periodic scans, the detection of malicious downloads, or the detection of
+   maliciousness when attempting to open or execute files.
+   Related Controls: AC-4, AC-19, CM-3, CM-8, IR-4, MA-3, MA-4, PL-9, RA-5, SC-7, SC-23, SC-26, SC28, SC-44, SI-2, SI-4, SI-7, SI-8, SI-15.
+   Control Enhancements:
+
+##### (1) MALICIOUS CODE PROTECTION | CENTRAL MANAGEMENT
+
      [Withdrawn: Incorporated into PL-9.]
-     (2) MALICIOUS CODE PROTECTION | AUTOMATIC UPDATES
+
+##### (2) MALICIOUS CODE PROTECTION | AUTOMATIC UPDATES
+
      [Withdrawn: Incorporated into SI-3.]
-     (3) MALICIOUS CODE PROTECTION | NON-PRIVILEGED USERS
+
+##### (3) MALICIOUS CODE PROTECTION | NON-PRIVILEGED USERS
+
      [Withdrawn: Incorporated into AC-6(10).]
-     (4) MALICIOUS CODE PROTECTION | UPDATES ONLY BY PRIVILEGED USERS
+
+##### (4) MALICIOUS CODE PROTECTION | UPDATES ONLY BY PRIVILEGED USERS
+
      Update malicious code protection mechanisms only when directed by a privileged user.
      Discussion: Protection mechanisms for malicious code are typically categorized as securityrelated software and, as such, are only updated by organizational personnel with
      appropriate access privileges.
      Related Controls: CM-5.
-     (5) MALICIOUS CODE PROTECTION | PORTABLE STORAGE DEVICES
+
+##### (5) MALICIOUS CODE PROTECTION | PORTABLE STORAGE DEVICES
+
      [Withdrawn: Incorporated into MP-7.]
-     (6) MALICIOUS CODE PROTECTION | TESTING AND VERIFICATION
+
+##### (6) MALICIOUS CODE PROTECTION | TESTING AND VERIFICATION
+
      (a) Test malicious code protection mechanisms [Assignment: organization-defined
      frequency] by introducing known benign code into the system; and
      (b) Verify that the detection of the code and the associated incident reporting occur.
      Discussion: None.
      Related Controls: CA-2, CA-7, RA-5.
-     (7) MALICIOUS CODE PROTECTION | NONSIGNATURE-BASED DETECTION
+
+##### (7) MALICIOUS CODE PROTECTION | NONSIGNATURE-BASED DETECTION
+
      [Withdrawn: Incorporated into SI-3.]
-     (8) MALICIOUS CODE PROTECTION | DETECT UNAUTHORIZED COMMANDS
+
+##### (8) MALICIOUS CODE PROTECTION | DETECT UNAUTHORIZED COMMANDS
+
      (a) Detect the following unauthorized operating system commands through the kernel
      application programming interface on [Assignment: organization-defined system
      hardware components]: [Assignment: organization-defined unauthorized operating
@@ -17108,9 +17660,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      component, component location in the network, or a combination thereof. Organizations
      may select different actions for different types, classes, or instances of malicious commands.
      Related Controls: AU-2, AU-6, AU-12.
-     (9) MALICIOUS CODE PROTECTION | AUTHENTICATE REMOTE COMMANDS
+
+##### (9) MALICIOUS CODE PROTECTION | AUTHENTICATE REMOTE COMMANDS
+
      [Withdrawn: Moved to AC-17(10).]
-     (10) MALICIOUS CODE PROTECTION | MALICIOUS CODE ANALYSIS
+
+##### (10) MALICIOUS CODE PROTECTION | MALICIOUS CODE ANALYSIS
+
      (a) Employ the following tools and techniques to analyze the characteristics and behavior
      of malicious code: [Assignment: organization-defined tools and techniques]; and
      (b) Incorporate the results from malicious code analysis into organizational incident
@@ -17130,60 +17686,62 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a.
      Monitor the system to detect:
 
-203. Attacks and indicators of potential attacks in accordance with the following monitoring
-     objectives: [Assignment: organization-defined monitoring objectives]; and
-204. Unauthorized local, network, and remote connections;
-     b.
-     Identify unauthorized use of the system through the following techniques and methods:
-     [Assignment: organization-defined techniques and methods];
-     c.
-     Invoke internal monitoring capabilities or deploy monitoring devices:
-205. Strategically within the system to collect organization-determined essential information;
-     and
-206. At ad hoc locations within the system to track specific types of transactions of interest
-     to the organization;
-     d.
-     Analyze detected events and anomalies;
-     e.
-     Adjust the level of system monitoring activity when there is a change in risk to organizational
-     operations and assets, individuals, other organizations, or the Nation;
-     f.
-     Obtain legal opinion regarding system monitoring activities; and
-     g.
-     Provide [Assignment: organization-defined system monitoring information] to [Assignment:
-     organization-defined personnel or roles] [Selection (one or more): as needed; [Assignment:
-     organization-defined frequency]].
-     Discussion: System monitoring includes external and internal monitoring. External monitoring
-     includes the observation of events occurring at external interfaces to the system. Internal
-     monitoring includes the observation of events occurring within the system. Organizations
-     monitor systems by observing audit activities in real time or by observing other system aspects
-     such as access patterns, characteristics of access, and other actions. The monitoring objectives
-     guide and inform the determination of the events. System monitoring capabilities are achieved
-     through a variety of tools and techniques, including intrusion detection and prevention systems,
-     malicious code protection software, scanning tools, audit record monitoring software, and
-     network monitoring software.
-     Depending on the security architecture, the distribution and configuration of monitoring devices
-     may impact throughput at key internal and external boundaries as well as at other locations
-     across a network due to the introduction of network throughput latency. If throughput
-     management is needed, such devices are strategically located and deployed as part of an
-     established organization-wide security architecture. Strategic locations for monitoring devices
-     include selected perimeter locations and near key servers and server farms that support critical
-     applications. Monitoring devices are typically employed at the managed interfaces associated
-     with controls SC-7 and AC-17. The information collected is a function of the organizational
-     monitoring objectives and the capability of systems to support such objectives. Specific types of
-     transactions of interest include Hypertext Transfer Protocol (HTTP) traffic that bypasses HTTP
-     proxies. System monitoring is an integral part of organizational continuous monitoring and
-     incident response programs, and output from system monitoring serves as input to those
-     programs. System monitoring requirements, including the need for specific types of system
-     monitoring, may be referenced in other controls (e.g., AC-2g, AC-2(7), AC-2(12)(a), AC-17(1), AU13, AU-13(1), AU-13(2), CM-3f, CM-6d, MA-3a, MA-4a, SC-5(3)(b), SC-7a, SC-7(24)(b), SC-18b, SC43b). Adjustments to levels of system monitoring are based on law enforcement information,
-     intelligence information, or other sources of information. The legality of system monitoring
-     activities is based on applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines.
-     Related Controls: AC-2, AC-3, AC-4, AC-8, AC-17, AU-2, AU-6, AU-7, AU-9, AU-12, AU-13, AU-14,
-     CA-7, CM-3, CM-6, CM-8, CM-11, IA-10, IR-4, MA-3, MA-4, PL-9, PM-12, RA-5, RA-10, SC-5, SC-7,
-     SC-18, SC-26, SC-31, SC-35, SC-36, SC-37, SC-43, SI-3, SI-6, SI-7, SR-9, SR-10.
-     Control Enhancements:
-     (1) SYSTEM MONITORING | SYSTEM-WIDE INTRUSION DETECTION SYSTEM
+1. Attacks and indicators of potential attacks in accordance with the following monitoring
+   objectives: [Assignment: organization-defined monitoring objectives]; and
+2. Unauthorized local, network, and remote connections;
+   b.
+   Identify unauthorized use of the system through the following techniques and methods:
+   [Assignment: organization-defined techniques and methods];
+   c.
+   Invoke internal monitoring capabilities or deploy monitoring devices:
+3. Strategically within the system to collect organization-determined essential information;
+   and
+4. At ad hoc locations within the system to track specific types of transactions of interest
+   to the organization;
+   d.
+   Analyze detected events and anomalies;
+   e.
+   Adjust the level of system monitoring activity when there is a change in risk to organizational
+   operations and assets, individuals, other organizations, or the Nation;
+   f.
+   Obtain legal opinion regarding system monitoring activities; and
+   g.
+   Provide [Assignment: organization-defined system monitoring information] to [Assignment:
+   organization-defined personnel or roles] [Selection (one or more): as needed; [Assignment:
+   organization-defined frequency]].
+   Discussion: System monitoring includes external and internal monitoring. External monitoring
+   includes the observation of events occurring at external interfaces to the system. Internal
+   monitoring includes the observation of events occurring within the system. Organizations
+   monitor systems by observing audit activities in real time or by observing other system aspects
+   such as access patterns, characteristics of access, and other actions. The monitoring objectives
+   guide and inform the determination of the events. System monitoring capabilities are achieved
+   through a variety of tools and techniques, including intrusion detection and prevention systems,
+   malicious code protection software, scanning tools, audit record monitoring software, and
+   network monitoring software.
+   Depending on the security architecture, the distribution and configuration of monitoring devices
+   may impact throughput at key internal and external boundaries as well as at other locations
+   across a network due to the introduction of network throughput latency. If throughput
+   management is needed, such devices are strategically located and deployed as part of an
+   established organization-wide security architecture. Strategic locations for monitoring devices
+   include selected perimeter locations and near key servers and server farms that support critical
+   applications. Monitoring devices are typically employed at the managed interfaces associated
+   with controls SC-7 and AC-17. The information collected is a function of the organizational
+   monitoring objectives and the capability of systems to support such objectives. Specific types of
+   transactions of interest include Hypertext Transfer Protocol (HTTP) traffic that bypasses HTTP
+   proxies. System monitoring is an integral part of organizational continuous monitoring and
+   incident response programs, and output from system monitoring serves as input to those
+   programs. System monitoring requirements, including the need for specific types of system
+   monitoring, may be referenced in other controls (e.g., AC-2g, AC-2(7), AC-2(12)(a), AC-17(1), AU13, AU-13(1), AU-13(2), CM-3f, CM-6d, MA-3a, MA-4a, SC-5(3)(b), SC-7a, SC-7(24)(b), SC-18b, SC43b). Adjustments to levels of system monitoring are based on law enforcement information,
+   intelligence information, or other sources of information. The legality of system monitoring
+   activities is based on applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines.
+   Related Controls: AC-2, AC-3, AC-4, AC-8, AC-17, AU-2, AU-6, AU-7, AU-9, AU-12, AU-13, AU-14,
+   CA-7, CM-3, CM-6, CM-8, CM-11, IA-10, IR-4, MA-3, MA-4, PL-9, PM-12, RA-5, RA-10, SC-5, SC-7,
+   SC-18, SC-26, SC-31, SC-35, SC-36, SC-37, SC-43, SI-3, SI-6, SI-7, SR-9, SR-10.
+   Control Enhancements:
+
+##### (1) SYSTEM MONITORING | SYSTEM-WIDE INTRUSION DETECTION SYSTEM
+
      Connect and configure individual intrusion detection tools into a system-wide intrusion
      detection system.
      Discussion: Linking individual intrusion detection tools into a system-wide intrusion
@@ -17191,7 +17749,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information contained in one intrusion detection tool can be shared widely across the
      organization, making the system-wide detection capability more robust and powerful.
      Related Controls: None.
-     (2) SYSTEM MONITORING | AUTOMATED TOOLS AND MECHANISMS FOR REAL-TIME ANALYSIS
+
+##### (2) SYSTEM MONITORING | AUTOMATED TOOLS AND MECHANISMS FOR REAL-TIME ANALYSIS
+
      Employ automated tools and mechanisms to support near real-time analysis of events.
      Discussion: Automated tools and mechanisms include host-based, network-based,
      transport-based, or storage-based event monitoring tools and mechanisms or security
@@ -17203,7 +17763,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      these risks in their privacy impact assessment and make determinations that are in
      alignment with their privacy program plan.
      Related Controls: PM-23, PM-25.
-     (3) SYSTEM MONITORING | AUTOMATED TOOL AND MECHANISM INTEGRATION
+
+##### (3) SYSTEM MONITORING | AUTOMATED TOOL AND MECHANISM INTEGRATION
+
      Employ automated tools and mechanisms to integrate intrusion detection tools and
      mechanisms into access control and flow control mechanisms.
      Discussion: Using automated tools and mechanisms to integrate intrusion detection tools
@@ -17211,7 +17773,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      attacks by enabling the reconfiguration of mechanisms in support of attack isolation and
      elimination.
      Related Controls: PM-23, PM-25.
-     (4) SYSTEM MONITORING | INBOUND AND OUTBOUND COMMUNICATIONS TRAFFIC
+
+##### (4) SYSTEM MONITORING | INBOUND AND OUTBOUND COMMUNICATIONS TRAFFIC
+
      (a) Determine criteria for unusual or unauthorized activities or conditions for inbound
      and outbound communications traffic;
      (b) Monitor inbound and outbound communications traffic [Assignment: organizationdefined frequency] for [Assignment: organization-defined unusual or unauthorized
@@ -17224,7 +17788,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      legitimate code or credentials is used to identify potentially compromised systems or system
      components.
      Related Controls: None.
-     (5) SYSTEM MONITORING | SYSTEM-GENERATED ALERTS
+
+##### (5) SYSTEM MONITORING | SYSTEM-GENERATED ALERTS
+
      Alert [Assignment: organization-defined personnel or roles] when the following systemgenerated indications of compromise or potential compromise occur: [Assignment:
      organization-defined compromise indicators].
      Discussion: Alerts may be generated from a variety of sources, including audit records or
@@ -17238,17 +17804,25 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      generated by organizations in SI-4(12) focus on information sources external to the system,
      such as suspicious activity reports and reports on potential insider threats.
      Related Controls: AU-4, AU-5, PE-6.
-     (6) SYSTEM MONITORING | RESTRICT NON-PRIVILEGED USERS
+
+##### (6) SYSTEM MONITORING | RESTRICT NON-PRIVILEGED USERS
+
      [Withdrawn: Incorporated into AC-6(10).]
-     (7) SYSTEM MONITORING | AUTOMATED RESPONSE TO SUSPICIOUS EVENTS
+
+##### (7) SYSTEM MONITORING | AUTOMATED RESPONSE TO SUSPICIOUS EVENTS
+
      (a) Notify [Assignment: organization-defined incident response personnel (identified by
      name and/or by role)] of detected suspicious events; and
      (b) Take the following actions upon detection: [Assignment: organization-defined leastdisruptive actions to terminate suspicious events].
      Discussion: Least-disruptive actions include initiating requests for human responses.
      Related Controls: None.
-     (8) SYSTEM MONITORING | PROTECTION OF MONITORING INFORMATION
+
+##### (8) SYSTEM MONITORING | PROTECTION OF MONITORING INFORMATION
+
      [Withdrawn: Incorporated into SI-4.]
-     (9) SYSTEM MONITORING | TESTING OF MONITORING TOOLS AND MECHANISMS
+
+##### (9) SYSTEM MONITORING | TESTING OF MONITORING TOOLS AND MECHANISMS
+
      Test intrusion-monitoring tools and mechanisms [Assignment: organization-defined
      frequency].
      Discussion: Testing intrusion-monitoring tools and mechanisms is necessary to ensure that
@@ -17256,7 +17830,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      objectives of organizations. The frequency and depth of testing depends on the types of
      tools and mechanisms used by organizations and the methods of deployment.
      Related Controls: None.
-     (10) SYSTEM MONITORING | VISIBILITY OF ENCRYPTED COMMUNICATIONS
+
+##### (10) SYSTEM MONITORING | VISIBILITY OF ENCRYPTED COMMUNICATIONS
+
      Make provisions so that [Assignment: organization-defined encrypted communications
      traffic] is visible to [Assignment: organization-defined system monitoring tools and
      mechanisms].
@@ -17266,7 +17842,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      encrypted traffic, encrypted traffic intended for external destinations, or a subset of the
      traffic types.
      Related Controls: None.
-     (11) SYSTEM MONITORING | ANALYZE COMMUNICATIONS TRAFFIC ANOMALIES
+
+##### (11) SYSTEM MONITORING | ANALYZE COMMUNICATIONS TRAFFIC ANOMALIES
+
      Analyze outbound communications traffic at the external interfaces to the system and
      selected [Assignment: organization-defined interior points within the system] to discover
      anomalies.
@@ -17276,7 +17854,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      protocols and ports, the use of unmonitored network protocols (e.g., IPv6 usage during IPv4
      transition), and attempted communications with suspected malicious external addresses.
      Related Controls: None.
-     (12) SYSTEM MONITORING | AUTOMATED ORGANIZATION-GENERATED ALERTS
+
+##### (12) SYSTEM MONITORING | AUTOMATED ORGANIZATION-GENERATED ALERTS
+
      Alert [Assignment: organization-defined personnel or roles] using [Assignment:
      organization-defined automated mechanisms] when the following indications of
      inappropriate or unusual activities with security or privacy implications occur:
@@ -17291,7 +17871,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      in SI-4(5) focus on information sources that are internal to the systems, such as audit
      records.
      Related Controls: None.
-     (13) SYSTEM MONITORING | ANALYZE TRAFFIC AND EVENT PATTERNS
+
+##### (13) SYSTEM MONITORING | ANALYZE TRAFFIC AND EVENT PATTERNS
+
      (a) Analyze communications traffic and event patterns for the system;
      (b) Develop profiles representing common traffic and event patterns; and
      (c) Use the traffic and event profiles in tuning system-monitoring devices.
@@ -17301,7 +17883,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information can help reduce the number of false positives and false negatives during system
      monitoring.
      Related Controls: None.
-     (14) SYSTEM MONITORING | WIRELESS INTRUSION DETECTION
+
+##### (14) SYSTEM MONITORING | WIRELESS INTRUSION DETECTION
+
      Employ a wireless intrusion detection system to identify rogue wireless devices and to
      detect attack attempts and potential compromises or breaches to the system.
      Discussion: Wireless signals may radiate beyond organizational facilities. Organizations
@@ -17310,7 +17894,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      within facilities containing systems but also include areas outside of facilities to verify that
      unauthorized wireless access points are not connected to organizational systems.
      Related Controls: AC-18, IA-3.
-     (15) SYSTEM MONITORING | WIRELESS TO WIRELINE COMMUNICATIONS
+
+##### (15) SYSTEM MONITORING | WIRELESS TO WIRELINE COMMUNICATIONS
+
      Employ an intrusion detection system to monitor wireless communications traffic as the
      traffic passes from wireless to wireline networks.
      Discussion: Wireless networks are inherently less secure than wired networks. For example,
@@ -17324,7 +17910,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      ensure that the traffic does not contain malicious code prior to transitioning to the wireline
      network.
      Related Controls: AC-18.
-     (16) SYSTEM MONITORING | CORRELATE MONITORING INFORMATION
+
+##### (16) SYSTEM MONITORING | CORRELATE MONITORING INFORMATION
+
      Correlate information from monitoring tools and mechanisms employed throughout the
      system.
      Discussion: Correlating information from different system monitoring tools and mechanisms
@@ -17338,7 +17926,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      of monitoring information is especially important during the transition from older to newer
      technologies (e.g., transitioning from IPv4 to IPv6 network protocols).
      Related Controls: AU-6.
-     (17) SYSTEM MONITORING | INTEGRATED SITUATIONAL AWARENESS
+
+##### (17) SYSTEM MONITORING | INTEGRATED SITUATIONAL AWARENESS
+
      Correlate information from monitoring physical, cyber, and supply chain activities to
      achieve integrated, organization-wide situational awareness.
      Discussion: Correlating monitoring information from a more diverse set of information
@@ -17351,14 +17941,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information from multiple activities may help reveal attacks on organizations that are
      operating across multiple attack vectors.
      Related Controls: AU-16, PE-6, SR-2, SR-4, SR-6.
-     (18) SYSTEM MONITORING | ANALYZE TRAFFIC AND COVERT EXFILTRATION
+
+##### (18) SYSTEM MONITORING | ANALYZE TRAFFIC AND COVERT EXFILTRATION
+
      Analyze outbound communications traffic at external interfaces to the system and at the
      following interior points to detect covert exfiltration of information: [Assignment:
      organization-defined interior points within the system].
      Discussion: Organization-defined interior points include subnetworks and subsystems.
      Covert means that can be used to exfiltrate information include steganography.
      Related Controls: None.
-     (19) SYSTEM MONITORING | RISK FOR INDIVIDUALS
+
+##### (19) SYSTEM MONITORING | RISK FOR INDIVIDUALS
+
      Implement [Assignment: organization-defined additional monitoring] of individuals who
      have been identified by [Assignment: organization-defined sources] as posing an increased
      level of risk.
@@ -17369,7 +17963,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      conducted in accordance with applicable laws, executive orders, directives, regulations,
      policies, standards, and guidelines.
      Related Controls: None.
-     (20) SYSTEM MONITORING | PRIVILEGED USERS
+
+##### (20) SYSTEM MONITORING | PRIVILEGED USERS
+
      Implement the following additional monitoring of privileged users: [Assignment:
      organization-defined additional monitoring].
      Discussion: Privileged users have access to more sensitive information, including securityrelated information, than the general user population. Access to such information means
@@ -17378,7 +17974,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      helps to ensure that organizations can identify malicious activity at the earliest possible time
      and take appropriate actions.
      Related Controls: AC-18.
-     (21) SYSTEM MONITORING | PROBATIONARY PERIODS
+
+##### (21) SYSTEM MONITORING | PROBATIONARY PERIODS
+
      Implement the following additional monitoring of individuals during [Assignment:
      organization-defined probationary period]: [Assignment: organization-defined additional
      monitoring].
@@ -17387,7 +17985,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the system, additional monitoring can help identify any potentially malicious activity or
      inappropriate behavior.
      Related Controls: AC-18.
-     (22) SYSTEM MONITORING | UNAUTHORIZED NETWORK SERVICES
+
+##### (22) SYSTEM MONITORING | UNAUTHORIZED NETWORK SERVICES
+
      (a) Detect network services that have not been authorized or approved by [Assignment:
      organization-defined authorization or approval processes]; and
      (b) [Selection (one or more): Audit; Alert [Assignment: organization-defined personnel or
@@ -17395,7 +17995,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: Unauthorized or unapproved network services include services in serviceoriented architectures that lack organizational verification or validation and may therefore
      be unreliable or serve as malicious rogues for valid services.
      Related Controls: CM-7.
-     (23) SYSTEM MONITORING | HOST-BASED DEVICES
+
+##### (23) SYSTEM MONITORING | HOST-BASED DEVICES
+
      Implement the following host-based monitoring mechanisms at [Assignment:
      organization-defined system components]: [Assignment: organization-defined host-based
      monitoring mechanisms].
@@ -17404,7 +18006,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      servers, notebook computers, and mobile devices. Organizations may consider employing
      host-based monitoring mechanisms from multiple product developers or vendors.
      Related Controls: AC-18, AC-19.
-     (24) SYSTEM MONITORING | INDICATORS OF COMPROMISE
+
+##### (24) SYSTEM MONITORING | INDICATORS OF COMPROMISE
+
      Discover, collect, and distribute to [Assignment: organization-defined personnel or roles],
      indicators of compromise provided by [Assignment: organization-defined sources].
      Discussion: Indicators of compromise (IOC) are forensic artifacts from intrusions that are
@@ -17420,7 +18024,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Industrial Base Cybersecurity Information Sharing Program, and the CERT Coordination
      Center.
      Related Controls: AC-18.
-     (25) SYSTEM MONITORING | OPTIMIZE NETWORK TRAFFIC ANALYSIS
+
+##### (25) SYSTEM MONITORING | OPTIMIZE NETWORK TRAFFIC ANALYSIS
+
      Provide visibility into network traffic at external and key internal system interfaces to
      optimize the effectiveness of monitoring devices.
      Discussion: Encrypted traffic, asymmetric routing architectures, capacity and latency
@@ -17460,7 +18066,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      supporting organizations.
      Related Controls: PM-15, RA-5, SI-2.
      Control Enhancements:
-     (1) SECURITY ALERTS, ADVISORIES, AND DIRECTIVES | AUTOMATED ALERTS AND ADVISORIES
+
+##### (1) SECURITY ALERTS, ADVISORIES, AND DIRECTIVES | AUTOMATED ALERTS AND ADVISORIES
+
      Broadcast security alert and advisory information throughout the organization using
      [Assignment: organization-defined automated mechanisms].
      Discussion: The significant number of changes to organizational systems and environments
@@ -17497,9 +18105,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      senior agency official for privacy or that privacy attributes are applied or used as expected.
      Related Controls: CA-7, CM-4, CM-6, SI-7.
      Control Enhancements:
-     (1) SECURITY AND PRIVACY FUNCTION VERIFICATION | NOTIFICATION OF FAILED SECURITY TESTS
+
+##### (1) SECURITY AND PRIVACY FUNCTION VERIFICATION | NOTIFICATION OF FAILED SECURITY TESTS
+
      [Withdrawn: Incorporated into SI-6.]
-     (2) SECURITY AND PRIVACY FUNCTION VERIFICATION | AUTOMATION SUPPORT FOR DISTRIBUTED
+
+##### (2) SECURITY AND PRIVACY FUNCTION VERIFICATION | AUTOMATION SUPPORT FOR DISTRIBUTED
+
      TESTING
      Implement automated mechanisms to support the management of distributed security
      and privacy function testing.
@@ -17507,7 +18119,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      function testing helps to ensure the integrity, timeliness, completeness, and efficacy of such
      testing.
      Related Controls: SI-2.
-     (3) SECURITY AND PRIVACY FUNCTION VERIFICATION | REPORT VERIFICATION RESULTS
+
+##### (3) SECURITY AND PRIVACY FUNCTION VERIFICATION | REPORT VERIFICATION RESULTS
+
      Report the results of security and privacy function verification to [Assignment:
      organization-defined personnel or roles].
      Discussion: Organizational personnel with potential interest in the results of the verification
@@ -17538,7 +18152,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: AC-4, CM-3, CM-7, CM-8, MA-3, MA-4, RA-5, SA-8, SA-9, SA-10, SC-8, SC-12,
      SC-13, SC-28, SC-37, SI-3, SR-3, SR-4, SR-5, SR-6, SR-9, SR-10, SR-11.
      Control Enhancements:
-     (1) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | INTEGRITY CHECKS
+
+##### (1) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | INTEGRITY CHECKS
+
      Perform an integrity check of [Assignment: organization-defined software, firmware, and
      information] [Selection (one or more): at startup; at [Assignment: organization-defined
      transitional states or security-relevant events]; [Assignment: organization-defined
@@ -17547,7 +18163,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      organizational systems are susceptible and the installation of new hardware, software, or
      firmware. Transitional states include system startup, restart, shutdown, and abort.
      Related Controls: None.
-     (2) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | AUTOMATED NOTIFICATIONS OF INTEGRITY
+
+##### (2) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | AUTOMATED NOTIFICATIONS OF INTEGRITY
+
      VIOLATIONS
      Employ automated tools that provide notification to [Assignment: organization-defined
      personnel or roles] upon discovering discrepancies during integrity verification.
@@ -17558,15 +18176,21 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      official, senior agency official for privacy, system administrators, software developers,
      systems integrators, information security officers, and privacy officers.
      Related Controls: None.
-     (3) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CENTRALLY MANAGED INTEGRITY TOOLS
+
+##### (3) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CENTRALLY MANAGED INTEGRITY TOOLS
+
      Employ centrally managed integrity verification tools.
      Discussion: Centrally managed integrity verification tools provides greater consistency in the
      application of such tools and can facilitate more comprehensive coverage of integrity
      verification actions.
      Related Controls: AU-3, SI-2, SI-8.
-     (4) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | TAMPER-EVIDENT PACKAGING
+
+##### (4) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | TAMPER-EVIDENT PACKAGING
+
      [Withdrawn: Incorporated into SR-9.]
-     (5) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | AUTOMATED RESPONSE TO INTEGRITY
+
+##### (5) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | AUTOMATED RESPONSE TO INTEGRITY
+
      VIOLATIONS
      Automatically [Selection (one or more): shut the system down; restart the system;
      implement [Assignment: organization-defined controls]] when integrity violations are
@@ -17578,7 +18202,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      includes reversing the changes, halting the system, or triggering audit alerts when
      unauthorized modifications to critical security files occur.
      Related Controls: None.
-     (6) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CRYPTOGRAPHIC PROTECTION
+
+##### (6) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CRYPTOGRAPHIC PROTECTION
+
      Implement cryptographic mechanisms to detect unauthorized changes to software,
      firmware, and information.
      Discussion: Cryptographic mechanisms used to protect integrity include digital signatures
@@ -17587,7 +18213,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      to verify the hash information. Organizations that employ cryptographic mechanisms also
      consider cryptographic key management solutions.
      Related Controls: SC-12, SC-13.
-     (7) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | INTEGRATION OF DETECTION AND
+
+##### (7) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | INTEGRATION OF DETECTION AND
+
      RESPONSE
      Incorporate the detection of the following unauthorized changes into the organizational
      incident response capability: [Assignment: organization-defined security-relevant changes
@@ -17599,7 +18227,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      unauthorized changes to established configuration settings or the unauthorized elevation of
      system privileges.
      Related Controls: AU-2, AU-6, IR-4, IR-5, SI-4.
-     (8) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | AUDITING CAPABILITY FOR SIGNIFICANT
+
+##### (8) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | AUDITING CAPABILITY FOR SIGNIFICANT
+
      EVENTS
      Upon detection of a potential integrity violation, provide the capability to audit the event
      and initiate the following actions: [Selection (one or more): generate an audit record; alert
@@ -17608,14 +18238,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: Organizations select response actions based on types of software, specific
      software, or information for which there are potential integrity violations.
      Related Controls: AU-2, AU-6, AU-12.
-     (9) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | VERIFY BOOT PROCESS
+
+##### (9) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | VERIFY BOOT PROCESS
+
      Verify the integrity of the boot process of the following system components: [Assignment:
      organization-defined system components].
      Discussion: Ensuring the integrity of boot processes is critical to starting system components
      in known, trustworthy states. Integrity verification mechanisms provide a level of assurance
      that only trusted code is executed during boot processes.
      Related Controls: SI-6.
-     (10) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | PROTECTION OF BOOT FIRMWARE
+
+##### (10) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | PROTECTION OF BOOT FIRMWARE
+
      Implement the following mechanisms to protect the integrity of boot firmware in
      [Assignment: organization-defined system components]: [Assignment: organizationdefined mechanisms].
      Discussion: Unauthorized modifications to boot firmware may indicate a sophisticated,
@@ -17626,10 +18260,14 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      and authenticity of all updates to the firmware prior to applying changes to the system
      component and preventing unauthorized processes from modifying the boot firmware.
      Related Controls: SI-6.
-     (11) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CONFINED ENVIRONMENTS WITH LIMITED
+
+##### (11) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CONFINED ENVIRONMENTS WITH LIMITED
+
      PRIVILEGES
      [Withdrawn: Moved to CM-7(6).]
-     (12) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | INTEGRITY VERIFICATION
+
+##### (12) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | INTEGRITY VERIFICATION
+
      Require that the integrity of the following user-installed software be verified prior to
      execution: [Assignment: organization-defined user-installed software].
      Discussion: Organizations verify the integrity of user-installed software prior to execution to
@@ -17638,12 +18276,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      verifying software integrity, including the availability of trustworthy checksums from
      software developers and vendors.
      Related Controls: CM-11.
-     (13) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CODE EXECUTION IN PROTECTED
+
+##### (13) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CODE EXECUTION IN PROTECTED
+
      ENVIRONMENTS
      [Withdrawn: Moved to CM-7(7).]
-     (14) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | BINARY OR MACHINE EXECUTABLE CODE
+
+##### (14) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | BINARY OR MACHINE EXECUTABLE CODE
+
      [Withdrawn: Moved to CM-7(8).]
-     (15) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CODE AUTHENTICATION
+
+##### (15) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CODE AUTHENTICATION
+
      Implement cryptographic mechanisms to authenticate the following software or firmware
      components prior to installation: [Assignment: organization-defined software or firmware
      components].
@@ -17653,7 +18297,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Organizations that employ cryptographic mechanisms also consider cryptographic key
      management solutions.
      Related Controls: CM-5, SC-12, SC-13.
-     (16) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | TIME LIMIT ON PROCESS EXECUTION
+
+##### (16) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | TIME LIMIT ON PROCESS EXECUTION
+
      WITHOUT SUPERVISION
      Prohibit processes from executing without supervision for more than [Assignment:
      organization-defined time period].
@@ -17663,7 +18309,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      operating systems, automated responses, and manual oversight and response when system
      process anomalies occur.
      Related Controls: None.
-     (17) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | RUNTIME APPLICATION SELF-PROTECTION
+
+##### (17) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | RUNTIME APPLICATION SELF-PROTECTION
+
      Implement [Assignment: organization-defined controls] for application self-protection at
      runtime.
      Discussion: Runtime application self-protection employs runtime instrumentation to detect
@@ -17699,9 +18347,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      accesses. Spam protection mechanisms include signature definitions.
      Related Controls: PL-9, SC-5, SC-7, SC-38, SI-3, SI-4.
      Control Enhancements:
-     (1) SPAM PROTECTION | CENTRAL MANAGEMENT
+
+##### (1) SPAM PROTECTION | CENTRAL MANAGEMENT
+
      [Withdrawn: Incorporated into PL-9.]
-     (2) SPAM PROTECTION | AUTOMATIC UPDATES
+
+##### (2) SPAM PROTECTION | AUTOMATIC UPDATES
+
      Automatically update spam protection mechanisms [Assignment: organization-defined
      frequency].
      Discussion: Using automated mechanisms to update spam protection mechanisms helps to
@@ -17743,7 +18395,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      correct inputs and prevents attacks such as cross-site scripting and a variety of injection attacks.
      Related Controls: None.
      Control Enhancements:
-     (1) INFORMATION INPUT VALIDATION | MANUAL OVERRIDE CAPABILITY
+
+##### (1) INFORMATION INPUT VALIDATION | MANUAL OVERRIDE CAPABILITY
+
      (a) Provide a manual override capability for input validation of the following information
      inputs: [Assignment: organization-defined inputs defined in the base control (SI-10)];
      (b) Restrict the use of the manual override capability to only [Assignment: organizationdefined authorized individuals]; and
@@ -17752,14 +18406,18 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      a manual override capability for input validation may be needed. Manual overrides are used
      only in limited circumstances and with the inputs defined by the organization.
      Related Controls: AC-3, AU-2, AU-12.
-     (2) INFORMATION INPUT VALIDATION | REVIEW AND RESOLVE ERRORS
+
+##### (2) INFORMATION INPUT VALIDATION | REVIEW AND RESOLVE ERRORS
+
      Review and resolve input validation errors within [Assignment: organization-defined time
      period].
      Discussion: Resolution of input validation errors includes correcting systemic causes of
      errors and resubmitting transactions with corrected input. Input validation errors are those
      related to the information inputs defined by the organization in the base control (SI-10).
      Related Controls: None.
-     (3) INFORMATION INPUT VALIDATION | PREDICTABLE BEHAVIOR
+
+##### (3) INFORMATION INPUT VALIDATION | PREDICTABLE BEHAVIOR
+
      Verify that the system behaves in a predictable and documented manner when invalid
      inputs are received.
      Discussion: A common vulnerability in organizational systems is unpredictable behavior
@@ -17769,7 +18427,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      unintended side effects. The invalid inputs are those related to the information inputs
      defined by the organization in the base control (SI-10).
      Related Controls: None.
-     (4) INFORMATION INPUT VALIDATION | TIMING INTERACTIONS
+
+##### (4) INFORMATION INPUT VALIDATION | TIMING INTERACTIONS
+
      Account for timing interactions among system components in determining appropriate
      responses for invalid inputs.
      Discussion: In addressing invalid system inputs received across protocol interfaces, timing
@@ -17784,7 +18444,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      construction of invalid input. The invalid inputs are those related to the information inputs
      defined by the organization in the base control (SI-10).
      Related Controls: None.
-     (5) INFORMATION INPUT VALIDATION | RESTRICT INPUTS TO TRUSTED SOURCES AND APPROVED
+
+##### (5) INFORMATION INPUT VALIDATION | RESTRICT INPUTS TO TRUSTED SOURCES AND APPROVED
+
      FORMATS
      Restrict the use of information inputs to [Assignment: organization-defined trusted
      sources] and/or [Assignment: organization-defined formats].
@@ -17794,7 +18456,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the probability of malicious activity. The information inputs are those defined by the
      organization in the base control (SI-10).
      Related Controls: AC-3, AC-6.
-     (6) INFORMATION INPUT VALIDATION | INJECTION PREVENTION
+
+##### (6) INFORMATION INPUT VALIDATION | INJECTION PREVENTION
+
      Prevent untrusted data injections.
      Discussion: Untrusted data injections may be prevented using a parameterized interface or
      output escaping (output encoding). Parameterized interfaces separate data from code so
@@ -17846,7 +18510,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      SA-10, SI-4, SR-2, SR-4, SR-8.
      Related Controls: All XX-1 Controls, AC-16, AU-5, AU-11, CA-2, CA-3, CA-5, CA-6, CA-7, CA-9, CM5, CM-9, CP-2, IR-8, MP-2, MP-3, MP-4, MP-6, PL-2, PL-4, PM-4, PM-8, PM-9, PS-2, PS-6, PT-2, PT3, RA-2, RA-3, SA-5, SA-8, SR-2.
      Control Enhancements:
-     (1) INFORMATION MANAGEMENT AND RETENTION | LIMIT PERSONALLY IDENTIFIABLE INFORMATION
+
+##### (1) INFORMATION MANAGEMENT AND RETENTION | LIMIT PERSONALLY IDENTIFIABLE INFORMATION
+
      ELEMENTS
      Limit personally identifiable information being processed in the information life cycle to
      the following elements of personally identifiable information: [Assignment: organizationdefined elements of personally identifiable information].
@@ -17858,7 +18524,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      policies can provide useful inputs to determining which elements of personally identifiable
      information may create risk.
      Related Controls: PM-25.
-     (2) INFORMATION MANAGEMENT AND RETENTION | MINIMIZE PERSONALLY IDENTIFIABLE
+
+##### (2) INFORMATION MANAGEMENT AND RETENTION | MINIMIZE PERSONALLY IDENTIFIABLE
+
      INFORMATION IN TESTING, TRAINING, AND RESEARCH
      Use the following techniques to minimize the use of personally identifiable information for
      research, testing, or training: [Assignment: organization-defined techniques].
@@ -17869,7 +18537,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      system. Risk assessments as well as applicable laws, regulations, and policies can provide
      useful inputs to determining the techniques to use and when to use them.
      Related Controls: PM-22, PM-25, SI-19.
-     (3) INFORMATION MANAGEMENT AND RETENTION | INFORMATION DISPOSAL
+
+##### (3) INFORMATION MANAGEMENT AND RETENTION | INFORMATION DISPOSAL
+
      Use the following techniques to dispose of, destroy, or erase information following the
      retention period: [Assignment: organization-defined techniques].
      Discussion: Organizations can minimize both security and privacy risks by disposing of
@@ -17901,7 +18571,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      maintenance issues or recovery failures in progress.
      Related Controls: CP-2, CP-10, CP-13, MA-2, MA-6, SA-8, SC-6.
      Control Enhancements:
-     (1) PREDICTABLE FAILURE PREVENTION | TRANSFERRING COMPONENT RESPONSIBILITIES
+
+##### (1) PREDICTABLE FAILURE PREVENTION | TRANSFERRING COMPONENT RESPONSIBILITIES
+
      Take system components out of service by transferring component responsibilities to
      substitute components no later than [Assignment: organization-defined fraction or
      percentage] of mean time to failure.
@@ -17912,9 +18584,13 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      However, the premature replacement of system components can result in the increased cost
      of system operations.
      Related Controls: None.
-     (2) PREDICTABLE FAILURE PREVENTION | TIME LIMIT ON PROCESS EXECUTION WITHOUT SUPERVISION
+
+##### (2) PREDICTABLE FAILURE PREVENTION | TIME LIMIT ON PROCESS EXECUTION WITHOUT SUPERVISION
+
      [Withdrawn: Incorporated into SI-7(16).]
-     (3) PREDICTABLE FAILURE PREVENTION | MANUAL TRANSFER BETWEEN COMPONENTS
+
+##### (3) PREDICTABLE FAILURE PREVENTION | MANUAL TRANSFER BETWEEN COMPONENTS
+
      Manually initiate transfers between active and standby system components when the use
      of the active component reaches [Assignment: organization-defined percentage] of the
      mean time to failure.
@@ -17922,7 +18598,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      percentage defined by the organization is 90 percent, the manual transfer would occur after
      90 days.
      Related Controls: None.
-     (4) PREDICTABLE FAILURE PREVENTION | STANDBY COMPONENT INSTALLATION AND NOTIFICATION
+
+##### (4) PREDICTABLE FAILURE PREVENTION | STANDBY COMPONENT INSTALLATION AND NOTIFICATION
+
      If system component failures are detected:
      (a) Ensure that the standby components are successfully and transparently installed
      within [Assignment: organization-defined time period]; and
@@ -17931,7 +18609,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Discussion: Automatic or manual transfer of components from standby to active mode can
      occur upon the detection of component failures.
      Related Controls: None.
-     (5) PREDICTABLE FAILURE PREVENTION | FAILOVER CAPABILITY
+
+##### (5) PREDICTABLE FAILURE PREVENTION | FAILOVER CAPABILITY
+
      Provide [Selection: real-time; near real-time] [Assignment: organization-defined failover
      capability] for the system.
      Discussion: Failover refers to the automatic switchover to an alternate system upon the
@@ -17972,13 +18652,17 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      windows of vulnerabilities.
      Related Controls: SC-30, SC-34, SI-21.
      Control Enhancements:
-     (1) NON-PERSISTENCE | REFRESH FROM TRUSTED SOURCES
+
+##### (1) NON-PERSISTENCE | REFRESH FROM TRUSTED SOURCES
+
      Obtain software and data employed during system component and service refreshes from
      the following trusted sources: [Assignment: organization-defined trusted sources].
      Discussion: Trusted sources include software and data from write-once, read-only media or
      from selected offline secure storage facilities.
      Related Controls: None.
-     (2) NON-PERSISTENCE | NON-PERSISTENT INFORMATION
+
+##### (2) NON-PERSISTENCE | NON-PERSISTENT INFORMATION
+
      (a) [Selection: Refresh [Assignment: organization-defined information] [Assignment:
      organization-defined frequency]; Generate [Assignment: organization-defined
      information] on demand]; and
@@ -17989,7 +18673,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      information, unnecessary retention provides advanced adversaries information that can
      assist in their reconnaissance and lateral movement through the system.
      Related Controls: None.
-     (3) NON-PERSISTENCE | NON-PERSISTENT CONNECTIVITY
+
+##### (3) NON-PERSISTENCE | NON-PERSISTENT CONNECTIVITY
+
      Establish connections to the system on demand and terminate connections after
      [Selection: completion of a request; a period of non-use].
      Discussion: Persistent connections to systems can provide advanced adversaries with paths
@@ -18070,7 +18756,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      validate personally identifiable information used for less sensitive purposes.
      Related Controls: PM-22, PM-24, PT-2, SI-4.
      Control Enhancements:
-     (1) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | AUTOMATION SUPPORT
+
+##### (1) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | AUTOMATION SUPPORT
+
      Correct or delete personally identifiable information that is inaccurate or outdated,
      incorrectly determined regarding impact, or incorrectly de-identified using [Assignment:
      organization-defined automated mechanisms].
@@ -18091,7 +18779,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      processes and procedures at-scale and enable more fine-grained detection and correction of
      data quality errors.
      Related Controls: PM-18, RA-8.
-     (2) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | DATA TAGS
+
+##### (2) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | DATA TAGS
+
      Employ data tags to automate the correction or deletion of personally identifiable
      information across the information life cycle within organizational systems.
      Discussion: Data tagging personally identifiable information includes tags that note
@@ -18100,7 +18790,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      identifiable information can support the use of automation tools to correct or delete
      relevant personally identifiable information.
      Related Controls: AC-3, AC-16, SC-16.
-     (3) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | COLLECTION
+
+##### (3) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | COLLECTION
+
      Collect personally identifiable information directly from the individual.
      Discussion: Individuals or their designated representatives can be sources of correct
      personally identifiable information. Organizations consider contextual factors that may
@@ -18112,7 +18804,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      may be more comprehensive than the measures taken to validate less sensitive personally
      identifiable information.
      Related Controls: None.
-     (4) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | INDIVIDUAL REQUESTS
+
+##### (4) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | INDIVIDUAL REQUESTS
+
      Correct or delete personally identifiable information upon request by individuals or their
      designated representatives.
      Discussion: Inaccurate personally identifiable information maintained by organizations may
@@ -18126,7 +18820,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      senior agency official for privacy and legal counsel regarding appropriate instances of
      correction or deletion.
      Related Controls: None.
-     (5) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | NOTICE OF CORRECTION OR
+
+##### (5) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | NOTICE OF CORRECTION OR
+
      DELETION
      Notify [Assignment: organization-defined recipients of personally identifiable information]
      and individuals that the personally identifiable information has been corrected or deleted.
@@ -18164,7 +18860,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      time support the management of this residual risk.
      Related Controls: MP-6, PM-22, PM-23, PM-24, RA-2, SI-12.
      Control Enhancements:
-     (1) DE-IDENTIFICATION | COLLECTION
+
+##### (1) DE-IDENTIFICATION | COLLECTION
+
      De-identify the dataset upon collection by not collecting personally identifiable
      information.
      Discussion: If a data source contains personally identifiable information but the information
@@ -18173,7 +18871,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      organization does not intend to use the social security number of an applicant, then
      application forms do not ask for a social security number.
      Related Controls: None.
-     (2) DE-IDENTIFICATION | ARCHIVING
+
+##### (2) DE-IDENTIFICATION | ARCHIVING
+
      Prohibit archiving of personally identifiable information elements if those elements in a
      dataset will not be needed after the dataset is archived.
      Discussion: Datasets can be archived for many reasons. The envisioned purposes for the
@@ -18183,7 +18883,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      elements from the linked records. In this case, it is not necessary to archive the social
      security numbers.
      Related Controls: None.
-     (3) DE-IDENTIFICATION | RELEASE
+
+##### (3) DE-IDENTIFICATION | RELEASE
+
      Remove personally identifiable information elements from a dataset prior to its release if
      those elements in the dataset do not need to be part of the data release.
      Discussion: Prior to releasing a dataset, a data custodian considers the intended uses of the
@@ -18191,7 +18893,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      personally identifiable information is not necessary, the information can be removed using
      de-identification techniques.
      Related Controls: None.
-     (4) DE-IDENTIFICATION | REMOVAL, MASKING, ENCRYPTION, HASHING, OR REPLACEMENT OF DIRECT
+
+##### (4) DE-IDENTIFICATION | REMOVAL, MASKING, ENCRYPTION, HASHING, OR REPLACEMENT OF DIRECT
+
      IDENTIFIERS
      Remove, mask, encrypt, hash, or replace direct identifiers in a dataset.
      Discussion: There are many possible processes for removing direct identifiers from a
@@ -18206,7 +18910,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      “George Washington” to “PATIENT” or replacing it with a surrogate value, such as
      transforming “George Washington” to “Abraham Polk.”
      Related Controls: SC-12, SC-13.
-     (5) DE-IDENTIFICATION | STATISTICAL DISCLOSURE CONTROL
+
+##### (5) DE-IDENTIFICATION | STATISTICAL DISCLOSURE CONTROL
+
      Manipulate numerical data, contingency tables, and statistical findings so that no
      individual or organization is identifiable in the results of the analysis.
      Discussion: Many types of statistical analyses can result in the disclosure of information
@@ -18215,7 +18921,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      10-19 such students in January, and subsequently reports that it has 20-29 such students in
      March, then it can be inferred that the student who enrolled in February was a minority.
      Related Controls: None.
-     (6) DE-IDENTIFICATION | DIFFERENTIAL PRIVACY
+
+##### (6) DE-IDENTIFICATION | DIFFERENTIAL PRIVACY
+
      Prevent disclosure of personally identifiable information by adding non-deterministic
      noise to the results of mathematical operations before the results are reported.
      Discussion: The mathematical definition for differential privacy holds that the result of a
@@ -18228,7 +18936,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the de-identified dataset. Non-deterministic noise can include adding small, random values
      to the results of mathematical operations in dataset analysis.
      Related Controls: SC-12, SC-13.
-     (7) DE-IDENTIFICATION | VALIDATED ALGORITHMS AND SOFTWARE
+
+##### (7) DE-IDENTIFICATION | VALIDATED ALGORITHMS AND SOFTWARE
+
      Perform de-identification using validated algorithms and software that is validated to
      implement the algorithms.
      Discussion: Algorithms that appear to remove personally identifiable information from a
@@ -18237,7 +18947,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      integers, but not de-identify another type of data, such as floating point numbers. For these
      reasons, de-identification is performed using algorithms and software that are validated.
      Related Controls: None.
-     (8) DE-IDENTIFICATION | MOTIVATED INTRUDER
+
+##### (8) DE-IDENTIFICATION | MOTIVATED INTRUDER
+
      Perform a motivated intruder test on the de-identified dataset to determine if the
      identified data remains or if the de-identified data can be re-identified.
      Discussion: A motivated intruder test is a test in which an individual or group takes a data
@@ -18345,44 +19057,44 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
 
-207. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] supply chain risk management policy that:
-     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
-     coordination among organizational entities, and compliance; and
-     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines; and
-208. Procedures to facilitate the implementation of the supply chain risk management policy
-     and the associated supply chain risk management controls;
-     b.
-     Designate an [Assignment: organization-defined official] to manage the development,
-     documentation, and dissemination of the supply chain risk management policy and
-     procedures; and
-     c.
-     Review and update the current supply chain risk management:
-209. Policy [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events]; and
-210. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: Supply chain risk management policy and procedures address the controls in the SR
-     family as well as supply chain-related controls in other families that are implemented within
-     systems and organizations. The risk management strategy is an important factor in establishing
-     such policies and procedures. Policies and procedures contribute to security and privacy
-     assurance. Therefore, it is important that security and privacy programs collaborate on the
-     development of supply chain risk management policy and procedures. Security and privacy
-     program policies and procedures at the organization level are preferable, in general, and may
-     obviate the need for mission- or system-specific policies and procedures. The policy can be
-     included as part of the general security and privacy policy or be represented by multiple policies
-     that reflect the complex nature of organizations. Procedures can be established for security and
-     privacy programs, for mission or business processes, and for systems, if needed. Procedures
-     describe how the policies or controls are implemented and can be directed at the individual or
-     role that is the object of the procedure. Procedures can be documented in system security and
-     privacy plans or in one or more separate documents. Events that may precipitate an update to
-     supply chain risk management policy and procedures include assessment or audit findings,
-     security incidents or breaches, or changes in applicable laws, executive orders, directives,
-     regulations, policies, standards, and guidelines. Simply restating controls does not constitute an
-     organizational policy or procedure.
-     Related Controls: PM-9, PM-30, PS-8, SI-12.
-     Control Enhancements: None.
-     References: [FASC18], [41 CFR 201], [EO 13873], [CNSSD 505], [SP 800-12], [SP 800-30], [SP 80039], [SP 800-100], [SP 800-161].
+1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] supply chain risk management policy that:
+   (a) Addresses purpose, scope, roles, responsibilities, management commitment,
+   coordination among organizational entities, and compliance; and
+   (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
+   standards, and guidelines; and
+2. Procedures to facilitate the implementation of the supply chain risk management policy
+   and the associated supply chain risk management controls;
+   b.
+   Designate an [Assignment: organization-defined official] to manage the development,
+   documentation, and dissemination of the supply chain risk management policy and
+   procedures; and
+   c.
+   Review and update the current supply chain risk management:
+3. Policy [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events]; and
+4. Procedures [Assignment: organization-defined frequency] and following [Assignment:
+   organization-defined events].
+   Discussion: Supply chain risk management policy and procedures address the controls in the SR
+   family as well as supply chain-related controls in other families that are implemented within
+   systems and organizations. The risk management strategy is an important factor in establishing
+   such policies and procedures. Policies and procedures contribute to security and privacy
+   assurance. Therefore, it is important that security and privacy programs collaborate on the
+   development of supply chain risk management policy and procedures. Security and privacy
+   program policies and procedures at the organization level are preferable, in general, and may
+   obviate the need for mission- or system-specific policies and procedures. The policy can be
+   included as part of the general security and privacy policy or be represented by multiple policies
+   that reflect the complex nature of organizations. Procedures can be established for security and
+   privacy programs, for mission or business processes, and for systems, if needed. Procedures
+   describe how the policies or controls are implemented and can be directed at the individual or
+   role that is the object of the procedure. Procedures can be documented in system security and
+   privacy plans or in one or more separate documents. Events that may precipitate an update to
+   supply chain risk management policy and procedures include assessment or audit findings,
+   security incidents or breaches, or changes in applicable laws, executive orders, directives,
+   regulations, policies, standards, and guidelines. Simply restating controls does not constitute an
+   organizational policy or procedure.
+   Related Controls: PM-9, PM-30, PS-8, SI-12.
+   Control Enhancements: None.
+   References: [FASC18], [41 CFR 201], [EO 13873], [CNSSD 505], [SP 800-12], [SP 800-30], [SP 80039], [SP 800-100], [SP 800-161].
 
 #### SR-2
 
@@ -18431,7 +19143,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      as part of life cycle-based systems security engineering processes (see SA-8).
      Related Controls: CA-2, CP-4, IR-4, MA-2, MA-6, PE-16, PL-2, PM-9, PM-30, RA-3, RA-7, SA-8, SI-4.
      Control Enhancements:
-     (1) SUPPLY CHAIN RISK MANAGEMENT PLAN | ESTABLISH SCRM TEAM
+
+##### (1) SUPPLY CHAIN RISK MANAGEMENT PLAN | ESTABLISH SCRM TEAM
+
      Establish a supply chain risk management team consisting of [Assignment: organizationdefined personnel, roles, and responsibilities] to lead and support the following SCRM
      activities: [Assignment: organization-defined supply chain risk management activities].
      Discussion: To implement supply chain risk management plans, organizations establish a
@@ -18481,7 +19195,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Related Controls: CA-2, MA-2, MA-6, PE-3, PE-16, PL-8, PM-30, SA-2, SA-3, SA-4, SA-5, SA-8, SA-9,
      SA-10, SA-15, SC-7, SC-29, SC-30, SC-38, SI-7, SR-6, SR-9, SR-11.
      Control Enhancements:
-     (1) SUPPLY CHAIN CONTROLS AND PROCESSES | DIVERSE SUPPLY BASE
+
+##### (1) SUPPLY CHAIN CONTROLS AND PROCESSES | DIVERSE SUPPLY BASE
+
      Employ a diverse set of sources for the following system components and services:
      [Assignment: organization-defined system components and services].
      Discussion: Diversifying the supply of systems, system components, and services can reduce
@@ -18492,7 +19208,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      reduce the impact of a natural disaster or other supply chain event. Organizations consider
      designing the system to include diverse materials and components.
      Related Controls: None.
-     (2) SUPPLY CHAIN PROTECTION CONTROLS AND PROCESSES | LIMITATION OF HARM
+
+##### (2) SUPPLY CHAIN PROTECTION CONTROLS AND PROCESSES | LIMITATION OF HARM
+
      Employ the following controls to limit harm from potential adversaries identifying and
      targeting the organizational supply chain: [Assignment: organization-defined controls].
      Discussion: Controls that can be implemented to reduce the probability of adversaries
@@ -18503,7 +19221,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      procurement carve-outs that provide exclusions to commitments or obligations, using
      diverse delivery routes, and minimizing the time between purchase decisions and delivery.
      Related Controls: None.
-     (3) SUPPLY CHAIN PROTECTION CONTROLS AND PROCESSES | SUB-TIER FLOW DOWN
+
+##### (3) SUPPLY CHAIN PROTECTION CONTROLS AND PROCESSES | SUB-TIER FLOW DOWN
+
      Ensure that the controls included in the contracts of prime contractors are also included in
      the contracts of subcontractors.
      Discussion: To manage supply chain risk effectively and holistically, it is important that
@@ -18537,7 +19257,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      life cycle and incorporated into contracts and other arrangements, as appropriate.
      Related Controls: CM-8, MA-2, MA-6, RA-9, SA-3, SA-8, SI-4.
      Control Enhancements:
-     (1) PROVENANCE | IDENTITY
+
+##### (1) PROVENANCE | IDENTITY
+
      Establish and maintain unique identification of the following supply chain elements,
      processes, and personnel associated with the identified system and critical system
      components: [Assignment: organization-defined supply chain elements, processes, and
@@ -18560,7 +19282,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      methods are sufficient to support an investigation in case of a supply chain change (e.g. if a
      supply company is purchased), compromise, or event.
      Related Controls: IA-2, IA-8, PE-16.
-     (2) PROVENANCE | TRACK AND TRACE
+
+##### (2) PROVENANCE | TRACK AND TRACE
+
      Establish and maintain unique identification of the following systems and critical system
      components for tracking through the supply chain: [Assignment: organization-defined
      systems and critical system components].
@@ -18573,7 +19297,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      methods are sufficient to support a forensic investigation after a supply chain compromise
      or event.
      Related Controls: IA-2, IA-8, PE-16, PL-2.
-     (3) PROVENANCE | VALIDATE AS GENUINE AND NOT ALTERED
+
+##### (3) PROVENANCE | VALIDATE AS GENUINE AND NOT ALTERED
+
      Employ the following controls to validate that the system or system component received is
      genuine and has not been altered: [Assignment: organization-defined controls].
      Discussion: For many systems and system components, especially hardware, there are
@@ -18591,7 +19317,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      the counterfeit or altered item. Organizations can provide training to personnel on how to
      identify suspicious system or component deliveries.
      Related Controls: AT-3, SR-9, SR-10, SR-11.
-     (4) PROVENANCE | SUPPLY CHAIN INTEGRITY — PEDIGREE
+
+##### (4) PROVENANCE | SUPPLY CHAIN INTEGRITY — PEDIGREE
+
      Employ [Assignment: organization-defined controls] and conduct [Assignment:
      organization-defined analysis] to ensure the integrity of the system and system
      components by validating the internal composition and provenance of critical or missionessential technologies, products, and services.
@@ -18638,7 +19366,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      Contracts may specify documentation protection requirements.
      Related Controls: AT-3, SA-2, SA-3, SA-4, SA-5, SA-8, SA-9, SA-10, SA-15, SR-6, SR-9, SR-10, SR-11.
      Control Enhancements:
-     (1) ACQUISITION STRATEGIES, TOOLS, AND METHODS | ADEQUATE SUPPLY
+
+##### (1) ACQUISITION STRATEGIES, TOOLS, AND METHODS | ADEQUATE SUPPLY
+
      Employ the following controls to ensure an adequate supply of [Assignment: organizationdefined critical system components]: [Assignment: organization-defined controls].
      Discussion: Adversaries can attempt to impede organizational operations by disrupting the
      supply of critical system components or corrupting supplier operations. Organizations may
@@ -18649,7 +19379,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      mission-critical times, and the identification of functionally identical or similar components
      that may be used, if necessary.
      Related Controls: RA-9.
-     (2) ACQUISITION STRATEGIES, TOOLS, AND METHODS | ASSESSMENTS PRIOR TO SELECTION,
+
+##### (2) ACQUISITION STRATEGIES, TOOLS, AND METHODS | ASSESSMENTS PRIOR TO SELECTION
+
      ACCEPTANCE, MODIFICATION, OR UPDATE
      Assess the system, system component, or system service prior to selection, acceptance,
      modification, or update.
@@ -18687,7 +19419,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      applicable rules, policies, or inter-organizational agreements or contracts.
      Related Controls: SR-3, SR-5.
      Control Enhancements:
-     (1) SUPPLIER ASSESSMENTS AND REVIEWS | TESTING AND ANALYSIS
+
+##### (1) SUPPLIER ASSESSMENTS AND REVIEWS | TESTING AND ANALYSIS
+
      Employ [Selection (one or more): organizational analysis; independent third-party analysis;
      organizational testing; independent third-party testing] of the following supply chain
      elements, processes, and actors associated with the system, system component, or system
@@ -18763,7 +19497,9 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      when in use.
      Related Controls: PE-3, PM-30, SA-15, SI-4, SI-7, SR-3, SR-4, SR-5, SR-10, SR-11.
      Control Enhancements:
-     (1) TAMPER RESISTANCE AND DETECTION | MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
+
+##### (1) TAMPER RESISTANCE AND DETECTION | MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
+
      Employ anti-tamper technologies, tools, and techniques throughout the system
      development life cycle.
      Discussion: The system development life cycle includes research and development, design,
@@ -18804,18 +19540,24 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
      include CISA.
      Related Controls: PE-3, SA-4, SI-7, SR-9, SR-10.
      Control Enhancements:
-     (1) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT TRAINING
+
+##### (1) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT TRAINING
+
      Train [Assignment: organization-defined personnel or roles] to detect counterfeit system
      components (including hardware, software, and firmware).
      Discussion: None.
      Related Controls: AT-3.
-     (2) COMPONENT AUTHENTICITY | CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+
+##### (2) COMPONENT AUTHENTICITY | CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+
      Maintain configuration control over the following system components awaiting service or
      repair and serviced or repaired components awaiting return to service: [Assignment:
      organization-defined system components].
      Discussion: None.
      Related Controls: CM-3, MA-2, MA-4, SA-10.
-     (3) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT SCANNING
+
+##### (3) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT SCANNING
+
      Scan for counterfeit system components [Assignment: organization-defined frequency].
      Discussion: The type of component determines the type of scanning to be conducted (e.g.,
      web application scanning if the component is a web application).

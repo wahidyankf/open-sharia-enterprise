@@ -25,6 +25,8 @@
     "worktrees/**",
     "local-temp/**",
     ".memsearch/**",
+    // PDF verbatim conversions — prose at 4-space indent (MD046) due to PDF layout faithfully reproduced
+    "docs/reference/security/frameworks/nist-sp-800-53-rev5.md",
   ],
 
   // Repository-specific markdown linting rules

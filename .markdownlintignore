@@ -45,3 +45,7 @@ apps/*/test-results/
 # IDE
 .vscode/
 .idea/
+
+# PDF verbatim conversions — formatting dictated by PDF source structure, not authoring conventions
+# These files contain prose blocks at 4-space indent (MD046) due to PDF layout faithfully reproduced
+docs/reference/security/frameworks/nist-sp-800-53-rev5.md
