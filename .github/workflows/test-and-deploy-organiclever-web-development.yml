@@ -22,8 +22,6 @@ jobs:
         run: |
           npx nx run organiclever-be:spec-coverage
           npx nx run organiclever-web:spec-coverage
-          npx nx run organiclever-be-e2e:spec-coverage
-          npx nx run organiclever-web-e2e:spec-coverage
 
   fe-lint:
     name: FE lint

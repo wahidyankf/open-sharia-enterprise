@@ -28,14 +28,20 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx oxlint@latest .", "npx tsc --noEmit"],
+        "commands": [
+          "npx oxlint@latest .",
+          "npx tsc --noEmit"
+        ],
         "parallel": true,
         "cwd": "apps/ose-web-fe-e2e"
       }
     },
     "test:e2e": {
       "executor": "nx:run-commands",
-      "inputs": ["default", "{workspaceRoot}/specs/apps/ose-platform/behavior/web/gherkin/**/*.feature"],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/specs/apps/ose-platform/behavior/web/gherkin/**/*.feature"
+      ],
       "options": {
         "command": "npx bddgen && npx playwright test",
         "cwd": "apps/ose-web-fe-e2e"
@@ -54,13 +60,15 @@
         "command": "npx playwright show-report",
         "cwd": "apps/ose-web-fe-e2e"
       }
-    },
-    "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ose-platform/behavior/web/gherkin apps/ose-web-fe-e2e",
-      "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ose-platform/behavior/web/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
-  "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:ose-platform"],
-  "implicitDependencies": ["ose-web"]
+  "tags": [
+    "type:e2e",
+    "platform:playwright",
+    "lang:ts",
+    "domain:ose-platform"
+  ],
+  "implicitDependencies": [
+    "ose-web"
+  ]
 }

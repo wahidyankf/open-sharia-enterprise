@@ -103,6 +103,14 @@
         "cwd": "{projectRoot}"
       },
       "outputs": ["{projectRoot}/storybook-static"]
+    },
+    "spec-coverage": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ose-app/behavior/web/gherkin apps/ose-app-web-e2e",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/apps/ose-app/behavior/web/gherkin/**/*.feature",
+        "{workspaceRoot}/apps/ose-app-web-e2e/**/*.ts"
+      ]
     }
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ose-app"],

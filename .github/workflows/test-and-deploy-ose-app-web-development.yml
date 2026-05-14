@@ -21,8 +21,7 @@ jobs:
       - name: Run spec-coverage for all OSE Application projects
         run: |
           npx nx run ose-app-be:spec-coverage
-          npx nx run ose-app-be-e2e:spec-coverage
-          npx nx run ose-app-web-e2e:spec-coverage
+          npx nx run ose-app-web:spec-coverage
 
   fe-lint:
     name: FE lint
