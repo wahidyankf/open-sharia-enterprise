@@ -118,18 +118,22 @@ graph TB
 
     Step2 --> Step3{Step 3: Check<br/>Findings}
 
-    Step3 -->|Zero findings| Step5{Step 5: Iteration<br/>Control}
+    Step3 -->|Zero findings| Step5[Step 5: Re-validate]
     Step3 -->|Findings exist| Step4[Step 4: Apply Fixes]
 
     Step4 --> Step5
 
-    Step5 -->|Continue| Step2
-    Step5 -->|Done| Step6[Step 6: Report]
+    Step5 --> Step6{Step 6: Iteration<br/>Control}
 
-    Step6 --> End([End: pass/partial/fail])
+    Step6 -->|More fixes needed| Step4
+    Step6 -->|Confirm zero| Step5
+    Step6 -->|Done| Step7[Step 7: Report]
+
+    Step7 --> End([End: pass/partial/fail])
 
     style MakeStep fill:#0173B2,color:#fff
     style Step2 fill:#029E73,color:#fff
+    style Step5 fill:#029E73,color:#fff
     style Step4 fill:#CC78BC,color:#fff
 ```
 
@@ -201,7 +205,6 @@ Validate the Markdown file against the source PDF across all dimensions.
 
 - Processes PDF in 50-page chunks for large documents
 - Loads `.known-false-positives.md` skip list before validating
-- On iteration 2+: scoped re-validation (changed sections only)
 
 ### 3. Check for Findings (Sequential)
 
@@ -222,7 +225,8 @@ Analyze audit report to determine if fixes are needed and track convergence prog
 
 - If threshold-level findings > 0: Proceed to step 4 (reset `consecutive_zero_count` to 0)
 - If threshold-level findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the
-  first zero); proceed to step 5 for confirmation re-check (consecutive pass requirement)
+  first zero); proceed to step 5 (Re-validate) for confirmation re-check (consecutive pass
+  requirement)
 
 **Depends on**: Step 2 completion
 
@@ -245,7 +249,7 @@ Apply validated fixes from the checker audit report.
 
 **Success criteria**: Fixer completes; fix report generated.
 
-**On failure**: Log errors; proceed to step 5.
+**On failure**: Log errors; proceed to step 5 (Re-validate).
 
 **Notes**:
 
@@ -255,24 +259,52 @@ Apply validated fixes from the checker audit report.
 - FALSE_POSITIVE findings persisted to `.known-false-positives.md`
 - Fix report includes changed sections list for scoped re-validation
 
-### 5. Iteration Control (Sequential)
+### 5. Re-validate (Sequential)
+
+Run the checker again to verify fixes resolved issues and no new issues were introduced.
+
+**Agent**: `pdf-to-md-checker`
+
+- **Args**: `pdf-file: {input.pdf-file}, md-file: {input.md-file}, EXECUTION_SCOPE: pdf-to-md,
+uuid-chain: {previous-uuid-chain}, fix-report: {step4.outputs.pdf-to-md-fix-report-N}`
+- **Output**: `{pdf-to-md-report-N}` — re-validation audit report
+- **Depends on**: Step 3 completion (when confirming a first-zero pass) or Step 4 completion
+  (when verifying fixes were applied correctly)
+
+**Re-validation mode**: The UUID chain signals re-validation mode to the checker. When called
+after Step 4, the fix report provides the changed sections list — checker validates only changed
+sections and reuses the iteration 1 full-document scan scope for unchanged sections. When called
+directly from Step 3 (zero-findings confirmation path), no fix report is provided and the checker
+re-validates the full document.
+
+**Success criteria**: Checker completes and generates re-validation audit report.
+
+**On failure**: Terminate workflow with status `fail`.
+
+**Notes**:
+
+- Loads `.known-false-positives.md` skip list before validating
+- Scoped re-validation (changed sections only) on iterations where fixes were applied
+- Full re-validation when confirming a zero-findings pass with no preceding fix step
+
+### 6. Iteration Control (Sequential)
 
 Determine whether to continue or finalize.
 
 **Logic**:
 
-- Track `consecutive_zero_count` across iterations (resets to 0 when threshold findings > 0,
+- Track consecutive_zero_count across iterations (resets to 0 when threshold-level findings > 0,
   increments when = 0)
-- If `consecutive_zero_count >= 2` AND `iterations >= min-iterations` (or min not provided):
-  Proceed to step 6 (double-zero confirmed — **pass**)
-- If `consecutive_zero_count >= 2` AND `iterations < min-iterations`: Loop back to step 2
-  (re-validate to satisfy min-iterations)
-- If `consecutive_zero_count < 2` AND threshold findings = 0: Loop back to step 2 (confirmation
-  check — no fix needed, just re-verify)
-- If threshold findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed
-  to step 6 (**partial**)
-- If threshold findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop
-  back to step 4
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed
+  to step 7 (double-zero confirmed — **pass**)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 5
+  (Re-validate to satisfy min-iterations)
+- If consecutive_zero_count < 2 AND threshold-level findings = 0: Loop back to step 5
+  (confirmation check — no fix needed, just re-verify)
+- If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations:
+  Proceed to step 7 (**partial**)
+- If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations):
+  Loop back to step 4 (Apply Fixes)
 
 **Below-threshold findings**: Reported in audit but don't affect iteration logic.
 
@@ -283,7 +315,7 @@ Determine whether to continue or finalize.
 - Escalation warning logged at iteration 5 if not converging
 - Default max-iterations: 7
 
-### 6. Finalization (Sequential)
+### 7. Finalization (Sequential)
 
 Report final status and summary.
 
@@ -395,18 +427,18 @@ Iteration 1:
   Fixer: Applied 12 HIGH_CONFIDENCE fixes; skipped 3 MEDIUM_CONFIDENCE
 
 Iteration 2:
-  Checker (scoped to changed sections): 2 findings
+  Re-validate (scoped to changed sections): 2 findings
     - HIGH: 1 Mermaid block still invalid after first fix attempt
     - MEDIUM: 1 heading drift in re-inserted section
   Fixer: Applied 1 fix; 1 MEDIUM skipped
   consecutive_zero_count: 0 (findings > 0 — reset)
 
 Iteration 3:
-  Checker (scoped): 0 findings
+  Re-validate (scoped): 0 findings
   consecutive_zero_count: 1 (first zero)
 
 Iteration 4 (confirmation):
-  Checker (scoped): 0 findings
+  Re-validate (scoped): 0 findings
   consecutive_zero_count: 2 ← double-zero confirmed
 
 Result: PASS (4 iterations)
@@ -423,7 +455,7 @@ Result: PASS (4 iterations)
 
 - Checker loads `.known-false-positives.md` at each iteration start
 - Fixer persists new FALSE_POSITIVEs to skip list
-- Re-validation uses changed-sections-only scan (iteration 2+)
+- Step 5 (Re-validate) uses changed-sections-only scan when called after Step 4 (Apply Fixes)
 
 **False Positive Protection**:
 
