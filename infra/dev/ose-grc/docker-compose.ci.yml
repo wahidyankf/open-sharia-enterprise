@@ -1,8 +1,0 @@
-services:
-  ose-grc-be:
-    environment:
-      ASPNETCORE_URLS: "http://+:8302"
-
-  ose-grc-web:
-    environment:
-      OSE_GRC_BE_URL: "http://ose-grc-be:8302"

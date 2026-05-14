@@ -1,0 +1,113 @@
+{
+  "name": "ose-app-be",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ose-app-be/src",
+  "projectType": "application",
+  "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/ose-app/containers/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/ose-app-be/generated-contracts --model-package OseAppBe.Contracts --global-property=models,modelDocs=false,apiDocs=false"
+      },
+      "dependsOn": ["ose-app-contracts:bundle"],
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/ose-app/containers/contracts/generated/openapi-bundled.yaml"],
+      "outputs": ["{projectRoot}/generated-contracts"]
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet publish src/OseAppBe/OseAppBe.fsproj -c Release -o dist",
+        "cwd": "apps/ose-app-be"
+      },
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": ["codegen"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet watch run --project src/OseAppBe/OseAppBe.fsproj",
+        "cwd": "apps/ose-app-be"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet run --project src/OseAppBe/OseAppBe.fsproj --urls http://localhost:8302",
+        "cwd": "apps/ose-app-be"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dotnet tool restore",
+          "dotnet build tests/OseAppBe.Tests/OseAppBe.Tests.fsproj",
+          "dotnet altcover --inputDirectory tests/OseAppBe.Tests/bin/Debug/net10.0 --outputDirectory tests/OseAppBe.Tests/bin/Debug/net10.0/__Instrumented --assemblyExcludeFilter=OseAppBe.Tests '--assemblyFilter=xunit|TickSpec|Microsoft|FSharp|testhost|AltCover|coverlet|dbup|Npgsql|EFCore' '--fileFilter=Program|AppDbContext' --linecover --reportFormat=lcov --report=coverage/altcov.info --save",
+          "dotnet altcover Runner --recorderDirectory tests/OseAppBe.Tests/bin/Debug/net10.0/__Instrumented --lcovReport coverage/altcov.info --executable dotnet -- test tests/OseAppBe.Tests/bin/Debug/net10.0/__Instrumented/OseAppBe.Tests.dll",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-app-be/coverage/altcov.info 90)"
+        ],
+        "parallel": false,
+        "cwd": "apps/ose-app-be"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs",
+        "{projectRoot}/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/ose-app/behavior/be/gherkin/**/*.feature"
+      ],
+      "outputs": ["{projectRoot}/coverage/altcov.info"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet test tests/OseAppBe.Tests/OseAppBe.Tests.fsproj --filter Category=Unit",
+        "cwd": "apps/ose-app-be"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs",
+        "{projectRoot}/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/ose-app/behavior/be/gherkin/**/*.feature"
+      ]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build",
+        "cwd": "apps/ose-app-be"
+      },
+      "cache": false
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "DOTNET_ROOT=$(dirname $(readlink -f $(which dotnet))) DOTNET_ROLL_FORWARD=LatestMajor fantomas --check src/ tests/",
+          "DOTNET_ROOT=$(dirname $(readlink -f $(which dotnet))) DOTNET_ROLL_FORWARD=LatestMajor dotnet fsharplint lint --lint-config fsharplint.json src/OseAppBe/OseAppBe.fsproj",
+          "dotnet tool restore && dotnet fsharp-analyzers --project src/OseAppBe/OseAppBe.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001"
+        ],
+        "parallel": false,
+        "cwd": "apps/ose-app-be"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build src/OseAppBe/OseAppBe.fsproj --nologo --no-restore",
+        "cwd": "apps/ose-app-be"
+      },
+      "dependsOn": ["codegen"],
+      "cache": true
+    },
+    "spec-coverage": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps --exclude-dir regulatory-source --exclude-dir internal-policy --exclude-dir gap-analysis --exclude-dir ai-orchestration specs/apps/ose-app/behavior/be/gherkin apps/ose-app-be",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/ose-app/behavior/be/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]
+    }
+  },
+  "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:ose-app"],
+  "implicitDependencies": ["ose-app-contracts", "rhino-cli"]
+}

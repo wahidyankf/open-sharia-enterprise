@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ose_app_dev
+      POSTGRES_USER: ose_app
+      POSTGRES_PASSWORD: ose_app
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "ose_app", "-d", "ose_app_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  ose-app-be:
+    build:
+      context: .
+      dockerfile: Dockerfile.be.dev
+    ports:
+      - "8302:8302"
+    environment:
+      DATABASE_URL: "postgresql://ose_app:ose_app@postgres:5432/ose_app_dev"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      OPENROUTER_MODEL: "${OPENROUTER_MODEL:-openrouter/auto}"
+      OPENROUTER_BASE_URL: "${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}"
+      ASPNETCORE_URLS: "http://+:8302"
+    volumes:
+      - ../../../apps/ose-app-be:/workspace:rw
+      - ../../../specs/apps/ose-app/behavior/be/gherkin:/specs/apps/ose-app/behavior/be/gherkin:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8302/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  ose-app-web:
+    build:
+      context: ../../..
+      dockerfile: apps/ose-app-web/Dockerfile
+      args:
+        OSE_APP_BE_URL: http://ose-app-be:8302
+    ports:
+      - "3300:3300"
+    environment:
+      OSE_APP_BE_URL: "http://ose-app-be:8302"
+    depends_on:
+      ose-app-be:
+        condition: service_healthy
