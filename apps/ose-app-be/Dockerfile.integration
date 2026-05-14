@@ -16,16 +16,16 @@ COPY apps/ose-app-be/dotnet-tools.json .
 COPY apps/ose-app-be/.editorconfig .
 
 # Copy project files for restore (before code to cache the restore layer).
-COPY apps/ose-app-be/src/OseGrcBe/OseGrcBe.fsproj src/OseGrcBe/
-COPY apps/ose-app-be/tests/OseGrcBe.Tests/OseGrcBe.Tests.fsproj tests/OseGrcBe.Tests/
+COPY apps/ose-app-be/src/OseAppBe/OseAppBe.fsproj src/OseAppBe/
+COPY apps/ose-app-be/tests/OseAppBe.Tests/OseAppBe.Tests.fsproj tests/OseAppBe.Tests/
 
 # Copy specs so the CopyGherkinSpecs MSBuild target can find feature files at build time.
 # The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\ose-app\behavior\be\gherkin\**\*.feature
-# Going up 4 levels from /build/tests/OseGrcBe.Tests/ resolves to /specs/apps/ose-app/behavior/be/gherkin.
+# Going up 4 levels from /build/tests/OseAppBe.Tests/ resolves to /specs/apps/ose-app/behavior/be/gherkin.
 COPY specs/apps/ose-app/behavior/be/gherkin /specs/apps/ose-app/behavior/be/gherkin
 
 # Restore dependencies (layer cache until project files change).
-RUN dotnet restore tests/OseGrcBe.Tests/OseGrcBe.Tests.fsproj
+RUN dotnet restore tests/OseAppBe.Tests/OseAppBe.Tests.fsproj
 
 # Copy source and test code
 COPY apps/ose-app-be/src/ src/
@@ -33,8 +33,8 @@ COPY apps/ose-app-be/generated-contracts/ generated-contracts/
 COPY apps/ose-app-be/tests/ tests/
 
 # Build the test project (restore again to ensure packages are available after source copy).
-RUN dotnet build tests/OseGrcBe.Tests/OseGrcBe.Tests.fsproj
+RUN dotnet build tests/OseAppBe.Tests/OseAppBe.Tests.fsproj
 
 # Run all tests against real PostgreSQL.
 # DATABASE_URL is supplied by docker-compose as environment variables.
-CMD ["dotnet", "test", "tests/OseGrcBe.Tests/OseGrcBe.Tests.fsproj", "--no-build", "--filter", "Category=Integration", "--logger", "console;verbosity=normal"]
+CMD ["dotnet", "test", "tests/OseAppBe.Tests/OseAppBe.Tests.fsproj", "--no-build", "--filter", "Category=Integration", "--logger", "console;verbosity=normal"]
