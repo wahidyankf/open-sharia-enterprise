@@ -2,10 +2,10 @@
 
 ## Product Overview
 
-crane-cli (Content Retrieval And Normalization Engine CLI) is a statically-typed Go CLI
+crane-cli (Content Retrieval And Normalization Engine CLI) is a statically-typed F# CLI
 that exposes every deterministic PDF analysis operation in the `pdf-to-md` pipeline as
 a composable, JSON-output command. It replaces fragile inline bash in agent `.md` files with
-verified, unit-tested Go logic, making agents thin orchestrators that read structured
+verified, unit-tested F# logic, making agents thin orchestrators that read structured
 findings rather than parsing raw text.
 
 The tool is consumed exclusively by AI agents and developer scripts — not by end users in a
@@ -28,15 +28,15 @@ machine reading and `--human` for developer diagnostics.
 - All 10 command groups specified in the Command Inventory below (pdf, text, heading, nesting,
   table, figure, mermaid, ocr, report, skiplist)
 - JSON-first output contract; `--human` human-readable output flag
-- Exit codes: 0 (success), 1 (findings / boolean false), 2 (tool not found)
-- Go 1.26+, go modules, Nx project.json integration (cobra, golangci-lint, godog)
-- BDD-driven development with godog; spec files in `specs/apps/crane/gherkin/`
+- Exit codes: 0 (success), 1 (findings / boolean false), 2 (tool not found — tesseract only)
+- F# (.NET 8+), NuGet, Nx project.json integration (Argu, Fantomas, TickSpec)
+- BDD-driven development with TickSpec; spec files in `specs/apps/crane/gherkin/`
 - rhino-cli spec-coverage enforcement
 - GitHub Actions CI: quality gate (typecheck/lint/test:quick/spec-coverage) via existing
-  `pr-quality-gate.yml` (auto-triggered by `lang:golang` tag); integration tests via new
-  `.github/workflows/crane-cli-integration.yml` (poppler-utils + real pdftotext, fixture at
-  `apps/crane-cli/tests/fixtures/`)
-- 95% unit test coverage threshold enforced by rhino-cli in `test:quick`
+  `pr-quality-gate.yml` (auto-triggered by `lang:fsharp` tag); integration tests via new
+  `.github/workflows/crane-cli-integration.yml` (tesseract + real OCR tests, fixture at
+  `apps/crane-cli/tests/integration/fixtures/`)
+- 95% unit test line coverage threshold enforced by coverlet in `test:quick`
 
 ### Out of Scope
 
@@ -46,14 +46,15 @@ machine reading and `--human` for developer diagnostics.
 - Non-English OCR quality heuristics
 - Streaming or async pipeline mode
 - GUI or web frontend
+- Publishing crane-cli core modules as a standalone NuGet package (future plan)
 
 ## Product Risks
 
 | Risk                                                      | Impact                                                                                                                                                         |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mermaid syntax validator misses newly-added diagram types | Checker flags valid Mermaid as HIGH finding; mitigated by `VALID_TYPES` frozenset update path and BDD test coverage                                            |
+| Mermaid syntax validator misses newly-added diagram types | Checker flags valid Mermaid as HIGH finding; mitigated by `validTypes` Set update path and BDD test coverage                                                   |
 | Fuzzy match threshold 0.85 too permissive                 | Real missing content passes undetected; mitigated by boundary-case unit tests and adjustable `--threshold` flag                                                |
-| BDD step file naming mismatch breaks spec-coverage        | rhino-cli spec-coverage fails to link steps to features; mitigated by explicit `GHERKIN_ROOT` path in conftest and naming convention enforcement               |
+| BDD step file naming mismatch breaks spec-coverage        | rhino-cli spec-coverage fails to link steps to features; mitigated by explicit `GHERKIN_ROOT` env var and naming convention enforcement                        |
 | Phase 5 partial migration breaks agents mid-flight        | Agent uses crane for some steps but not others, causing inconsistent state; mitigated by per-agent atomic commits that keep agents functional before and after |
 
 ## User Stories
@@ -86,9 +87,9 @@ machine reading and `--human` for developer diagnostics.
 ```
 crane
 ├── pdf
-│   ├── info       Get PDF metadata (pages, type, title, size)
-│   ├── type       Detect "text" or "image" PDF
-│   └── extract    Extract text from page range via pdftotext -layout
+│   ├── info       Get PDF metadata (pages, type, title, size) via PdfPig
+│   ├── type       Detect "text" or "image" PDF via PdfPig
+│   └── extract    Extract text from page range via PdfPig layout extraction
 ├── text
 │   ├── check      Chunk-by-chunk text completeness + accuracy check
 │   └── search     Normalized fuzzy search for a segment in Markdown
@@ -96,7 +97,7 @@ crane
 │   ├── infer      Infer heading depth from layout text (section numbering or font-size)
 │   └── check      Compare heading depths PDF vs Markdown
 ├── nesting
-│   ├── infer      Infer list nesting levels from pdftotext -layout column offsets
+│   ├── infer      Infer list nesting levels from PdfPig column offsets
 │   └── check      Compare list nesting PDF vs Markdown
 ├── table
 │   ├── detect     Detect columnar tables in layout text
@@ -108,7 +109,7 @@ crane
 │   └── validate   Validate syntax of every Mermaid block in Markdown
 ├── ocr
 │   ├── quality    Assess OCR quality of <!-- OCR: page N -->-tagged sections
-│   └── extract    OCR a single PDF page via tesseract (for manual inspection)
+│   └── extract    OCR a single PDF page via TesseractOCR (for manual inspection)
 ├── report
 │   ├── init       Create audit report file with UUID chain + UTC+7 timestamp
 │   └── finalize   Update report status header (In Progress → PASS/FAIL/PARTIAL)
@@ -132,33 +133,37 @@ Pass `--human` for human-readable terminal output (formatted text instead of JSO
 
 **Exit codes**:
 
-| Code | Meaning                                                              |
-| ---- | -------------------------------------------------------------------- |
-| 0    | Success; no threshold findings (or boolean true)                     |
-| 1    | Findings present; or boolean false; or operation failed              |
-| 2    | Required system tool not found (`pdftotext`, `pdfinfo`, `tesseract`) |
+| Code | Meaning                                                             |
+| ---- | ------------------------------------------------------------------- |
+| 0    | Success; no threshold findings (or boolean true)                    |
+| 1    | Findings present; or boolean false; or operation failed             |
+| 2    | Required system tool not found (`tesseract` for OCR commands only)  |
+
+Note: PDF text extraction and metadata use PdfPig (pure .NET library) — exit code 2 is only
+relevant for `crane ocr extract` and `crane ocr quality` commands that invoke tesseract.
 
 ## Requirements by Phase
 
 ### Phase 1: Core PDF Commands
 
 **REQ-PDF-1** — `crane pdf info <pdf>` returns JSON object with `pages` (int), `type`
-("text"\|"image"), `title` (str\|null), `size_bytes` (int). Exits 0. Exits 2 if pdfinfo
-not found.
+("text"\|"image"), `title` (str\|null), `size_bytes` (int). Uses PdfPig for all metadata.
+Exits 0. No subprocess dependency.
 
 **REQ-PDF-2** — `crane pdf type <pdf>` returns JSON `{"type": "text"}` or `{"type": "image"}`.
-Exits 0 for text-based, 1 for image-only. Text is detected by extracting pages 1–3 and checking
-for > 100 non-whitespace characters. Exits 2 if pdftotext not found.
+Exits 0 for text-based, 1 for image-only. Text is detected by sampling pages 1–3 via PdfPig
+and checking for > 100 non-whitespace characters across extracted words. No subprocess dependency.
 
 **REQ-PDF-3** — `crane pdf extract <pdf> --start N --end M [--output path]` extracts text from
-pages N–M using `pdftotext -layout`. Writes to stdout or `--output` file. Exits 2 if pdftotext
-not found.
+pages N–M using PdfPig layout extraction. Writes to stdout or `--output` file. No subprocess
+dependency.
 
 ### Phase 2: Analysis Commands
 
 **REQ-TEXT-1** — `crane text check <pdf> <md>` extracts PDF text in `--chunk-size` (default 50)
-page chunks, splits into segments (≥ 10 words), normalizes whitespace, performs fuzzy search in
-Markdown text (similarity threshold 0.85), and returns JSON findings array.
+page chunks via PdfPig, splits into segments (≥ 10 words), normalizes whitespace, performs fuzzy
+search in Markdown text (similarity threshold 0.85 via StringSimilarity.NET NormalizedLevenshtein),
+and returns JSON findings array.
 
 **REQ-TEXT-2** — Missing segment criticality classification:
 heading/section-start → CRITICAL; paragraph (≥ 10 words) → HIGH; footnote/reference → HIGH;
@@ -169,7 +174,8 @@ short phrase or page header/footer → MEDIUM.
 
 **REQ-HEADING-1** — `crane heading check <pdf> <md>` compares each Markdown heading's `#` depth
 against the PDF visual hierarchy. Depth inferred from section numbering (primary: count dots in
-`1.2.3` → H4) or font-size heuristic (fallback). Returns JSON findings array.
+`1.2.3` → H4) or font-size heuristic (fallback) using PdfPig character metadata. Returns JSON
+findings array.
 
 **REQ-HEADING-2** — Heading depth criticality: off by 2+ levels or systematic family error → HIGH;
 off by 1 level, isolated → MEDIUM; ambiguous PDF hierarchy (no numbering, uniform font) → LOW.
@@ -178,7 +184,7 @@ off by 1 level, isolated → MEDIUM; ambiguous PDF hierarchy (no numbering, unif
 "method": "section-numbering"|"font-heuristic"}`.
 
 **REQ-NESTING-1** — `crane nesting check <pdf> <md>` extracts list item column offsets from
-`pdftotext -layout` output, maps to nesting levels (minimum offset = level 1), and compares
+PdfPig character position data, maps to nesting levels (minimum offset = level 1), and compares
 against Markdown list nesting depth. Returns JSON findings.
 
 **REQ-NESTING-2** — Nesting criticality: hierarchy inverted → HIGH; off by one level → MEDIUM;
@@ -240,9 +246,9 @@ entries: `[{"category": "...", "description": "..."}, ...]`.
 
 ## Acceptance Criteria (Gherkin)
 
-Feature files live at `specs/apps/crane/gherkin/`. Unit step definitions (fake adapters) live at
-`apps/crane-cli/tests/unit/steps/`; integration step definitions (real adapters) live at
-`apps/crane-cli/tests/integration/steps/`.
+Feature files live at `specs/apps/crane/gherkin/`. Unit step definitions (fake PdfPig adapter)
+live at `apps/crane-cli/tests/unit/Steps/`; integration step definitions (real PdfPig + real
+tesseract) live at `apps/crane-cli/tests/integration/Steps/`.
 
 ### Feature: PDF Type Detection
 
@@ -263,12 +269,6 @@ Feature: PDF type detection
     When I run "crane pdf type" on the fixture
     Then the JSON output contains type "image"
     And the exit code is 1
-
-  Scenario: pdftotext not on PATH
-    Given pdftotext is not available
-    When I run "crane pdf type" on any PDF
-    Then stderr mentions "pdftotext"
-    And the exit code is 2
 ```
 
 ### Feature: PDF Metadata

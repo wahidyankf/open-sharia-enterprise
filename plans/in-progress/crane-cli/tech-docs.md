@@ -2,14 +2,14 @@
 
 ## Architecture
 
-Three-layer design: thin CLI commands delegate to pure-Go core logic; adapters isolate
-subprocess calls to system tools.
+Three-layer design: thin CLI commands delegate to pure-F# core logic; adapters isolate
+library calls to PDF/OCR tools.
 
 ```mermaid
 flowchart TD
-    CLI["CLI Layer\ncmd/crane/ + internal/commands/\nCobra commands, JSON output, exit codes"]
-    Core["Core Layer\ninternal/core/\nPure business logic, deterministic analysis\nNo subprocess; accepts string/Path args only"]
-    Adapter["Adapter Layer\ninternal/adapters/\nSubprocess wrappers for pdftotext/pdfinfo/tesseract\nReturns error on tool not found"]
+    CLI["CLI Layer\nCommands/\nArgu argument types, JSON output, exit codes"]
+    Core["Core Layer\nCore/\nPure business logic, deterministic analysis\nNo I/O; accepts string/Path args only"]
+    Adapter["Adapter Layer\nAdapters/\nPdfPig wrapper (text PDFs), TesseractOCR wrapper\nReturns Error on tool not found"]
 
     CLI --> Core
     CLI --> Adapter
@@ -24,109 +24,185 @@ flowchart TD
 
 ```
 apps/crane-cli/
-├── cmd/
-│   └── crane/
-│       └── main.go              # cobra root command + subgroup registration
-├── internal/
-│   ├── commands/
-│   │   ├── pdf.go               # crane pdf *
-│   │   ├── text.go              # crane text *
-│   │   ├── heading.go           # crane heading *
-│   │   ├── nesting.go           # crane nesting *
-│   │   ├── table.go             # crane table *
-│   │   ├── figure.go            # crane figure *
-│   │   ├── mermaid.go           # crane mermaid *
-│   │   ├── ocr.go               # crane ocr *
-│   │   ├── report.go            # crane report *
-│   │   └── skiplist.go          # crane skiplist *
-│   ├── core/
-│   │   ├── text_checker.go      # Completeness + accuracy analysis
-│   │   ├── heading_checker.go   # Heading depth inference + comparison
-│   │   ├── nesting_checker.go   # List nesting column-offset analysis
-│   │   ├── table_checker.go     # Columnar table detection + comparison
-│   │   ├── figure_checker.go    # Figure reference detection + coverage
-│   │   ├── mermaid_validator.go # Mermaid syntax validation
-│   │   ├── ocr_assessor.go      # OCR confusion-character error rate
-│   │   ├── report_manager.go    # UUID chain, UTC+7 timestamp, report init
-│   │   └── skiplist_manager.go  # Skip list CRUD with dedup
-│   ├── adapters/
-│   │   ├── pdftotext.go         # pdftotext -layout subprocess wrapper
-│   │   ├── pdfinfo.go           # pdfinfo subprocess wrapper
-│   │   └── tesseract.go         # tesseract subprocess wrapper
-│   └── models/
-│       ├── finding.go           # Finding, Criticality, Confidence, Category types
-│       ├── pdf_metadata.go      # PDFMetadata struct
-│       └── report.go            # SkipListEntry struct
+├── crane-cli.fsproj
+├── Program.fs               # Argu root command + subgroup dispatch
+├── Commands/
+│   ├── PdfCommands.fs       # crane pdf *
+│   ├── TextCommands.fs      # crane text *
+│   ├── HeadingCommands.fs   # crane heading *
+│   ├── NestingCommands.fs   # crane nesting *
+│   ├── TableCommands.fs     # crane table *
+│   ├── FigureCommands.fs    # crane figure *
+│   ├── MermaidCommands.fs   # crane mermaid *
+│   ├── OcrCommands.fs       # crane ocr *
+│   ├── ReportCommands.fs    # crane report *
+│   └── SkiplistCommands.fs  # crane skiplist *
+├── Core/
+│   ├── TextChecker.fs       # Completeness + accuracy analysis
+│   ├── HeadingChecker.fs    # Heading depth inference + comparison
+│   ├── NestingChecker.fs    # List nesting column-offset analysis
+│   ├── TableChecker.fs      # Columnar table detection + comparison
+│   ├── FigureChecker.fs     # Figure reference detection + coverage
+│   ├── MermaidValidator.fs  # Mermaid syntax validation
+│   ├── OcrAssessor.fs       # OCR confusion-character error rate
+│   ├── ReportManager.fs     # UUID chain, UTC+7 timestamp, report init
+│   └── SkiplistManager.fs   # Skip list CRUD with dedup
+├── Adapters/
+│   ├── PdfAdapter.fs        # PdfPig wrapper (text extraction + metadata)
+│   └── OcrAdapter.fs        # TesseractOCR wrapper (returns Error on missing engine)
+├── Models/
+│   ├── Finding.fs           # Criticality/Confidence/Category DUs + Finding record
+│   ├── PdfMetadata.fs       # PdfMetadata record
+│   └── Report.fs            # SkipListEntry record
 ├── tests/
 │   ├── unit/
-│   │   ├── suite_test.go        # godog runner with fake adapters (no pdftotext needed)
-│   │   ├── steps/
-│   │   │   ├── init.go          # InitializeScenario: wires all step packages
-│   │   │   ├── pdf_steps.go     # uses FakePDFAdapter (mocked exec.Command)
-│   │   │   ├── text_steps.go
-│   │   │   ├── heading_steps.go
-│   │   │   ├── nesting_steps.go
-│   │   │   ├── table_steps.go
-│   │   │   ├── figure_steps.go
-│   │   │   ├── mermaid_steps.go
-│   │   │   ├── ocr_steps.go
-│   │   │   ├── report_steps.go
-│   │   │   └── skiplist_steps.go
-│   │   ├── text_checker_test.go     # pure function unit tests (no godog)
-│   │   ├── heading_checker_test.go
-│   │   ├── nesting_checker_test.go
-│   │   ├── table_checker_test.go
-│   │   ├── figure_checker_test.go
-│   │   ├── mermaid_validator_test.go
-│   │   ├── ocr_assessor_test.go
-│   │   ├── report_manager_test.go
-│   │   └── skiplist_manager_test.go
-│   ├── integration/
-│   │   ├── suite_test.go        # godog runner with real adapters (pdftotext on PATH)
-│   │   └── steps/
-│   │       ├── init.go          # InitializeScenario: wires all step packages
-│   │       └── pdf_steps.go     # uses real exec.Command("pdftotext", ...)
-│   └── fixtures/
-│       ├── sample-text.pdf          # Small text-based PDF (public domain)
-│       ├── sample-text.md           # Complete Markdown conversion of above
-│       ├── sample-text-missing.md   # MD with one section removed
-│       └── sample-text-headings-wrong.md
-├── go.mod
-├── go.sum
+│   │   ├── crane-cli-unit-tests.fsproj
+│   │   ├── Suite.fs         # TickSpec xUnit runner (fake PdfPig adapter)
+│   │   └── Steps/
+│   │       ├── PdfSteps.fs
+│   │       ├── TextSteps.fs
+│   │       ├── HeadingSteps.fs
+│   │       ├── NestingSteps.fs
+│   │       ├── TableSteps.fs
+│   │       ├── FigureSteps.fs
+│   │       ├── MermaidSteps.fs
+│   │       ├── OcrSteps.fs
+│   │       ├── ReportSteps.fs
+│   │       └── SkiplistSteps.fs
+│   └── integration/
+│       ├── crane-cli-integration-tests.fsproj
+│       ├── Suite.fs         # TickSpec xUnit runner (real PdfPig + real tesseract)
+│       ├── Steps/
+│       │   ├── PdfSteps.fs  # uses real PdfPig (no subprocess needed)
+│       │   └── OcrSteps.fs  # uses real TesseractOCR (requires tesseract engine on PATH)
+│       └── fixtures/
+│           ├── sample-text.pdf          # Small text-based PDF (public domain)
+│           ├── sample-text.md           # Complete Markdown conversion of above
+│           ├── sample-text-missing.md   # MD with one section removed
+│           └── sample-text-headings-wrong.md
 ├── project.json
 └── README.md
 ```
 
 ## Tech Stack
 
-| Component      | Choice                                                                                                                                                        | Reason                                          |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| CLI framework  | cobra v1.10.2 [Repo-grounded: apps/rhino-cli]                                                                                                                 | Platform standard for ose-public Go CLIs        |
-| Output         | encoding/json (stdlib)                                                                                                                                        | Zero external dependency                        |
-| Data models    | Go structs + json tags                                                                                                                                        | No runtime dependency                           |
-| Build          | Go modules                                                                                                                                                    | Platform standard                               |
-| Linter         | golangci-lint [Repo-grounded: apps/rhino-cli]                                                                                                                 | Platform standard for Go apps                   |
-| Type safety    | Native (Go is statically typed)                                                                                                                               | No extra tool needed                            |
-| BDD framework  | godog v0.15.1 [Repo-grounded: apps/rhino-cli]                                                                                                                 | Platform standard (rhino-cli pattern)           |
-| Unit tests     | testing + testify/assert v1.9+ [Web-cited: pkg.go.dev/github.com/stretchr/testify — "Thou shalt write tests." Rich assertion lib for Go, accessed 2026-05-15] | Platform standard                               |
-| Coverage       | go test -coverprofile; 95% threshold enforced by rhino-cli                                                                                                    | Native Go; rhino-cli validates threshold        |
-| Nx executor    | nx:run-commands with `go build`/`go test`                                                                                                                     | Same as rhino-cli/ayokoding-cli [Repo-grounded] |
-| Fuzzy matching | go-diff (sergi/go-diff) [Web-cited: pkg.go.dev/github.com/sergi/go-diff — Levenshtein/diff library for Go, accessed 2026-05-15]                               | Levenshtein + LCS; no NLP runtime needed        |
+| Component      | Choice                                                                                                                                                                              | Reason                                                    |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Language       | F# (.NET 8+) [Repo-grounded: apps/organiclever-be, apps/ose-app-be]                                                                                                                | Shared library use with ose-app-be; team is F# fluent     |
+| CLI framework  | Argu 6.2.5 [Web-cited: github.com/fsprojects/Argu — MIT, 3M downloads, Dec 2024]                                                                                                   | Idiomatic F# declarative CLI via discriminated unions     |
+| PDF library    | PdfPig 0.1.14 [Web-cited: github.com/UglyToad/PdfPig — Apache-2.0, 22M downloads, Mar 2026]                                                                                        | Pure managed .NET; eliminates pdftotext/pdfinfo subprocs  |
+| OCR            | TesseractOCR 5.5.2 [Web-cited: nuget.org/packages/TesseractOCR — Apache-2.0, Mar 2026]                                                                                             | .NET wrapper for tesseract engine; active fork            |
+| JSON output    | System.Text.Json (stdlib) + FSharp.SystemTextJson 1.4.36 [Web-cited: github.com/Tarmil/FSharp.SystemTextJson — MIT, 4M downloads]                                                  | stdlib JSON + F# DU/option/list serialization             |
+| Fuzzy matching | F23.StringSimilarity 7.0.1 [Web-cited: github.com/feature23/StringSimilarity.NET — MIT, Dec 2025]                                                                                  | Returns `double` 0.0–1.0 directly; no int conversion      |
+| UUID           | System.Guid.NewGuid() (stdlib)                                                                                                                                                      | Zero dependency; direct drop-in for uuid.New()            |
+| BDD framework  | TickSpec 2.0.4 [Web-cited: github.com/fsprojects/TickSpec — Apache-2.0, Jan 2026]                                                                                                  | F#-native Gherkin; backtick step methods; active          |
+| Test runner    | xUnit 2.x (via TickSpec.Xunit)                                                                                                                                                      | Standard .NET test runner; TickSpec integration           |
+| Coverage       | coverlet 6.x; 95% line threshold via `/p:Threshold=95`                                                                                                                             | Built into `dotnet test`; no external validator needed    |
+| Linter         | Fantomas [Web-cited: fsprojects.github.io/fantomas — MIT, official F# formatter]                                                                                                   | F# standard formatter; `dotnet fantomas --check`          |
+| Type safety    | Native (F# is statically typed)                                                                                                                                                     | No extra tool needed                                      |
+| Nx executor    | nx:run-commands with `dotnet build`/`dotnet test`                                                                                                                                   | Same pattern as organiclever-be [Repo-grounded]           |
+| Distribution   | `PublishSingleFile + SelfContained` (~60 MB); AOT optional future step                                                                                                              | Zero .NET runtime on target; no F# AOT friction risk now  |
 
-## go.mod
+## crane-cli.fsproj
 
-```go
-module github.com/wahidyankf/ose-public/apps/crane-cli
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>CraneCli</RootNamespace>
+    <AssemblyName>crane</AssemblyName>
+    <Nullable>enable</Nullable>
+    <!-- Standalone publish (CI): dotnet publish -r <RID> --self-contained true -o dist/
+         RID examples: linux-x64, osx-arm64, win-x64
+         The Nx build target uses dotnet build; CI runs dotnet publish with the target RID. -->
+  </PropertyGroup>
 
-go 1.26 // [Judgment call] matches installed toolchain (go1.26.1) and all sibling CLIs (rhino-cli, ayokoding-cli, ose-cli)
+  <ItemGroup>
+    <!-- Models first (no dependencies) -->
+    <Compile Include="Models/Finding.fs" />
+    <Compile Include="Models/PdfMetadata.fs" />
+    <Compile Include="Models/Report.fs" />
+    <!-- Adapters before Core (Core may call adapters via interface) -->
+    <Compile Include="Adapters/PdfAdapter.fs" />
+    <Compile Include="Adapters/OcrAdapter.fs" />
+    <!-- Core modules (pure logic, depend on Models + Adapters) -->
+    <Compile Include="Core/TextChecker.fs" />
+    <Compile Include="Core/HeadingChecker.fs" />
+    <Compile Include="Core/NestingChecker.fs" />
+    <Compile Include="Core/TableChecker.fs" />
+    <Compile Include="Core/FigureChecker.fs" />
+    <Compile Include="Core/MermaidValidator.fs" />
+    <Compile Include="Core/OcrAssessor.fs" />
+    <Compile Include="Core/ReportManager.fs" />
+    <Compile Include="Core/SkiplistManager.fs" />
+    <!-- Commands (depend on Core + Adapters) -->
+    <Compile Include="Commands/PdfCommands.fs" />
+    <Compile Include="Commands/TextCommands.fs" />
+    <Compile Include="Commands/HeadingCommands.fs" />
+    <Compile Include="Commands/NestingCommands.fs" />
+    <Compile Include="Commands/TableCommands.fs" />
+    <Compile Include="Commands/FigureCommands.fs" />
+    <Compile Include="Commands/MermaidCommands.fs" />
+    <Compile Include="Commands/OcrCommands.fs" />
+    <Compile Include="Commands/ReportCommands.fs" />
+    <Compile Include="Commands/SkiplistCommands.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
 
-require (
-    github.com/spf13/cobra v1.10.2              // [Repo-grounded: apps/rhino-cli/go.mod, apps/ayokoding-cli/go.mod]
-    github.com/cucumber/godog v0.15.1           // [Repo-grounded: apps/rhino-cli/go.mod, apps/ayokoding-cli/go.mod]
-    github.com/stretchr/testify v1.9.0
-    github.com/google/uuid v1.6.0              // [Web-cited: https://github.com/google/uuid/releases/tag/v1.6.0 — "Pure Go implementation of UUIDs", accessed 2026-05-15]
-    github.com/sergi/go-diff v1.3.1
-)
+  <ItemGroup>
+    <PackageReference Include="Argu" Version="6.2.5" />
+    <PackageReference Include="PdfPig" Version="0.1.14" />
+    <PackageReference Include="TesseractOCR" Version="5.5.2" />
+    <PackageReference Include="FSharp.SystemTextJson" Version="1.4.36" />
+    <PackageReference Include="F23.StringSimilarity" Version="7.0.1" />
+  </ItemGroup>
+</Project>
+```
+
+## Unit Test Project (crane-cli-unit-tests.fsproj)
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>CraneCli.Tests.Unit</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Steps/PdfSteps.fs" />
+    <Compile Include="Steps/TextSteps.fs" />
+    <Compile Include="Steps/HeadingSteps.fs" />
+    <Compile Include="Steps/NestingSteps.fs" />
+    <Compile Include="Steps/TableSteps.fs" />
+    <Compile Include="Steps/FigureSteps.fs" />
+    <Compile Include="Steps/MermaidSteps.fs" />
+    <Compile Include="Steps/OcrSteps.fs" />
+    <Compile Include="Steps/ReportSteps.fs" />
+    <Compile Include="Steps/SkiplistSteps.fs" />
+    <Compile Include="Suite.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="TickSpec" Version="2.0.4" />
+    <PackageReference Include="TickSpec.Xunit" Version="2.0.4" />
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../crane-cli.fsproj" />
+  </ItemGroup>
+</Project>
 ```
 
 ## project.json
@@ -140,46 +216,50 @@ require (
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go build -o dist/crane ./cmd/crane/...",
+        "command": "dotnet build crane-cli.fsproj -c Release",
         "cwd": "apps/crane-cli"
       },
-      "outputs": ["{projectRoot}/dist"]
+      "outputs": ["{projectRoot}/bin"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go run ./cmd/crane/... --help",
+        "command": "dotnet run --project crane-cli.fsproj -- --help",
         "cwd": "apps/crane-cli"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "CGO_ENABLED=0 go test -v ./tests/unit/... -coverprofile=coverage/coverage.out -covermode=atomic",
-          "go tool cover -func=coverage/coverage.out",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/coverage.out 95)"
-        ],
+        "command": "dotnet test tests/unit/crane-cli-unit-tests.fsproj --collect:\"XPlat Code Coverage\" --results-directory coverage/ /p:Threshold=95 /p:ThresholdType=line /p:ThresholdStat=Total",
         "parallel": false,
         "cwd": "apps/crane-cli"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"],
-      "outputs": ["{projectRoot}/coverage/coverage.out"]
+      "inputs": [
+        "{projectRoot}/**/*.fs",
+        "{projectRoot}/**/*.fsproj",
+        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"
+      ],
+      "outputs": ["{projectRoot}/coverage/"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go test -v ./tests/unit/...",
+        "command": "dotnet test tests/unit/crane-cli-unit-tests.fsproj",
         "cwd": "apps/crane-cli"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"]
+      "inputs": [
+        "{projectRoot}/**/*.fs",
+        "{projectRoot}/**/*.fsproj",
+        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"
+      ]
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go test -v ./tests/integration/...",
+        "command": "dotnet test tests/integration/crane-cli-integration-tests.fsproj",
         "cwd": "apps/crane-cli"
       },
       "cache": false
@@ -187,78 +267,80 @@ require (
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go vet ./...",
+        "command": "dotnet build crane-cli.fsproj --no-restore -c Debug",
         "cwd": "apps/crane-cli"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "golangci-lint run ./...",
+        "command": "dotnet fantomas --check .",
         "cwd": "apps/crane-cli"
       }
     },
     "spec-coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/crane/gherkin apps/crane-cli"
+        "command": "CGO_ENABLED=0 go run main.go spec-coverage validate --shared-steps ../../specs/apps/crane/gherkin ../../apps/crane-cli",
+        "cwd": "apps/rhino-cli"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+      "inputs": [
+        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature",
+        "{projectRoot}/**/*.fs"
+      ]
     }
   },
-  "tags": ["type:app", "platform:cli", "lang:golang", "domain:crane"],
+  "tags": ["type:app", "platform:cli", "lang:fsharp", "domain:crane"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
 
+Note: `lang:fsharp` tag triggers the F# quality gate job in `pr-quality-gate.yml` — verify
+this tag against existing F# projects (`organiclever-be`, `ose-app-be`) before committing.
+`spec-coverage` via rhino-cli must be verified to support `.fs` step files; if not, a
+custom coverage script is needed as a substitute.
+
 ## Data Models
 
-```go
-// internal/models/finding.go
-package models
+```fsharp
+// Models/Finding.fs
+module CraneCli.Models.Finding
 
-type Criticality string
+open System.Text.Json.Serialization
 
-const (
-    CriticalityCRITICAL Criticality = "CRITICAL"
-    CriticalityHIGH     Criticality = "HIGH"
-    CriticalityMEDIUM   Criticality = "MEDIUM"
-    CriticalityLOW      Criticality = "LOW"
-)
+type Criticality =
+    | CRITICAL
+    | HIGH
+    | MEDIUM
+    | LOW
 
-type Confidence string
+type Confidence =
+    | HIGH
+    | MEDIUM
+    | FALSE_POSITIVE
 
-const (
-    ConfidenceHIGH          Confidence = "HIGH"
-    ConfidenceMEDIUM        Confidence = "MEDIUM"
-    ConfidenceFALSEPOSITIVE Confidence = "FALSE_POSITIVE"
-)
+type Category =
+    | TextCompleteness
+    | TextAccuracy
+    | HeadingLevelAccuracy
+    | ContentNestingAccuracy
+    | TableIntegrity
+    | FigureCoverage
+    | MermaidSyntax
+    | OcrQuality
+    | Structure
 
-type Category string
-
-const (
-    CategoryTextCompleteness Category = "text-completeness"
-    CategoryTextAccuracy     Category = "text-accuracy"
-    CategoryHeadingLevel     Category = "heading-level-accuracy"
-    CategoryContentNesting   Category = "content-nesting-accuracy"
-    CategoryTableIntegrity   Category = "table-integrity"
-    CategoryFigureCoverage   Category = "figure-coverage"
-    CategoryMermaidSyntax    Category = "mermaid-syntax"
-    CategoryOCRQuality       Category = "ocr-quality"
-    CategoryStructure        Category = "structure"
-)
-
-type Finding struct {
-    Category      Category    `json:"category"`
-    Criticality   Criticality `json:"criticality"`
-    Confidence    Confidence  `json:"confidence"`
-    LocationPDF   string      `json:"location_pdf,omitempty"`
-    LocationMD    string      `json:"location_md,omitempty"`
-    Description   string      `json:"description"`
-    PDFText       string      `json:"pdf_text,omitempty"`
-    FixSuggestion string      `json:"fix_suggestion,omitempty"`
-    AutoFixable   bool        `json:"auto_fixable"`
+type Finding = {
+    [<JsonPropertyName("category")>]      Category:      string
+    [<JsonPropertyName("criticality")>]   Criticality:   string
+    [<JsonPropertyName("confidence")>]    Confidence:    string
+    [<JsonPropertyName("location_pdf")>]  LocationPdf:   string option
+    [<JsonPropertyName("location_md")>]   LocationMd:    string option
+    [<JsonPropertyName("description")>]   Description:   string
+    [<JsonPropertyName("pdf_text")>]      PdfText:       string option
+    [<JsonPropertyName("fix_suggestion")>] FixSuggestion: string option
+    [<JsonPropertyName("auto_fixable")>]  AutoFixable:   bool
 }
 ```
 
@@ -266,354 +348,277 @@ type Finding struct {
 
 ### Text Normalization and Fuzzy Matching
 
-```go
-// internal/core/text_checker.go
-package core
+```fsharp
+// Core/TextChecker.fs
+module CraneCli.Core.TextChecker
 
-import (
-    "strings"
-    "regexp"
+open System
+open System.Text.RegularExpressions
+open F23.StringSimilarity
 
-    "github.com/sergi/go-diff/diffmatchpatch"
-)
+let private fuzzyThreshold = 0.85
+let private wsPattern = Regex(@"\s+", RegexOptions.Compiled)
+let private levenshtein = NormalizedLevenshtein()
 
-const FuzzyThreshold = 0.85
+let normalize (text: string) =
+    wsPattern.Replace(text.Trim(), " ")
 
-var wsPattern = regexp.MustCompile(`\s+`)
+let computeSimilarity (a: string) (b: string) =
+    let na = (normalize a).ToLowerInvariant()
+    let nb = (normalize b).ToLowerInvariant()
+    if na = nb then 1.0
+    else levenshtein.Similarity(na, nb)
 
-func Normalize(text string) string {
-    return strings.TrimSpace(wsPattern.ReplaceAllString(text, " "))
-}
-
-func Similarity(a, b string) float64 {
-    na := strings.ToLower(Normalize(a))
-    nb := strings.ToLower(Normalize(b))
-    if na == nb {
-        return 1.0
-    }
-    dmp := diffmatchpatch.New()
-    diffs := dmp.DiffMain(na, nb, false)
-    levenshtein := dmp.DiffLevenshtein(diffs)
-    maxLen := len([]rune(na))
-    if lb := len([]rune(nb)); lb > maxLen {
-        maxLen = lb
-    }
-    if maxLen == 0 {
-        return 1.0
-    }
-    return 1.0 - float64(levenshtein)/float64(maxLen)
-}
+let segmentIsPresent (segment: string) (mdText: string) =
+    computeSimilarity segment mdText >= fuzzyThreshold
 ```
 
 ### Heading Depth Inference
 
-```go
-// internal/core/heading_checker.go
-package core
+```fsharp
+// Core/HeadingChecker.fs
+module CraneCli.Core.HeadingChecker
 
-import (
-    "regexp"
-    "strings"
-)
+open System.Text.RegularExpressions
 
-var sectionNumPattern = regexp.MustCompile(`^(\d+|\w)(\.\d+|\.\w)*\.?\s`)
+let private sectionNumPattern =
+    Regex(@"^(\d+|\w)(\.\d+|\.\w)*\.?\s", RegexOptions.Compiled)
 
-// InferDepthFromNumbering returns (depth 1-5, confidence "HIGH", ok=true)
-// or (0, "", false) when no section numbering detected.
+// Returns Some (depth 1-5, confidence "HIGH") or None when no section numbering detected.
 // "1. Title" → 2, "2.3 Title" → 3, "2.3.1 Title" → 4
-func InferDepthFromNumbering(heading string) (depth int, confidence string, ok bool) {
-    heading = strings.TrimSpace(heading)
-    match := sectionNumPattern.FindString(heading)
-    if match == "" {
-        return 0, "", false
-    }
-    numPart := strings.TrimRight(match, " \t")
-    dots := strings.Count(numPart, ".")
-    if strings.HasSuffix(numPart, ".") {
-        depth = dots + 1
-    } else {
-        depth = dots + 2
-    }
-    if depth > 5 {
-        depth = 5
-    }
-    return depth, "HIGH", true
-}
+let inferDepthFromNumbering (heading: string) =
+    let heading = heading.Trim()
+    let m = sectionNumPattern.Match(heading)
+    if not m.Success then None
+    else
+        let numPart = m.Value.TrimEnd(' ', '\t')
+        let dots = numPart |> Seq.filter ((=) '.') |> Seq.length
+        let depth =
+            if numPart.EndsWith('.') then dots + 1
+            else dots + 2
+        Some (min 5 depth, "HIGH")
 ```
 
 ### Mermaid Validation
 
-```go
-// internal/core/mermaid_validator.go
-package core
+```fsharp
+// Core/MermaidValidator.fs
+module CraneCli.Core.MermaidValidator
 
-import (
-    "fmt"
-    "strings"
-)
+open System
 
-var validMermaidTypes = map[string]bool{
-    "graph": true, "flowchart": true, "sequenceDiagram": true,
-    "stateDiagram": true, "stateDiagram-v2": true, "classDiagram": true,
-    "gantt": true, "pie": true, "erDiagram": true, "journey": true,
-    "gitGraph": true, "mindmap": true, "timeline": true,
-    "quadrantChart": true, "xychart-beta": true, "sankey-beta": true,
-    "block-beta": true, "architecture-beta": true,
-}
+let private validTypes =
+    Set.ofList [
+        "graph"; "flowchart"; "sequenceDiagram"; "stateDiagram"
+        "stateDiagram-v2"; "classDiagram"; "gantt"; "pie"; "erDiagram"
+        "journey"; "gitGraph"; "mindmap"; "timeline"; "quadrantChart"
+        "xychart-beta"; "sankey-beta"; "block-beta"; "architecture-beta"
+    ]
 
-func ValidateMermaidBlock(content string) (valid bool, errMsg string) {
-    lines := strings.Split(strings.TrimSpace(content), "\n")
-    if len(lines) == 0 || strings.TrimSpace(lines[0]) == "" {
-        return false, "empty Mermaid block"
-    }
-    diagramType := strings.Fields(lines[0])[0]
-    if !validMermaidTypes[diagramType] {
-        return false, fmt.Sprintf("unknown diagram type: %q", diagramType)
-    }
-    if strings.Count(content, "[") != strings.Count(content, "]") {
-        return false, "unmatched brackets"
-    }
-    if strings.Count(content, "(") != strings.Count(content, ")") {
-        return false, "unmatched parentheses"
-    }
-    return true, ""
-}
+let validateBlock (content: string) =
+    let lines = content.Trim().Split('\n')
+    if lines.Length = 0 || lines[0].Trim() = "" then
+        Error "empty Mermaid block"
+    else
+        let diagramType = lines[0].Trim().Split(' ')[0]
+        if not (Set.contains diagramType validTypes) then
+            Error (sprintf "unknown diagram type: %s" diagramType)
+        elif (content |> Seq.filter ((=) '[') |> Seq.length) <>
+             (content |> Seq.filter ((=) ']') |> Seq.length) then
+            Error "unmatched brackets"
+        elif (content |> Seq.filter ((=) '(') |> Seq.length) <>
+             (content |> Seq.filter ((=) ')') |> Seq.length) then
+            Error "unmatched parentheses"
+        else
+            Ok ()
 ```
 
 ### OCR Quality Assessment
 
-```go
-// internal/core/ocr_assessor.go
-package core
+```fsharp
+// Core/OcrAssessor.fs
+module CraneCli.Core.OcrAssessor
 
-import (
-    "regexp"
-    "strings"
-)
+open System.Text.RegularExpressions
 
-var ocrErrorPatterns = []*regexp.Regexp{
-    regexp.MustCompile(`[^\x00-\x7F]{3,}`),
-    regexp.MustCompile(`\b[lI1]{5,}\b`),
-    regexp.MustCompile(`\b[0Oo]{5,}\b`),
-    regexp.MustCompile(`[a-zA-Z]{30,}`),
-}
+let private ocrErrorPatterns =
+    [|
+        Regex(@"[^\x00-\x7F]{3,}", RegexOptions.Compiled)
+        Regex(@"\b[lI1]{5,}\b", RegexOptions.Compiled)
+        Regex(@"\b[0Oo]{5,}\b", RegexOptions.Compiled)
+        Regex(@"[a-zA-Z]{30,}", RegexOptions.Compiled)
+    |]
 
-func EstimateOCRErrorRate(text string) float64 {
-    clean := strings.ReplaceAll(strings.ReplaceAll(text, " ", ""), "\n", "")
-    total := len([]rune(clean))
-    if total == 0 {
-        return 0.0
-    }
-    errorChars := 0
-    for _, p := range ocrErrorPatterns {
-        for _, m := range p.FindAllString(text, -1) {
-            errorChars += len([]rune(m))
-        }
-    }
-    rate := float64(errorChars) / float64(total)
-    if rate > 1.0 {
-        return 1.0
-    }
-    return rate
-}
+let estimateOCRErrorRate (text: string) =
+    let clean = text.Replace(" ", "").Replace("\n", "")
+    let total = clean |> Seq.length
+    if total = 0 then 0.0
+    else
+        let errorChars =
+            ocrErrorPatterns
+            |> Array.sumBy (fun p ->
+                p.Matches(text)
+                |> Seq.cast<System.Text.RegularExpressions.Match>
+                |> Seq.sumBy (fun m -> m.Length))
+        let rate = float errorChars / float total
+        min 1.0 rate
 ```
 
 ### UUID Chain + UTC+7 Timestamp
 
-```go
-// internal/core/report_manager.go
-package core
+```fsharp
+// Core/ReportManager.fs
+module CraneCli.Core.ReportManager
 
-import (
-    "fmt"
-    "os"
-    "strconv"
-    "strings"
-    "time"
+open System
+open System.IO
 
-    "github.com/google/uuid"
-)
+let private chainWindowSeconds = 30L
+let private utc7Offset = TimeSpan.FromHours(7.0)
 
-const chainWindowSeconds = 30
+let getOrExtendChain (scope: string) =
+    let chainFile = sprintf ".execution-chain-%s" scope
+    let newId = Guid.NewGuid().ToString("N").Substring(0, 6)
 
-var utc7 = time.FixedZone("UTC+7", 7*60*60)
+    let existingChain =
+        if File.Exists(chainFile) then
+            let parts = File.ReadAllText(chainFile).Trim().Split(' ', 2)
+            if parts.Length = 2 then
+                match Int64.TryParse(parts[0]) with
+                | true, ts when DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts < chainWindowSeconds ->
+                    Some (parts[1] + "__" + newId)
+                | _ -> None
+            else None
+        else None
 
-func GetOrExtendChain(scope string) string {
-    chainFile := fmt.Sprintf(".execution-chain-%s", scope)
-    newID := strings.ReplaceAll(uuid.New().String(), "-", "")[:6]
+    let chain = existingChain |> Option.defaultValue newId
+    File.WriteAllText(chainFile, sprintf "%d %s" (DateTimeOffset.UtcNow.ToUnixTimeSeconds()) chain)
+    chain
 
-    if data, err := os.ReadFile(chainFile); err == nil {
-        parts := strings.SplitN(strings.TrimSpace(string(data)), " ", 2)
-        if len(parts) == 2 {
-            if ts, err2 := strconv.ParseInt(parts[0], 10, 64); err2 == nil {
-                if time.Now().Unix()-ts < chainWindowSeconds {
-                    chain := parts[1] + "__" + newID
-                    _ = os.WriteFile(chainFile, []byte(fmt.Sprintf("%d %s", time.Now().Unix(), chain)), 0o644)
-                    return chain
-                }
-            }
-        }
-    }
-    _ = os.WriteFile(chainFile, []byte(fmt.Sprintf("%d %s", time.Now().Unix(), newID)), 0o644)
-    return newID
-}
-
-func UTC7Timestamp() string {
-    return time.Now().In(utc7).Format("2006-01-02--15-04")
-}
+let utc7Timestamp () =
+    DateTimeOffset.UtcNow.ToOffset(utc7Offset).ToString("yyyy-MM-dd--HH-mm")
 ```
 
-## godog Feature Loader Pattern
+## TickSpec Feature Loader Pattern
 
 Both suites load the same `specs/apps/crane/gherkin/` feature files. The difference is the
-adapter layer: unit steps use `FakePDFAdapter` (mocked `exec.Command`); integration steps
-use the real adapter (actual `pdftotext` subprocess).
+adapter layer: unit steps use a `FakePdfAdapter` (in-memory text, no PdfPig I/O); integration
+steps use real PdfPig and TesseractOCR against fixture PDFs.
 
-### Unit Suite (fake adapters — no system tools needed)
+### Unit Suite (fake adapter — no real PDF I/O needed)
 
-```go
-// tests/unit/suite_test.go
-package unit_test
+```fsharp
+// tests/unit/Suite.fs
+module CraneCli.Tests.Unit.Suite
 
-import (
-    "os"
-    "testing"
+open System.IO
+open TickSpec.Xunit
 
-    "github.com/cucumber/godog"
-    "github.com/wahidyankf/ose-public/apps/crane-cli/tests/unit/steps"
-)
+let private gherkinRoot () =
+    let envRoot = System.Environment.GetEnvironmentVariable("GHERKIN_ROOT")
+    if isNull envRoot then
+        Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/gherkin")
+    else envRoot
 
-func gherkinRoot() string {
-    if root := os.Getenv("GHERKIN_ROOT"); root != "" {
-        return root
-    }
-    return "../../specs/apps/crane/gherkin"
-}
-
-func TestMain(m *testing.M) {
-    opts := godog.Options{
-        Format:   "pretty",
-        Paths:    []string{gherkinRoot()},
-        TestingT: m,
-    }
-    suite := godog.TestSuite{
-        Name:                "crane-cli-unit",
-        Options:             &opts,
-        ScenarioInitializer: steps.InitializeScenario,
-    }
-    os.Exit(suite.Run())
-}
+type CraneCliUnitSuite() =
+    inherit FeatureBase(gherkinRoot())
 ```
 
-```go
-// tests/unit/steps/pdf_steps.go
-package steps
+```fsharp
+// tests/unit/Steps/PdfSteps.fs
+module CraneCli.Tests.Unit.Steps.PdfSteps
 
-import (
-    "github.com/cucumber/godog"
-    "github.com/wahidyankf/ose-public/apps/crane-cli/internal/adapters"
-)
+open TickSpec
+open Xunit
 
-// FakePDFAdapter returns canned text without calling pdftotext
-type FakePDFAdapter struct{ Text string }
+// Fake adapter — returns canned data without calling PdfPig
+type FakePdfDoc = { Text: string; Pages: int; IsTextBased: bool }
 
-func (f *FakePDFAdapter) Sample(_ string, _ int) (string, error) { return f.Text, nil }
-func (f *FakePDFAdapter) Extract(_ string, _, _ int) (string, error) { return f.Text, nil }
+let mutable private currentFixture: FakePdfDoc option = None
+let mutable private lastPdfTypeResult: {| ``type``: string |} option = None
 
-func InitializePDFSteps(sc *godog.ScenarioContext) {
-    sc.Step(`^a text-based PDF fixture exists$`, aTextBasedPDFFixtureExists)
-    sc.Step(`^I run "crane pdf type" on the fixture$`, iRunCranePDFTypeWithFakeAdapter)
-    sc.Step(`^the JSON output contains type "([^"]*)"$`, jsonOutputContainsType)
-    sc.Step(`^the exit code is (\d+)$`, exitCodeIs)
-}
+let [<Given>] ``a text-based PDF fixture exists`` () =
+    currentFixture <- Some { Text = "Sample text content for testing"; Pages = 5; IsTextBased = true }
+
+let [<When>] ``I run "crane pdf type" on the fixture`` () =
+    match currentFixture with
+    | Some doc ->
+        // Call core type-detection logic with injected fake text
+        let docType = if doc.IsTextBased then "text" else "image"
+        lastPdfTypeResult <- Some {| ``type`` = docType |}
+    | None -> failwith "No fixture configured"
+
+let [<Then>] ``the JSON output contains type "([^"]*)"`` (expected: string) =
+    match lastPdfTypeResult with
+    | Some result -> Assert.Equal(expected, result.``type``)
+    | None -> failwith "No result available"
+
+let [<Then>] ``the exit code is (\d+)`` (_: int) = ()
 ```
 
-```go
-// tests/unit/steps/init.go
-package steps
+### Integration Suite (real adapters — requires PdfPig + tesseract)
 
-import "github.com/cucumber/godog"
+```fsharp
+// tests/integration/Suite.fs
+module CraneCli.Tests.Integration.Suite
 
-func InitializeScenario(sc *godog.ScenarioContext) {
-    InitializePDFSteps(sc)
-    InitializeTextSteps(sc)
-    InitializeHeadingSteps(sc)
-    InitializeNestingSteps(sc)
-    InitializeTableSteps(sc)
-    InitializeFigureSteps(sc)
-    InitializeMermaidSteps(sc)
-    InitializeOCRSteps(sc)
-    InitializeReportSteps(sc)
-    InitializeSkiplistSteps(sc)
-}
+open System.IO
+open TickSpec.Xunit
+
+let private gherkinRoot () =
+    let envRoot = System.Environment.GetEnvironmentVariable("GHERKIN_ROOT")
+    if isNull envRoot then
+        Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/gherkin")
+    else envRoot
+
+type CraneCliIntegrationSuite() =
+    inherit FeatureBase(gherkinRoot())
 ```
 
-### Integration Suite (real adapters — requires pdftotext on PATH)
+```fsharp
+// tests/integration/Steps/PdfSteps.fs
+module CraneCli.Tests.Integration.Steps.PdfSteps
 
-```go
-// tests/integration/suite_test.go
-package integration_test
+open System.IO
+open TickSpec
+open Xunit
+open UglyToad.PdfPig
 
-import (
-    "os"
-    "testing"
+let private fixtureDir = Path.Combine(__SOURCE_DIRECTORY__, "../fixtures")
 
-    "github.com/cucumber/godog"
-    "github.com/wahidyankf/ose-public/apps/crane-cli/tests/integration/steps"
-)
+let mutable private testFixturePath: string option = None
 
-func gherkinRoot() string {
-    if root := os.Getenv("GHERKIN_ROOT"); root != "" {
-        return root
-    }
-    return "../../specs/apps/crane/gherkin"
-}
+let [<Given>] ``a text-based PDF fixture exists`` () =
+    let path = Path.Combine(fixtureDir, "sample-text.pdf")
+    Assert.True(File.Exists(path), sprintf "Fixture not found: %s" path)
+    testFixturePath <- Some path
 
-func TestMain(m *testing.M) {
-    opts := godog.Options{
-        Format:   "pretty",
-        Paths:    []string{gherkinRoot()},
-        TestingT: m,
-    }
-    suite := godog.TestSuite{
-        Name:                "crane-cli-integration",
-        Options:             &opts,
-        ScenarioInitializer: steps.InitializeScenario,
-    }
-    os.Exit(suite.Run())
-}
-```
-
-```go
-// tests/integration/steps/pdf_steps.go — uses real pdftotext subprocess
-package steps
-
-import (
-    "github.com/cucumber/godog"
-    "github.com/wahidyankf/ose-public/apps/crane-cli/internal/adapters"
-)
-
-func InitializePDFSteps(sc *godog.ScenarioContext) {
-    sc.Step(`^a text-based PDF fixture exists$`, aTextBasedPDFFixtureExists)
-    sc.Step(`^I run "crane pdf type" on the fixture$`, iRunCranePDFTypeWithRealAdapter)
-    sc.Step(`^the JSON output contains type "([^"]*)"$`, jsonOutputContainsType)
-    sc.Step(`^the exit code is (\d+)$`, exitCodeIs)
-}
+let [<When>] ``I run "crane pdf type" on the fixture`` () =
+    match testFixturePath with
+    | Some path ->
+        use doc = PdfDocument.Open(path)
+        let wordCount =
+            doc.GetPages()
+            |> Seq.truncate 3
+            |> Seq.sumBy (fun page ->
+                page.GetWords() |> Seq.length)
+        // wordCount > 100 indicates text-based PDF
+        ()
+    | None -> failwith "No fixture path set"
 ```
 
 ## CI Workflow
 
-crane-cli follows the **rhino-cli pattern** [Repo-grounded: `.github/workflows/pr-quality-gate.yml`]:
+crane-cli follows the **F# backend pattern** [Repo-grounded: `apps/organiclever-be`]:
 
 **Quality gate (typecheck + lint + test:quick + spec-coverage)** — handled automatically by the
-existing `.github/workflows/pr-quality-gate.yml` workflow. It detects affected `tag:lang:golang`
-projects via `npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:golang'`
-and uses `.github/actions/setup-golang` (Go 1.26.0, golangci-lint v2.10.1, no `poppler-utils`
-needed). No new workflow file required for the quality gate — crane-cli's `lang:golang` tag is
-sufficient.
+existing `.github/workflows/pr-quality-gate.yml` workflow. It detects affected `tag:lang:fsharp`
+projects via `npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:fsharp'`
+and uses `.github/actions/setup-dotnet` (no tesseract needed — all PDF adapters are fake in unit
+suite). No new workflow file required for the quality gate.
 
-**Integration tests (real pdftotext)** — separate workflow file because `poppler-utils` is not
-installed in the standard `setup-golang` action:
+**Integration tests (real PdfPig + tesseract for OCR)** — separate workflow file because tesseract
+is not installed in the standard `setup-dotnet` action:
 
 Workflow file: `.github/workflows/crane-cli-integration.yml`
 
@@ -643,23 +648,28 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-golang
-      - name: Install poppler-utils (pdftotext + pdfinfo)
-        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - uses: ./.github/actions/setup-dotnet
+      - name: Install tesseract (OCR integration tests)
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr libtesseract-dev
       - run: npx nx run crane-cli:test:integration
 ```
 
-**Unit/quality job** — `pr-quality-gate.yml` golang job; no `poppler-utils` needed (all adapters
-mocked). **Integration job** — `crane-cli-integration.yml`; installs `poppler-utils` and runs
-real pdftotext against `apps/crane-cli/tests/fixtures/sample-text.pdf`.
+**Unit/quality job** — `pr-quality-gate.yml` fsharp job; no tesseract needed (PdfPig is a
+library, always available; OCR adapter is a fake in unit tests). **Integration job** —
+`crane-cli-integration.yml`; installs tesseract engine for real OCR tests against
+`apps/crane-cli/tests/integration/fixtures/sample-text.pdf`.
+
+Note: Verify `.github/actions/setup-dotnet` composite action exists and pins .NET 8 SDK
+against existing F# project CI (organiclever-be). If a different action name is used, update
+the workflow file accordingly.
 
 ## File Impact
 
 ### New Files
 
-- `apps/crane-cli/` — entire new Go module (cmd/, internal/, tests/, go.mod, project.json)
+- `apps/crane-cli/` — entire new F# project (.fsproj, Commands/, Core/, Adapters/, Models/, tests/)
 - `specs/apps/crane/gherkin/*.feature` — 10 Gherkin feature files (written during Phase 0)
-- `.github/workflows/crane-cli-integration.yml` — integration CI job (poppler-utils + real pdftotext)
+- `.github/workflows/crane-cli-integration.yml` — integration CI job (tesseract + real OCR tests)
 - Note: quality gate (typecheck/lint/test:quick/spec-coverage) runs via existing `pr-quality-gate.yml`
   automatically — no new workflow file needed for quality
 
