@@ -33,6 +33,6 @@ type CraneCliUnitSuite() =
     static member Scenarios() : seq<obj[]> =
         buildScenarioData () |> Seq.toList :> seq<_>
 
-    [<Theory(Skip = "No unit step definitions registered yet — Phase 0 scaffold")>]
+    [<Theory>]
     [<MemberData("Scenarios")>]
     member _.``Crane unit scenarios``(scenario: Scenario) = scenario.Action.Invoke()

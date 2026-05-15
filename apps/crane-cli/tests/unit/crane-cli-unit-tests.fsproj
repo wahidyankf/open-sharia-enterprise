@@ -16,6 +16,7 @@
     <Compile Include="Steps/OcrSteps.fs" />
     <Compile Include="Steps/ReportSteps.fs" />
     <Compile Include="Steps/SkiplistSteps.fs" />
+    <Compile Include="Tests/PdfCommandsTests.fs" />
     <Compile Include="Suite.fs" />
   </ItemGroup>
 
@@ -31,5 +32,11 @@
 
   <ItemGroup>
     <ProjectReference Include="../../crane-cli.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

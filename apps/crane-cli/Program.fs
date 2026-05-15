@@ -1,11 +1,17 @@
 module CraneCli.Program
 
+open System
 open Argu
+open CraneCli.Adapters.PdfAdapter
+open CraneCli.Commands.PdfCommands
 
 type PdfArgs =
-    | Info of pdf: string
-    | Type of pdf: string
-    | Extract of pdf: string
+    | [<AltCommandLine("-f")>] Info of pdf: string
+    | [<AltCommandLine("-t")>] Type of pdf: string
+    | [<AltCommandLine("-e")>] Extract of pdf: string
+    | [<AltCommandLine("-s")>] Start_Page of int
+    | [<AltCommandLine("-n")>] End_Page of int
+    | [<AltCommandLine("-o")>] Output of string
 
     interface IArgParserTemplate with
         member a.Usage =
@@ -13,6 +19,9 @@ type PdfArgs =
             | Info _ -> "Get PDF metadata as JSON"
             | Type _ -> "Detect if PDF is text-based or image-based"
             | Extract _ -> "Extract text from PDF pages"
+            | Start_Page _ -> "Start page (default 1)"
+            | End_Page _ -> "End page (default: last page)"
+            | Output _ -> "Output file path (default: stdout)"
 
 type TextArgs =
     | Check of pdf: string * md: string
@@ -138,9 +147,30 @@ let main argv =
         let results = parser.ParseCommandLine(argv)
 
         match results.GetSubCommand() with
-        | Pdf _ ->
-            printfn "pdf subcommand (not yet implemented)"
-            0
+        | Pdf subArgs ->
+            let allArgs = subArgs.GetAllResults()
+
+            let subCommand =
+                allArgs
+                |> List.tryPick (function
+                    | PdfArgs.Info p -> Some("info", p)
+                    | PdfArgs.Type p -> Some("type", p)
+                    | PdfArgs.Extract p -> Some("extract", p)
+                    | _ -> None)
+
+            let realAdapter = RealPdfAdapter() :> IPdfAdapter
+
+            match subCommand with
+            | Some("info", pdf) -> runInfo realAdapter Console.Out pdf
+            | Some("type", pdf) -> runType realAdapter Console.Out pdf
+            | Some("extract", pdf) ->
+                let startPage = subArgs.GetResult(PdfArgs.Start_Page, defaultValue = 1)
+                let endPage = subArgs.GetResult(PdfArgs.End_Page, defaultValue = 999)
+                let output = subArgs.TryGetResult(PdfArgs.Output)
+                runExtract realAdapter Console.Out pdf startPage endPage output
+            | _ ->
+                printfn "%s" (subArgs.Parser.PrintUsage())
+                1
         | Text _ ->
             printfn "text subcommand (not yet implemented)"
             0

@@ -21,8 +21,11 @@ let private buildScenarioData () : seq<obj[]> =
 
         files
         |> Seq.collect (fun path ->
-            let feature = defs.GenerateFeature(path)
-            feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |]))
+            try
+                let feature = defs.GenerateFeature(path)
+                feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |])
+            with _ ->
+                Seq.empty)
     else
         Seq.empty
 
