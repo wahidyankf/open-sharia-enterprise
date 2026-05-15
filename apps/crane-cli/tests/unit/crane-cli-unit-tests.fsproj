@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Steps/BddState.fs" />
     <Compile Include="Steps/PdfSteps.fs" />
     <Compile Include="Steps/TextSteps.fs" />
     <Compile Include="Steps/HeadingSteps.fs" />

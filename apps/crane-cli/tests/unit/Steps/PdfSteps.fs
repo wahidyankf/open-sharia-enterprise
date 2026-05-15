@@ -4,18 +4,10 @@ open TickSpec
 open Xunit
 open CraneCli.Adapters.PdfAdapter
 open CraneCli.Commands.PdfCommands
+open CraneCli.Tests.Unit.Steps.BddState
 
 let mutable private currentAdapter: IPdfAdapter =
     FakePdfAdapter("Sample text with many words for testing purposes right here and more", 5, 10240L)
-
-let mutable private lastExitCode: int = -1
-let mutable private lastOutput: string = ""
-
-let private runWithWriter (f: System.IO.TextWriter -> int) =
-    use writer = new System.IO.StringWriter()
-    let code = f writer
-    lastOutput <- writer.ToString().Trim()
-    lastExitCode <- code
 
 [<Given>]
 let ``a text-based PDF fixture with a known page count`` () =
@@ -33,31 +25,31 @@ let ``an image-only PDF fixture exists`` () =
 
 [<When>]
 let ``I run "crane pdf info" on the fixture`` () =
-    runWithWriter (fun w -> runInfo currentAdapter w "fake.pdf")
+    RunWithWriter(fun w -> runInfo currentAdapter w "fake.pdf")
 
 [<When>]
 let ``I run "crane pdf type" on the fixture`` () =
-    runWithWriter (fun w -> runType currentAdapter w "fake.pdf")
+    RunWithWriter(fun w -> runType currentAdapter w "fake.pdf")
 
 [<Then>]
 let ``the JSON output is valid`` () =
-    let doc = System.Text.Json.JsonDocument.Parse(lastOutput)
+    let doc = System.Text.Json.JsonDocument.Parse(LastOutput)
     Assert.NotNull(doc)
 
 [<Then>]
 let ``the JSON field "pages" matches the known page count`` () =
-    let doc = System.Text.Json.JsonDocument.Parse(lastOutput)
+    let doc = System.Text.Json.JsonDocument.Parse(LastOutput)
     Assert.Equal(5, doc.RootElement.GetProperty("pages").GetInt32())
 
 [<Then>]
 let ``the JSON field "size_bytes" is greater than 0`` () =
-    let doc = System.Text.Json.JsonDocument.Parse(lastOutput)
+    let doc = System.Text.Json.JsonDocument.Parse(LastOutput)
     Assert.True(doc.RootElement.GetProperty("size_bytes").GetInt64() > 0L)
 
 [<Then>]
 let ``the JSON output contains type "([^"]*)"`` (expected: string) =
-    let doc = System.Text.Json.JsonDocument.Parse(lastOutput)
+    let doc = System.Text.Json.JsonDocument.Parse(LastOutput)
     Assert.Equal(expected, doc.RootElement.GetProperty("type").GetString())
 
 [<Then>]
-let ``the exit code is (\d+)`` (expected: int) = Assert.Equal(expected, lastExitCode)
+let ``the exit code is (\d+)`` (expected: int) = Assert.Equal(expected, LastExitCode)
