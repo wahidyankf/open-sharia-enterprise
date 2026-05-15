@@ -32,6 +32,11 @@ machine reading and `--human` for developer diagnostics.
 - Go 1.26+, go modules, Nx project.json integration (cobra, golangci-lint, godog)
 - BDD-driven development with godog; spec files in `specs/apps/crane/gherkin/`
 - rhino-cli spec-coverage enforcement
+- GitHub Actions CI: quality gate (typecheck/lint/test:quick/spec-coverage) via existing
+  `pr-quality-gate.yml` (auto-triggered by `lang:golang` tag); integration tests via new
+  `.github/workflows/crane-cli-integration.yml` (poppler-utils + real pdftotext, fixture at
+  `apps/crane-cli/tests/fixtures/`)
+- 95% unit test coverage threshold enforced by rhino-cli in `test:quick`
 
 ### Out of Scope
 
@@ -235,8 +240,9 @@ entries: `[{"category": "...", "description": "..."}, ...]`.
 
 ## Acceptance Criteria (Gherkin)
 
-Feature files live at `specs/apps/crane/gherkin/`. Step definitions live at
-`apps/crane-cli/tests/bdd/steps/`.
+Feature files live at `specs/apps/crane/gherkin/`. Unit step definitions (fake adapters) live at
+`apps/crane-cli/tests/unit/steps/`; integration step definitions (real adapters) live at
+`apps/crane-cli/tests/integration/steps/`.
 
 ### Feature: PDF Type Detection
 

@@ -59,7 +59,20 @@ apps/crane-cli/
 │       └── report.go            # SkipListEntry struct
 ├── tests/
 │   ├── unit/
-│   │   ├── text_checker_test.go
+│   │   ├── suite_test.go        # godog runner with fake adapters (no pdftotext needed)
+│   │   ├── steps/
+│   │   │   ├── init.go          # InitializeScenario: wires all step packages
+│   │   │   ├── pdf_steps.go     # uses FakePDFAdapter (mocked exec.Command)
+│   │   │   ├── text_steps.go
+│   │   │   ├── heading_steps.go
+│   │   │   ├── nesting_steps.go
+│   │   │   ├── table_steps.go
+│   │   │   ├── figure_steps.go
+│   │   │   ├── mermaid_steps.go
+│   │   │   ├── ocr_steps.go
+│   │   │   ├── report_steps.go
+│   │   │   └── skiplist_steps.go
+│   │   ├── text_checker_test.go     # pure function unit tests (no godog)
 │   │   ├── heading_checker_test.go
 │   │   ├── nesting_checker_test.go
 │   │   ├── table_checker_test.go
@@ -69,21 +82,10 @@ apps/crane-cli/
 │   │   ├── report_manager_test.go
 │   │   └── skiplist_manager_test.go
 │   ├── integration/
-│   │   └── pdf_commands_test.go # Requires pdftotext on PATH; build tag: Integration
-│   ├── bdd/
-│   │   ├── suite_test.go        # godog runner: loads specs/apps/crane/gherkin/
+│   │   ├── suite_test.go        # godog runner with real adapters (pdftotext on PATH)
 │   │   └── steps/
 │   │       ├── init.go          # InitializeScenario: wires all step packages
-│   │       ├── pdf_steps.go
-│   │       ├── text_steps.go
-│   │       ├── heading_steps.go
-│   │       ├── nesting_steps.go
-│   │       ├── table_steps.go
-│   │       ├── figure_steps.go
-│   │       ├── mermaid_steps.go
-│   │       ├── ocr_steps.go
-│   │       ├── report_steps.go
-│   │       └── skiplist_steps.go
+│   │       └── pdf_steps.go     # uses real exec.Command("pdftotext", ...)
 │   └── fixtures/
 │       ├── sample-text.pdf          # Small text-based PDF (public domain)
 │       ├── sample-text.md           # Complete Markdown conversion of above
@@ -97,19 +99,19 @@ apps/crane-cli/
 
 ## Tech Stack
 
-| Component      | Choice                                        | Reason                                          |
-| -------------- | --------------------------------------------- | ----------------------------------------------- |
-| CLI framework  | cobra v1.10.2 [Repo-grounded: apps/rhino-cli] | Platform standard for ose-public Go CLIs        |
-| Output         | encoding/json (stdlib)                        | Zero external dependency                        |
-| Data models    | Go structs + json tags                        | No runtime dependency                           |
-| Build          | Go modules                                    | Platform standard                               |
-| Linter         | golangci-lint [Repo-grounded: apps/rhino-cli] | Platform standard for Go apps                   |
-| Type safety    | Native (Go is statically typed)               | No extra tool needed                            |
-| BDD framework  | godog v0.15.1 [Repo-grounded: apps/rhino-cli] | Platform standard (rhino-cli pattern)           |
-| Unit tests     | testing + testify/assert v1.9+ [Web-cited]    | Platform standard                               |
-| Coverage       | go test -coverprofile                         | Native Go; rhino-cli validates threshold        |
-| Nx executor    | nx:run-commands with `go build`/`go test`     | Same as rhino-cli/ayokoding-cli [Repo-grounded] |
-| Fuzzy matching | go-diff (sergi/go-diff) [Web-cited]           | Levenshtein + LCS; no NLP runtime needed        |
+| Component      | Choice                                                                                                                                                        | Reason                                          |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| CLI framework  | cobra v1.10.2 [Repo-grounded: apps/rhino-cli]                                                                                                                 | Platform standard for ose-public Go CLIs        |
+| Output         | encoding/json (stdlib)                                                                                                                                        | Zero external dependency                        |
+| Data models    | Go structs + json tags                                                                                                                                        | No runtime dependency                           |
+| Build          | Go modules                                                                                                                                                    | Platform standard                               |
+| Linter         | golangci-lint [Repo-grounded: apps/rhino-cli]                                                                                                                 | Platform standard for Go apps                   |
+| Type safety    | Native (Go is statically typed)                                                                                                                               | No extra tool needed                            |
+| BDD framework  | godog v0.15.1 [Repo-grounded: apps/rhino-cli]                                                                                                                 | Platform standard (rhino-cli pattern)           |
+| Unit tests     | testing + testify/assert v1.9+ [Web-cited: pkg.go.dev/github.com/stretchr/testify — "Thou shalt write tests." Rich assertion lib for Go, accessed 2026-05-15] | Platform standard                               |
+| Coverage       | go test -coverprofile; 95% threshold enforced by rhino-cli                                                                                                    | Native Go; rhino-cli validates threshold        |
+| Nx executor    | nx:run-commands with `go build`/`go test`                                                                                                                     | Same as rhino-cli/ayokoding-cli [Repo-grounded] |
+| Fuzzy matching | go-diff (sergi/go-diff) [Web-cited: pkg.go.dev/github.com/sergi/go-diff — Levenshtein/diff library for Go, accessed 2026-05-15]                               | Levenshtein + LCS; no NLP runtime needed        |
 
 ## go.mod
 
@@ -122,7 +124,7 @@ require (
     github.com/spf13/cobra v1.10.2              // [Repo-grounded: apps/rhino-cli/go.mod, apps/ayokoding-cli/go.mod]
     github.com/cucumber/godog v0.15.1           // [Repo-grounded: apps/rhino-cli/go.mod, apps/ayokoding-cli/go.mod]
     github.com/stretchr/testify v1.9.0
-    github.com/google/uuid v1.6.0              // [Web-cited: https://github.com/google/uuid/releases/tag/v1.6.0, accessed 2026-05-15]
+    github.com/google/uuid v1.6.0              // [Web-cited: https://github.com/google/uuid/releases/tag/v1.6.0 — "Pure Go implementation of UUIDs", accessed 2026-05-15]
     github.com/sergi/go-diff v1.3.1
 )
 ```
@@ -154,9 +156,9 @@ require (
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "go test -v -run 'Unit|BDD' ./... -coverprofile=coverage/coverage.out -covermode=atomic",
+          "CGO_ENABLED=0 go test -v ./tests/unit/... -coverprofile=coverage/coverage.out -covermode=atomic",
           "go tool cover -func=coverage/coverage.out",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/coverage.out 85)"
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/coverage.out 95)"
         ],
         "parallel": false,
         "cwd": "apps/crane-cli"
@@ -168,7 +170,7 @@ require (
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go test -v -run Unit ./tests/unit/...",
+        "command": "CGO_ENABLED=0 go test -v ./tests/unit/...",
         "cwd": "apps/crane-cli"
       },
       "cache": true,
@@ -177,7 +179,7 @@ require (
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go test -v -run Integration ./tests/integration/...",
+        "command": "CGO_ENABLED=0 go test -v ./tests/integration/...",
         "cwd": "apps/crane-cli"
       },
       "cache": false
@@ -205,7 +207,7 @@ require (
       "inputs": ["{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
     }
   },
-  "tags": ["type:app", "platform:cli", "lang:go", "domain:crane"],
+  "tags": ["type:app", "platform:cli", "lang:golang", "domain:crane"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -463,23 +465,29 @@ func UTC7Timestamp() string {
 
 ## godog Feature Loader Pattern
 
+Both suites load the same `specs/apps/crane/gherkin/` feature files. The difference is the
+adapter layer: unit steps use `FakePDFAdapter` (mocked `exec.Command`); integration steps
+use the real adapter (actual `pdftotext` subprocess).
+
+### Unit Suite (fake adapters — no system tools needed)
+
 ```go
-// tests/bdd/suite_test.go
-package bdd_test
+// tests/unit/suite_test.go
+package unit_test
 
 import (
     "os"
     "testing"
 
     "github.com/cucumber/godog"
-    "github.com/wahidyankf/ose-public/apps/crane-cli/tests/bdd/steps"
+    "github.com/wahidyankf/ose-public/apps/crane-cli/tests/unit/steps"
 )
 
 func gherkinRoot() string {
     if root := os.Getenv("GHERKIN_ROOT"); root != "" {
         return root
     }
-    return "../../../specs/apps/crane/gherkin"
+    return "../../specs/apps/crane/gherkin"
 }
 
 func TestMain(m *testing.M) {
@@ -489,7 +497,7 @@ func TestMain(m *testing.M) {
         TestingT: m,
     }
     suite := godog.TestSuite{
-        Name:                "crane-cli",
+        Name:                "crane-cli-unit",
         Options:             &opts,
         ScenarioInitializer: steps.InitializeScenario,
     }
@@ -498,21 +506,30 @@ func TestMain(m *testing.M) {
 ```
 
 ```go
-// tests/bdd/steps/pdf_steps.go
+// tests/unit/steps/pdf_steps.go
 package steps
 
-import "github.com/cucumber/godog"
+import (
+    "github.com/cucumber/godog"
+    "github.com/wahidyankf/ose-public/apps/crane-cli/internal/adapters"
+)
+
+// FakePDFAdapter returns canned text without calling pdftotext
+type FakePDFAdapter struct{ Text string }
+
+func (f *FakePDFAdapter) Sample(_ string, _ int) (string, error) { return f.Text, nil }
+func (f *FakePDFAdapter) Extract(_ string, _, _ int) (string, error) { return f.Text, nil }
 
 func InitializePDFSteps(sc *godog.ScenarioContext) {
     sc.Step(`^a text-based PDF fixture exists$`, aTextBasedPDFFixtureExists)
-    sc.Step(`^I run "crane pdf type" on the fixture$`, iRunCranePDFType)
+    sc.Step(`^I run "crane pdf type" on the fixture$`, iRunCranePDFTypeWithFakeAdapter)
     sc.Step(`^the JSON output contains type "([^"]*)"$`, jsonOutputContainsType)
     sc.Step(`^the exit code is (\d+)$`, exitCodeIs)
 }
 ```
 
 ```go
-// tests/bdd/steps/init.go
+// tests/unit/steps/init.go
 package steps
 
 import "github.com/cucumber/godog"
@@ -531,12 +548,120 @@ func InitializeScenario(sc *godog.ScenarioContext) {
 }
 ```
 
+### Integration Suite (real adapters — requires pdftotext on PATH)
+
+```go
+// tests/integration/suite_test.go
+package integration_test
+
+import (
+    "os"
+    "testing"
+
+    "github.com/cucumber/godog"
+    "github.com/wahidyankf/ose-public/apps/crane-cli/tests/integration/steps"
+)
+
+func gherkinRoot() string {
+    if root := os.Getenv("GHERKIN_ROOT"); root != "" {
+        return root
+    }
+    return "../../specs/apps/crane/gherkin"
+}
+
+func TestMain(m *testing.M) {
+    opts := godog.Options{
+        Format:   "pretty",
+        Paths:    []string{gherkinRoot()},
+        TestingT: m,
+    }
+    suite := godog.TestSuite{
+        Name:                "crane-cli-integration",
+        Options:             &opts,
+        ScenarioInitializer: steps.InitializeScenario,
+    }
+    os.Exit(suite.Run())
+}
+```
+
+```go
+// tests/integration/steps/pdf_steps.go — uses real pdftotext subprocess
+package steps
+
+import (
+    "github.com/cucumber/godog"
+    "github.com/wahidyankf/ose-public/apps/crane-cli/internal/adapters"
+)
+
+func InitializePDFSteps(sc *godog.ScenarioContext) {
+    sc.Step(`^a text-based PDF fixture exists$`, aTextBasedPDFFixtureExists)
+    sc.Step(`^I run "crane pdf type" on the fixture$`, iRunCranePDFTypeWithRealAdapter)
+    sc.Step(`^the JSON output contains type "([^"]*)"$`, jsonOutputContainsType)
+    sc.Step(`^the exit code is (\d+)$`, exitCodeIs)
+}
+```
+
+## CI Workflow
+
+crane-cli follows the **rhino-cli pattern** [Repo-grounded: `.github/workflows/pr-quality-gate.yml`]:
+
+**Quality gate (typecheck + lint + test:quick + spec-coverage)** — handled automatically by the
+existing `.github/workflows/pr-quality-gate.yml` workflow. It detects affected `tag:lang:golang`
+projects via `npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:golang'`
+and uses `.github/actions/setup-golang` (Go 1.26.0, golangci-lint v2.10.1, no `poppler-utils`
+needed). No new workflow file required for the quality gate — crane-cli's `lang:golang` tag is
+sufficient.
+
+**Integration tests (real pdftotext)** — separate workflow file because `poppler-utils` is not
+installed in the standard `setup-golang` action:
+
+Workflow file: `.github/workflows/crane-cli-integration.yml`
+
+```yaml
+name: crane-cli integration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/crane-cli/**"
+      - "specs/apps/crane/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/crane-cli/**"
+      - "specs/apps/crane/**"
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-golang
+      - name: Install poppler-utils (pdftotext + pdfinfo)
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - run: npx nx run crane-cli:test:integration
+```
+
+**Unit/quality job** — `pr-quality-gate.yml` golang job; no `poppler-utils` needed (all adapters
+mocked). **Integration job** — `crane-cli-integration.yml`; installs `poppler-utils` and runs
+real pdftotext against `apps/crane-cli/tests/fixtures/sample-text.pdf`.
+
 ## File Impact
 
 ### New Files
 
 - `apps/crane-cli/` — entire new Go module (cmd/, internal/, tests/, go.mod, project.json)
-- `specs/apps/crane/gherkin/*.feature` — 10 Gherkin feature files (written during Phases 1–4)
+- `specs/apps/crane/gherkin/*.feature` — 10 Gherkin feature files (written during Phase 0)
+- `.github/workflows/crane-cli-integration.yml` — integration CI job (poppler-utils + real pdftotext)
+- Note: quality gate (typecheck/lint/test:quick/spec-coverage) runs via existing `pr-quality-gate.yml`
+  automatically — no new workflow file needed for quality
 
 ### Modified Files (Phase 5)
 

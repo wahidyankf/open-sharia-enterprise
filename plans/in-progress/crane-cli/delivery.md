@@ -45,10 +45,14 @@ _Suggested executor: swe-golang-dev_
 - [ ] Create `apps/crane-cli/internal/adapters/` — pdftotext.go, pdfinfo.go, tesseract.go stubs
 - [ ] Create `apps/crane-cli/internal/models/` — finding.go, pdf_metadata.go, report.go with type
       declarations exactly as specified in tech-docs.md
-- [ ] Create `apps/crane-cli/tests/unit/` — one `_test.go` file per core module (all empty bodies)
-- [ ] Create `apps/crane-cli/tests/integration/pdf_commands_test.go` — build tag `//go:build Integration`
-- [ ] Create `apps/crane-cli/tests/bdd/suite_test.go` — godog runner (see tech-docs.md)
-- [ ] Create `apps/crane-cli/tests/bdd/steps/init.go` — `InitializeScenario` wires all step packages
+- [ ] Create `apps/crane-cli/tests/unit/suite_test.go` — godog runner with fake adapters
+      (see tech-docs.md Unit Suite pattern)
+- [ ] Create `apps/crane-cli/tests/unit/steps/init.go` — `InitializeScenario` wires all unit step packages
+- [ ] Create `apps/crane-cli/tests/unit/` — one `_test.go` file per core module (pure function tests,
+      no godog — e.g., `text_checker_test.go`, `mermaid_validator_test.go`, etc.)
+- [ ] Create `apps/crane-cli/tests/integration/suite_test.go` — godog runner with real adapters
+      (see tech-docs.md Integration Suite pattern)
+- [ ] Create `apps/crane-cli/tests/integration/steps/init.go` — `InitializeScenario` wires integration steps
 - [ ] Create `apps/crane-cli/tests/fixtures/` — empty dir with `.gitkeep`
 
 - [ ] Verify scaffold: `find apps/crane-cli -name '*.go' | wc -l` returns ≥ 25;
@@ -65,7 +69,84 @@ _Suggested executor: swe-golang-dev_
 - [ ] Write `apps/crane-cli/README.md` — one-paragraph description, `go build`, `crane --help` instructions
 - [ ] Run `cd apps/crane-cli && go mod tidy` — downloads deps, creates go.sum; exits 0
 
-### P0.3 — Bootstrap verification
+### P0.3 — Gherkin feature files
+
+_Suggested executor: swe-golang-dev_
+
+Write each feature file at `specs/apps/crane/gherkin/<name>.feature`, containing the `Feature:`
+header and the scenarios specified in `prd.md §Acceptance Criteria` for that command domain.
+
+- [ ] Write `specs/apps/crane/gherkin/pdf-commands.feature` — Feature header + all PDF command
+      scenarios from prd.md (pdf info, pdf type, pdf extract)
+- [ ] Write `specs/apps/crane/gherkin/text-check.feature` — Feature header + all text completeness
+      scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/heading-check.feature` — Feature header + all heading
+      check scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/nesting-check.feature` — Feature header + all nesting
+      check scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/table-check.feature` — Feature header + all table check
+      scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/figure-check.feature` — Feature header + all figure check
+      scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/mermaid-validate.feature` — Feature header + all mermaid
+      validation scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/ocr-quality.feature` — Feature header + all OCR quality
+      scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/report-management.feature` — Feature header + all report
+      management scenarios from prd.md
+- [ ] Write `specs/apps/crane/gherkin/skiplist-management.feature` — Feature header + all
+      skiplist management scenarios from prd.md
+
+- [ ] Verify all 10 feature files exist:
+      `find specs/apps/crane/gherkin -name '*.feature' | wc -l` returns 10
+
+### P0.4 — Test fixtures
+
+_Suggested executor: swe-golang-dev_
+
+Acquire the PDF fixture required by all integration tests from Phase 1 onward.
+
+- [ ] Download a public-domain text-based PDF:
+
+  ```bash
+  mkdir -p apps/crane-cli/tests/fixtures
+  curl -L "https://www.w3.org/WAI/WCAG21/Techniques/pdf/sample.pdf" \
+    -o apps/crane-cli/tests/fixtures/sample-text.pdf
+  ```
+
+  If that URL is unavailable, substitute any small public-domain text PDF (e.g., from
+  <https://www.w3.org/WAI/WCAG21/Techniques/pdf/>) and update this step with the actual URL used.
+
+- [ ] Create the Markdown pair from the fixture:
+
+  ```bash
+  pdftotext apps/crane-cli/tests/fixtures/sample-text.pdf \
+    apps/crane-cli/tests/fixtures/sample-text.md
+  ```
+
+- [ ] Verify fixture is present and is a text PDF:
+      `test -f apps/crane-cli/tests/fixtures/sample-text.pdf` exits 0; and
+      `crane pdf type apps/crane-cli/tests/fixtures/sample-text.pdf | jq -r .type` outputs `text`
+      (run this after Phase 1 `crane pdf type` is implemented to confirm type detection)
+
+### P0.5 — CI workflow
+
+_Suggested executor: swe-golang-dev_
+
+Note: The quality gate (typecheck + lint + test:quick + spec-coverage) is handled automatically
+by the existing `pr-quality-gate.yml` via the `lang:golang` tag — no new workflow file needed
+for quality. Only the integration job requires a new file (needs `poppler-utils`).
+
+- [ ] Write `.github/workflows/crane-cli-integration.yml` — exactly as specified in tech-docs.md
+      (single `integration` job using `.github/actions/setup-golang` + `apt-get install poppler-utils` + `npx nx run crane-cli:test:integration`)
+- [ ] Verify workflow syntax:
+      `python3 -c "import sys,yaml; yaml.safe_load(open('.github/workflows/crane-cli-integration.yml'))"` exits 0
+- [ ] Confirm path filters cover `apps/crane-cli/**`:
+      `grep -c 'apps/crane-cli' .github/workflows/crane-cli-integration.yml` returns ≥ 1
+- [ ] Confirm `tag:lang:golang` in project.json so `pr-quality-gate.yml` picks up crane-cli:
+      `grep -q 'lang:golang' apps/crane-cli/project.json` exits 0
+
+### P0.6 — Bootstrap verification
 
 _Suggested executor: swe-golang-dev_
 
@@ -82,8 +163,8 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/pdf_steps.go` — `InitializePDFSteps` with step stubs
-      for all `pdf-commands.feature` scenarios; `go test -run BDD ./tests/bdd/...` fails
+- [ ] **RED** Write `tests/unit/steps/pdf_steps.go` — `InitializePDFSteps` with step stubs
+      for all `pdf-commands.feature` scenarios; `go test ./tests/unit/...` fails
 - [ ] Write `internal/adapters/pdfinfo.go` — `GetInfo(pdf string) (map[string]string, error)`;
       `exec.Command("pdfinfo", pdf)`; returns `ErrToolNotFound` when exit code 127
 - [ ] **RED** Write `tests/unit/pdf_adapter_test.go::TestUnitGetInfo_ParsesPageCount` — fails
@@ -108,7 +189,7 @@ _Suggested executor: swe-golang-dev_
 _Suggested executor: swe-golang-dev_
 
 - [ ] **RED** Add step implementations in `pdf_steps.go` for `pdf-commands.feature`
-      "PDF metadata extraction" scenario; `go test -run BDD` fails with "undefined step"
+      "PDF metadata extraction" scenario; `go test ./tests/unit/...` fails with "undefined step"
 - [ ] Write `internal/commands/pdf.go` `infoCmd` — calls pdfinfo adapter + pdftotext sample;
       marshals `PDFMetadata` to JSON; exits 0 (exit 2 on `ErrToolNotFound`)
 - [ ] **GREEN** "PDF metadata extraction" BDD scenario passes
@@ -118,7 +199,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Add step implementations for "PDF type detection" scenarios; `go test -run BDD` fails
+- [ ] **RED** Add step implementations for "PDF type detection" scenarios; `go test ./tests/unit/...` fails
 - [ ] Write `internal/commands/pdf.go` `typeCmd` — calls `pdftotext.Sample`; counts non-whitespace
       chars; prints `{"type":"text"}` or `{"type":"image"}`; exits 0/1 (exit 2 on tool absent)
 - [ ] **GREEN** all "PDF type detection" BDD scenarios pass
@@ -136,8 +217,9 @@ _Suggested executor: swe-golang-dev_
 
 - [ ] `nx run crane-cli:test:unit` — all Phase 1 BDD + unit tests pass
 - [ ] `nx run crane-cli:lint` clean
-- [ ] `nx run crane-cli:test:integration` — `crane pdf info tests/fixtures/sample-text.pdf`
-      returns JSON with correct page count (requires pdftotext on PATH)
+- [ ] `nx run crane-cli:test:integration` — integration godog suite runs against real
+      `apps/crane-cli/tests/fixtures/sample-text.pdf`; PDF type detection and info scenarios
+      pass with actual pdftotext output (requires pdftotext on PATH)
 
 ---
 
@@ -147,8 +229,8 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/text_steps.go` — step stubs for all `text-check.feature`
-      scenarios; `go test -run BDD` fails
+- [ ] **RED** Write `tests/unit/steps/text_steps.go` — step stubs for all `text-check.feature`
+      scenarios; `go test ./tests/unit/...` fails
 - [ ] Write `internal/core/text_checker.go`:
   - `Normalize(text string) string`
   - `Similarity(a, b string) float64`
@@ -173,7 +255,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/heading_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/heading_steps.go` — step stubs; fails
 - [ ] Write `internal/core/heading_checker.go`:
   - `InferDepthFromNumbering(heading string) (depth int, confidence string, ok bool)`
   - `ExtractMDHeadings(mdText string) []HeadingEntry` — (lineNo, depth, text)
@@ -194,7 +276,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/nesting_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/nesting_steps.go` — step stubs; fails
 - [ ] Write `internal/core/nesting_checker.go`:
   - `ExtractNestingLevels(layoutText string) []NestingItem` — (colOffset, depth)
   - `CheckNesting(pdfLayoutText, mdText string) []models.Finding`
@@ -211,7 +293,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/table_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/table_steps.go` — step stubs; fails
 - [ ] Write `internal/core/table_checker.go`:
   - `DetectTables(layoutText string) []TableSpec`
   - `CheckTables(pdfLayoutText, mdText string) []models.Finding`
@@ -239,7 +321,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/figure_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/figure_steps.go` — step stubs; fails
 - [ ] Write `internal/core/figure_checker.go`:
   - `DetectFigures(text string) []FigureRef` — regex: `Figure \d+`, `Fig\. \d+`, `Exhibit \d+`,
     `Diagram \d+`, `Chart \d+`
@@ -259,7 +341,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/mermaid_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/mermaid_steps.go` — step stubs; fails
 - [ ] Write `internal/core/mermaid_validator.go`:
   - `validMermaidTypes` map (18 types — see tech-docs.md)
   - `ValidateMermaidBlock(content string) (bool, string)`
@@ -282,7 +364,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/ocr_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/ocr_steps.go` — step stubs; fails
 - [ ] Write `internal/core/ocr_assessor.go`:
   - `ocrErrorPatterns` slice (4 patterns — see tech-docs.md)
   - `EstimateOCRErrorRate(text string) float64`
@@ -304,7 +386,7 @@ _Suggested executor: swe-golang-dev_
 
 ### P3.4 — Phase 3 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 3 unit + BDD tests pass; coverage ≥ 85%
+- [ ] `nx run crane-cli:test:unit` — all Phase 3 unit + BDD tests pass; coverage ≥ 95%
 - [ ] `nx run crane-cli:lint` clean
 
 ---
@@ -315,7 +397,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/report_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/report_steps.go` — step stubs; fails
 - [ ] Write `internal/core/report_manager.go`:
   - `GetOrExtendChain(scope string) string`
   - `UTC7Timestamp() string`
@@ -338,7 +420,7 @@ _Suggested executor: swe-golang-dev_
 
 _Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write `tests/bdd/steps/skiplist_steps.go` — step stubs; fails
+- [ ] **RED** Write `tests/unit/steps/skiplist_steps.go` — step stubs; fails
 - [ ] Write `internal/core/skiplist_manager.go`:
   - `StableKey(mdBasename, category, description string) string`
   - `Add(mdBasename, category, description string) (bool, error)` — true if added, false if dup
@@ -360,7 +442,7 @@ _Suggested executor: swe-golang-dev_
 
 ### P4.3 — Phase 4 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 4 unit + BDD tests pass; coverage ≥ 85%
+- [ ] `nx run crane-cli:test:unit` — all Phase 4 unit + BDD tests pass; coverage ≥ 95%
 - [ ] `nx run crane-cli:lint` clean
 - [ ] `nx run crane-cli:spec-coverage` — passes (all feature scenarios implemented)
 - [ ] `crane --help` shows all 10 subcommand groups with correct subcommands listed
@@ -430,8 +512,8 @@ _Suggested executor: swe-golang-dev_
 
 ### P5.5 — End-to-end validation
 
-- [ ] Copy or create a small freely-licensed text-based PDF at
-      `apps/crane-cli/tests/fixtures/sample-text.pdf`; verify:
+- [ ] Verify the fixture created in P0.4 is present and correctly typed:
+      `test -f apps/crane-cli/tests/fixtures/sample-text.pdf` exits 0 and
       `crane pdf type apps/crane-cli/tests/fixtures/sample-text.pdf | jq -r .type` outputs `text`
 - [ ] Run the `pdf-to-md-quality-gate` workflow on the fixture:
       `pdf_file=apps/crane-cli/tests/fixtures/sample-text.pdf mode=normal`;
@@ -470,6 +552,7 @@ local gate, push the fix. Do not proceed to next delivery item until CI is green
 Commit thematically per Conventional Commits format. Do not bundle unrelated changes. Suggested
 split:
 
+- `ci(crane-cli): add GitHub Actions workflow — Phase 0`
 - `feat(crane-cli): scaffold Go module — Phase 0`
 - `feat(crane-cli): add PDF commands — Phase 1`
 - `feat(crane-cli): add analysis commands — Phase 2`
@@ -482,7 +565,7 @@ split:
 When all Final Gate items are checked:
 
 ```bash
-git mv plans/in-progress/crane-cli plans/done/2026-MM-DD__crane-cli
+git mv plans/in-progress/crane-cli plans/done/YYYY-MM-DD__crane-cli
 ```
 
 Update `plans/done/README.md` and `plans/in-progress/README.md` accordingly.
@@ -492,7 +575,7 @@ Update `plans/done/README.md` and `plans/in-progress/README.md` accordingly.
 ## Final Gate
 
 - [ ] **F1** All 5 phases complete; all items above checked
-- [ ] **F2** `nx run crane-cli:test:quick` passes — coverage ≥ 85%, rhino-cli validates threshold
+- [ ] **F2** `nx run crane-cli:test:quick` passes — coverage ≥ 95%, rhino-cli validates threshold
 - [ ] **F3** `nx run crane-cli:test:integration` passes with pdftotext on PATH
 - [ ] **F4** `nx run crane-cli:lint` clean — zero golangci-lint violations
 - [ ] **F5** `nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
@@ -500,5 +583,8 @@ Update `plans/done/README.md` and `plans/in-progress/README.md` accordingly.
 - [ ] **F7** `crane pdf type apps/crane-cli/tests/fixtures/sample-text.pdf | jq -r .type` outputs `text`
 - [ ] **F8** pdf-to-md agents contain no inline `grep -F`, `pdfinfo | awk`, or UUID bash
 - [ ] **F9** `nx affected -t typecheck lint test:quick spec-coverage` passes (pre-push gate)
-- [ ] **F10** Post-push CI workflows green on `origin/main`
-- [ ] **F11** Plan archival complete: folder moved to `plans/done/YYYY-MM-DD__crane-cli/`
+- [ ] **F10** `.github/workflows/crane-cli-integration.yml` exists;
+      `gh workflow list` shows `crane-cli integration`
+- [ ] **F11** Post-push: `pr-quality-gate.yml` golang job passes for crane-cli;
+      `crane-cli-integration.yml` integration job passes
+- [ ] **F12** Plan archival complete: folder moved to `plans/done/YYYY-MM-DD__crane-cli/`

@@ -90,7 +90,7 @@ structured data, not raw text.
 
 - All 8 pdf-to-md validation dimensions covered by crane commands with unit tests
 - pdf-to-md agents contain no inline bash analysis logic after Phase 5
-- `nx run crane-cli:test:quick` passes with ≥ 85% line coverage enforced by rhino-cli
+- `nx run crane-cli:test:quick` passes with ≥ 95% line coverage enforced by rhino-cli
 - End-to-end quality gate on a real text-based PDF produces a `PASS` result
 - `nx run crane-cli:spec-coverage` passes (all Gherkin scenarios implemented)
 
