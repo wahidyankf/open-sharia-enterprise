@@ -8,8 +8,8 @@ It replaces fragile bash one-liners in the `pdf-to-md` agents with well-tested, 
 F# commands, turning agents into thin orchestrators of a tested analysis engine.
 
 crane-cli is intentionally built in F# (not Go) so its core logic can be shared as a NuGet
-library with `ose-app-be`, `organiclever-be`, and future OSE backend services — eliminating
-the subprocess boundary when PDF analysis is needed inline within a service.
+library with `ose-app-be` and future F# OSE backend services — eliminating the subprocess
+boundary when PDF analysis is needed inline within a service.
 
 ## Why
 

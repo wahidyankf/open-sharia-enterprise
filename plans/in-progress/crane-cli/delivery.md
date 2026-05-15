@@ -39,11 +39,16 @@ _Suggested executor: swe-fsharp-dev_
 
 - [ ] Create directory structure: `apps/crane-cli/{Commands,Core,Adapters,Models}/`
 - [ ] Create `apps/crane-cli/Models/Finding.fs` — Criticality, Confidence, Category DUs + Finding
-      record exactly as specified in tech-docs.md
-- [ ] Create `apps/crane-cli/Models/PdfMetadata.fs` — PdfMetadata record
-- [ ] Create `apps/crane-cli/Models/Report.fs` — SkipListEntry record
-- [ ] Create `apps/crane-cli/Adapters/PdfAdapter.fs` — PdfPig wrapper stub (module declaration only)
-- [ ] Create `apps/crane-cli/Adapters/OcrAdapter.fs` — TesseractOCR wrapper stub
+      record exactly as specified in tech-docs.md.
+      Verify: `test -f apps/crane-cli/Models/Finding.fs` exits 0
+- [ ] Create `apps/crane-cli/Models/PdfMetadata.fs` — PdfMetadata record.
+      Verify: `test -f apps/crane-cli/Models/PdfMetadata.fs` exits 0
+- [ ] Create `apps/crane-cli/Models/Report.fs` — SkipListEntry record.
+      Verify: `test -f apps/crane-cli/Models/Report.fs` exits 0
+- [ ] Create `apps/crane-cli/Adapters/PdfAdapter.fs` — PdfPig wrapper stub (module declaration only).
+      Verify: `test -f apps/crane-cli/Adapters/PdfAdapter.fs` exits 0
+- [ ] Create `apps/crane-cli/Adapters/OcrAdapter.fs` — TesseractOCR wrapper stub.
+      Verify: `test -f apps/crane-cli/Adapters/OcrAdapter.fs` exits 0
 - [ ] Create `apps/crane-cli/Core/` — one `.fs` stub per module: TextChecker, HeadingChecker,
       NestingChecker, TableChecker, FigureChecker, MermaidValidator, OcrAssessor, ReportManager,
       SkiplistManager (module declaration + empty `let placeholder () = ()`)
@@ -70,8 +75,11 @@ _Suggested executor: swe-fsharp-dev_
       `net8.0`, `PublishSingleFile`, `SelfContained`, all `<Compile>` items in dependency order,
       NuGet packages: Argu 6.2.5, PdfPig 0.1.14, TesseractOCR 5.5.2,
       FSharp.SystemTextJson 1.4.36, F23.StringSimilarity 7.0.1
+- [ ] Write `apps/crane-cli/.config/dotnet-tools.json` — exactly as specified in tech-docs.md:
+      `altcover.global` 9.0.102 as the sole dotnet tool (NO `<PackageReference Include="altcover">` in any .fsproj; Fantomas runs as a globally-installed tool, not via dotnet-tools.json)
 - [ ] Write `apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj` — exactly as specified in
-      tech-docs.md: xUnit, TickSpec 2.0.4, altcover (MIT), ProjectReference to crane-cli.fsproj
+      tech-docs.md: xUnit, TickSpec 2.0.4, ProjectReference to crane-cli.fsproj (altcover installed
+      via dotnet-tools.json, not PackageReference)
 - [ ] Write `apps/crane-cli/tests/integration/crane-cli-integration-tests.fsproj` — same deps
       as unit test project; ProjectReference to crane-cli.fsproj
 - [ ] Write `apps/crane-cli/project.json` — exactly as specified in tech-docs.md
@@ -206,7 +214,9 @@ let private tessDataPath =
 
 - [ ] Download English tessdata during P0.4:
       `mkdir -p apps/crane-cli/tessdata && curl -L "https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata" -o apps/crane-cli/tessdata/eng.traineddata`
-- [ ] Add `tessdata/eng.traineddata` content file configuration to `crane-cli.fsproj`
+- [ ] Edit `apps/crane-cli/crane-cli.fsproj`: add the tessdata content ItemGroup exactly as shown
+      in the Standalone Binary Requirement section above (the `<Content Include="tessdata/eng.traineddata">` block).
+      Verify: `grep -q 'tessdata/eng.traineddata' apps/crane-cli/crane-cli.fsproj` exits 0
 - [ ] Build standalone binary for current platform and verify it works:
 
   ```bash
@@ -289,13 +299,7 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/TextSteps.fs` for `text-check.feature`; fails
-- [ ] Write `Core/TextChecker.fs`:
-  - `normalize (text: string) : string`
-  - `computeSimilarity (a: string) (b: string) : float`
-  - `segmentIsPresent (segment: string) (mdText: string) : bool`
-  - `classifyMissing (segment: string) : Criticality`
-  - `checkText (pdfChunks: string list) (mdText: string) : Finding list`
-- [ ] **RED** Write unit tests in `tests/unit/Steps/TextSteps.fs`:
+- [ ] **RED** Write unit tests in `tests/unit/Steps/TextSteps.fs` (no implementation yet — all fail):
   - `TestUnitNormalize_CollapsesWhitespace`
   - `TestUnitNormalize_StripsLeadingTrailing`
   - `TestUnitSimilarity_ExactIs1`
@@ -304,6 +308,12 @@ _Suggested executor: swe-fsharp-dev_
   - `TestUnitMissingHeading_IsCritical`
   - `TestUnitMissingParagraph_IsHigh`
   - `TestUnitPresentText_NoFinding`
+- [ ] Write `Core/TextChecker.fs`:
+  - `normalize (text: string) : string`
+  - `computeSimilarity (a: string) (b: string) : float`
+  - `segmentIsPresent (segment: string) (mdText: string) : bool`
+  - `classifyMissing (segment: string) : Criticality`
+  - `checkText (pdfChunks: string list) (mdText: string) : Finding list`
 - [ ] **GREEN** all text checker unit tests pass
 - [ ] **REFACTOR** Extract `windowMatch (seg: string) (text: string) : bool` private helper
 - [ ] Write `Commands/TextCommands.fs` `checkCmd` and `searchCmd`
@@ -314,18 +324,19 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/HeadingSteps.fs`; fails
-- [ ] Write `Core/HeadingChecker.fs`:
-  - `inferDepthFromNumbering (heading: string) : (int * string) option`
-  - `extractMdHeadings (mdText: string) : HeadingEntry list`
-  - `checkHeadings (pdfLayoutText: string) (mdText: string) : Finding list`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitInferDepth_SingleNumber` — "1. Title" → 2
   - `TestUnitInferDepth_TwoComponents` — "2.3 Title" → 3
   - `TestUnitInferDepth_ThreeComponents` — "2.3.1 Title" → 4
   - `TestUnitInferDepth_NoNumber` — "Introduction" → None
   - `TestUnitWrongDepth_OffByTwo_IsHigh`
   - `TestUnitCorrectDepth_NoFinding`
+- [ ] Write `Core/HeadingChecker.fs`:
+  - `inferDepthFromNumbering (heading: string) : (int * string) option`
+  - `extractMdHeadings (mdText: string) : HeadingEntry list`
+  - `checkHeadings (pdfLayoutText: string) (mdText: string) : Finding list`
 - [ ] **GREEN** all heading unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in HeadingChecker module
 - [ ] Write `Commands/HeadingCommands.fs` `inferCmd` and `checkCmd`
 - [ ] **GREEN** all `heading-check.feature` BDD scenarios pass
 
@@ -334,15 +345,16 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/NestingSteps.fs`; fails
-- [ ] Write `Core/NestingChecker.fs`:
-  - `extractNestingLevels (layoutText: string) : NestingItem list`
-  - `checkNesting (pdfLayoutText: string) (mdText: string) : Finding list`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitExtractNesting_SingleLevel`
   - `TestUnitExtractNesting_TwoLevels`
   - `TestUnitWrongNesting_OffByOne_IsMedium`
   - `TestUnitInvertedNesting_IsHigh`
+- [ ] Write `Core/NestingChecker.fs`:
+  - `extractNestingLevels (layoutText: string) : NestingItem list`
+  - `checkNesting (pdfLayoutText: string) (mdText: string) : Finding list`
 - [ ] **GREEN** all nesting unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in NestingChecker module
 - [ ] Write `Commands/NestingCommands.fs` `inferCmd` and `checkCmd`
 - [ ] **GREEN** all `nesting-check.feature` BDD scenarios pass
 
@@ -351,16 +363,17 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/TableSteps.fs`; fails
-- [ ] Write `Core/TableChecker.fs`:
-  - `detectTables (layoutText: string) : TableSpec list`
-  - `checkTables (pdfLayoutText: string) (mdText: string) : Finding list`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitDetect3ColTable_ReturnsOne`
   - `TestUnitDetectProse_ReturnsEmpty`
   - `TestUnitMissingTable_IsCritical`
   - `TestUnitPresentTable_NoFinding`
   - `TestUnitWrongRowCount_IsMedium`
+- [ ] Write `Core/TableChecker.fs`:
+  - `detectTables (layoutText: string) : TableSpec list`
+  - `checkTables (pdfLayoutText: string) (mdText: string) : Finding list`
 - [ ] **GREEN** all table unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in TableChecker module
 - [ ] Write `Commands/TableCommands.fs` `detectCmd` and `checkCmd`
 - [ ] **GREEN** all `table-check.feature` BDD scenarios pass
 
@@ -378,17 +391,18 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/FigureSteps.fs`; fails
-- [ ] Write `Core/FigureChecker.fs`:
-  - `detectFigures (text: string) : FigureRef list`
-  - `checkFigures (pdfText: string) (mdText: string) : Finding list`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitDetectFigureN_Pattern`
   - `TestUnitDetectFigDotN_Pattern`
   - `TestUnitNoFigures_ReturnsEmpty`
   - `TestUnitMissingFigure_IsHigh`
   - `TestUnitPlaceholder_SatisfiesCoverage`
   - `TestUnitMermaidBlock_SatisfiesCoverage`
+- [ ] Write `Core/FigureChecker.fs`:
+  - `detectFigures (text: string) : FigureRef list`
+  - `checkFigures (pdfText: string) (mdText: string) : Finding list`
 - [ ] **GREEN** all figure unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in FigureChecker module
 - [ ] Write `Commands/FigureCommands.fs` `detectCmd` and `checkCmd`
 - [ ] **GREEN** all `figure-check.feature` BDD scenarios pass
 
@@ -397,12 +411,7 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/MermaidSteps.fs`; fails
-- [ ] Write `Core/MermaidValidator.fs`:
-  - `validTypes` Set (18 types — see tech-docs.md)
-  - `validateBlock (content: string) : Result<unit, string>`
-  - `extractBlocks (mdText: string) : MermaidBlock list`
-  - `validateMd (mdText: string) : Finding list`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitValidGraphTD_NoFinding`
   - `TestUnitAllKnownTypes_Accepted` — table-driven over validTypes
   - `TestUnitUnknownType_IsHigh`
@@ -410,7 +419,13 @@ _Suggested executor: swe-fsharp-dev_
   - `TestUnitUnmatchedBracket_IsHigh`
   - `TestUnitUnmatchedParen_IsHigh`
   - `TestUnitFinding_IncludesLineNumber`
+- [ ] Write `Core/MermaidValidator.fs`:
+  - `validTypes` Set (18 types — see tech-docs.md)
+  - `validateBlock (content: string) : Result<unit, string>`
+  - `extractBlocks (mdText: string) : MermaidBlock list`
+  - `validateMd (mdText: string) : Finding list`
 - [ ] **GREEN** all mermaid unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in MermaidValidator module
 - [ ] Write `Commands/MermaidCommands.fs` `validateCmd`
 - [ ] **GREEN** all `mermaid-validate.feature` BDD scenarios pass
 
@@ -419,12 +434,7 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/OcrSteps.fs`; fails
-- [ ] Write `Core/OcrAssessor.fs`:
-  - `ocrErrorPatterns` array (4 patterns — see tech-docs.md)
-  - `estimateOCRErrorRate (text: string) : float`
-  - `extractOCRSections (mdText: string) : OCRSection list`
-  - `checkOCRQuality (mdText: string) : Finding list`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitCleanText_RateNearZero`
   - `TestUnitRepeatedL_RaisesRate`
   - `TestUnitNonASCIIRuns_RaisesRate`
@@ -433,7 +443,13 @@ _Suggested executor: swe-fsharp-dev_
   - `TestUnitRate2to5Pct_IsMedium`
   - `TestUnitRateBelow2Pct_NoFinding`
   - `TestUnitNoOCRTags_ReturnsEmpty`
+- [ ] Write `Core/OcrAssessor.fs`:
+  - `ocrErrorPatterns` array (4 patterns — see tech-docs.md)
+  - `estimateOCRErrorRate (text: string) : float`
+  - `extractOCRSections (mdText: string) : OCRSection list`
+  - `checkOCRQuality (mdText: string) : Finding list`
 - [ ] **GREEN** all OCR assessor unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in OcrAssessor module
 - [ ] Write `Commands/OcrCommands.fs` `qualityCmd` and `extractCmd`
 - [ ] **GREEN** all `ocr-quality.feature` BDD scenarios pass
 
@@ -451,12 +467,7 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/ReportSteps.fs`; fails
-- [ ] Write `Core/ReportManager.fs`:
-  - `getOrExtendChain (scope: string) : string`
-  - `utc7Timestamp () : string`
-  - `initReport (scope: string) (pdf: string) (md: string) : Result<string, string>`
-  - `finalizeReport (reportPath: string) (status: string) : Result<unit, string>`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitNewChain_Is6HexChars`
   - `TestUnitChain_ExtendsWhenFresh`
   - `TestUnitChain_ResetsWhenStale`
@@ -464,7 +475,13 @@ _Suggested executor: swe-fsharp-dev_
   - `TestUnitInitReport_CreatesFileInGeneratedReports`
   - `TestUnitFinalizeReport_ReplacesInProgressWithPass`
   - `TestUnitFinalizeReport_ErrorsOnMissingFile`
+- [ ] Write `Core/ReportManager.fs`:
+  - `getOrExtendChain (scope: string) : string`
+  - `utc7Timestamp () : string`
+  - `initReport (scope: string) (pdf: string) (md: string) : Result<string, string>`
+  - `finalizeReport (reportPath: string) (status: string) : Result<unit, string>`
 - [ ] **GREEN** all report manager unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in ReportManager module
 - [ ] Write `Commands/ReportCommands.fs` `initCmd` and `finalizeCmd`
 - [ ] **GREEN** all `report-management.feature` BDD scenarios pass
 
@@ -473,12 +490,7 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] **RED** Write step stubs in `tests/unit/Steps/SkiplistSteps.fs`; fails
-- [ ] Write `Core/SkiplistManager.fs`:
-  - `stableKey (mdBasename: string) (category: string) (description: string) : string`
-  - `add (mdBasename: string) (category: string) (description: string) : Result<bool, string>`
-  - `check (mdBasename: string) (category: string) (description: string) : Result<bool, string>`
-  - `list (mdBasename: string) : Result<SkipListEntry list, string>`
-- [ ] **RED** Write unit tests:
+- [ ] **RED** Write unit tests (no implementation yet — all fail):
   - `TestUnitStableKey_Format`
   - `TestUnitAdd_CreatesFile`
   - `TestUnitAdd_ReturnsTrueOnNewEntry`
@@ -488,7 +500,13 @@ _Suggested executor: swe-fsharp-dev_
   - `TestUnitCheck_ReturnsFalseOnUnknown`
   - `TestUnitList_ReturnsAllEntries`
   - `TestUnitList_ReturnsEmptyOnMissingFile`
+- [ ] Write `Core/SkiplistManager.fs`:
+  - `stableKey (mdBasename: string) (category: string) (description: string) : string`
+  - `add (mdBasename: string) (category: string) (description: string) : Result<bool, string>`
+  - `check (mdBasename: string) (category: string) (description: string) : Result<bool, string>`
+  - `list (mdBasename: string) : Result<SkipListEntry list, string>`
 - [ ] **GREEN** all skiplist manager unit tests pass
+- [ ] **REFACTOR** Ensure pure function signatures with no I/O side effects in SkiplistManager module
 - [ ] Write `Commands/SkiplistCommands.fs` `addCmd`, `checkCmd`, `listCmd`
 - [ ] **GREEN** all `skiplist-management.feature` BDD scenarios pass
 
@@ -560,13 +578,15 @@ _Suggested executor: swe-fsharp-dev_
 
 ### P5.4 — Update workflow documentation
 
-_Suggested executor: swe-fsharp-dev_
-
 - [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md` Tool Dependencies section:
       add `npx nx run crane-cli:build` (builds `apps/crane-cli/dist/crane`) and
       `export PATH="$PWD/apps/crane-cli/dist:$PATH"` and `crane --version` verification line;
       verify `grep -q 'crane --version' repo-governance/workflows/content/pdf-to-md-quality-gate.md` exits 0
-- [ ] Edit Validation Dimensions Summary table: add crane command column for each dimension
+- [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md`: in the
+      "Validation Dimensions Summary" table (or equivalent table listing all 8 dimensions),
+      add a "crane command" column with the appropriate `crane <subcmd>` for each dimension.
+      Verify: `grep -q 'crane text check\|crane heading check' repo-governance/workflows/content/pdf-to-md-quality-gate.md`
+      exits 0
 
 ### P5.5 — End-to-end validation
 

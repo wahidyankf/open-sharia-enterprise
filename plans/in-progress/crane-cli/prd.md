@@ -33,9 +33,10 @@ machine reading and `--human` for developer diagnostics.
 - BDD-driven development with TickSpec; spec files in `specs/apps/crane/gherkin/`
 - rhino-cli spec-coverage enforcement
 - GitHub Actions CI: quality gate (typecheck/lint/test:quick/spec-coverage) via existing
-  `pr-quality-gate.yml` (auto-triggered by `lang:fsharp` tag); integration tests via new
-  `.github/workflows/crane-cli-integration.yml` (tesseract + real OCR tests, fixture at
-  `apps/crane-cli/tests/integration/fixtures/`)
+  `pr-quality-gate.yml` (auto-triggered by `lang:fsharp` tag)
+  [Repo-grounded: .github/workflows/pr-quality-gate.yml — lang:fsharp|lang:csharp triggers .NET quality gate job];
+  integration tests via new `.github/workflows/crane-cli-integration.yml` (tesseract + real OCR tests,
+  fixture at `apps/crane-cli/tests/integration/fixtures/`)
 - 95% unit test line coverage threshold enforced by altcover + rhino-cli in `test:quick`
 
 ### Out of Scope

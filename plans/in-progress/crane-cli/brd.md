@@ -107,7 +107,7 @@ structured data, not raw text.
   [Repo-grounded: apps/ose-app-be]
 - Must run on macOS (darwin, primary dev) and Linux (GitHub Actions CI) — self-contained
   single binary via `dotnet publish --self-contained`
-- .NET 8+ [Repo-grounded: apps/ose-app-be — uses .NET 8]
+- .NET 8+ [Judgment call: crane-cli will target net8.0 as minimum LTS baseline; ose-app-be has since moved to net10.0 and can serve as migration target later]
 - No Python runtime required — pure F# implementation
 
 ## Affected Roles
