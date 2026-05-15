@@ -18,6 +18,15 @@
     <Compile Include="Steps/ReportSteps.fs" />
     <Compile Include="Steps/SkiplistSteps.fs" />
     <Compile Include="Tests/PdfCommandsTests.fs" />
+    <Compile Include="Tests/FigureCommandsTests.fs" />
+    <Compile Include="Tests/HeadingCommandsTests.fs" />
+    <Compile Include="Tests/NestingCommandsTests.fs" />
+    <Compile Include="Tests/TableCommandsTests.fs" />
+    <Compile Include="Tests/TextCommandsTests.fs" />
+    <Compile Include="Tests/MermaidCommandsTests.fs" />
+    <Compile Include="Tests/OcrCommandsTests.fs" />
+    <Compile Include="Tests/ReportCommandsTests.fs" />
+    <Compile Include="Tests/SkiplistCommandsTests.fs" />
     <Compile Include="Suite.fs" />
   </ItemGroup>
 
