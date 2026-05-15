@@ -5,19 +5,22 @@
 Three-layer design: thin CLI commands delegate to pure-Python core logic; adapters isolate
 subprocess calls to system tools.
 
-```
-┌───────────────────────────────────────────────┐
-│  CLI Layer  crane/commands/*.py                │
-│  Typer commands, JSON serialization, exit codes│
-├───────────────────────────────────────────────┤
-│  Core Layer  crane/core/*.py                   │
-│  Pure business logic, deterministic analysis   │
-│  No subprocess; accepts str/Path args only     │
-├───────────────────────────────────────────────┤
-│  Adapter Layer  crane/adapters/*.py            │
-│  Subprocess wrappers for pdftotext/pdfinfo/    │
-│  tesseract; raises ToolNotFoundError on 127    │
-└───────────────────────────────────────────────┘
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+%% Top-down orientation: shows data flow from CLI consumer to system tools
+flowchart TD
+    A["CLI Layer<br/>crane/commands/*.py<br/>Typer commands, JSON serialization, exit codes"]:::blue
+    B["Core Layer<br/>crane/core/*.py<br/>Pure business logic, deterministic analysis<br/>No subprocess; accepts str/Path args only"]:::teal
+    C["Adapter Layer<br/>crane/adapters/*.py<br/>Subprocess wrappers for pdftotext/pdfinfo/tesseract<br/>Raises ToolNotFoundError on exit 127"]:::orange
+
+    A --> B
+    A --> C
+    B -.->|"str/Path only — no subprocess"| B
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## Project Structure
@@ -94,20 +97,23 @@ apps/crane-cli/
 
 ## Tech Stack
 
-| Component       | Choice                        | Reason                                           |
-| --------------- | ----------------------------- | ------------------------------------------------ |
-| CLI framework   | Typer 0.12+                   | Type-safe, built on Click, natural with Pydantic |
-| Terminal output | Rich 13+                      | Tables, progress, colored human output           |
-| Data models     | Pydantic v2                   | JSON serialization, validation, type safety      |
-| Package manager | uv                            | Platform standard (ose-primer)                   |
-| Build backend   | hatchling                     | Platform standard (ose-primer)                   |
-| Linter          | ruff                          | Platform standard (ose-primer)                   |
-| Type checker    | pyright                       | Platform standard (ose-primer); NOT mypy         |
-| Test framework  | pytest + pytest-bdd           | Platform standard (ose-primer)                   |
-| Coverage        | coverage[toml]                | lcov output for rhino-cli threshold validation   |
-| Nx executor     | nx:run-commands with `uv run` | Platform standard; no Nx Python plugin           |
+| Component       | Choice                                                                  | Reason                                           |
+| --------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
+| CLI framework   | Typer 0.12+ [Web-cited: pypi.org/project/typer, accessed 2026-05-15]    | Type-safe, built on Click, natural with Pydantic |
+| Terminal output | Rich 13+ [Web-cited: pypi.org/project/rich, accessed 2026-05-15]        | Tables, progress, colored human output           |
+| Data models     | Pydantic v2 [Web-cited: pypi.org/project/pydantic, accessed 2026-05-15] | JSON serialization, validation, type safety      |
+| Package manager | uv                                                                      | Platform standard (ose-primer)                   |
+| Build backend   | hatchling                                                               | Platform standard (ose-primer)                   |
+| Linter          | ruff                                                                    | Platform standard (ose-primer)                   |
+| Type checker    | pyright                                                                 | Platform standard (ose-primer); NOT mypy         |
+| Test framework  | pytest + pytest-bdd                                                     | Platform standard (ose-primer)                   |
+| Coverage        | coverage[toml]                                                          | lcov output for rhino-cli threshold validation   |
+| Nx executor     | nx:run-commands with `uv run`                                           | Platform standard; no Nx Python plugin           |
 
 ## pyproject.toml
+
+Version pins below are [Web-cited: pypi.org, accessed 2026-05-15]; path constraints are
+[Repo-grounded: verified via `test -d` / `which` at authoring time].
 
 ```toml
 [project]
@@ -519,6 +525,43 @@ GHERKIN_ROOT = (
 )
 ```
 
+## File Impact
+
+**New files (created by this plan)**:
+
+- `apps/crane-cli/` — entire directory tree (see Project Structure section above) _New file_
+- `specs/apps/crane/gherkin/` — one `.feature` file per command group (pdf-commands, text-check,
+  heading-check, nesting-check, table-check, figure-check, mermaid-validate, ocr-quality,
+  report-management, skiplist-management) _New files_
+
+**Modified files**:
+
+- `.claude/agents/pdf-to-md-maker.md` — Phase 5.1: bash extraction replaced with crane commands
+- `.claude/agents/pdf-to-md-checker.md` — Phase 5.2: bash analysis replaced with crane commands
+- `.claude/agents/pdf-to-md-fixer.md` — Phase 5.3: grep/echo replaced with crane commands
+- `repo-governance/workflows/content/pdf-to-md-quality-gate.md` — Phase 5.4: crane added to Tool
+  Dependencies and Validation Dimensions table
+
+## Rollback
+
+All modified agent files and the workflow document are tracked in git. If Phase 5 crane
+integration causes issues:
+
+```bash
+# Revert Phase 5 commits individually (example — adjust N to the number of Phase 5 commits)
+git revert HEAD~N..HEAD
+
+# Or revert specific agent files directly
+git checkout main -- .claude/agents/pdf-to-md-maker.md
+git checkout main -- .claude/agents/pdf-to-md-checker.md
+git checkout main -- .claude/agents/pdf-to-md-fixer.md
+git checkout main -- repo-governance/workflows/content/pdf-to-md-quality-gate.md
+```
+
+The `apps/crane-cli/` app can remain installed without impacting agents if agent edits are
+reverted. The crane binary has no side effects unless invoked; removing it from agents means
+agents simply stop calling it.
+
 ## Agent Integration Pattern
 
 After Phase 5, agents call crane instead of writing bash analysis:
@@ -528,7 +571,7 @@ After Phase 5, agents call crane instead of writing bash analysis:
 ```bash
 # Before (racy bash)
 UUID=$(openssl rand -hex 3)
-TIMESTAMP=$(TZ='Asia/Bangkok' date '+%Y-%m-%d--%H-%M')
+TIMESTAMP=$(TZ='Asia/Jakarta' date '+%Y-%m-%d--%H-%M')
 REPORT="generated-reports/pdf-to-md__${UUID}__${TIMESTAMP}__audit.md"
 
 # After (crane)

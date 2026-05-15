@@ -1,8 +1,32 @@
 # crane-cli — Delivery Checklist
 
 TDD workflow: **Red → Green → Refactor** per item. Mark `[x]` when done.
-Agent for implementation items: `swe-python-dev`.
-Worktree: `worktrees/pdf` (active — same worktree as this plan).
+
+---
+
+## Worktree
+
+Worktree path: `worktrees/crane-cli/`
+
+Provision before execution (run from repo root):
+
+```bash
+claude --worktree crane-cli
+```
+
+See [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans.md#worktree-specification).
+
+---
+
+## Environment Setup
+
+- [ ] Verify Python 3.13+: `python3 --version` — shows 3.13.x
+- [ ] Verify uv installed: `uv --version` — shows uv version
+- [ ] Verify pdftotext available: `which pdftotext` — exits 0
+- [ ] Verify pdfinfo available: `which pdfinfo` — exits 0
+- [ ] Run `npm install && npm run doctor -- --fix` from repo root (worktree)
+- [ ] Confirm existing tests pass before starting: `npx nx affected -t test:quick` — exits 0
 
 ---
 
@@ -26,6 +50,10 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 - [ ] Create `apps/crane-cli/tests/integration/__init__.py`
 - [ ] Create `apps/crane-cli/tests/integration/conftest.py` — skip marker if `pdftotext` absent
 - [ ] Create `apps/crane-cli/tests/fixtures/` — empty directory with `.gitkeep`
+
+- [ ] Verify all scaffold files exist:
+      `find apps/crane-cli/src apps/crane-cli/tests -name '*.py' | wc -l` returns ≥ 13;
+      `test -f apps/crane-cli/tests/fixtures/.gitkeep` exits 0.
 
 ### P0.2 — Configuration files
 
@@ -56,21 +84,28 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 
 ### P1.1 — Adapter: pdfinfo
 
-- [ ] **RED** Write `tests/unit/steps/pdf_steps.py` — import `scenarios` for
+- [ ] **RED** Write `apps/crane-cli/tests/unit/steps/pdf_steps.py` — import `scenarios` for
       `pdf-commands.feature`; write step stubs that fail
-- [ ] Write `src/crane_cli/adapters/pdfinfo.py` — `get_info(pdf: Path) -> dict[str, str]`
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Write `apps/crane-cli/src/crane_cli/adapters/pdfinfo.py` — `get_info(pdf: Path) -> dict[str, str]`
       subprocess wrapper; raises `ToolNotFoundError(tool="pdfinfo")` on exit 127
-- [ ] Write unit test `tests/unit/test_pdfinfo_adapter.py` — mock subprocess; assert page count
-      parsed from `pdfinfo` output; assert `ToolNotFoundError` on missing tool
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Write unit test `apps/crane-cli/tests/unit/test_pdfinfo_adapter.py` — mock subprocess; assert
+      page count parsed from `pdfinfo` output; assert `ToolNotFoundError` on missing tool
+  - _Suggested executor: `swe-python-dev`_
+- [ ] **GREEN** `nx run crane-cli:test:unit` — pdfinfo adapter unit tests pass
 
 ### P1.2 — Adapter: pdftotext
 
-- [ ] Write `src/crane_cli/adapters/pdftotext.py`:
+- [ ] Write `apps/crane-cli/src/crane_cli/adapters/pdftotext.py`:
   - `sample(pdf: Path, pages: int = 3) -> str` — extract first N pages, return text
   - `extract(pdf: Path, start: int, end: int) -> str` — extract page range with `-layout`
   - Raises `ToolNotFoundError(tool="pdftotext")` on exit 127
-- [ ] Write unit test `tests/unit/test_pdftotext_adapter.py` — mock subprocess; assert text
-      returned; assert `ToolNotFoundError` on missing tool
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Write unit test `apps/crane-cli/tests/unit/test_pdftotext_adapter.py` — mock subprocess;
+      assert text returned; assert `ToolNotFoundError` on missing tool
+  - _Suggested executor: `swe-python-dev`_
+- [ ] **GREEN** `nx run crane-cli:test:unit` — pdftotext adapter unit tests pass
 
 ### P1.3 — `crane pdf info` command
 
@@ -91,9 +126,14 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 
 ### P1.5 — `crane pdf extract` command
 
-- [ ] Write `src/crane_cli/commands/pdf.py::extract` — calls `pdftotext.extract`; writes to
-      stdout or `--output` file; exits 2 on `ToolNotFoundError`
-- [ ] Unit test: mock adapter; assert output written to stdout and to file path
+- [ ] **RED** Write `apps/crane-cli/tests/unit/test_pdf_extract.py` — add test
+      `test_extract_writes_to_stdout` and `test_extract_writes_to_file`; run
+      `nx run crane-cli:test:unit`, watch fail
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Write `apps/crane-cli/src/crane_cli/commands/pdf.py::extract` — calls
+      `pdftotext.extract`; writes to stdout or `--output` file; exits 2 on `ToolNotFoundError`
+  - _Suggested executor: `swe-python-dev`_
+- [ ] **GREEN** `nx run crane-cli:test:unit` — both extract tests pass
 
 ### P1.6 — Phase 1 gate
 
@@ -109,8 +149,10 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 
 ### P2.1 — Core: text checker
 
-- [ ] **RED** Write failing BDD steps in `text_steps.py` for all `text-check.feature` scenarios
-- [ ] Write `src/crane_cli/core/text_checker.py`:
+- [ ] **RED** Write failing BDD steps in `apps/crane-cli/tests/unit/steps/text_steps.py` for
+      all `text-check.feature` scenarios
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Write `apps/crane-cli/src/crane_cli/core/text_checker.py`:
   - `normalize(text: str) -> str`
   - `similarity(a: str, b: str) -> float`
   - `segment_is_present(segment: str, md_text: str) -> bool`
@@ -198,9 +240,10 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 
 ### P3.1 — Core: figure checker
 
-- [ ] **RED** Write failing BDD steps in `figure_steps.py` for all `figure-check.feature`
-      scenarios
-- [ ] Write `src/crane_cli/core/figure_checker.py`:
+- [ ] **RED** Write failing BDD steps in `apps/crane-cli/tests/unit/steps/figure_steps.py` for
+      all `figure-check.feature` scenarios
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Write `apps/crane-cli/src/crane_cli/core/figure_checker.py`:
   - `detect_figures(text: str) -> list[FigureRef]` — regex: `Figure \d+`, `Fig\. \d+`,
     `Exhibit \d+`, `Diagram \d+`, `Chart \d+`
   - `check_figures(pdf_text: str, md_text: str) -> list[Finding]`
@@ -266,9 +309,10 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 
 ### P4.1 — Core: report manager
 
-- [ ] **RED** Write failing BDD steps in `report_steps.py` for all `report-management.feature`
-      scenarios
-- [ ] Write `src/crane_cli/core/report_manager.py`:
+- [ ] **RED** Write failing BDD steps in `apps/crane-cli/tests/unit/steps/report_steps.py` for
+      all `report-management.feature` scenarios
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Write `apps/crane-cli/src/crane_cli/core/report_manager.py`:
   - `get_or_extend_chain(scope: str) -> str`
   - `utc7_timestamp() -> str`
   - `init_report(scope: str, pdf: Path, md: Path) -> Path` — creates file, returns path
@@ -322,43 +366,106 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 
 ### P5.1 — Update pdf-to-md-maker
 
-- [ ] Replace Step 1 `pdftotext` sample + `wc -c` with `crane pdf type "$PDF_FILE"`
-- [ ] Replace bash loop in Step 2a with `crane pdf extract "$PDF_FILE" --start $FIRST --end $LAST`
-- [ ] Replace `pdfinfo | awk` page count with `crane pdf info "$PDF_FILE" | jq .pages`
-- [ ] Review remaining inline bash; move any analysis logic to crane or remove if already covered
+- [ ] Edit `.claude/agents/pdf-to-md-maker.md` Step 1: replace `pdftotext` sample + `wc -c`
+      with `crane pdf type "$PDF_FILE"`. Verify: `grep -q 'crane pdf type' .claude/agents/pdf-to-md-maker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-maker.md` Step 2a: replace bash extraction loop with
+      `crane pdf extract "$PDF_FILE" --start $FIRST --end $LAST`. Verify: `grep -q 'crane pdf extract' .claude/agents/pdf-to-md-maker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-maker.md`: replace `pdfinfo | awk` page count with
+      `crane pdf info "$PDF_FILE" | jq .pages`. Verify: `grep -q 'crane pdf info' .claude/agents/pdf-to-md-maker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Run `grep -n 'pdftotext\|pdfinfo\|grep -F' .claude/agents/pdf-to-md-maker.md` — output
+      must be empty (zero lines). If any remain, add a targeted replacement item per occurrence.
 
 ### P5.2 — Update pdf-to-md-checker
 
-- [ ] Step 0 — Replace bash UUID + timestamp + file create with:
-      `REPORT=$(crane report init --scope pdf-to-md --pdf "$PDF_FILE" --md "$MD_FILE" | jq -r .path)`
-- [ ] Step 2 — Replace `grep -F` segment loop with `crane text check "$PDF_FILE" "$MD_FILE"`
-- [ ] Step 3 — Replace manual grep heading extraction with `crane heading check "$PDF_FILE" "$MD_FILE"`
-- [ ] Step 4 — Replace manual column-offset inspection with `crane nesting check "$PDF_FILE" "$MD_FILE"`
-- [ ] Step 5 — Replace brittle table grep with `crane table check "$PDF_FILE" "$MD_FILE"`
-- [ ] Step 6 — Replace figure grep count with `crane figure check "$PDF_FILE" "$MD_FILE"`
-- [ ] Step 7 — Replace manual Mermaid keyword checks with `crane mermaid validate "$MD_FILE"`
-- [ ] Step 8 — Replace described-but-absent OCR logic with `crane ocr quality "$MD_FILE"`
-- [ ] Skip list loading — Replace file grep with `crane skiplist check "$MD_BASENAME" ...`
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 0: replace bash UUID + timestamp + file
+      create with `REPORT=$(crane report init --scope pdf-to-md --pdf "$PDF_FILE" --md "$MD_FILE" | jq -r .path)`.
+      Verify: `grep -q 'crane report init' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 2: replace `grep -F` segment loop with
+      `crane text check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane text check' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 3: replace manual grep heading extraction
+      with `crane heading check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane heading check' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 4: replace manual column-offset inspection
+      with `crane nesting check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane nesting check' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 5: replace brittle table grep with
+      `crane table check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane table check' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 6: replace figure grep count with
+      `crane figure check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane figure check' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 7: replace manual Mermaid keyword checks
+      with `crane mermaid validate "$MD_FILE"`. Verify: `grep -q 'crane mermaid validate' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 8: replace described-but-absent OCR logic
+      with `crane ocr quality "$MD_FILE"`. Verify: `grep -q 'crane ocr quality' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-checker.md` skip list loading: replace file grep with
+      `crane skiplist check "$MD_BASENAME" <category> <description>`. Verify:
+      `grep -q 'crane skiplist check' .claude/agents/pdf-to-md-checker.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
 
 ### P5.3 — Update pdf-to-md-fixer
 
-- [ ] Replace all re-validation `grep -F` calls with `crane text search "$MD_FILE" "$SEGMENT"`
-- [ ] Replace false positive persistence `echo >>` with `crane skiplist add "$MD_BASENAME" ...`
-- [ ] Replace fix report file init with `crane report init` where applicable
+- [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace all re-validation `grep -F` calls with
+      `crane text search "$MD_FILE" "$SEGMENT"`. Verify: `grep -q 'crane text search' .claude/agents/pdf-to-md-fixer.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace false positive persistence `echo >>`
+      with `crane skiplist add "$MD_BASENAME" <category> <description>`. Verify:
+      `grep -q 'crane skiplist add' .claude/agents/pdf-to-md-fixer.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
+- [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace fix report file init bash block with
+      `REPORT=$(crane report init --scope pdf-to-md --pdf "$PDF_FILE" --md "$MD_FILE" | jq -r .path)`.
+      Verify: `grep -q 'crane report init' .claude/agents/pdf-to-md-fixer.md` exits 0.
+  - _Suggested executor: `swe-python-dev`_
 
 ### P5.4 — Update workflow documentation
 
-- [ ] Add `crane` to Tool Dependencies section in `pdf-to-md-quality-gate.md`
-      (install: `uv tool install crane-cli`, verify: `crane --version`)
-- [ ] Update Validation Dimensions Summary table: note crane commands per dimension
+- [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md` Tool Dependencies
+      section: add `crane` with install command `uv tool install crane-cli` and verify command
+      `crane --version`. Verify: `grep -q 'crane' repo-governance/workflows/content/pdf-to-md-quality-gate.md` exits 0.
+- [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md` Validation Dimensions
+      Summary table: add crane command column per dimension (e.g., "text check: `crane text check`").
+      Verify: table in that section references `crane` for each dimension.
 
 ### P5.5 — End-to-end validation
 
-- [ ] Obtain or create a small freely-licensed text-based PDF as `tests/fixtures/sample-text.pdf`
-- [ ] Run `pdf-to-md-quality-gate` on the fixture using updated agents; verify `PASS` result
-- [ ] Confirm `crane` commands appear in agent bash output (not raw pdftotext/grep calls)
+- [ ] Copy or create a small freely-licensed text-based PDF at
+      `apps/crane-cli/tests/fixtures/sample-text.pdf`. Verify:
+      `crane pdf type apps/crane-cli/tests/fixtures/sample-text.pdf | jq -r .type` outputs `text`.
+- [ ] Run the `pdf-to-md-quality-gate` workflow on the fixture:
+      `pdf_file=apps/crane-cli/tests/fixtures/sample-text.pdf mode=normal`;
+      verify the resulting audit report in `generated-reports/` has status "PASS".
+- [ ] Run `grep -rn 'crane ' .claude/agents/pdf-to-md-*.md` — output shows crane commands;
+      run `grep -rn 'pdftotext\|pdfinfo\b\|grep -F' .claude/agents/pdf-to-md-*.md` — output
+      must be empty (zero analysis-bash lines remain).
 
 ---
+
+## Commit Guidelines
+
+- [ ] Commit Phase 0–4 scaffold and implementation thematically — one commit per phase or
+      sub-phase (e.g., `feat(crane-cli): add project scaffold`, `feat(crane-cli): add PDF commands`)
+- [ ] Use Conventional Commits format: `feat(crane-cli): <description>`
+- [ ] Phase 5 agent edits: one commit per agent file modified (e.g., `refactor(pdf-to-md-maker): delegate to crane`)
+- [ ] Do NOT bundle scaffold + implementation + agent updates into a single commit
+
+## Pre-Push Local Gate
+
+- [ ] Run `npx nx affected -t typecheck lint test:quick spec-coverage` — passes for all affected
+      projects
+- [ ] Fix ALL failures found, including those not caused by crane-cli changes (root-cause
+      orientation principle)
+- [ ] Re-run until zero failures
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by
+> crane-cli changes. This follows the root cause orientation principle — proactively fix
+> preexisting errors encountered during work.
 
 ## Final Gate
 
@@ -370,4 +477,15 @@ Worktree: `worktrees/pdf` (active — same worktree as this plan).
 - [ ] **F6** `nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
 - [ ] **F7** `crane --help` shows all 10 subcommand groups
 - [ ] **F8** pdf-to-md agents contain no inline `grep -F`, `pdfinfo | awk`, or analysis bash
-- [ ] **F9** Commit: `feat(crane-cli): add Content Retrieval And Normalization Engine CLI`
+- [ ] **F9** Push to `origin/main`: `git push origin main`
+- [ ] **F10** Monitor GitHub Actions: `gh run list --branch main --limit 3` every 3–5 min until green
+- [ ] **F11** If any CI check fails, diagnose root cause and push a fix commit before marking plan done
+
+## Plan Archival
+
+- [ ] Verify ALL delivery checklist items are ticked
+- [ ] Verify ALL quality gates pass (local + CI)
+- [ ] Run `git mv plans/in-progress/crane-cli plans/done/$(date +%Y-%m-%d)__crane-cli`
+- [ ] Update `plans/in-progress/README.md` — remove crane-cli entry
+- [ ] Update `plans/done/README.md` — add crane-cli entry with completion date
+- [ ] Commit: `chore(plans): archive crane-cli to done`

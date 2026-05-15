@@ -97,13 +97,34 @@ structured data, not raw text.
 ## Constraints
 
 - Wrap system tools (`pdftotext`, `pdfinfo`, `tesseract`) — do not replace them; they are
-  already installed (verified: `/opt/homebrew/bin/pdftotext`, `/opt/homebrew/bin/pdfinfo`)
+  already installed (verified: `/opt/homebrew/bin/pdftotext` [Repo-grounded], `/opt/homebrew/bin/pdfinfo` [Repo-grounded])
 - Default output is JSON for AI agent parsing; `--human` flag for rich terminal display
 - Follow ose-primer Python wiring: `uv`, `src/` layout, `hatchling`, `ruff`, `pyright`,
   `pytest-bdd`, `nx:run-commands` executors with `cwd`
 - Must run on macOS (darwin, primary dev) and Linux (GitHub Actions CI)
-- Python 3.13+ (already installed at `/Users/wkf/.pyenv/versions/3.13.1`)
+- Python 3.13+ (already installed at `/Users/wkf/.pyenv/versions/3.13.1` [Repo-grounded])
 - No Nx Python plugin dependency — use `nx:run-commands` with `uv run` per primer pattern
+
+## Affected Roles
+
+| Role                            | Impact                                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `pdf-to-md-maker` agent         | Gains crane commands for PDF type detection, extraction, and metadata; loses inline bash analysis |
+| `pdf-to-md-checker` agent       | Gains structured JSON findings from crane; loses fragile bash grep/awk one-liners                 |
+| `pdf-to-md-fixer` agent         | Gains deduplicating skiplist and fuzzy text search; loses undeduped echo-appends                  |
+| Human developer / plan executor | Must have `pdftotext`, `pdfinfo`, Python 3.13+, and `uv` installed to run integration tests       |
+| CI/CD pipeline (GitHub Actions) | Must install `poppler` (pdftotext/pdfinfo) and Python 3.13 in test runner                         |
+
+## Business Risks
+
+| Risk                                                   | Severity | Mitigation                                                                                                             |
+| ------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `pdftotext`/`pdfinfo` not available in CI              | HIGH     | Integration tests guarded by `pytest.importorskip` / skip marker; unit tests use mocked adapters                       |
+| Python 3.13 incompatibility on CI runner               | HIGH     | Declare `requires-python = ">=3.13"` in `pyproject.toml`; pin Python via `.python-version` or Volta-equivalent         |
+| Performance regression from per-chunk subprocess calls | MEDIUM   | Adapter layer caches subprocess output; future caching target can be added if needed                                   |
+| Phase 5 agent API breakage during transition           | MEDIUM   | Phase 5 items are incremental per-agent; if crane is not installed, agents fall back gracefully until Phase 5 complete |
+| Fuzzy threshold too permissive (false negatives)       | MEDIUM   | Threshold 0.85 chosen conservatively; unit tests cover boundary cases; adjustable via `--threshold` flag (Phase 2)     |
+| Skip list key collision (deduplication failure)        | LOW      | Stable key format is deterministic; unit test `test_add_does_not_duplicate_file_line` guards this                      |
 
 ## Non-Scope (Future Plans)
 

@@ -1,5 +1,81 @@
 # crane-cli — Product Requirements Document
 
+## Product Overview
+
+crane-cli (Content Retrieval And Normalization Engine CLI) is a tested Python command-line
+tool that exposes every deterministic PDF analysis operation in the `pdf-to-md` pipeline as
+a composable, JSON-output command. It replaces fragile inline bash in agent `.md` files with
+verified, unit-tested Python logic, making agents thin orchestrators that read structured
+findings rather than parsing raw text.
+
+The tool is consumed exclusively by AI agents and developer scripts — not by end users in a
+browser or GUI. Its primary interface is the `crane` CLI with structured JSON output for
+machine reading and `--human` for developer diagnostics.
+
+## Personas
+
+| Persona                   | Role                                                                                                                                                                                      |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pdf-to-md-maker` agent   | Calls `crane pdf type`, `crane pdf extract`, `crane pdf info` to plan extraction strategy                                                                                                 |
+| `pdf-to-md-checker` agent | Calls every analysis command (`crane text check`, `crane heading check`, etc.) to validate conversion quality; calls `crane report init` / `crane skiplist check` for workflow management |
+| `pdf-to-md-fixer` agent   | Calls `crane text search` for re-validation; calls `crane skiplist add` to persist accepted false positives                                                                               |
+| Developer / plan executor | Runs `crane --help`, `crane pdf type <file>`, integration tests during development and CI; reads structured JSON output for debugging                                                     |
+
+## Product Scope
+
+### In Scope
+
+- All 10 command groups specified in the Command Inventory below (pdf, text, heading, nesting,
+  table, figure, mermaid, ocr, report, skiplist)
+- JSON-first output contract; `--human` Rich output flag
+- Exit codes: 0 (success), 1 (findings / boolean false), 2 (tool not found)
+- Python 3.13+, uv packaging, Nx project.json integration
+- BDD-driven development with pytest-bdd; spec files in `specs/apps/crane/gherkin/`
+- rhino-cli spec-coverage enforcement
+
+### Out of Scope
+
+- Processing formats other than PDF (docx, html, epub)
+- Web content retrieval or URL scraping
+- NLP semantic analysis (summarization, sentiment, topic extraction)
+- Non-English OCR quality heuristics
+- Streaming or async pipeline mode
+- GUI or web frontend
+
+## Product Risks
+
+| Risk                                                      | Impact                                                                                                                                                         |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mermaid syntax validator misses newly-added diagram types | Checker flags valid Mermaid as HIGH finding; mitigated by `VALID_TYPES` frozenset update path and BDD test coverage                                            |
+| Fuzzy match threshold 0.85 too permissive                 | Real missing content passes undetected; mitigated by boundary-case unit tests and adjustable `--threshold` flag                                                |
+| BDD step file naming mismatch breaks spec-coverage        | rhino-cli spec-coverage fails to link steps to features; mitigated by explicit `GHERKIN_ROOT` path in conftest and naming convention enforcement               |
+| Phase 5 partial migration breaks agents mid-flight        | Agent uses crane for some steps but not others, causing inconsistent state; mitigated by per-agent atomic commits that keep agents functional before and after |
+
+## User Stories
+
+- As a `pdf-to-md-maker` agent, I want to reliably detect whether a PDF is text-based or
+  image-only so that I choose the correct extraction path.
+- As a `pdf-to-md-maker` agent, I want structured PDF metadata in one command so that I can
+  plan chunk sizes and validate extraction completeness.
+- As a `pdf-to-md-checker` agent, I want to verify that all PDF text exists in the Markdown
+  so that no content is silently lost during conversion.
+- As a `pdf-to-md-checker` agent, I want to verify heading depths match PDF visual hierarchy
+  so that document structure is faithfully represented.
+- As a `pdf-to-md-checker` agent, I want to verify list nesting depths match the PDF layout
+  so that nested content hierarchy is faithfully represented.
+- As a `pdf-to-md-checker` agent, I want to verify all tables are present and correctly
+  structured in the Markdown so that tabular data is not lost or corrupted.
+- As a `pdf-to-md-checker` agent, I want to verify every figure reference has a representation
+  in the Markdown so that diagrams are not silently dropped.
+- As a `pdf-to-md-checker` agent, I want to validate Mermaid syntax in the Markdown so that
+  generated diagrams are renderable.
+- As a `pdf-to-md-checker` agent, I want to quantify OCR quality in image-extracted sections
+  so that unreadably garbled pages are flagged for manual review.
+- As the `pdf-to-md-quality-gate` workflow, I want consistent UUID-chained reports with UTC+7
+  timestamps so that iterations are traceable and reports are uniquely named.
+- As a `pdf-to-md-fixer` agent, I want to persist known false positives with deduplication
+  so that the checker does not re-report already-accepted non-issues.
+
 ## Command Inventory
 
 ```
