@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CraneCli</RootNamespace>
+    <AssemblyName>crane</AssemblyName>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Models/Finding.fs" />
+    <Compile Include="Models/PdfMetadata.fs" />
+    <Compile Include="Models/Report.fs" />
+    <Compile Include="Adapters/PdfAdapter.fs" />
+    <Compile Include="Adapters/OcrAdapter.fs" />
+    <Compile Include="Core/TextChecker.fs" />
+    <Compile Include="Core/HeadingChecker.fs" />
+    <Compile Include="Core/NestingChecker.fs" />
+    <Compile Include="Core/TableChecker.fs" />
+    <Compile Include="Core/FigureChecker.fs" />
+    <Compile Include="Core/MermaidValidator.fs" />
+    <Compile Include="Core/OcrAssessor.fs" />
+    <Compile Include="Core/ReportManager.fs" />
+    <Compile Include="Core/SkiplistManager.fs" />
+    <Compile Include="Commands/PdfCommands.fs" />
+    <Compile Include="Commands/TextCommands.fs" />
+    <Compile Include="Commands/HeadingCommands.fs" />
+    <Compile Include="Commands/NestingCommands.fs" />
+    <Compile Include="Commands/TableCommands.fs" />
+    <Compile Include="Commands/FigureCommands.fs" />
+    <Compile Include="Commands/MermaidCommands.fs" />
+    <Compile Include="Commands/OcrCommands.fs" />
+    <Compile Include="Commands/ReportCommands.fs" />
+    <Compile Include="Commands/SkiplistCommands.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="tessdata/eng.traineddata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Argu" Version="6.2.5" />
+    <PackageReference Include="PdfPig" Version="0.1.14" />
+    <PackageReference Include="TesseractOCR" Version="5.5.2" />
+    <PackageReference Include="FSharp.SystemTextJson" Version="1.4.36" />
+    <PackageReference Include="F23.StringSimilarity" Version="7.0.1" />
+  </ItemGroup>
+</Project>
