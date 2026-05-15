@@ -4,7 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [crane-cli](./crane-cli/README.md) — F# CLI (Content Retrieval And Normalization Engine) powering the pdf-to-md pipeline
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
 
 ## Instructions

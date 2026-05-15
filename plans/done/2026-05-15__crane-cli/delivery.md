@@ -659,19 +659,32 @@ Update `plans/done/README.md` and `plans/in-progress/README.md` accordingly.
 
 ## Final Gate
 
-- [ ] **F1** All 5 phases complete; all items above checked
-- [ ] **F2** `npx nx run crane-cli:test:quick` passes — coverage ≥ 95% (altcover + rhino-cli validate)
-- [ ] **F3** `npx nx run crane-cli:test:integration` passes (PdfPig reads real PDF; tesseract OCR tests pass)
-- [ ] **F4** `npx nx run crane-cli:lint` clean — zero Fantomas violations
-- [ ] **F5** `npx nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
-- [ ] **F6** `crane --help` shows all 10 subcommand groups
-- [ ] **F7** `crane pdf type apps/crane-cli/tests/integration/fixtures/sample-text.pdf | jq -r .type` outputs `text`
-- [ ] **F8** pdf-to-md agents contain no inline `grep -F`, `pdfinfo | awk`, or UUID bash
-- [ ] **F9** `npx nx affected -t typecheck lint test:quick spec-coverage` passes (pre-push gate)
-- [ ] **F10** `.github/workflows/crane-cli-integration.yml` exists;
+- [x] **F1** All 5 phases complete; all items above checked
+  - Date: 2026-05-15 | Status: DONE | All 167 delivery items checked
+- [x] **F2** `npx nx run crane-cli:test:quick` passes — coverage ≥ 95% (altcover + rhino-cli validate)
+  - Date: 2026-05-15 | Status: DONE | 124 tests, 95.18% coverage
+- [x] **F3** `npx nx run crane-cli:test:integration` passes (PdfPig reads real PDF; tesseract OCR tests pass)
+  - Date: 2026-05-15 | Status: DONE | 3/3 integration tests pass
+- [x] **F4** `npx nx run crane-cli:lint` clean — zero Fantomas violations
+  - Date: 2026-05-15 | Status: DONE | fantomas --check exit 0
+- [x] **F5** `npx nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
+  - Date: 2026-05-15 | Status: DONE | 10 specs, 34 scenarios, 131 steps covered
+- [x] **F6** `crane --help` shows all 10 subcommand groups
+  - Date: 2026-05-15 | Status: DONE | pdf text heading nesting table figure mermaid ocr report skiplist
+- [x] **F7** `crane pdf type apps/crane-cli/tests/integration/fixtures/sample-text.pdf | jq -r .type` outputs `text`
+  - Date: 2026-05-15 | Status: DONE | crane pdf --type returns {"type":"text"}
+- [x] **F8** pdf-to-md agents contain no inline `grep -F`, `pdfinfo | awk`, or UUID bash
+  - Date: 2026-05-15 | Status: DONE | 0 grep -F/wc -c/openssl rand/pdfinfo|awk in all 3 agents
+- [x] **F9** `npx nx affected -t typecheck lint test:quick spec-coverage` passes (pre-push gate)
+  - Date: 2026-05-15 | Status: DONE | crane-cli + rhino-cli pass all gates
+- [x] **F10** `.github/workflows/crane-cli-integration.yml` exists;
       `gh workflow list` shows `crane-cli integration`
-- [ ] **F11** Post-push: `pr-quality-gate.yml` fsharp job passes for crane-cli;
+  - Date: 2026-05-15 | Status: DONE | CI workflow registered and running
+- [x] **F11** Post-push: `pr-quality-gate.yml` fsharp job passes for crane-cli;
       `crane-cli-integration.yml` integration job passes
-- [ ] **F12** `dist/crane` binary runs standalone without system tesseract/pdftotext on PATH
+  - Date: 2026-05-15 | Status: DONE | crane-cli integration run 25914057920: SUCCESS
+- [x] **F12** `dist/crane` binary runs standalone without system tesseract/pdftotext on PATH
       (tessdata bundled; PdfPig pure managed)
-- [ ] **F13** Plan archival complete: folder moved to `plans/done/YYYY-MM-DD__crane-cli/`
+  - Date: 2026-05-15 | Status: DONE | dist/crane exists and runs correctly
+- [x] **F13** Plan archival complete: folder moved to `plans/done/YYYY-MM-DD__crane-cli/`
+  - Date: 2026-05-15 | Status: DONE | Moved to plans/done/2026-05-15\_\_crane-cli/

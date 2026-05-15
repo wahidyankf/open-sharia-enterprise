@@ -40,7 +40,7 @@ it can be tested, debugged, and distributed as a single binary without runtime d
 
 | #   | Scope                                                                             | Status |
 | --- | --------------------------------------------------------------------------------- | ------ |
-| 0   | Project scaffold, Nx wiring, .fsproj, NuGet                                      | ☐      |
+| 0   | Project scaffold, Nx wiring, .fsproj, NuGet                                       | ☐      |
 | 1   | Core PDF commands — `pdf info`, `pdf type`, `pdf extract`                         | ☐      |
 | 2   | Analysis commands — `text check`, `heading check`, `nesting check`, `table check` | ☐      |
 | 3   | Coverage commands — `figure check`, `mermaid validate`, `ocr quality`             | ☐      |
