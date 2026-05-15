@@ -5,12 +5,12 @@
 
 ## Documents
 
-| File | Purpose |
-|---|---|
-| [brd.md](./brd.md) | Business rationale and risk assessment |
-| [prd.md](./prd.md) | Requirements and Gherkin acceptance criteria |
+| File                           | Purpose                                           |
+| ------------------------------ | ------------------------------------------------- |
+| [brd.md](./brd.md)             | Business rationale and risk assessment            |
+| [prd.md](./prd.md)             | Requirements and Gherkin acceptance criteria      |
 | [tech-docs.md](./tech-docs.md) | Version table, per-file change map, upgrade notes |
-| [delivery.md](./delivery.md) | Granular task checklist (execute in order) |
+| [delivery.md](./delivery.md)   | Granular task checklist (execute in order)        |
 
 ## Scope
 
@@ -37,14 +37,14 @@ workflows. Covers:
 
 ## Policy Compliance
 
-This plan complies with the [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md).
+This plan complies with the [Dependency Bump Stability & Safety Policy](../../../repo-governance/development/workflow/dependency-bump-policy.md).
 Cutoff date: **2026-03-16** (today − 60 days).
 
-| Path | Meaning | Examples |
-|---|---|---|
-| **A — LTS** | Latest LTS-line patch; recency irrelevant | Node 24.15.0, Java 25.0.3, .NET 10.0.300, Spring Boot 4.0.6, PostgreSQL 17.10 |
-| **B — 60-day stable + CVE-clean** | Latest pre-cutoff version; CVE-clean | Go 1.25.8, Rust 1.93.0, TypeScript 5.8.3 (NOT 6.0.3), Tailwind 4.2.1 (NOT 4.3.0), Vitest 4.1.0, Storybook 10.2.10 (DOWNGRADE), ESLint 9.x, Nx 22.5.4, Playwright 1.60.0, Shiki 4.0.2 |
-| **C — Security waiver** | Recent CVE patch required; older versions vulnerable | Next.js 16.2.6, React 19.2.6, mermaid 11.15.0, postcss 8.5.10, Eclipse Temurin 25-jdk Ubuntu base |
+| Path                              | Meaning                                              | Examples                                                                                                                                                                             |
+| --------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **A — LTS**                       | Latest LTS-line patch; recency irrelevant            | Node 24.15.0, Java 25.0.3, .NET 10.0.300, Spring Boot 4.0.6, PostgreSQL 17.10                                                                                                        |
+| **B — 60-day stable + CVE-clean** | Latest pre-cutoff version; CVE-clean                 | Go 1.25.8, Rust 1.93.0, TypeScript 5.8.3 (NOT 6.0.3), Tailwind 4.2.1 (NOT 4.3.0), Vitest 4.1.0, Storybook 10.2.10 (DOWNGRADE), ESLint 9.x, Nx 22.5.4, Playwright 1.60.0, Shiki 4.0.2 |
+| **C — Security waiver**           | Recent CVE patch required; older versions vulnerable | Next.js 16.2.6, React 19.2.6, mermaid 11.15.0, postcss 8.5.10, Eclipse Temurin 25-jdk Ubuntu base                                                                                    |
 
 ## Major Migrations DEFERRED to Future Plans
 

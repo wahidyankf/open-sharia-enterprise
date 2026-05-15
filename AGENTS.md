@@ -55,7 +55,7 @@ ose-public/
 │   ├── rhino-cli/            # Repository management CLI
 │   ├── ose-cli/      # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
-│   ├── organiclever-be/      # OrganicLever F#/Giraffe REST API backend
+│   ├── organiclever-be/      # OrganicLever Java/Spring Boot 4 REST API backend
 │   ├── organiclever-web-e2e/ # Playwright FE E2E tests for organiclever-web
 │   ├── organiclever-be-e2e/  # Playwright BE E2E tests for organiclever-be
 │   ├── ose-app-be/               # OSE Application F#/Giraffe REST API (api.oseplatform.com)
@@ -516,7 +516,7 @@ nx run ose-app-web-e2e:test:e2e             # Frontend E2E tests
 
 ### organiclever-be
 
-- **Framework**: F#/Giraffe REST API
+- **Framework**: Java/Spring Boot 4 REST API
 - **Deployment**: Kubernetes (staging/production)
 - **Content**: Backend API for OrganicLever productivity tracker
 - **E2E tests**: `organiclever-be-e2e`

@@ -155,70 +155,6 @@ jobs:
       - uses: ./.github/actions/setup-python
       - run: npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:python'
 
-  rust:
-    name: Rust quality gate
-    needs: detect
-    if: needs.detect.outputs.has-rust == 'true'
-    runs-on: ubuntu-latest
-    env:
-      NX_BASE: origin/${{ github.base_ref }}
-      NX_HEAD: ${{ github.sha }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:rust'
-
-  elixir:
-    name: Elixir quality gate
-    needs: detect
-    if: needs.detect.outputs.has-elixir == 'true'
-    runs-on: ubuntu-latest
-    env:
-      NX_BASE: origin/${{ github.base_ref }}
-      NX_HEAD: ${{ github.sha }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-elixir
-      - run: npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:elixir'
-
-  clojure:
-    name: Clojure quality gate
-    needs: detect
-    if: needs.detect.outputs.has-clojure == 'true'
-    runs-on: ubuntu-latest
-    env:
-      NX_BASE: origin/${{ github.base_ref }}
-      NX_HEAD: ${{ github.sha }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-clojure
-      - run: npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:clojure'
-
-  dart:
-    name: Dart quality gate
-    needs: detect
-    if: needs.detect.outputs.has-dart == 'true'
-    runs-on: ubuntu-latest
-    env:
-      NX_BASE: origin/${{ github.base_ref }}
-      NX_HEAD: ${{ github.sha }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-flutter
-      - run: npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:dart'
-
   markdown:
     name: Markdown quality gate
     needs: detect
@@ -250,23 +186,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs:
-      [
-        detect,
-        format,
-        typescript,
-        golang,
-        jvm,
-        dotnet,
-        python,
-        rust,
-        elixir,
-        clojure,
-        dart,
-        markdown,
-        naming,
-        specs-gate,
-      ]
+    needs: [detect, format, typescript, golang, jvm, dotnet, python, markdown, naming, specs-gate]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -274,7 +194,7 @@ jobs:
         run: |
           echo "Checking quality gate results..."
           FAILED=false
-          for job in typescript golang jvm dotnet python rust elixir clojure dart markdown naming specs-gate; do
+          for job in typescript golang jvm dotnet python markdown naming specs-gate; do
             RESULT="${{ toJSON(needs) }}"
             # A skipped job is OK (language not affected). Only failure blocks.
           done

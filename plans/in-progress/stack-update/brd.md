@@ -8,7 +8,7 @@ plus 2 placeholder libs (`ts-ui`, `clojure-openapi-codegen`). Specific issues:
 
 - **Security risk**: Next.js 16.1.6 has known CVE patches addressed in 16.2.6
   (CVE-2026-29057, CVE-2026-27979, CVE-2026-44578 — see `tech-docs.md §Security Clearance
-  Status` for full CVE list already audited). Spring Boot 4.0.4 has
+Status` for full CVE list already audited). Spring Boot 4.0.4 has
   8 CVE patches addressed in 4.0.6. [Web-cited: Spring Boot 4.0.6 released 2026-04-23
   patches 8 CVEs (CVE-2026-40976, 40973, 40972, 40970, 40971, 40974, 40975, 40977)
   per https://spring.io/blog/2026/04/23/spring-boot-4-0-6-available-now/, accessed
@@ -56,7 +56,7 @@ plus 2 placeholder libs (`ts-ui`, `clojure-openapi-codegen`). Specific issues:
 ## Goals
 
 1. All runtimes and toolchains on policy-compliant versions per the
-   [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md):
+   [Dependency Bump Stability & Safety Policy](../../../repo-governance/development/workflow/dependency-bump-policy.md):
    either Path A (LTS) or Path B (≥60-day pre-cutoff stable + CVE-clean) or Path C
    (security-override waiver). Cutoff date: **2026-03-16**.
 2. All `package.json` deps updated to latest compatible version (minor/patch) or migrated
@@ -107,6 +107,7 @@ This plan is executed by a single maintainer wearing the following hats:
 - **Security auditor** — verifies CVE patches applied; confirms no new vulnerabilities introduced
 
 Agents that consume this plan:
+
 - `plan-executor` — executes the delivery checklist step by step
 - `plan-execution-checker` — validates completed execution matches expected outcomes
 
@@ -144,13 +145,13 @@ No sign-off or approval ceremonies required; code review via git history is the 
 
 ## Business Risks
 
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| Next.js 16.2.6 (Path C waiver, post-cutoff) introduces a regression | LOW | Phase 6 includes build + test:quick + dev-server spot-check; CVE patch is the driver; rollback = `git revert` Phase 6 commit |
-| React 19.2.6 (Path C waiver, post-cutoff) introduces a regression | LOW | Phase 6 includes typecheck + test:quick; CVE-2025-55182 makes staying on 19.1.x riskier than the waiver; rollback = revert Phase 6 |
-| mermaid 11.15.0 (Path C waiver, post-cutoff) introduces a regression | VERY LOW | Security fix only (CSS injection CVEs); functional change risk low; rollback = revert Phase 2E |
-| Shiki 4.x API change breaks syntax highlighting in ayokoding-web / ose-web | LOW | Phase 10 includes dev-server spot-check and Playwright MCP verification; rollback = `git revert` Phase 10 commit |
-| Storybook 10.2.10 DOWNGRADE breaks web-ui component stories | VERY LOW | 10.2.10 is stable; DOWNGRADE is CVE-driven; rollback = revert Phase 7C |
-| Spring Boot 4.0.6 introduces a regression | VERY LOW | 4.0.4 → 4.0.6 is a pure patch; Phase 4 includes unit tests and curl health check; rollback = revert pom.xml |
-| Schedule risk: plan is large (15 phases) and may span multiple sessions | HIGH | Phases are independent commits; any phase can be completed and pushed independently; plan does not need to be done in one session |
-| DEFERRED major migrations (TS 6, ESLint 10, Zod 4, lucide-react 1.x, @xstate/react 6) tracked in ideas.md | LOW | Policy-compliant deferral; each item has 60-day soak condition that governs the next bump plan |
+| Risk                                                                                                      | Likelihood | Mitigation                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Next.js 16.2.6 (Path C waiver, post-cutoff) introduces a regression                                       | LOW        | Phase 6 includes build + test:quick + dev-server spot-check; CVE patch is the driver; rollback = `git revert` Phase 6 commit       |
+| React 19.2.6 (Path C waiver, post-cutoff) introduces a regression                                         | LOW        | Phase 6 includes typecheck + test:quick; CVE-2025-55182 makes staying on 19.1.x riskier than the waiver; rollback = revert Phase 6 |
+| mermaid 11.15.0 (Path C waiver, post-cutoff) introduces a regression                                      | VERY LOW   | Security fix only (CSS injection CVEs); functional change risk low; rollback = revert Phase 2E                                     |
+| Shiki 4.x API change breaks syntax highlighting in ayokoding-web / ose-web                                | LOW        | Phase 10 includes dev-server spot-check and Playwright MCP verification; rollback = `git revert` Phase 10 commit                   |
+| Storybook 10.2.10 DOWNGRADE breaks web-ui component stories                                               | VERY LOW   | 10.2.10 is stable; DOWNGRADE is CVE-driven; rollback = revert Phase 7C                                                             |
+| Spring Boot 4.0.6 introduces a regression                                                                 | VERY LOW   | 4.0.4 → 4.0.6 is a pure patch; Phase 4 includes unit tests and curl health check; rollback = revert pom.xml                        |
+| Schedule risk: plan is large (15 phases) and may span multiple sessions                                   | HIGH       | Phases are independent commits; any phase can be completed and pushed independently; plan does not need to be done in one session  |
+| DEFERRED major migrations (TS 6, ESLint 10, Zod 4, lucide-react 1.x, @xstate/react 6) tracked in ideas.md | LOW        | Policy-compliant deferral; each item has 60-day soak condition that governs the next bump plan                                     |

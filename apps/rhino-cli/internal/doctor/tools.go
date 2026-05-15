@@ -30,11 +30,11 @@ func parseTrimVersion(s string) string {
 // To add a new tool, add a new entry to the slice below — no other file needs to change.
 func buildToolDefs(repoRoot string) []toolDef {
 	packageJSONPath := filepath.Join(repoRoot, "package.json")
-	pomXMLPath := filepath.Join(repoRoot, "apps", "organiclever-be-jasb", "pom.xml")
+	pomXMLPath := filepath.Join(repoRoot, "apps", "organiclever-be", "pom.xml")
 	goModPath := filepath.Join(repoRoot, "apps", "rhino-cli", "go.mod")
 	pythonVersionPath := filepath.Join(repoRoot, "apps", "a-demo-be-python-fastapi", ".python-version")
 	toolVersionsPath := filepath.Join(repoRoot, ".tool-versions")
-	globalJSONPath := filepath.Join(repoRoot, "apps", "ose-grc-be", "global.json")
+	globalJSONPath := filepath.Join(repoRoot, "apps", "ose-app-be", "global.json")
 	pubspecPath := filepath.Join(repoRoot, "apps", "a-demo-fe-dart-flutterweb", "pubspec.yaml")
 	cargoTomlPath := filepath.Join(repoRoot, "apps", "a-demo-be-rust-axum", "Cargo.toml")
 
@@ -96,7 +96,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:      "java",
 			binary:    "java",
-			source:    "apps/organiclever-be-jasb/pom.xml → <java.version>",
+			source:    "apps/organiclever-be/pom.xml → <java.version>",
 			args:      []string{"-version"},
 			useStderr: true, // java -version writes to stderr, not stdout
 			parseVer:  parseJavaVersion,
@@ -137,7 +137,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "python",
 			binary:   "python3",
-			source:   "apps/a-demo-be-python-fastapi/.python-version",
+			source:   "(demo extracted to ose-primer — no local requirement)",
 			args:     []string{"--version"},
 			parseVer: parsePythonVersion,
 			compare:  compareGTE,
@@ -159,7 +159,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "rust",
 			binary:   "rustc",
-			source:   "apps/a-demo-be-rust-axum/Cargo.toml → rust-version",
+			source:   "(demo extracted to ose-primer — no local requirement)",
 			args:     []string{"--version"},
 			parseVer: parseRustVersion,
 			compare:  compareGTE,
@@ -219,7 +219,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "dotnet",
 			binary:   "dotnet",
-			source:   "apps/ose-grc-be/global.json → sdk.version",
+			source:   "apps/ose-app-be/global.json → sdk.version",
 			args:     []string{"--version"},
 			parseVer: parseDotnetVersion,
 			compare:  compareMajorGTE,
@@ -252,7 +252,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:       "dart",
 			binary:     "dart",
-			source:     "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk",
+			source:     "(demo extracted to ose-primer — no local requirement)",
 			args:       []string{"--version"},
 			parseVer:   parseDartVersion,
 			compare:    compareGTE,
@@ -262,7 +262,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "flutter",
 			binary:   "flutter",
-			source:   "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.flutter",
+			source:   "(demo extracted to ose-primer — no local requirement)",
 			args:     []string{"--version"},
 			parseVer: parseFlutterVersion,
 			compare:  compareGTE,
@@ -309,11 +309,11 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "golangci-lint",
 			binary:   "golangci-lint",
-			source:   "(pinned: v2.11.1)",
+			source:   "(pinned: v2.11.3)",
 			args:     []string{"version"},
 			parseVer: parseGolangciLintVersion,
 			compare:  compareGTE,
-			readReq:  func() string { return "2.11.1" },
+			readReq:  func() string { return "2.11.3" },
 			installCmd: func(req, platform string) []InstallStep {
 				return []InstallStep{{
 					Description: fmt.Sprintf("Install golangci-lint v%s via go install", req),
