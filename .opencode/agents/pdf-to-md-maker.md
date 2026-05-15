@@ -21,7 +21,7 @@ skills:
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
-- Multi-step orchestration of CLI tools (pdftotext, pdfimages, tesseract)
+- Multi-step orchestration of CLI tools (crane, pdftoppm, tesseract)
 - Complex decision trees for PDF type detection and chunk assembly
 - Accurate Mermaid diagram stub generation from figure descriptions
 - Verbatim text preservation discipline across large documents
@@ -55,21 +55,20 @@ Markdown file at `md-file` path. If the file already exists, the maker overwrite
 ### Step 1: Detect PDF Type
 
 ```bash
-# Check if PDF is text-based or image-only
-pdftotext -f 1 -l 3 "$PDF_FILE" /tmp/pdf-sample.txt 2>&1
-wc -c /tmp/pdf-sample.txt
+# Detect PDF type using crane
+PDF_TYPE=$(crane pdf --type "$PDF_FILE" | jq -r .type)
 ```
 
-- If output is **> 100 characters**: text-based PDF → proceed with `pdftotext`
-- If output is **≤ 100 characters or contains only whitespace**: image-only PDF → use OCR path
-- If `pdftotext` not found: fail immediately with clear error message
+- If output is `"text"` (exit 0): text-based PDF → proceed with crane extraction
+- If output is `"image"` (exit 1): image-only PDF → use OCR path
+- If `crane` not found: `dotnet run --project apps/crane-cli/crane-cli.fsproj -- pdf --type "$PDF_FILE" | jq -r .type`
 
 ### Step 2a: Text-Based PDF Extraction
 
 Process in chunks of `chunk-size` pages (default: 50) to handle arbitrarily large PDFs:
 
 ```bash
-TOTAL_PAGES=$(pdfinfo "$PDF_FILE" | grep Pages | awk '{print $2}')
+TOTAL_PAGES=$(crane pdf --info "$PDF_FILE" | jq .pages)
 CHUNK_SIZE=50
 CHUNKS=$(( (TOTAL_PAGES + CHUNK_SIZE - 1) / CHUNK_SIZE ))
 
@@ -77,7 +76,7 @@ for i in $(seq 0 $((CHUNKS - 1))); do
   FIRST=$(( i * CHUNK_SIZE + 1 ))
   LAST=$(( (i + 1) * CHUNK_SIZE ))
   [ $LAST -gt $TOTAL_PAGES ] && LAST=$TOTAL_PAGES
-  pdftotext -layout -f $FIRST -l $LAST "$PDF_FILE" "/tmp/chunk_${i}.txt"
+  crane pdf --extract "$PDF_FILE" --start-page $FIRST --end-page $LAST > "/tmp/chunk_${i}.txt"
 done
 ```
 
@@ -93,7 +92,7 @@ command -v tesseract >/dev/null 2>&1 || {
 }
 
 # Extract images page-by-page then OCR
-TOTAL_PAGES=$(pdfinfo "$PDF_FILE" | grep Pages | awk '{print $2}')
+TOTAL_PAGES=$(crane pdf --info "$PDF_FILE" | jq .pages)
 for PAGE in $(seq 1 $TOTAL_PAGES); do
   pdftoppm -f $PAGE -l $PAGE -r 300 "$PDF_FILE" /tmp/pdf_page
   tesseract /tmp/pdf_page-1.ppm /tmp/ocr_page_$PAGE -l eng 2>/dev/null
@@ -192,16 +191,16 @@ Write the assembled Markdown to `md-file`. If file exists, overwrite.
 
 ## Graceful Degradation
 
-| Tool Missing                      | Behavior                                                                                          |
-| --------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `pdftotext` not found             | Fail immediately with: `ERROR: pdftotext (poppler-utils) required. Install: brew install poppler` |
-| `tesseract` not found (image PDF) | Fail with: `ERROR: tesseract required for image-only PDFs. Install: brew install tesseract`       |
-| `pdfinfo` not found               | Estimate page count from file size; process in conservative 25-page chunks                        |
-| `pdftoppm` not found              | Try `convert` (ImageMagick) as fallback for image extraction                                      |
+| Tool Missing                      | Behavior                                                                                            |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `crane` not found                 | Use `dotnet run --project apps/crane-cli/crane-cli.fsproj --` as prefix instead of `crane`          |
+| `tesseract` not found (image PDF) | Fail with: `ERROR: tesseract required for image-only PDFs. Install: brew install tesseract`         |
+| `jq` not found                    | Parse JSON output manually; `crane pdf --info` returns `{"pages":N,...}` — extract with grep or cut |
+| `pdftoppm` not found              | Try `convert` (ImageMagick) as fallback for image extraction                                        |
 
 ## Tools Usage
 
-- **Bash**: Run pdftotext, pdfimages, pdftoppm, tesseract, pdfinfo; assemble chunks
+- **Bash**: Run crane pdf --type/--info/--extract, pdftoppm, tesseract; assemble chunks
 - **Read**: Read extracted text chunks from /tmp/; read existing MD for overwrite awareness
 - **Write**: Write final assembled Markdown to output path
 - **Edit**: Update sections of existing MD file if reprocessing specific pages
