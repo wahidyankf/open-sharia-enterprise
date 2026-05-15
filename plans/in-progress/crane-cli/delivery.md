@@ -71,8 +71,7 @@ _Suggested executor: swe-fsharp-dev_
       NuGet packages: Argu 6.2.5, PdfPig 0.1.14, TesseractOCR 5.5.2,
       FSharp.SystemTextJson 1.4.36, F23.StringSimilarity 7.0.1
 - [ ] Write `apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj` — exactly as specified in
-      tech-docs.md: xUnit, TickSpec 2.0.4, TickSpec.Xunit 2.0.4, coverlet.collector 6.x,
-      ProjectReference to crane-cli.fsproj
+      tech-docs.md: xUnit, TickSpec 2.0.4, altcover (MIT), ProjectReference to crane-cli.fsproj
 - [ ] Write `apps/crane-cli/tests/integration/crane-cli-integration-tests.fsproj` — same deps
       as unit test project; ProjectReference to crane-cli.fsproj
 - [ ] Write `apps/crane-cli/project.json` — exactly as specified in tech-docs.md
@@ -83,7 +82,7 @@ _Suggested executor: swe-fsharp-dev_
 - [ ] Run `cd apps/crane-cli && dotnet restore` — downloads NuGet packages; exits 0
 
 - [ ] Verify `lang:fsharp` tag is the correct tag for F# projects in this repo:
-      `grep -r 'lang:fsharp' apps/organiclever-be/project.json apps/ose-app-be/project.json` —
+      `grep -r 'lang:fsharp' apps/ose-app-be/project.json` —
       confirms convention (update tag to match if different)
 
 ### P0.3 — Gherkin feature files
@@ -168,10 +167,10 @@ for quality. Only the integration job requires a new file (needs tesseract for O
 
 _Suggested executor: swe-fsharp-dev_
 
-- [ ] `nx run crane-cli:build` passes — `dotnet build` compiles without errors
+- [ ] `npx nx run crane-cli:build` passes — `dotnet build` compiles without errors
 - [ ] `dotnet run --project apps/crane-cli/crane-cli.fsproj -- --help` shows all 10 subcommand groups
-- [ ] `nx run crane-cli:test:unit` completes (0 tests, 0 failures — stubs only)
-- [ ] `nx run crane-cli:lint` passes on scaffold
+- [ ] `npx nx run crane-cli:test:unit` completes (0 tests, 0 failures — stubs only)
+- [ ] `npx nx run crane-cli:lint` passes on scaffold
 
 ---
 
@@ -273,9 +272,9 @@ _Suggested executor: swe-fsharp-dev_
 
 ### P1.5 — Phase 1 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 1 BDD + unit tests pass
-- [ ] `nx run crane-cli:lint` clean
-- [ ] `nx run crane-cli:test:integration` — integration TickSpec suite runs against real
+- [ ] `npx nx run crane-cli:test:unit` — all Phase 1 BDD + unit tests pass
+- [ ] `npx nx run crane-cli:lint` clean
+- [ ] `npx nx run crane-cli:test:integration` — integration TickSpec suite runs against real
       `apps/crane-cli/tests/integration/fixtures/sample-text.pdf`; PDF type detection and info
       scenarios pass with actual PdfPig output (no subprocess needed)
 - [ ] Create `tests/integration/fixtures/sample-text.md` from fixture if not yet done:
@@ -367,8 +366,8 @@ _Suggested executor: swe-fsharp-dev_
 
 ### P2.5 — Phase 2 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 2 unit + BDD tests pass
-- [ ] `nx run crane-cli:lint` clean
+- [ ] `npx nx run crane-cli:test:unit` — all Phase 2 unit + BDD tests pass
+- [ ] `npx nx run crane-cli:lint` clean
 
 ---
 
@@ -440,8 +439,8 @@ _Suggested executor: swe-fsharp-dev_
 
 ### P3.4 — Phase 3 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 3 unit + BDD tests pass; coverage ≥ 95%
-- [ ] `nx run crane-cli:lint` clean
+- [ ] `npx nx run crane-cli:test:unit` — all Phase 3 unit + BDD tests pass; coverage ≥ 95%
+- [ ] `npx nx run crane-cli:lint` clean
 
 ---
 
@@ -495,14 +494,19 @@ _Suggested executor: swe-fsharp-dev_
 
 ### P4.3 — Phase 4 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 4 unit + BDD tests pass; coverage ≥ 95%
-- [ ] `nx run crane-cli:lint` clean
-- [ ] `nx run crane-cli:spec-coverage` — passes (all feature scenarios implemented)
+- [ ] `npx nx run crane-cli:test:unit` — all Phase 4 unit + BDD tests pass; coverage ≥ 95%
+- [ ] `npx nx run crane-cli:lint` clean
+- [ ] `npx nx run crane-cli:spec-coverage` — passes (all feature scenarios implemented)
 - [ ] `crane --help` shows all 10 subcommand groups with correct subcommands listed
 
 ---
 
 ## Phase 5: Agent Integration
+
+> **Development note**: During Phase 5, the self-contained binary may not yet be built.
+> Agents can invoke crane via `dotnet run` instead:
+> `dotnet run --project apps/crane-cli/crane-cli.fsproj -- <cmd>` (equivalent to running the
+> binary). Build the binary first with `npx nx run crane-cli:build` if needed.
 
 ### P5.1 — Update pdf-to-md-maker
 
@@ -559,7 +563,7 @@ _Suggested executor: swe-fsharp-dev_
 _Suggested executor: swe-fsharp-dev_
 
 - [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md` Tool Dependencies section:
-      add `nx run crane-cli:build` (builds `apps/crane-cli/dist/crane`) and
+      add `npx nx run crane-cli:build` (builds `apps/crane-cli/dist/crane`) and
       `export PATH="$PWD/apps/crane-cli/dist:$PATH"` and `crane --version` verification line;
       verify `grep -q 'crane --version' repo-governance/workflows/content/pdf-to-md-quality-gate.md` exits 0
 - [ ] Edit Validation Dimensions Summary table: add crane command column for each dimension
@@ -598,7 +602,12 @@ gh run list --branch main --limit 5
 gh run watch <run-id>
 ```
 
-Monitor until green. If any workflow fails: investigate root cause, fix locally, re-run the
+Monitor until green. Verify both workflows pass:
+
+- `pr-quality-gate.yml` — .NET quality gate (typecheck, lint, test:quick, spec-coverage for `lang:fsharp`)
+- `crane-cli-integration.yml` — integration tests (real PdfPig + tesseract OCR)
+
+If any workflow fails: investigate root cause, fix locally, re-run the
 local gate, push the fix. Do not proceed to next delivery item until CI is green.
 
 ## Commit Guidelines
@@ -629,14 +638,14 @@ Update `plans/done/README.md` and `plans/in-progress/README.md` accordingly.
 ## Final Gate
 
 - [ ] **F1** All 5 phases complete; all items above checked
-- [ ] **F2** `nx run crane-cli:test:quick` passes — coverage ≥ 95% (coverlet enforces threshold)
-- [ ] **F3** `nx run crane-cli:test:integration` passes (PdfPig reads real PDF; tesseract OCR tests pass)
-- [ ] **F4** `nx run crane-cli:lint` clean — zero Fantomas violations
-- [ ] **F5** `nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
+- [ ] **F2** `npx nx run crane-cli:test:quick` passes — coverage ≥ 95% (altcover + rhino-cli validate)
+- [ ] **F3** `npx nx run crane-cli:test:integration` passes (PdfPig reads real PDF; tesseract OCR tests pass)
+- [ ] **F4** `npx nx run crane-cli:lint` clean — zero Fantomas violations
+- [ ] **F5** `npx nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
 - [ ] **F6** `crane --help` shows all 10 subcommand groups
 - [ ] **F7** `crane pdf type apps/crane-cli/tests/integration/fixtures/sample-text.pdf | jq -r .type` outputs `text`
 - [ ] **F8** pdf-to-md agents contain no inline `grep -F`, `pdfinfo | awk`, or UUID bash
-- [ ] **F9** `nx affected -t typecheck lint test:quick spec-coverage` passes (pre-push gate)
+- [ ] **F9** `npx nx affected -t typecheck lint test:quick spec-coverage` passes (pre-push gate)
 - [ ] **F10** `.github/workflows/crane-cli-integration.yml` exists;
       `gh workflow list` shows `crane-cli integration`
 - [ ] **F11** Post-push: `pr-quality-gate.yml` fsharp job passes for crane-cli;

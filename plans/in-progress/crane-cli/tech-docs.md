@@ -88,19 +88,19 @@ apps/crane-cli/
 
 | Component      | Choice                                                                                                                                                                              | Reason                                                    |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| Language       | F# (.NET 8+) [Repo-grounded: apps/organiclever-be, apps/ose-app-be]                                                                                                                | Shared library use with ose-app-be; team is F# fluent     |
+| Language       | F# (.NET 8+) [Repo-grounded: apps/ose-app-be]                                                                                                                                      | Shared library use with ose-app-be; team is F# fluent     |
 | CLI framework  | Argu 6.2.5 [Web-cited: github.com/fsprojects/Argu — MIT, 3M downloads, Dec 2024]                                                                                                   | Idiomatic F# declarative CLI via discriminated unions     |
 | PDF library    | PdfPig 0.1.14 [Web-cited: github.com/UglyToad/PdfPig — Apache-2.0, 22M downloads, Mar 2026]                                                                                        | Pure managed .NET; eliminates pdftotext/pdfinfo subprocs  |
 | OCR            | TesseractOCR 5.5.2 [Web-cited: nuget.org/packages/TesseractOCR — Apache-2.0, Mar 2026]                                                                                             | .NET wrapper for tesseract engine; active fork            |
-| JSON output    | System.Text.Json (stdlib) + FSharp.SystemTextJson 1.4.36 [Web-cited: github.com/Tarmil/FSharp.SystemTextJson — MIT, 4M downloads]                                                  | stdlib JSON + F# DU/option/list serialization             |
+| JSON output    | System.Text.Json (stdlib) + FSharp.SystemTextJson 1.4.36 [Web-cited: github.com/Tarmil/FSharp.SystemTextJson — MIT, ~674K downloads]                                               | stdlib JSON + F# DU/option/list serialization             |
 | Fuzzy matching | F23.StringSimilarity 7.0.1 [Web-cited: github.com/feature23/StringSimilarity.NET — MIT, Dec 2025]                                                                                  | Returns `double` 0.0–1.0 directly; no int conversion      |
 | UUID           | System.Guid.NewGuid() (stdlib)                                                                                                                                                      | Zero dependency; direct drop-in for uuid.New()            |
 | BDD framework  | TickSpec 2.0.4 [Web-cited: github.com/fsprojects/TickSpec — Apache-2.0, Jan 2026]                                                                                                  | F#-native Gherkin; backtick step methods; active          |
-| Test runner    | xUnit 2.x (via TickSpec.Xunit)                                                                                                                                                      | Standard .NET test runner; TickSpec integration           |
-| Coverage       | coverlet 6.x; 95% line threshold via `/p:Threshold=95`                                                                                                                             | Built into `dotnet test`; no external validator needed    |
+| Test runner    | xUnit 2.x (with TickSpec step definitions)                                                                                                                                          | Standard .NET test runner; TickSpec integration           |
+| Coverage       | altcover (MIT) + `rhino-cli test-coverage validate 95` [Repo-grounded: apps/ose-app-be]                                                                                             | Matches ose-app-be F# backend pattern; threshold enforced by rhino-cli |
 | Linter         | Fantomas [Web-cited: fsprojects.github.io/fantomas — MIT, official F# formatter]                                                                                                   | F# standard formatter; `dotnet fantomas --check`          |
 | Type safety    | Native (F# is statically typed)                                                                                                                                                     | No extra tool needed                                      |
-| Nx executor    | nx:run-commands with `dotnet build`/`dotnet test`                                                                                                                                   | Same pattern as organiclever-be [Repo-grounded]           |
+| Nx executor    | nx:run-commands with `dotnet build`/`dotnet test`                                                                                                                                   | Same pattern as ose-app-be [Repo-grounded: apps/ose-app-be] |
 | Distribution   | `PublishSingleFile + SelfContained` (~60 MB); AOT optional future step                                                                                                              | Zero .NET runtime on target; no F# AOT friction risk now  |
 
 ## crane-cli.fsproj
@@ -192,8 +192,7 @@ apps/crane-cli/
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="TickSpec" Version="2.0.4" />
-    <PackageReference Include="TickSpec.Xunit" Version="2.0.4" />
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
+    <PackageReference Include="altcover" Version="*">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -231,7 +230,13 @@ apps/crane-cli/
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/unit/crane-cli-unit-tests.fsproj --collect:\"XPlat Code Coverage\" --results-directory coverage/ /p:Threshold=95 /p:ThresholdType=line /p:ThresholdStat=Total",
+        "commands": [
+          "dotnet tool restore",
+          "dotnet build tests/unit/crane-cli-unit-tests.fsproj",
+          "dotnet altcover --inputDirectory tests/unit/bin/Debug/net8.0 --outputDirectory tests/unit/bin/Debug/net8.0/__Instrumented --assemblyExcludeFilter=crane-cli-unit-tests '--assemblyFilter=xunit|TickSpec|Microsoft|FSharp|testhost|AltCover' --linecover --reportFormat=lcov --report=coverage/altcov.info --save",
+          "dotnet altcover Runner --recorderDirectory tests/unit/bin/Debug/net8.0/__Instrumented --lcovReport coverage/altcov.info --executable dotnet -- test tests/unit/bin/Debug/net8.0/__Instrumented/crane-cli-unit-tests.dll",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/altcov.info 95)"
+        ],
         "parallel": false,
         "cwd": "apps/crane-cli"
       },
@@ -296,8 +301,8 @@ apps/crane-cli/
 }
 ```
 
-Note: `lang:fsharp` tag triggers the F# quality gate job in `pr-quality-gate.yml` — verify
-this tag against existing F# projects (`organiclever-be`, `ose-app-be`) before committing.
+Note: `lang:fsharp` tag triggers the .NET quality gate job in `pr-quality-gate.yml` — verify
+this tag against existing F# projects (`ose-app-be`) before committing.
 `spec-coverage` via rhino-cli must be verified to support `.fs` step files; if not, a
 custom coverage script is needed as a substitute.
 
@@ -358,7 +363,7 @@ open F23.StringSimilarity
 
 let private fuzzyThreshold = 0.85
 let private wsPattern = Regex(@"\s+", RegexOptions.Compiled)
-let private levenshtein = NormalizedLevenshtein()
+let private levenshtein = NormalizedLevenshtein() // [Web-cited: github.com/feature23/StringSimilarity.NET/blob/main/src/F23.StringSimilarity/NormalizedLevenshtein.cs — implements INormalizedStringSimilarity with Similarity(s1, s2) : double in [0.0, 1.0]]
 
 let normalize (text: string) =
     wsPattern.Replace(text.Trim(), " ")
@@ -512,16 +517,33 @@ steps use real PdfPig and TesseractOCR against fixture PDFs.
 module CraneCli.Tests.Unit.Suite
 
 open System.IO
-open TickSpec.Xunit
+open System.Reflection
+open TickSpec
+open Xunit
 
-let private gherkinRoot () =
-    let envRoot = System.Environment.GetEnvironmentVariable("GHERKIN_ROOT")
-    if isNull envRoot then
-        Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/gherkin")
-    else envRoot
+let private assembly = Assembly.GetExecutingAssembly()
+
+let private gherkinRoot =
+    match System.Environment.GetEnvironmentVariable("GHERKIN_ROOT") with
+    | null -> Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/gherkin")
+    | root -> root
+
+let private buildScenarioData () : seq<obj[]> =
+    if Directory.Exists(gherkinRoot) then
+        let files = Directory.GetFiles(gherkinRoot, "*.feature", SearchOption.AllDirectories)
+        let defs = StepDefinitions(assembly)
+        files
+        |> Seq.collect (fun path ->
+            let feature = defs.GenerateFeature(path)
+            feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |]))
+    else Seq.empty
 
 type CraneCliUnitSuite() =
-    inherit FeatureBase(gherkinRoot())
+    static member Scenarios() : seq<obj[]> = buildScenarioData () |> Seq.toList :> seq<_>
+
+    [<Theory>]
+    [<MemberData("Scenarios")>]
+    member _.``Crane unit scenarios``(scenario: Scenario) = scenario.Action.Invoke()
 ```
 
 ```fsharp
@@ -563,16 +585,33 @@ let [<Then>] ``the exit code is (\d+)`` (_: int) = ()
 module CraneCli.Tests.Integration.Suite
 
 open System.IO
-open TickSpec.Xunit
+open System.Reflection
+open TickSpec
+open Xunit
 
-let private gherkinRoot () =
-    let envRoot = System.Environment.GetEnvironmentVariable("GHERKIN_ROOT")
-    if isNull envRoot then
-        Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/gherkin")
-    else envRoot
+let private assembly = Assembly.GetExecutingAssembly()
+
+let private gherkinRoot =
+    match System.Environment.GetEnvironmentVariable("GHERKIN_ROOT") with
+    | null -> Path.Combine(__SOURCE_DIRECTORY__, "../../../../specs/apps/crane/gherkin")
+    | root -> root
+
+let private buildScenarioData () : seq<obj[]> =
+    if Directory.Exists(gherkinRoot) then
+        let files = Directory.GetFiles(gherkinRoot, "*.feature", SearchOption.AllDirectories)
+        let defs = StepDefinitions(assembly)
+        files
+        |> Seq.collect (fun path ->
+            let feature = defs.GenerateFeature(path)
+            feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |]))
+    else Seq.empty
 
 type CraneCliIntegrationSuite() =
-    inherit FeatureBase(gherkinRoot())
+    static member Scenarios() : seq<obj[]> = buildScenarioData () |> Seq.toList :> seq<_>
+
+    [<Theory>]
+    [<MemberData("Scenarios")>]
+    member _.``Crane integration scenarios``(scenario: Scenario) = scenario.Action.Invoke()
 ```
 
 ```fsharp
@@ -609,11 +648,12 @@ let [<When>] ``I run "crane pdf type" on the fixture`` () =
 
 ## CI Workflow
 
-crane-cli follows the **F# backend pattern** [Repo-grounded: `apps/organiclever-be`]:
+crane-cli follows the **F# backend pattern** [Repo-grounded: `apps/ose-app-be`]:
 
 **Quality gate (typecheck + lint + test:quick + spec-coverage)** — handled automatically by the
-existing `.github/workflows/pr-quality-gate.yml` workflow. It detects affected `tag:lang:fsharp`
-projects via `npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:fsharp'`
+existing `.github/workflows/pr-quality-gate.yml` workflow. The `.NET quality gate` job detects
+affected `tag:lang:fsharp` and `tag:lang:csharp` projects via
+`npx nx run-many -t typecheck lint test:quick spec-coverage --projects='tag:lang:fsharp,tag:lang:csharp'`
 and uses `.github/actions/setup-dotnet` (no tesseract needed — all PDF adapters are fake in unit
 suite). No new workflow file required for the quality gate.
 
@@ -660,7 +700,7 @@ library, always available; OCR adapter is a fake in unit tests). **Integration j
 `apps/crane-cli/tests/integration/fixtures/sample-text.pdf`.
 
 Note: Verify `.github/actions/setup-dotnet` composite action exists and pins .NET 8 SDK
-against existing F# project CI (organiclever-be). If a different action name is used, update
+against existing F# project CI (ose-app-be). If a different action name is used, update
 the workflow file accordingly.
 
 ## File Impact
@@ -696,6 +736,16 @@ If crane-cli causes regressions in the pdf-to-md pipeline:
 ## Agent Integration Pattern
 
 After Phase 5, agents call crane instead of writing bash analysis.
+
+Note: During development (before Phase 5 standalone binary is built), agents invoke crane via
+`dotnet run` — no pre-built binary required:
+
+```bash
+dotnet run --project apps/crane-cli/crane-cli.fsproj -- report init --scope pdf-to-md --pdf "$PDF_FILE" --md "$MD_FILE"
+```
+
+In production/CI, the self-contained binary from `dotnet publish --self-contained` is used
+instead (Phase 5 delivery step).
 
 **pdf-to-md-checker Step 0 — Report Init**:
 

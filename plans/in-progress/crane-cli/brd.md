@@ -83,7 +83,7 @@ structured data, not raw text.
 | Reliability   | Every algorithm tested; predictable exit codes; no silent `2>/dev/null` swallowing      |
 | Debuggability | `crane --debug` shows intermediate extraction steps; structured JSON findings           |
 | Testability   | Unit tests for each analysis module; TickSpec BDD for all Gherkin scenarios             |
-| Reusability   | F# core modules reusable as NuGet library by `ose-app-be`, `organiclever-be`, and peers |
+| Reusability   | F# core modules reusable as NuGet library by `ose-app-be` and future F# projects        |
 | Correctness   | Fuzzy matching prevents false negatives; proper column analysis finds real tables       |
 | Speed         | PdfPig eliminates pdftotext subprocess calls for text PDFs; cached Nx targets           |
 
@@ -91,9 +91,9 @@ structured data, not raw text.
 
 - All 8 pdf-to-md validation dimensions covered by crane commands with unit tests
 - pdf-to-md agents contain no inline bash analysis logic after Phase 5
-- `nx run crane-cli:test:quick` passes with ≥ 95% line coverage enforced by coverlet
+- `npx nx run crane-cli:test:quick` passes with ≥ 95% line coverage enforced by altcover + rhino-cli
 - End-to-end quality gate on a real text-based PDF produces a `PASS` result
-- `nx run crane-cli:spec-coverage` passes (all Gherkin scenarios implemented)
+- `npx nx run crane-cli:spec-coverage` passes (all Gherkin scenarios implemented)
 
 ## Constraints
 
@@ -103,11 +103,11 @@ structured data, not raw text.
   must be present on PATH for OCR integration tests
 - Default output is JSON for AI agent parsing; `--human` flag for rich terminal display
 - Follow ose-public F# backend pattern: NuGet, Fantomas, xUnit + TickSpec, `nx:run-commands`
-  with `dotnet build`/`dotnet test`, consistent with `organiclever-be`, `ose-app-be`
-  [Repo-grounded: apps/organiclever-be, apps/ose-app-be]
+  with `dotnet build`/`dotnet test`, consistent with `ose-app-be`
+  [Repo-grounded: apps/ose-app-be]
 - Must run on macOS (darwin, primary dev) and Linux (GitHub Actions CI) — self-contained
   single binary via `dotnet publish --self-contained`
-- .NET 8+ [Repo-grounded: apps/organiclever-be, apps/ose-app-be — both use .NET 8]
+- .NET 8+ [Repo-grounded: apps/ose-app-be — uses .NET 8]
 - No Python runtime required — pure F# implementation
 
 ## Affected Roles

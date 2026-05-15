@@ -36,7 +36,7 @@ machine reading and `--human` for developer diagnostics.
   `pr-quality-gate.yml` (auto-triggered by `lang:fsharp` tag); integration tests via new
   `.github/workflows/crane-cli-integration.yml` (tesseract + real OCR tests, fixture at
   `apps/crane-cli/tests/integration/fixtures/`)
-- 95% unit test line coverage threshold enforced by coverlet in `test:quick`
+- 95% unit test line coverage threshold enforced by altcover + rhino-cli in `test:quick`
 
 ### Out of Scope
 
