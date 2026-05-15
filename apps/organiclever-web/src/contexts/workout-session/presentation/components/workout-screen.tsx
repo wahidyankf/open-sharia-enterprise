@@ -8,7 +8,7 @@ import type { Routine } from "@/contexts/routine/application";
 import type { AppSettings } from "@/contexts/settings/application";
 import type { JournalRuntime } from "@/contexts/journal/application";
 import type { CompletedSession } from "@/contexts/app-shell/presentation/app-machine";
-import type { CompletedSet } from "@/contexts/journal/application";
+import type { CompletedSet, ActiveExercise } from "@/contexts/journal/application";
 import { fmtTime } from "@/shared/utils/fmt";
 import { ActiveExerciseRow } from "./active-exercise-row";
 import { RestTimer } from "./rest-timer";
@@ -110,12 +110,12 @@ export function WorkoutScreen({ routine, settings, runtime, onFinishWorkout, onB
   const isFinishing = state.matches("finishing");
   const isError = state.matches("error");
 
-  const totalSets = exercises.reduce((n, e) => n + e.targetSets, 0);
-  const doneSets = exercises.reduce((n, e) => n + e.sets.length, 0);
+  const totalSets = exercises.reduce((n: number, e: ActiveExercise) => n + e.targetSets, 0);
+  const doneSets = exercises.reduce((n: number, e: ActiveExercise) => n + e.sets.length, 0);
   const pct = totalSets > 0 ? (doneSets / totalSets) * 100 : 0;
 
   // Find index of first exercise not yet fully done
-  const nextUpIdx = exercises.findIndex((e) => e.sets.length < e.targetSets);
+  const nextUpIdx = exercises.findIndex((e: ActiveExercise) => e.sets.length < e.targetSets);
 
   function handleLogSet(exerciseIdx: number, setData: CompletedSet) {
     send({ type: "LOG_SET", exerciseIdx, setData });
@@ -161,9 +161,9 @@ export function WorkoutScreen({ routine, settings, runtime, onFinishWorkout, onB
   const [editedSets, setEditedSets] = useState<Map<string, CompletedSet>>(new Map());
 
   // Merge machine exercises with local edits for display
-  const displayExercises = exercises.map((ex, exIdx) => ({
+  const displayExercises = exercises.map((ex: ActiveExercise, exIdx: number) => ({
     ...ex,
-    sets: ex.sets.map((s, sIdx) => {
+    sets: ex.sets.map((s: CompletedSet, sIdx: number) => {
       const override = editedSets.get(`${exIdx}:${sIdx}`);
       return override ?? s;
     }),
@@ -299,7 +299,7 @@ export function WorkoutScreen({ routine, settings, runtime, onFinishWorkout, onB
             <div style={{ fontSize: 13, marginTop: 4 }}>No routine was selected. Finish to save a blank session.</div>
           </div>
         ) : (
-          displayExercises.map((ex, idx) => (
+          displayExercises.map((ex: ActiveExercise, idx: number) => (
             <ActiveExerciseRow
               key={ex.id ?? idx}
               exercise={ex}
