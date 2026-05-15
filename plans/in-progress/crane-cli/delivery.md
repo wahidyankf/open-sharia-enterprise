@@ -15,7 +15,7 @@ claude --worktree crane-cli
 ```
 
 See [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans.md#worktree-specification).
+[Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md).
 
 ---
 
@@ -195,6 +195,7 @@ dependencies. This is achieved via:
    required for `crane ocr` commands to work without external tessdata directory
 
 Implementation in `crane-cli.fsproj`:
+
 ```xml
 <!-- Bundle tessdata as content file alongside the binary -->
 <ItemGroup>
@@ -206,6 +207,7 @@ Implementation in `crane-cli.fsproj`:
 ```
 
 In `OcrAdapter.fs`, point TesseractOCR at the bundled tessdata path relative to the assembly:
+
 ```fsharp
 let private tessDataPath =
     let assemblyDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
