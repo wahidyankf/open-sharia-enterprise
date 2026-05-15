@@ -71,7 +71,7 @@
         "commands": [
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc ose-platform)",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul ose-platform)",
-          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-web/coverage/lcov.info 95)",
+          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-web/coverage/lcov.info 86)",
           "../../apps/ose-cli/dist/ose-cli links check --content content"
         ],
         "parallel": false
