@@ -476,35 +476,42 @@ Result: PASS (4 iterations)
 
 ## Tool Dependencies
 
-Install via Homebrew on macOS:
+Build crane-cli and add to PATH:
 
 ```bash
-brew install poppler       # pdftotext, pdfinfo, pdfimages, pdftoppm
+npx nx run crane-cli:build                           # builds apps/crane-cli/bin/Release/net10.0/crane
+export PATH="$PWD/apps/crane-cli/bin/Release/net10.0:$PATH"
+crane --version
+```
+
+Install system dependencies:
+
+```bash
 brew install tesseract     # OCR for image-only PDFs
-npm install -g @mermaid-js/mermaid-cli  # mmdc (optional, for diagram validation)
+brew install jq            # JSON parsing for crane output
 ```
 
 Verify:
 
 ```bash
-pdftotext -v
+crane --version
 tesseract --version
-mmdc --version
+jq --version
 ```
 
 ## Validation Dimensions Summary
 
-| Dimension                                       | Agent   | Auto-Fixable                          |
-| ----------------------------------------------- | ------- | ------------------------------------- |
-| Text completeness (missing sections/paragraphs) | checker | Yes (re-extract from PDF)             |
-| Text accuracy (wrong words)                     | checker | Yes (re-extract from PDF)             |
-| Heading level accuracy (`#` depth vs PDF)       | checker | Yes (re-derive from layout heuristic) |
-| Content nesting accuracy (list/block depth)     | checker | Yes (re-extract with layout output)   |
-| Table integrity (missing/wrong data)            | checker | Yes (re-extract from PDF)             |
-| Figure coverage (Mermaid or placeholder)        | checker | Yes (add placeholder)                 |
-| Mermaid syntax validity                         | checker | Yes (fix syntax)                      |
-| OCR quality (gibberish rate)                    | checker | No (manual review)                    |
-| Structural order (section sequence)             | checker | Partial (re-ordering risky)           |
+| Dimension                                       | Agent   | crane Command                          | Auto-Fixable                          |
+| ----------------------------------------------- | ------- | -------------------------------------- | ------------------------------------- |
+| Text completeness (missing sections/paragraphs) | checker | `crane text --check "$PDF" "$MD"`      | Yes (re-extract from PDF)             |
+| Text accuracy (wrong words)                     | checker | `crane text --search "$MD" "$SEGMENT"` | Yes (re-extract from PDF)             |
+| Heading level accuracy (`#` depth vs PDF)       | checker | `crane heading --check "$PDF" "$MD"`   | Yes (re-derive from layout heuristic) |
+| Content nesting accuracy (list/block depth)     | checker | `crane nesting --check "$PDF" "$MD"`   | Yes (re-extract with layout output)   |
+| Table integrity (missing/wrong data)            | checker | `crane table --check "$PDF" "$MD"`     | Yes (re-extract from PDF)             |
+| Figure coverage (Mermaid or placeholder)        | checker | `crane figure --check "$PDF" "$MD"`    | Yes (add placeholder)                 |
+| Mermaid syntax validity                         | checker | `crane mermaid --validate "$MD"`       | Yes (fix syntax)                      |
+| OCR quality (gibberish rate)                    | checker | No (manual review)                     |
+| Structural order (section sequence)             | checker | Partial (re-ordering risky)            |
 
 ## Principles Implemented/Respected
 

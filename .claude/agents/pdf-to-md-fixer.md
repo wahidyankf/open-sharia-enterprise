@@ -29,11 +29,12 @@ You are a careful PDF-to-Markdown fix applicator. You read `pdf-to-md-checker` a
 ## Core Responsibility
 
 1. Read the audit report from `pdf-to-md-checker`
-2. Re-validate each finding against both PDF (source of truth) and Markdown (target)
-3. Apply HIGH_CONFIDENCE fixes automatically
-4. Skip MEDIUM_CONFIDENCE fixes (flag for manual review)
-5. Mark FALSE_POSITIVE findings (persist to skip list)
-6. Generate fix report with audit trail
+2. Initialize fix report: `crane report --init "$PDF_FILE" --md "$MD_FILE" --scope pdf-to-md-fix | jq -r .path`
+3. Re-validate each finding against both PDF (source of truth) and Markdown (target)
+4. Apply HIGH_CONFIDENCE fixes automatically
+5. Skip MEDIUM_CONFIDENCE fixes (flag for manual review)
+6. Mark FALSE_POSITIVE findings (persist to skip list via `crane skiplist --add`)
+7. Finalize fix report: `crane report --finalize "$FIX_REPORT" --status PASS`
 
 **CRITICAL**: Never apply a fix without re-verifying the issue in the current MD file. The file may have changed since the audit was generated.
 
@@ -82,13 +83,10 @@ Execute fixes in this order per P0-P4 priority matrix:
 
 ```bash
 # Re-validate: confirm section not in MD
-grep -F "Section Title" "$MD_FILE" >/dev/null && echo "FALSE_POSITIVE" && exit 0
+crane text --search "$MD_FILE" --segment "$SECTION_TITLE" | jq -r .found | grep -q true && echo "FALSE_POSITIVE" && exit 0
 
 # Extract section from PDF by page range
-pdftotext -layout -f $START_PAGE -l $END_PAGE "$PDF_FILE" /tmp/missing_section.txt
-
-# Read extracted text
-cat /tmp/missing_section.txt
+crane pdf --extract "$PDF_FILE" --start-page $START_PAGE --end-page $END_PAGE
 ```
 
 Convert extracted text to Markdown and insert at correct location in MD file.
@@ -97,10 +95,10 @@ Convert extracted text to Markdown and insert at correct location in MD file.
 
 ```bash
 # Re-validate: confirm incorrect text still present
-grep -F "$INCORRECT_TEXT" "$MD_FILE" >/dev/null || echo "FALSE_POSITIVE — already fixed"
+crane text --search "$MD_FILE" --segment "$INCORRECT_TEXT" | jq -r .found | grep -q false || echo "FALSE_POSITIVE — already fixed"
 
 # Extract correct text from PDF
-pdftotext -layout -f $PAGE -l $PAGE "$PDF_FILE" /tmp/correct_page.txt
+crane pdf --extract "$PDF_FILE" --start-page $PAGE --end-page $PAGE
 ```
 
 Replace incorrect text with PDF-sourced text. Preserve surrounding Markdown formatting.
@@ -108,16 +106,17 @@ Replace incorrect text with PDF-sourced text. Preserve surrounding Markdown form
 ### Fix: Heading Level Accuracy (HIGH/MEDIUM — re-derive from PDF layout)
 
 ```bash
-# Re-validate: confirm heading exists at wrong depth
-grep -n '^#\+\s' "$MD_FILE" | grep -F "$HEADING_TEXT"
+# Re-validate: check heading depth using crane
+crane heading --check "$PDF_FILE" "$MD_FILE" | jq '.[] | select(.location_md | contains("'"$HEADING_TEXT"'"))'
 
-# Extract affected page range from PDF for depth re-derivation
-pdftotext -layout -f $START_PAGE -l $END_PAGE "$PDF_FILE" /tmp/heading_page.txt
+# Extract affected page range and infer depth
+crane pdf --extract "$PDF_FILE" --start-page $START_PAGE --end-page $END_PAGE
+crane heading --infer "$HEADING_TEXT"
 ```
 
 For each heading depth finding from audit:
 
-1. Run `pdftotext -layout -f <first_page> -l <last_page> <pdf> -` for the affected section's page range.
+1. Use `crane heading --infer "$HEADING_TEXT"` to get unambiguous depth from section numbering.
 2. Identify the heading in the layout output. Determine correct depth via section numbering (count dots in `1.2.3` → depth 3 = H3) or, if unnumbered, via relative font-size compared to surrounding headings.
 3. Replace the existing `##...#` prefix on the heading line with the correct number of `#` characters.
 4. Verify surrounding headings are not broken by the change (no H4 before H3, etc.).
@@ -157,10 +156,10 @@ For each nesting depth finding from audit:
 
 ```bash
 # Re-validate: confirm table not in MD
-grep -F "$TABLE_HEADER" "$MD_FILE" >/dev/null && echo "FALSE_POSITIVE"
+crane table --check "$PDF_FILE" "$MD_FILE" | jq 'length == 0' | grep -q true && echo "FALSE_POSITIVE"
 
 # Extract table page
-pdftotext -layout -f $PAGE -l $PAGE "$PDF_FILE" /tmp/table_page.txt
+crane pdf --extract "$PDF_FILE" --start-page $PAGE --end-page $PAGE
 ```
 
 Parse column-aligned content from extraction. Convert to Markdown table. Insert at correct location.
@@ -182,9 +181,9 @@ For each invalid block found in audit:
 ### Fix: Missing Figure Placeholder (HIGH — add placeholder)
 
 ```bash
-# Re-validate: confirm no Mermaid or placeholder for figure N
-grep -F "[FIGURE $N" "$MD_FILE" >/dev/null && echo "FALSE_POSITIVE"
-grep -A5 "Figure $N" /tmp/pdf_full.txt | head -6
+# Re-validate: confirm no figure coverage
+crane figure --check "$PDF_FILE" "$MD_FILE" | jq 'length == 0' | grep -q true && echo "FALSE_POSITIVE"
+crane pdf --extract "$PDF_FILE" --start-page $PAGE --end-page $PAGE
 ```
 
 Insert placeholder at appropriate location:
@@ -197,20 +196,20 @@ Insert placeholder at appropriate location:
 
 ```bash
 # Re-validate
-grep -F "$FIRST_10_WORDS" "$MD_FILE" >/dev/null && echo "FALSE_POSITIVE"
+crane text --search "$MD_FILE" --segment "$FIRST_10_WORDS" | jq -r .found | grep -q true && echo "FALSE_POSITIVE"
 ```
 
 Extract paragraph from PDF source page. Insert after identified anchor text in MD.
 
 ## False Positive Persistence
 
-When a finding is confirmed FALSE_POSITIVE, append to skip list:
+When a finding is confirmed FALSE_POSITIVE, add to skip list:
 
 ```bash
-echo "- [text-completeness] | $MD_FILE | $BRIEF_DESCRIPTION" >> "generated-reports/pdf-to-md__${MD_BASENAME}__known-false-positives.md"
+crane skiplist --add "$MD_BASENAME" --category "$CATEGORY" --description "$BRIEF_DESCRIPTION"
 ```
 
-Format: `[category] | [file] | [brief-description]`
+Uses SHA256 stable key for dedup — safe to call multiple times with same arguments.
 
 Categories: `text-completeness`, `text-accuracy`, `heading-level-accuracy`, `content-nesting-accuracy`, `table-integrity`, `figure-coverage`, `mermaid-syntax`, `ocr-quality`, `structure`
 
