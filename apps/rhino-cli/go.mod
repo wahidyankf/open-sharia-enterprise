@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/cucumber/godog v0.15.1
 	github.com/spf13/cobra v1.10.2
-	github.com/wahidyankf/ose-public/libs/golang-commons v0.0.0-00010101000000-000000000000
+	github.com/wahidyankf/ose-public/libs/golang-commons v0.0.0-20260515180206-9f4c59a7c82c
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -28,12 +28,11 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/narqo/go-badge v0.0.0-20230821190521-c9a75c019a59 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
-	github.com/spf13/pflag v1.0.9 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/vladopajic/go-test-coverage/v2 v2.18.3 // indirect
-	golang.org/x/image v0.18.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
-	golang.org/x/tools v0.41.0 // indirect
+	golang.org/x/image v0.39.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/tools v0.43.0 // indirect
 )
 
 tool github.com/vladopajic/go-test-coverage/v2

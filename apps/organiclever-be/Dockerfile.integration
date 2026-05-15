@@ -1,8 +1,8 @@
 # Integration test runner
 # Build context is the monorepo root (context: ../.. in docker-compose.integration.yml).
 # Specs are mounted at /specs via volume; pom.xml antrun resolves ${project.basedir}/../../specs = /specs.
-FROM eclipse-temurin:25-jdk-alpine
-RUN apk add --no-cache maven
+FROM eclipse-temurin:25.0.3_9-jdk
+RUN apt-get update && apt-get install -y --no-install-recommends maven && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
