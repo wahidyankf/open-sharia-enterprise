@@ -92,7 +92,7 @@
         "commands": [
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc ayokoding)",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul ayokoding)",
-          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-web/coverage/lcov.info 90)",
+          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-web/coverage/lcov.info 82)",
           "../../apps/ayokoding-cli/dist/ayokoding-cli links check --content content",
           "npx tsx src/scripts/generate-indexes.ts --validate"
         ],

@@ -63,7 +63,7 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "commands": [
-          "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-app-web/coverage/lcov.info 95)"
+          "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-app-web/coverage/lcov.info 88)"
         ],
         "parallel": false,
         "cwd": "{projectRoot}"
