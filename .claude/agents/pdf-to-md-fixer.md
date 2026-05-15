@@ -131,17 +131,18 @@ For each heading depth finding from audit:
 ### Fix: Content Nesting Accuracy (HIGH/MEDIUM — re-extract with layout indentation)
 
 ```bash
-# Re-validate: locate the incorrectly nested block
-grep -n '^\s*[-*]\|^\s*[0-9]\+\.' "$MD_FILE" | head -20
+# Re-validate: check nesting via crane
+crane nesting --check "$PDF_FILE" "$MD_FILE" | jq 'length == 0' | grep -q true && echo "FALSE_POSITIVE"
 
-# Extract relevant page range for indentation re-derivation
-pdftotext -layout -f $START_PAGE -l $END_PAGE "$PDF_FILE" /tmp/nesting_page.txt
+# Extract relevant page range for nesting re-derivation
+crane pdf --extract "$PDF_FILE" --start-page $START_PAGE --end-page $END_PAGE
+crane nesting --infer "$PDF_FILE"
 ```
 
 For each nesting depth finding from audit:
 
-1. Run `pdftotext -layout` on the relevant page range.
-2. Parse indentation column offsets to reconstruct the nesting hierarchy (e.g., indent 4 = level 1, indent 8 = level 2).
+1. Use `crane nesting --infer` to extract layout indentation levels.
+2. Parse indentation to reconstruct the nesting hierarchy (e.g., indent 4 = level 1, indent 8 = level 2).
 3. Rewrite the Markdown list with correct nesting (`  ` per level for bullets, `   ` for numbered).
 4. Replace the flat or incorrectly nested block in the MD file with the reconstructed version.
 
@@ -277,7 +278,7 @@ This enables checker to scope its next iteration to only changed areas.
 
 ## Tools Usage
 
-- **Bash**: pdftotext for re-extraction; grep for re-validation; wc for OCR assessment
+- **Bash**: crane pdf --extract for re-extraction; crane text --search for re-validation; crane ocr --quality for OCR assessment
 - **Read**: Read audit report, current MD file, extracted text from /tmp/
 - **Edit**: Apply targeted fixes to MD file (targeted, not full rewrite)
 - **Write**: Write fix report to `generated-reports/`

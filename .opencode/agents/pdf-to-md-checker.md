@@ -71,13 +71,11 @@ Validate a Markdown file against its source PDF across seven dimensions:
 
 ### Step 0: Initialize Report File
 
-Use `repo-generating-validation-reports` Skill for UUID generation, UTC+7 timestamp, and progressive report creation.
+```bash
+REPORT=$(crane report --init "$PDF_FILE" --md "$MD_FILE" --scope pdf-to-md | jq -r .path)
+```
 
-1. Generate 6-char UUID via Bash
-2. Determine UUID chain (check `.execution-chain-pdf-to-md`, append if <30s, else new)
-3. Generate UTC+7 timestamp
-4. Create report at `generated-reports/pdf-to-md__{uuid-chain}__{timestamp}__audit.md`
-5. Write initial header with scope, status ("In Progress"), progress tracker
+This creates a UUID-chained, UTC+7-timestamped report at `generated-reports/pdf-to-md__{uuid-chain}__{timestamp}__audit.md` and returns the path.
 
 ### Step 1: Pre-flight Checks
 
@@ -94,92 +92,37 @@ MD_SIZE=$(wc -c < "$MD_FILE")
 [ "$MD_SIZE" -gt 0 ] || { echo "CRITICAL: MD file is empty"; exit 1; }
 ```
 
-### Step 2: Text Completeness Check (chunk-by-chunk)
-
-Process PDF in 50-page chunks. For each chunk:
+### Step 2: Text Completeness Check
 
 ```bash
-pdftotext -layout -f $FIRST -l $LAST "$PDF_FILE" /tmp/pdf_chunk_${i}.txt
+TEXT_FINDINGS=$(crane text --check "$PDF_FILE" "$MD_FILE")
 ```
 
-Extract significant text segments (sentences, paragraphs ≥ 10 words) from the chunk. For each segment, search the Markdown for its presence:
-
-```bash
-# Normalize whitespace for comparison
-NORMALIZED=$(echo "$SEGMENT" | tr -s ' ' | tr '\n' ' ')
-grep -F "$NORMALIZED" "$MD_FILE" >/dev/null 2>&1
-```
-
-If segment NOT found in MD:
-
-- If segment is a heading or section start → CRITICAL
-- If segment is a paragraph → HIGH
-- If segment is a footnote/reference → HIGH
-- If segment is a short phrase or header/footer → MEDIUM
+Returns JSON array of findings with `category`, `criticality`, `confidence`, `description`, `pdf_text`, and `fix_suggestion`. Criticality is CRITICAL for missing headings/section starts, HIGH for paragraphs, MEDIUM for short phrases.
 
 ### Step 3: Heading Level Accuracy Check
 
-Extract all heading lines from the Markdown and verify each heading's `#` depth matches its role in the PDF visual hierarchy:
-
 ```bash
-# Extract all heading lines from MD
-grep -n "^#" "$MD_FILE"
+HEADING_FINDINGS=$(crane heading --check "$PDF_FILE" "$MD_FILE")
 ```
 
-For each heading found, compare its depth against the PDF layout:
-
-```bash
-# Extract layout-preserved text to compare font-size heuristics and numbering depth
-pdftotext -layout "$PDF_FILE" /tmp/pdf_full.txt
-```
-
-Mapping rules:
-
-- Title = H1 (`#`)
-- Top-level chapters/parts = H2 (`##`)
-- Numbered sections (e.g. `1.`, `2.`) = H3 (`###`)
-- Subsections (e.g. `1.1`, `2.3`) = H4 (`####`)
-- Sub-subsections (e.g. `1.1.1`) = H5 (`#####`)
-
-If a heading is off by 2+ levels, or an entire family of headings is systematically wrong → HIGH
-If a single isolated heading is off by 1 level → MEDIUM
-If the PDF uses non-standard hierarchy (ambiguous) → LOW
-
-Use HIGH_CONFIDENCE when section numbering depth gives unambiguous evidence. Use MEDIUM_CONFIDENCE when relying solely on font-size heuristics without numbering.
-
-Auto-fixable: Yes — re-derive heading depth from PDF layout and replace the `#` prefix.
+Returns JSON array of findings. HIGH when heading off by 2+ levels or entire family wrong. MEDIUM for single isolated heading off by 1 level. HIGH_CONFIDENCE when section numbering gives unambiguous evidence.
 
 ### Step 4: Content Nesting Accuracy Check
 
-Use `pdftotext -layout` output to extract indentation levels of list items and block elements, then compare against Markdown list nesting:
-
 ```bash
-# Extract layout-preserved output (reuse /tmp/pdf_full.txt if already generated)
-pdftotext -layout "$PDF_FILE" /tmp/pdf_full.txt
+NESTING_FINDINGS=$(crane nesting --check "$PDF_FILE" "$MD_FILE")
 ```
 
-Map PDF indentation column offsets to Markdown nesting levels:
-
-- Each additional indentation tier in the PDF maps to one additional level of Markdown nesting (`-` for nested bullets, `1.` for nested numbered lists).
-
-If top-level items are nested under wrong parents (content hierarchy inverted) → HIGH
-If nesting is off by one level → MEDIUM
-If single-item lists or ambiguous indentation → LOW
-
-Use HIGH_CONFIDENCE when the PDF has clear multi-level indentation. Use MEDIUM_CONFIDENCE when indentation is subtle.
-
-Auto-fixable: Yes — re-extract with layout-preserved output and correct nesting.
+Returns JSON array of findings. HIGH when nesting hierarchy inverted. MEDIUM when off by one level. HIGH_CONFIDENCE when PDF has clear multi-level indentation.
 
 ### Step 5: Table Integrity Check
 
-Extract tables from PDF text (detect column-aligned content):
-
 ```bash
-pdftotext -layout "$PDF_FILE" /tmp/pdf_full.txt
-grep -n "^\s\+[A-Za-z].*\s\{2,\}.*\s\{2,\}" /tmp/pdf_full.txt | head -100
+TABLE_FINDINGS=$(crane table --check "$PDF_FILE" "$MD_FILE")
 ```
 
-For each detected table:
+Returns JSON array of findings. For each detected table:
 
 1. Count rows and columns in PDF source
 2. Find corresponding Markdown table (search by header row keywords)
@@ -191,54 +134,27 @@ Wrong data in cells → HIGH
 
 ### Step 6: Figure and Diagram Coverage Check
 
-Count figures referenced in PDF:
-
 ```bash
-grep -c "^Figure\|^Fig\.\|^\[Figure\|Exhibit\|Diagram\|Chart" /tmp/pdf_full.txt
+FIGURE_FINDINGS=$(crane figure --check "$PDF_FILE" "$MD_FILE")
 ```
 
-For each figure reference found in PDF, check MD has either:
-
-- A Mermaid code block near the corresponding location
-- A `[FIGURE N: ...]` placeholder
-
-Figure with no representation at all → HIGH
-Figure with placeholder but no Mermaid when type was determinable → MEDIUM
+Returns JSON array of findings. Figure with no representation (no Mermaid, no placeholder) → HIGH. Figure with placeholder only when type was determinable → MEDIUM.
 
 ### Step 7: Mermaid Syntax Validation
 
-Find all Mermaid blocks in MD:
+```bash
+MERMAID_FINDINGS=$(crane mermaid --validate "$MD_FILE")
+```
 
-````bash
-grep -n '```mermaid' "$MD_FILE"
-````
-
-For each Mermaid block, validate syntax by checking:
-
-- Block starts with a valid diagram type keyword (`graph`, `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, `flowchart`, `gantt`, `pie`, `erDiagram`, `journey`, `gitGraph`)
-- All nodes referenced in edges are defined
-- No unclosed brackets or quotes
-- Arrow syntax is valid (`-->`, `->>`, `->`, `--`)
-
-Invalid Mermaid block → HIGH
+Returns JSON array of findings. Validates 18 known diagram type keywords, balanced brackets/parentheses, non-empty blocks. Invalid Mermaid block → HIGH.
 
 ### Step 8: OCR Quality Assessment (if applicable)
 
-Check for OCR-tagged pages:
-
 ```bash
-grep -c "<!-- OCR: page" "$MD_FILE"
+OCR_FINDINGS=$(crane ocr --quality "$MD_FILE")
 ```
 
-For each OCR-tagged page section:
-
-1. Extract the text segment
-2. Count character patterns that indicate OCR errors: sequences of random consonants, `l` substituted for `1`, `0` for `O`, etc.
-3. Estimate error rate: `(error_char_count / total_char_count) * 100`
-
-Error rate > 10% → CRITICAL
-Error rate 5-10% → HIGH
-Error rate 2-5% → MEDIUM
+Returns JSON array of findings for `<!-- OCR: ... -->` tagged sections. Uses 4 error patterns (non-ASCII runs, repeated l/I/1, repeated 0/O, long concatenated words). Error rate > 10% → CRITICAL, 5-10% → HIGH, 2-5% → MEDIUM.
 
 ### Step 9: Structural Integrity Check
 
@@ -269,8 +185,12 @@ Add summary:
 
 Before beginning validation, load the skip list:
 
-- **File**: `generated-reports/.known-false-positives.md`
-- Check each finding against stable key: `[category] | [file] | [brief-description]`
+```bash
+# Check if a finding is in the skip list
+crane skiplist --check "$MD_BASENAME" --category "$CATEGORY" --description "$DESCRIPTION"
+```
+
+- Uses stable SHA256 key derivation for dedup
 - If matched: log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]`
 
 ### Re-validation Mode (Scoped Scan)
