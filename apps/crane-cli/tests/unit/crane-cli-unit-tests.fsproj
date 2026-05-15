@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CraneCli.Tests.Unit</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Steps/PdfSteps.fs" />
+    <Compile Include="Steps/TextSteps.fs" />
+    <Compile Include="Steps/HeadingSteps.fs" />
+    <Compile Include="Steps/NestingSteps.fs" />
+    <Compile Include="Steps/TableSteps.fs" />
+    <Compile Include="Steps/FigureSteps.fs" />
+    <Compile Include="Steps/MermaidSteps.fs" />
+    <Compile Include="Steps/OcrSteps.fs" />
+    <Compile Include="Steps/ReportSteps.fs" />
+    <Compile Include="Steps/SkiplistSteps.fs" />
+    <Compile Include="Suite.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="TickSpec" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../crane-cli.fsproj" />
+  </ItemGroup>
+</Project>

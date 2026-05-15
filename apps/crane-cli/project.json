@@ -1,0 +1,88 @@
+{
+  "name": "crane-cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build crane-cli.fsproj -c Release",
+        "cwd": "apps/crane-cli"
+      },
+      "outputs": ["{projectRoot}/bin"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet run --project crane-cli.fsproj -- --help",
+        "cwd": "apps/crane-cli"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dotnet tool restore",
+          "dotnet build tests/unit/crane-cli-unit-tests.fsproj",
+          "dotnet altcover --inputDirectory tests/unit/bin/Debug/net10.0 --outputDirectory tests/unit/bin/Debug/net10.0/__Instrumented --assemblyExcludeFilter=crane-cli-unit-tests '--assemblyFilter=xunit|TickSpec|Microsoft|FSharp|testhost|AltCover' --linecover --reportFormat=lcov --report=coverage/altcov.info --save",
+          "dotnet altcover Runner --recorderDirectory tests/unit/bin/Debug/net10.0/__Instrumented --lcovReport coverage/altcov.info --executable dotnet -- test tests/unit/bin/Debug/net10.0/__Instrumented/crane-cli-unit-tests.dll",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/altcov.info 95)"
+        ],
+        "parallel": false,
+        "cwd": "apps/crane-cli"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.fs",
+        "{projectRoot}/**/*.fsproj",
+        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"
+      ],
+      "outputs": ["{projectRoot}/coverage/"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet test tests/unit/crane-cli-unit-tests.fsproj",
+        "cwd": "apps/crane-cli"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.fs",
+        "{projectRoot}/**/*.fsproj",
+        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"
+      ]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet test tests/integration/crane-cli-integration-tests.fsproj",
+        "cwd": "apps/crane-cli"
+      },
+      "cache": false
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build crane-cli.fsproj --no-restore -c Debug",
+        "cwd": "apps/crane-cli"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "~/.dotnet/tools/fantomas --check .",
+        "cwd": "apps/crane-cli"
+      }
+    },
+    "spec-coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/crane/gherkin apps/crane-cli"
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]
+    }
+  },
+  "tags": ["type:app", "platform:cli", "lang:fsharp", "domain:crane"],
+  "implicitDependencies": ["rhino-cli"]
+}
