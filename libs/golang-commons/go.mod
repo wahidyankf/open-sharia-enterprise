@@ -29,7 +29,7 @@ require (
 	github.com/rs/zerolog v1.34.0 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/vladopajic/go-test-coverage/v2 v2.18.3 // indirect
-	golang.org/x/image v0.18.0 // indirect
+	golang.org/x/image v0.39.0 // indirect
 	golang.org/x/net v0.50.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/tools v0.41.0 // indirect
