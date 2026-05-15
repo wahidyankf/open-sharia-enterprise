@@ -10,4 +10,6 @@ type PdfMetadata =
       [<JsonPropertyName("author")>]
       Author: string option
       [<JsonPropertyName("file")>]
-      File: string }
+      File: string
+      [<JsonPropertyName("size_bytes")>]
+      SizeBytes: int64 }
