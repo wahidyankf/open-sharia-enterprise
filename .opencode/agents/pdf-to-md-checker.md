@@ -85,11 +85,10 @@ This creates a UUID-chained, UTC+7-timestamped report at `generated-reports/pdf-
 [ -f "$MD_FILE" ]  || { echo "CRITICAL: MD not found: $MD_FILE"; exit 1; }
 
 # Get page count
-TOTAL_PAGES=$(pdfinfo "$PDF_FILE" | grep Pages | awk '{print $2}')
+TOTAL_PAGES=$(crane pdf --info "$PDF_FILE" | jq .pages)
 
 # Check MD file is non-empty
-MD_SIZE=$(wc -c < "$MD_FILE")
-[ "$MD_SIZE" -gt 0 ] || { echo "CRITICAL: MD file is empty"; exit 1; }
+[ -s "$MD_FILE" ] || { echo "CRITICAL: MD file is empty"; exit 1; }
 ```
 
 ### Step 2: Text Completeness Check
@@ -267,7 +266,7 @@ On re-validation:
 
 ## Tools Usage
 
-- **Bash**: pdftotext, pdfinfo, grep, wc, diff for text extraction and comparison
+- **Bash**: crane (pdf/text/heading/nesting/table/figure/mermaid/ocr/report/skiplist commands), diff for comparison
 - **Read**: Read Markdown file and temporary extracted text files
 - **Glob**: Find MD file if path not specified
 - **Grep**: Search MD for text segments, count figures, find Mermaid blocks
