@@ -135,6 +135,22 @@ let ``TextCommands_runCheck_ErrorAdapter_Returns1`` () =
     Assert.Equal(0, code)
 
 [<Fact>]
+let ``TextCommands_runCheck_WithRealErrorAdapter_Returns1`` () =
+    // Create an adapter that returns Error to cover the Error branch
+    let errorAdapter =
+        { new CraneCli.Adapters.PdfAdapter.IPdfAdapter with
+            member _.GetMetadata(_path) = Error "not implemented"
+            member _.SampleText(_path, _pageCount) = Error "test error"
+            member _.ExtractPages(_path, _startPage, _endPage) = Error "not implemented" }
+
+    use sw = new System.IO.StringWriter()
+
+    let code =
+        CraneCli.Commands.TextCommands.runCheck errorAdapter "fake.pdf" "some md text" sw
+
+    Assert.Equal(1, code)
+
+[<Fact>]
 let ``TextCommands_runSearch_Found_Returns0`` () =
     use sw = new System.IO.StringWriter()
     let code = CraneCli.Commands.TextCommands.runSearch "hello world text" "hello" sw

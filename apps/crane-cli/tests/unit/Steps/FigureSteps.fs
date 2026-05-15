@@ -68,3 +68,11 @@ let ``TestUnitPlaceholder_SatisfiesCoverage`` () =
 let ``TestUnitMermaidBlock_SatisfiesCoverage`` () =
     let findings = checkFigures "See Figure 3" "```mermaid\ngraph TD\n```"
     Assert.Empty(findings)
+
+[<Fact>]
+let ``TestUnitRunDetect_ReturnsJson`` () =
+    use sw = new System.IO.StringWriter()
+    let code = runDetect "See Figure 1 and Figure 2 for details" sw
+    let json = System.Text.Json.JsonDocument.Parse(sw.ToString().Trim())
+    Assert.Equal(0, code)
+    Assert.Equal(System.Text.Json.JsonValueKind.Array, json.RootElement.ValueKind)
