@@ -2,10 +2,10 @@
 
 ## Product Overview
 
-crane-cli (Content Retrieval And Normalization Engine CLI) is a tested Python command-line
-tool that exposes every deterministic PDF analysis operation in the `pdf-to-md` pipeline as
+crane-cli (Content Retrieval And Normalization Engine CLI) is a statically-typed Go CLI
+that exposes every deterministic PDF analysis operation in the `pdf-to-md` pipeline as
 a composable, JSON-output command. It replaces fragile inline bash in agent `.md` files with
-verified, unit-tested Python logic, making agents thin orchestrators that read structured
+verified, unit-tested Go logic, making agents thin orchestrators that read structured
 findings rather than parsing raw text.
 
 The tool is consumed exclusively by AI agents and developer scripts — not by end users in a
@@ -27,10 +27,10 @@ machine reading and `--human` for developer diagnostics.
 
 - All 10 command groups specified in the Command Inventory below (pdf, text, heading, nesting,
   table, figure, mermaid, ocr, report, skiplist)
-- JSON-first output contract; `--human` Rich output flag
+- JSON-first output contract; `--human` human-readable output flag
 - Exit codes: 0 (success), 1 (findings / boolean false), 2 (tool not found)
-- Python 3.13+, uv packaging, Nx project.json integration
-- BDD-driven development with pytest-bdd; spec files in `specs/apps/crane/gherkin/`
+- Go 1.26+, go modules, Nx project.json integration (cobra, golangci-lint, godog)
+- BDD-driven development with godog; spec files in `specs/apps/crane/gherkin/`
 - rhino-cli spec-coverage enforcement
 
 ### Out of Scope
@@ -116,7 +116,7 @@ crane
 ## Output Contract
 
 All commands output **JSON** by default (machine-readable for agents).
-Pass `--human` for rich terminal output via Rich.
+Pass `--human` for human-readable terminal output (formatted text instead of JSON).
 
 **Standard JSON shapes**:
 
@@ -236,7 +236,7 @@ entries: `[{"category": "...", "description": "..."}, ...]`.
 ## Acceptance Criteria (Gherkin)
 
 Feature files live at `specs/apps/crane/gherkin/`. Step definitions live at
-`apps/crane-cli/tests/unit/steps/`.
+`apps/crane-cli/tests/bdd/steps/`.
 
 ### Feature: PDF Type Detection
 

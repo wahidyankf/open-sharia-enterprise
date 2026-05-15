@@ -2,10 +2,10 @@
 
 ## What Is This?
 
-crane-cli (**C**ontent **R**etrieval **A**nd **N**ormalization **E**ngine) is a Python CLI
+crane-cli (**C**ontent **R**etrieval **A**nd **N**ormalization **E**ngine) is a Go CLI
 that provides reliable, deterministic operations for the PDF-to-Markdown conversion pipeline.
-It replaces fragile bash one-liners in the `pdf-to-md` agents with well-tested, type-safe
-Python commands, turning agents into thin orchestrators of a tested analysis engine.
+It replaces fragile bash one-liners in the `pdf-to-md` agents with well-tested, statically-typed
+Go commands, turning agents into thin orchestrators of a tested analysis engine.
 
 ## Why
 
@@ -13,29 +13,30 @@ The `pdf-to-md-quality-gate` workflow agents currently embed complex analysis lo
 bash: text comparison via `grep -F`, table detection via column-regex, OCR quality estimation
 as a described-but-unimplemented stub, UUID chain management via racy `date` + `openssl rand`,
 and heading depth inference with no working implementation. All of these fail silently on edge
-cases and cannot be unit-tested. crane-cli relocates every deterministic operation to Python
-where it can be tested, debugged, and maintained independently of agent prompt text.
+cases and cannot be unit-tested. crane-cli relocates every deterministic operation to Go — consistent with the existing
+`rhino-cli`, `ayokoding-cli`, and `ose-cli` pattern — where it can be tested, debugged,
+and distributed as a single binary without runtime dependencies.
 
 ## Scope
 
-| Field           | Value               |
-| --------------- | ------------------- |
-| Repository      | `ose-public`        |
-| App path        | `apps/crane-cli/`   |
-| Specs path      | `specs/apps/crane/` |
-| Language        | Python 3.13+        |
-| CLI framework   | Typer + Rich        |
-| Models          | Pydantic v2         |
-| Package manager | uv                  |
-| Linter          | ruff                |
-| Type checker    | pyright             |
-| Test framework  | pytest + pytest-bdd |
+| Field           | Value                        |
+| --------------- | ---------------------------- |
+| Repository      | `ose-public`                 |
+| App path        | `apps/crane-cli/`            |
+| Specs path      | `specs/apps/crane/`          |
+| Language        | Go 1.26+                     |
+| CLI framework   | cobra                        |
+| Models          | encoding/json + structs      |
+| Package manager | Go modules                   |
+| Linter          | golangci-lint                |
+| Type checker    | N/A (Go is statically typed) |
+| Test framework  | testing + godog              |
 
 ## Phases
 
 | #   | Scope                                                                             | Status |
 | --- | --------------------------------------------------------------------------------- | ------ |
-| 0   | Project scaffold, Nx wiring, uv workspace                                         | ☐      |
+| 0   | Project scaffold, Nx wiring, Go modules                                           | ☐      |
 | 1   | Core PDF commands — `pdf info`, `pdf type`, `pdf extract`                         | ☐      |
 | 2   | Analysis commands — `text check`, `heading check`, `nesting check`, `table check` | ☐      |
 | 3   | Coverage commands — `figure check`, `mermaid validate`, `ocr quality`             | ☐      |
@@ -46,7 +47,7 @@ where it can be tested, debugged, and maintained independently of agent prompt t
 
 - [Business Requirements](./brd.md) — Problem, solution, value, constraints
 - [Product Requirements](./prd.md) — Command inventory, output contract, Gherkin acceptance criteria
-- [Technical Design](./tech-docs.md) — Architecture, project layout, pyproject.toml, project.json, algorithms
+- [Technical Design](./tech-docs.md) — Architecture, project layout, go.mod, project.json, algorithms
 - [Delivery Checklist](./delivery.md) — Granular TDD step-by-step implementation checklist
 
 ## Key Outputs

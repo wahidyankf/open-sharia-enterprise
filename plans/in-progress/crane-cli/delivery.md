@@ -21,11 +21,11 @@ See [Worktree Path Convention](../../repo-governance/conventions/structure/workt
 
 ## Environment Setup
 
-- [ ] Verify Python 3.13+: `python3 --version` — shows 3.13.x
-- [ ] Verify uv installed: `uv --version` — shows uv version
-- [ ] Verify pdftotext available: `which pdftotext` — exits 0
-- [ ] Verify pdfinfo available: `which pdfinfo` — exits 0
-- [ ] Run `npm install && npm run doctor -- --fix` from repo root (worktree)
+- [ ] Verify Go 1.26+: `go version` — shows go1.26.x or newer
+- [ ] Verify golangci-lint: `golangci-lint --version` — exits 0; if absent: `brew install golangci-lint`
+- [ ] Verify pdftotext available: `which pdftotext` — exits 0; if absent: `brew install poppler`
+- [ ] Verify pdfinfo available: `which pdfinfo` — exits 0 (installed with poppler)
+- [ ] Run `npm install && npm run doctor -- --fix` from repo root (worktree) — provisions all tools
 - [ ] Confirm existing tests pass before starting: `npx nx affected -t test:quick` — exits 0
 
 ---
@@ -34,49 +34,45 @@ See [Worktree Path Convention](../../repo-governance/conventions/structure/workt
 
 ### P0.1 — Directory scaffold
 
-- [ ] Create `apps/crane-cli/src/crane_cli/__init__.py`
-- [ ] Create `apps/crane-cli/src/crane_cli/main.py` — Typer app skeleton with empty
-      subcommand groups: `pdf`, `text`, `heading`, `nesting`, `table`, `figure`, `mermaid`,
-      `ocr`, `report`, `skiplist`
-- [ ] Create `apps/crane-cli/src/crane_cli/commands/__init__.py`
-- [ ] Create `apps/crane-cli/src/crane_cli/core/__init__.py`
-- [ ] Create `apps/crane-cli/src/crane_cli/adapters/__init__.py`
-- [ ] Create `apps/crane-cli/src/crane_cli/models/__init__.py`
-- [ ] Create `apps/crane-cli/tests/__init__.py`
-- [ ] Create `apps/crane-cli/tests/conftest.py` — empty top-level conftest
-- [ ] Create `apps/crane-cli/tests/unit/__init__.py`
-- [ ] Create `apps/crane-cli/tests/unit/conftest.py` — `GHERKIN_ROOT` path (ose-primer pattern)
-- [ ] Create `apps/crane-cli/tests/unit/steps/__init__.py`
-- [ ] Create `apps/crane-cli/tests/integration/__init__.py`
-- [ ] Create `apps/crane-cli/tests/integration/conftest.py` — skip marker if `pdftotext` absent
-- [ ] Create `apps/crane-cli/tests/fixtures/` — empty directory with `.gitkeep`
+_Suggested executor: swe-golang-dev_
 
-- [ ] Verify all scaffold files exist:
-      `find apps/crane-cli/src apps/crane-cli/tests -name '*.py' | wc -l` returns ≥ 13;
-      `test -f apps/crane-cli/tests/fixtures/.gitkeep` exits 0.
+- [ ] Create `apps/crane-cli/cmd/crane/main.go` — cobra root command skeleton with `Use: "crane"`,
+      `Short` description, and empty subcommand groups registered: `pdf`, `text`, `heading`,
+      `nesting`, `table`, `figure`, `mermaid`, `ocr`, `report`, `skiplist`
+- [ ] Create `apps/crane-cli/internal/commands/` — one empty `.go` file with package declaration
+      per subcommand group (pdf.go, text.go, … skiplist.go)
+- [ ] Create `apps/crane-cli/internal/core/` — one empty `.go` stub per analysis module
+- [ ] Create `apps/crane-cli/internal/adapters/` — pdftotext.go, pdfinfo.go, tesseract.go stubs
+- [ ] Create `apps/crane-cli/internal/models/` — finding.go, pdf_metadata.go, report.go with type
+      declarations exactly as specified in tech-docs.md
+- [ ] Create `apps/crane-cli/tests/unit/` — one `_test.go` file per core module (all empty bodies)
+- [ ] Create `apps/crane-cli/tests/integration/pdf_commands_test.go` — build tag `//go:build Integration`
+- [ ] Create `apps/crane-cli/tests/bdd/suite_test.go` — godog runner (see tech-docs.md)
+- [ ] Create `apps/crane-cli/tests/bdd/steps/init.go` — `InitializeScenario` wires all step packages
+- [ ] Create `apps/crane-cli/tests/fixtures/` — empty dir with `.gitkeep`
+
+- [ ] Verify scaffold: `find apps/crane-cli -name '*.go' | wc -l` returns ≥ 25;
+      `test -f apps/crane-cli/tests/fixtures/.gitkeep` exits 0
 
 ### P0.2 — Configuration files
 
-- [ ] Write `apps/crane-cli/pyproject.toml` — exactly as specified in tech-docs.md (uv, hatchling,
-      ruff, pyright, pytest-bdd, coverage, `crane` entrypoint)
+_Suggested executor: swe-golang-dev_
+
+- [ ] Write `apps/crane-cli/go.mod` — module path `github.com/wahidyankf/ose-public/apps/crane-cli`,
+      Go 1.26, dependencies as specified in tech-docs.md (cobra, godog, testify, uuid, go-diff)
 - [ ] Write `apps/crane-cli/project.json` — exactly as specified in tech-docs.md (`build`, `dev`,
       `test:quick`, `test:unit`, `test:integration`, `lint`, `typecheck`, `spec-coverage` targets)
-- [ ] Write `apps/crane-cli/README.md` — one-paragraph description, install/run instructions
+- [ ] Write `apps/crane-cli/README.md` — one-paragraph description, `go build`, `crane --help` instructions
+- [ ] Run `cd apps/crane-cli && go mod tidy` — downloads deps, creates go.sum; exits 0
 
-### P0.3 — Models scaffold
+### P0.3 — Bootstrap verification
 
-- [ ] Write `apps/crane-cli/src/crane_cli/models/finding.py` — `Criticality`, `Confidence`,
-      `Category` enums, `Finding` Pydantic model (as specified in tech-docs.md)
-- [ ] Write `apps/crane-cli/src/crane_cli/models/pdf_metadata.py` — `PDFMetadata` Pydantic model
-- [ ] Write `apps/crane-cli/src/crane_cli/models/report.py` — `SkipListEntry` Pydantic model
+_Suggested executor: swe-golang-dev_
 
-### P0.4 — uv workspace setup
-
-- [ ] Run `cd apps/crane-cli && uv sync` — creates `.venv`, installs deps
-- [ ] Verify `uv run crane --help` shows all 10 empty subcommand groups
-- [ ] Verify `nx run crane-cli:test:unit` completes (0 tests, 0 failures)
-- [ ] Verify `nx run crane-cli:lint` passes on scaffold
-- [ ] Verify `nx run crane-cli:typecheck` passes on scaffold
+- [ ] `nx run crane-cli:build` passes — `dist/crane` binary created; `file dist/crane` shows ELF/Mach-O
+- [ ] `go run ./cmd/crane/... --help` shows all 10 subcommand groups
+- [ ] `nx run crane-cli:test:unit` completes (0 tests, 0 failures)
+- [ ] `nx run crane-cli:lint` passes on scaffold
 
 ---
 
@@ -84,64 +80,64 @@ See [Worktree Path Convention](../../repo-governance/conventions/structure/workt
 
 ### P1.1 — Adapter: pdfinfo
 
-- [ ] **RED** Write `apps/crane-cli/tests/unit/steps/pdf_steps.py` — import `scenarios` for
-      `pdf-commands.feature`; write step stubs that fail
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Write `apps/crane-cli/src/crane_cli/adapters/pdfinfo.py` — `get_info(pdf: Path) -> dict[str, str]`
-      subprocess wrapper; raises `ToolNotFoundError(tool="pdfinfo")` on exit 127
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Write unit test `apps/crane-cli/tests/unit/test_pdfinfo_adapter.py` — mock subprocess; assert
-      page count parsed from `pdfinfo` output; assert `ToolNotFoundError` on missing tool
-  - _Suggested executor: `swe-python-dev`_
-- [ ] **GREEN** `nx run crane-cli:test:unit` — pdfinfo adapter unit tests pass
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Write `tests/bdd/steps/pdf_steps.go` — `InitializePDFSteps` with step stubs
+      for all `pdf-commands.feature` scenarios; `go test -run BDD ./tests/bdd/...` fails
+- [ ] Write `internal/adapters/pdfinfo.go` — `GetInfo(pdf string) (map[string]string, error)`;
+      `exec.Command("pdfinfo", pdf)`; returns `ErrToolNotFound` when exit code 127
+- [ ] **RED** Write `tests/unit/pdf_adapter_test.go::TestUnitGetInfo_ParsesPageCount` — fails
+- [ ] **GREEN** `TestUnitGetInfo_ParsesPageCount` passes (mock exec.Command output)
+- [ ] Write `TestUnitGetInfo_ToolNotFound` — returns `ErrToolNotFound` when binary absent
+- [ ] **GREEN** all pdfinfo adapter unit tests pass
 
 ### P1.2 — Adapter: pdftotext
 
-- [ ] Write `apps/crane-cli/src/crane_cli/adapters/pdftotext.py`:
-  - `sample(pdf: Path, pages: int = 3) -> str` — extract first N pages, return text
-  - `extract(pdf: Path, start: int, end: int) -> str` — extract page range with `-layout`
-  - Raises `ToolNotFoundError(tool="pdftotext")` on exit 127
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Write unit test `apps/crane-cli/tests/unit/test_pdftotext_adapter.py` — mock subprocess;
-      assert text returned; assert `ToolNotFoundError` on missing tool
-  - _Suggested executor: `swe-python-dev`_
-- [ ] **GREEN** `nx run crane-cli:test:unit` — pdftotext adapter unit tests pass
+_Suggested executor: swe-golang-dev_
+
+- [ ] Write `internal/adapters/pdftotext.go`:
+  - `Sample(pdf string, pages int) (string, error)` — `exec.Command("pdftotext", "-f", "1", "-l", strconv.Itoa(pages), pdf, "-")`
+  - `Extract(pdf string, start, end int) (string, error)` — `exec.Command("pdftotext", "-layout", …, "-")`
+  - Returns `ErrToolNotFound` on exit 127
+- [ ] **RED** Write `tests/unit/pdftotext_adapter_test.go::TestUnitSample_ReturnsText` — fails
+- [ ] **GREEN** all pdftotext adapter unit tests pass (mock exec via interface)
+- [ ] **REFACTOR** Extract `runPDFTool(name string, args ...string) (string, error)` shared helper
 
 ### P1.3 — `crane pdf info` command
 
-- [ ] **RED** Add step implementations in `pdf_steps.py` for `pdf-commands.feature`
-      "PDF metadata extraction" scenarios — run, watch fail
-- [ ] Write `src/crane_cli/commands/pdf.py::info` — calls pdfinfo adapter + pdftotext sample;
-      assembles `PDFMetadata`; prints JSON; exits 0
-- [ ] **GREEN** `nx run crane-cli:test:unit` — "PDF metadata extraction" scenarios pass
-- [ ] **REFACTOR** Extract `_build_metadata(pdf: Path) -> PDFMetadata` helper
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Add step implementations in `pdf_steps.go` for `pdf-commands.feature`
+      "PDF metadata extraction" scenario; `go test -run BDD` fails with "undefined step"
+- [ ] Write `internal/commands/pdf.go` `infoCmd` — calls pdfinfo adapter + pdftotext sample;
+      marshals `PDFMetadata` to JSON; exits 0 (exit 2 on `ErrToolNotFound`)
+- [ ] **GREEN** "PDF metadata extraction" BDD scenario passes
+- [ ] **REFACTOR** Extract `buildMetadata(pdf string) (models.PDFMetadata, error)` helper
 
 ### P1.4 — `crane pdf type` command
 
-- [ ] **RED** Add step implementations for "PDF type detection" scenarios — run, watch fail
-- [ ] Write `src/crane_cli/commands/pdf.py::type_` — calls `pdftotext.sample`; computes
-      non-whitespace char count; prints `{"type": "text"|"image"}`; exits 0 or 1
-- [ ] **GREEN** "PDF type detection" scenarios pass
-- [ ] Handle `ToolNotFoundError` → stderr message + exit 2 (unit test: mock ToolNotFoundError)
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Add step implementations for "PDF type detection" scenarios; `go test -run BDD` fails
+- [ ] Write `internal/commands/pdf.go` `typeCmd` — calls `pdftotext.Sample`; counts non-whitespace
+      chars; prints `{"type":"text"}` or `{"type":"image"}`; exits 0/1 (exit 2 on tool absent)
+- [ ] **GREEN** all "PDF type detection" BDD scenarios pass
 
 ### P1.5 — `crane pdf extract` command
 
-- [ ] **RED** Write `apps/crane-cli/tests/unit/test_pdf_extract.py` — add test
-      `test_extract_writes_to_stdout` and `test_extract_writes_to_file`; run
-      `nx run crane-cli:test:unit`, watch fail
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Write `apps/crane-cli/src/crane_cli/commands/pdf.py::extract` — calls
-      `pdftotext.extract`; writes to stdout or `--output` file; exits 2 on `ToolNotFoundError`
-  - _Suggested executor: `swe-python-dev`_
-- [ ] **GREEN** `nx run crane-cli:test:unit` — both extract tests pass
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Write `tests/unit/pdf_commands_test.go::TestUnitExtract_WritesToStdout` — fails
+- [ ] Write `internal/commands/pdf.go` `extractCmd` — calls `pdftotext.Extract`; writes to
+      stdout or `--output` file; exits 2 on `ErrToolNotFound`
+- [ ] **GREEN** `TestUnitExtract_WritesToStdout` passes
 
 ### P1.6 — Phase 1 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 1 BDD scenarios pass
+- [ ] `nx run crane-cli:test:unit` — all Phase 1 BDD + unit tests pass
 - [ ] `nx run crane-cli:lint` clean
-- [ ] `nx run crane-cli:typecheck` clean
-- [ ] `nx run crane-cli:test:integration` — real PDF fixture; `crane pdf info` returns correct
-      page count (requires pdftotext on PATH)
+- [ ] `nx run crane-cli:test:integration` — `crane pdf info tests/fixtures/sample-text.pdf`
+      returns JSON with correct page count (requires pdftotext on PATH)
 
 ---
 
@@ -149,90 +145,91 @@ See [Worktree Path Convention](../../repo-governance/conventions/structure/workt
 
 ### P2.1 — Core: text checker
 
-- [ ] **RED** Write failing BDD steps in `apps/crane-cli/tests/unit/steps/text_steps.py` for
-      all `text-check.feature` scenarios
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Write `apps/crane-cli/src/crane_cli/core/text_checker.py`:
-  - `normalize(text: str) -> str`
-  - `similarity(a: str, b: str) -> float`
-  - `segment_is_present(segment: str, md_text: str) -> bool`
-  - `classify_missing(segment: str) -> Criticality`
-  - `check_text(pdf_chunks: list[str], md_text: str) -> list[Finding]`
-- [ ] Unit test `tests/unit/test_text_checker.py`:
-  - `test_normalize_collapses_whitespace`
-  - `test_normalize_strips_leading_trailing`
-  - `test_similarity_exact_is_1`
-  - `test_similarity_transposed_words`
-  - `test_similarity_below_threshold_returns_false`
-  - `test_fuzzy_match_accepts_minor_variation`
-  - `test_missing_section_heading_is_critical`
-  - `test_missing_paragraph_is_high`
-  - `test_present_text_produces_no_finding`
-- [ ] **GREEN** BDD scenarios and unit tests pass
-- [ ] **REFACTOR** Extract sliding-window fuzzy match to `_window_match` private function
+_Suggested executor: swe-golang-dev_
 
-### P2.2 — `crane text check` command
+- [ ] **RED** Write `tests/bdd/steps/text_steps.go` — step stubs for all `text-check.feature`
+      scenarios; `go test -run BDD` fails
+- [ ] Write `internal/core/text_checker.go`:
+  - `Normalize(text string) string`
+  - `Similarity(a, b string) float64`
+  - `SegmentIsPresent(segment, mdText string) bool`
+  - `ClassifyMissing(segment string) models.Criticality`
+  - `CheckText(pdfChunks []string, mdText string) []models.Finding`
+- [ ] **RED** Write `tests/unit/text_checker_test.go`:
+  - `TestUnitNormalize_CollapsesWhitespace`
+  - `TestUnitNormalize_StripsLeadingTrailing`
+  - `TestUnitSimilarity_ExactIs1`
+  - `TestUnitSimilarity_BelowThreshold`
+  - `TestUnitFuzzyMatch_AcceptsMinorVariation`
+  - `TestUnitMissingHeading_IsCritical`
+  - `TestUnitMissingParagraph_IsHigh`
+  - `TestUnitPresentText_NoFinding`
+- [ ] **GREEN** all text checker unit tests pass
+- [ ] **REFACTOR** Extract `windowMatch(seg, text string) bool` private helper
+- [ ] Write `internal/commands/text.go` `checkCmd` and `searchCmd`
+- [ ] **GREEN** all `text-check.feature` BDD scenarios pass
 
-- [ ] Write `src/crane_cli/commands/text.py::check` — calls `pdftotext.extract` per chunk,
-      calls `check_text`, serializes findings to JSON, exits 0 (no findings) or 1
-- [ ] Write `src/crane_cli/commands/text.py::search` — single segment fuzzy search; exits 0
-      if found, 1 if not
-- [ ] **GREEN** All `text-check.feature` BDD scenarios pass
+### P2.2 — Core: heading checker
 
-### P2.3 — Core: heading checker
+_Suggested executor: swe-golang-dev_
 
-- [ ] **RED** Write failing BDD steps in `heading_steps.py` for all `heading-check.feature`
-      scenarios
-- [ ] Write `src/crane_cli/core/heading_checker.py`:
-  - `infer_depth_from_numbering(text: str) -> tuple[int, str] | None`
-  - `extract_md_headings(md_text: str) -> list[tuple[int, int, str]]` — (line, depth, text)
-  - `check_headings(pdf_layout_text: str, md_text: str) -> list[Finding]`
-- [ ] Unit test `tests/unit/test_heading_checker.py`:
-  - `test_infer_depth_single_number` — "1. Title" → depth 2
-  - `test_infer_depth_two_components` — "2.3 Title" → depth 3
-  - `test_infer_depth_three_components` — "2.3.1 Title" → depth 4
-  - `test_infer_depth_no_number` — "Introduction" → None
-  - `test_infer_depth_appendix` — "A. Appendix" → depth 2
-  - `test_wrong_depth_off_by_two_is_high`
-  - `test_correct_depth_no_finding`
-- [ ] **GREEN** All heading scenarios pass
-- [ ] Write `src/crane_cli/commands/heading.py::infer` and `::check`
+- [ ] **RED** Write `tests/bdd/steps/heading_steps.go` — step stubs; fails
+- [ ] Write `internal/core/heading_checker.go`:
+  - `InferDepthFromNumbering(heading string) (depth int, confidence string, ok bool)`
+  - `ExtractMDHeadings(mdText string) []HeadingEntry` — (lineNo, depth, text)
+  - `CheckHeadings(pdfLayoutText, mdText string) []models.Finding`
+- [ ] **RED** Write `tests/unit/heading_checker_test.go`:
+  - `TestUnitInferDepth_SingleNumber` — "1. Title" → 2
+  - `TestUnitInferDepth_TwoComponents` — "2.3 Title" → 3
+  - `TestUnitInferDepth_ThreeComponents` — "2.3.1 Title" → 4
+  - `TestUnitInferDepth_NoNumber` — "Introduction" → ok=false
+  - `TestUnitInferDepth_Appendix` — "A. Appendix" → 2
+  - `TestUnitWrongDepth_OffByTwo_IsHigh`
+  - `TestUnitCorrectDepth_NoFinding`
+- [ ] **GREEN** all heading unit tests pass
+- [ ] Write `internal/commands/heading.go` `inferCmd` and `checkCmd`
+- [ ] **GREEN** all `heading-check.feature` BDD scenarios pass
 
-### P2.4 — Core: nesting checker
+### P2.3 — Core: nesting checker
 
-- [ ] **RED** Write failing BDD steps in `nesting_steps.py` for all `nesting-check.feature`
-      scenarios
-- [ ] Write `src/crane_cli/core/nesting_checker.py`:
-  - `extract_nesting_levels(layout_text: str) -> list[tuple[int, int]]` — (col_offset, depth)
-  - `check_nesting(pdf_layout_text: str, md_text: str) -> list[Finding]`
-- [ ] Unit test `tests/unit/test_nesting_checker.py`:
-  - `test_extract_single_level_list`
-  - `test_extract_two_level_nested_list`
-  - `test_wrong_nesting_off_by_one_is_medium`
-  - `test_inverted_nesting_is_high`
-- [ ] Write `src/crane_cli/commands/nesting.py::infer` and `::check`
+_Suggested executor: swe-golang-dev_
 
-### P2.5 — Core: table checker
+- [ ] **RED** Write `tests/bdd/steps/nesting_steps.go` — step stubs; fails
+- [ ] Write `internal/core/nesting_checker.go`:
+  - `ExtractNestingLevels(layoutText string) []NestingItem` — (colOffset, depth)
+  - `CheckNesting(pdfLayoutText, mdText string) []models.Finding`
+- [ ] **RED** Write `tests/unit/nesting_checker_test.go`:
+  - `TestUnitExtractNesting_SingleLevel`
+  - `TestUnitExtractNesting_TwoLevels`
+  - `TestUnitWrongNesting_OffByOne_IsMedium`
+  - `TestUnitInvertedNesting_IsHigh`
+- [ ] **GREEN** all nesting unit tests pass
+- [ ] Write `internal/commands/nesting.go` `inferCmd` and `checkCmd`
+- [ ] **GREEN** all `nesting-check.feature` BDD scenarios pass
 
-- [ ] **RED** Write failing BDD steps in `table_steps.py` for all `table-check.feature`
-      scenarios
-- [ ] Write `src/crane_cli/core/table_checker.py`:
-  - `detect_tables(layout_text: str) -> list[TableSpec]`
-  - `check_tables(pdf_layout_text: str, md_text: str) -> list[Finding]`
-- [ ] Unit test `tests/unit/test_table_checker.py`:
-  - `test_detect_3col_table_returns_one_spec`
-  - `test_detect_prose_returns_empty`
-  - `test_detect_numeric_only_table`
-  - `test_missing_table_is_critical`
-  - `test_present_table_no_finding`
-  - `test_wrong_row_count_is_medium`
-- [ ] Write `src/crane_cli/commands/table.py::detect` and `::check`
+### P2.4 — Core: table checker
 
-### P2.6 — Phase 2 gate
+_Suggested executor: swe-golang-dev_
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 2 scenarios and unit tests pass
+- [ ] **RED** Write `tests/bdd/steps/table_steps.go` — step stubs; fails
+- [ ] Write `internal/core/table_checker.go`:
+  - `DetectTables(layoutText string) []TableSpec`
+  - `CheckTables(pdfLayoutText, mdText string) []models.Finding`
+- [ ] **RED** Write `tests/unit/table_checker_test.go`:
+  - `TestUnitDetect3ColTable_ReturnsOne`
+  - `TestUnitDetectProse_ReturnsEmpty`
+  - `TestUnitDetectNumericOnlyTable`
+  - `TestUnitMissingTable_IsCritical`
+  - `TestUnitPresentTable_NoFinding`
+  - `TestUnitWrongRowCount_IsMedium`
+- [ ] **GREEN** all table unit tests pass
+- [ ] Write `internal/commands/table.go` `detectCmd` and `checkCmd`
+- [ ] **GREEN** all `table-check.feature` BDD scenarios pass
+
+### P2.5 — Phase 2 gate
+
+- [ ] `nx run crane-cli:test:unit` — all Phase 2 unit + BDD tests pass
 - [ ] `nx run crane-cli:lint` clean
-- [ ] `nx run crane-cli:typecheck` clean
 
 ---
 
@@ -240,68 +237,75 @@ See [Worktree Path Convention](../../repo-governance/conventions/structure/workt
 
 ### P3.1 — Core: figure checker
 
-- [ ] **RED** Write failing BDD steps in `apps/crane-cli/tests/unit/steps/figure_steps.py` for
-      all `figure-check.feature` scenarios
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Write `apps/crane-cli/src/crane_cli/core/figure_checker.py`:
-  - `detect_figures(text: str) -> list[FigureRef]` — regex: `Figure \d+`, `Fig\. \d+`,
-    `Exhibit \d+`, `Diagram \d+`, `Chart \d+`
-  - `check_figures(pdf_text: str, md_text: str) -> list[Finding]`
-- [ ] Unit test `tests/unit/test_figure_checker.py`:
-  - `test_detect_figure_n_pattern`
-  - `test_detect_fig_dot_n_pattern`
-  - `test_no_figures_returns_empty`
-  - `test_missing_figure_is_high`
-  - `test_placeholder_satisfies_coverage`
-  - `test_mermaid_block_satisfies_coverage`
-- [ ] Write `src/crane_cli/commands/figure.py::detect` and `::check`
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Write `tests/bdd/steps/figure_steps.go` — step stubs; fails
+- [ ] Write `internal/core/figure_checker.go`:
+  - `DetectFigures(text string) []FigureRef` — regex: `Figure \d+`, `Fig\. \d+`, `Exhibit \d+`,
+    `Diagram \d+`, `Chart \d+`
+  - `CheckFigures(pdfText, mdText string) []models.Finding`
+- [ ] **RED** Write `tests/unit/figure_checker_test.go`:
+  - `TestUnitDetectFigureN_Pattern`
+  - `TestUnitDetectFigDotN_Pattern`
+  - `TestUnitNoFigures_ReturnsEmpty`
+  - `TestUnitMissingFigure_IsHigh`
+  - `TestUnitPlaceholder_SatisfiesCoverage`
+  - `TestUnitMermaidBlock_SatisfiesCoverage`
+- [ ] **GREEN** all figure unit tests pass
+- [ ] Write `internal/commands/figure.go` `detectCmd` and `checkCmd`
+- [ ] **GREEN** all `figure-check.feature` BDD scenarios pass
 
 ### P3.2 — Core: mermaid validator
 
-- [ ] **RED** Write failing BDD steps in `mermaid_steps.py` for all `mermaid-validate.feature`
-      scenarios
-- [ ] Write `src/crane_cli/core/mermaid_validator.py`:
-  - `VALID_TYPES` frozenset (18 diagram types)
-  - `validate_block(block_content: str) -> tuple[bool, str | None]`
-  - `extract_blocks(md_text: str) -> list[tuple[int, str]]` — (line_no, content)
-  - `validate_md(md_text: str) -> list[Finding]`
-- [ ] Unit test `tests/unit/test_mermaid_validator.py`:
-  - `test_valid_graph_td_no_finding`
-  - `test_valid_flowchart_lr_no_finding`
-  - `test_all_known_types_accepted` — parameterized over VALID_TYPES
-  - `test_unknown_type_is_high`
-  - `test_empty_block_is_high`
-  - `test_unmatched_bracket_is_high`
-  - `test_unmatched_paren_is_high`
-  - `test_finding_includes_line_number`
-- [ ] **GREEN** All mermaid BDD scenarios pass
-- [ ] Write `src/crane_cli/commands/mermaid.py::validate`
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Write `tests/bdd/steps/mermaid_steps.go` — step stubs; fails
+- [ ] Write `internal/core/mermaid_validator.go`:
+  - `validMermaidTypes` map (18 types — see tech-docs.md)
+  - `ValidateMermaidBlock(content string) (bool, string)`
+  - `ExtractBlocks(mdText string) []MermaidBlock` — (lineNo, content)
+  - `ValidateMD(mdText string) []models.Finding`
+- [ ] **RED** Write `tests/unit/mermaid_validator_test.go`:
+  - `TestUnitValidGraphTD_NoFinding`
+  - `TestUnitValidFlowchartLR_NoFinding`
+  - `TestUnitAllKnownTypes_Accepted` — table-driven over validMermaidTypes
+  - `TestUnitUnknownType_IsHigh`
+  - `TestUnitEmptyBlock_IsHigh`
+  - `TestUnitUnmatchedBracket_IsHigh`
+  - `TestUnitUnmatchedParen_IsHigh`
+  - `TestUnitFinding_IncludesLineNumber`
+- [ ] **GREEN** all mermaid unit tests pass
+- [ ] Write `internal/commands/mermaid.go` `validateCmd`
+- [ ] **GREEN** all `mermaid-validate.feature` BDD scenarios pass
 
 ### P3.3 — Core: OCR assessor
 
-- [ ] **RED** Write failing BDD steps in `ocr_steps.py` for all `ocr-quality.feature` scenarios
-- [ ] Write `src/crane_cli/core/ocr_assessor.py`:
-  - `estimate_error_rate(text: str) -> float` — returns 0.0–1.0
-  - `extract_ocr_sections(md_text: str) -> list[tuple[int, str]]` — (page_no, text)
-  - `check_ocr_quality(md_text: str) -> list[Finding]`
-- [ ] Unit test `tests/unit/test_ocr_assessor.py`:
-  - `test_clean_text_rate_near_zero`
-  - `test_repeated_l_characters_raises_rate`
-  - `test_non_ascii_runs_raises_rate`
-  - `test_rate_above_10_percent_is_critical`
-  - `test_rate_5_to_10_percent_is_high`
-  - `test_rate_2_to_5_percent_is_medium`
-  - `test_rate_below_2_percent_no_finding`
-  - `test_no_ocr_tags_returns_empty`
-  - `test_finding_includes_page_number`
-- [ ] **GREEN** All OCR BDD scenarios pass
-- [ ] Write `src/crane_cli/commands/ocr.py::quality` and `::extract`
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Write `tests/bdd/steps/ocr_steps.go` — step stubs; fails
+- [ ] Write `internal/core/ocr_assessor.go`:
+  - `ocrErrorPatterns` slice (4 patterns — see tech-docs.md)
+  - `EstimateOCRErrorRate(text string) float64`
+  - `ExtractOCRSections(mdText string) []OCRSection` — (pageNo, text) from `<!-- OCR: page N -->`
+  - `CheckOCRQuality(mdText string) []models.Finding`
+- [ ] **RED** Write `tests/unit/ocr_assessor_test.go`:
+  - `TestUnitCleanText_RateNearZero`
+  - `TestUnitRepeatedL_RaisesRate`
+  - `TestUnitNonASCIIRuns_RaisesRate`
+  - `TestUnitRateAbove10Pct_IsCritical`
+  - `TestUnitRate5to10Pct_IsHigh`
+  - `TestUnitRate2to5Pct_IsMedium`
+  - `TestUnitRateBelow2Pct_NoFinding`
+  - `TestUnitNoOCRTags_ReturnsEmpty`
+  - `TestUnitFinding_IncludesPageNumber`
+- [ ] **GREEN** all OCR assessor unit tests pass
+- [ ] Write `internal/commands/ocr.go` `qualityCmd` and `extractCmd`
+- [ ] **GREEN** all `ocr-quality.feature` BDD scenarios pass
 
 ### P3.4 — Phase 3 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 3 scenarios and unit tests pass, coverage ≥ 85%
+- [ ] `nx run crane-cli:test:unit` — all Phase 3 unit + BDD tests pass; coverage ≥ 85%
 - [ ] `nx run crane-cli:lint` clean
-- [ ] `nx run crane-cli:typecheck` clean
 
 ---
 
@@ -309,55 +313,56 @@ See [Worktree Path Convention](../../repo-governance/conventions/structure/workt
 
 ### P4.1 — Core: report manager
 
-- [ ] **RED** Write failing BDD steps in `apps/crane-cli/tests/unit/steps/report_steps.py` for
-      all `report-management.feature` scenarios
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Write `apps/crane-cli/src/crane_cli/core/report_manager.py`:
-  - `get_or_extend_chain(scope: str) -> str`
-  - `utc7_timestamp() -> str`
-  - `init_report(scope: str, pdf: Path, md: Path) -> Path` — creates file, returns path
-  - `finalize_report(report_path: Path, status: str) -> None`
-- [ ] Unit test `tests/unit/test_report_manager.py`:
-  - `test_new_chain_is_6_hex_chars`
-  - `test_chain_extends_when_fresh` — mock `time.time` to simulate 5s age
-  - `test_chain_resets_when_stale` — mock `time.time` to simulate 60s age
-  - `test_utc7_timestamp_format` — assert `YYYY-MM-DD--HH-MM` format
-  - `test_init_creates_file_in_generated_reports`
-  - `test_init_filename_matches_pattern`
-  - `test_init_returns_path_as_string`
-  - `test_finalize_replaces_in_progress_with_pass`
-  - `test_finalize_raises_on_missing_file`
-- [ ] **GREEN** All report BDD scenarios pass
-- [ ] Write `src/crane_cli/commands/report.py::init` and `::finalize`
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Write `tests/bdd/steps/report_steps.go` — step stubs; fails
+- [ ] Write `internal/core/report_manager.go`:
+  - `GetOrExtendChain(scope string) string`
+  - `UTC7Timestamp() string`
+  - `InitReport(scope, pdf, md string) (string, error)` — creates file, returns path
+  - `FinalizeReport(reportPath, status string) error`
+- [ ] **RED** Write `tests/unit/report_manager_test.go`:
+  - `TestUnitNewChain_Is6HexChars`
+  - `TestUnitChain_ExtendsWhenFresh` — mock `time.Now` to simulate 5s age
+  - `TestUnitChain_ResetsWhenStale` — mock `time.Now` to simulate 60s age
+  - `TestUnitUTC7Timestamp_Format` — assert `YYYY-MM-DD--HH-MM` format
+  - `TestUnitInitReport_CreatesFileInGeneratedReports`
+  - `TestUnitInitReport_FilenameMatchesPattern`
+  - `TestUnitFinalizeReport_ReplacesInProgressWithPass`
+  - `TestUnitFinalizeReport_ErrorsOnMissingFile`
+- [ ] **GREEN** all report manager unit tests pass
+- [ ] Write `internal/commands/report.go` `initCmd` and `finalizeCmd`
+- [ ] **GREEN** all `report-management.feature` BDD scenarios pass
 
 ### P4.2 — Core: skiplist manager
 
-- [ ] **RED** Write failing BDD steps in `skiplist_steps.py` for all `skiplist-management.feature`
-      scenarios
-- [ ] Write `src/crane_cli/core/skiplist_manager.py`:
-  - `stable_key(md_basename: str, category: str, description: str) -> str`
-  - `add(md_basename: str, category: str, description: str) -> bool` — True if added, False if dup
-  - `check(md_basename: str, category: str, description: str) -> bool`
-  - `list_entries(md_basename: str) -> list[SkipListEntry]`
-- [ ] Unit test `tests/unit/test_skiplist_manager.py`:
-  - `test_stable_key_format`
-  - `test_add_creates_file`
-  - `test_add_returns_true_on_new_entry`
-  - `test_add_returns_false_on_duplicate`
-  - `test_add_does_not_duplicate_file_line`
-  - `test_check_returns_true_on_known_entry`
-  - `test_check_returns_false_on_unknown_entry`
-  - `test_list_returns_all_entries`
-  - `test_list_returns_empty_on_missing_file`
-- [ ] **GREEN** All skiplist BDD scenarios pass
-- [ ] Write `src/crane_cli/commands/skiplist.py::add`, `::check`, `::list`
+_Suggested executor: swe-golang-dev_
+
+- [ ] **RED** Write `tests/bdd/steps/skiplist_steps.go` — step stubs; fails
+- [ ] Write `internal/core/skiplist_manager.go`:
+  - `StableKey(mdBasename, category, description string) string`
+  - `Add(mdBasename, category, description string) (bool, error)` — true if added, false if dup
+  - `Check(mdBasename, category, description string) (bool, error)`
+  - `List(mdBasename string) ([]models.SkipListEntry, error)`
+- [ ] **RED** Write `tests/unit/skiplist_manager_test.go`:
+  - `TestUnitStableKey_Format`
+  - `TestUnitAdd_CreatesFile`
+  - `TestUnitAdd_ReturnsTrueOnNewEntry`
+  - `TestUnitAdd_ReturnsFalseOnDuplicate`
+  - `TestUnitAdd_DoesNotDuplicateFileLine`
+  - `TestUnitCheck_ReturnsTrueOnKnownEntry`
+  - `TestUnitCheck_ReturnsFalseOnUnknown`
+  - `TestUnitList_ReturnsAllEntries`
+  - `TestUnitList_ReturnsEmptyOnMissingFile`
+- [ ] **GREEN** all skiplist manager unit tests pass
+- [ ] Write `internal/commands/skiplist.go` `addCmd`, `checkCmd`, `listCmd`
+- [ ] **GREEN** all `skiplist-management.feature` BDD scenarios pass
 
 ### P4.3 — Phase 4 gate
 
-- [ ] `nx run crane-cli:test:unit` — all Phase 4 scenarios pass; coverage ≥ 85%
+- [ ] `nx run crane-cli:test:unit` — all Phase 4 unit + BDD tests pass; coverage ≥ 85%
 - [ ] `nx run crane-cli:lint` clean
-- [ ] `nx run crane-cli:typecheck` clean
-- [ ] `nx run crane-cli:spec-coverage` — passes (all feature scenarios implemented in steps)
+- [ ] `nx run crane-cli:spec-coverage` — passes (all feature scenarios implemented)
 - [ ] `crane --help` shows all 10 subcommand groups with correct subcommands listed
 
 ---
@@ -366,126 +371,134 @@ See [Worktree Path Convention](../../repo-governance/conventions/structure/workt
 
 ### P5.1 — Update pdf-to-md-maker
 
-- [ ] Edit `.claude/agents/pdf-to-md-maker.md` Step 1: replace `pdftotext` sample + `wc -c`
-      with `crane pdf type "$PDF_FILE"`. Verify: `grep -q 'crane pdf type' .claude/agents/pdf-to-md-maker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-maker.md` Step 2a: replace bash extraction loop with
-      `crane pdf extract "$PDF_FILE" --start $FIRST --end $LAST`. Verify: `grep -q 'crane pdf extract' .claude/agents/pdf-to-md-maker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
+_Suggested executor: swe-golang-dev_
+
+- [ ] Edit `.claude/agents/pdf-to-md-maker.md` Step 1: replace `pdftotext` sample + `wc -c` with
+      `crane pdf type "$PDF_FILE"`; verify `grep -q 'crane pdf type' .claude/agents/pdf-to-md-maker.md` exits 0
+- [ ] Edit `.claude/agents/pdf-to-md-maker.md` Step 2a: replace bash loop with
+      `crane pdf extract "$PDF_FILE" --start $FIRST --end $LAST`; verify `grep -q 'crane pdf extract'` exits 0
 - [ ] Edit `.claude/agents/pdf-to-md-maker.md`: replace `pdfinfo | awk` page count with
-      `crane pdf info "$PDF_FILE" | jq .pages`. Verify: `grep -q 'crane pdf info' .claude/agents/pdf-to-md-maker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Run `grep -n 'pdftotext\|pdfinfo\|grep -F' .claude/agents/pdf-to-md-maker.md` — output
-      must be empty (zero lines). If any remain, add a targeted replacement item per occurrence.
+      `crane pdf info "$PDF_FILE" | jq .pages`; verify `grep -q 'crane pdf info'` exits 0
+- [ ] Verify no remaining raw `pdftotext -layout` or `wc -c` analysis lines:
+      `grep -n 'wc -c\|pdftotext -layout' .claude/agents/pdf-to-md-maker.md` exits 1
 
 ### P5.2 — Update pdf-to-md-checker
 
+_Suggested executor: swe-golang-dev_
+
 - [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 0: replace bash UUID + timestamp + file
-      create with `REPORT=$(crane report init --scope pdf-to-md --pdf "$PDF_FILE" --md "$MD_FILE" | jq -r .path)`.
-      Verify: `grep -q 'crane report init' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 2: replace `grep -F` segment loop with
-      `crane text check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane text check' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 3: replace manual grep heading extraction
-      with `crane heading check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane heading check' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 4: replace manual column-offset inspection
-      with `crane nesting check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane nesting check' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 5: replace brittle table grep with
-      `crane table check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane table check' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 6: replace figure grep count with
-      `crane figure check "$PDF_FILE" "$MD_FILE"`. Verify: `grep -q 'crane figure check' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 7: replace manual Mermaid keyword checks
-      with `crane mermaid validate "$MD_FILE"`. Verify: `grep -q 'crane mermaid validate' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` Step 8: replace described-but-absent OCR logic
-      with `crane ocr quality "$MD_FILE"`. Verify: `grep -q 'crane ocr quality' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-checker.md` skip list loading: replace file grep with
-      `crane skiplist check "$MD_BASENAME" <category> <description>`. Verify:
-      `grep -q 'crane skiplist check' .claude/agents/pdf-to-md-checker.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
+      create with `crane report init --scope pdf-to-md --pdf "$PDF_FILE" --md "$MD_FILE" | jq -r .path`;
+      verify `grep -q 'crane report init' .claude/agents/pdf-to-md-checker.md` exits 0
+- [ ] Edit Step 2: replace `grep -F` segment loop with `crane text check "$PDF_FILE" "$MD_FILE"`;
+      verify `grep -q 'crane text check'` exits 0
+- [ ] Edit Step 3: replace manual grep heading extraction with `crane heading check "$PDF_FILE" "$MD_FILE"`;
+      verify `grep -q 'crane heading check'` exits 0
+- [ ] Edit Step 4: replace column-offset inspection with `crane nesting check "$PDF_FILE" "$MD_FILE"`;
+      verify `grep -q 'crane nesting check'` exits 0
+- [ ] Edit Step 5: replace brittle table grep with `crane table check "$PDF_FILE" "$MD_FILE"`;
+      verify `grep -q 'crane table check'` exits 0
+- [ ] Edit Step 6: replace figure grep count with `crane figure check "$PDF_FILE" "$MD_FILE"`;
+      verify `grep -q 'crane figure check'` exits 0
+- [ ] Edit Step 7: replace manual Mermaid checks with `crane mermaid validate "$MD_FILE"`;
+      verify `grep -q 'crane mermaid validate'` exits 0
+- [ ] Edit Step 8: replace absent OCR logic with `crane ocr quality "$MD_FILE"`;
+      verify `grep -q 'crane ocr quality'` exits 0
+- [ ] Edit skip list loading: replace file grep with `crane skiplist check "$MD_BASENAME"`;
+      verify `grep -q 'crane skiplist check'` exits 0
+- [ ] Confirm no remaining inline `grep -F` analysis: `grep -c 'grep -F' .claude/agents/pdf-to-md-checker.md` outputs 0
 
 ### P5.3 — Update pdf-to-md-fixer
 
+_Suggested executor: swe-golang-dev_
+
 - [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace all re-validation `grep -F` calls with
-      `crane text search "$MD_FILE" "$SEGMENT"`. Verify: `grep -q 'crane text search' .claude/agents/pdf-to-md-fixer.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace false positive persistence `echo >>`
-      with `crane skiplist add "$MD_BASENAME" <category> <description>`. Verify:
-      `grep -q 'crane skiplist add' .claude/agents/pdf-to-md-fixer.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
-- [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace fix report file init bash block with
-      `REPORT=$(crane report init --scope pdf-to-md --pdf "$PDF_FILE" --md "$MD_FILE" | jq -r .path)`.
-      Verify: `grep -q 'crane report init' .claude/agents/pdf-to-md-fixer.md` exits 0.
-  - _Suggested executor: `swe-python-dev`_
+      `crane text search "$MD_FILE" "$SEGMENT"`; verify `grep -q 'crane text search'` exits 0
+- [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace `echo >>` skip list appends with
+      `crane skiplist add "$MD_BASENAME" ...`; verify `grep -q 'crane skiplist add'` exits 0
+- [ ] Edit `.claude/agents/pdf-to-md-fixer.md`: replace fix report init bash with `crane report init`;
+      verify `grep -q 'crane report init'` exits 0
 
 ### P5.4 — Update workflow documentation
 
-- [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md` Tool Dependencies
-      section: add `crane` with install command `uv tool install crane-cli` and verify command
-      `crane --version`. Verify: `grep -q 'crane' repo-governance/workflows/content/pdf-to-md-quality-gate.md` exits 0.
-- [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md` Validation Dimensions
-      Summary table: add crane command column per dimension (e.g., "text check: `crane text check`").
-      Verify: table in that section references `crane` for each dimension.
+_Suggested executor: swe-golang-dev_
+
+- [ ] Edit `repo-governance/workflows/content/pdf-to-md-quality-gate.md` Tool Dependencies section:
+      add `nx run crane-cli:build` (builds `apps/crane-cli/dist/crane`) and `export PATH="$PWD/apps/crane-cli/dist:$PATH"` and `crane --version` verification line;
+      verify `grep -q 'crane --version' repo-governance/workflows/content/pdf-to-md-quality-gate.md` exits 0
+- [ ] Edit Validation Dimensions Summary table: add crane command column for each dimension;
+      verify `grep -q 'crane text check' repo-governance/workflows/content/pdf-to-md-quality-gate.md` exits 0
 
 ### P5.5 — End-to-end validation
 
 - [ ] Copy or create a small freely-licensed text-based PDF at
-      `apps/crane-cli/tests/fixtures/sample-text.pdf`. Verify:
-      `crane pdf type apps/crane-cli/tests/fixtures/sample-text.pdf | jq -r .type` outputs `text`.
+      `apps/crane-cli/tests/fixtures/sample-text.pdf`; verify:
+      `crane pdf type apps/crane-cli/tests/fixtures/sample-text.pdf | jq -r .type` outputs `text`
 - [ ] Run the `pdf-to-md-quality-gate` workflow on the fixture:
       `pdf_file=apps/crane-cli/tests/fixtures/sample-text.pdf mode=normal`;
-      verify the resulting audit report in `generated-reports/` has status "PASS".
+      verify the resulting audit report in `generated-reports/` has status "PASS"
 - [ ] Run `grep -rn 'crane ' .claude/agents/pdf-to-md-*.md` — output shows crane commands;
-      run `grep -rn 'pdftotext\|pdfinfo\b\|grep -F' .claude/agents/pdf-to-md-*.md` — output
-      must be empty (zero analysis-bash lines remain).
+      `grep -rn 'grep -F\|wc -c\|openssl rand' .claude/agents/pdf-to-md-*.md` outputs nothing
 
 ---
 
-## Commit Guidelines
-
-- [ ] Commit Phase 0–4 scaffold and implementation thematically — one commit per phase or
-      sub-phase (e.g., `feat(crane-cli): add project scaffold`, `feat(crane-cli): add PDF commands`)
-- [ ] Use Conventional Commits format: `feat(crane-cli): <description>`
-- [ ] Phase 5 agent edits: one commit per agent file modified (e.g., `refactor(pdf-to-md-maker): delegate to crane`)
-- [ ] Do NOT bundle scaffold + implementation + agent updates into a single commit
-
 ## Pre-Push Local Gate
 
-- [ ] Run `npx nx affected -t typecheck lint test:quick spec-coverage` — passes for all affected
-      projects
-- [ ] Fix ALL failures found, including those not caused by crane-cli changes (root-cause
-      orientation principle)
-- [ ] Re-run until zero failures
+Before every push to `origin/main`, run and fix **all** failures — including preexisting issues
+not caused by current changes (root cause orientation; do not suppress):
 
-> **Important**: Fix ALL failures found during quality gates, not just those caused by
-> crane-cli changes. This follows the root cause orientation principle — proactively fix
-> preexisting errors encountered during work.
+```bash
+npx nx affected -t typecheck lint test:quick spec-coverage
+```
 
-## Final Gate
+Fix everything the gate reports before pushing. A CI failure after push means the pre-push gate
+was not fully clean — investigate and fix the root cause.
 
-- [ ] **F1** All 5 phases complete; all items checked above
-- [ ] **F2** `nx run crane-cli:test:quick` passes (coverage ≥ 85%, rhino-cli validates threshold)
-- [ ] **F3** `nx run crane-cli:test:integration` passes with pdftotext on PATH
-- [ ] **F4** `nx run crane-cli:lint` clean — zero ruff violations
-- [ ] **F5** `nx run crane-cli:typecheck` clean — zero pyright errors
-- [ ] **F6** `nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
-- [ ] **F7** `crane --help` shows all 10 subcommand groups
-- [ ] **F8** pdf-to-md agents contain no inline `grep -F`, `pdfinfo | awk`, or analysis bash
-- [ ] **F9** Push to `origin/main`: `git push origin main`
-- [ ] **F10** Monitor GitHub Actions: `gh run list --branch main --limit 3` every 3–5 min until green
-- [ ] **F11** If any CI check fails, diagnose root cause and push a fix commit before marking plan done
+## Post-Push CI Verification
+
+After pushing to `origin/main`:
+
+```bash
+gh run list --branch main --limit 5
+gh run watch <run-id>
+```
+
+Monitor until green. If any workflow fails: investigate root cause, fix locally, re-run the
+local gate, push the fix. Do not proceed to next delivery item until CI is green.
+
+## Commit Guidelines
+
+Commit thematically per Conventional Commits format. Do not bundle unrelated changes. Suggested
+split:
+
+- `feat(crane-cli): scaffold Go module — Phase 0`
+- `feat(crane-cli): add PDF commands — Phase 1`
+- `feat(crane-cli): add analysis commands — Phase 2`
+- `feat(crane-cli): add coverage+validation commands — Phase 3`
+- `feat(crane-cli): add workflow commands — Phase 4`
+- `feat(crane-cli): integrate into pdf-to-md agents — Phase 5`
 
 ## Plan Archival
 
-- [ ] Verify ALL delivery checklist items are ticked
-- [ ] Verify ALL quality gates pass (local + CI)
-- [ ] Run `git mv plans/in-progress/crane-cli plans/done/$(date +%Y-%m-%d)__crane-cli`
-- [ ] Update `plans/in-progress/README.md` — remove crane-cli entry
-- [ ] Update `plans/done/README.md` — add crane-cli entry with completion date
-- [ ] Commit: `chore(plans): archive crane-cli to done`
+When all Final Gate items are checked:
+
+```bash
+git mv plans/in-progress/crane-cli plans/done/2026-MM-DD__crane-cli
+```
+
+Update `plans/done/README.md` and `plans/in-progress/README.md` accordingly.
+
+---
+
+## Final Gate
+
+- [ ] **F1** All 5 phases complete; all items above checked
+- [ ] **F2** `nx run crane-cli:test:quick` passes — coverage ≥ 85%, rhino-cli validates threshold
+- [ ] **F3** `nx run crane-cli:test:integration` passes with pdftotext on PATH
+- [ ] **F4** `nx run crane-cli:lint` clean — zero golangci-lint violations
+- [ ] **F5** `nx run crane-cli:spec-coverage` passes — all Gherkin scenarios implemented
+- [ ] **F6** `crane --help` shows all 10 subcommand groups
+- [ ] **F7** `crane pdf type apps/crane-cli/tests/fixtures/sample-text.pdf | jq -r .type` outputs `text`
+- [ ] **F8** pdf-to-md agents contain no inline `grep -F`, `pdfinfo | awk`, or UUID bash
+- [ ] **F9** `nx affected -t typecheck lint test:quick spec-coverage` passes (pre-push gate)
+- [ ] **F10** Post-push CI workflows green on `origin/main`
+- [ ] **F11** Plan archival complete: folder moved to `plans/done/YYYY-MM-DD__crane-cli/`

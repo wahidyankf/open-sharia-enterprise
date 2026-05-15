@@ -2,183 +2,129 @@
 
 ## Architecture
 
-Three-layer design: thin CLI commands delegate to pure-Python core logic; adapters isolate
+Three-layer design: thin CLI commands delegate to pure-Go core logic; adapters isolate
 subprocess calls to system tools.
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-%% Top-down orientation: shows data flow from CLI consumer to system tools
 flowchart TD
-    A["CLI Layer<br/>crane/commands/*.py<br/>Typer commands, JSON serialization, exit codes"]:::blue
-    B["Core Layer<br/>crane/core/*.py<br/>Pure business logic, deterministic analysis<br/>No subprocess; accepts str/Path args only"]:::teal
-    C["Adapter Layer<br/>crane/adapters/*.py<br/>Subprocess wrappers for pdftotext/pdfinfo/tesseract<br/>Raises ToolNotFoundError on exit 127"]:::orange
+    CLI["CLI Layer\ncmd/crane/ + internal/commands/\nCobra commands, JSON output, exit codes"]
+    Core["Core Layer\ninternal/core/\nPure business logic, deterministic analysis\nNo subprocess; accepts string/Path args only"]
+    Adapter["Adapter Layer\ninternal/adapters/\nSubprocess wrappers for pdftotext/pdfinfo/tesseract\nReturns error on tool not found"]
 
-    A --> B
-    A --> C
-    B -.->|"str/Path only — no subprocess"| B
+    CLI --> Core
+    CLI --> Adapter
+    Core --> Adapter
 
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CLI fill:#0173B2,color:#fff
+    style Core fill:#029E73,color:#fff
+    style Adapter fill:#CC78BC,color:#fff
 ```
 
 ## Project Structure
 
 ```
 apps/crane-cli/
-├── src/
-│   └── crane_cli/
-│       ├── __init__.py
-│       ├── main.py                  # Typer app, subcommand group registration
-│       ├── commands/
-│       │   ├── __init__.py
-│       │   ├── pdf.py               # crane pdf *
-│       │   ├── text.py              # crane text *
-│       │   ├── heading.py           # crane heading *
-│       │   ├── nesting.py           # crane nesting *
-│       │   ├── table.py             # crane table *
-│       │   ├── figure.py            # crane figure *
-│       │   ├── mermaid.py           # crane mermaid *
-│       │   ├── ocr.py               # crane ocr *
-│       │   ├── report.py            # crane report *
-│       │   └── skiplist.py          # crane skiplist *
-│       ├── core/
-│       │   ├── __init__.py
-│       │   ├── text_checker.py      # Completeness + accuracy analysis
-│       │   ├── heading_checker.py   # Heading depth inference + comparison
-│       │   ├── nesting_checker.py   # List nesting column-offset analysis
-│       │   ├── table_checker.py     # Columnar table detection + comparison
-│       │   ├── figure_checker.py    # Figure reference detection + coverage
-│       │   ├── mermaid_validator.py # Mermaid syntax validation
-│       │   ├── ocr_assessor.py      # OCR confusion-character error rate
-│       │   ├── report_manager.py    # UUID chain, UTC+7 timestamp, report init
-│       │   └── skiplist_manager.py  # Skip list CRUD with dedup
-│       ├── adapters/
-│       │   ├── __init__.py
-│       │   ├── pdftotext.py         # pdftotext -layout subprocess wrapper
-│       │   ├── pdfinfo.py           # pdfinfo subprocess wrapper
-│       │   └── tesseract.py         # tesseract subprocess wrapper
-│       └── models/
-│           ├── __init__.py
-│           ├── finding.py           # Finding, Criticality, Confidence, Category
-│           ├── pdf_metadata.py      # PDFMetadata
-│           └── report.py           # SkipListEntry
+├── cmd/
+│   └── crane/
+│       └── main.go              # cobra root command + subgroup registration
+├── internal/
+│   ├── commands/
+│   │   ├── pdf.go               # crane pdf *
+│   │   ├── text.go              # crane text *
+│   │   ├── heading.go           # crane heading *
+│   │   ├── nesting.go           # crane nesting *
+│   │   ├── table.go             # crane table *
+│   │   ├── figure.go            # crane figure *
+│   │   ├── mermaid.go           # crane mermaid *
+│   │   ├── ocr.go               # crane ocr *
+│   │   ├── report.go            # crane report *
+│   │   └── skiplist.go          # crane skiplist *
+│   ├── core/
+│   │   ├── text_checker.go      # Completeness + accuracy analysis
+│   │   ├── heading_checker.go   # Heading depth inference + comparison
+│   │   ├── nesting_checker.go   # List nesting column-offset analysis
+│   │   ├── table_checker.go     # Columnar table detection + comparison
+│   │   ├── figure_checker.go    # Figure reference detection + coverage
+│   │   ├── mermaid_validator.go # Mermaid syntax validation
+│   │   ├── ocr_assessor.go      # OCR confusion-character error rate
+│   │   ├── report_manager.go    # UUID chain, UTC+7 timestamp, report init
+│   │   └── skiplist_manager.go  # Skip list CRUD with dedup
+│   ├── adapters/
+│   │   ├── pdftotext.go         # pdftotext -layout subprocess wrapper
+│   │   ├── pdfinfo.go           # pdfinfo subprocess wrapper
+│   │   └── tesseract.go         # tesseract subprocess wrapper
+│   └── models/
+│       ├── finding.go           # Finding, Criticality, Confidence, Category types
+│       ├── pdf_metadata.go      # PDFMetadata struct
+│       └── report.go            # SkipListEntry struct
 ├── tests/
-│   ├── __init__.py
-│   ├── conftest.py                  # Top-level shared fixtures
 │   ├── unit/
-│   │   ├── __init__.py
-│   │   ├── conftest.py              # GHERKIN_ROOT, shared step fixtures, fake adapters
-│   │   └── steps/
-│   │       ├── __init__.py
-│   │       ├── pdf_steps.py         # BDD steps for pdf-commands.feature
-│   │       ├── text_steps.py        # BDD steps for text-check.feature
-│   │       ├── heading_steps.py     # BDD steps for heading-check.feature
-│   │       ├── nesting_steps.py     # BDD steps for nesting-check.feature
-│   │       ├── table_steps.py       # BDD steps for table-check.feature
-│   │       ├── figure_steps.py      # BDD steps for figure-check.feature
-│   │       ├── mermaid_steps.py     # BDD steps for mermaid-validate.feature
-│   │       ├── ocr_steps.py         # BDD steps for ocr-quality.feature
-│   │       ├── report_steps.py      # BDD steps for report-management.feature
-│   │       └── skiplist_steps.py    # BDD steps for skiplist-management.feature
+│   │   ├── text_checker_test.go
+│   │   ├── heading_checker_test.go
+│   │   ├── nesting_checker_test.go
+│   │   ├── table_checker_test.go
+│   │   ├── figure_checker_test.go
+│   │   ├── mermaid_validator_test.go
+│   │   ├── ocr_assessor_test.go
+│   │   ├── report_manager_test.go
+│   │   └── skiplist_manager_test.go
 │   ├── integration/
-│   │   ├── __init__.py
-│   │   └── conftest.py              # Real pdftotext required; skips if absent
+│   │   └── pdf_commands_test.go # Requires pdftotext on PATH; build tag: Integration
+│   ├── bdd/
+│   │   ├── suite_test.go        # godog runner: loads specs/apps/crane/gherkin/
+│   │   └── steps/
+│   │       ├── init.go          # InitializeScenario: wires all step packages
+│   │       ├── pdf_steps.go
+│   │       ├── text_steps.go
+│   │       ├── heading_steps.go
+│   │       ├── nesting_steps.go
+│   │       ├── table_steps.go
+│   │       ├── figure_steps.go
+│   │       ├── mermaid_steps.go
+│   │       ├── ocr_steps.go
+│   │       ├── report_steps.go
+│   │       └── skiplist_steps.go
 │   └── fixtures/
 │       ├── sample-text.pdf          # Small text-based PDF (public domain)
 │       ├── sample-text.md           # Complete Markdown conversion of above
 │       ├── sample-text-missing.md   # MD with one section removed
-│       └── sample-text-headings-wrong.md  # MD with wrong heading depths
-├── pyproject.toml
+│       └── sample-text-headings-wrong.md
+├── go.mod
+├── go.sum
 ├── project.json
 └── README.md
 ```
 
 ## Tech Stack
 
-| Component       | Choice                                                                  | Reason                                           |
-| --------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
-| CLI framework   | Typer 0.12+ [Web-cited: pypi.org/project/typer, accessed 2026-05-15]    | Type-safe, built on Click, natural with Pydantic |
-| Terminal output | Rich 13+ [Web-cited: pypi.org/project/rich, accessed 2026-05-15]        | Tables, progress, colored human output           |
-| Data models     | Pydantic v2 [Web-cited: pypi.org/project/pydantic, accessed 2026-05-15] | JSON serialization, validation, type safety      |
-| Package manager | uv                                                                      | Platform standard (ose-primer)                   |
-| Build backend   | hatchling                                                               | Platform standard (ose-primer)                   |
-| Linter          | ruff                                                                    | Platform standard (ose-primer)                   |
-| Type checker    | pyright                                                                 | Platform standard (ose-primer); NOT mypy         |
-| Test framework  | pytest + pytest-bdd                                                     | Platform standard (ose-primer)                   |
-| Coverage        | coverage[toml]                                                          | lcov output for rhino-cli threshold validation   |
-| Nx executor     | nx:run-commands with `uv run`                                           | Platform standard; no Nx Python plugin           |
+| Component      | Choice                                        | Reason                                          |
+| -------------- | --------------------------------------------- | ----------------------------------------------- |
+| CLI framework  | cobra v1.10.2 [Repo-grounded: apps/rhino-cli] | Platform standard for ose-public Go CLIs        |
+| Output         | encoding/json (stdlib)                        | Zero external dependency                        |
+| Data models    | Go structs + json tags                        | No runtime dependency                           |
+| Build          | Go modules                                    | Platform standard                               |
+| Linter         | golangci-lint [Repo-grounded: apps/rhino-cli] | Platform standard for Go apps                   |
+| Type safety    | Native (Go is statically typed)               | No extra tool needed                            |
+| BDD framework  | godog v0.15.1 [Repo-grounded: apps/rhino-cli] | Platform standard (rhino-cli pattern)           |
+| Unit tests     | testing + testify/assert v1.9+ [Web-cited]    | Platform standard                               |
+| Coverage       | go test -coverprofile                         | Native Go; rhino-cli validates threshold        |
+| Nx executor    | nx:run-commands with `go build`/`go test`     | Same as rhino-cli/ayokoding-cli [Repo-grounded] |
+| Fuzzy matching | go-diff (sergi/go-diff) [Web-cited]           | Levenshtein + LCS; no NLP runtime needed        |
 
-## pyproject.toml
+## go.mod
 
-Version pins below are [Web-cited: pypi.org, accessed 2026-05-15]; path constraints are
-[Repo-grounded: verified via `test -d` / `which` at authoring time].
+```go
+module github.com/wahidyankf/ose-public/apps/crane-cli
 
-```toml
-[project]
-name = "crane-cli"
-version = "0.1.0"
-description = "Content Retrieval And Normalization Engine CLI"
-requires-python = ">=3.13"
-dependencies = [
-    "typer>=0.12",
-    "rich>=13",
-    "pydantic>=2",
-]
+go 1.26 // [Judgment call] matches installed toolchain (go1.26.1) and all sibling CLIs (rhino-cli, ayokoding-cli, ose-cli)
 
-[project.scripts]
-crane = "crane_cli.main:app"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/crane_cli"]
-
-[dependency-groups]
-dev = [
-    "pytest>=8.3",
-    "pytest-bdd>=7.3",
-    "coverage[toml]>=7.6",
-    "ruff>=0.8",
-    "pyright>=1.1",
-]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_steps.py"]
-markers = [
-    "unit: unit tests (no real system tools required)",
-    "integration: integration tests (requires pdftotext on PATH)",
-]
-
-[tool.coverage.run]
-source = ["crane_cli"]
-
-[tool.coverage.report]
-show_missing = true
-
-[tool.coverage.lcov]
-output = "coverage/lcov.info"
-
-[tool.ruff]
-src = ["src"]
-line-length = 100
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "PT"]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**/steps/*_steps.py" = ["E501"]
-
-[tool.pyright]
-include = ["src", "tests"]
-pythonVersion = "3.13"
-typeCheckingMode = "basic"
-venvPath = "."
-venv = ".venv"
+require (
+    github.com/spf13/cobra v1.10.2              // [Repo-grounded: apps/rhino-cli/go.mod, apps/ayokoding-cli/go.mod]
+    github.com/cucumber/godog v0.15.1           // [Repo-grounded: apps/rhino-cli/go.mod, apps/ayokoding-cli/go.mod]
+    github.com/stretchr/testify v1.9.0
+    github.com/google/uuid v1.6.0              // [Web-cited: https://github.com/google/uuid/releases/tag/v1.6.0, accessed 2026-05-15]
+    github.com/sergi/go-diff v1.3.1
+)
 ```
 
 ## project.json
@@ -187,13 +133,12 @@ venv = ".venv"
 {
   "name": "crane-cli",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/crane-cli/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv build",
+        "command": "CGO_ENABLED=0 go build -o dist/crane ./cmd/crane/...",
         "cwd": "apps/crane-cli"
       },
       "outputs": ["{projectRoot}/dist"]
@@ -201,7 +146,7 @@ venv = ".venv"
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv run crane --help",
+        "command": "go run ./cmd/crane/... --help",
         "cwd": "apps/crane-cli"
       }
     },
@@ -209,57 +154,47 @@ venv = ".venv"
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "uv run coverage run -m pytest -m unit",
-          "uv run coverage lcov -o coverage/lcov.info",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/lcov.info 85)"
+          "go test -v -run 'Unit|BDD' ./... -coverprofile=coverage/coverage.out -covermode=atomic",
+          "go tool cover -func=coverage/coverage.out",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/coverage.out 85)"
         ],
         "parallel": false,
         "cwd": "apps/crane-cli"
       },
       "cache": true,
-      "inputs": [
-        "{projectRoot}/src/**/*.py",
-        "{projectRoot}/tests/**/*.py",
-        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"
-      ],
-      "outputs": ["{projectRoot}/coverage/lcov.info"]
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"],
+      "outputs": ["{projectRoot}/coverage/coverage.out"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv run pytest -m unit",
+        "command": "go test -v -run Unit ./tests/unit/...",
         "cwd": "apps/crane-cli"
       },
       "cache": true,
-      "inputs": [
-        "{projectRoot}/src/**/*.py",
-        "{projectRoot}/tests/**/*.py",
-        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"
-      ]
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv run pytest -m integration",
+        "command": "go test -v -run Integration ./tests/integration/...",
         "cwd": "apps/crane-cli"
       },
       "cache": false
     },
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "uv run ruff check .",
-        "cwd": "apps/crane-cli"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv run pyright",
+        "command": "CGO_ENABLED=0 go vet ./...",
         "cwd": "apps/crane-cli"
-      },
-      "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.py", "{projectRoot}/tests/**/*.py"]
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "golangci-lint run ./...",
+        "cwd": "apps/crane-cli"
+      }
     },
     "spec-coverage": {
       "executor": "nx:run-commands",
@@ -267,304 +202,365 @@ venv = ".venv"
         "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/crane/gherkin apps/crane-cli"
       },
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature", "{projectRoot}/**/*.py"]
+      "inputs": ["{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
     }
   },
-  "tags": ["type:app", "platform:cli", "lang:python", "domain:crane"],
+  "tags": ["type:app", "platform:cli", "lang:go", "domain:crane"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
 
 ## Data Models
 
-```python
-# src/crane_cli/models/finding.py
-from enum import Enum
-from pydantic import BaseModel
+```go
+// internal/models/finding.go
+package models
 
-class Criticality(str, Enum):
-    CRITICAL = "CRITICAL"
-    HIGH = "HIGH"
-    MEDIUM = "MEDIUM"
-    LOW = "LOW"
+type Criticality string
 
-class Confidence(str, Enum):
-    HIGH = "HIGH"
-    MEDIUM = "MEDIUM"
-    FALSE_POSITIVE = "FALSE_POSITIVE"
+const (
+    CriticalityCRITICAL Criticality = "CRITICAL"
+    CriticalityHIGH     Criticality = "HIGH"
+    CriticalityMEDIUM   Criticality = "MEDIUM"
+    CriticalityLOW      Criticality = "LOW"
+)
 
-class Category(str, Enum):
-    TEXT_COMPLETENESS = "text-completeness"
-    TEXT_ACCURACY = "text-accuracy"
-    HEADING_LEVEL = "heading-level-accuracy"
-    CONTENT_NESTING = "content-nesting-accuracy"
-    TABLE_INTEGRITY = "table-integrity"
-    FIGURE_COVERAGE = "figure-coverage"
-    MERMAID_SYNTAX = "mermaid-syntax"
-    OCR_QUALITY = "ocr-quality"
-    STRUCTURE = "structure"
+type Confidence string
 
-class Finding(BaseModel):
-    category: Category
-    criticality: Criticality
-    confidence: Confidence = Confidence.HIGH
-    location_pdf: str | None = None   # e.g. "Page 12, section heading"
-    location_md: str | None = None    # e.g. "nist.md:line_445"
-    description: str
-    pdf_text: str | None = None       # first 80 chars of affected PDF passage
-    fix_suggestion: str | None = None
-    auto_fixable: bool = False
+const (
+    ConfidenceHIGH          Confidence = "HIGH"
+    ConfidenceMEDIUM        Confidence = "MEDIUM"
+    ConfidenceFALSEPOSITIVE Confidence = "FALSE_POSITIVE"
+)
+
+type Category string
+
+const (
+    CategoryTextCompleteness Category = "text-completeness"
+    CategoryTextAccuracy     Category = "text-accuracy"
+    CategoryHeadingLevel     Category = "heading-level-accuracy"
+    CategoryContentNesting   Category = "content-nesting-accuracy"
+    CategoryTableIntegrity   Category = "table-integrity"
+    CategoryFigureCoverage   Category = "figure-coverage"
+    CategoryMermaidSyntax    Category = "mermaid-syntax"
+    CategoryOCRQuality       Category = "ocr-quality"
+    CategoryStructure        Category = "structure"
+)
+
+type Finding struct {
+    Category      Category    `json:"category"`
+    Criticality   Criticality `json:"criticality"`
+    Confidence    Confidence  `json:"confidence"`
+    LocationPDF   string      `json:"location_pdf,omitempty"`
+    LocationMD    string      `json:"location_md,omitempty"`
+    Description   string      `json:"description"`
+    PDFText       string      `json:"pdf_text,omitempty"`
+    FixSuggestion string      `json:"fix_suggestion,omitempty"`
+    AutoFixable   bool        `json:"auto_fixable"`
+}
 ```
 
 ## Key Algorithms
 
 ### Text Normalization and Fuzzy Matching
 
-```python
-# src/crane_cli/core/text_checker.py
-import re
-from difflib import SequenceMatcher
+```go
+// internal/core/text_checker.go
+package core
 
-FUZZY_THRESHOLD = 0.85
+import (
+    "strings"
+    "regexp"
 
-def normalize(text: str) -> str:
-    return re.sub(r"\s+", " ", text).strip()
+    "github.com/sergi/go-diff/diffmatchpatch"
+)
 
-def similarity(a: str, b: str) -> float:
-    return SequenceMatcher(None, normalize(a).lower(), normalize(b).lower()).ratio()
+const FuzzyThreshold = 0.85
 
-def segment_is_present(segment: str, md_text: str) -> bool:
-    norm_seg = normalize(segment).lower()
-    # First: exact normalized match (fast path)
-    if norm_seg in normalize(md_text).lower():
-        return True
-    # Fallback: fuzzy match on sliding windows of similar length
-    seg_len = len(norm_seg)
-    norm_md = normalize(md_text).lower()
-    for i in range(0, max(1, len(norm_md) - seg_len + 1), max(1, seg_len // 4)):
-        window = norm_md[i : i + seg_len + 20]
-        if similarity(norm_seg, window) >= FUZZY_THRESHOLD:
-            return True
-    return False
+var wsPattern = regexp.MustCompile(`\s+`)
+
+func Normalize(text string) string {
+    return strings.TrimSpace(wsPattern.ReplaceAllString(text, " "))
+}
+
+func Similarity(a, b string) float64 {
+    na := strings.ToLower(Normalize(a))
+    nb := strings.ToLower(Normalize(b))
+    if na == nb {
+        return 1.0
+    }
+    dmp := diffmatchpatch.New()
+    diffs := dmp.DiffMain(na, nb, false)
+    levenshtein := dmp.DiffLevenshtein(diffs)
+    maxLen := len([]rune(na))
+    if lb := len([]rune(nb)); lb > maxLen {
+        maxLen = lb
+    }
+    if maxLen == 0 {
+        return 1.0
+    }
+    return 1.0 - float64(levenshtein)/float64(maxLen)
+}
 ```
 
 ### Heading Depth Inference
 
-```python
-# src/crane_cli/core/heading_checker.py
-import re
+```go
+// internal/core/heading_checker.go
+package core
 
-def infer_depth_from_numbering(heading_text: str) -> tuple[int, str] | None:
-    """
-    Returns (depth, confidence) or None if no section numbering detected.
-    "2.3.1 Title" -> (4, "HIGH")
-    "A.1 Title"   -> (3, "HIGH")
-    "1. Title"    -> (2, "HIGH")
-    """
-    stripped = heading_text.strip()
-    match = re.match(r"^(\d+|\w)(\.\d+|\.\w)*\.?\s", stripped)
-    if not match:
-        return None
-    number_part = match.group(0).rstrip()
-    dots = number_part.count(".")
-    # "1." = 1 dot → H2; "1.1" = 1 dot → H3; "1.1.1" = 2 dots → H4
-    if number_part.endswith("."):
-        depth = dots + 1   # "1." has 1 dot → depth 2
-    else:
-        depth = dots + 2   # "1.1" has 1 dot → depth 3
-    return (min(depth, 5), "HIGH")
-```
+import (
+    "regexp"
+    "strings"
+)
 
-### Table Detection
+var sectionNumPattern = regexp.MustCompile(`^(\d+|\w)(\.\d+|\.\w)*\.?\s`)
 
-```python
-# src/crane_cli/core/table_checker.py
-import re
-from dataclasses import dataclass
-
-@dataclass
-class TableSpec:
-    start_line: int
-    header_text: str
-    col_count: int
-    row_count: int
-
-def detect_tables(layout_text: str) -> list[TableSpec]:
-    """
-    Detect columnar tables by finding runs of lines with >= 3 columns of
-    content separated by >= 2 whitespace characters.
-    """
-    lines = layout_text.splitlines()
-    tables: list[TableSpec] = []
-    i = 0
-    while i < len(lines):
-        cols = re.split(r"\s{2,}", lines[i].strip())
-        if len(cols) >= 3 and all(c.strip() for c in cols):
-            # Potential table header — scan forward for data rows
-            header = lines[i]
-            row_count = 0
-            j = i + 1
-            while j < len(lines):
-                row_cols = re.split(r"\s{2,}", lines[j].strip())
-                if len(row_cols) >= 2 and lines[j].strip():
-                    row_count += 1
-                    j += 1
-                else:
-                    break
-            if row_count >= 2:
-                tables.append(TableSpec(i, header.strip(), len(cols), row_count))
-                i = j
-                continue
-        i += 1
-    return tables
+// InferDepthFromNumbering returns (depth 1-5, confidence "HIGH", ok=true)
+// or (0, "", false) when no section numbering detected.
+// "1. Title" → 2, "2.3 Title" → 3, "2.3.1 Title" → 4
+func InferDepthFromNumbering(heading string) (depth int, confidence string, ok bool) {
+    heading = strings.TrimSpace(heading)
+    match := sectionNumPattern.FindString(heading)
+    if match == "" {
+        return 0, "", false
+    }
+    numPart := strings.TrimRight(match, " \t")
+    dots := strings.Count(numPart, ".")
+    if strings.HasSuffix(numPart, ".") {
+        depth = dots + 1
+    } else {
+        depth = dots + 2
+    }
+    if depth > 5 {
+        depth = 5
+    }
+    return depth, "HIGH", true
+}
 ```
 
 ### Mermaid Validation
 
-````python
-# src/crane_cli/core/mermaid_validator.py
-import re
+```go
+// internal/core/mermaid_validator.go
+package core
 
-VALID_TYPES: frozenset[str] = frozenset({
-    "graph", "flowchart", "sequenceDiagram", "stateDiagram", "stateDiagram-v2",
-    "classDiagram", "gantt", "pie", "erDiagram", "journey", "gitGraph",
-    "mindmap", "timeline", "quadrantChart", "xychart-beta", "sankey-beta",
-    "block-beta", "architecture-beta",
-})
+import (
+    "fmt"
+    "strings"
+)
 
-def validate_block(block_content: str) -> tuple[bool, str | None]:
-    """Returns (is_valid, error_description)."""
-    lines = block_content.strip().splitlines()
-    if not lines:
-        return False, "Empty Mermaid block"
-    diagram_type = lines[0].split()[0] if lines[0].strip() else ""
-    if diagram_type not in VALID_TYPES:
-        return False, f"Unknown diagram type: '{diagram_type}'"
-    if block_content.count("[") != block_content.count("]"):
-        return False, "Unmatched brackets"
-    if block_content.count("(") != block_content.count(")"):
-        return False, "Unmatched parentheses"
-    return True, None
+var validMermaidTypes = map[string]bool{
+    "graph": true, "flowchart": true, "sequenceDiagram": true,
+    "stateDiagram": true, "stateDiagram-v2": true, "classDiagram": true,
+    "gantt": true, "pie": true, "erDiagram": true, "journey": true,
+    "gitGraph": true, "mindmap": true, "timeline": true,
+    "quadrantChart": true, "xychart-beta": true, "sankey-beta": true,
+    "block-beta": true, "architecture-beta": true,
+}
 
-def extract_blocks(md_text: str) -> list[tuple[int, str]]:
-    """Return list of (start_line, block_content)."""
-    pattern = re.compile(r"^```mermaid\n(.*?)^```", re.MULTILINE | re.DOTALL)
-    results = []
-    for match in pattern.finditer(md_text):
-        line_no = md_text[: match.start()].count("\n") + 1
-        results.append((line_no, match.group(1)))
-    return results
-````
+func ValidateMermaidBlock(content string) (valid bool, errMsg string) {
+    lines := strings.Split(strings.TrimSpace(content), "\n")
+    if len(lines) == 0 || strings.TrimSpace(lines[0]) == "" {
+        return false, "empty Mermaid block"
+    }
+    diagramType := strings.Fields(lines[0])[0]
+    if !validMermaidTypes[diagramType] {
+        return false, fmt.Sprintf("unknown diagram type: %q", diagramType)
+    }
+    if strings.Count(content, "[") != strings.Count(content, "]") {
+        return false, "unmatched brackets"
+    }
+    if strings.Count(content, "(") != strings.Count(content, ")") {
+        return false, "unmatched parentheses"
+    }
+    return true, ""
+}
+```
 
 ### OCR Quality Assessment
 
-```python
-# src/crane_cli/core/ocr_assessor.py
-import re
+```go
+// internal/core/ocr_assessor.go
+package core
 
-_ERROR_PATTERNS: list[str] = [
-    r"[^\x00-\x7F]{3,}",     # 3+ consecutive non-ASCII (garbled multi-byte)
-    r"\b[lI1]{5,}\b",         # 5+ l/I/1 confusion characters
-    r"\b[0Oo]{5,}\b",         # 5+ 0/O/o confusion characters
-    r"[a-zA-Z]{30,}",         # Impossibly long word (joined OCR tokens)
-]
+import (
+    "regexp"
+    "strings"
+)
 
-def estimate_error_rate(text: str) -> float:
-    total = len(text.replace(" ", "").replace("\n", ""))
-    if total == 0:
+var ocrErrorPatterns = []*regexp.Regexp{
+    regexp.MustCompile(`[^\x00-\x7F]{3,}`),
+    regexp.MustCompile(`\b[lI1]{5,}\b`),
+    regexp.MustCompile(`\b[0Oo]{5,}\b`),
+    regexp.MustCompile(`[a-zA-Z]{30,}`),
+}
+
+func EstimateOCRErrorRate(text string) float64 {
+    clean := strings.ReplaceAll(strings.ReplaceAll(text, " ", ""), "\n", "")
+    total := len([]rune(clean))
+    if total == 0 {
         return 0.0
-    error_chars = sum(
-        sum(len(m.group()) for m in re.finditer(p, text))
-        for p in _ERROR_PATTERNS
-    )
-    return min(error_chars / total, 1.0)
+    }
+    errorChars := 0
+    for _, p := range ocrErrorPatterns {
+        for _, m := range p.FindAllString(text, -1) {
+            errorChars += len([]rune(m))
+        }
+    }
+    rate := float64(errorChars) / float64(total)
+    if rate > 1.0 {
+        return 1.0
+    }
+    return rate
+}
 ```
 
 ### UUID Chain + UTC+7 Timestamp
 
-```python
-# src/crane_cli/core/report_manager.py
-import time, uuid
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
+```go
+// internal/core/report_manager.go
+package core
 
-_UTC7 = timezone(timedelta(hours=7))
-_CHAIN_WINDOW_SECONDS = 30
+import (
+    "fmt"
+    "os"
+    "strconv"
+    "strings"
+    "time"
 
-def get_or_extend_chain(scope: str) -> str:
-    chain_file = Path(f".execution-chain-{scope}")
-    new_id = uuid.uuid4().hex[:6]
-    if chain_file.exists():
-        age = time.time() - chain_file.stat().st_mtime
-        if age < _CHAIN_WINDOW_SECONDS:
-            existing = chain_file.read_text().strip()
-            chain = f"{existing}__{new_id}"
-            chain_file.write_text(chain)
-            return chain
-    chain_file.write_text(new_id)
-    return new_id
+    "github.com/google/uuid"
+)
 
-def utc7_timestamp() -> str:
-    return datetime.now(_UTC7).strftime("%Y-%m-%d--%H-%M")
+const chainWindowSeconds = 30
+
+var utc7 = time.FixedZone("UTC+7", 7*60*60)
+
+func GetOrExtendChain(scope string) string {
+    chainFile := fmt.Sprintf(".execution-chain-%s", scope)
+    newID := strings.ReplaceAll(uuid.New().String(), "-", "")[:6]
+
+    if data, err := os.ReadFile(chainFile); err == nil {
+        parts := strings.SplitN(strings.TrimSpace(string(data)), " ", 2)
+        if len(parts) == 2 {
+            if ts, err2 := strconv.ParseInt(parts[0], 10, 64); err2 == nil {
+                if time.Now().Unix()-ts < chainWindowSeconds {
+                    chain := parts[1] + "__" + newID
+                    _ = os.WriteFile(chainFile, []byte(fmt.Sprintf("%d %s", time.Now().Unix(), chain)), 0o644)
+                    return chain
+                }
+            }
+        }
+    }
+    _ = os.WriteFile(chainFile, []byte(fmt.Sprintf("%d %s", time.Now().Unix(), newID)), 0o644)
+    return newID
+}
+
+func UTC7Timestamp() string {
+    return time.Now().In(utc7).Format("2006-01-02--15-04")
+}
 ```
 
-## conftest.py Pattern (GHERKIN_ROOT)
+## godog Feature Loader Pattern
 
-Unit test conftest follows the ose-primer pattern exactly:
+```go
+// tests/bdd/suite_test.go
+package bdd_test
 
-```python
-# tests/unit/conftest.py
-import os
-import pathlib
+import (
+    "os"
+    "testing"
 
-_env_root = os.environ.get("GHERKIN_ROOT")
-GHERKIN_ROOT = (
-    pathlib.Path(_env_root)
-    if _env_root
-    else pathlib.Path(__file__).parents[4] / "specs" / "apps" / "crane" / "gherkin"
+    "github.com/cucumber/godog"
+    "github.com/wahidyankf/ose-public/apps/crane-cli/tests/bdd/steps"
 )
+
+func gherkinRoot() string {
+    if root := os.Getenv("GHERKIN_ROOT"); root != "" {
+        return root
+    }
+    return "../../../specs/apps/crane/gherkin"
+}
+
+func TestMain(m *testing.M) {
+    opts := godog.Options{
+        Format:   "pretty",
+        Paths:    []string{gherkinRoot()},
+        TestingT: m,
+    }
+    suite := godog.TestSuite{
+        Name:                "crane-cli",
+        Options:             &opts,
+        ScenarioInitializer: steps.InitializeScenario,
+    }
+    os.Exit(suite.Run())
+}
+```
+
+```go
+// tests/bdd/steps/pdf_steps.go
+package steps
+
+import "github.com/cucumber/godog"
+
+func InitializePDFSteps(sc *godog.ScenarioContext) {
+    sc.Step(`^a text-based PDF fixture exists$`, aTextBasedPDFFixtureExists)
+    sc.Step(`^I run "crane pdf type" on the fixture$`, iRunCranePDFType)
+    sc.Step(`^the JSON output contains type "([^"]*)"$`, jsonOutputContainsType)
+    sc.Step(`^the exit code is (\d+)$`, exitCodeIs)
+}
+```
+
+```go
+// tests/bdd/steps/init.go
+package steps
+
+import "github.com/cucumber/godog"
+
+func InitializeScenario(sc *godog.ScenarioContext) {
+    InitializePDFSteps(sc)
+    InitializeTextSteps(sc)
+    InitializeHeadingSteps(sc)
+    InitializeNestingSteps(sc)
+    InitializeTableSteps(sc)
+    InitializeFigureSteps(sc)
+    InitializeMermaidSteps(sc)
+    InitializeOCRSteps(sc)
+    InitializeReportSteps(sc)
+    InitializeSkiplistSteps(sc)
+}
 ```
 
 ## File Impact
 
-**New files (created by this plan)**:
+### New Files
 
-- `apps/crane-cli/` — entire directory tree (see Project Structure section above) _New file_
-- `specs/apps/crane/gherkin/` — one `.feature` file per command group (pdf-commands, text-check,
-  heading-check, nesting-check, table-check, figure-check, mermaid-validate, ocr-quality,
-  report-management, skiplist-management) _New files_
+- `apps/crane-cli/` — entire new Go module (cmd/, internal/, tests/, go.mod, project.json)
+- `specs/apps/crane/gherkin/*.feature` — 10 Gherkin feature files (written during Phases 1–4)
 
-**Modified files**:
+### Modified Files (Phase 5)
 
-- `.claude/agents/pdf-to-md-maker.md` — Phase 5.1: bash extraction replaced with crane commands
-- `.claude/agents/pdf-to-md-checker.md` — Phase 5.2: bash analysis replaced with crane commands
-- `.claude/agents/pdf-to-md-fixer.md` — Phase 5.3: grep/echo replaced with crane commands
-- `repo-governance/workflows/content/pdf-to-md-quality-gate.md` — Phase 5.4: crane added to Tool
-  Dependencies and Validation Dimensions table
+- `.claude/agents/pdf-to-md-maker.md` — replace bash analysis with crane commands
+- `.claude/agents/pdf-to-md-checker.md` — replace all 8 bash validation stubs with crane commands
+- `.claude/agents/pdf-to-md-fixer.md` — replace grep re-validation and echo-append skiplist
+- `repo-governance/workflows/content/pdf-to-md-quality-gate.md` — add crane as tool dependency
+
+### Unmodified
+
+All other apps, libs, specs, and governance files are untouched.
 
 ## Rollback
 
-All modified agent files and the workflow document are tracked in git. If Phase 5 crane
-integration causes issues:
+If crane-cli causes regressions in the pdf-to-md pipeline:
 
-```bash
-# Revert Phase 5 commits individually (example — adjust N to the number of Phase 5 commits)
-git revert HEAD~N..HEAD
-
-# Or revert specific agent files directly
-git checkout main -- .claude/agents/pdf-to-md-maker.md
-git checkout main -- .claude/agents/pdf-to-md-checker.md
-git checkout main -- .claude/agents/pdf-to-md-fixer.md
-git checkout main -- repo-governance/workflows/content/pdf-to-md-quality-gate.md
-```
-
-The `apps/crane-cli/` app can remain installed without impacting agents if agent edits are
-reverted. The crane binary has no side effects unless invoked; removing it from agents means
-agents simply stop calling it.
+1. `git revert <Phase 5 commit SHA>` — reverts agent + workflow changes back to bash one-liners
+2. `apps/crane-cli/` can remain on disk; it has no runtime coupling to the agents until Phase 5
+   commits are applied
+3. Gherkin feature files in `specs/apps/crane/gherkin/` are additive and safe to leave
 
 ## Agent Integration Pattern
 
-After Phase 5, agents call crane instead of writing bash analysis:
+After Phase 5, agents call crane instead of writing bash analysis.
 
 **pdf-to-md-checker Step 0 — Report Init**:
 
@@ -587,17 +583,6 @@ grep -F "$SEGMENT" "$MD_FILE" >/dev/null 2>&1 || echo "MISSING: $SEGMENT"
 # After (crane, structured findings)
 crane text check "$PDF_FILE" "$MD_FILE" --chunk-size 50 > /tmp/text-findings.json
 ```
-
-**pdf-to-md-checker Step 7 — Mermaid Validation**:
-
-````bash
-# Before (ad-hoc keyword checks)
-grep -n '```mermaid' "$MD_FILE"
-# ... manual block extraction and keyword check
-
-# After
-crane mermaid validate "$MD_FILE" > /tmp/mermaid-findings.json
-````
 
 **pdf-to-md-fixer — False Positive Persistence**:
 

@@ -22,7 +22,7 @@ and waste fix iterations.
 The bash pattern `grep -n "^\s\+[A-Za-z].*\s\{2,\}.*\s\{2,\}"` in the checker has a high
 false-positive rate on flowing prose and misses tables with numeric-only rows. Proper table
 detection requires analyzing column-aligned structure across consecutive lines — a task suited
-to Python's line-by-line parsing, not a single-line regex.
+to Go's line-by-line string iteration, not a single-line regex.
 
 ### 3. Unimplemented Heading Depth Inference
 
@@ -35,29 +35,29 @@ belongs in code, not in prose.
 
 Report UUID chain management uses `date`, `openssl rand`, and file `mtime` checks in bash.
 Under concurrent agent runs, two agents can read the same mtime window and produce conflicting
-chain files. Python's `time.time()` + atomic write + `uuid.uuid4()` eliminates the race.
+chain files. Go's `time.Now().Unix()` + atomic `os.WriteFile` + `github.com/google/uuid` eliminates the race.
 
 ### 5. Untestable Agent Logic
 
 Complex analysis logic embedded in `.md` agent definition files cannot be unit-tested. Regressions
-are discovered only during live PDF processing runs. Moving deterministic logic to a Python package
+are discovered only during live PDF processing runs. Moving deterministic logic to a Go package
 makes every algorithm independently testable before deployment.
 
 ### 6. OCR Quality Metric Not Implemented
 
 The checker agent describes OCR error rate estimation ("count garbled characters") as a validation
-dimension but no working bash implementation exists — agents skip it or mark it manually. Python
-regex makes this straightforward and reproducible.
+dimension but no working bash implementation exists — agents skip it or mark it manually. Go's
+`regexp` package makes this straightforward and reproducible.
 
 ### 7. Skip List Fragility
 
 False positive persistence uses `echo "..." >> file` appends with no deduplication logic. Re-runs
-accumulate duplicate entries; skip list checks are grep-based and miss normalized variants. Python
+accumulate duplicate entries; skip list checks are grep-based and miss normalized variants. Go
 enables proper dedup and normalized key matching.
 
 ## Solution
 
-crane-cli provides a tested, type-safe Python CLI exposing every deterministic operation in the
+crane-cli provides a tested, statically-typed Go CLI exposing every deterministic operation in the
 pdf-to-md pipeline as a discrete, composable command. Agents become thin orchestrators:
 
 ```
@@ -97,13 +97,16 @@ structured data, not raw text.
 ## Constraints
 
 - Wrap system tools (`pdftotext`, `pdfinfo`, `tesseract`) — do not replace them; they are
-  already installed (verified: `/opt/homebrew/bin/pdftotext` [Repo-grounded], `/opt/homebrew/bin/pdfinfo` [Repo-grounded])
+  already installed (verified: `/opt/homebrew/bin/pdftotext` [Repo-grounded],
+  `/opt/homebrew/bin/pdfinfo` [Repo-grounded])
 - Default output is JSON for AI agent parsing; `--human` flag for rich terminal display
-- Follow ose-primer Python wiring: `uv`, `src/` layout, `hatchling`, `ruff`, `pyright`,
-  `pytest-bdd`, `nx:run-commands` executors with `cwd`
-- Must run on macOS (darwin, primary dev) and Linux (GitHub Actions CI)
-- Python 3.13+ (already installed at `/Users/wkf/.pyenv/versions/3.13.1` [Repo-grounded])
-- No Nx Python plugin dependency — use `nx:run-commands` with `uv run` per primer pattern
+- Follow ose-public Go CLI pattern: `go modules`, `cobra`, `golangci-lint`, `godog`,
+  `nx:run-commands` with `go build`/`go test`, consistent with `rhino-cli`, `ayokoding-cli`,
+  `ose-cli` [Repo-grounded: apps/rhino-cli, apps/ayokoding-cli, apps/ose-cli]
+- Must run on macOS (darwin, primary dev) and Linux (GitHub Actions CI) — single static binary,
+  no runtime dependency beyond system PDF tools
+- Go 1.26+ [Repo-grounded: apps/rhino-cli/go.mod, apps/ayokoding-cli/go.mod, apps/ose-cli/go.mod — all use go 1.26]
+- No Python runtime required — pure Go implementation; no subprocess-to-Python escape hatch
 
 ## Affected Roles
 
@@ -112,19 +115,19 @@ structured data, not raw text.
 | `pdf-to-md-maker` agent         | Gains crane commands for PDF type detection, extraction, and metadata; loses inline bash analysis |
 | `pdf-to-md-checker` agent       | Gains structured JSON findings from crane; loses fragile bash grep/awk one-liners                 |
 | `pdf-to-md-fixer` agent         | Gains deduplicating skiplist and fuzzy text search; loses undeduped echo-appends                  |
-| Human developer / plan executor | Must have `pdftotext`, `pdfinfo`, Python 3.13+, and `uv` installed to run integration tests       |
-| CI/CD pipeline (GitHub Actions) | Must install `poppler` (pdftotext/pdfinfo) and Python 3.13 in test runner                         |
+| Human developer / plan executor | Must have `pdftotext`, `pdfinfo`, and Go 1.26+ installed to run integration tests                 |
+| CI/CD pipeline (GitHub Actions) | Must install `poppler` (pdftotext/pdfinfo) in test runner; Go toolchain via standard action       |
 
 ## Business Risks
 
-| Risk                                                   | Severity | Mitigation                                                                                                             |
-| ------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `pdftotext`/`pdfinfo` not available in CI              | HIGH     | Integration tests guarded by `pytest.importorskip` / skip marker; unit tests use mocked adapters                       |
-| Python 3.13 incompatibility on CI runner               | HIGH     | Declare `requires-python = ">=3.13"` in `pyproject.toml`; pin Python via `.python-version` or Volta-equivalent         |
-| Performance regression from per-chunk subprocess calls | MEDIUM   | Adapter layer caches subprocess output; future caching target can be added if needed                                   |
-| Phase 5 agent API breakage during transition           | MEDIUM   | Phase 5 items are incremental per-agent; if crane is not installed, agents fall back gracefully until Phase 5 complete |
-| Fuzzy threshold too permissive (false negatives)       | MEDIUM   | Threshold 0.85 chosen conservatively; unit tests cover boundary cases; adjustable via `--threshold` flag (Phase 2)     |
-| Skip list key collision (deduplication failure)        | LOW      | Stable key format is deterministic; unit test `test_add_does_not_duplicate_file_line` guards this                      |
+| Risk                                                   | Severity | Mitigation                                                                                                                                                                 |
+| ------------------------------------------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pdftotext`/`pdfinfo` not available in CI              | HIGH     | Integration tests use `//go:build Integration` build tag; `nx run crane-cli:test:unit` skips integration; `nx run crane-cli:test:integration` requires `pdftotext` on PATH |
+| Go 1.26+ not available on CI runner                    | MEDIUM   | Use `actions/setup-go@v5` with `go-version: "1.26"`; verify via `go version`                                                                                               |
+| Performance regression from per-chunk subprocess calls | MEDIUM   | Adapter layer caches subprocess output; future caching target can be added if needed                                                                                       |
+| Phase 5 agent API breakage during transition           | MEDIUM   | Phase 5 items are incremental per-agent; if crane is not installed, agents fall back gracefully until Phase 5 complete                                                     |
+| Fuzzy threshold too permissive (false negatives)       | MEDIUM   | Threshold 0.85 chosen conservatively; unit tests cover boundary cases; adjustable via `--threshold` flag (Phase 2)                                                         |
+| Skip list key collision (deduplication failure)        | LOW      | Stable key format is deterministic; unit test `TestUnitAdd_DoesNotDuplicateFileLine` in `tests/unit/skiplist_manager_test.go` guards this                                  |
 
 ## Non-Scope (Future Plans)
 
