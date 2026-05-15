@@ -94,7 +94,7 @@ jobs:
       - name: Set up Go (for oapi-codegen used by FE codegen)
         uses: actions/setup-go@v5
         with:
-          go-version: "1.26.0"
+          go-version: "1.25.8"
           cache-dependency-path: "**/go.sum"
 
       - name: Install oapi-codegen

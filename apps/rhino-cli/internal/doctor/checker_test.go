@@ -631,10 +631,10 @@ func setupCheckAllRepo(t *testing.T) string {
 	tmpDir := t.TempDir()
 
 	for _, dir := range []string{
-		"apps/organiclever-be-jasb",
+		"apps/organiclever-be",
 		"apps/rhino-cli",
 		"apps/a-demo-be-python-fastapi",
-		"apps/ose-grc-be",
+		"apps/ose-app-be",
 		"apps/a-demo-fe-dart-flutterweb",
 		"apps/a-demo-be-rust-axum",
 	} {
@@ -645,11 +645,11 @@ func setupCheckAllRepo(t *testing.T) string {
 
 	files := map[string]string{
 		"package.json":                                  `{"volta":{"node":"24.11.1","npm":"11.6.3"}}`,
-		"apps/organiclever-be-jasb/pom.xml":             `<project><properties><java.version>25</java.version></properties></project>`,
+		"apps/organiclever-be/pom.xml":                  `<project><properties><java.version>25</java.version></properties></project>`,
 		"apps/rhino-cli/go.mod":                         "module foo\n\ngo 1.24.2\n",
 		"apps/a-demo-be-python-fastapi/.python-version": "3.13\n",
 		".tool-versions":                                "erlang 27.3\nelixir 1.19.5-otp-27\n",
-		"apps/ose-grc-be/global.json":                   `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
+		"apps/ose-app-be/global.json":                   `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
 		"apps/a-demo-be-rust-axum/Cargo.toml":           "[package]\nname = \"test\"\nrust-version = \"1.80\"\n",
 		"apps/a-demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n  flutter: \">=3.41.0\"\n",
 	}
@@ -687,7 +687,7 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		"flutter":       {stdout: "Flutter 3.41.5 • channel stable\n", exitCode: 0},
 		"docker":        {stdout: "Docker version 29.2.1, build a5c7197\n", exitCode: 0},
 		"jq":            {stdout: "jq-1.8.1\n", exitCode: 0},
-		"golangci-lint": {stdout: "golangci-lint has version 2.11.1 built with go1.26.1 from 89a46a24 on 2026-03-06T14:04:16Z\n", exitCode: 0},
+		"golangci-lint": {stdout: "golangci-lint has version 2.11.3 built with go1.26.1 from 89a46a24 on 2026-03-10T14:04:16Z\n", exitCode: 0},
 		"npx":           {stdout: "Version 1.58.2\n", exitCode: 0},
 	})
 
@@ -906,7 +906,7 @@ func TestCheckAll_FullScopeDefault(t *testing.T) {
 		"flutter":       {stdout: "Flutter 3.41.5\n", exitCode: 0},
 		"docker":        {stdout: "Docker version 29.2.1, build abc\n", exitCode: 0},
 		"jq":            {stdout: "jq-1.8.1\n", exitCode: 0},
-		"golangci-lint": {stdout: "golangci-lint has version 2.11.1 built with go1.26.1 from 89a46a24 on 2026-03-06T14:04:16Z\n", exitCode: 0},
+		"golangci-lint": {stdout: "golangci-lint has version 2.11.3 built with go1.26.1 from 89a46a24 on 2026-03-10T14:04:16Z\n", exitCode: 0},
 		"npx":           {stdout: "Version 1.58.2\n", exitCode: 0},
 	})
 
@@ -1484,15 +1484,15 @@ func TestParseGolangciLintVersion(t *testing.T) {
 
 func TestRunOneDef_GolangciLint_Found(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
-		"golangci-lint": {stdout: "golangci-lint has version 2.11.1 built with go1.26.1 from 89a46a24 on 2026-03-06T14:04:16Z\n", exitCode: 0},
+		"golangci-lint": {stdout: "golangci-lint has version 2.11.3 built with go1.26.1 from 89a46a24 on 2026-03-10T14:04:16Z\n", exitCode: 0},
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "golangci-lint")
 	check := runOneDef(runner, def)
 	if check.Status.Code() != "ok" {
 		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
-	if check.InstalledVersion != "2.11.1" {
-		t.Errorf("expected version %q, got %q", "2.11.1", check.InstalledVersion)
+	if check.InstalledVersion != "2.11.3" {
+		t.Errorf("expected version %q, got %q", "2.11.3", check.InstalledVersion)
 	}
 }
 

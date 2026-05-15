@@ -1,0 +1,20 @@
+name: "Setup JVM"
+description: "Install Java (Temurin) and Maven with caching"
+inputs:
+  java-version:
+    description: "Java major version"
+    required: false
+    default: "25"
+  java-distribution:
+    description: "Java distribution"
+    required: false
+    default: "temurin"
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{ inputs.java-distribution }}
+        java-version: ${{ inputs.java-version }}
+        cache: maven

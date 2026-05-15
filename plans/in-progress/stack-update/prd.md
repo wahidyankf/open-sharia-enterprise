@@ -7,7 +7,7 @@ runtimes, toolchains, and dependencies as of 2026-05-15. It resolves known secur
 in Next.js and Spring Boot, fixes preexisting CI breakage (missing `setup-jvm` composite
 action), corrects stale rhino-cli doctor paths, and updates all apps to policy-compliant
 pinned versions per the
-[Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md)
+[Dependency Bump Stability & Safety Policy](../../../repo-governance/development/workflow/dependency-bump-policy.md)
 (cutoff: 2026-03-16).
 
 The one MAJOR library migration executed in this plan is **Shiki 4.0.2** (Phase 10, Path B
@@ -16,6 +16,7 @@ the **9.x stay-on-line**. Zod 4, lucide-react 1.x, and @xstate/react 6 are all
 **DEFERRED** to future plans — see `plans/ideas.md` for tracking notes.
 
 The product outcome is a monorepo where:
+
 - `npm run doctor` returns all-OK with accurate data
 - CI pipeline is fully operational (no broken composite actions)
 - All apps build, typecheck, lint, and test clean against the updated toolchain
@@ -96,7 +97,7 @@ judgment calls.
 ### R0 — Dependency Bump Policy Compliance (META)
 
 Every version pinned in this plan complies with the
-[Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md).
+[Dependency Bump Stability & Safety Policy](../../../repo-governance/development/workflow/dependency-bump-policy.md).
 Each pin is classified Path A (LTS), Path B (≥60-day pre-cutoff stable + CVE-clean),
 or Path C (security-override waiver). Cutoff date: **2026-03-16**. Waivers are documented
 in `tech-docs.md §Security Waivers`.
@@ -281,8 +282,8 @@ deferred). `@typescript-eslint/parser` pinned to `8.57.0` (Path B; 2026-03-09 pr
 `@vitejs/plugin-react` updated `^4.0.0` / `^5.1.4` → `6.0.1` (exact; Path B released
 2026-03-13; 6.0.2 released 2026-05-14 is post-cutoff) in all consumers. v6 removes
 Babel as a dependency in favor of Oxc-based React Refresh. Verify no app uses custom
-Babel plugins through this package. Vitest tests using `@vitejs/plugin-react` (most apps
-+ web-ui lib) must continue to pass.
+Babel plugins through this package. Vitest tests using `@vitejs/plugin-react`
+(most apps and the web-ui lib) must continue to pass.
 
 ### R26 — Other minor dep bumps (root + apps)
 
@@ -410,12 +411,12 @@ Feature: Stack update — all runtimes and deps at latest stable
 
 ## Product Risks
 
-| Risk | Impact | Likelihood | Notes |
-|---|---|---|---|
-| Shiki 4.x theme rename causes blank code blocks on ayokoding-web / ose-web | MEDIUM | LOW | Phase 10 includes dev-server Playwright MCP verification; visible immediately |
-| Next.js 16.2.6 (Path C waiver) introduces a regression despite CVE need | MEDIUM | LOW | Phase 6 includes build + test:quick + dev-server spot-check for all 5 apps |
-| React 19.2.6 (Path C waiver) introduces a regression | MEDIUM | LOW | Phase 6 includes typecheck + test:quick; E2E tests cover main user flows |
-| mermaid 11.15.0 (Path C waiver) introduces a regression | LOW | VERY LOW | Phase 2E includes lint:md and format:md check; mermaid renders in browser |
-| Storybook 10.2.10 DOWNGRADE breaks web-ui component stories | LOW | LOW | Phase 7C includes Storybook build verification; 10.2.10 is a stable release |
-| The 15-phase plan spans multiple sessions causing context loss | MEDIUM | HIGH | Each phase ends with a thematic commit; delivery checklist is the resume point |
-| DEFERRED migrations (TS 6, ESLint 10, Zod 4, lucide-react 1.x, @xstate/react 6) accumulate technical debt | LOW | LOW | Tracked in plans/ideas.md; deferral is policy-compliant per 60-day rule |
+| Risk                                                                                                      | Impact | Likelihood | Notes                                                                          |
+| --------------------------------------------------------------------------------------------------------- | ------ | ---------- | ------------------------------------------------------------------------------ |
+| Shiki 4.x theme rename causes blank code blocks on ayokoding-web / ose-web                                | MEDIUM | LOW        | Phase 10 includes dev-server Playwright MCP verification; visible immediately  |
+| Next.js 16.2.6 (Path C waiver) introduces a regression despite CVE need                                   | MEDIUM | LOW        | Phase 6 includes build + test:quick + dev-server spot-check for all 5 apps     |
+| React 19.2.6 (Path C waiver) introduces a regression                                                      | MEDIUM | LOW        | Phase 6 includes typecheck + test:quick; E2E tests cover main user flows       |
+| mermaid 11.15.0 (Path C waiver) introduces a regression                                                   | LOW    | VERY LOW   | Phase 2E includes lint:md and format:md check; mermaid renders in browser      |
+| Storybook 10.2.10 DOWNGRADE breaks web-ui component stories                                               | LOW    | LOW        | Phase 7C includes Storybook build verification; 10.2.10 is a stable release    |
+| The 15-phase plan spans multiple sessions causing context loss                                            | MEDIUM | HIGH       | Each phase ends with a thematic commit; delivery checklist is the resume point |
+| DEFERRED migrations (TS 6, ESLint 10, Zod 4, lucide-react 1.x, @xstate/react 6) accumulate technical debt | LOW    | LOW        | Tracked in plans/ideas.md; deferral is policy-compliant per 60-day rule        |
