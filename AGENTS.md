@@ -328,6 +328,12 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example.
 
 **See**: [repo-governance/development/workflow/reproducible-environments.md](./repo-governance/development/workflow/reproducible-environments.md)
 
+### Dependency Bump Stability & Safety Policy
+
+Three-path decision tree governing every dependency bump: Path A (LTS latest patch), Path B (60-day soak + CVE-clean), Path C (security-override waiver). All versions must be exact pins (no caret/tilde). CVE clearance required via NVD, GitHub Advisories, Snyk DB, and vendor security pages. Cutoff dates computed and recorded in writing. Waivers documented in the introducing plan's `tech-docs.md` and `docs/reference/security-waivers.md`.
+
+**See**: [repo-governance/development/workflow/dependency-bump-policy.md](./repo-governance/development/workflow/dependency-bump-policy.md)
+
 ### Agent Workflow Orchestration
 
 Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated agents for focused subtasks, verify before done, autonomous bug fixing, self-improvement loop after corrections.
