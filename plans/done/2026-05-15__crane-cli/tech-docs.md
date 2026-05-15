@@ -86,22 +86,22 @@ apps/crane-cli/
 
 ## Tech Stack
 
-| Component      | Choice                                                                                                                                                                              | Reason                                                    |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| Language       | F# (.NET 8+) [Judgment call: crane-cli will target net8.0 as minimum LTS baseline; ose-app-be uses net10.0 and can serve as migration target later]                                 | Shared library use with ose-app-be; team is F# fluent     |
-| CLI framework  | Argu 6.2.5 [Web-cited: https://github.com/fsprojects/Argu — MIT, 3M downloads; accessed 2026-05-15]                                                                                | Idiomatic F# declarative CLI via discriminated unions     |
-| PDF library    | PdfPig 0.1.14 [Web-cited: https://github.com/UglyToad/PdfPig — Apache-2.0, 22M downloads; accessed 2026-05-15]                                                                     | Pure managed .NET; eliminates pdftotext/pdfinfo subprocs  |
-| OCR            | TesseractOCR 5.5.2 [Web-cited: https://www.nuget.org/packages/TesseractOCR — Apache-2.0; accessed 2026-05-15]                                                                      | .NET wrapper for tesseract engine; active fork            |
-| JSON output    | System.Text.Json (stdlib) + FSharp.SystemTextJson 1.4.36 [Web-cited: https://github.com/Tarmil/FSharp.SystemTextJson — MIT, ~674K downloads; accessed 2026-05-15]                  | stdlib JSON + F# DU/option/list serialization             |
-| Fuzzy matching | F23.StringSimilarity 7.0.1 [Web-cited: https://github.com/feature23/StringSimilarity.NET — MIT; accessed 2026-05-15]                                                               | Returns `double` 0.0–1.0 directly; no int conversion      |
-| UUID           | System.Guid.NewGuid() (stdlib)                                                                                                                                                      | Zero dependency; direct drop-in for uuid.New()            |
-| BDD framework  | TickSpec 2.0.4 [Web-cited: https://github.com/fsprojects/TickSpec — Apache-2.0; accessed 2026-05-15]                                                                               | F#-native Gherkin; backtick step methods; active          |
-| Test runner    | xUnit 2.x (with TickSpec step definitions)                                                                                                                                          | Standard .NET test runner; TickSpec integration           |
-| Coverage       | altcover.global dotnet tool (MIT) + `rhino-cli test-coverage validate 95` [Repo-grounded: apps/ose-app-be/dotnet-tools.json — altcover.global 9.0.102 as dotnet tool, not PackageReference]                                                                                             | Matches ose-app-be F# backend pattern; threshold enforced by rhino-cli |
-| Linter         | Fantomas [Web-cited: https://fsprojects.github.io/fantomas — MIT, official F# formatter; accessed 2026-05-15]                                                                       | F# standard formatter; `dotnet fantomas --check`          |
-| Type safety    | Native (F# is statically typed)                                                                                                                                                     | No extra tool needed                                      |
-| Nx executor    | nx:run-commands with `dotnet build`/`dotnet test`                                                                                                                                   | Same pattern as ose-app-be [Repo-grounded: apps/ose-app-be] |
-| Distribution   | `PublishSingleFile + SelfContained` (~60 MB); AOT optional future step                                                                                                              | Zero .NET runtime on target; no F# AOT friction risk now  |
+| Component      | Choice                                                                                                                                                                                      | Reason                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Language       | F# (.NET 8+) [Judgment call: crane-cli will target net8.0 as minimum LTS baseline; ose-app-be uses net10.0 and can serve as migration target later]                                         | Shared library use with ose-app-be; team is F# fluent                  |
+| CLI framework  | Argu 6.2.5 [Web-cited: https://github.com/fsprojects/Argu — MIT, 3M downloads; accessed 2026-05-15]                                                                                         | Idiomatic F# declarative CLI via discriminated unions                  |
+| PDF library    | PdfPig 0.1.14 [Web-cited: https://github.com/UglyToad/PdfPig — Apache-2.0, 22M downloads; accessed 2026-05-15]                                                                              | Pure managed .NET; eliminates pdftotext/pdfinfo subprocs               |
+| OCR            | TesseractOCR 5.5.2 [Web-cited: https://www.nuget.org/packages/TesseractOCR — Apache-2.0; accessed 2026-05-15]                                                                               | .NET wrapper for tesseract engine; active fork                         |
+| JSON output    | System.Text.Json (stdlib) + FSharp.SystemTextJson 1.4.36 [Web-cited: https://github.com/Tarmil/FSharp.SystemTextJson — MIT, ~674K downloads; accessed 2026-05-15]                           | stdlib JSON + F# DU/option/list serialization                          |
+| Fuzzy matching | F23.StringSimilarity 7.0.1 [Web-cited: https://github.com/feature23/StringSimilarity.NET — MIT; accessed 2026-05-15]                                                                        | Returns `double` 0.0–1.0 directly; no int conversion                   |
+| UUID           | System.Guid.NewGuid() (stdlib)                                                                                                                                                              | Zero dependency; direct drop-in for uuid.New()                         |
+| BDD framework  | TickSpec 2.0.4 [Web-cited: https://github.com/fsprojects/TickSpec — Apache-2.0; accessed 2026-05-15]                                                                                        | F#-native Gherkin; backtick step methods; active                       |
+| Test runner    | xUnit 2.x (with TickSpec step definitions)                                                                                                                                                  | Standard .NET test runner; TickSpec integration                        |
+| Coverage       | altcover.global dotnet tool (MIT) + `rhino-cli test-coverage validate 95` [Repo-grounded: apps/ose-app-be/dotnet-tools.json — altcover.global 9.0.102 as dotnet tool, not PackageReference] | Matches ose-app-be F# backend pattern; threshold enforced by rhino-cli |
+| Linter         | Fantomas [Web-cited: https://fsprojects.github.io/fantomas — MIT, official F# formatter; accessed 2026-05-15]                                                                               | F# standard formatter; `dotnet fantomas --check`                       |
+| Type safety    | Native (F# is statically typed)                                                                                                                                                             | No extra tool needed                                                   |
+| Nx executor    | nx:run-commands with `dotnet build`/`dotnet test`                                                                                                                                           | Same pattern as ose-app-be [Repo-grounded: apps/ose-app-be]            |
+| Distribution   | `PublishSingleFile + SelfContained` (~60 MB); AOT optional future step                                                                                                                      | Zero .NET runtime on target; no F# AOT friction risk now               |
 
 ## crane-cli.fsproj
 
@@ -310,10 +310,7 @@ provide the `dotnet altcover` CLI command.
         "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/crane/gherkin apps/crane-cli"
       },
       "cache": true,
-      "inputs": [
-        "{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature",
-        "{projectRoot}/**/*.fs"
-      ]
+      "inputs": ["{workspaceRoot}/specs/apps/crane/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]
     }
   },
   "tags": ["type:app", "platform:cli", "lang:fsharp", "domain:crane"],

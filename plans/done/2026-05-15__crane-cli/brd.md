@@ -78,14 +78,14 @@ structured data, not raw text.
 
 ## Business Value
 
-| Value         | How crane-cli Delivers                                                                  |
-| ------------- | --------------------------------------------------------------------------------------- |
-| Reliability   | Every algorithm tested; predictable exit codes; no silent `2>/dev/null` swallowing      |
-| Debuggability | `crane --debug` shows intermediate extraction steps; structured JSON findings           |
-| Testability   | Unit tests for each analysis module; TickSpec BDD for all Gherkin scenarios             |
-| Reusability   | F# core modules reusable as NuGet library by `ose-app-be` and future F# projects        |
-| Correctness   | Fuzzy matching prevents false negatives; proper column analysis finds real tables       |
-| Speed         | PdfPig eliminates pdftotext subprocess calls for text PDFs; cached Nx targets           |
+| Value         | How crane-cli Delivers                                                             |
+| ------------- | ---------------------------------------------------------------------------------- |
+| Reliability   | Every algorithm tested; predictable exit codes; no silent `2>/dev/null` swallowing |
+| Debuggability | `crane --debug` shows intermediate extraction steps; structured JSON findings      |
+| Testability   | Unit tests for each analysis module; TickSpec BDD for all Gherkin scenarios        |
+| Reusability   | F# core modules reusable as NuGet library by `ose-app-be` and future F# projects   |
+| Correctness   | Fuzzy matching prevents false negatives; proper column analysis finds real tables  |
+| Speed         | PdfPig eliminates pdftotext subprocess calls for text PDFs; cached Nx targets      |
 
 ## Success Criteria
 
@@ -122,14 +122,14 @@ structured data, not raw text.
 
 ## Business Risks
 
-| Risk                                                   | Severity | Mitigation                                                                                                                                                               |
-| ------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tesseract-ocr` not available in CI for OCR tests      | HIGH     | OCR integration tests guarded by build tag; `nx run crane-cli:test:unit` skips them; `nx run crane-cli:test:integration` installs `tesseract-ocr` via apt in CI          |
-| .NET 8 SDK not available on CI runner                  | MEDIUM   | Use `actions/setup-dotnet` with `dotnet-version: "8.0.x"`; verify via `dotnet --version`                                                                                |
-| F# Native AOT friction (self-contained binary size)    | MEDIUM   | Use `PublishSingleFile + SelfContained` (no AOT risk, ~60 MB); AOT is a future optimization after verifying F# 10 trimming support removes all friction                  |
-| Phase 5 agent API breakage during transition           | MEDIUM   | Phase 5 items are incremental per-agent; if crane is not installed, agents fall back gracefully until Phase 5 complete                                                   |
-| Fuzzy threshold too permissive (false negatives)       | MEDIUM   | Threshold 0.85 chosen conservatively; unit tests cover boundary cases; adjustable via `--threshold` flag (Phase 2)                                                       |
-| Skip list key collision (deduplication failure)        | LOW      | Stable key format is deterministic; unit test `TestUnitAdd_DoesNotDuplicateFileLine` in `tests/unit/Steps/SkiplistSteps.fs` guards this                                  |
+| Risk                                                | Severity | Mitigation                                                                                                                                                      |
+| --------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tesseract-ocr` not available in CI for OCR tests   | HIGH     | OCR integration tests guarded by build tag; `nx run crane-cli:test:unit` skips them; `nx run crane-cli:test:integration` installs `tesseract-ocr` via apt in CI |
+| .NET 8 SDK not available on CI runner               | MEDIUM   | Use `actions/setup-dotnet` with `dotnet-version: "8.0.x"`; verify via `dotnet --version`                                                                        |
+| F# Native AOT friction (self-contained binary size) | MEDIUM   | Use `PublishSingleFile + SelfContained` (no AOT risk, ~60 MB); AOT is a future optimization after verifying F# 10 trimming support removes all friction         |
+| Phase 5 agent API breakage during transition        | MEDIUM   | Phase 5 items are incremental per-agent; if crane is not installed, agents fall back gracefully until Phase 5 complete                                          |
+| Fuzzy threshold too permissive (false negatives)    | MEDIUM   | Threshold 0.85 chosen conservatively; unit tests cover boundary cases; adjustable via `--threshold` flag (Phase 2)                                              |
+| Skip list key collision (deduplication failure)     | LOW      | Stable key format is deterministic; unit test `TestUnitAdd_DoesNotDuplicateFileLine` in `tests/unit/Steps/SkiplistSteps.fs` guards this                         |
 
 ## Non-Scope (Future Plans)
 

@@ -134,11 +134,11 @@ Pass `--human` for human-readable terminal output (formatted text instead of JSO
 
 **Exit codes**:
 
-| Code | Meaning                                                             |
-| ---- | ------------------------------------------------------------------- |
-| 0    | Success; no threshold findings (or boolean true)                    |
-| 1    | Findings present; or boolean false; or operation failed             |
-| 2    | Required system tool not found (`tesseract` for OCR commands only)  |
+| Code | Meaning                                                            |
+| ---- | ------------------------------------------------------------------ |
+| 0    | Success; no threshold findings (or boolean true)                   |
+| 1    | Findings present; or boolean false; or operation failed            |
+| 2    | Required system tool not found (`tesseract` for OCR commands only) |
 
 Note: PDF text extraction and metadata use PdfPig (pure .NET library) — exit code 2 is only
 relevant for `crane ocr extract` and `crane ocr quality` commands that invoke tesseract.
