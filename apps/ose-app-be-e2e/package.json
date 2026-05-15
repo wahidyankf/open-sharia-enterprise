@@ -7,10 +7,13 @@
     "test:report": "playwright show-report"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
-    "playwright-bdd": "^8.2.0"
+    "@playwright/test": "1.60.0",
+    "playwright-bdd": "8.5.1"
   },
   "volta": {
     "extends": "../../package.json"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.4"
   }
 }
