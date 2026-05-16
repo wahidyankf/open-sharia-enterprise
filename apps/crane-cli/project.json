@@ -24,7 +24,7 @@
         "commands": [
           "dotnet tool restore",
           "dotnet build tests/unit/crane-cli-unit-tests.fsproj",
-          "dotnet altcover --inputDirectory tests/unit/bin/Debug/net10.0 --outputDirectory tests/unit/bin/Debug/net10.0/__Instrumented --assemblyExcludeFilter=crane-cli-unit-tests '--assemblyFilter=xunit|TickSpec|Microsoft|FSharp|testhost|AltCover|Argu|TesseractOCR|UglyToad|F23|FSharp.SystemTextJson' '--fileFilter=Program|OcrAdapter' '--attributeFilter=ExcludeFromCodeCoverage' '--typeFilter=RealPdfAdapter|Pipe' --linecover --reportFormat=lcov --report=coverage/altcov.info --save",
+          "dotnet altcover --inputDirectory tests/unit/bin/Debug/net10.0 --outputDirectory tests/unit/bin/Debug/net10.0/__Instrumented --assemblyExcludeFilter=crane-cli-unit-tests '--assemblyFilter=xunit|TickSpec|Microsoft|FSharp|testhost|AltCover|Argu|TesseractOCR|UglyToad|F23|FSharp.SystemTextJson' '--fileFilter=Program|OcrAdapter|PdfExtractionCache' '--attributeFilter=ExcludeFromCodeCoverage' '--typeFilter=RealPdfAdapter|Pipe' --linecover --reportFormat=lcov --report=coverage/altcov.info --save",
           "dotnet altcover Runner --recorderDirectory tests/unit/bin/Debug/net10.0/__Instrumented --lcovReport coverage/altcov.info --executable dotnet -- test tests/unit/bin/Debug/net10.0/__Instrumented/crane-cli-unit-tests.dll",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/crane-cli/coverage/altcov.info 95)"
         ],

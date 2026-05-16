@@ -17,6 +17,8 @@
     <Compile Include="Steps/OcrSteps.fs" />
     <Compile Include="Steps/ReportSteps.fs" />
     <Compile Include="Steps/SkiplistSteps.fs" />
+    <Compile Include="Steps/CheckAllSteps.fs" />
+    <Compile Include="Steps/VersionSteps.fs" />
     <Compile Include="Tests/PdfCommandsTests.fs" />
     <Compile Include="Tests/FigureCommandsTests.fs" />
     <Compile Include="Tests/HeadingCommandsTests.fs" />

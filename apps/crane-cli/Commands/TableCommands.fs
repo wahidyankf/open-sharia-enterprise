@@ -2,6 +2,7 @@ module CraneCli.Commands.TableCommands
 
 open System.Text.Json
 open System.Text.Json.Serialization
+open CraneCli.Adapters.PdfAdapter
 open CraneCli.Core.TableChecker
 
 let private jsonOptions =
@@ -22,11 +23,22 @@ let runCheck (pdfText: string) (mdText: string) (output: System.IO.TextWriter) =
 
 [<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let detect (pdfPath: string) =
-    let pdfText = System.IO.File.ReadAllText(pdfPath)
-    runDetect pdfText System.Console.Out
+    let adapter = RealPdfAdapter() :> IPdfAdapter
+
+    match adapter.SampleText(pdfPath, 999) with
+    | Ok pdfText -> runDetect pdfText System.Console.Out
+    | Error msg ->
+        eprintfn "Error: %s" msg
+        1
 
 [<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let check (pdfPath: string) (mdPath: string) =
-    let pdfText = System.IO.File.ReadAllText(pdfPath)
-    let mdText = System.IO.File.ReadAllText(mdPath)
-    runCheck pdfText mdText System.Console.Out
+    let adapter = RealPdfAdapter() :> IPdfAdapter
+
+    match adapter.SampleText(pdfPath, 999) with
+    | Ok pdfText ->
+        let mdText = System.IO.File.ReadAllText(mdPath)
+        runCheck pdfText mdText System.Console.Out
+    | Error msg ->
+        eprintfn "Error: %s" msg
+        1

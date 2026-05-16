@@ -22,6 +22,7 @@
     <Compile Include="Core/OcrAssessor.fs" />
     <Compile Include="Core/ReportManager.fs" />
     <Compile Include="Core/SkiplistManager.fs" />
+    <Compile Include="Core/PdfExtractionCache.fs" />
     <Compile Include="Commands/PdfCommands.fs" />
     <Compile Include="Commands/TextCommands.fs" />
     <Compile Include="Commands/HeadingCommands.fs" />
@@ -32,6 +33,7 @@
     <Compile Include="Commands/OcrCommands.fs" />
     <Compile Include="Commands/ReportCommands.fs" />
     <Compile Include="Commands/SkiplistCommands.fs" />
+    <Compile Include="Commands/CheckAllCommands.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

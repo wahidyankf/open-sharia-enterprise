@@ -36,10 +36,7 @@ let initReport (scope: string) (pdf: string) (md: string) : Result<string, strin
         let chain = getOrExtendChain scope
         let ts = utc7Timestamp ()
         let reportPath = sprintf "generated-reports/%s__%s__%s__audit.md" scope chain ts
-        let dir = Path.GetDirectoryName(reportPath)
-
-        if not (Directory.Exists(dir)) then
-            Directory.CreateDirectory(dir) |> ignore
+        Directory.CreateDirectory("generated-reports") |> ignore
 
         let header =
             sprintf "# Audit Report\n\nScope: %s\nPDF: %s\nMD: %s\nStatus: IN_PROGRESS\n" scope pdf md

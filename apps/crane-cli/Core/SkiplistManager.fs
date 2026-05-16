@@ -20,6 +20,8 @@ let private loadEntries (mdBasename: string) : SkipListEntry list =
     if File.Exists(path) then
         try
             JsonSerializer.Deserialize<SkipListEntry list>(File.ReadAllText(path))
+            |> Option.ofObj
+            |> Option.defaultValue []
         with _ ->
             []
     else
