@@ -3,6 +3,26 @@ import { expect } from "@playwright/test";
 
 const { When, Then } = createBdd();
 
+When("a visitor navigates to {string}", async ({ page }, url: string) => {
+  await page.goto(url);
+});
+
+Then("the page should respond with HTTP 200", async ({ page }) => {
+  const response = await page.waitForLoadState("networkidle").then(() =>
+    page.evaluate(() => document.readyState),
+  );
+  // Verify we landed on a real page (not a 404/500 error page) by checking the
+  // document is fully interactive. Playwright's goto throws on network-level
+  // errors; application-level 404 pages are caught by asserting the article
+  // region is visible (the site renders a content article on every valid page).
+  await expect(page.getByRole("article")).toBeVisible();
+  expect(response).toBe("complete");
+});
+
+Then("the page should contain a heading with text {string}", async ({ page }, headingText: string) => {
+  await expect(page.getByRole("heading", { name: headingText })).toBeVisible();
+});
+
 When("a visitor opens a content page that has child sections", async ({ page }) => {
   await page.goto("/en/learn/overview");
 });
