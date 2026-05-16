@@ -34,6 +34,7 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 
 - [Security Reference](./security/README.md) - Security framework documentation and compliance references
   - [NIST SP 800-53 Rev 5](./security/frameworks/nist-sp-800-53-rev5.md) - NIST Special Publication 800-53 Revision 5: Security and Privacy Controls for Information Systems and Organizations (verbatim Markdown conversion)
+- [Security Waivers](./security-waivers.md) - Persistent register of Path C (security-override) dependency waivers granted across the workspace per the Dependency Bump Stability & Safety Policy
 
 ### Platform Bindings
 

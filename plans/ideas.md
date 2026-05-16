@@ -35,3 +35,4 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
 - Future plan: Storybook 10.3/10.4 adoption (post-cutoff; downgrade in this plan to 10.2.10 for CVE clearance).
 - Future plan: Volta → mise migration (volta last release Dec 2024).
 - Future plan: Microsoft Defender / dotnet 10.0.300 brew bottle availability (currently install via dotnet-install.sh to ~/.dotnet).
+- Future plan: bump `vite` to 7.4+ across all consumers, then adopt `@vitejs/plugin-react 6.0.1` (this plan reverted plugin-react 6.0.1 → `^5.1.4` because plugin-react 6 requires vite's `./internal` subpath which is unavailable on the installed transitive vite 7.3.1). Caret retained pending the vite bump.
