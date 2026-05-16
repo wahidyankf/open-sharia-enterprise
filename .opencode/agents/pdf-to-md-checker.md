@@ -112,6 +112,13 @@ unavailable, invoke the individual subcommand:
 TEXT_FINDINGS=$(crane text --check "$PDF_FILE" "$MD_FILE")
 ```
 
+**Large-PDF timeout protocol**: `crane check-all` may exceed practical completion time on PDFs
+larger than ~200 pages (text-completeness is the dominant cost). When the aggregator times out or
+produces empty output, fall back to per-dimension subcommands. If a dimension was sampled rather
+than exhausted (e.g. text-completeness checked on a subset of pages), disclose the sampling scope
+in the audit report's footer under `## Workflow Deviations`. See the workflow's Tool Dependencies
+section for the canonical fallback rule.
+
 Returns JSON array of findings with `category`, `criticality`, `confidence`, `description`, `pdf_text`, and `fix_suggestion`. Criticality is CRITICAL for missing headings/section starts, HIGH for paragraphs, MEDIUM for short phrases.
 
 ### Step 3: Heading Level Accuracy Check
@@ -200,8 +207,8 @@ Add summary:
 Before beginning validation, load the skip list:
 
 ```bash
-# Check if a finding is in the skip list
-crane skiplist --check "$MD_BASENAME" --category "$CATEGORY" --description "$DESCRIPTION"
+# Check if a finding is in the skip list (entries live in generated-reports/.known-false-positives.md)
+crane skiplist --check "$MD_BASENAME" "$CATEGORY" "$DESCRIPTION"
 ```
 
 - Uses stable SHA256 key derivation for dedup
@@ -212,8 +219,12 @@ crane skiplist --check "$MD_BASENAME" --category "$CATEGORY" --description "$DES
 When UUID chain is multi-part (iteration 2+):
 
 1. Check latest fix report for `## Changed Sections (for Scoped Re-validation)`
-2. If found: validate only changed sections, not entire document
-3. If not found: run full scan
+2. If list is non-empty: validate only those changed sections, not the entire document
+3. If list is empty (fixer ran with `Applied (HIGH_CONFIDENCE): 0`): write a **carry-forward
+   audit** that references the prior audit by UUID and reproduces its findings verbatim — no
+   re-scan. The fixer's deterministic no-op outcome means nothing has changed.
+4. If no fix report exists (Step 5 invoked from Step 3 zero-findings confirmation path): run full
+   scan
 
 ### Cached Comparison Results (Iterations 2+)
 

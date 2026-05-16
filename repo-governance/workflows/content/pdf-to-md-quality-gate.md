@@ -204,7 +204,7 @@ Validate the Markdown file against the source PDF across all dimensions.
 **Notes**:
 
 - Processes PDF in 50-page chunks for large documents
-- Loads `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md` skip list before validating
+- Loads `generated-reports/.known-false-positives.md` skip list before validating
 
 ### 3. Check for Findings (Sequential)
 
@@ -256,7 +256,7 @@ Apply validated fixes from the checker audit report.
 - Fixer re-validates each finding before applying (prevents false positives)
 - HIGH_CONFIDENCE fixes applied automatically
 - MEDIUM_CONFIDENCE fixes skipped (flagged for manual review)
-- FALSE_POSITIVE findings persisted to `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md`
+- FALSE_POSITIVE findings persisted to `generated-reports/.known-false-positives.md`
 - Fix report includes changed sections list for scoped re-validation
 
 **Confidence Downgrade Rules**:
@@ -296,15 +296,22 @@ sections and reuses the iteration 1 full-document scan scope for unchanged secti
 directly from Step 3 (zero-findings confirmation path), no fix report is provided and the checker
 re-validates the full document.
 
+**Empty `changed_sections` case**: When the preceding fixer ran with `Applied (HIGH_CONFIDENCE): 0`,
+the fix report's `Changed Sections` list is empty. The checker writes a thin **carry-forward audit**
+that references the prior audit by UUID and reproduces its findings verbatim — no re-scan. This
+satisfies the per-iteration audit requirement at zero scan cost when the fixer's outcome is
+deterministically a no-op.
+
 **Success criteria**: Checker completes and generates re-validation audit report.
 
 **On failure**: Terminate workflow with status `fail`.
 
 **Notes**:
 
-- Loads `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md` skip list before validating
+- Loads `generated-reports/.known-false-positives.md` skip list before validating
 - Scoped re-validation (changed sections only) on iterations where fixes were applied
 - Full re-validation when confirming a zero-findings pass with no preceding fix step
+- Carry-forward audit (no re-scan) when `changed_sections` is empty after a zero-applied fixer iteration
 
 ### 6. Iteration Control (Sequential)
 
@@ -341,6 +348,12 @@ Determine whether to continue or finalize.
   iterations, the orchestrator terminates `partial` rather than burning the remaining
   max-iterations budget on a deterministic no-op. The fix report's
   `**Applied (HIGH_CONFIDENCE)**: A` line is the canonical signal — no new schema needed.
+- **Why two iterations, not one**: A single `Applied=0` could indicate transient causes (crane
+  subprocess error, partial fixer crash recovered by retry, race with a concurrent skip-list
+  write). Requiring TWO consecutive zero-applied iterations distinguishes deterministic-skip
+  stagnation from transient failure. Cost: one extra checker+fixer invocation in the worst
+  case (mitigated by the carry-forward audit in Step 5 when `changed_sections` is empty).
+  Benefit: no false `partial` exit on transient errors.
 - Escalation warning logged at iteration 5 if not converging
 - Default max-iterations: 7
 
@@ -482,7 +495,7 @@ Result: PASS (4 iterations)
 
 **Convergence Safeguards**:
 
-- Checker loads `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md` at each iteration start
+- Checker loads `generated-reports/.known-false-positives.md` at each iteration start
 - Fixer persists new FALSE_POSITIVEs to that same file in `generated-reports/`
 - Step 5 (Re-validate) uses changed-sections-only scan when called after Step 4 (Apply Fixes)
 
@@ -535,20 +548,29 @@ process with a single shared PDF extraction. Prefer this over invoking each dime
 Add `--cache-dir <dir>` to persist PDF extractions keyed by SHA256 of the PDF bytes; subsequent
 runs against the same PDF read the cached extraction instead of re-parsing. The cache is opt-in.
 
+**Large-PDF fallback**: `crane check-all` may exceed practical completion time on documents larger
+than ~200 pages (text-completeness is the dominant cost). When the aggregator times out or produces
+empty output, the checker MAY fall back to per-dimension subcommands (`crane text`, `crane heading`,
+`crane nesting`, `crane table`, `crane figure`, `crane mermaid`, `crane ocr`). If the fallback
+samples rather than exhausts a dimension (e.g. text-completeness checked on a subset of pages), the
+checker MUST disclose the sampling scope in the audit report's footer under a `## Workflow
+Deviations` section so downstream readers know which dimensions have full coverage versus sampling
+coverage.
+
 ## Validation Dimensions Summary
 
-| Dimension                                       | Agent   | crane Command                          | Auto-Fixable                          |
-| ----------------------------------------------- | ------- | -------------------------------------- | ------------------------------------- |
-| Text completeness (missing sections/paragraphs) | checker | `crane text --check "$PDF" "$MD"`      | Yes (re-extract from PDF)             |
-| Text accuracy (wrong words)                     | checker | `crane text --search "$MD" "$SEGMENT"` | Yes (re-extract from PDF)             |
-| Heading level accuracy (`#` depth vs PDF)       | checker | `crane heading --check "$PDF" "$MD"`   | Yes (re-derive from layout heuristic) |
-| Content nesting accuracy (list/block depth)     | checker | `crane nesting --check "$PDF" "$MD"`   | Yes (re-extract with layout output)   |
-| Table integrity (missing/wrong data)            | checker | `crane table --check "$PDF" "$MD"`     | Yes (re-extract from PDF)             |
-| Figure coverage (Mermaid or placeholder)        | checker | `crane figure --check "$PDF" "$MD"`    | Yes (add placeholder)                 |
-| Mermaid syntax validity                         | checker | `crane mermaid --validate "$MD"`       | Yes (fix syntax)                      |
-| OCR quality (gibberish rate)                    | checker | `crane ocr --quality "$MD"`            | No (manual review)                    |
-| Structural order (section sequence)             | checker | (heuristic from text+heading checks)   | Partial (re-ordering risky)           |
-| **All-in-one aggregator**                       | checker | `crane check-all "$PDF" "$MD"`         | Mixed (per-dimension; see above)      |
+| Dimension                                       | Agent   | crane Command                          | Auto-Fixable                                                               |
+| ----------------------------------------------- | ------- | -------------------------------------- | -------------------------------------------------------------------------- |
+| Text completeness (missing sections/paragraphs) | checker | `crane text --check "$PDF" "$MD"`      | Yes (re-extract from PDF)                                                  |
+| Text accuracy (wrong words)                     | checker | `crane text --search "$MD" "$SEGMENT"` | Yes (re-extract from PDF)                                                  |
+| Heading level accuracy (`#` depth vs PDF)       | checker | `crane heading --check "$PDF" "$MD"`   | Yes (re-derive from layout heuristic)                                      |
+| Content nesting accuracy (list/block depth)     | checker | `crane nesting --check "$PDF" "$MD"`   | Yes (re-extract with layout output)                                        |
+| Table integrity (missing/wrong data)            | checker | `crane table --check "$PDF" "$MD"`     | Yes (re-extract from PDF)                                                  |
+| Figure coverage (Mermaid or placeholder)        | checker | `crane figure --check "$PDF" "$MD"`    | Yes (add placeholder)                                                      |
+| Mermaid syntax validity                         | checker | `crane mermaid --validate "$MD"`       | Yes (fix syntax)                                                           |
+| OCR quality (gibberish rate)                    | checker | `crane ocr --quality "$MD"`            | No (manual review)                                                         |
+| Structural order (section sequence)             | checker | (heuristic from text+heading checks)   | Partial (re-ordering risky)                                                |
+| **All-in-one aggregator**                       | checker | `crane check-all "$PDF" "$MD"`         | Mixed (per-dimension; may time out on large PDFs — see Large-PDF fallback) |
 
 ## Principles Implemented/Respected
 

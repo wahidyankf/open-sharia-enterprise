@@ -289,7 +289,7 @@ This enables checker to scope its next iteration to only changed areas.
 
 **Finding**: Checker reported paragraph absent
 **Re-validation**: Paragraph present at line 892, whitespace-normalized match
-**Action**: Added to `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md`
+**Action**: Added to `generated-reports/.known-false-positives.md` via `crane skiplist --add <md-basename> <category> <description>`
 
 ## Changed Sections (for Scoped Re-validation)
 
