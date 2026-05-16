@@ -1,5 +1,6 @@
 module CraneCli.Tests.Unit.Steps.SkiplistSteps
 
+open System
 open System.IO
 open TickSpec
 open Xunit
@@ -9,16 +10,25 @@ open CraneCli.Tests.Unit.Steps.BddState
 
 // ---- BDD shared state ----
 let mutable private currentMdBasename: string = "nist-sp-800-53"
+let mutable private currentTempPath: string = ""
+
+let private resetTempPath () =
+    // Each scenario gets its own temp markdown file via CRANE_SKIPLIST_PATH so the
+    // global generated-reports/.known-false-positives.md is never touched.
+    currentTempPath <-
+        Path.Combine(Path.GetTempPath(), sprintf "crane-skiplist-bdd-%s.md" (Guid.NewGuid().ToString("N").[..11]))
+
+    Environment.SetEnvironmentVariable("CRANE_SKIPLIST_PATH", currentTempPath)
+
+    if File.Exists(currentTempPath) then
+        File.Delete(currentTempPath)
 
 // ---- BDD Given steps ----
 
 [<Given>]
 let ``no existing skip list for "([^"]*)"`` (mdBasename: string) =
     currentMdBasename <- mdBasename
-    let path = sprintf ".crane-skiplist-%s.json" mdBasename
-
-    if File.Exists(path) then
-        File.Delete(path)
+    resetTempPath ()
 
 [<Given>]
 let ``a skip list for "([^"]*)" already containing the entry for text-completeness "([^"]*)"``
@@ -26,11 +36,7 @@ let ``a skip list for "([^"]*)" already containing the entry for text-completene
     (description: string)
     =
     currentMdBasename <- mdBasename
-    let path = sprintf ".crane-skiplist-%s.json" mdBasename
-
-    if File.Exists(path) then
-        File.Delete(path)
-
+    resetTempPath ()
     add mdBasename "text-completeness" description |> ignore
 
 [<Given>]
@@ -40,11 +46,7 @@ let ``a skip list containing "([^|]*)\| ([^|]*)\| ([^"]*)"``
     (description: string)
     =
     currentMdBasename <- mdBasename.Trim()
-    let path = sprintf ".crane-skiplist-%s.json" (mdBasename.Trim())
-
-    if File.Exists(path) then
-        File.Delete(path)
-
+    resetTempPath ()
     add (mdBasename.Trim()) (category.Trim()) (description.Trim()) |> ignore
 
 // ---- BDD When steps ----
@@ -69,28 +71,24 @@ let ``I run "crane skiplist check nist-sp-800-53 text-completeness '([^']*)'"`` 
 
 [<Then>]
 let ``the skip list file is created`` () =
-    let path = sprintf ".crane-skiplist-%s.json" currentMdBasename
-    Assert.True(File.Exists(path), sprintf "Skip list file should exist: %s" path)
+    Assert.True(File.Exists(currentTempPath), sprintf "Skip list file should exist: %s" currentTempPath)
 
 [<Then>]
 let ``it contains one entry with category "([^"]*)"`` (category: string) =
-    let path = sprintf ".crane-skiplist-%s.json" currentMdBasename
-    Assert.True(File.Exists(path))
-    let content = File.ReadAllText(path)
-    Assert.Contains(category, content)
+    Assert.True(File.Exists(currentTempPath))
+    let content = File.ReadAllText(currentTempPath)
+    Assert.Contains(sprintf "## FALSE_POSITIVE: %s |" category, content)
     // Cleanup
-    File.Delete(path)
+    File.Delete(currentTempPath)
 
 [<Then>]
 let ``the skip list file contains exactly one matching entry`` () =
     match list currentMdBasename with
     | Ok entries -> Assert.Equal(1, entries.Length)
     | Error msg -> Assert.Fail(msg)
-    // Cleanup
-    let path = sprintf ".crane-skiplist-%s.json" currentMdBasename
 
-    if File.Exists(path) then
-        File.Delete(path)
+    if File.Exists(currentTempPath) then
+        File.Delete(currentTempPath)
 
 [<Then>]
 let ``the JSON output contains match true`` () =
