@@ -2,8 +2,9 @@
 
 ## Status
 
-**Stage**: In-progress
+**Stage**: Done
 **Created**: 2026-05-16
+**Completed**: 2026-05-16
 **Identifier**: `ddd-hex-in-the-field`
 **Scope expanded 2026-05-16**: added OOP track parallel to FP track. User directive: "make sure we have both oop and fp version."
 **Target tutorial paths**:
