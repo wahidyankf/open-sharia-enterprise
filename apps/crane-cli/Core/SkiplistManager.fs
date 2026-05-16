@@ -26,7 +26,10 @@ let stableKey (mdBasename: string) (category: string) (description: string) : st
     let combined = sprintf "%s|%s|%s" mdBasename category description
     let bytes = Encoding.UTF8.GetBytes(combined)
     let hash = System.Security.Cryptography.SHA256.HashData(bytes)
-    BitConverter.ToString(hash).[..15].Replace("-", "").ToLowerInvariant()
+    // Strip the BitConverter "XX-XX-..." dashes before slicing so the prefix
+    // is genuinely 16 hex chars. Prior version sliced first, leaving ~11
+    // chars after dash removal.
+    BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant().[..15]
 
 let private nowTimestamp () =
     DateTime.Now.ToString("yyyy-MM-dd--HH-mm")
