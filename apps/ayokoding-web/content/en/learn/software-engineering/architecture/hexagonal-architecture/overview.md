@@ -94,3 +94,10 @@ Both tutorials use the same **order-taking domain** — a system that accepts cu
 - **[Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/overview)**: 80 examples showing how functional programming maps naturally to hexagonal architecture. Ports become function type aliases. Adapters become function implementations. Dependency injection happens through partial application. The functional core/imperative shell pattern and hexagonal architecture are the same idea in different vocabularies.
 
 - **[Hexagonal Architecture Using OOP — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/overview)**: 80 examples in Java 21+, Kotlin, and C# 12+ side-by-side. Ports become interfaces. Adapters become classes implementing those interfaces. Application services orchestrate domain objects through ports. Dependency injection wires adapters into application services at startup.
+
+## Production Wiring
+
+Once the by-example tracks above are clear, the in-the-field tutorials show ports and adapters wired around real DDD aggregates in production code:
+
+- Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field) — pairs with the FP by-example track.
+- Next step (production wiring): [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field) — pairs with the OOP by-example track.

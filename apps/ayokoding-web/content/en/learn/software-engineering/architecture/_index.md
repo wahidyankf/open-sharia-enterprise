@@ -25,3 +25,6 @@ draft: false
   - [Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example)
   - [Overview](/en/learn/software-engineering/architecture/hexagonal-architecture/overview)
   - [Hexagonal Architecture Using OOP — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example)
+- [DDD + Hexagonal in Practice](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice)
+  - [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)
+  - [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field)
