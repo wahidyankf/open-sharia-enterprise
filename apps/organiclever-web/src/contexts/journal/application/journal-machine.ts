@@ -153,7 +153,6 @@ export const journalMachine = createMachine(
             on: Object.fromEntries(
               MUTATION_EVENTS.map((type) => [
                 type,
-                // @ts-expect-error xstate 5.28 createMachine TContext inference regression with assign function form
                 { actions: assign(({ event }) => ({ pendingMutationEvent: event as JournalEvent })) },
               ]),
             ),
