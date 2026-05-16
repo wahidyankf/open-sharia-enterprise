@@ -109,32 +109,19 @@ The AI executes checker and fixer logic directly using Bash (pdftotext) and Read
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}}}%%
 graph TB
-    Start([Start Workflow]) --> Step1{Step 1: MD exists?}
+    Start([Start]) --> S1[Step 1: Maker if MD missing]
+    S1 --> S2[Step 2: Checker validate]
+    S2 --> S34[Step 3-4: Findings + Fix]
+    S34 --> S5[Step 5: Re-validate]
+    S5 --> S6{Step 6: Converged?}
+    S6 -->|loop| S34
+    S6 -->|yes| S7[Step 7: Report]
+    S7 --> End([End: pass/partial/fail])
 
-    Step1 -->|No or force-remake| MakeStep[Step 1a: Generate Markdown]
-    Step1 -->|Yes| Step2[Step 2: Validate Fidelity]
-    MakeStep -->|Success| Step2
-    MakeStep -->|Fail| Fail([End: fail])
-
-    Step2 --> Step3{Step 3: Check<br/>Findings}
-
-    Step3 -->|Zero findings| Step5[Step 5: Re-validate]
-    Step3 -->|Findings exist| Step4[Step 4: Apply Fixes]
-
-    Step4 --> Step5
-
-    Step5 --> Step6{Step 6: Iteration<br/>Control}
-
-    Step6 -->|More fixes needed| Step4
-    Step6 -->|Confirm zero| Step5
-    Step6 -->|Done| Step7[Step 7: Report]
-
-    Step7 --> End([End: pass/partial/fail])
-
-    style MakeStep fill:#0173B2,color:#fff
-    style Step2 fill:#029E73,color:#fff
-    style Step5 fill:#029E73,color:#fff
-    style Step4 fill:#CC78BC,color:#fff
+    style S1 fill:#0173B2,color:#fff
+    style S2 fill:#029E73,color:#fff
+    style S5 fill:#029E73,color:#fff
+    style S34 fill:#CC78BC,color:#fff
 ```
 
 ## Steps

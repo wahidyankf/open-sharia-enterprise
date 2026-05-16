@@ -1090,24 +1090,7 @@ Sources for additional information related to the control
 
 FIGURE 1: CONTROL STRUCTURE
 
-```mermaid
-graph TD
-    A["<b>Control Identifier</b> | <b>Control Name</b><br/>Organization-defined Parameter(s)"]
-    A --> B["<b>Base Control</b><br/>Control text with [Assignment: org-defined parameters]"]
-    B --> C["<b>Discussion</b><br/>Additional information about the control"]
-    C --> D["<b>Related Controls</b><br/>List of related control identifiers"]
-    D --> E["<b>Control Enhancements</b>"]
-    E --> F["<b>(N) Enhancement Name</b><br/>Organization-defined Parameter(s)<br/>Enhancement text<br/>Discussion<br/>Related Controls"]
-    B --> G["<b>References</b><br/>List of applicable standards and guidelines"]
-
-    style A fill:#d0e8ff,stroke:#336699
-    style B fill:#e8f5e9,stroke:#2e7d32
-    style C fill:#fff8e1,stroke:#f9a825
-    style D fill:#fce4ec,stroke:#c62828
-    style E fill:#f3e5f5,stroke:#6a1b9a
-    style F fill:#ede7f6,stroke:#4527a0
-    style G fill:#e0f2f1,stroke:#00695c
-```
+[FIGURE 1: CONTROL STRUCTURE — hierarchical diagram from PDF showing the structure of an SP 800-53 control: Control Identifier and Name at the top, then Base Control (with assignment parameters), Discussion, Related Controls, Control Enhancements (with per-enhancement Name, parameters, text, Discussion, Related Controls), and References branched from Base Control.]
 
 Example control: **AU-4 AUDIT STORAGE CAPACITY** — Control: Allocate audit record storage capacity to accommodate [Assignment: organization-defined audit record retention requirements].
 The control section prescribes a security or privacy capability to be implemented. Security and
