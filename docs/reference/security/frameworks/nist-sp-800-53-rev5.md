@@ -98,7 +98,9 @@ information security; information system; integrity; personally identifiable inf
 Act; privacy controls; privacy functions; privacy requirements; Risk Management Framework;
 security controls; security functions; security requirements; system; system security.
 ii
-Acknowledgements
+
+## Acknowledgements
+
 This publication was developed by the Joint Task Force Interagency Working Group. The group
 includes representatives from the civil, defense, and intelligence communities. The National
 Institute of Standards and Technology wishes to acknowledge and thank the senior leaders from
@@ -426,7 +428,9 @@ in SP 800-53 was eliminated. That content will be moved to other NIST publicatio
 future, NIST also plans to offer the content of SP 800-53, SP 800-53A, and SP 800-53B to a webbased portal to provide its customers interactive, online access to all control, control baseline,
 overlay, and assessment information.
 xv
-Prologue
+
+## Prologue
+
 “…Through the process of risk management, leaders must consider risk to US interests from
 adversaries using cyberspace to their advantage and from our own efforts to employ the global
 nature of cyberspace to achieve objectives in military, intelligence, and business operations… “
@@ -23406,6 +23410,7 @@ References: [SP 800-162], [SP 800-178], [SP 800-192].
 | SA-4(3)        | DEVELOPMENT METHODS, TECHNIQUES, AND PRACTICES                    | O                                    | √         |
 | SA-4(4)        | ASSIGNMENT OF COMPONENTS TO SYSTEMS                               | W: Incorporated into CM-8(9).        |           |
 | SA-4(5)        | SYSTEM, COMPONENT, AND SERVICE CONFIGURATIONS                     | O                                    | √         |
+| SA-4(6)        | USE OF INFORMATION ASSURANCE PRODUCTS                             | O                                    | √         |
 | SA-4(7)        | NIAP-APPROVED PROTECTION PROFILES                                 | O                                    | √         |
 | SA-4(8)        | CONTINUOUS MONITORING PLAN FOR CONTROLS                           | O                                    | √         |
 | SA-4(9)        | FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES IN USE                  | O                                    | √         |
