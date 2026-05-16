@@ -4,7 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [stack-update](./stack-update/README.md) — Bring entire ose-public monorepo to policy-compliant versions per dependency-bump-policy (cutoff 2026-03-16); includes Shiki 4 MAJOR migration, Next.js 16.2.6 + React 19.2.6 security waivers, and stay-on-line pins for TS 5.8.3 / ESLint 9.x / Zod 3.x / lucide-react 0.x / @xstate/react 5.x
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
 
 ## Instructions
