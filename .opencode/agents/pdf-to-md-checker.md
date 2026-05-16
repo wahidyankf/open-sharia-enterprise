@@ -93,6 +93,21 @@ TOTAL_PAGES=$(crane pdf --info "$PDF_FILE" | jq .pages)
 
 ### Step 2: Text Completeness Check
 
+**Preferred (single-pass aggregator)**: run all six core dimensions (text, heading, nesting, table,
+figure, mermaid) in one process invocation with a single shared PDF extraction:
+
+```bash
+ALL_FINDINGS=$(crane check-all "$PDF_FILE" "$MD_FILE")
+# On repeat checker runs against the same PDF, add an opt-in disk cache:
+ALL_FINDINGS=$(crane check-all --cache-dir "$CACHE_DIR" "$PDF_FILE" "$MD_FILE")
+```
+
+Each finding's `category` field carries its dimension label (`text-completeness`,
+`heading-depth`, etc.), so a single `jq` pass partitions the array.
+
+**Fallback (per-dimension)**: when investigating a single failure or when the aggregator is
+unavailable, invoke the individual subcommand:
+
 ```bash
 TEXT_FINDINGS=$(crane text --check "$PDF_FILE" "$MD_FILE")
 ```

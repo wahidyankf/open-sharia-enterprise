@@ -72,6 +72,27 @@ See `repo-assessing-criticality-confidence` Skill for full matrix.
 - Text was present but in different normalized form
 - Table data actually correct upon re-check
 
+### Confidence Downgrade Conditions
+
+Even when the audit labels a finding `HIGH_CONFIDENCE`, downgrade to `MEDIUM_CONFIDENCE` and skip
+auto-application when any of these hold at fix time:
+
+- **Wide-scope structural restructure** — fix would mechanically alter more than 10 occurrences of
+  the same structural pattern (e.g. changing list nesting across many controls, re-numbering
+  hundreds of sub-items). Wide-scope mechanical edits carry cascading-side-effect risk that
+  warrants per-occurrence human review.
+- **Out-of-locus edits** — fix would touch document regions outside the audit finding's
+  `location_md` field. The audit located one problem; the fix should not silently expand its
+  blast radius.
+- **Conflicting concurrent finding** — another audit finding's expected fix would touch the same
+  span and the two might collide.
+
+When downgrading, record the reason in the fix report under
+**Skipped (MEDIUM_CONFIDENCE)** as `<original-finding-id>: downgraded — <reason>`. Workflow
+orchestration uses `**Applied (HIGH_CONFIDENCE)**: A` to detect stagnation; downgraded findings
+correctly stay out of that count so the workflow can terminate `partial` when no real progress
+is being made.
+
 ## Priority Execution Order
 
 Execute fixes in this order per P0-P4 priority matrix:

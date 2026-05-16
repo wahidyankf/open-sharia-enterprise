@@ -259,6 +259,25 @@ Apply validated fixes from the checker audit report.
 - FALSE_POSITIVE findings persisted to `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md`
 - Fix report includes changed sections list for scoped re-validation
 
+**Confidence Downgrade Rules**:
+
+The fixer MUST downgrade an originally-`HIGH_CONFIDENCE` finding to `MEDIUM_CONFIDENCE`
+(and therefore skip auto-application) when any of these conditions hold at fix time:
+
+- **Wide-scope structural restructure** — the fix would mechanically alter more than 10 occurrences
+  of the same structural pattern (e.g. changing list nesting depth across many controls,
+  re-numbering hundreds of sub-items). Wide-scope mechanical changes carry cascading-side-effect
+  risk that warrants per-occurrence human review.
+- **Out-of-locus edits** — the fix would touch document regions outside the audit finding's
+  `location_md` field. The audit located one problem; the fix should not silently expand its blast
+  radius.
+- **Conflicting concurrent finding** — a different audit finding's expected fix would touch the
+  same span, and the two fixes might collide.
+
+Downgraded findings appear in the fix report under **Skipped (MEDIUM_CONFIDENCE)** with the
+downgrade reason cited. See [pdf-to-md-fixer agent definition](../../../.claude/agents/pdf-to-md-fixer.md)
+for the binding rule.
+
 ### 5. Re-validate (Sequential)
 
 Run the checker again to verify fixes resolved issues and no new issues were introduced.
@@ -293,13 +312,19 @@ Determine whether to continue or finalize.
 
 **Logic**:
 
-- Track consecutive_zero_count across iterations (resets to 0 when threshold-level findings > 0,
+- Track `consecutive_zero_count` across iterations (resets to 0 when threshold-level findings > 0,
   increments when = 0)
-- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed
+- Track `consecutive_zero_fixes` across iterations: read `**Applied (HIGH_CONFIDENCE)**: A` from
+  the most recent fix report. Increment when `A = 0`. Reset to 0 when `A > 0`. No fix report this
+  iteration (e.g. iteration ran no fixer) leaves the counter unchanged.
+- If `consecutive_zero_fixes >= 2`: Proceed to step 7 (**partial** — stagnation exit). Two
+  back-to-back fixer runs that applied nothing prove the remaining findings are deterministically
+  manual-only; further iteration is wasted work.
+- If `consecutive_zero_count >= 2` AND iterations >= min-iterations (or min not provided): Proceed
   to step 7 (double-zero confirmed — **pass**)
-- If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 5
+- If `consecutive_zero_count >= 2` AND iterations < min-iterations: Loop back to step 5
   (Re-validate to satisfy min-iterations)
-- If consecutive_zero_count < 2 AND threshold-level findings = 0: Loop back to step 5
+- If `consecutive_zero_count < 2` AND threshold-level findings = 0: Loop back to step 5
   (confirmation check — no fix needed, just re-verify)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations:
   Proceed to step 7 (**partial**)
@@ -312,6 +337,10 @@ Determine whether to continue or finalize.
 
 - **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check
   before declaring success
+- **Stagnation exit**: When the fixer applies zero `HIGH_CONFIDENCE` fixes on two consecutive
+  iterations, the orchestrator terminates `partial` rather than burning the remaining
+  max-iterations budget on a deterministic no-op. The fix report's
+  `**Applied (HIGH_CONFIDENCE)**: A` line is the canonical signal — no new schema needed.
 - Escalation warning logged at iteration 5 if not converging
 - Default max-iterations: 7
 
@@ -481,7 +510,8 @@ Build crane-cli and add to PATH:
 ```bash
 npx nx run crane-cli:build                           # builds apps/crane-cli/bin/Release/net10.0/crane
 export PATH="$PWD/apps/crane-cli/bin/Release/net10.0:$PATH"
-crane --version
+crane --version                                      # prints assembly version, exits 0
+crane --help                                         # lists every subcommand
 ```
 
 Install system dependencies:
@@ -495,9 +525,15 @@ Verify:
 
 ```bash
 crane --version
+crane --help
 tesseract --version
 jq --version
 ```
+
+**Aggregator entry point**: `crane check-all <pdf> <md>` runs the six core check dimensions in one
+process with a single shared PDF extraction. Prefer this over invoking each dimension separately.
+Add `--cache-dir <dir>` to persist PDF extractions keyed by SHA256 of the PDF bytes; subsequent
+runs against the same PDF read the cached extraction instead of re-parsing. The cache is opt-in.
 
 ## Validation Dimensions Summary
 
@@ -510,8 +546,9 @@ jq --version
 | Table integrity (missing/wrong data)            | checker | `crane table --check "$PDF" "$MD"`     | Yes (re-extract from PDF)             |
 | Figure coverage (Mermaid or placeholder)        | checker | `crane figure --check "$PDF" "$MD"`    | Yes (add placeholder)                 |
 | Mermaid syntax validity                         | checker | `crane mermaid --validate "$MD"`       | Yes (fix syntax)                      |
-| OCR quality (gibberish rate)                    | checker | No (manual review)                     |
-| Structural order (section sequence)             | checker | Partial (re-ordering risky)            |
+| OCR quality (gibberish rate)                    | checker | `crane ocr --quality "$MD"`            | No (manual review)                    |
+| Structural order (section sequence)             | checker | (heuristic from text+heading checks)   | Partial (re-ordering risky)           |
+| **All-in-one aggregator**                       | checker | `crane check-all "$PDF" "$MD"`         | Mixed (per-dimension; see above)      |
 
 ## Principles Implemented/Respected
 
