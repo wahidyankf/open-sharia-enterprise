@@ -39,6 +39,12 @@ let ``TestUnitStableKey_DiffersForDifferentInputs`` () =
     Assert.NotEqual<string>(key1, key2)
 
 [<Fact>]
+let ``TestUnitStableKey_Is16HexChars`` () =
+    let key = stableKey "doc" "category" "description"
+    Assert.Equal(16, key.Length)
+    Assert.Matches("^[0-9a-f]{16}$", key)
+
+[<Fact>]
 let ``TestUnitAdd_ReturnsTrueForNewEntry`` () =
     withTempSkiplist (fun _ ->
         let basename = uniqueBase ()
