@@ -4,7 +4,18 @@ weight: 10000004
 date: 2026-05-15T00:00:00+07:00
 draft: false
 description: "Examples 26-55: CQRS ports, event publishing, infrastructure ports, retry/circuit-breaker in adapters, ACL between contexts, saga orchestration, and testing strategies in Java, Kotlin, and C#"
-tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java", "kotlin", "csharp", "intermediate"]
+tags:
+  [
+    "hexagonal-architecture",
+    "ports-and-adapters",
+    "tutorial",
+    "by-example",
+    "oop",
+    "java",
+    "kotlin",
+    "csharp",
+    "intermediate",
+  ]
 ---
 
 Examples 26–55 build on the three-zone structure from the beginner section. Every code block is self-contained and runnable. Annotation density targets 1.0–2.25 comment lines per code line per example.
@@ -3724,6 +3735,7 @@ public class CircuitBreakerPaymentGateway(
 **Why It Matters**: A payment gateway under heavy load can cascade failures to every order being placed if the application service retries blindly. A circuit breaker in the adapter layer detects the failure threshold, stops all calls during the open period, and allows a controlled recovery probe — protecting both the gateway and the application from overload while giving callers a typed `CircuitOpen` error they can handle specifically.
 
 ---
+
 ## Multiple Bounded Contexts and ACL (Examples 39–44)
 
 ### Example 39: Multiple bounded contexts as separate hexagons — package structure
@@ -5226,6 +5238,7 @@ class LambdaShipment(Func<OrderId, ReservationId, bool> cr, Action<OrderId> ca) 
 **Why It Matters**: Distributed transactions across services require explicit and carefully sequenced compensation logic. A saga orchestrator in the application service layer makes the compensation flow explicit and fully testable with in-memory port adapters. Every compensation path can be exercised in complete isolation — without running a real inventory service, payment gateway, or shipping service.
 
 ---
+
 ## Testing Strategies (Examples 45–55)
 
 ### Example 45: The hexagonal testing pyramid
