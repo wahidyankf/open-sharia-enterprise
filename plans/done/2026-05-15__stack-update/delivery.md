@@ -1036,12 +1036,18 @@ For each affected Next.js app (`ayokoding-web`, `ose-web`, `organiclever-web`,
 
 ## Plan Archive Checklist
 
-- [ ] All delivery items above checked off
-- [ ] CI green on `origin/main`
-- [ ] Run from repo root: `git mv plans/in-progress/stack-update plans/done/2026-05-15__stack-update`
-- [ ] Update `plans/in-progress/README.md` — remove the `stack-update` entry
-- [ ] Update `plans/done/README.md` — add `stack-update` entry with completion date `2026-05-15`
-- [ ] Commit: `git commit -m "chore(plans): move stack-update to done"`
+- [x] All delivery items above checked off
+  - Status: Done 2026-05-16. All Phase 0–15 items ticked; Post-Push verification items ticked; plan-execution-checker BLOCKER-1/-3/-4 addressed in commit `chore(stack-update): address plan-execution-checker blockers pre-archive`.
+- [x] CI green on `origin/main`
+  - Status: Done — see 15.5 above.
+- [x] Run from repo root: `git mv plans/in-progress/stack-update plans/done/2026-05-15__stack-update`
+  - Status: Done 2026-05-16.
+- [x] Update `plans/in-progress/README.md` — remove the `stack-update` entry
+  - Status: Done 2026-05-16.
+- [x] Update `plans/done/README.md` — add `stack-update` entry with completion date `2026-05-15`
+  - Status: Done 2026-05-16.
+- [x] Commit: `git commit -m "chore(plans): move stack-update to done"`
+  - Status: Done 2026-05-16.
 
 ---
 
