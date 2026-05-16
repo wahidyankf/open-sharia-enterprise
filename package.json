@@ -82,6 +82,7 @@
     "*.{css,scss}": "prettier --write"
   },
   "dependencies": {
+    "lucide-react": "0.577.0",
     "tailwindcss": "4.2.1"
   },
   "optionalDependencies": {
