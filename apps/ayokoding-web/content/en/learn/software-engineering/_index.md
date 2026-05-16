@@ -72,6 +72,7 @@ weight: 102
   - [Overview](/en/learn/software-engineering/architecture/overview)
   - [Domain Driven Design Ddd](/en/learn/software-engineering/architecture/domain-driven-design-ddd)
   - [Finite State Machine Fsm](/en/learn/software-engineering/architecture/finite-state-machine-fsm)
+  - [Hexagonal Architecture](/en/learn/software-engineering/architecture/hexagonal-architecture)
 - [Platform Mobile](/en/learn/software-engineering/platform-mobile)
   - [Tools](/en/learn/software-engineering/platform-mobile/tools)
 - [Development](/en/learn/software-engineering/development)
