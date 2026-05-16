@@ -223,12 +223,16 @@ import java.util.UUID;
 public record Task(
     TaskId id,
     // => Strongly-typed identity — prevents confusion with other aggregate IDs
+    // => TaskId wraps UUID: the compiler rejects a raw UUID where a TaskId is expected
     String title,
     // => Ubiquitous language: what the task is in business terms
+    // => String: plain text title — bounded-context language uses "title", not "name" or "description"
     String ownerId,
     // => Reference to user context by ID only — no User object imported
+    // => Cross-context coupling via primitive ID: the task context never imports the user domain type
     boolean completed
     // => Simple boolean state — no ORM column mapping annotation
+    // => false at creation: the compact constructor enforces this invariant through the creation path
 ) {
     // => Java record compact constructor: runs before each component is assigned
     // => All validation happens here — the record is immutable after construction
@@ -716,6 +720,7 @@ package com.organicleverbe;
 // => com.organicleverbe: root package — Spring Boot scans from here
 
 import org.springframework.boot.SpringApplication;
+// => SpringApplication: entry-point bootstrap utility — run() starts the entire ApplicationContext
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication

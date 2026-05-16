@@ -133,15 +133,12 @@ Source: [apps/ose-app-be/src/OseAppBe/Domain/Types.fs](../../../../../../ose-app
 
 The intended layout separates shared cross-cutting types from context-specific types. The flat `Domain/Types.fs` continues to hold genuinely shared types (`AppEnv`, `AppError`) while per-context types migrate to `contexts/<ctx>/domain/`.
 
+Current flat layout: `Domain/RegulatorySource.fs` — a placeholder module with a doc comment marking its intended migration target.
+
 ```fsharp
-// Current flat layout: Domain/RegulatorySource.fs
-/// Regulatory source bounded context — ingests and stores regulator-published rule documents.
-/// Detailed domain types and services added in regulatory-source feature plan.
 module OseAppBe.Domain.RegulatorySource
-// => Module is intentionally empty except for the doc comment
-// => Acts as a placeholder — types land here only temporarily
+// => Placeholder module — types land here only temporarily
 // => Migration target: contexts/regulatory-source/domain/RegulatorySource.fs
-// => Flat layout preserved until the feature plan migrates it
 ```
 
 Source: [apps/ose-app-be/src/OseAppBe/Domain/RegulatorySource.fs](../../../../../../ose-app-be/src/OseAppBe/Domain/RegulatorySource.fs)

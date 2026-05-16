@@ -188,8 +188,11 @@ import org.springframework.stereotype.Repository;
 // => @Repository: Spring registers this class as a bean during component scan
 // => Also enables Spring's PersistenceExceptionTranslationPostProcessor for JDBC exceptions
 import java.util.List;
+// => java.util.List: standard collection — return type for findByOwnerId port method
 import java.util.Optional;
+// => java.util.Optional: return type for findById — communicates absence without null
 import java.util.UUID;
+// => UUID: used by the RowMapper to extract the typed id column from the ResultSet
 
 @Repository
 // => @Repository: Spring discovers this bean via the root-package scan in OrganicleverBeApplication
@@ -279,6 +282,7 @@ public class TaskJdbcAdapter implements TaskRepository {
 
     @Override
     public List<Task> findByOwnerId(String ownerId) {
+        // => No checked exception: same as findById — SQL failures propagate as unchecked DataAccessException
         return jdbc.sql(
                 "SELECT id, title, owner_id, completed FROM tasks WHERE owner_id = :ownerId ORDER BY id")
             .param("ownerId", ownerId)
@@ -289,8 +293,11 @@ public class TaskJdbcAdapter implements TaskRepository {
                 // => Same RowMapper shape as findById — extract to a private mapRow() helper in production
                 // => Duplication here is intentional: the two queries select different sets of rows
                 rs.getString("title"),
+                // => getString("title"): reads the NOT NULL title column — guaranteed non-null by schema constraint
                 rs.getString("owner_id"),
+                // => owner_id: snake_case column maps to camelCase ownerId component — explicit column name required
                 rs.getBoolean("completed")
+                // => getBoolean: maps SQL BOOLEAN to primitive boolean — false if the column is NULL
             ))
             .list();
             // => .list(): runs the SELECT and maps every row — returns an empty List (not null) when no rows match
@@ -299,6 +306,7 @@ public class TaskJdbcAdapter implements TaskRepository {
 
     @Override
     public void delete(TaskId id) throws TaskNotFoundException, TaskPersistenceException {
+        // => try block: wraps the DELETE to distinguish domain exceptions from infrastructure failures
         try {
             int rows = jdbc.sql("DELETE FROM tasks WHERE id = :id")
                 .param("id", id.value())
@@ -413,8 +421,11 @@ import com.organicleverbe.task.domain.TaskId;
 import java.util.ArrayList;
 // => ArrayList: intermediate collection for findByOwnerId — converted to unmodifiable List before return
 import java.util.List;
+// => java.util.List: return type for findByOwnerId — the port contract uses the stdlib interface
 import java.util.Map;
+// => Map<TaskId, Task>: typed store — ConcurrentHashMap is the implementation, Map is the field type
 import java.util.Optional;
+// => java.util.Optional: return type for findById — same absence contract as the JDBC adapter
 import java.util.concurrent.ConcurrentHashMap;
 // => ConcurrentHashMap: thread-safe — parallel Cucumber step definitions do not corrupt the store
 // => get(), put(), remove() are all atomic operations — no external synchronisation needed
@@ -444,7 +455,9 @@ public class InMemoryTaskRepository implements TaskRepository {
     }
 
     @Override
+    // => @Override: compiler verifies the method signature matches the interface — catches refactoring mistakes
     public Optional<Task> findById(TaskId id) {
+        // => findById: returns Optional.empty() when the key is absent — never null
         return Optional.ofNullable(store.get(id));
         // => Optional.ofNullable: returns Optional.empty() when the key is absent
         // => ConcurrentHashMap.get returns null for absent keys — ofNullable wraps safely
@@ -452,12 +465,15 @@ public class InMemoryTaskRepository implements TaskRepository {
     }
 
     @Override
+    // => @Override: the compiler verifies the signature matches TaskRepository — no typo in the method name
     public List<Task> findByOwnerId(String ownerId) {
+        // => In-memory filter: iterates the map values and collects matching tasks
         var result = new ArrayList<Task>();
         // => var: Java 11+ local variable type inference — Task is inferred from the ArrayList
         for (var task : store.values()) {
             // => store.values(): ConcurrentHashMap snapshot — safe to iterate under concurrent writes
             if (ownerId.equals(task.ownerId())) {
+                // => ownerId.equals: null-safe left-hand comparison — ownerId is never null in the port contract
                 result.add(task);
                 // => Filter by ownerId: mirrors the SQL WHERE owner_id = :ownerId predicate
             }
@@ -504,7 +520,9 @@ import com.organicleverbe.task.infrastructure.InMemoryTaskRepository;
 import io.cucumber.java.Before;
 // => @Before: Cucumber hook — runs before each scenario in this glue class
 import io.cucumber.java.en.Given;
+// => @Given: annotates the method that runs for "Given ..." scenario lines
 import io.cucumber.java.en.Then;
+// => @Then: annotates the assertion method that verifies the observable outcome
 import io.cucumber.java.en.When;
 // => Cucumber JVM: step-definition annotations — same Cucumber framework used by HealthUnitTest
 import static org.junit.jupiter.api.Assertions.*;
@@ -533,6 +551,7 @@ public class TaskIntegrationSteps {
     }
 
     @Given("a task with title {string} owned by {string}")
+    // => @Given step: Cucumber matches the scenario line text and calls this method
     public void aTaskWithTitleOwnedBy(String title, String ownerId) throws Exception {
         lastTask = service.createTask(title, ownerId);
         // => Calls the real application service: domain invariants enforced, aggregate created
@@ -541,6 +560,7 @@ public class TaskIntegrationSteps {
     }
 
     @When("the task is retrieved by its id")
+    // => @When step: executed after @Given — retrieves the task using the id captured in lastTask
     public void theTaskIsRetrievedByItsId() throws Exception {
         lastTask = service.findById(lastTask.id()).orElseThrow();
         // => findById goes through the port to the in-memory adapter — no SQL, no Docker
@@ -948,6 +968,7 @@ public class OutboxEventPublisher implements TaskEventPublisher {
     // => Injected ObjectMapper: Spring's auto-configured instance — consistent serialisation across the app
 
     public OutboxEventPublisher(JdbcClient jdbc, ObjectMapper objectMapper) {
+        // => Single-constructor injection: Spring Boot 4 auto-detects this pattern — no @Autowired annotation needed
         this.jdbc = jdbc;
         this.objectMapper = objectMapper;
         // => Constructor injection: both are Spring-managed beans — no @Autowired needed
@@ -969,6 +990,7 @@ public class OutboxEventPublisher implements TaskEventPublisher {
     }
 
     private void insertOutboxRow(String eventType, Object payload) {
+        // => Private helper: both publish() overloads delegate here — single INSERT path, no duplication
         try {
             String json = objectMapper.writeValueAsString(payload);
             // => writeValueAsString: serialise the Java record to JSON
@@ -1279,14 +1301,10 @@ package com.organicleverbe.task.presentation;
 // => presentation/ package: hand-authored DTOs live alongside the @RestController
 
 public record CreateTaskRequest(String title, String ownerId) {}
-// => title: if the spec renames this field to "taskTitle", the controller still compiles
 // => No compile error when spec and DTO diverge — drift is discovered at runtime
-// => A new required field added to the spec does not appear here unless the developer remembers
 
 public record TaskResponse(String id, String title, String ownerId, boolean completed) {}
-// => id: the spec may define format:uuid — the hand-authored record uses String without enforcement
 // => A field added to the spec response schema is silently absent from the response body
-// => Integration test failures are the only mechanism that surfaces spec drift
 ```
 
 _Illustrative snippet — not from `apps/organiclever-be`; demonstrates the
@@ -1306,13 +1324,17 @@ the Maven compile path:
 <!-- pom.xml: generated-contracts source directory wired into Maven compile path -->
 <!-- Source: apps/organiclever-be/pom.xml (build-helper-maven-plugin section) -->
 <plugin>
+    <!-- => <plugin>: a Maven build lifecycle participant — runs during the generate-sources phase -->
     <groupId>org.codehaus.mojo</groupId>
+    <!-- => org.codehaus.mojo: the Maven Mojo project group — community-maintained plugin collection -->
     <artifactId>build-helper-maven-plugin</artifactId>
     <!-- => build-helper-maven-plugin: registers an additional source directory with the Maven compiler -->
     <!-- => Version is managed by the Spring Boot parent BOM — no explicit version pin needed in this POM -->
     <!-- => Without this plugin, Maven only compiles src/main/java/ — the generated-contracts/ directory is invisible -->
     <executions>
+        <!-- => <executions>: one or more plugin execution bindings — each binds to a Maven lifecycle phase -->
         <execution>
+            <!-- => <execution>: a single binding that runs add-source at the generate-sources phase -->
             <id>add-generated-contracts-source</id>
             <!-- => id: distinguishes this execution from any other build-helper executions in the same POM -->
             <!-- => Multiple executions in the same plugin block each need a unique id -->
@@ -1323,7 +1345,9 @@ the Maven compile path:
             <!-- => add-source goal: registers the path as an additional Maven compile source root -->
             <!-- => Maven's compiler plugin picks up this path alongside src/main/java/ automatically -->
             <configuration>
+                <!-- => <configuration>: plugin-specific settings — <sources> lists extra source roots to add -->
                 <sources>
+                    <!-- => <sources>: wraps the list of additional source directories to register -->
                     <source>${project.basedir}/generated-contracts/src/main/java</source>
                     <!-- => ${project.basedir}: expands to apps/organiclever-be/ — makes the path project-relative -->
                     <!-- => generated-contracts/: gitignored output directory, populated by nx run organiclever-contracts:codegen -->
@@ -1388,6 +1412,7 @@ public class TaskContractController {
     public TaskContractController(TaskApplicationService taskService, TaskEventPublisher eventPublisher) {
         this.taskService = taskService;
         this.eventPublisher = eventPublisher;
+        // => Assign the event publisher: same injection pattern as taskService — the port interface, not the concrete adapter
         // => Constructor injection: identical to Guide 12 — generated DTOs don't affect wiring
     }
 
@@ -1618,12 +1643,15 @@ public class TaskAcl implements TaskCorpusPort {
     }
 
     @Override
+    // => @Override: compiler verifies the signature matches TaskCorpusPort.findAll() — refactoring-safe
     public List<TaskCorpusEntry> findAll() {
         // => ACL translation method: calls the task port and maps results to gap-analysis domain types
+        // => The return type is gap-analysis's own domain type — not task.domain.Task
         return taskRepository.findByOwnerId("")
             // => Illustrative: a real implementation calls a ListAllTasks port method on the task context
             // => findByOwnerId("") is a stand-in — add a findAll() method to TaskRepository in production
             .stream()
+            // => .stream(): creates a sequential stream from the List<Task> returned by the task port
             .map(task -> new TaskCorpusEntry(
                 task.title(),
                 // => Map task.title() to TaskCorpusEntry.taskTitle — structural translation at the ACL seam

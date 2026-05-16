@@ -228,26 +228,40 @@ Add the Testcontainers dependency to the `pom.xml` for `apps/organiclever-be`:
 <!-- New dependency — intended layout, pom.xml exists at apps/organiclever-be/pom.xml -->
 <!-- Add to <dependencyManagement> section: -->
 <dependency>
+    <!-- => <dependency> in <dependencyManagement>: pins the version for all transitive consumers -->
     <groupId>org.testcontainers</groupId>
-    <artifactId>testcontainers-bom</artifactId><!-- => testcontainers-bom: the BOM that pins all org.testcontainers module versions -->
-    <version>1.19.8</version><!-- => Spring Boot 4.0.6 BOM does NOT manage org.testcontainers core modules — explicit BOM import required -->
+    <!-- => org.testcontainers: official Testcontainers Maven group — covers all container modules -->
+    <!-- => testcontainers-bom: the BOM that pins all org.testcontainers module versions -->
+    <artifactId>testcontainers-bom</artifactId>
+    <!-- => Spring Boot 4.0.6 BOM does NOT manage org.testcontainers core modules — explicit BOM import required -->
+    <version>1.21.3</version>
+    <!-- => type pom: this entry is a BOM import, not a jar — Maven reads it as a bill of materials -->
     <type>pom</type>
+    <!-- => scope import: imports version constraints from this BOM into the current pom's dependencyManagement -->
     <scope>import</scope>
 </dependency>
 
 <!-- Then in <dependencies>: -->
 <dependency>
-    <groupId>org.testcontainers</groupId><!-- => org.testcontainers: official Testcontainers Maven group -->
-    <artifactId>postgresql</artifactId><!-- => postgresql module: wraps postgres Docker image, exposes JDBC URL -->
+    <!-- => <dependency>: adds testcontainers postgresql module under test scope -->
+    <!-- => org.testcontainers: official Testcontainers Maven group -->
+    <groupId>org.testcontainers</groupId>
+    <!-- => postgresql module: wraps postgres Docker image, exposes JDBC URL -->
+    <artifactId>postgresql</artifactId>
     <!-- => Version managed by org.testcontainers:testcontainers-bom 1.19.8 — no explicit version needed here -->
-    <scope>test</scope><!-- => test scope: Testcontainers classes are never on the production classpath -->
+    <!-- => test scope: Testcontainers classes are never on the production classpath -->
+    <scope>test</scope>
 </dependency>
 <dependency>
-    <groupId>org.testcontainers</groupId><!-- => Same groupId: all Testcontainers modules share org.testcontainers -->
-    <artifactId>junit-jupiter</artifactId><!-- => junit-jupiter: provides @Testcontainers and @Container annotations -->
+    <!-- => <dependency>: adds the JUnit 5 lifecycle extension for @Testcontainers and @Container -->
+    <!-- => Same groupId: all Testcontainers modules share org.testcontainers -->
+    <groupId>org.testcontainers</groupId>
+    <!-- => junit-jupiter: provides @Testcontainers and @Container annotations -->
+    <artifactId>junit-jupiter</artifactId>
     <!-- => Without this module, the JUnit 5 lifecycle extension is not registered automatically -->
     <!-- => Version managed by org.testcontainers:testcontainers-bom 1.19.8 -->
-    <scope>test</scope><!-- => test scope: extension code is not needed at runtime -->
+    <!-- => test scope: extension code is not needed at runtime -->
+    <scope>test</scope>
 </dependency>
 ```
 
@@ -441,14 +455,18 @@ Add the Flyway dependency to `pom.xml`:
 <!-- Flyway starter — triggers FlywayAutoConfiguration in Spring Boot 4 -->
 <!-- New dependency — intended layout, pom.xml exists at apps/organiclever-be/pom.xml -->
 <dependency>
-    <groupId>org.springframework.boot</groupId><!-- => spring-boot starter group — triggers auto-configuration -->
-    <artifactId>spring-boot-starter-flyway</artifactId><!-- => required in Spring Boot 4: standalone flyway-core no longer triggers FlywayAutoConfiguration -->
+    <!-- => spring-boot starter group — triggers auto-configuration -->
+    <groupId>org.springframework.boot</groupId>
+    <!-- => required in Spring Boot 4: standalone flyway-core no longer triggers FlywayAutoConfiguration -->
+    <artifactId>spring-boot-starter-flyway</artifactId>
     <!-- => Version managed by spring-boot-starter-parent 4.0.6 BOM — no explicit version needed -->
     <!-- => This starter pulls in flyway-core transitively and registers FlywayAutoConfiguration -->
 </dependency>
 <dependency>
-    <groupId>org.flywaydb</groupId><!-- => org.flywaydb: Flyway's Maven group — distinct from spring-boot starters -->
-    <artifactId>flyway-database-postgresql</artifactId><!-- => PostgreSQL dialect module: required for PG-specific DDL -->
+    <!-- => org.flywaydb: Flyway's Maven group — distinct from spring-boot starters -->
+    <groupId>org.flywaydb</groupId>
+    <!-- => PostgreSQL dialect module: required for PG-specific DDL -->
+    <artifactId>flyway-database-postgresql</artifactId>
     <!-- => Version managed by spring-boot-starter-parent 4.0.6 BOM — no explicit version needed -->
     <!-- => Without this, Flyway falls back to a generic JDBC dialect — some Postgres features are not supported -->
 </dependency>
@@ -607,6 +625,7 @@ _New file — intended layout, scaffolding exists at
 // apps/organiclever-be/src/main/java/com/organicleverbe/ai/infrastructure/
 
 package com.organicleverbe.ai.infrastructure;
+// => ai/infrastructure/ package: the RestClient adapter lives here — not in ai/application/
 
 import com.organicleverbe.ai.application.AiPort;
 import com.organicleverbe.ai.application.AiUnavailableException;
@@ -671,6 +690,7 @@ public class OpenRouterAiAdapter implements AiPort {
     public String completePrompt(String prompt) throws AiUnavailableException {
         // => Implements AiPort.completePrompt — the only method the application service calls
         // => This method is the only place in the codebase that imports RestClient
+        // => try block: wraps the RestClient call to translate Spring exceptions into AiUnavailableException
         try {
             var requestBody = new ChatRequest(
                 model,
@@ -848,11 +868,13 @@ public class ResilientTaskRepository implements TaskRepository {
 
     public ResilientTaskRepository(TaskRepository delegate) {
         // => Constructor injection: the delegate adapter is passed in — no new adapter instantiation here
+        // => This constructor builds both the Retry and CircuitBreaker policies at construction time
         this.delegate = delegate;
         // => Store the delegate — every port method calls delegate.<method> inside the decorator wrapping
         this.retry = Retry.of(
             "task-repository",
             // => Instance name: used for metrics and logging — matches the bean context
+            // => RetryConfig.custom(): starts the builder chain for a custom retry policy
             RetryConfig.custom()
                 .maxAttempts(3)
                 // => maxAttempts: 3 — the initial call plus two retries
@@ -864,9 +886,11 @@ public class ResilientTaskRepository implements TaskRepository {
                 .build()
                 // => build(): produces an immutable RetryConfig — shared across all decorated methods
         );
+        // => CircuitBreaker.of: creates a named circuit-breaker with the custom config below
         this.circuitBreaker = CircuitBreaker.of(
             "task-repository",
             // => Same name as the Retry instance: metrics aggregate under one label
+            // => CircuitBreakerConfig.custom(): starts the builder chain for a custom CB policy
             CircuitBreakerConfig.custom()
                 .failureRateThreshold(50)
                 // => failureRateThreshold: 50% failure rate in the sliding window opens the circuit
@@ -880,6 +904,7 @@ public class ResilientTaskRepository implements TaskRepository {
     }
 
     @Override
+    // => @Override: compiler verifies save() signature matches TaskRepository — no silent signature drift
     public void save(Task task) {
         // => Wraps save() with retry + circuit-breaker: transient DB failures are retried
         Retry.decorateRunnable(retry,
@@ -889,11 +914,13 @@ public class ResilientTaskRepository implements TaskRepository {
                 () -> delegate.save(task)
                 // => Lambda delegates to the real adapter — retry fires if the lambda throws
             )
+            // => closing paren: ends the CircuitBreaker.decorateRunnable(...) call
         ).run();
         // => .run(): executes the wrapped operation — throws if all retries exhausted or CB is open
     }
 
     @Override
+    // => @Override: verifies findById matches the port interface — prevents method-name typos silently becoming dead code
     public Optional<Task> findById(TaskId id) {
         // => Wraps findById() with retry + circuit-breaker: same policy as save()
         return Retry.decorateSupplier(retry,
@@ -903,12 +930,14 @@ public class ResilientTaskRepository implements TaskRepository {
                 () -> delegate.findById(id)
                 // => Lambda: the actual delegate call — wraps the real database read
             )
+            // => closing paren: ends the CircuitBreaker.decorateSupplier(...) call
         ).get();
         // => .get(): executes the supplier — returns Optional<Task> on success
         // => Throws on retry exhaustion or open circuit — propagates to the GlobalExceptionHandler
     }
 
     @Override
+    // => @Override: verifies findByOwnerId matches the port interface — compiler guard for all four port methods
     public List<Task> findByOwnerId(String ownerId) {
         // => Same decorator stack as save() and findById() — consistent resilience policy across all port methods
         return Retry.decorateSupplier(retry,
@@ -918,14 +947,17 @@ public class ResilientTaskRepository implements TaskRepository {
                 () -> delegate.findByOwnerId(ownerId)
                 // => Delegate returns List<Task> — retry fires if the lambda throws a SQLException
             )
+            // => closing paren: ends the CircuitBreaker.decorateSupplier(...) call
         ).get();
         // => .get(): executes the supplier — returns List<Task>, empty if no tasks found
         // => Same decorator pattern: retry + circuit-breaker around the delegate call
     }
 
     @Override
+    // => @Override: verifies delete matches the port interface — all four methods decorated consistently
     public void delete(TaskId id) {
         // => delete() is a write operation: retry only if the exception is a transient SQLException
+        // => Retry.decorateRunnable: void operation requires Runnable wrapper, not Supplier
         Retry.decorateRunnable(retry,
             // => decorateRunnable: void return — Runnable wraps the delete call
             CircuitBreaker.decorateRunnable(circuitBreaker,
@@ -933,6 +965,7 @@ public class ResilientTaskRepository implements TaskRepository {
                 () -> delegate.delete(id)
                 // => Delegate: the real adapter's delete — performs the hard-delete or soft-delete
             )
+            // => closing paren: ends the CircuitBreaker.decorateRunnable(...) call
         ).run();
         // => .run(): executes the wrapped Runnable — throws if CB is open or retries exhausted
     }
@@ -971,11 +1004,11 @@ Add the Resilience4j Spring Boot starter to `pom.xml`:
 <dependency>
     <groupId>io.github.resilience4j</groupId>
     <!-- => groupId: io.github.resilience4j is the official Resilience4j Maven group -->
-    <artifactId>resilience4j-spring-boot3</artifactId>
-    <!-- => spring-boot3 artifact is compatible with Spring Boot 4 — no spring-boot4 artifact yet -->
+    <artifactId>resilience4j-spring-boot4</artifactId>
+    <!-- => resilience4j-spring-boot4: dedicated Spring Boot 4 starter — published to Maven Central as of v2.4.0 -->
     <!-- => Includes auto-configuration for Retry, CircuitBreaker, RateLimiter, Bulkhead, and TimeLimiter -->
-    <version>2.3.0</version>
-    <!-- => 2.3.0: explicit pin — Spring Boot 4 BOM does not yet manage Resilience4j transitively -->
+    <version>2.4.0</version>
+    <!-- => 2.4.0: explicit pin — Spring Boot 4 BOM does not manage Resilience4j transitively -->
     <!-- => Version managed by Spring Boot 4 BOM where available; otherwise pin explicitly -->
 </dependency>
 ```
@@ -1098,7 +1131,9 @@ public class TracedTaskRepository implements TaskRepository {
     }
 
     @Override
+    // => @Override: compiler verifies save() signature matches TaskRepository — silent typo becomes a compile error
     public void save(Task task) {
+        // => save: wraps the delegate's write operation with a named tracing span
         Span span = tracer.nextSpan().name("task-repository.save").start();
         // => nextSpan(): creates a child span if a parent trace context is active, otherwise starts a root span
         // => name: span name visible in Jaeger / Zipkin — describes the operation
@@ -1112,12 +1147,14 @@ public class TracedTaskRepository implements TaskRepository {
             delegate.save(task);
             // => Delegate: the real adapter call — the span wraps its entire execution time
         } catch (Exception ex) {
+            // => catch (Exception ex): broad catch — covers connectivity failures, timeouts, and JDBC errors
             span.error(ex);
             // => error: marks the span as failed and records the exception — visible in trace viewers
             // => Without this call, failed spans appear identical to successful ones in the trace
             throw ex;
             // => Rethrow: the span records the error, but the caller still receives the exception
         } finally {
+            // => finally: guaranteed execution — span.end() runs even if catch rethrows the exception
             span.end();
             // => end(): closes the span and reports it to the OpenTelemetry exporter
             // => Always in finally: ensures spans are exported even when exceptions are thrown
@@ -1125,7 +1162,9 @@ public class TracedTaskRepository implements TaskRepository {
     }
 
     @Override
+    // => @Override: verifies findById signature matches the port — prevents dead-method mistakes at compile time
     public Optional<Task> findById(TaskId id) {
+        // => findById: wraps the read operation with a span scoped to this task identity
         Span span = tracer.nextSpan().name("task-repository.findById").start();
         // => Separate span for each port method — granular tracing shows which operation is slow
         // => span name "task-repository.findById": searchable in Jaeger / Zipkin by operation name
@@ -1137,18 +1176,21 @@ public class TracedTaskRepository implements TaskRepository {
             // => delegate: the resilience decorator — may retry on SQLException before returning
         } catch (Exception ex) {
             // => catch (Exception ex): broad catch — covers both connectivity and query failures
-            span.error(ex);
             // => error: marks the span as failed — the trace viewer shows red for this span
+            span.error(ex);
             throw ex;
             // => Rethrow: propagate the exception after recording it in the span
         } finally {
+            // => finally: guaranteed execution — span.end() runs even on exception
             span.end();
             // => end(): always called — exports the span to the configured OTel exporter
         }
     }
 
     @Override
+    // => @Override: verifies findByOwnerId signature — all four port methods traced consistently
     public List<Task> findByOwnerId(String ownerId) {
+        // => findByOwnerId: spans the full list-read including any retry wait from the resilience layer
         Span span = tracer.nextSpan().name("task-repository.findByOwnerId").start();
         // => One span per port method: makes findByOwnerId independently visible in traces
         try (var ignored = tracer.withSpan(span)) {
@@ -1158,6 +1200,7 @@ public class TracedTaskRepository implements TaskRepository {
             return delegate.findByOwnerId(ownerId);
             // => Delegate returns List<Task> — span duration includes any retry wait time in the resilience layer
         } catch (Exception ex) {
+            // => catch (Exception ex): broad catch — covers any exception from the delegate or resilience layer
             span.error(ex);
             // => error(): records the exception type and message on the span attributes
             throw ex;
@@ -1169,7 +1212,9 @@ public class TracedTaskRepository implements TaskRepository {
     }
 
     @Override
+    // => @Override: verifies delete signature — compiler confirms the decorator covers the full port contract
     public void delete(TaskId id) {
+        // => delete: traces the full delete operation including TaskNotFoundException propagation
         Span span = tracer.nextSpan().name("task-repository.delete").start();
         // => delete span: records how long the delete operation takes — useful for capacity planning
         try (var ignored = tracer.withSpan(span)) {
@@ -1225,14 +1270,20 @@ Add Micrometer Tracing to `pom.xml`:
 <!-- Micrometer Tracing + OpenTelemetry bridge -->
 <!-- New dependency — intended layout, pom.xml exists at apps/organiclever-be/pom.xml -->
 <dependency>
-    <groupId>io.micrometer</groupId><!-- => io.micrometer: Micrometer project group — includes metrics and tracing -->
-    <artifactId>micrometer-tracing-bridge-otel</artifactId><!-- => OTel bridge: translates Micrometer Tracing to OTel spans -->
+    <!-- => first <dependency>: adds the Micrometer-to-OTel bridge that Spring Boot 4 uses for span export -->
+    <!-- => io.micrometer: Micrometer project group — includes metrics and tracing -->
+    <groupId>io.micrometer</groupId>
+    <!-- => OTel bridge: translates Micrometer Tracing to OTel spans -->
+    <artifactId>micrometer-tracing-bridge-otel</artifactId>
     <!-- => Version managed by spring-boot-starter-parent 4.0.6 BOM -->
     <!-- => Adds OTel span export support; requires opentelemetry-exporter-otlp for the backend endpoint -->
 </dependency>
 <dependency>
-    <groupId>io.opentelemetry</groupId><!-- => io.opentelemetry: OpenTelemetry project group — separate from Micrometer -->
-    <artifactId>opentelemetry-exporter-otlp</artifactId><!-- => OTLP exporter: sends spans to Collector, Jaeger, or Tempo -->
+    <!-- => second <dependency>: the OTLP exporter that sends spans to the configured backend -->
+    <!-- => io.opentelemetry: OpenTelemetry project group — separate from Micrometer -->
+    <groupId>io.opentelemetry</groupId>
+    <!-- => OTLP exporter: sends spans to Collector, Jaeger, or Tempo -->
+    <artifactId>opentelemetry-exporter-otlp</artifactId>
     <!-- => Configure the endpoint in application.properties: management.otlp.tracing.endpoint -->
 </dependency>
 ```
@@ -1375,6 +1426,8 @@ import java.util.UUID;
 @Service
 // => @Service: Spring registers this as a singleton bean — component scan discovers it
 public class TaskApplicationServiceImpl implements TaskApplicationService {
+    // => implements TaskApplicationService: the compiler verifies all three port methods are present
+    // => The @Configuration class wires this impl to the port interface — no caller imports this class
 
     private final TaskRepository taskRepository;
     // => Port interface: wired to the decorated adapter stack (traced → resilient → JDBC)
@@ -1383,6 +1436,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     public TaskApplicationServiceImpl(
             TaskRepository taskRepository,
+            // => TaskRepository: the port interface — Spring injects the decorated adapter stack at startup
             ApplicationEventPublisher eventPublisher) {
         // => Constructor injection: Spring injects both beans automatically — no @Autowired needed
         this.taskRepository = taskRepository;
@@ -1415,6 +1469,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     }
 
     @Override
+    // => @Override: compiler verifies findById signature matches TaskApplicationService
     public Optional<Task> findById(TaskId id) {
         // => findById: pure read — no transaction needed, no event needed
         return taskRepository.findById(id);
@@ -1425,7 +1480,9 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     @Transactional
     // => @Transactional: wraps markCompleted in a transaction — read + write are atomic
     public Task markCompleted(TaskId id) throws TaskNotFoundException {
+        // => markCompleted: a read-then-write command — the transaction prevents a concurrent completion race
         var task = taskRepository.findById(id)
+            // => findById: queries the port — the decorated adapter stack handles retries and tracing
             .orElseThrow(() -> new TaskNotFoundException(id));
         // => orElseThrow: absence is a domain error here — throws typed exception, not Optional.empty()
         // => TaskNotFoundException: the GlobalExceptionHandler maps this to HTTP 404
