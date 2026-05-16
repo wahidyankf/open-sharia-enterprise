@@ -328,7 +328,9 @@ selection and implementation of security and privacy controls related to records
 can support consistency and efficiency and ultimately strengthen the organization’s security and
 privacy posture.
 xii
-Table of Contents
+
+## Table of Contents
+
 CHAPTER ONE INTRODUCTION ...................................................................................................... 1
 1.1 PURPOSE AND APPLICABILITY ................................................................................................... 2
 1.2 TARGET AUDIENCE .................................................................................................................. 3
@@ -465,7 +467,9 @@ requirements and controls in a way that effectively bridges the aspirations with
 THE NATIONAL PRIVACY RESEARCH STRATEGY
 NATIONAL SCIENCE AND TECHNOLOGY COUNCIL, NETWORKING AND INFORMATION TECHNOLOGY RESEARCH AND DEVELOPMENT PROGRAM
 xvi
-Errata
+
+## Errata
+
 This table contains changes that have been incorporated into SP 800-53, Revision 5. Errata
 updates can include corrections, clarifications, or other minor changes in the publication that
 are either editorial or substantive in nature. Any potential updates for this document that are
