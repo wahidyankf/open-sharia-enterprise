@@ -2,6 +2,7 @@ module CraneCli.Commands.NestingCommands
 
 open System.Text.Json
 open System.Text.Json.Serialization
+open CraneCli.Adapters.PdfAdapter
 open CraneCli.Core.NestingChecker
 
 let private jsonOptions =
@@ -25,6 +26,12 @@ let infer (text: string) = runInfer text System.Console.Out
 
 [<System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage>]
 let check (pdfPath: string) (mdPath: string) =
-    let pdfText = System.IO.File.ReadAllText(pdfPath)
-    let mdText = System.IO.File.ReadAllText(mdPath)
-    runCheck pdfText mdText System.Console.Out
+    let adapter = RealPdfAdapter() :> IPdfAdapter
+
+    match adapter.SampleText(pdfPath, 999) with
+    | Ok pdfText ->
+        let mdText = System.IO.File.ReadAllText(mdPath)
+        runCheck pdfText mdText System.Console.Out
+    | Error msg ->
+        eprintfn "Error: %s" msg
+        1
