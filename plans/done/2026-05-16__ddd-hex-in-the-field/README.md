@@ -15,7 +15,22 @@
 **Running domains**:
 
 - FP: `apps/ose-app-be` (F# / Giraffe / Npgsql) — four bounded contexts: `regulatory-source`, `internal-policy`, `gap-analysis`, `ai-orchestration`.
-- OOP: `apps/organiclever-be` (Java 24 / Spring Boot 4) — minimal scaffold today (health controller only); heavy intended-layout mode for snippets.
+- OOP: `apps/organiclever-be` (Java 25 / Spring Boot 4.0.6) — minimal scaffold today (health controller only); heavy intended-layout mode for snippets.
+
+## Outcome
+
+- FP track: 26 guides (beginner 6 / intermediate 8 / advanced 8 / production 4). Exhaustive strict-mode density scan: all 77 code blocks within `[1.0, 2.5]`.
+- OOP track: 27 guides (beginner 7 / intermediate 8 / advanced 7 / production 5). Exhaustive strict-mode density scan: all 85 code blocks within `[1.0, 2.5]`.
+- Cross-links present in `architecture/overview.md`, `architecture/domain-driven-design-ddd/overview.md`, `architecture/hexagonal-architecture/overview.md`, plus auto-generated parent `_index.md`.
+- E2E navigation smoke at `specs/apps/ayokoding/behavior/web/gherkin/navigation/ddd-hex-in-the-field-routes.feature` with paired unit-side step impls.
+- Deployed to `https://ayokoding.com` via `prod-ayokoding-web` branch (commit `7830db02d`).
+- All 14 audit reports under `generated-reports/`.
+
+## Lessons recorded
+
+- ayokoding-web auto-regenerates `_index.md` files via `generate-indexes.ts` — cross-links must live in `overview.md` to survive future builds.
+- The in-the-field-checker's sampling pass missed density gaps that exhaustive per-block measurement caught. Future runs should request exhaustive density measurement explicitly when EXCELLENT certification is the goal.
+- XML annotation style matters: trailing inline `<!-- => ... -->` after an element doesn't count as a comment line; annotations must start the line.
 
 ## Context
 
