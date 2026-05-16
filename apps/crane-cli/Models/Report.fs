@@ -10,4 +10,8 @@ type SkipListEntry =
       [<JsonPropertyName("description")>]
       Description: string
       [<JsonPropertyName("key")>]
-      Key: string }
+      Key: string
+      [<JsonPropertyName("accepted")>]
+      Accepted: string
+      [<JsonPropertyName("reason")>]
+      Reason: string }
