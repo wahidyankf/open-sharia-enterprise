@@ -1,6 +1,7 @@
 ---
 title: "P2P Shared Architecture Domain — Locked Spec"
-status: in-progress
+status: done
+completed: 2026-05-17
 created: 2026-05-17
 owner: tigalakilaki12
 ---
