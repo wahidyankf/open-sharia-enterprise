@@ -69,6 +69,22 @@ The `docs-creating-by-example-tutorials` Skill provides complete By Example stan
 - **Progressive complexity** within themed groups
 - **Example grouping** (Basic Operations, Error Handling, Advanced Patterns, etc.)
 
+## Examples-by-Level Section (MANDATORY)
+
+Every `overview.md` MUST end with a `## Examples by Level` section listing every example as a deep link to the matching `### Example N:` heading on the corresponding level page. See the
+[Examples-by-Level Section rule in the By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/by-example.md#examples-by-level-section-mandatory)
+for the exact format, slug algorithm (`github-slugger`, matches `rehype-slug`),
+and worked snippet.
+
+When creating or updating a by-example tutorial, generate this section last:
+
+1. After all level pages (`beginner.md` / `intermediate.md` / `advanced.md`) are written with their `### Example N: Title` headings.
+2. Compute each anchor slug via `github-slugger` against the exact heading text.
+3. Emit one `### {Level} (Examples N–M)` subsection per level, with one bullet per example.
+4. Each bullet: `- [Example N: Title](/en/learn/.../<tutorial-base>/<level>#<slug>)`.
+
+A bullet whose link text and heading text are not character-for-character identical is a defect — it will silently land on the wrong anchor or 404.
+
 ## ayokoding-web Integration
 
 The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specific guidance:

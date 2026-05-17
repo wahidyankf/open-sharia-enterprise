@@ -196,6 +196,22 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 5. **Diagrams**: 30-50 total diagrams (approximately 35-60% of 75-85 examples), color-blind palette
 6. **Format**: Five-part structure: (1) Brief Explanation (2-3 sentences), (2) Mermaid Diagram (when appropriate), (3) Heavily Annotated Code, (4) Key Takeaway (1-2 sentences), (5) Why It Matters (50-100 words)
 7. **Frontmatter**: Complete and correct
+8. **Examples-by-Level section** (CRITICAL — see
+   [By-Example Convention §Examples-by-Level Section](../../conventions/tutorials/by-example.md#examples-by-level-section-mandatory)):
+   - `overview.md` MUST contain a `## Examples by Level` heading (exact text, exact level).
+   - Every `### Example N: Title` heading on every level page (`beginner.md`,
+     `intermediate.md`, `advanced.md`, and `production.md` if present) MUST appear as a
+     bullet in the matching per-level subheading block.
+   - Each bullet MUST be a markdown link whose text is the verbatim example
+     heading and whose href is `<level-page-url>#<slug>` — where `<slug>` is
+     produced by `github-slugger` against the verbatim heading text (same
+     algorithm as `rehype-slug`). See the
+     [Examples-by-Level Section rule](../../conventions/tutorials/by-example.md#examples-by-level-section-mandatory)
+     for the literal pattern and a worked snippet.
+   - No bullet may point to an anchor that does not exist on the target level page (the
+     link checker validates this).
+   - If any level-page heading changes, the corresponding overview bullet (link text AND
+     slug) MUST be regenerated.
 
 **Outputs**:
 

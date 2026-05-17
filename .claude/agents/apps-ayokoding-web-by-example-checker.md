@@ -238,6 +238,23 @@ Count Mermaid diagrams across all tutorial files:
 - Flag if total < 30 (insufficient visualization) or > 50 (over-diagrammed)
 - Verify color palette compliance (accessible colors only)
 
+### Step 5.7: Validate Examples-by-Level Section in Overview
+
+**CRITICAL validation**. See the
+[Examples-by-Level Section rule](../../repo-governance/conventions/tutorials/by-example.md#examples-by-level-section-mandatory)
+for the full standard.
+
+For each tutorial's `overview.md`:
+
+1. **Presence** — file MUST contain an `## Examples by Level` heading. Flag (CRITICAL) if absent.
+2. **Coverage** — every `### Example N: Title` heading on every level page (`beginner.md` / `intermediate.md` / `advanced.md` / `production.md`) MUST appear as exactly one bullet under that section. Flag (CRITICAL) any missing or extra example.
+3. **Verbatim text** — bullet link text MUST equal the heading text character-for-character. Flag (HIGH) any divergence (typos, case mismatch, paraphrasing).
+4. **Slug correctness** — anchor in each link MUST equal `github-slugger`'s slug of the same heading. Sanity-check at least one anchor per level by running `node -e "import('github-slugger').then(m => console.log(new m.default().slug('<heading>')))"`. Flag (HIGH) any slug that does not match.
+5. **Path correctness** — link path MUST be `/en/learn/...<tutorial-base>/<level>` (no trailing slash, level name lowercase). Flag (MEDIUM) any malformed path.
+6. **Subsection headings** — each level subsection MUST be `### {Beginner|Intermediate|Advanced|Production} (Examples N–M)` (en-dash, not hyphen). Flag (LOW) any deviation.
+
+If the link checker (`ayokoding-cli`) is wired to validate anchors, also flag any bullet pointing to a non-existent anchor (CRITICAL).
+
 ### Step 6: Finalize Report
 
 Update status, add summary, prioritize findings.

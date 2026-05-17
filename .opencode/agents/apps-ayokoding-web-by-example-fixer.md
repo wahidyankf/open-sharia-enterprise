@@ -95,11 +95,24 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 - Example grouping effectiveness (design choice)
 - Complexity progression appropriateness (context-dependent)
 
+**HIGH Confidence — Examples-by-Level section** (Apply automatically):
+
+- Missing `## Examples by Level` section in overview → regenerate from level pages and append.
+- Bullet text does not match heading text character-for-character → replace bullet text with current heading.
+- Anchor slug mismatch (any drift from `github-slugger` output) → recompute slug via `github-slugger` and replace.
+- Bullet pointing to a removed example, or an example missing a bullet → regenerate the entire section from current level-page headings (whole-section rewrite is safer than spot-edits when coverage is wrong).
+- Subsection heading does not use en-dash (`–`) in `(Examples N–M)` → replace hyphen with en-dash.
+
+When regenerating the section, recompute slugs with `github-slugger` against the live heading text — never hand-edit a slug. See the
+[Examples-by-Level Section rule](../../repo-governance/conventions/tutorials/by-example.md#examples-by-level-section-mandatory)
+for the canonical algorithm and worked snippet.
+
 **FALSE_POSITIVE** (Report to checker):
 
 - Checker miscounted examples
 - Checker misidentified structure
 - Checker incorrectly calculated ratio
+- Checker flagged a slug that actually matches `github-slugger` output (verify by running `node -e "import('github-slugger').then(m => console.log(new m.default().slug('<heading>')))"`)
 
 ## Convergence Safeguards
 
