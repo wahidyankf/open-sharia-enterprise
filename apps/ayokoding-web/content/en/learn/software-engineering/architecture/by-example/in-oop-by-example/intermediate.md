@@ -3,7 +3,7 @@ title: "Intermediate"
 weight: 10000002
 date: 2026-03-20T00:00:00+07:00
 draft: false
-description: "Intermediate software architecture examples covering hexagonal architecture, clean architecture, event-driven patterns, structural design patterns, and domain-driven design concepts (40-75% coverage)"
+description: "OOP variant — intermediate software architecture examples covering hexagonal architecture, clean architecture, event-driven patterns, structural design patterns, and domain-driven design concepts (40-75% coverage)"
 tags:
   [
     "software-architecture",
@@ -14,7 +14,10 @@ tags:
     "ddd",
     "hexagonal",
     "clean-architecture",
+    "oop",
   ]
+aliases:
+  - /en/learn/software-engineering/architecture/by-example/intermediate/
 ---
 
 Examples 29-57 cover intermediate software architecture concepts (40-75% coverage). These examples build on foundational patterns and introduce composite architectural styles, enterprise patterns, and domain-driven design building blocks. Each example is self-contained and uses Python or TypeScript.
@@ -172,14 +175,14 @@ interface OrderItem {
 // USE CASES LAYER — application business rules, depends only on entities
 // => Use case interface defines the input/output contract
 interface PlaceOrderUseCase {
-  execute(customerId: string, items: OrderItem[]): Promise<Order>;
+  execute(customerId: string, items: OrderItem[]): Promise;
   // => Promise because use cases may coordinate async work
 }
 
 // => Repository interface belongs to use cases layer (dependency inversion)
 // => Use case defines what it needs; infrastructure provides the implementation
 interface OrderRepository {
-  save(order: Order): Promise<void>; // => persistence abstraction
+  save(order: Order): Promise; // => persistence abstraction
 }
 
 // => Use case implementation — pure business orchestration, no HTTP/DB code
@@ -187,7 +190,7 @@ class PlaceOrderInteractor implements PlaceOrderUseCase {
   constructor(private readonly repo: OrderRepository) {}
   // => repo injected, satisfies dependency inversion
 
-  async execute(customerId: string, items: OrderItem[]): Promise<Order> {
+  async execute(customerId: string, items: OrderItem[]): Promise {
     const id = `ord-${Date.now()}`; // => generate order ID
     const order = new Order(id, items, customerId); // => create entity
     await this.repo.save(order); // => persist via repository port
@@ -201,7 +204,7 @@ class OrderController {
   constructor(private readonly useCase: PlaceOrderUseCase) {}
   // => depends on use case interface, not concrete class
 
-  async handleRequest(body: { customerId: string; items: OrderItem[] }): Promise<{ orderId: string; total: number }> {
+  async handleRequest(body: { customerId: string; items: OrderItem[] }): Promise {
     const order = await this.useCase.execute(body.customerId, body.items);
     // => invoke use case with domain-shaped input
     return { orderId: order.id, total: order.total };
@@ -213,7 +216,7 @@ class OrderController {
 class InMemoryOrderRepo implements OrderRepository {
   private store = new Map<string, Order>(); // => storage detail hidden from use cases
 
-  async save(order: Order): Promise<void> {
+  async save(order: Order): Promise {
     this.store.set(order.id, order); // => concrete persistence
   }
 }
@@ -348,14 +351,14 @@ type EventHandler<T> = (event: T) => void;
 // => generic handler type: receives event payload, returns void
 
 class EventBus<T> {
-  private handlers: EventHandler<T>[] = [];
+  private handlers: EventHandler[] = [];
   // => list grows as handlers subscribe; shrinks on unsubscribe
 
-  subscribe(handler: EventHandler<T>): void {
+  subscribe(handler: EventHandler): void {
     this.handlers.push(handler); // => add observer to list
   }
 
-  unsubscribe(handler: EventHandler<T>): void {
+  unsubscribe(handler: EventHandler): void {
     this.handlers = this.handlers.filter((h) => h !== handler);
     // => remove by reference equality; remaining handlers unaffected
   }
@@ -516,16 +519,16 @@ Event-driven architecture connects services through asynchronous messages on a m
 // => MESSAGE BROKER SIMULATION: in-memory topic-based pub/sub
 // => In production, replace with Kafka, RabbitMQ, or AWS SQS
 class MessageBroker {
-  private topics = new Map<string, Array<(message: unknown) => Promise<void>>>();
+  private topics = new Map<string, Array>();
   // => each topic holds a list of consumer callbacks
 
-  subscribe<T>(topic: string, consumer: (message: T) => Promise<void>): void {
+  subscribe<T>(topic: string, consumer: (message: T) => Promise): void {
     if (!this.topics.has(topic)) this.topics.set(topic, []);
-    this.topics.get(topic)!.push(consumer as (message: unknown) => Promise<void>);
+    this.topics.get(topic)!.push(consumer as (message: unknown) => Promise);
     // => consumer registered for this topic
   }
 
-  async publish<T>(topic: string, message: T): Promise<void> {
+  async publish<T>(topic: string, message: T): Promise {
     const consumers = this.topics.get(topic) ?? [];
     // => get all consumers; empty array if topic has no subscribers
     await Promise.all(consumers.map((consumer) => consumer(message)));
@@ -544,7 +547,7 @@ interface OrderShipped {
 class OrderService {
   constructor(private readonly broker: MessageBroker) {}
 
-  async shipOrder(orderId: string, trackingCode: string): Promise<void> {
+  async shipOrder(orderId: string, trackingCode: string): Promise {
     // simulate shipping logic here
     const event: OrderShipped = {
       orderId,
@@ -559,7 +562,7 @@ class OrderService {
 
 // => CONSUMER 1: notification service — listens independently
 class NotificationService {
-  async onOrderShipped(event: OrderShipped): Promise<void> {
+  async onOrderShipped(event: OrderShipped): Promise {
     console.log(`Notif: send tracking ${event.trackingCode} to customer for order ${event.orderId}`);
     // => in production: call email/SMS provider API
   }
@@ -567,7 +570,7 @@ class NotificationService {
 
 // => CONSUMER 2: warehouse service — listens independently
 class WarehouseService {
-  async onOrderShipped(event: OrderShipped): Promise<void> {
+  async onOrderShipped(event: OrderShipped): Promise {
     console.log(`Warehouse: update inventory for order ${event.orderId}`);
     // => in production: decrement stock counts in warehouse DB
   }
@@ -738,7 +741,7 @@ class BankTransferProcessor implements PaymentProcessor {
 // => FACTORY: knows how to create payment processors
 // => Caller never calls new StripeProcessor() directly — factory owns creation
 class PaymentProcessorFactory {
-  private static readonly registry: Record<string, () => PaymentProcessor> = {
+  private static readonly registry: Record = {
     stripe: () => new StripeProcessor(), // => factory function per type
     paypal: () => new PayPalProcessor(), // => factory function
     bank_transfer: () => new BankTransferProcessor(), // => factory function
@@ -893,7 +896,7 @@ class LegacyAnalyticsSDK {
 interface AnalyticsPort {
   recordPageView(page: string, user: { id: string; name: string }): void;
   // => our interface uses string IDs and a user object
-  recordEvent(event: { name: string; properties: Record<string, unknown> }): void;
+  recordEvent(event: { name: string; properties: Record }): void;
   // => our interface accepts a typed properties object, not stringified JSON
 }
 
@@ -910,7 +913,7 @@ class LegacyAnalyticsAdapter implements AnalyticsPort {
     // => our callers never know about the legacy integer ID format
   }
 
-  recordEvent(event: { name: string; properties: Record<string, unknown> }): void {
+  recordEvent(event: { name: string; properties: Record }): void {
     const legacyData = JSON.stringify(event.properties);
     // => TRANSLATE: our typed object → legacy stringified JSON
     this.sdk.trackEvent(event.name, legacyData);
@@ -2324,7 +2327,7 @@ class PluginManager {
   private routes = new Map<string, (req: unknown) => unknown>();
   // => routes registered by plugins
 
-  private eventHandlers = new Map<string, Array<(data: unknown) => void>>();
+  private eventHandlers = new Map<string, Array>();
   // => event handlers registered by plugins
 
   // => CORE API IMPLEMENTATION: what we expose to plugins
@@ -2877,8 +2880,8 @@ A Saga is a sequence of local transactions where each transaction publishes an e
 // => SAGA STEP: each step has a transaction and a compensating transaction
 interface SagaStep {
   name: string;
-  execute(): Promise<void>; // => forward: perform the action
-  compensate(): Promise<void>; // => backward: undo the action
+  execute(): Promise; // => forward: perform the action
+  compensate(): Promise; // => backward: undo the action
 }
 
 // => SAGA ORCHESTRATOR: executes steps in order, compensates on failure
@@ -2886,7 +2889,7 @@ class SagaOrchestrator {
   private executedSteps: SagaStep[] = [];
   // => tracks which steps completed so we know which to compensate
 
-  async execute(steps: SagaStep[]): Promise<void> {
+  async execute(steps: SagaStep[]): Promise {
     for (const step of steps) {
       try {
         console.log(`Saga: executing step — ${step.name}`);
@@ -2901,7 +2904,7 @@ class SagaOrchestrator {
     console.log("Saga: all steps completed successfully");
   }
 
-  private async compensate(): Promise<void> {
+  private async compensate(): Promise {
     console.log("Saga: starting compensation (rolling back completed steps)");
     // => compensate in reverse order (LIFO)
     for (const step of [...this.executedSteps].reverse()) {
@@ -2919,11 +2922,11 @@ class SagaOrchestrator {
 // => DOMAIN SERVICES: each owns one step of the saga
 const inventoryService = {
   reserved: false,
-  async reserve(productId: string, qty: number): Promise<void> {
+  async reserve(productId: string, qty: number): Promise {
     console.log(`  Inventory: reserving ${qty}x ${productId}`);
     this.reserved = true; // => mark as reserved
   },
-  async release(productId: string, qty: number): Promise<void> {
+  async release(productId: string, qty: number): Promise {
     console.log(`  Inventory: releasing ${qty}x ${productId} (compensation)`);
     this.reserved = false; // => undo reservation
   },
@@ -2931,23 +2934,23 @@ const inventoryService = {
 
 const paymentService = {
   authCode: "",
-  async charge(amount: number): Promise<void> {
+  async charge(amount: number): Promise {
     console.log(`  Payment: charging $${amount}`);
     this.authCode = `AUTH-${Date.now()}`; // => simulated authorization
   },
-  async refund(): Promise<void> {
+  async refund(): Promise {
     console.log(`  Payment: refunding auth ${this.authCode} (compensation)`);
     this.authCode = ""; // => undo charge
   },
 };
 
 const shippingService = {
-  async schedule(orderId: string): Promise<void> {
+  async schedule(orderId: string): Promise {
     // => simulate failure: shipping unavailable
     throw new Error("Shipping service unavailable");
     // => this triggers compensation of inventory + payment
   },
-  async cancel(orderId: string): Promise<void> {
+  async cancel(orderId: string): Promise {
     console.log(`  Shipping: cancelling order ${orderId} (compensation)`);
   },
 };

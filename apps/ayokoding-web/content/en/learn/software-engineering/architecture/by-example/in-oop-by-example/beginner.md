@@ -3,8 +3,10 @@ title: "Beginner"
 weight: 10000001
 date: 2026-03-20T00:00:00+07:00
 draft: false
-description: "Foundational software architecture examples with heavily annotated code covering core patterns, layering, and basic structural decisions"
-tags: ["software-architecture", "tutorial", "by-example", "beginner"]
+description: "OOP variant — foundational software architecture examples with heavily annotated code covering core patterns, layering, and basic structural decisions"
+tags: ["software-architecture", "tutorial", "by-example", "beginner", "oop"]
+aliases:
+  - /en/learn/software-engineering/architecture/by-example/beginner/
 ---
 
 This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using Python or TypeScript with self-contained, runnable code. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working code.
@@ -82,7 +84,7 @@ The Single Responsibility Principle (SRP) states that a class or module should h
 // => UserManager handles user data AND email sending AND password logic
 // => This class has THREE reasons to change: user schema, email templates, auth rules
 class UserManager {
-  private users: Map<number, { name: string; email: string }> = new Map();
+  private users: Map = new Map();
   // => users stores id → { name, email }
 
   addUser(id: number, name: string, email: string): void {
@@ -113,7 +115,7 @@ class UserManager {
 ```typescript
 // => RESPONSIBILITY 1: User data management only
 class UserRepository {
-  private users: Map<number, { name: string; email: string }> = new Map();
+  private users: Map = new Map();
 
   add(id: number, name: string, email: string): void {
     this.users.set(id, { name, email }); // => stores user record
@@ -236,7 +238,7 @@ The presentation layer should translate raw input into domain calls and translat
 
 ```typescript
 // => DATA LAYER — retrieves raw records
-const orderDb: Record<number, { id: number; total: number; status: string }> = {
+const orderDb: Record = {
   101: { id: 101, total: 299.99, status: "shipped" },
   102: { id: 102, total: 49.0, status: "pending" },
 };
@@ -1612,15 +1614,15 @@ Real repositories go beyond simple CRUD. They expose domain-meaningful query met
 interface OrderRepository {
   save(order: { id: number; customerId: number; total: number; status: string }): void;
   findById(id: number): { id: number; customerId: number; total: number; status: string } | null;
-  findByCustomerId(customerId: number): Array<{ id: number; customerId: number; total: number; status: string }>;
+  findByCustomerId(customerId: number): Array;
   // => named for business question: "which orders belong to this customer?"
-  findPendingAbove(threshold: number): Array<{ id: number; customerId: number; total: number; status: string }>;
+  findPendingAbove(threshold: number): Array;
   // => named for business question: "which pending orders exceed this threshold?"
 }
 
 // => IN-MEMORY IMPLEMENTATION — satisfies all query methods without a database
 class InMemoryOrderRepository implements OrderRepository {
-  private orders: Map<number, { id: number; customerId: number; total: number; status: string }> = new Map();
+  private orders: Map = new Map();
 
   save(order: { id: number; customerId: number; total: number; status: string }): void {
     this.orders.set(order.id, order); // => upsert by id
@@ -1750,11 +1752,11 @@ type Result<T> = { success: true; data: T } | { success: false; error: string };
 // => callers must handle both cases — no hidden exception paths
 
 // => DOMAIN
-const inventory: Record<string, number> = { Widget: 10, Gadget: 0 };
+const inventory: Record = { Widget: 10, Gadget: 0 };
 
 // => SERVICE with explicit Result return type
 class InventoryService {
-  reserve(item: string, quantity: number): Result<{ item: string; reserved: number }> {
+  reserve(item: string, quantity: number): Result {
     const stock = inventory[item];
 
     if (stock === undefined) {

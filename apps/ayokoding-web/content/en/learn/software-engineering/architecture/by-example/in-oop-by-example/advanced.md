@@ -3,8 +3,10 @@ title: "Advanced"
 weight: 10000003
 date: 2026-03-20T00:00:00+07:00
 draft: false
-description: "Advanced software architecture examples covering distributed systems, microservices patterns, resilience strategies, and expert-level architectural decisions"
-tags: ["software-architecture", "tutorial", "by-example", "advanced"]
+description: "OOP variant — advanced software architecture examples covering distributed systems, microservices patterns, resilience strategies, and expert-level architectural decisions"
+tags: ["software-architecture", "tutorial", "by-example", "advanced", "oop"]
+aliases:
+  - /en/learn/software-engineering/architecture/by-example/advanced/
 ---
 
 This section covers advanced software architecture patterns for distributed systems, microservices,
