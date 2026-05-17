@@ -414,7 +414,7 @@
 
 ### 7g: docs/explanation/ files
 
-- [x] **7.26** Update `docs/explanation/software-engineering/architecture/c4-architecture-model/ex-soen-ar-c4armo__nx-workspace-visualization.md`: update Hugo → Next.js for ayokoding-web
+- [x] **7.26** Update `docs/explanation/software-engineering/architecture/c4-model/ex-soen-ar-c4armo__nx-workspace-visualization.md`: update Hugo → Next.js for ayokoding-web
 - [x] **7.27** Update `docs/explanation/software-engineering/programming-languages/typescript/README.md`: update ayokoding-web reference
 - [x] **7.28** Scan remaining `docs/explanation/` files for `ayokoding-web-v2` references — update any found (most files reference `apps/ayokoding-web/content/` which stays correct)
 

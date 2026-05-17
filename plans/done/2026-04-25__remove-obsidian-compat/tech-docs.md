@@ -55,7 +55,7 @@ All of this gets deleted.
 | `ex__name.md`                | _(rare root-level explanation file)_      | `docs/explanation/`                                                                                             |
 | `ex-go-co-st__name.md`       | `ex-go-co-st__file-naming.md`             | `docs/explanation/repo-governance/conventions/structure/` _(historical paths; most now under repo-governance/)_ |
 | `ex-soen-prla-ty__name.md`   | `ex-soen-prla-ty__best-practices.md`      | `docs/explanation/software-engineering/programming-languages/typescript/`                                       |
-| `ex-soen-ar-c4armo__name.md` | `ex-soen-ar-c4armo__tooling-standards.md` | `docs/explanation/software-engineering/architecture/c4-architecture-model/`                                     |
+| `ex-soen-ar-c4armo__name.md` | `ex-soen-ar-c4armo__tooling-standards.md` | `docs/explanation/software-engineering/architecture/c4-model/`                                                  |
 
 **Rename rule**: split basename on the first `__`, discard the left side, keep the right side plus the extension.
 
@@ -67,30 +67,30 @@ The inventory expanded significantly after a repo-wide grep for prefix patterns,
 
 From the baseline `ripgrep -il obsidian` scan (filtering out `plans/done/*`, `.opencode/*`, `.gitignore`, `apps/oseplatform-web/content/updates/*`, and `docs/metadata/external-links-status.yaml`):
 
-| File                                                                                                               | Edit required                                                                        |
-| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| `docs/README.md`                                                                                                   | Remove "optimized for Obsidian" tip block                                            |
-| `docs/how-to/hoto__organize-work.md`                                                                               | Remove Obsidian references (file itself will be renamed to `organize-work.md`)       |
-| `docs/explanation/software-engineering/architecture/c4-architecture-model/ex-soen-ar-c4armo__tooling-standards.md` | Remove Obsidian references (file will be renamed)                                    |
-| `README.md` (root)                                                                                                 | Remove any Obsidian references (TBD — verify with ripgrep)                           |
-| `ROADMAP.md`                                                                                                       | Remove Obsidian references                                                           |
-| `repo-governance/conventions/README.md`                                                                            | Remove Obsidian mention in formatting subsection description                         |
-| `repo-governance/conventions/structure/file-naming.md`                                                             | **Rewrite entire file** (see §4)                                                     |
-| `repo-governance/conventions/formatting/linking.md`                                                                | Remove "ensures links work consistently across GitHub web, Obsidian" language        |
-| `repo-governance/conventions/formatting/diagrams.md`                                                               | Remove Obsidian platform mention                                                     |
-| `repo-governance/conventions/formatting/emoji.md`                                                                  | Remove Obsidian from "render consistency" list                                       |
-| `repo-governance/conventions/formatting/indentation.md`                                                            | Remove Obsidian references                                                           |
-| `repo-governance/conventions/formatting/nested-code-fences.md`                                                     | Remove Obsidian preview recommendation                                               |
-| `repo-governance/conventions/formatting/mathematical-notation.md`                                                  | Remove "Obsidian/GitHub dual compatibility" framing                                  |
-| `repo-governance/conventions/formatting/color-accessibility.md`                                                    | Remove Obsidian from cross-platform consistency notes                                |
-| `repo-governance/conventions/writing/conventions.md`                                                               | Remove "TAB indentation for Obsidian compatibility" checklist item                   |
-| `repo-governance/conventions/tutorials/general.md`                                                                 | Remove Obsidian references                                                           |
-| `repo-governance/conventions/hugo/shared.md`                                                                       | Remove Obsidian contrast notes (docs/ vs Hugo)                                       |
-| `repo-governance/development/agents/ai-agents.md`                                                                  | Remove wiki-link anti-pattern example and cross-platform Obsidian mention            |
-| `repo-governance/workflows/meta/workflow-identifier.md`                                                            | Remove Obsidian YAML-parser justification (keep the quoting rule, change the reason) |
-| `.claude/skills/docs-validating-links/SKILL.md`                                                                    | Remove wiki-link error class                                                         |
-| `.claude/agents/docs-maker.md`                                                                                     | Remove "do NOT use Obsidian-only wiki links" language                                |
-| `.claude/agents/docs-file-manager.md`                                                                              | Remove "No Obsidian wiki links" rule                                                 |
+| File                                                                                                  | Edit required                                                                        |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `docs/README.md`                                                                                      | Remove "optimized for Obsidian" tip block                                            |
+| `docs/how-to/hoto__organize-work.md`                                                                  | Remove Obsidian references (file itself will be renamed to `organize-work.md`)       |
+| `docs/explanation/software-engineering/architecture/c4-model/ex-soen-ar-c4armo__tooling-standards.md` | Remove Obsidian references (file will be renamed)                                    |
+| `README.md` (root)                                                                                    | Remove any Obsidian references (TBD — verify with ripgrep)                           |
+| `ROADMAP.md`                                                                                          | Remove Obsidian references                                                           |
+| `repo-governance/conventions/README.md`                                                               | Remove Obsidian mention in formatting subsection description                         |
+| `repo-governance/conventions/structure/file-naming.md`                                                | **Rewrite entire file** (see §4)                                                     |
+| `repo-governance/conventions/formatting/linking.md`                                                   | Remove "ensures links work consistently across GitHub web, Obsidian" language        |
+| `repo-governance/conventions/formatting/diagrams.md`                                                  | Remove Obsidian platform mention                                                     |
+| `repo-governance/conventions/formatting/emoji.md`                                                     | Remove Obsidian from "render consistency" list                                       |
+| `repo-governance/conventions/formatting/indentation.md`                                               | Remove Obsidian references                                                           |
+| `repo-governance/conventions/formatting/nested-code-fences.md`                                        | Remove Obsidian preview recommendation                                               |
+| `repo-governance/conventions/formatting/mathematical-notation.md`                                     | Remove "Obsidian/GitHub dual compatibility" framing                                  |
+| `repo-governance/conventions/formatting/color-accessibility.md`                                       | Remove Obsidian from cross-platform consistency notes                                |
+| `repo-governance/conventions/writing/conventions.md`                                                  | Remove "TAB indentation for Obsidian compatibility" checklist item                   |
+| `repo-governance/conventions/tutorials/general.md`                                                    | Remove Obsidian references                                                           |
+| `repo-governance/conventions/hugo/shared.md`                                                          | Remove Obsidian contrast notes (docs/ vs Hugo)                                       |
+| `repo-governance/development/agents/ai-agents.md`                                                     | Remove wiki-link anti-pattern example and cross-platform Obsidian mention            |
+| `repo-governance/workflows/meta/workflow-identifier.md`                                               | Remove Obsidian YAML-parser justification (keep the quoting rule, change the reason) |
+| `.claude/skills/docs-validating-links/SKILL.md`                                                       | Remove wiki-link error class                                                         |
+| `.claude/agents/docs-maker.md`                                                                        | Remove "do NOT use Obsidian-only wiki links" language                                |
+| `.claude/agents/docs-file-manager.md`                                                                 | Remove "No Obsidian wiki links" rule                                                 |
 
 #### 1.3.b Prefix-scheme references (no Obsidian word, but mention prefix encoding)
 

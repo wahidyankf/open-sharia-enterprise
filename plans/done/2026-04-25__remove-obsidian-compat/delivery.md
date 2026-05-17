@@ -195,7 +195,7 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 - [x] `docs/README.md` — remove "optimized for Obsidian" tip block; confirm the rest of the file still reads cleanly
 - [x] `docs/how-to/organize-work.md` (renamed from `hoto__organize-work.md` in Phase 4) — remove Obsidian references
-- [x] `docs/explanation/software-engineering/architecture/c4-architecture-model/tooling-standards.md` (renamed) — remove Obsidian references
+- [x] `docs/explanation/software-engineering/architecture/c4-model/tooling-standards.md` (renamed) — remove Obsidian references
 - [x] `README.md` (repo root) — confirm/remove any Obsidian references (TBD from Phase 1 inventory)
 - [x] `ROADMAP.md` — remove Obsidian references
 - [x] `repo-governance/conventions/README.md` — remove Obsidian mention in the formatting subsection description

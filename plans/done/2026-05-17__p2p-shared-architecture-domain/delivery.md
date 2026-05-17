@@ -26,7 +26,7 @@ owner: tigalakilaki12
 
 ## Phase C: C4 + FSM (2 parallel subagents)
 
-- [x] Rewrite `c4-architecture-model/by-example/{overview,beginner,intermediate,advanced}.md` modeling `procurement-platform-be`
+- [x] Rewrite `c4-model/by-example/{overview,beginner,intermediate,advanced}.md` modeling `procurement-platform-be`
 - [x] Rewrite `finite-state-machine-fsm/by-example/{overview,beginner,intermediate,advanced}.md` using `PurchaseOrder` + `Invoice` + `Supplier` state machines
 
 ## Phase D: Validate

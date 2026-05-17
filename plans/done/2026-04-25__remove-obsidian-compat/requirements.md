@@ -63,7 +63,7 @@ Feature: Docs files use GitHub-compatible kebab-case naming
     Then every file in docs/metadata/ has the same name as before
 
   Scenario: Git history is preserved for renamed files
-    Given a sampled file like docs/explanation/software-engineering/architecture/c4-architecture-model/tooling-standards.md
+    Given a sampled file like docs/explanation/software-engineering/architecture/c4-model/tooling-standards.md
     When I run "git log --follow" on the new path
     Then commits from before the rename appear in the log
 

@@ -36,7 +36,7 @@ Remove all Obsidian-specific artifacts and conventions from the repository. Conc
 ### 2. Rename docs/ files to plain kebab-case
 
 - Drop the `[prefix]__` segment from all `docs/` filenames.
-- Example: `docs/explanation/software-engineering/architecture/c4-architecture-model/ex-soen-ar-c4armo__tooling-standards.md` → `docs/explanation/software-engineering/architecture/c4-architecture-model/tooling-standards.md`.
+- Example: `docs/explanation/software-engineering/architecture/c4-model/ex-soen-ar-c4armo__tooling-standards.md` → `docs/explanation/software-engineering/architecture/c4-model/tooling-standards.md`.
 - Preserve `README.md` files (already exempt).
 - Preserve `docs/metadata/` (already exempt).
 - **Collision handling**: Audit for cases where stripping the prefix creates a name conflict inside the same directory. Plan expects ≤5 such collisions given the current structure, resolved by descriptive suffixes (no prefix reintroduction).

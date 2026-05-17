@@ -16,7 +16,7 @@ running, dogfooded domain rather than yet another Wlaschin order-taking recap.
   cannot answer: "how do I take a `RegulatorySource` aggregate, expose a create
   endpoint, persist via Npgsql, publish a domain event, and integration-test the
   whole hex boundary?" [Judgment call — based on existing tutorial structure
-  reviewed at `apps/ayokoding-web/content/en/learn/software-engineering/architecture/`]
+  reviewed at `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/`]
 - Real wiring is touched only sparsely in advanced sections — not enough density
   for a contributor to copy-paste-adapt for `apps/ose-app-be` work [Unverified —
   recheck during authoring].

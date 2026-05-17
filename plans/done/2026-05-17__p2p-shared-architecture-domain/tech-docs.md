@@ -178,7 +178,7 @@ Primary (driving) adapters:
 
 ---
 
-## C4 levels (for `c4-architecture-model/by-example`)
+## C4 levels (for `c4-model/by-example`)
 
 **System Context (Level 1)** — Procurement Platform sits between:
 
@@ -223,9 +223,9 @@ To prevent every tutorial from copying every value object, here is the canonical
 | `hexagonal-architecture/{fp,oop}-by-example/beginner`          | purchasing                                 | PurchaseOrder (minimal)                                                             | PurchaseOrderRepository, Clock                                                  |
 | `hexagonal-architecture/{fp,oop}-by-example/intermediate`      | purchasing, supplier                       | PurchaseOrder + Supplier                                                            | PurchaseOrderRepository, SupplierRepository, EventPublisher, ApprovalRouterPort |
 | `hexagonal-architecture/{fp,oop}-by-example/advanced`          | purchasing, receiving, invoicing, payments | All aggregates above                                                                | All ports above + BankingPort + SupplierNotifierPort                            |
-| `c4-architecture-model/by-example/beginner`                    | n/a                                        | n/a — system context level only                                                     | n/a                                                                             |
-| `c4-architecture-model/by-example/intermediate`                | purchasing                                 | n/a — containers + components                                                       | n/a                                                                             |
-| `c4-architecture-model/by-example/advanced`                    | purchasing, receiving, invoicing           | n/a — full C4 + dynamic diagrams                                                    | n/a                                                                             |
+| `c4-model/by-example/beginner`                                 | n/a                                        | n/a — system context level only                                                     | n/a                                                                             |
+| `c4-model/by-example/intermediate`                             | purchasing                                 | n/a — containers + components                                                       | n/a                                                                             |
+| `c4-model/by-example/advanced`                                 | purchasing, receiving, invoicing           | n/a — full C4 + dynamic diagrams                                                    | n/a                                                                             |
 | `finite-state-machine-fsm/by-example/beginner`                 | purchasing                                 | PurchaseOrder state machine (simple transitions)                                    | n/a                                                                             |
 | `finite-state-machine-fsm/by-example/intermediate`             | purchasing, invoicing                      | PurchaseOrder + Invoice state machines, guards                                      | n/a                                                                             |
 | `finite-state-machine-fsm/by-example/advanced`                 | purchasing, supplier, invoicing, payments  | Hierarchical/parallel states, history states, supplier lifecycle                    | n/a                                                                             |
@@ -271,4 +271,4 @@ Every rewritten file MUST contain zero hits for:
 - All 8 pattern-specific architecture tutorials reference the procurement-platform domain with names/states/events/ports exactly matching this spec.
 - `architecture/by-example` (generic principles catalog) is INTENTIONALLY untouched — it teaches SRP/separation/etc. against generic Alice/discount examples.
 - Build green: `nx run ayokoding-web:test:quick` passes, link-check 0 broken, coverage ≥ 82%.
-- Live at https://www.ayokoding.com/en/learn/software-engineering/architecture/* with new content.
+- Live at https://www.ayokoding.com/en/learn/software-engineering/software-architecture/* with new content.

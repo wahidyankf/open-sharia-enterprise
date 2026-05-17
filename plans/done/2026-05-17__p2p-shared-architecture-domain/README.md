@@ -24,7 +24,7 @@ Generic `architecture/by-example` (SRP/separation principles catalog) was intent
 | `domain-driven-design-ddd/in-oop-by-example` | Generic e-shop                      | P2P procurement (75 examples) |
 | `hexagonal-architecture/in-fp-by-example`    | Generic                             | P2P procurement (75 examples) |
 | `hexagonal-architecture/in-oop-by-example`   | Generic                             | P2P procurement (75 examples) |
-| `c4-architecture-model/by-example`           | Mixed system examples               | P2P procurement (85 examples) |
+| `c4-model/by-example`                        | Mixed system examples               | P2P procurement (85 examples) |
 | `finite-state-machine-fsm/by-example`        | Generic state-machine examples      | P2P procurement (75 examples) |
 | `ddd-hexagonal-in-practice/fp-in-the-field`  | Conference Talk Submission Platform | P2P procurement (27 guides)   |
 | `ddd-hexagonal-in-practice/oop-in-the-field` | Conference Talk Submission Platform | P2P procurement (27 guides)   |

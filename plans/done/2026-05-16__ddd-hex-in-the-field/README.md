@@ -9,8 +9,8 @@
 **Scope expanded 2026-05-16**: added OOP track parallel to FP track. User directive: "make sure we have both oop and fp version."
 **Target tutorial paths**:
 
-- FP: `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/`
-- OOP: `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/`
+- FP: `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/`
+- OOP: `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/oop-in-the-field/`
 
 **Running domains**:
 
@@ -35,7 +35,7 @@
 ## Context
 
 The repo already ships four `by-example` tutorials at
-`apps/ayokoding-web/content/en/learn/software-engineering/architecture/` [Repo-grounded]:
+`apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/` [Repo-grounded]:
 
 | Tutorial                                     | Examples (claimed by user) | Stack                                           |
 | -------------------------------------------- | -------------------------- | ----------------------------------------------- |
@@ -61,7 +61,7 @@ running, dogfooded domain rather than recapping Wlaschin's order-taking story.
 **In scope**:
 
 - New in-the-field tutorial at
-  `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/`.
+  `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/`.
 - 20–40 production-grade guides per `docs-creating-in-the-field-tutorials`
   skill (1.0–2.25 annotation density, five-part guide structure, standard library
   first principle).

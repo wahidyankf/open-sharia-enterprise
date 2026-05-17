@@ -43,26 +43,26 @@ authored in.
 ## Phase 1 — Scaffold the Tutorial Trail
 
 - [x] Create directory:
-      `mkdir -p apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field`.
+      `mkdir -p apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field`.
       Verify: directory exists.
   - _Suggested executor: shell only — no subagent needed._
 - [x] Create
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/_index.md`
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/_index.md`
       modelled on the sibling
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/_index.md`.
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/_index.md`.
       Frontmatter: `title`, `weight`, short trail description naming the two
       planned tracks (`fp-in-the-field`, future `oop-in-the-field`).
-      Verify: `npm run lint:md -- apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/_index.md`
+      Verify: `npm run lint:md -- apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/_index.md`
       exits 0.
   - _Suggested executor: `apps-ayokoding-web-in-the-field-maker`._
 - [x] Create
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/_index.md`
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/_index.md`
       modelled on the sibling
       `domain-driven-design-ddd/in-fp-by-example/_index.md`.
       Verify: `npm run lint:md -- <path>` exits 0.
   - _Suggested executor: `apps-ayokoding-web-in-the-field-maker`._
 - [x] Create
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview.md`.
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview.md`.
       MUST contain a `## Prerequisites` H2 section naming both
       `domain-driven-design-ddd/in-fp-by-example` and
       `hexagonal-architecture/in-fp-by-example` as required reading and stating the
@@ -76,13 +76,13 @@ authored in.
       `beginner.md`, `intermediate.md`, `advanced.md`, `production.md` in the new
       trail directory, each with frontmatter (`title`, `weight`) and a single
       `## Guides` H2 placeholder. Verify: `ls
-apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/`
+apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/`
       shows all six files (`_index.md`, `overview.md`, `beginner.md`,
       `intermediate.md`, `advanced.md`, `production.md`).
   - _Suggested executor: `apps-ayokoding-web-in-the-field-maker`._
 - [x] Run `npm run lint:md`. Verify: exits 0 across the whole repo.
 - [x] Commit scaffolding:
-      `git add apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice plans/in-progress/ddd-hex-in-the-field && git commit -m "docs(ayokoding-web): scaffold ddd-hexagonal-in-practice/fp-in-the-field trail"`.
+      `git add apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice plans/in-progress/ddd-hex-in-the-field && git commit -m "docs(ayokoding-web): scaffold ddd-hexagonal-in-practice/fp-in-the-field trail"`.
 
 ## Phase 2 — Beginner Guides
 
@@ -162,7 +162,7 @@ apps/ose-app-be/src` yields zero hits, include an Out-of-scope note
 - [x] Verify total guide count is between 20 and 40 inclusive via
       `grep -c "^## Guide [0-9]" beginner.md intermediate.md advanced.md production.md`
       summed (under
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/`).
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/`).
       Acceptance: `20 <= total <= 40`.
 - [x] Invoke `apps-ayokoding-web-in-the-field-checker`; fix via
       `apps-ayokoding-web-in-the-field-fixer`. Loop until two consecutive
@@ -177,44 +177,44 @@ apps/ose-app-be/src` yields zero hits, include an Out-of-scope note
 Update the six files enumerated in tech-docs.md §Cross-Linking Plan.
 
 <!-- Link text pattern per tech-docs.md §Cross-Linking Plan (use verbatim on every edit below):
-Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)
+Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)
 -->
 
 - [x] Edit
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/_index.md`:
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/_index.md`:
       add a navigation entry with the canonical link text:
-      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
-      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/architecture/_index.md`
+      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
+      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/_index.md`
       returns ≥1 hit.
 - [x] Edit
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/overview.md`:
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/overview.md`:
       add a "Production wiring" section with the canonical link text:
-      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
-      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/architecture/overview.md`
+      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
+      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/overview.md`
       returns ≥1 hit.
 - [x] Edit
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/_index.md`:
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/_index.md`:
       add a "Next: production wiring" entry with the canonical link text:
-      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
-      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/_index.md`
+      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
+      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/_index.md`
       returns ≥1 hit.
 - [x] Edit
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md`:
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview.md`:
       add a closing link using the canonical link text:
-      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
-      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md`
+      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
+      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview.md`
       returns ≥1 hit.
 - [x] Edit
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/_index.md`:
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/_index.md`:
       add a "Next: production wiring" entry with the canonical link text:
-      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
-      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/_index.md`
+      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
+      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/_index.md`
       returns ≥1 hit.
 - [x] Edit
-      `apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/overview.md`:
+      `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md`:
       add a closing link using the canonical link text:
-      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
-      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/overview.md`
+      `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
+      Verify: `grep -n "ddd-hexagonal-in-practice" apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md`
       returns ≥1 hit.
 - [x] Run `nx run ayokoding-web:test:quick` to exercise the link validator.
       Verify exits 0. Fix any reported broken links including preexisting ones
@@ -228,7 +228,7 @@ Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field]
 
 - [x] Start dev server: `nx dev ayokoding-web` in a background terminal.
 - [x] Use `browser_navigate` to visit
-      `http://localhost:3101/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview`.
+      `http://localhost:3101/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview`.
 - [x] Use `browser_snapshot` to confirm the `h1` text contains "DDD + Hexagonal
       in Practice" or close equivalent. Acceptance: snapshot includes the H1.
 - [x] Use `browser_console_messages`: zero JS errors.

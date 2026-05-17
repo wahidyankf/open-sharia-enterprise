@@ -203,7 +203,7 @@ pre-push gate use identical thresholds.
 ### Batch 9 — Architecture / C4 diagrams
 
 - [x] Identify files: `grep "^✗" /tmp/mermaid-post-phase0.txt | grep -i "architecture\|c4"`
-<!-- Date: 2026-04-25 | Status: done | Notes: 10 files: c4-architecture-model/* + system-architecture/*. -->
+<!-- Date: 2026-04-25 | Status: done | Notes: 10 files: c4-model/* + system-architecture/*. -->
 - [x] Fix each file (complex diagrams — use splitting strategy; preserve all relationships)
 <!-- Date: 2026-04-25 | Status: done | Files Changed: architecture/*.md, system-architecture/*.md | Notes: S0, S2, S4. -->
 - [x] Verify zero errors for batch files

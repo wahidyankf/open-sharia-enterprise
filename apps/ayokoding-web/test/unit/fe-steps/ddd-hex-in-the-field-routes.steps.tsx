@@ -17,7 +17,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("F# in-the-field tutorial route is reachable", ({ When, Then, And }) => {
     When(
-      'a visitor navigates to "/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field"',
+      'a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field"',
       () => {
         expect(true).toBe(true);
       },
@@ -27,17 +27,14 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    And(
-      'the page should contain a heading with text "DDD + Hexagonal in Practice — F# in the Field"',
-      () => {
-        expect(true).toBe(true);
-      },
-    );
+    And('the page should contain a heading with text "DDD + Hexagonal in Practice — F# in the Field"', () => {
+      expect(true).toBe(true);
+    });
   });
 
   Scenario("Java in-the-field tutorial route is reachable", ({ When, Then, And }) => {
     When(
-      'a visitor navigates to "/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field"',
+      'a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/oop-in-the-field"',
       () => {
         expect(true).toBe(true);
       },
@@ -47,11 +44,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    And(
-      'the page should contain a heading with text "DDD + Hexagonal in Practice — Java in the Field"',
-      () => {
-        expect(true).toBe(true);
-      },
-    );
+    And('the page should contain a heading with text "DDD + Hexagonal in Practice — Java in the Field"', () => {
+      expect(true).toBe(true);
+    });
   });
 });

@@ -3,7 +3,7 @@
 ## Product Overview
 
 A new in-the-field tutorial under
-`apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/`
+`apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/`
 that teaches production wiring of DDD aggregates through a hexagonal
 F# / Giraffe / Npgsql codebase. Audience: contributors who have already
 completed both `domain-driven-design-ddd/in-fp-by-example` and
@@ -80,7 +80,7 @@ wants the dogfooded mental model.
 Scenario: Tutorial directory scaffolded under en/ architecture content
   Given the ose-public repo at HEAD of the worktree branch
   When the plan execution completes Phase 1
-  Then the directory "apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/" exists
+  Then the directory "apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/" exists
   And it contains "_index.md", "overview.md", "beginner.md", "intermediate.md", "advanced.md", "production.md"
   And the parent directory "ddd-hexagonal-in-practice/" contains an "_index.md" describing the trail
   And every file passes "npm run lint:md"
@@ -159,12 +159,12 @@ Scenario: Cross-cutting wiring concerns are each covered by at least one guide
 Scenario: Existing DDD-FP and Hex-FP tutorials surface the new in-the-field trail
   Given the existing files:
     | path                                                                                                            |
-    | apps/ayokoding-web/content/en/learn/software-engineering/architecture/_index.md                                  |
-    | apps/ayokoding-web/content/en/learn/software-engineering/architecture/overview.md                                |
-    | apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/_index.md         |
-    | apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md       |
-    | apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/_index.md            |
-    | apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/overview.md          |
+    | apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/_index.md                                  |
+    | apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/overview.md                                |
+    | apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/_index.md         |
+    | apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview.md       |
+    | apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/_index.md            |
+    | apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md          |
   When Phase 5 completes
   Then each of those six files contains at least one link pointing at the new "ddd-hexagonal-in-practice/fp-in-the-field/" trail
   And the architecture root _index.md surfaces the new trail in its navigation

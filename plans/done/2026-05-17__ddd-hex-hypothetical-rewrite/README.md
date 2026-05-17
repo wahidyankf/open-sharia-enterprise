@@ -10,7 +10,7 @@ owner: tigalakilaki12
 
 ## Problem
 
-The `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/` tutorial (two tracks, ~10k lines, 27 guides per track) was grounded against two real codebases — `apps/ose-app-be` (F#/Giraffe/Npgsql) and `apps/organiclever-be` (Java/Spring Boot 4) — via a mirror-mode / intended-layout / illustrative-mode dogfooding contract. The real codebases drift; every drift made the tutorial wrong. The tutorial then taught "how the pieces connect in production", which is exactly the kind of content that ages worst when wired to a moving codebase.
+The `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/` tutorial (two tracks, ~10k lines, 27 guides per track) was grounded against two real codebases — `apps/ose-app-be` (F#/Giraffe/Npgsql) and `apps/organiclever-be` (Java/Spring Boot 4) — via a mirror-mode / intended-layout / illustrative-mode dogfooding contract. The real codebases drift; every drift made the tutorial wrong. The tutorial then taught "how the pieces connect in production", which is exactly the kind of content that ages worst when wired to a moving codebase.
 
 ## Outcome
 

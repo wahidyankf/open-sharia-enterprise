@@ -5,7 +5,7 @@
 The new trail lands here (paths relative to ose-public repo root):
 
 ```text
-apps/ayokoding-web/content/en/learn/software-engineering/architecture/
+apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/
 └── ddd-hexagonal-in-practice/
     ├── _index.md                       # Trail-level index
     └── fp-in-the-field/
@@ -19,7 +19,7 @@ apps/ayokoding-web/content/en/learn/software-engineering/architecture/
 ```
 
 Sibling pattern reference: existing
-`apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/`
+`apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/`
 already ships `_index.md`, `overview.md`, `beginner.md`, `intermediate.md`,
 `advanced.md` [Repo-grounded]. The new trail adds a `production.md` tier to
 hold the deployment / observability / failure-mode guides that have no
@@ -138,16 +138,16 @@ Blue `#0173B2`, Orange `#DE8F05`, Teal `#029E73`, Purple `#CC78BC`, Brown `#CA91
 
 Six files receive new links to the new trail:
 
-- `apps/ayokoding-web/content/en/learn/software-engineering/architecture/_index.md`
-- `apps/ayokoding-web/content/en/learn/software-engineering/architecture/overview.md`
-- `apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/_index.md`
-- `apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md`
-- `apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/_index.md`
-- `apps/ayokoding-web/content/en/learn/software-engineering/architecture/hexagonal-architecture/overview.md`
+- `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/_index.md`
+- `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/overview.md`
+- `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/_index.md`
+- `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview.md`
+- `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/_index.md`
+- `apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md`
 
 [All six verified to exist via Bash 2026-05-16, Repo-grounded.]
 
-Link text pattern: `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
+Link text pattern: `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
 
 ## Test Strategy
 
@@ -155,7 +155,7 @@ Tutorial content itself is not TDD — the deliverable is Markdown. TDD-shaped
 executable work in this plan:
 
 - **E2E navigation smoke** (`apps/ayokoding-web-fe-e2e/`): Red — add failing
-  spec that navigates to `/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview`,
+  spec that navigates to `/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview`,
   expects `h1` containing "DDD + Hexagonal in Practice". Green — Phase 1
   scaffolding makes the route exist. Refactor — share the smoke pattern with
   the sibling architecture tutorials if useful.
@@ -173,7 +173,7 @@ via `Read` during Phase 2 authoring before citing version numbers].
 
 ## Rollback
 
-Pure additive change. Rollback is `git rm -r apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/`
+Pure additive change. Rollback is `git rm -r apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/`
 plus reverting the six cross-link edits plus removing the new
 `apps/ayokoding-web-fe-e2e/` spec. No data migration, no schema change, no
 runtime dependency.

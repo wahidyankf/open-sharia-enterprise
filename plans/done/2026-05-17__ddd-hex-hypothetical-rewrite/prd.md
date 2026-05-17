@@ -13,7 +13,7 @@ date: 2026-05-17
 Feature: Tutorial decoupled from real OSE codebases
 
   Scenario: No links to apps/ose-app-be or apps/organiclever-be
-    Given the rewritten tutorial files under apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/
+    Given the rewritten tutorial files under apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/
     When I grep for "ose-app-be" or "organiclever-be"
     Then I find zero matches in any tutorial file (12 markdown files)
     And I find zero matches in the frontmatter tags array
