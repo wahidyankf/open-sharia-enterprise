@@ -1,6 +1,6 @@
 ---
 title: "Hexagonal Architecture"
-weight: 10000002
+weight: 10000004
 date: 2026-05-15T00:00:00+07:00
 draft: false
 description: "Learn Hexagonal Architecture (Ports and Adapters) through annotated code examples — domain isolation, port interfaces, adapter implementations, and testable system design"

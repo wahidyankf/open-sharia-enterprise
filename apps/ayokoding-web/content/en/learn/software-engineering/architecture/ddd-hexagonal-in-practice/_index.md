@@ -1,6 +1,6 @@
 ---
 title: "DDD + Hexagonal in Practice"
-weight: 10000003
+weight: 10000005
 date: 2026-05-16T00:00:00+07:00
 draft: false
 description: "Production wiring guides that combine Domain-Driven Design and Hexagonal Architecture — two tracks: fp-in-the-field (F# / Giraffe / Npgsql) and oop-in-the-field (Java / Spring Boot 4)"
