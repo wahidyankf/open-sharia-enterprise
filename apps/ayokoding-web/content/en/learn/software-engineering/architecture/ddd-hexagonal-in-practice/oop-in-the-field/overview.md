@@ -15,8 +15,8 @@ Every guide in this series traces a single wiring seam: how a Spring `@RestContr
 
 **Both of the following tutorials are required reading before this one:**
 
-- [Domain-Driven Design — OOP by Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/overview) — teaches DDD tactical patterns (aggregates, value objects, domain events, factories, repositories) using Java, Kotlin, and C# examples.
-- [Hexagonal Architecture — OOP by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/overview) — teaches ports-and-adapters structure (primary adapters, output port interfaces, adapter swapping, integration test seams) in Java and related OOP languages.
+- [Domain-Driven Design — OOP by Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-oop-by-example/overview) — teaches DDD tactical patterns (aggregates, value objects, domain events, factories, repositories) using Java, Kotlin, and C# examples.
+- [Hexagonal Architecture — OOP by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/overview) — teaches ports-and-adapters structure (primary adapters, output port interfaces, adapter swapping, integration test seams) in Java and related OOP languages.
 
 **This tutorial does NOT re-teach DDD or hexagonal fundamentals.** Terms like _aggregate_, _port_, _adapter_, _bounded context_, and _repository pattern_ are used without definition. If any of those feel unfamiliar, complete the prerequisite tracks first. The guides here are about wiring — how the pieces connect in production — not about what the pieces are.
 
@@ -68,7 +68,7 @@ Every code block in this tutorial is **production-grade hypothetical Java**. Tha
 - **Hypothetical**: no link to a real file. The snippets describe the wiring shape for the procurement platform. The shape is real; the specific file at any given commit of any real service is not the point.
 - **Cross-guide consistent**: a port interface defined in Guide 5 keeps the same method signature in Guide 12. A package layout introduced in Guide 2 stays consistent through Guide 22.
 
-If you want to see real Java / Spring Boot codebases that use these patterns, look at any of the Java-track examples in the [Hexagonal Architecture — OOP by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/overview) prerequisite.
+If you want to see real Java / Spring Boot codebases that use these patterns, look at any of the Java-track examples in the [Hexagonal Architecture — OOP by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/overview) prerequisite.
 
 ## Guide Numbering
 

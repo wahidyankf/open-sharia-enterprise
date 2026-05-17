@@ -6,8 +6,8 @@ A new in-the-field tutorial under
 `apps/ayokoding-web/content/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/`
 that teaches production wiring of DDD aggregates through a hexagonal
 F# / Giraffe / Npgsql codebase. Audience: contributors who have already
-completed both `domain-driven-design-ddd/fp-by-example` and
-`hexagonal-architecture/fp-by-example`. Running domain: `apps/ose-app-be`.
+completed both `domain-driven-design-ddd/in-fp-by-example` and
+`hexagonal-architecture/in-fp-by-example`. Running domain: `apps/ose-app-be`.
 
 ## Personas
 
@@ -60,8 +60,8 @@ wants the dogfooded mental model.
 
 ### US-4 — Cross-tutorial discoverability
 
-> **As** a reader on `domain-driven-design-ddd/fp-by-example` or
-> `hexagonal-architecture/fp-by-example`,
+> **As** a reader on `domain-driven-design-ddd/in-fp-by-example` or
+> `hexagonal-architecture/in-fp-by-example`,
 > **I want** a clear next-step link to the in-the-field tutorial,
 > **so that** I do not miss the production wiring track.
 
@@ -93,7 +93,7 @@ Scenario: overview.md declares the by-example prerequisite verbatim
   Given the file "ddd-hexagonal-in-practice/fp-in-the-field/overview.md"
   When apps-ayokoding-web-in-the-field-checker runs
   Then overview.md contains an explicit Prerequisites section
-  And the section names both "domain-driven-design-ddd/fp-by-example" and "hexagonal-architecture/fp-by-example" as required reading
+  And the section names both "domain-driven-design-ddd/in-fp-by-example" and "hexagonal-architecture/in-fp-by-example" as required reading
   And the section states the tutorial does NOT re-teach DDD or hex fundamentals
   And no guide body re-explains aggregate, port, adapter, bounded context, or repository pattern from scratch
   And the apps-ayokoding-web-in-the-field-checker report contains zero CRITICAL or HIGH findings on separation

@@ -25,7 +25,7 @@ Each example demonstrates a focused hexagonal concept. Examples build progressiv
 
 This tutorial is code-first. Each example leads with working, self-contained Java code annotated with `// =>` markers that show values, types, zones, and effects at each step.
 
-The running domain across all examples is **procurement-platform-be** — a Procure-to-Pay (P2P) platform where employees request goods and services, managers approve, suppliers fulfill, and finance pays. The same domain is used in the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/overview), letting you see how hexagonal boundaries fit around DDD building blocks.
+The running domain across all examples is **procurement-platform-be** — a Procure-to-Pay (P2P) platform where employees request goods and services, managers approve, suppliers fulfill, and finance pays. The same domain is used in the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-oop-by-example/overview), letting you see how hexagonal boundaries fit around DDD building blocks.
 
 ## What This Tutorial Covers
 
@@ -60,13 +60,13 @@ The running domain across all examples is **procurement-platform-be** — a Proc
 ## What This Tutorial Does NOT Cover
 
 - Language tutorials: Java has its own by-example tutorial for language fundamentals
-- DDD tactical patterns in depth: read the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/overview) for entities, aggregates, value objects, and domain services
+- DDD tactical patterns in depth: read the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-oop-by-example/overview) for entities, aggregates, value objects, and domain services
 - Framework setup and project bootstrapping (Spring Boot initialisation, Gradle/Maven configuration)
 - Kubernetes, Docker, or deployment infrastructure
 
 ## Sibling Tutorial: Functional Programming Approach
 
-If you prefer a functional programming treatment of Hexagonal Architecture, see [Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/overview). That tutorial covers the same patterns through F# function type aliases, partial application, and Railway-Oriented Programming pipelines, using the same procurement-platform-be domain.
+If you prefer a functional programming treatment of Hexagonal Architecture, see [Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/overview). That tutorial covers the same patterns through F# function type aliases, partial application, and Railway-Oriented Programming pipelines, using the same procurement-platform-be domain.
 
 ## Structure of Each Example
 
@@ -80,6 +80,6 @@ Every example follows a consistent five-part format:
 
 ## Tutorial Structure
 
-- [Beginner (Examples 1–20)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/beginner) — The three zones, port interfaces, adapter classes, package structure, dependency direction, in-memory adapters, application service wiring, and the full request/response flow — all using the `purchasing` context of `procurement-platform-be`.
-- [Intermediate (Examples 21–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/intermediate) — `SupplierRepository`, `EventPublisher`, `ApprovalRouterPort`, adapter swapping, anti-corruption layer, integration test seam, composition root via Spring `@Configuration`, and CQRS command/query port split — purchasing and supplier contexts.
-- [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/advanced) — Strategic multi-hexagon design across `purchasing`, `receiving`, `invoicing`, and `payments` contexts; `BankingPort` with retry decorator; `SupplierNotifierPort`; `Observability` adapter; domain evolution; adapter replacement; anti-patterns; and a full production reference architecture.
+- [Beginner (Examples 1–20)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/beginner) — The three zones, port interfaces, adapter classes, package structure, dependency direction, in-memory adapters, application service wiring, and the full request/response flow — all using the `purchasing` context of `procurement-platform-be`.
+- [Intermediate (Examples 21–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/intermediate) — `SupplierRepository`, `EventPublisher`, `ApprovalRouterPort`, adapter swapping, anti-corruption layer, integration test seam, composition root via Spring `@Configuration`, and CQRS command/query port split — purchasing and supplier contexts.
+- [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/advanced) — Strategic multi-hexagon design across `purchasing`, `receiving`, `invoicing`, and `payments` contexts; `BankingPort` with retry decorator; `SupplierNotifierPort`; `Observability` adapter; domain evolution; adapter replacement; anti-patterns; and a full production reference architecture.

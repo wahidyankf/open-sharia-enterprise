@@ -20,10 +20,10 @@ Generic `architecture/by-example` (SRP/separation principles catalog) was intent
 
 | Tutorial                                     | Before                              | After (post-fix)              |
 | -------------------------------------------- | ----------------------------------- | ----------------------------- |
-| `domain-driven-design-ddd/fp-by-example`     | Wlaschin order-taking               | P2P procurement (80 examples) |
-| `domain-driven-design-ddd/oop-by-example`    | Generic e-shop                      | P2P procurement (75 examples) |
-| `hexagonal-architecture/fp-by-example`       | Generic                             | P2P procurement (75 examples) |
-| `hexagonal-architecture/oop-by-example`      | Generic                             | P2P procurement (75 examples) |
+| `domain-driven-design-ddd/in-fp-by-example`  | Wlaschin order-taking               | P2P procurement (80 examples) |
+| `domain-driven-design-ddd/in-oop-by-example` | Generic e-shop                      | P2P procurement (75 examples) |
+| `hexagonal-architecture/in-fp-by-example`    | Generic                             | P2P procurement (75 examples) |
+| `hexagonal-architecture/in-oop-by-example`   | Generic                             | P2P procurement (75 examples) |
 | `c4-architecture-model/by-example`           | Mixed system examples               | P2P procurement (85 examples) |
 | `finite-state-machine-fsm/by-example`        | Generic state-machine examples      | P2P procurement (75 examples) |
 | `ddd-hexagonal-in-practice/fp-in-the-field`  | Conference Talk Submission Platform | P2P procurement (27 guides)   |

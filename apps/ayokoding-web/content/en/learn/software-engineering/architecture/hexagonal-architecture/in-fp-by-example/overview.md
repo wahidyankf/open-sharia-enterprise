@@ -55,7 +55,7 @@ Employee submits PurchaseOrder draft
   → Paid (banking port disburses funds)
 ```
 
-This is the same domain used in the [DDD FP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/fp-by-example/overview). The two tutorials complement each other: the DDD tutorial teaches how to model the domain; this tutorial teaches how to isolate it from infrastructure.
+This is the same domain used in the [DDD FP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/overview). The two tutorials complement each other: the DDD tutorial teaches how to model the domain; this tutorial teaches how to isolate it from infrastructure.
 
 ## Prerequisites
 
@@ -75,6 +75,6 @@ Every example follows a consistent five-part format:
 
 ## Learning Path
 
-- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/beginner) — The three zones, ports as function types, adapters as function modules, the dependency rule, partial application as DI, in-memory adapters, and the full flow from HTTP to domain to repository — all within the `purchasing` bounded context.
-- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/intermediate) — Composition root, adapter swapping, integration test seams with stub adapters, dependency rejection, event publishing, the `supplier` context, `ApprovalRouterPort`, multi-context wiring, cross-context event flow, conditional adapter selection, and Railway-Oriented Programming across port boundaries.
-- [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/advanced) — Multi-context wiring across `receiving`, `invoicing`, and `payments`, anti-corruption layer at port boundaries, retry adapter wrapping, `BankingPort`, `SupplierNotifierPort`, `Observability`, and a full production reference.
+- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/beginner) — The three zones, ports as function types, adapters as function modules, the dependency rule, partial application as DI, in-memory adapters, and the full flow from HTTP to domain to repository — all within the `purchasing` bounded context.
+- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/intermediate) — Composition root, adapter swapping, integration test seams with stub adapters, dependency rejection, event publishing, the `supplier` context, `ApprovalRouterPort`, multi-context wiring, cross-context event flow, conditional adapter selection, and Railway-Oriented Programming across port boundaries.
+- [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/advanced) — Multi-context wiring across `receiving`, `invoicing`, and `payments`, anti-corruption layer at port boundaries, retry adapter wrapping, `BankingPort`, `SupplierNotifierPort`, `Observability`, and a full production reference.

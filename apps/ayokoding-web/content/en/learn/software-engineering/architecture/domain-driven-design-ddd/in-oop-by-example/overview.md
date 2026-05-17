@@ -56,7 +56,7 @@ The running domain across all examples is the **`procurement-platform-be`** — 
 
 ## Sibling Tutorial: Functional Programming Approach
 
-If you prefer a functional programming treatment of DDD, see [DDD Using FP (F#) — By Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/fp-by-example/overview). That tutorial covers the same strategic and tactical patterns through F# discriminated unions, Railway-Oriented Programming, and workflow pipelines, following Scott Wlaschin's _Domain Modeling Made Functional_.
+If you prefer a functional programming treatment of DDD, see [DDD Using FP (F#) — By Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/overview). That tutorial covers the same strategic and tactical patterns through F# discriminated unions, Railway-Oriented Programming, and workflow pipelines, following Scott Wlaschin's _Domain Modeling Made Functional_.
 
 ## Structure of Each Example
 
@@ -70,6 +70,6 @@ Every example follows a consistent five-part format:
 
 ## Tutorial Structure
 
-- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/beginner) — Tactical building blocks: Value Objects, Entities, Aggregates, Repositories, Domain Services, Application Services, and Domain Events using the `purchasing` bounded context.
-- [Intermediate (Examples 26–51)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/intermediate) — Integration and layering patterns: Specifications, Factories, CQRS, hexagonal architecture, domain exception hierarchies, and Bounded Context packaging, adding the `supplier` context.
-- [Advanced (Examples 56–79)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/advanced) — Strategic patterns and advanced tactical: Context Maps, Anti-Corruption Layers, cross-context ACL, repositories with infra adapters, event sourcing, sagas, temporal modelling, and common anti-patterns, adding the `receiving` and `invoicing` contexts. The `murabaha-finance` context is optional and introduced only where Sharia-compliant financing patterns add pedagogical value.
+- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-oop-by-example/beginner) — Tactical building blocks: Value Objects, Entities, Aggregates, Repositories, Domain Services, Application Services, and Domain Events using the `purchasing` bounded context.
+- [Intermediate (Examples 26–51)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-oop-by-example/intermediate) — Integration and layering patterns: Specifications, Factories, CQRS, hexagonal architecture, domain exception hierarchies, and Bounded Context packaging, adding the `supplier` context.
+- [Advanced (Examples 56–79)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-oop-by-example/advanced) — Strategic patterns and advanced tactical: Context Maps, Anti-Corruption Layers, cross-context ACL, repositories with infra adapters, event sourcing, sagas, temporal modelling, and common anti-patterns, adding the `receiving` and `invoicing` contexts. The `murabaha-finance` context is optional and introduced only where Sharia-compliant financing patterns add pedagogical value.

@@ -37,12 +37,12 @@
 The repo already ships four `by-example` tutorials at
 `apps/ayokoding-web/content/en/learn/software-engineering/architecture/` [Repo-grounded]:
 
-| Tutorial                                  | Examples (claimed by user) | Stack                                           |
-| ----------------------------------------- | -------------------------- | ----------------------------------------------- |
-| `domain-driven-design-ddd/fp-by-example`  | 80 [Judgment call]         | F# (Wlaschin "Domain Modeling Made Functional") |
-| `domain-driven-design-ddd/oop-by-example` | 80 [Judgment call]         | Java 21+ / Kotlin / C# 12+                      |
-| `hexagonal-architecture/fp-by-example`    | 80 [Judgment call]         | F#                                              |
-| `hexagonal-architecture/oop-by-example`   | 80 [Judgment call]         | Java / Kotlin / C#                              |
+| Tutorial                                     | Examples (claimed by user) | Stack                                           |
+| -------------------------------------------- | -------------------------- | ----------------------------------------------- |
+| `domain-driven-design-ddd/in-fp-by-example`  | 80 [Judgment call]         | F# (Wlaschin "Domain Modeling Made Functional") |
+| `domain-driven-design-ddd/in-oop-by-example` | 80 [Judgment call]         | Java 21+ / Kotlin / C# 12+                      |
+| `hexagonal-architecture/in-fp-by-example`    | 80 [Judgment call]         | F#                                              |
+| `hexagonal-architecture/in-oop-by-example`   | 80 [Judgment call]         | Java / Kotlin / C#                              |
 
 These tutorials teach DDD (_what_ to model) and hex (_where_ to put it)
 separately. Integration is touched only sparsely (DDD OOP intermediate Ex 44;
@@ -67,7 +67,7 @@ running, dogfooded domain rather than recapping Wlaschin's order-taking story.
   first principle).
 - Running domain = `apps/ose-app-be` F# code, dogfooded.
 - Prerequisite statement at tutorial overview (audience MUST have completed
-  `domain-driven-design-ddd/fp-by-example` and `hexagonal-architecture/fp-by-example`)
+  `domain-driven-design-ddd/in-fp-by-example` and `hexagonal-architecture/in-fp-by-example`)
   per `docs-validating-software-engineering-separation` skill — no re-teaching DDD
   or hex individually.
 - Cross-links from existing DDD-FP and Hex-FP `_index.md` + overview pages.

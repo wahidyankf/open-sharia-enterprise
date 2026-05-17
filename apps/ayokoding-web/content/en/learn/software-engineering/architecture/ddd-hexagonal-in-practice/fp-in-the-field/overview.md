@@ -15,8 +15,8 @@ Every guide in this series traces a single wiring seam: how a Giraffe handler pa
 
 **Both of the following tutorials are required reading before this one:**
 
-- [Domain-Driven Design — F# by Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/fp-by-example/overview) — teaches DDD tactical patterns (aggregates, value objects, domain events, workflows) in F# using the Wlaschin order-taking domain.
-- [Hexagonal Architecture — F# by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/overview) — teaches ports-and-adapters structure (primary adapters, output ports, adapter swapping, integration test seams) in F#.
+- [Domain-Driven Design — F# by Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/overview) — teaches DDD tactical patterns (aggregates, value objects, domain events, workflows) in F# using the Wlaschin order-taking domain.
+- [Hexagonal Architecture — F# by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/overview) — teaches ports-and-adapters structure (primary adapters, output ports, adapter swapping, integration test seams) in F#.
 
 **This tutorial does NOT re-teach DDD or hexagonal fundamentals.** Terms like _aggregate_, _port_, _adapter_, _bounded context_, and _repository pattern_ are used without definition. If any of those feel unfamiliar, complete the prerequisite tracks first. The guides here are about wiring — how the pieces connect in production — not about what the pieces are.
 
@@ -57,7 +57,7 @@ Every code block in this tutorial is **production-grade hypothetical F#**. That 
 - **Hypothetical**: no link to a real file. The snippets describe the wiring shape for the procurement platform. The shape is real; the specific file at any given commit of any real service is not the point.
 - **Cross-guide consistent**: a port defined in Guide 5 keeps the same signature in Guide 11. A bounded-context folder shape introduced in Guide 2 stays consistent through Guide 22.
 
-If you want to see a real F# / Giraffe / Npgsql codebase that uses these patterns, look at any of the F#-track examples in the [Hexagonal Architecture — F# by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/overview) prerequisite.
+If you want to see a real F# / Giraffe / Npgsql codebase that uses these patterns, look at any of the F#-track examples in the [Hexagonal Architecture — F# by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/overview) prerequisite.
 
 ## Guide Numbering
 

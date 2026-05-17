@@ -19,7 +19,7 @@ apps/ayokoding-web/content/en/learn/software-engineering/architecture/
 ```
 
 Sibling pattern reference: existing
-`apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/fp-by-example/`
+`apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/`
 already ships `_index.md`, `overview.md`, `beginner.md`, `intermediate.md`,
 `advanced.md` [Repo-grounded]. The new trail adds a `production.md` tier to
 hold the deployment / observability / failure-mode guides that have no
@@ -38,7 +38,7 @@ beginner → intermediate → advanced → production), `<topic>` is a short nou
 phrase. Example: `## Guide 7 — Repository port + Npgsql adapter pair`.
 
 Rationale: matches the existing by-example convention of numbered examples in
-flat difficulty files [Repo-grounded — verified against `domain-driven-design-ddd/fp-by-example/beginner.md` file shape].
+flat difficulty files [Repo-grounded — verified against `domain-driven-design-ddd/in-fp-by-example/beginner.md` file shape].
 
 ## Running Domain Mapping — `apps/ose-app-be`
 
@@ -106,7 +106,7 @@ Two snippet modes are allowed; mode chosen per guide:
 
 - **Mirror mode** (preferred): inline excerpt that copies the live file at
   authoring time, with a relative link directly under the code block:
-  `Source: [apps/ose-app-be/src/OseAppBe/Domain/RegulatorySource.fs](../../../../../../ose-app-be/src/OseAppBe/Domain/RegulatorySource.fs)`.
+  `Source: apps/ose-app-be/src/OseAppBe/Domain/RegulatorySource.fs` (relative link, plan was authored when real codebase existed).
   Cost: drifts silently if BE changes. Mitigation: `apps-ayokoding-web-facts-checker`
   is invoked on every plan-execution and on a 6-month cadence.
 - **Intended-layout mode**: when the BE has scaffolding only (e.g.
@@ -147,8 +147,7 @@ Six files receive new links to the new trail:
 
 [All six verified to exist via Bash 2026-05-16, Repo-grounded.]
 
-Link text pattern: `Next step (production wiring): [DDD + Hexagonal in
-Practice — F# in the Field](../ddd-hexagonal-in-practice/fp-in-the-field/)`.
+Link text pattern: `Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)`.
 
 ## Test Strategy
 

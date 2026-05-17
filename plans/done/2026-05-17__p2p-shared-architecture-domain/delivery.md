@@ -14,10 +14,10 @@ owner: tigalakilaki12
 
 ## Phase A: by-example DDD + Hex (4 parallel subagents)
 
-- [x] Rewrite `domain-driven-design-ddd/fp-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
-- [x] Rewrite `domain-driven-design-ddd/oop-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
-- [x] Rewrite `hexagonal-architecture/fp-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
-- [x] Rewrite `hexagonal-architecture/oop-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
+- [x] Rewrite `domain-driven-design-ddd/in-fp-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
+- [x] Rewrite `domain-driven-design-ddd/in-oop-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
+- [x] Rewrite `hexagonal-architecture/in-fp-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
+- [x] Rewrite `hexagonal-architecture/in-oop-by-example/{overview,beginner,intermediate,advanced}.md` against P2P spec
 
 ## Phase B: DDD+Hex in-the-field re-rewrite (2 parallel subagents)
 
