@@ -78,3 +78,89 @@ Every example follows a consistent five-part format:
 - [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/beginner) — The three zones, ports as function types, adapters as function modules, the dependency rule, partial application as DI, in-memory adapters, and the full flow from HTTP to domain to repository — all within the `purchasing` bounded context.
 - [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/intermediate) — Composition root, adapter swapping, integration test seams with stub adapters, dependency rejection, event publishing, the `supplier` context, `ApprovalRouterPort`, multi-context wiring, cross-context event flow, conditional adapter selection, and Railway-Oriented Programming across port boundaries.
 - [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/advanced) — Multi-context wiring across `receiving`, `invoicing`, and `payments`, anti-corruption layer at port boundaries, retry adapter wrapping, `BankingPort`, `SupplierNotifierPort`, `Observability`, and a full production reference.
+
+## Examples by Level
+
+### Beginner (Examples 1–25)
+
+- Example 1: The Hexagon Metaphor — Three Zones as F# Namespaces
+- Example 2: Domain Isolation — A Pure Domain Function with No Infrastructure Imports
+- Example 3: Input Port as a Function Type Alias
+- Example 4: Output Port as a Record Type — `PurchaseOrderRepository`
+- Example 5: The `Clock` Output Port — Injecting Time
+- Example 6: The Dependency Rule — Direction of Imports
+- Example 7: Zone Boundaries as File Organisation
+- Example 8: Output Port — The `PurchaseOrderRepository` Record Type
+- Example 9: Output Port — Minimal vs Full Signatures
+- Example 10: Output Port — Async vs Sync Signatures
+- Example 11: Output Port — Error Type Design
+- Example 12: Input Port — Receiving from HTTP vs CLI vs Message Bus
+- Example 13: Composing Multiple Output Ports
+- Example 14: Port as a Named Record vs Curried Parameters
+- Example 15: In-Memory Adapter — Satisfying `PurchaseOrderRepository`
+- Example 16: Primary Adapter — HTTP Handler as a Function
+- Example 17: The Composition Root — Wiring Adapters to Ports
+- Example 18: Spy Adapter — Verifying Port Calls in Tests
+- Example 19: Failing Adapter — Testing Error Paths
+- Example 20: Partial Application as Dependency Injection
+- Example 21: Domain Function vs Application Service vs Adapter — Three Responsibilities
+- Example 22: Testing the Domain Without Infrastructure
+- Example 23: Testing the Application Service with In-Memory Adapters
+- Example 24: The Anti-Corruption Layer — Translating External DTOs
+- Example 25: Full Hexagonal Flow — HTTP to Domain to Repository to Response
+
+### Intermediate (Examples 26–55)
+
+- Example 26: Command Port vs Query Port — CQRS at the Port Boundary
+- Example 27: Read Model vs Domain Model — Two Separate Output Ports
+- Example 28: Async Output Port — `Async<Result<>>` Composition
+- Example 29: Railway-Oriented Programming Across Async Port Calls
+- Example 30: Error Union Across Port and Domain Layers
+- Example 31: Repository Port as a Record of Functions
+- Example 32: SupplierRepository Port — Cross-Context Dependency
+- Example 33: EventPublisher Port — Domain Events as Output Port
+- Example 34: ApprovalRouterPort — Routing Logic Behind a Port
+- Example 35: The Composition Root — Wiring Adapters to Ports
+- Example 36: Adapter Swapping for Tests — Same Application Service, Two Adapters
+- Example 37: Integration Test Seam with Stub Adapter
+- Example 38: Dependency Rejection — The Application Service Refuses Infrastructure
+- Example 39: Two Bounded Contexts — Purchasing + Supplier in One Composition Root
+- Example 40: Cross-Context Event Flow — SupplierApproved Consumed by Purchasing
+- Example 41: Spy Adapter — Recording Port Calls for Test Assertions
+- Example 42: Conditional Adapter Selection at the Composition Root
+- Example 43: Full Flow — HTTP Request to Domain to Repository to Event Bus
+- Example 44: Port Contract Testing — Verifying Every Adapter Satisfies the Same Spec
+- Example 45: Approval Router Port — Routing Based on PO Total
+- Example 46: Dependency Rejection — Refusing Infrastructure at the Domain Boundary
+- Example 47: Port Versioning — Evolving a Port Without Breaking Adapters
+- Example 48: Receiving Context — `GoodsReceiptNote` Repository Port
+- Example 49: Three-Way Match Port — Invoicing Context
+- Example 50: Retry Adapter Wrapper — Adding Resilience Without Touching Application Services
+- Example 51: Caching Adapter Wrapper — Read-Through Cache at the Port
+- Example 52: Audit Log Adapter — Side-Effecting Wrapper
+- Example 53: Input Port Multiplexer — Routing One Input to Multiple Handlers
+- Example 54: Observability Port — Structured Metrics Without Infrastructure Imports
+- Example 55: Composition Root for the Full Purchasing + Receiving Flow
+
+### Advanced (Examples 56–75)
+
+- Example 56: Ports for the `receiving` Context — `GoodsReceiptRepository`
+- Example 57: Ports for the `invoicing` Context — `InvoiceRepository` and Three-Way Match
+- Example 58: `BankingPort` — Initiating a Disbursement
+- Example 59: `SupplierNotifierPort` — SMTP and EDI Fallback
+- Example 60: `Observability` Port — Emitting Metrics and Traces
+- Example 61: Multi-Context Composition Root — Wiring Four Contexts
+- Example 62: Retry Adapter — Decorator over `BankingPort`
+- Example 63: Circuit Breaker Adapter — Wrapping `BankingPort`
+- Example 64: Anti-Corruption Layer at the `BankingPort` Boundary
+- Example 65: Port Versioning at the Composition Root
+- Example 66: Outbox Pattern at the Adapter Level
+- Example 67: Cross-Context Event — `GoodsReceived` Triggers Invoicing
+- Example 68: Three-Way Match Across Context Ports
+- Example 69: `PaymentScheduled` — Payments Context Consumes `InvoiceMatched`
+- Example 70: Full Port Suite Spy — Testing the Payments Application Service
+- Example 71: Observability-Driven Testing — Asserting Metrics Were Emitted
+- Example 72: Contract Test — `BankingPort` Adapter Must Honour Domain Errors
+- Example 73: Property-Based Testing — Domain Invariants Across All Inputs
+- Example 74: Adapter Replacement — Swapping `GoodsReceiptRepository` from Postgres to S3
+- Example 75: Complete Composition Root Wiring Verified by a Smoke Test

@@ -83,3 +83,89 @@ Every example follows a consistent five-part format:
 - [Beginner (Examples 1–20)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/beginner) — The three zones, port interfaces, adapter classes, package structure, dependency direction, in-memory adapters, application service wiring, and the full request/response flow — all using the `purchasing` context of `procurement-platform-be`.
 - [Intermediate (Examples 21–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/intermediate) — `SupplierRepository`, `EventPublisher`, `ApprovalRouterPort`, adapter swapping, anti-corruption layer, integration test seam, composition root via Spring `@Configuration`, and CQRS command/query port split — purchasing and supplier contexts.
 - [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/advanced) — Strategic multi-hexagon design across `purchasing`, `receiving`, `invoicing`, and `payments` contexts; `BankingPort` with retry decorator; `SupplierNotifierPort`; `Observability` adapter; domain evolution; adapter replacement; anti-patterns; and a full production reference architecture.
+
+## Examples by Level
+
+### Beginner (Examples 1–20)
+
+- Example 1: The hexagon metaphor — three zones as packages
+- Example 2: Domain entity — pure Java record, no framework annotations
+- Example 3: Value object — PurchaseOrderId and Money
+- Example 4: The dependency rule — what can import what
+- Example 5: Output port interface — PurchaseOrderRepository
+- Example 6: Clock output port — making time testable
+- Example 7: In-memory adapter implementing PurchaseOrderRepository
+- Example 8: JPA adapter implementing PurchaseOrderRepository
+- Example 9: Input port interface — use-case contract
+- Example 10: Application service implementing the input port
+- Example 11: Naming conventions — ports and adapters
+- Example 12: Package/namespace structure for hexagonal
+- Example 13: HTTP input adapter — thin controller
+- Example 14: DTO at the adapter boundary — inbound and outbound
+- Example 15: Multi-adapter — HTTP and CLI calling the same use case
+- Example 16: Composition root — wiring the hexagon at startup
+- Example 17: Dependency injection wiring without Spring
+- Example 18: Testing with the in-memory adapter — fast, no DB
+- Example 19: Domain error hierarchy at port boundaries
+- Example 20: Full hexagonal flow — HTTP request to domain to response
+
+### Intermediate (Examples 21–55)
+
+- Example 21: SupplierRepository output port
+- Example 22: Supplier domain aggregate with lifecycle states
+- Example 23: In-memory SupplierRepository adapter
+- Example 24: EventPublisher output port — decoupling cross-context side effects
+- Example 25: ApprovalRouterPort — routing approval requests
+- Example 26: Adapter swapping — switching from in-memory to Postgres at the composition root
+- Example 27: Spring @Profile-based adapter selection
+- Example 28: Integration test seam — testing the application service with real ports
+- Example 29: Dependency rejection — refusing a supplier that is not APPROVED
+- Example 30: Testing supplier eligibility rejection — fast unit test
+- Example 31: Anti-corruption layer — translating supplier context types into purchasing
+- Example 32: Kotlin — SupplierRepository port and in-memory adapter
+- Example 33: EventPublisher — outbox adapter pattern (sketch)
+- Example 34: ApprovalRouterPort — workflow engine adapter (sketch)
+- Example 35: Full intermediate flow — two contexts, four ports, one request
+- Example 36: Spring @Configuration with multiple bounded contexts
+- Example 37: Constructor injection depth — no @Autowired in business classes
+- Example 38: Kotlin — data class as command DTO with validation
+- Example 39: ArchUnit — enforcing hexagonal dependency rules in CI
+- Example 40: Full intermediate test suite — unit + integration coverage map
+- Example 41: CQRS — separating command and query input ports
+- Example 42: CQRS command service implementation
+- Example 43: CQRS query service with read-only output port
+- Example 44: CQRS — wiring command and query services at the composition root
+- Example 45: CQRS — in-memory read adapter for fast query tests
+- Example 46: Specialised query — findPendingApprovalByLevel
+- Example 47: PO summary read model — projecting domain state for the UI
+- Example 48: Paginated query port — findByStatus with pagination
+- Example 49: Sorting output port parameter — domain-neutral sort specification
+- Example 50: Composite query — combining sort and pagination
+- Example 51: Adding a method to a port — backward-compatible evolution
+- Example 52: Deprecating a port method without breaking adapters
+- Example 53: Port interface segregation — splitting a fat port
+- Example 54: Notification port — SupplierNotifierPort with multiple adapter strategies
+- Example 55: Full intermediate flow — CQRS + query facade + notifier in one request lifecycle
+
+### Advanced (Examples 56–75)
+
+- Example 56: Receiving context — GoodsReceiptNote aggregate and port
+- Example 57: Invoicing context — three-way match port
+- Example 58: Payments context — Payment aggregate and BankingPort
+- Example 59: SupplierNotifierPort — email and EDI fallback
+- Example 60: Observability port — metrics and traces without framework lock-in
+- Example 61: RetryingBankingAdapter — retry decorator for BankingPort
+- Example 62: CircuitBreakingBankingAdapter — circuit-breaker decorator
+- Example 63: Anti-corruption layer — receiving context translating purchasing events
+- Example 64: Port versioning — adding a field without breaking existing adapters
+- Example 65: Outbox pattern — EventPublisher adapter that guarantees delivery
+- Example 66: Clock port — deterministic time in payments scheduling
+- Example 67: Multi-context application service — InvoiceMatchingService with three ports
+- Example 68: Murabaha context (optional) — port extension for Sharia financing
+- Example 69: Anti-pattern — domain importing framework annotations
+- Example 70: Anti-pattern — application service instantiating adapters directly
+- Example 71: Anti-pattern — skipping the port (direct adapter call from domain)
+- Example 72: Anti-pattern — fat adapter (business logic in adapter)
+- Example 73: Composition root — wiring all contexts with Spring @Configuration
+- Example 74: Integration test — wiring in-memory adapters for a full slice
+- Example 75: Port adapter test contract — verifying all adapters meet port guarantees

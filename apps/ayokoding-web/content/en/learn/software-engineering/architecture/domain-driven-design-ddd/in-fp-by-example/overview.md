@@ -57,3 +57,94 @@ Every example follows a consistent five-part format:
 - [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/beginner) — Types as the design. Covers ubiquitous language, bounded contexts, record and union types, smart constructors, and the full set of value types used by the purchasing context (`PurchaseRequisition`, `Money`, `SkuCode`, `Quantity`, `RequisitionId`).
 - [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/intermediate) — Pipelines, Railway-Oriented Programming, effects, and dependency injection. Covers function composition, `Result`, `Async`, validation accumulation, workflow signatures, domain events (`PurchaseOrderIssued`, `RequisitionApproved`), and the `PurchaseOrder` state machine.
 - [Advanced (Examples 56–80)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/advanced) — Persistence, serialization, CQRS, cross-context Anti-Corruption Layers, factory functions, repository as function-type alias, dependency rejection, and testing strategies across the `receiving` and `invoicing` contexts.
+
+## Examples by Level
+
+### Beginner (Examples 1–25)
+
+- Example 1: Ubiquitous Language as F# Type Aliases
+- Example 2: Domain Event Named in Past Tense
+- Example 3: Bounded Context as F# Module
+- Example 4: AND Type — Record
+- Example 5: OR Type — Discriminated Union
+- Example 6: Workflow Expressed as a Function Type
+- Example 7: Single-Case Discriminated Union Wrapper
+- Example 8: Smart Constructor Returning Result
+- Example 9: Pattern Matching on a Discriminated Union
+- Example 10: Exhaustive Match — Compiler-Enforced
+- Example 11: Option Type Replacing Null
+- Example 12: Constrained String — SkuCode
+- Example 13: Quantity as a Smart-Constructed Value Object
+- Example 14: Money Record with Currency
+- Example 15: Lifecycle States as a Discriminated Union
+- Example 16: State Machine Encoded Purely by Type Transitions
+- Example 17: Domain Primitive Wrapping Decimal — Unit Price
+- Example 18: Units of Measure
+- Example 19: Email Value via Regex Validation
+- Example 20: ProductCode as a Union of Two Subtypes
+- Example 21: PurchaseRequisitionLine Record — Composing Value Objects
+- Example 22: PurchaseRequisition Aggregate Record
+- Example 23: UnvalidatedRequisition DTO-Shaped Record
+- Example 24: Approval Level Derived from Requisition Total
+- Example 25: Workflow Type Alias — Full SubmitRequisition Signature
+
+### Intermediate (Examples 26–55)
+
+- Example 26: Function Composition with >>
+- Example 27: Pipe Operator |>
+- Example 28: Currying — Every F# Function is One-Arg
+- Example 29: Workflow Expressed as Function Composition
+- Example 30: Result Type — Ok and Error
+- Example 31: Result.bind — Chaining Fallible Steps
+- Example 32: Result.map — Transforming the Success Value
+- Example 33: Validation Accumulation with List of Errors
+- Example 34: Computation Expression for Result
+- Example 35: Async Result — Effects at the Edges
+- Example 36: Domain Error DU — Every Failure Mode Named
+- Example 37: PurchaseOrder Aggregate — Full State Machine
+- Example 38: Domain Events from State Transitions
+- Example 39: Supplier Aggregate — Lifecycle States
+- Example 40: Aggregate Boundary — What Goes Inside
+- Example 41: Refactor Primitive Obsession — Typed Wrapper
+- Example 42: ValidatedPurchaseOrder Type — Emitted by Validation Step
+- Example 43: IssuedPurchaseOrder Type — Emitted by Issue Step
+- Example 44: ApprovePO Workflow Signature with Dependencies
+- Example 45: IssuePO Workflow Signature with Dependencies
+- Example 46: AcknowledgePO Workflow Signature
+- Example 47: Pipeline Composition — Wiring Three Workflow Steps
+- Example 48: Domain Error DU — Every Purchasing Failure Named
+- Example 49: Mapping Domain Error to API Error at the Boundary
+- Example 50: Pushing Effects to the Edges
+- Example 51: Pure Core Wrapping at the Edge
+- Example 52: Dependency Injection via Partial Application
+- Example 53: Persistence Interface as a Record of Functions
+- Example 54: Approval Level Enforcement — Invariant in the Domain
+- Example 55: Cancellation Workflow — Off-Ramp from Any Pre-Paid State
+
+### Advanced (Examples 56–80)
+
+- Example 56: Serialization — JSON via DTO Boundary
+- Example 57: Date/Time as a Domain Concept
+- Example 58: GoodsReceiptNote Aggregate — Receiving Context
+- Example 59: Invoice Aggregate — Three-Way Matching
+- Example 60: EventStore vs Repository — Trade-offs
+- Example 61: Bounded Context Boundary as Module + Signature
+- Example 62: ACL as a Translation Function Between Contexts
+- Example 63: Published Language — DU of Public Events
+- Example 64: Factory Function for PurchaseOrder
+- Example 65: Repository as Function-Type Alias
+- Example 66: Dependency Rejection — No Optional Dependencies
+- Example 67: Cross-Context Consistency — Eventual vs Strong
+- Example 68: Property-Based Test for an Invariant — FsCheck
+- Example 69: Compile-Time vs Runtime Check — Comparison
+- Example 70: Workflow Testing Without Mocks
+- Example 71: Evolution Scenario 1 — Adding a Supplier Preferred Currency
+- Example 72: Evolution Scenario 2 — Adding a Three-Way Match Tolerance Override
+- Example 73: Evolution Scenario 3 — Murabaha Finance Context (Optional)
+- Example 74: Bounded Context Integration Map
+- Example 75: Long-Running Workflow — Approval Saga
+- Example 76: Interop with C# Caller — Workflow Exposed as Task
+- Example 77: CQRS — Separate Read and Write Models
+- Example 78: Invoice Payment Workflow — Full Pipeline
+- Example 79: Domain Model Evolution — Adding a New State
+- Example 80: Full System Sketch — Procurement Platform End-to-End
