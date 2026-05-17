@@ -9,7 +9,7 @@ tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "in-the-field"]
 
 **You have finished the by-example tracks. You know what an aggregate is. You know what a port is. Now the question is: how do they wire together in a real production Java codebase that ships?** This tutorial answers that question using Java 25 / Spring Boot 4, running against a hypothetical Procure-to-Pay procurement platform backend.
 
-Every guide in this series traces a single wiring seam: how a Spring `@RestController` parses an HTTP request into a command record, how a domain aggregate processes that command, how an output port interface carries the result to a Spring-managed adapter, and how a unit test swaps that adapter for an in-memory stub. No toy examples. No generic order-taking stories. A single coherent domain — production-grade Spring wiring decisions — carried consistently across all twenty-seven guides.
+Every guide in this series traces a single wiring seam: how a Spring `@RestController` parses an HTTP request into a command record, how a domain aggregate processes that command, how an output port interface carries the result to a Spring-managed adapter, and how a unit test swaps that adapter for an in-memory stub. No toy examples. One coherent procurement-platform-be P2P domain — production-grade Spring wiring decisions — carried consistently across all twenty-seven guides.
 
 ## Prerequisites
 

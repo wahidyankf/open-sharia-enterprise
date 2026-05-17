@@ -9,7 +9,7 @@ tags: ["ddd", "hexagonal-architecture", "f#", "in-the-field", "giraffe", "npgsql
 
 **You have finished the by-example tracks. You know what an aggregate is. You know what a port is. Now the question is: how do they wire together in a real production codebase that ships?** This tutorial answers that question using F# / Giraffe / Npgsql, running against a hypothetical Procure-to-Pay procurement platform.
 
-Every guide in this series traces a single wiring seam: how a Giraffe handler parses an HTTP request into a command, how a domain aggregate processes that command, how an output port carries the result to a Npgsql adapter, and how an integration test swaps that adapter for an in-memory stub. No toy examples. No order-taking stories. A single coherent domain — production-grade wiring decisions — carried consistently across all twenty-seven guides.
+Every guide in this series traces a single wiring seam: how a Giraffe handler parses an HTTP request into a command, how a domain aggregate processes that command, how an output port carries the result to a Npgsql adapter, and how an integration test swaps that adapter for an in-memory stub. No toy examples. One coherent procurement-platform-be P2P domain — production-grade wiring decisions — carried consistently across all twenty-seven guides.
 
 ## Prerequisites
 
