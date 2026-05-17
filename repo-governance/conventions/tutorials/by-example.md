@@ -1273,17 +1273,17 @@ three separate level pages.
 
 ### Beginner (Examples 1–25)
 
-- [Example 1: States as a Sealed Type](/en/learn/software-engineering/architecture/procurement-platform-be/by-example/beginner#example-1-states-as-a-sealed-type)
-- [Example 2: The Minimal FSM Record](/en/learn/software-engineering/architecture/procurement-platform-be/by-example/beginner#example-2-the-minimal-fsm-record)
+- [Example 1: States as a Sealed Type](/en/learn/software-engineering/software-architecture/procurement-platform-be/by-example/beginner#example-1-states-as-a-sealed-type)
+- [Example 2: The Minimal FSM Record](/en/learn/software-engineering/software-architecture/procurement-platform-be/by-example/beginner#example-2-the-minimal-fsm-record)
 
 ### Intermediate (Examples 26–50)
 
-- [Example 26: Invoice States and the Three-Way Match](/en/learn/software-engineering/architecture/procurement-platform-be/by-example/intermediate#example-26-invoice-states-and-the-three-way-match)
-- [Example 27: The Three-Way Match Guard](/en/learn/software-engineering/architecture/procurement-platform-be/by-example/intermediate#example-27-the-three-way-match-guard)
+- [Example 26: Invoice States and the Three-Way Match](/en/learn/software-engineering/software-architecture/procurement-platform-be/by-example/intermediate#example-26-invoice-states-and-the-three-way-match)
+- [Example 27: The Three-Way Match Guard](/en/learn/software-engineering/software-architecture/procurement-platform-be/by-example/intermediate#example-27-the-three-way-match-guard)
 ```
 
 The live FSM by-example tutorial at
-`apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/by-example/overview.md`
+`apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/by-example/overview.md`
 follows this exact pattern and can be used as a reference implementation.
 
 > **NOTE**: This section is automatically regenerable. If a heading on any level page changes,
