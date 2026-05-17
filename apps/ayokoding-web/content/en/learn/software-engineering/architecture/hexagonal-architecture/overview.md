@@ -2,7 +2,7 @@
 title: "Overview"
 date: 2026-05-15T00:00:00+07:00
 draft: false
-weight: 10000001
+weight: 10000000
 description: "Hexagonal Architecture (Ports and Adapters) — domain isolation, port contracts, adapter implementations, and testable system design"
 tags: ["hexagonal-architecture", "ports-and-adapters", "clean-architecture", "domain-isolation", "testability"]
 ---
