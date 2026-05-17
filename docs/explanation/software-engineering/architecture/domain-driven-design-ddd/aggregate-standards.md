@@ -17,7 +17,7 @@ created: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding DDD Aggregates](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/by-example/) before using these standards.
+**REQUIRED**: Complete [AyoKoding DDD Aggregates](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/patterns-and-principles/) before using these standards.
 
 ## Purpose
 
@@ -28,6 +28,8 @@ OSE Platform aggregate design standards for Islamic finance systems.
 **REQUIRED**: All business rules MUST be enforced by aggregate roots.
 
 ### Zakat Assessment Aggregate
+
+#### `Java`
 
 ```java
 public record ZakatAssessment(
@@ -54,6 +56,69 @@ public record ZakatAssessment(
             throw new InvalidPaymentException("Cannot overpay Zakat");
         }
         return withStatus(AssessmentStatus.PAID);
+    }
+}
+```
+
+#### `Kotlin`
+
+```kotlin
+data class ZakatAssessment(
+    val id: AssessmentId,
+    val userId: UserId,
+    val totalWealth: Money,
+    val nisabThreshold: Money,  // 87.48g gold equivalent
+    val zakatDue: ZakatAmount,
+    val status: AssessmentStatus,
+) {
+    // MUST enforce: Zakat is 2.5% of wealth exceeding Nisab
+    fun calculate(): ZakatAssessment =
+        if (totalWealth < nisabThreshold) {
+            copy(status = AssessmentStatus.BELOW_NISAB)
+        } else {
+            val zakatAmount = totalWealth * 0.025
+            copy(zakatDue = zakatAmount, status = AssessmentStatus.CALCULATED)
+        }
+
+    // MUST enforce: Cannot pay more than owed
+    fun markAsPaid(paidAmount: Money): ZakatAssessment {
+        require(!paidAmount.isGreaterThan(zakatDue)) {
+            "Cannot overpay Zakat"
+        }
+        return copy(status = AssessmentStatus.PAID)
+    }
+}
+```
+
+#### `C#`
+
+```csharp
+namespace Ose.Zakat.Domain;
+
+public sealed record ZakatAssessment(
+    AssessmentId Id,
+    UserId UserId,
+    Money TotalWealth,
+    Money NisabThreshold,  // 87.48g gold equivalent
+    ZakatAmount ZakatDue,
+    AssessmentStatus Status)
+{
+    // MUST enforce: Zakat is 2.5% of wealth exceeding Nisab
+    public ZakatAssessment Calculate() =>
+        TotalWealth < NisabThreshold
+            ? this with { Status = AssessmentStatus.BelowNisab }
+            : this with
+            {
+                ZakatDue = TotalWealth.Multiply(0.025m),
+                Status = AssessmentStatus.Calculated,
+            };
+
+    // MUST enforce: Cannot pay more than owed
+    public ZakatAssessment MarkAsPaid(Money paidAmount)
+    {
+        if (paidAmount > ZakatDue)
+            throw new InvalidPaymentException("Cannot overpay Zakat");
+        return this with { Status = AssessmentStatus.Paid };
     }
 }
 ```

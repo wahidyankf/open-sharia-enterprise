@@ -34,11 +34,11 @@ This document establishes the separation between:
 **Prerequisite Knowledge**: All architecture documentation assumes completion of corresponding AyoKoding learning paths. These are OSE Platform-specific standards, not educational tutorials.
 
 - **[C4 Architecture Model](./architecture/c4-architecture-model/README.md)** - System visualization
-  - **Prerequisite**: [AyoKoding C4 Architecture Model](../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/)
+  - **Prerequisite**: [AyoKoding C4 Architecture Model](../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/c4-model/)
 - **[Domain-Driven Design](./architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns
-  - **Prerequisite**: [AyoKoding Domain-Driven Design](../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)
+  - **Prerequisite**: [AyoKoding Domain-Driven Design](../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/)
 - **[Finite State Machines](./architecture/finite-state-machine-fsm/README.md)** - State management
-  - **Prerequisite**: [AyoKoding Finite State Machines](../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/)
+  - **Prerequisite**: [AyoKoding Finite State Machines](../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/)
 
 ### Development Practices
 

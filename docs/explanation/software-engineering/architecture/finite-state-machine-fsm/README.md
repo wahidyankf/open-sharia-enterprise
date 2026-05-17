@@ -54,9 +54,9 @@ OSE Platform FSM implementations MUST use the following frameworks:
 
 **You MUST understand FSM fundamentals before using these standards:**
 
-- **[Finite State Machine Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/)** - Educational foundation for FSM concepts
-- **[Finite State Machine Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/overview.md)** - Core FSM concepts (States, Transitions, Events, Guards, Actions)
-- **[Finite State Machine By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/by-example/)** - Practical FSM implementation examples
+- **[Finite State Machine Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/)** - Educational foundation for FSM concepts
+- **[Finite State Machine Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/overview.md)** - Core FSM concepts (States, Transitions, Events, Guards, Actions)
+- **[Finite State Machine By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/)** - Practical FSM implementation examples
 
 **What this documentation covers**: OSE Platform-specific FSM patterns, Islamic finance state machines (Zakat lifecycle, contract approval, donation campaigns), framework choices (Spring State Machine, XState), integration with DDD aggregates, repository-specific FSM conventions.
 
@@ -169,6 +169,8 @@ FSM in OSE Platform enforces foundational software engineering principles:
 
 **Configuration**:
 
+#### `Java`
+
 ```java
 @Configuration
 @EnableStateMachine
@@ -196,6 +198,61 @@ public class ZakatStateMachineConfig extends StateMachineConfigurerAdapter<
                 .guard(nisabThresholdGuard())
                 .action(publishZakatCalculatedEvent());
     }
+}
+```
+
+#### `Kotlin`
+
+```kotlin
+@Configuration
+@EnableStateMachine
+class ZakatStateMachineConfig : StateMachineConfigurerAdapter<ZakatState, ZakatEvent>() {
+
+    override fun configure(states: StateMachineStateConfigurer<ZakatState, ZakatEvent>) {
+        states
+            .withStates()
+            .initial(ZakatState.DRAFT)
+            .state(ZakatState.CALCULATED)
+            .end(ZakatState.PAID)
+    }
+
+    override fun configure(transitions: StateMachineTransitionConfigurer<ZakatState, ZakatEvent>) {
+        transitions
+            .withExternal()
+            .source(ZakatState.DRAFT)
+            .target(ZakatState.CALCULATED)
+            .event(ZakatEvent.CALCULATE)
+            .guard(nisabThresholdGuard())
+            .action(publishZakatCalculatedEvent())
+    }
+}
+```
+
+#### `C#`
+
+```csharp
+namespace Zakat.Infrastructure.StateMachines;
+
+public sealed class ZakatStateMachineConfig
+{
+    public StateMachine<ZakatState, ZakatEvent> Build()
+    {
+        var machine = new StateMachine<ZakatState, ZakatEvent>(ZakatState.Draft);
+
+        machine.Configure(ZakatState.Draft)
+            .Permit(ZakatEvent.Calculate, ZakatState.Calculated);
+
+        machine.Configure(ZakatState.Calculated)
+            .Permit(ZakatEvent.ConfirmPayment, ZakatState.Paid)
+            .OnEntry(PublishZakatCalculatedEvent);
+
+        machine.Configure(ZakatState.Paid)
+            .IsSubstateOf(ZakatState.Calculated);
+
+        return machine;
+    }
+
+    private void PublishZakatCalculatedEvent() { /* publish domain event */ }
 }
 ```
 
@@ -243,6 +300,8 @@ const campaignMachine = createMachine({
 
 **REQUIRED**: FSM state MUST be part of aggregate root.
 
+#### `Java`
+
 ```java
 public class ZakatAssessment {
     private AssessmentId id;
@@ -255,6 +314,66 @@ public class ZakatAssessment {
         // Publish domain event
         domainEvents.add(new ZakatCalculated(id, calculatedAmount));
     }
+}
+```
+
+#### `Kotlin`
+
+```kotlin
+class ZakatAssessment(
+    val id: AssessmentId,
+) {
+    var currentState: ZakatState = ZakatState.DRAFT
+        private set
+
+    private val domainEvents = mutableListOf<DomainEvent>()
+
+    fun calculate(stateMachine: StateMachine<ZakatState, ZakatEvent>, calculatedAmount: Money) {
+        stateMachine.sendEvent(ZakatEvent.CALCULATE)
+        currentState = stateMachine.state.id
+        domainEvents += ZakatCalculated(id, calculatedAmount)
+    }
+
+    fun pullEvents(): List<DomainEvent> = domainEvents.toList().also { domainEvents.clear() }
+}
+```
+
+#### `C#`
+
+```csharp
+namespace Zakat.Domain.Aggregates;
+
+public sealed class ZakatAssessment
+{
+    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly StateMachine<ZakatState, ZakatEvent> _stateMachine;
+
+    public AssessmentId Id { get; }
+    public ZakatState CurrentState => _stateMachine.State;
+
+    public ZakatAssessment(AssessmentId id)
+    {
+        Id = id;
+        _stateMachine = new StateMachine<ZakatState, ZakatEvent>(ZakatState.Draft);
+        ConfigureTransitions();
+    }
+
+    public void Calculate(Money calculatedAmount)
+    {
+        _stateMachine.Fire(ZakatEvent.Calculate);
+        _domainEvents.Add(new ZakatCalculated(Id, calculatedAmount));
+    }
+
+    public IReadOnlyList<IDomainEvent> PullEvents()
+    {
+        var events = _domainEvents.ToList();
+        _domainEvents.Clear();
+        return events;
+    }
+
+    private void ConfigureTransitions() =>
+        _stateMachine.Configure(ZakatState.Draft)
+            .Permit(ZakatEvent.Calculate, ZakatState.Calculated);
 }
 ```
 

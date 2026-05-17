@@ -51,9 +51,9 @@ OSE Platform Islamic finance systems MUST use the following DDD patterns:
 
 **You MUST understand DDD fundamentals before using these standards:**
 
-- **[Domain-Driven Design Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)** - Educational foundation for DDD concepts
-- **[Domain-Driven Design Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md)** - Core DDD principles (Ubiquitous Language, Bounded Contexts, Strategic/Tactical patterns)
-- **[Domain-Driven Design By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)** - Practical DDD implementation examples
+- **[Domain-Driven Design Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/)** - Educational foundation for DDD concepts
+- **[Domain-Driven Design Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview.md)** - Core DDD principles (Ubiquitous Language, Bounded Contexts, Strategic/Tactical patterns)
+- **[Domain-Driven Design By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/)** - Practical DDD implementation examples
 
 **What this documentation covers**: OSE Platform-specific DDD patterns, Islamic finance domain modeling, aggregate boundaries, bounded context mapping in OSE Platform, integration with C4 and FSM, repository-specific tactical patterns.
 
@@ -244,6 +244,8 @@ DDD implementations MUST pass the following validation checks:
 
 ### Aggregate: ZakatAssessment
 
+#### `Java`
+
 ```java
 // Java implementation (Spring Boot)
 public record ZakatAssessment(
@@ -271,7 +273,62 @@ public record ZakatAssessment(
 }
 ```
 
+#### `Kotlin`
+
+```kotlin
+// Kotlin implementation (Spring Boot)
+data class ZakatAssessment(
+    val id: AssessmentId,
+    val userId: UserId,
+    val calculationDate: FiscalDate,
+    val totalWealth: Money,
+    val nisabThreshold: Money,
+    val zakatDue: ZakatAmount,
+    val status: AssessmentStatus,
+) {
+    // Business invariant: Zakat is 2.5% of wealth exceeding Nisab
+    fun calculate(): ZakatAssessment =
+        if (totalWealth < nisabThreshold) {
+            copy(zakatDue = Money.zero(), status = AssessmentStatus.BELOW_NISAB)
+        } else {
+            copy(
+                zakatDue = totalWealth * 0.025,
+                status = AssessmentStatus.CALCULATED,
+            )
+        }
+}
+```
+
+#### `C#`
+
+```csharp
+// C# implementation (ASP.NET Core)
+namespace Ose.Zakat.Domain;
+
+public sealed record ZakatAssessment(
+    AssessmentId Id,
+    UserId UserId,
+    FiscalDate CalculationDate,
+    Money TotalWealth,
+    Money NisabThreshold,
+    ZakatAmount ZakatDue,
+    AssessmentStatus Status)
+{
+    // Business invariant: Zakat is 2.5% of wealth exceeding Nisab
+    public ZakatAssessment Calculate() =>
+        TotalWealth < NisabThreshold
+            ? this with { ZakatDue = Money.Zero, Status = AssessmentStatus.BelowNisab }
+            : this with
+            {
+                ZakatDue = TotalWealth.Multiply(0.025m),
+                Status = AssessmentStatus.Calculated,
+            };
+}
+```
+
 ### Value Objects
+
+#### `Java`
 
 ```java
 // Money value object
@@ -297,7 +354,58 @@ public record Money(BigDecimal amount, Currency currency) {
 }
 ```
 
+#### `Kotlin`
+
+```kotlin
+// Money value object
+data class Money(val amount: BigDecimal, val currency: Currency) {
+    init {
+        require(amount >= BigDecimal.ZERO) { "Amount cannot be negative" }
+    }
+
+    operator fun times(factor: Double): Money =
+        copy(amount = amount.multiply(BigDecimal.valueOf(factor)))
+
+    operator fun compareTo(other: Money): Int {
+        assertSameCurrency(other)
+        return amount.compareTo(other.amount)
+    }
+
+    companion object {
+        fun zero(): Money = Money(BigDecimal.ZERO, Currency.getInstance("USD"))
+    }
+}
+```
+
+#### `C#`
+
+```csharp
+// Money value object
+namespace Ose.Zakat.Domain;
+
+public sealed record Money(decimal Amount, string Currency)
+{
+    public Money
+    {
+        if (Amount < 0)
+            throw new ArgumentException("Amount cannot be negative", nameof(Amount));
+    }
+
+    public Money Multiply(decimal factor) => this with { Amount = Amount * factor };
+
+    public bool IsLessThan(Money other)
+    {
+        AssertSameCurrency(other);
+        return Amount < other.Amount;
+    }
+
+    public static Money Zero => new(0m, "USD");
+}
+```
+
 ### Domain Event
+
+#### `Java`
 
 ```java
 // ZakatCalculated event
@@ -309,6 +417,33 @@ public record ZakatCalculated(
 ) implements DomainEvent {
     // Immutable event - no setters
 }
+```
+
+#### `Kotlin`
+
+```kotlin
+// ZakatCalculated event
+data class ZakatCalculated(
+    val assessmentId: AssessmentId,
+    val userId: UserId,
+    val zakatAmount: Money,
+    val occurredAt: Instant,
+) : DomainEvent
+// Immutable event - no setters
+```
+
+#### `C#`
+
+```csharp
+// ZakatCalculated event
+namespace Ose.Zakat.Domain.Events;
+
+public sealed record ZakatCalculated(
+    AssessmentId AssessmentId,
+    UserId UserId,
+    Money ZakatAmount,
+    DateTimeOffset OccurredAt) : DomainEvent;
+// Immutable event - no setters
 ```
 
 ## Related Documentation

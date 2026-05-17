@@ -16,7 +16,7 @@ created: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding FSM Frameworks](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/by-example/) before using these standards.
+**REQUIRED**: Complete [AyoKoding FSM Frameworks](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/) before using these standards.
 
 ## Spring State Machine (Java)
 
@@ -30,12 +30,38 @@ created: 2026-02-09
 
 **Example**:
 
+#### `Java`
+
 ```java
 @Configuration
 @EnableStateMachine
 public class ZakatStateMachineConfig extends StateMachineConfigurerAdapter<
     ZakatState, ZakatEvent> {
     // Configuration here
+}
+```
+
+#### `Kotlin`
+
+```kotlin
+@Configuration
+@EnableStateMachine
+class ZakatStateMachineConfig : StateMachineConfigurerAdapter<ZakatState, ZakatEvent>() {
+    // Configuration here
+}
+```
+
+#### `C#`
+
+```csharp
+// C# uses Stateless or custom FSM — no direct Spring State Machine equivalent.
+// Shown here with Stateless library (idiomatic C# FSM approach).
+namespace Zakat.Infrastructure.StateMachines;
+
+public sealed class ZakatStateMachineConfig
+{
+    public StateMachine<ZakatState, ZakatEvent> Build() =>
+        new StateMachine<ZakatState, ZakatEvent>(ZakatState.Draft);
 }
 ```
 

@@ -77,6 +77,19 @@ DDD provides two complementary pattern sets: strategic design for understanding 
 - Long-lived systems expected to evolve over years
 - High cost of defects or regulatory compliance requirements
 
+### ⬡ [Hexagonal Architecture](./hexagonal-architecture/README.md)
+
+**OSE Platform port, adapter, composition root, and testing conventions**
+
+Hexagonal Architecture (Ports and Adapters) isolates the domain core from all infrastructure concerns. OSE Platform conventions govern port naming and ownership, adapter package placement and forbidden imports, composition root wiring for Spring Boot (Java) and Giraffe (F#), and the port-contract-test pattern that maps to Nx `test:unit` / `test:integration` targets.
+
+**Use Hexagonal Architecture conventions when you are:**
+
+- Designing a new port interface for an OrganicLever bounded context
+- Implementing a database, messaging, or HTTP adapter
+- Wiring adapters in a Spring Boot `@Configuration` class or F# `CompositionRoot`
+- Writing port contract tests or setting up an in-memory adapter for `test:unit`
+
 ### 🔄 [Finite State Machine (FSM)](./finite-state-machine-fsm/README.md)
 
 **Standards for entity lifecycle management using finite state machines**
@@ -89,6 +102,19 @@ Finite State Machines provide a formal model for managing entity lifecycle trans
 - Business processes requiring explicit state transition rules
 - Domain logic that depends on current state
 - Need for auditable state history
+
+### 🧩 [DDD + Hexagonal In Practice](./ddd-hexagonal-in-practice/README.md)
+
+**OSE Platform conventions for combining DDD with Hexagonal Architecture**
+
+Strategic DDD (bounded contexts, context maps) and tactical DDD (aggregates, value objects, domain events) integrate cleanly with Hexagonal port-and-adapter structure. OSE Platform conventions govern bounded-context-to-port mapping, aggregate-port boundaries, cross-context integration via domain events and ACLs, and module organization for combined projects across Java/Kotlin and F#/Giraffe stacks.
+
+**Use these conventions when you are:**
+
+- Mapping a new bounded context onto port/adapter structure for OrganicLever
+- Deciding aggregate-to-port boundaries and write-port granularity
+- Designing cross-context integration with domain events, ACL, OHS, or sagas
+- Organizing modules/packages for a combined DDD + Hexagonal codebase
 
 ---
 

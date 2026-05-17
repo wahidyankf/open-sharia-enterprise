@@ -17,7 +17,7 @@ created: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding DDD Domain Events](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/by-example/) before using these standards.
+**REQUIRED**: Complete [AyoKoding DDD Domain Events](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/patterns-and-principles/) before using these standards.
 
 ## Purpose
 
@@ -45,6 +45,8 @@ OSE Platform domain event standards for event-driven architecture.
 
 **REQUIRED**: All events MUST be immutable.
 
+#### `Java`
+
 ```java
 public record ZakatCalculated(
     AssessmentId assessmentId,
@@ -54,6 +56,31 @@ public record ZakatCalculated(
 ) implements DomainEvent {
     // No setters - immutable
 }
+```
+
+#### `Kotlin`
+
+```kotlin
+data class ZakatCalculated(
+    val assessmentId: AssessmentId,
+    val userId: UserId,
+    val zakatAmount: Money,
+    val occurredAt: Instant,
+) : DomainEvent
+// No setters - immutable data class
+```
+
+#### `C#`
+
+```csharp
+namespace Ose.Zakat.Domain.Events;
+
+public sealed record ZakatCalculated(
+    AssessmentId AssessmentId,
+    UserId UserId,
+    Money ZakatAmount,
+    DateTimeOffset OccurredAt) : DomainEvent;
+// No setters - immutable record
 ```
 
 ## OSE Platform Domain Events
