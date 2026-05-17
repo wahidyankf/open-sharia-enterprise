@@ -3,113 +3,116 @@ title: "Beginner"
 weight: 10000003
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Beginner DDD + Hexagonal in Practice guides (Guides 1–6) — one context as one hexagon, reading the flat layout, domain types, application service signatures, repository port, and Giraffe handler as primary adapter"
-tags: ["ddd", "hexagonal-architecture", "f#", "in-the-field", "ose-app-be", "giraffe", "beginner"]
+description: "Beginner DDD + Hexagonal in Practice guides (Guides 1–6) — one context as one hexagon, reading the per-context layout, domain types, application service signatures, repository port, and Giraffe handler as primary adapter"
+tags: ["ddd", "hexagonal-architecture", "f#", "in-the-field", "giraffe", "beginner"]
 ---
 
 ## Guide 1 — One Context, One Hexagon
 
 ### Why It Matters
 
-A bounded context is not just a namespace — it is an isolation unit. Every time two contexts share a database table or call each other's repositories directly, a change in one cascades silently into the other. In `apps/ose-app-be` the four contexts (`regulatory-source`, `internal-policy`, `gap-analysis`, `ai-orchestration`) each own their domain layer and infrastructure adapters. Nothing crosses the context boundary except through an explicit port. Getting this isolation invariant right from day one is the single most valuable structural decision in a DDD + hexagonal codebase.
+A bounded context is not just a namespace — it is an isolation unit. Every time two contexts share a database table or call each other's repositories directly, a change in one cascades silently into the other. In `talks-platform-be` the four contexts (`submission`, `review`, `scheduling`, `ai-assist`) each own their domain layer and infrastructure adapters. Nothing crosses the context boundary except through an explicit port. Getting this isolation invariant right from day one is the single most valuable structural decision in a DDD + hexagonal codebase.
 
 ### Standard Library First
 
-F# modules are the only tool the standard library gives you for grouping related declarations. A module is a namespace, not a boundary enforcer — nothing stops `GapAnalysis.fs` from opening `RegulatorySource.fs` and reading its types directly. The standard library delivers cohesion, not isolation.
+F# modules are the only tool the standard library gives you for grouping related declarations. A module is a namespace, not a boundary enforcer — nothing stops `Review.fs` from opening `Submission.fs` and reading its types directly. The standard library delivers cohesion, not isolation.
 
 ```fsharp
 // Standard library approach: modules group code but enforce no boundary
-module OseAppBe.Domain.GapAnalysis
+module TalksPlatform.Domain.Review
 
-// => GapAnalysis module declared — F# namespace grouping
-open OseAppBe.Domain.RegulatorySource
-// => Direct open: GapAnalysis can now use all RegulatorySource types
+// => Review module declared — F# namespace grouping
+open TalksPlatform.Domain.Submission
+// => Direct open: Review can now use all Submission types
 // => The compiler permits this — no boundary enforcement here
-// => Any future change to RegulatorySource types breaks GapAnalysis silently
+// => Any future change to Submission types breaks Review silently
 
-let analyzeGap (source: RegulatoryDoc) = // hypothetical type
-    // => Takes a RegulatorySource type directly
+let scoreReview (talk: Talk) = // hypothetical type from Submission
+    // => Takes a Submission type directly
     // => The domain boundary exists only in the developer's head
     ()
 ```
-
-_Illustrative snippet — not from `apps/ose-app-be`; demonstrates the stdlib module approach that the hexagonal context layout supersedes._
 
 **Limitation for production**: modules permit cross-context imports with no enforcement. As the codebase grows, accidental coupling accumulates. The compiler cannot help you find boundary violations.
 
 ### Production Framework
 
-The hexagonal pattern enforces the boundary by making each context own its own `domain/`, `application/`, and `infrastructure/` layers, and only exposing types through explicit port types (function type aliases or discriminated unions). Nothing in `gap-analysis` opens anything from `regulatory-source` domain layer directly — it talks to `regulatory-source` through a port defined in the `gap-analysis` application layer.
+The hexagonal pattern enforces the boundary by making each context own its own `Domain/`, `Application/`, and `Infrastructure/` layers, and only exposing types through explicit port types (function type aliases or discriminated unions). Nothing in `review` opens anything from the `submission` domain layer directly — it talks to `submission` through a port defined in the `review` application layer.
 
-The diagram below shows the intended per-context layout that the `contexts/` scaffolding targets.
+The diagram below shows the per-context layout that the `Contexts/` scaffolding targets.
 
 ```mermaid
 flowchart LR
-    subgraph ctx["regulatory-source context"]
+    subgraph ctx["submission context"]
         direction TB
-        dom["domain/\n(types, aggregates)"]:::blue
-        app["application/\n(ports, services)"]:::orange
-        inf["infrastructure/\n(adapters, DB)"]:::teal
+        dom["Domain/\n(Talk, ValueObjects, DomainEvents)"]:::blue
+        app["Application/\n(ports, services)"]:::orange
+        inf["Infrastructure/\n(adapters, DB)"]:::teal
     end
-    subgraph gap["gap-analysis context"]
+    subgraph rev["review context"]
         direction TB
-        gdom["domain/\n(gap types)"]:::blue
-        gapp["application/\n(RegulatorySourcePort)"]:::orange
-        ginf["infrastructure/\n(ACL adapter)"]:::teal
+        rdom["Domain/\n(ReviewRound types)"]:::blue
+        rapp["Application/\n(TalkSubmittedPort)"]:::orange
+        rinf["Infrastructure/\n(ACL adapter)"]:::teal
     end
-    gapp -->|"consumes port only"| app
-    ginf -->|"calls HTTP / DB"| inf
+    rapp -->|"consumes port only"| app
+    rinf -->|"calls HTTP / DB"| inf
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
     classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
 ```
 
-The `ose-app-be` `contexts/` directory has this structure scaffolded today. Each bounded context gets its own layers:
+Each bounded context gets its own layers:
 
 ```fsharp
-// Intended layout — regulatory-source context domain layer
-// New file — intended layout.
-// Scaffolding exists at apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/domain/
-module OseAppBe.Contexts.RegulatorySource.Domain
+// Per-context layout — submission context domain layer
+// src/TalksPlatform/Contexts/Submission/Domain/ValueObjects.fs
+module TalksPlatform.Contexts.Submission.Domain.ValueObjects
 
-// => Module path mirrors the directory: contexts/regulatory-source/domain/
-// => Only types belonging to regulatory-source live here
+// => Module path mirrors the directory: Contexts/Submission/Domain/
+// => Only types belonging to submission live here
 // => No opens from other context domains
 
-type DocumentId = DocumentId of System.Guid
-// => Strongly-typed wrapper prevents passing a gap-analysis ID where a source ID is expected
-// => The constructor is private — only this module creates DocumentIds
+type TalkId = TalkId of System.Guid
+// => Strongly-typed wrapper — prevents passing a review ID where a talk ID is expected
+// => Single-case DU: the constructor is the only way to create a TalkId
 
-type RegulatoryDocument =
-    { Id: DocumentId
-      Title: string
-      IssuedBy: string
-      EffectiveDate: System.DateOnly }
-// => Aggregate root for regulatory-source context
-// => Fields reflect the ubiquitous language of the regulatory domain
-// => No ORM annotations — this is a pure domain type
+type Track =
+    | Backend
+    | Frontend
+    | InfraSecurity
+    | AI
+    | Leadership
+// => Discriminated union for conference tracks — pure domain type
+// => No ORM annotation, no serializer hint
+// => Compiles without any framework on the classpath
+
+type Format =
+    | Lightning  // 10 minutes
+    | Standard   // 30 minutes
+    | Workshop   // 90 minutes
+// => Format carries duration semantics without a numeric field
+// => Pattern-matching on Format is exhaustive — the compiler enforces it
 ```
 
-_New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/domain/`._
-
-**Trade-offs**: the per-context directory layout requires discipline during code review — the compiler cannot stop a developer from adding an `open` across contexts at the module level. A custom Roslyn/FSharpLint rule or a pre-commit grep can enforce the boundary mechanically. The payoff is that each context can evolve its domain model independently, and the integration test for one context never breaks when another context changes.
+**Trade-offs**: the per-context directory layout requires discipline during code review — the compiler cannot stop a developer from adding an `open` across contexts at the module level. A custom FSharpLint rule or a pre-commit grep can enforce the boundary mechanically. The payoff is that each context can evolve its domain model independently, and the integration test for one context never breaks when another context changes.
 
 ---
 
-## Guide 2 — Reading the Existing Flat Layout
+## Guide 2 — Reading the Per-Context Layout
 
 ### Why It Matters
 
-`apps/ose-app-be` is mid-migration. The production codebase you read today has a flat layout (`Domain/Types.fs`, `Domain/RegulatorySource.fs`, `Handlers/HealthHandler.fs`, `Infrastructure/AppDbContext.fs`) alongside the scaffolded per-context directories that contain only `.gitkeep` files. Before writing any new feature code you need to read both layouts fluently — otherwise you put new files in the wrong place or duplicate types that already exist in the flat layout.
+`talks-platform-be` organizes all feature code under `src/TalksPlatform/Contexts/`. Before writing any new feature code you need to read this layout fluently — otherwise you put new files in the wrong layer or duplicate types that already exist. The folder shape is not arbitrary: F# compiles files in the order listed in the `.fsproj`, which means the directory structure also encodes the dependency rule.
 
 ### Standard Library First
 
-The flat layout is a direct consequence of starting with a single-module approach. F# projects list every `.fs` file in the `.fsproj` in compilation order. A flat layout means all domain files sit in one `Domain/` directory, all handlers in one `Handlers/` directory. This is the zero-ceremony stdlib approach: it compiles, it works, and it is adequate for a small codebase.
+The flat layout is a direct consequence of starting with a single-module approach. F# projects list every `.fs` file in the `.fsproj` in compilation order. A flat layout means all domain files sit in one `Domain/` directory and all handlers in one `Presentation/` directory. This is the zero-ceremony stdlib approach: it compiles, it works, and it is adequate for a small codebase.
 
 ```fsharp
-// Current flat layout: Domain/Types.fs — shared cross-cutting types
-module OseAppBe.Domain.Types
+// Flat layout: Domain/Types.fs — shared cross-cutting types
+module TalksPlatform.Domain.Types
 
 // => Single module for all shared domain types
 // => No context scoping — every module in the project can open this
@@ -118,59 +121,43 @@ type AppEnv =
     | Staging
     | Prod
 // => Discriminated union for deployment environment
-// => Used by infrastructure layer to select connection strings
+// => Used by infrastructure to select connection strings
 
-type AppError = UnknownError of string
-// => Single shared error type — works for small codebase
+type RepositoryError =
+    | NotFound
+    | ConnectionFailure of exn
+// => Single shared error type — works for small codebases
 // => Will split into per-context error types as contexts gain feature plans
 ```
 
-Source: [apps/ose-app-be/src/OseAppBe/Domain/Types.fs](../../../../../../ose-app-be/src/OseAppBe/Domain/Types.fs)
-
-**Limitation for production**: as each bounded context adds its own error variants, a single shared `AppError` becomes a merge-conflict magnet and prevents per-context type evolution.
+**Limitation for production**: as each bounded context adds its own error variants, a single shared `RepositoryError` becomes a merge-conflict magnet and prevents per-context type evolution.
 
 ### Production Framework
 
-The intended layout separates shared cross-cutting types from context-specific types. The flat `Domain/Types.fs` continues to hold genuinely shared types (`AppEnv`, `AppError`) while per-context types migrate to `contexts/<ctx>/domain/`.
-
-Current flat layout: `Domain/RegulatorySource.fs` — a placeholder module with a doc comment marking its intended migration target.
-
-```fsharp
-module OseAppBe.Domain.RegulatorySource
-// => Placeholder module — types land here only temporarily
-// => Migration target: contexts/regulatory-source/domain/RegulatorySource.fs
-```
-
-Source: [apps/ose-app-be/src/OseAppBe/Domain/RegulatorySource.fs](../../../../../../ose-app-be/src/OseAppBe/Domain/RegulatorySource.fs)
-
-The `.fsproj` compilation order tells you what the migration has achieved so far:
+The per-context layout separates shared cross-cutting types from context-specific types. The `.fsproj` compilation order tells you what the layout has achieved:
 
 ```xml
-<!-- apps/ose-app-be/src/OseAppBe/OseAppBe.fsproj (excerpt) -->
-<!-- Flat layout files: compiled before contexts/ -->
+<!-- TalksPlatform.fsproj (excerpt) -->
+<!-- Per-context layout: compiled in dependency order -->
 <!-- => F# compiles files in the order listed — earlier files cannot reference later ones -->
-<Compile Include="Domain/Types.fs" />
-<!-- => Shared cross-cutting types first — every module below depends on this -->
-<!-- => Each domain module is self-contained — RegulatorySource, InternalPolicy, GapAnalysis, AiOrchestration compile before anything that depends on them -->
-<Compile Include="Domain/RegulatorySource.fs" />
-<Compile Include="Domain/InternalPolicy.fs" />
-<Compile Include="Domain/GapAnalysis.fs" />
-<Compile Include="Domain/AiOrchestration.fs" />
-<!-- => Flat domain modules compiled before infrastructure — enforces the dependency rule mechanically -->
-<Compile Include="Infrastructure/AppDbContext.fs" />
-<Compile Include="Infrastructure/Migrations.fs" />
-<!-- => Infrastructure opens Domain; Domain cannot open Infrastructure (it compiles first) -->
-<!-- => Contracts and Handlers compile after Infrastructure — they depend on both Domain types and Infrastructure adapters -->
-<Compile Include="Contracts/ContractWrappers.fs" />
-<Compile Include="Handlers/HealthHandler.fs" />
-<Compile Include="Program.fs" />
+<Compile Include="Contexts/Submission/Domain/ValueObjects.fs" />
+<!-- => Value objects first: TalkId, SpeakerId, Track, Format, Abstract, TagSet -->
+<Compile Include="Contexts/Submission/Domain/DomainEvents.fs" />
+<!-- => Events after value objects: TalkSubmitted, ReviewRoundClosed, TalkAccepted -->
+<Compile Include="Contexts/Submission/Application/Ports.fs" />
+<!-- => Ports after domain: function type aliases referencing domain types -->
+<Compile Include="Contexts/Submission/Application/SubmitTalk.fs" />
+<!-- => Application services after ports: orchestrate domain and port calls -->
+<Compile Include="Contexts/Submission/Infrastructure/NpgsqlTalkRepository.fs" />
+<!-- => Infrastructure after application: adapters import ports but ports never import adapters -->
+<Compile Include="Contexts/Submission/Presentation/SubmissionHandlers.fs" />
+<!-- => Presentation last per context: imports Giraffe, application layer, and contracts -->
+<Compile Include="Composition/Program.fs" />
 <!-- => Program.fs last — the composition root that wires everything together -->
-<!-- contexts/<ctx>/ files will be inserted above Program.fs as feature plans land -->
+<!-- Review/, Scheduling/, AiAssist/ follow the same pattern before Program.fs -->
 ```
 
-_New file (excerpt) — intended layout shows how feature files slot in. Source: [apps/ose-app-be/src/OseAppBe/OseAppBe.fsproj](../../../../../../ose-app-be/src/OseAppBe/OseAppBe.fsproj)._
-
-**Trade-offs**: keeping the flat layout alive during migration means two source-of-truth locations for domain types temporarily. The risk of duplication is real. Mitigate by never writing new types in `Domain/RegulatorySource.fs` — all new types for `regulatory-source` go directly into `contexts/regulatory-source/domain/`. The flat files become tombstones pointing at the new location.
+**Trade-offs**: keeping per-context files in strict compilation order means adding a new file requires updating the `.fsproj`. This is a minor cost. The benefit is that circular dependencies between layers are impossible — the compiler rejects them before any test runs.
 
 ---
 
@@ -178,7 +165,7 @@ _New file (excerpt) — intended layout shows how feature files slot in. Source:
 
 ### Why It Matters
 
-The single most common way a hexagonal architecture degrades into a layered monolith is when domain types import framework assemblies. The moment `RegulatoryDocument` has a `[<JsonPropertyName>]` attribute, or a `[<Column("regulatory_doc_id")>]` annotation, the domain layer depends on a serialization or ORM framework. Switching frameworks — or testing the domain in isolation — now requires framework setup. In `apps/ose-app-be`, keeping `Domain/Types.fs` and the per-context domain modules free of `open Microsoft.EntityFrameworkCore`, `open System.Text.Json`, or `open Giraffe` is the invariant that makes everything else possible.
+The single most common way a hexagonal architecture degrades into a layered monolith is when domain types import framework assemblies. The moment `Talk` has a `[<JsonPropertyName>]` attribute, or a `[<Column("talk_id")>]` annotation, the domain layer depends on a serialization or ORM framework. Switching frameworks — or testing the domain in isolation — now requires framework setup. In `talks-platform-be`, keeping the `Contexts/Submission/Domain/` modules free of `open Microsoft.EntityFrameworkCore`, `open System.Text.Json`, or `open Giraffe` is the invariant that makes everything else possible.
 
 ### Standard Library First
 
@@ -186,52 +173,65 @@ F# record types carry no annotations by default. The standard library gives you 
 
 ```fsharp
 // Standard library: pure record type, zero framework imports
-module OseAppBe.Domain.Types
+module TalksPlatform.Contexts.Submission.Domain.ValueObjects
 
 // => Module opens only the F# standard library implicitly
 // => No open statements required for basic types
 
-type AppEnv =
-    | Dev
-    | Staging
-    | Prod
-// => Pure discriminated union — no ORM attribute, no serializer hint
+type TalkId = TalkId of System.Guid
+// => Pure single-case DU — no ORM attribute, no serializer hint
 // => Compiles without Microsoft.EntityFrameworkCore or System.Text.Json on the classpath
 // => Can be used in unit tests with zero setup
 
-type AppError = UnknownError of string
-// => Single-case DU wrapping a string — pure F# stdlib
-// => No framework needed to construct, pattern-match, or test this type
-```
+type Abstract = private Abstract of string
+// => Private constructor: only the smart constructor (below) creates Abstract values
+// => The compiler enforces that callers go through validation
 
-Source: [apps/ose-app-be/src/OseAppBe/Domain/Types.fs](../../../../../../ose-app-be/src/OseAppBe/Domain/Types.fs)
+// Smart constructor: validates and returns Result
+let createAbstract (s: string) : Result<Abstract, string> =
+    // => Returns Result — the caller cannot ignore the error case
+    // => No exception thrown — functional error handling throughout the domain
+    if System.String.IsNullOrWhiteSpace(s) then Error "Abstract cannot be empty"
+    // => Empty string rejected at the type level — the domain invariant holds
+    elif s.Length > 2000 then Error "Abstract exceeds 2000 characters"
+    // => Length cap enforced here — no infrastructure needed to check this
+    else Ok (Abstract s)
+    // => Ok: the validated value — downstream functions receive only valid Abstracts
+```
 
 **Limitation for production**: when you need to persist a domain type, the ORM needs to know the column names. The stdlib gives you no mechanism for this — you have to decide where the ORM mapping lives.
 
 ### Production Framework
 
-The hexagonal answer is: ORM mapping lives in the infrastructure layer, not the domain layer. The domain type is a plain F# record. The `AppDbContext` in `Infrastructure/AppDbContext.fs` holds the EF Core `DbSet<>` declarations and `OnModelCreating` column mappings, keeping the domain module completely free of Entity Framework:
+The hexagonal answer is: ORM mapping lives in the infrastructure layer, not the domain layer. The domain type is a plain F# record. The `NpgsqlTalkRepository.fs` in `Infrastructure/` holds the mapping logic, keeping the domain module completely free of Npgsql:
 
 ```fsharp
-// Infrastructure layer: AppDbContext.fs holds all ORM concerns
-module OseAppBe.Infrastructure.AppDbContext
+// Infrastructure layer: NpgsqlTalkRepository.fs holds all ORM concerns
+// src/TalksPlatform/Contexts/Submission/Infrastructure/NpgsqlTalkRepository.fs
+module TalksPlatform.Contexts.Submission.Infrastructure.NpgsqlTalkRepository
 
-open Microsoft.EntityFrameworkCore
-// => ORM import is confined to the infrastructure module only
-// => The domain/Types.fs never needs to open this
+open Npgsql
+// => Npgsql import is confined to the infrastructure module only
+// => Domain/ValueObjects.fs never needs to open this
+open TalksPlatform.Contexts.Submission.Domain
+// => Import domain types for mapping — infrastructure depends on domain, not the reverse
 
-type AppDbContext(options: DbContextOptions<AppDbContext>) =
-    inherit DbContext(options)
-// => DbContext is a framework type — lives only in infrastructure
-// => Domain types do not inherit from DbContext or any ORM base class
-// DbSet<> declarations added in feature plans when entities are defined
-// => Comment signals the growth pattern: domain types come first, DbSets follow
-// => When RegulatoryDocument gains a DbSet, it lands here, not in Domain/
+// Row-level record matching the submission.talks table columns
+[<CLIMutable>]
+type TalkRow =
+    { talk_id: System.Guid
+      // => snake_case: matches the PostgreSQL column name — ORM concern only in infrastructure
+      speaker_id: System.Guid
+      abstract_text: string
+      format: string
+      // => format stored as string — deserialize to Format DU in the repository, not in domain
+      status: string }
+      // => CLIMutable: enables Npgsql Dapper-style mapping — stays out of the domain layer
+// => TalkRow: the database-facing record; Talk (domain) is the application-facing record
+// => The mapping between the two is the adapter's sole responsibility
 ```
 
-Source: [apps/ose-app-be/src/OseAppBe/Infrastructure/AppDbContext.fs](../../../../../../ose-app-be/src/OseAppBe/Infrastructure/AppDbContext.fs)
-
-The dependency rule flows inward: `Infrastructure` opens `Domain`, never the reverse. In F# project files the compilation order enforces this mechanically — `Domain/Types.fs` compiles before `Infrastructure/AppDbContext.fs`, so the domain module physically cannot open anything from infrastructure.
+The dependency rule flows inward: `Infrastructure` opens `Domain`, never the reverse. In F# project files the compilation order enforces this mechanically — `Domain/ValueObjects.fs` compiles before `Infrastructure/NpgsqlTalkRepository.fs`, so the domain module physically cannot open anything from infrastructure.
 
 **Trade-offs**: keeping domain types annotation-free means you need a separate mapping step at the boundary. For simple CRUD aggregates this mapping is tedious. For complex aggregates with invariants (value objects that must be validated on construction) the separation pays for itself immediately — you can test the entire domain layer without spinning up a database or serializer.
 
@@ -241,7 +241,7 @@ The dependency rule flows inward: `Infrastructure` opens `Domain`, never the rev
 
 ### Why It Matters
 
-Application services are the orchestration layer between the driving adapter (an HTTP handler) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the HTTP handler works with — JSON-friendly `[<CLIMutable>]` records with nullable fields and no invariants. When that happens the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. In `apps/ose-app-be`, the design rule is: application service functions take and return domain aggregates; the handler translates.
+Application services are the orchestration layer between the driving adapter (an HTTP handler) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the HTTP handler works with — JSON-friendly `[<CLIMutable>]` records with nullable fields and no invariants. When that happens the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. In `talks-platform-be`, the design rule is: application service functions take and return domain aggregates; the handler translates.
 
 ### Standard Library First
 
@@ -249,34 +249,30 @@ F# function types naturally express this signature without any framework. The st
 
 ```fsharp
 // Standard library: application service as a plain function with domain types
-// New file — intended layout.
-// Scaffolding exists at apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/
-module OseAppBe.Contexts.RegulatorySource.Application.RegulatorySourceService
-// => Module path mirrors the directory: contexts/regulatory-source/application/
+// src/TalksPlatform/Contexts/Submission/Application/SubmitTalk.fs
+module TalksPlatform.Contexts.Submission.Application.SubmitTalk
 
-open OseAppBe.Contexts.RegulatorySource.Domain
+open TalksPlatform.Contexts.Submission.Domain
 // => Import only the domain module — no HTTP, no JSON, no ORM
 // => Keeping the application layer free of framework imports preserves testability
 
 // Plain F# function — returns Result to propagate domain errors
-let ingestDocument
-    (save: RegulatoryDocument -> Result<unit, string>)  // output port injected
+let submitTalk
+    (save: Talk -> Result<unit, string>)   // output port injected
     // => 'save' is a function parameter — the application service is agnostic of the implementation
-    (document: RegulatoryDocument)                       // domain aggregate as input
+    (talk: Talk)                            // domain aggregate as input
     // => Aggregate received from the handler after invariant validation
-    : Result<RegulatoryDocument, string> =               // domain aggregate as output
+    : Result<Talk, string> =               // domain aggregate as output
     // => Signature is entirely in domain terms
     // => No DTO type crosses this function boundary
     // => 'save' is an output port — its implementation lives in infrastructure
     // => Result return type lets callers pattern-match on success or failure without exceptions
-    save document
+    save talk
     // => Delegates persistence to the injected port — synchronous stdlib version
-    |> Result.map (fun () -> document)
+    |> Result.map (fun () -> talk)
     // => On success, return the same aggregate the caller passed in
     // => On failure, propagate the error string from the port
 ```
-
-_New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/`._
 
 **Limitation for production**: plain strings as error types lose type information. In a real service you want a discriminated union for errors so callers can pattern-match on specific failure modes.
 
@@ -285,61 +281,56 @@ _New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseApp
 In the Giraffe stack the HTTP handler owns the DTO translation. The application service never touches `HttpContext`, `System.Text.Json`, or Giraffe types:
 
 ```fsharp
-// Intended production application service signature
-// New file — intended layout.
-// Scaffolding exists at apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/
-module OseAppBe.Contexts.RegulatorySource.Application.RegulatorySourceService
-// => Module path mirrors the directory: contexts/regulatory-source/application/
+// Production application service signature
+// src/TalksPlatform/Contexts/Submission/Application/SubmitTalk.fs
+module TalksPlatform.Contexts.Submission.Application.SubmitTalk
 
-open OseAppBe.Contexts.RegulatorySource.Domain
-open OseAppBe.Domain.Types
-// => Only domain and shared cross-cutting types imported
-// => No Giraffe, no System.Text.Json, no Microsoft.EntityFrameworkCore
+open TalksPlatform.Contexts.Submission.Domain
+open TalksPlatform.Contexts.Submission.Application.Ports
+// => Only domain and port types imported
+// => No Giraffe, no System.Text.Json, no Npgsql
 // => This import boundary is what makes the application layer unit-testable without a web server
 
 // Typed error union — each failure mode is explicit
-type IngestError =
-    | DuplicateDocument of DocumentId
-    // => Carries the DocumentId that already exists — callers log or return 409
-    | InvalidTitle of string
+type SubmitTalkError =
+    | DuplicateSubmission of TalkId
+    // => Carries the TalkId that already exists — callers log or return 409
+    | InvalidFormat of string
     // => Carries the validation message — callers return 400 with this text
-    | RepositoryFailure of AppError
-    // => Wraps the shared AppError — callers return 500, log the AppError payload
+    | RepositoryFailure of exn
+    // => Wraps the infrastructure exception — callers return 500, log the exception
 // => Pattern-matched at the handler boundary, not inside the service
 // => Adding a new failure mode requires updating all call sites — the compiler enforces it
 
-// Output port type alias — injected, never constructed here
-type SaveDocument = RegulatoryDocument -> Async<Result<unit, IngestError>>
-// => Function type alias for the repository port
-// => The application service does not know whether SaveDocument writes to Postgres or memory
-// => Switching adapters requires no change to this file
-// => Async because the Npgsql production implementation performs I/O
-
 // Application service: takes aggregate, returns aggregate-or-error
-let ingestDocument
-    (save: SaveDocument)
+let submitTalk
+    (save: TalkRepository)
     // => Port injected by the composition root (Program.fs) via partial application
-    (document: RegulatoryDocument)
+    (pub: EventPublisher)
+    // => Event publisher port — injected the same way as the repository
+    (talk: Talk)
     // => Validated aggregate — the handler called the smart constructor before reaching here
-    : Async<Result<RegulatoryDocument, IngestError>> =
+    : Async<Result<Talk, SubmitTalkError>> =
     // => Entirely domain and stdlib types in the signature
-    // => 'document' is a validated aggregate — smart constructor enforced invariants before this call
     async {
-        match! save document with
+        match! save.SaveTalk talk with
         // => Async computation expression — awaits the repository port call
         // => match! desugars to Async.bind: no thread-blocking, no callback pyramid
+        | Error (RepositoryError.UniqueConstraintViolation) ->
+            return Error (DuplicateSubmission talk.Id)
+            // => Translate infrastructure error to application-layer error variant
+        | Error (RepositoryError.ConnectionFailure ex) ->
+            return Error (RepositoryFailure ex)
+            // => Wrap the raw exception for the handler to log
         | Ok () ->
-            return Ok document
+            do! pub.Publish (TalkSubmitted { TalkId = talk.Id; SpeakerId = talk.SpeakerId
+                                             Abstract = talk.Abstract; Format = talk.Format })
+            // => Publish domain event after successful save — outbox adapter is atomic
+            return Ok talk
             // => Success: return the same aggregate
             // => Caller (handler) translates this to a 201 Created response
-        | Error e ->
-            return Error e
-            // => Failure: propagate the typed error without wrapping
-            // => Handler pattern-matches on IngestError variants to produce the correct HTTP status
     }
 ```
-
-_New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/`._
 
 **Trade-offs**: this clean signature forces you to write a mapping function in the handler layer. For thin CRUD endpoints the mapping is boilerplate. For endpoints where the domain aggregate has invariants the payoff is substantial — the application service is a pure function of domain types and can be tested with zero framework setup.
 
@@ -349,7 +340,7 @@ _New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseApp
 
 ### Why It Matters
 
-Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In object-oriented hexagonal architecture this is typically an interface. In F# the idiomatic equivalent is a function type alias — a single-function type that the application service receives as a parameter. This makes the dependency explicit in the type signature, eliminates interface ceremony, and makes adapter swapping as simple as passing a different function. `apps/ose-app-be` uses this pattern throughout its intended per-context layout.
+Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In object-oriented hexagonal architecture this is typically an interface. In F# the idiomatic equivalent is a function type alias — a single-function type that the application service receives as a parameter. This makes the dependency explicit in the type signature, eliminates interface ceremony, and makes adapter swapping as simple as passing a different function. `talks-platform-be` uses this pattern throughout its per-context layout.
 
 ### Standard Library First
 
@@ -357,25 +348,22 @@ F# function types are first-class. The standard library lets you express any por
 
 ```fsharp
 // Standard library: function type alias as output port
-// New file — intended layout.
-// Scaffolding exists at apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/
-module OseAppBe.Contexts.RegulatorySource.Application.Ports
+// src/TalksPlatform/Contexts/Submission/Application/Ports.fs
+module TalksPlatform.Contexts.Submission.Application.Ports
 
-open OseAppBe.Contexts.RegulatorySource.Domain
+open TalksPlatform.Contexts.Submission.Domain
 
-// Repository port: find a document by its ID
-type FindDocument = DocumentId -> Result<RegulatoryDocument option, string>
+// Repository port: find a talk by its ID
+type FindTalk = TalkId -> Result<Talk option, string>
 // => Plain F# type alias — no interface keyword, no abstract class
-// => The type says exactly what the application service needs: give me an ID, return a document-or-nothing-or-error
+// => The type says exactly what the application service needs: give me an ID, return a talk-or-nothing-or-error
 // => Compose multiple ports as parameters to the service function
 
-// Repository port: persist a document
-type SaveDocument = RegulatoryDocument -> Result<unit, string>
+// Repository port: persist a talk
+type SaveTalk = Talk -> Result<unit, string>
 // => Write-side port — unit return on success means the caller does not need to re-read
 // => Error string is the stdlib approach; production version uses a DU (see Guide 4)
 ```
-
-_New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/`._
 
 **Limitation for production**: plain `Result<_, string>` loses error semantics. The caller cannot distinguish a database connection failure from a uniqueness constraint violation without parsing the string.
 
@@ -385,9 +373,9 @@ The Giraffe + Npgsql stack wraps each port in a typed error union and makes the 
 
 ```mermaid
 flowchart LR
-    app["Application layer\nSaveDocument port type alias"]:::orange
-    inf["Infrastructure layer\nnpgsqlSaveDocument : SaveDocument"]:::teal
-    mem["Test infrastructure\ninMemorySaveDocument : SaveDocument"]:::purple
+    app["Application layer\nTalkRepository port record"]:::orange
+    inf["Infrastructure layer\nnpgsqlTalkRepository : TalkRepository"]:::teal
+    mem["Test infrastructure\ninMemoryTalkRepository : TalkRepository"]:::purple
     app -->|"satisfied by"| inf
     app -->|"satisfied by in tests"| mem
 
@@ -398,17 +386,16 @@ flowchart LR
 
 ```fsharp
 // Production port type alias — application layer only
-// New file — intended layout.
-// Scaffolding exists at apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/
-module OseAppBe.Contexts.RegulatorySource.Application.Ports
+// src/TalksPlatform/Contexts/Submission/Application/Ports.fs
+module TalksPlatform.Contexts.Submission.Application.Ports
 // => This module contains only type aliases — no implementation, no I/O, no framework imports
 
-open OseAppBe.Contexts.RegulatorySource.Domain
+open TalksPlatform.Contexts.Submission.Domain
 // => Domain types are the only dependency — ports are defined in application layer terms
 
 type RepositoryError =
-    | NotFound of DocumentId
-    // => Read-side only: a missing document is surfaced as NotFound, not as an Option
+    | NotFound of TalkId
+    // => Read-side only: a missing talk is surfaced as NotFound, not as an Option
     | UniqueConstraintViolation
     // => Write-side: the DB raised a uniqueness constraint — callers return HTTP 409
     | ConnectionFailure of exn
@@ -416,21 +403,24 @@ type RepositoryError =
 // => Typed DU — pattern matching at call site is exhaustive
 // => Adding a new DB error mode requires all callers to handle it
 
-// Read port
-type FindDocument = DocumentId -> Async<Result<RegulatoryDocument option, RepositoryError>>
-// => Async because the Npgsql adapter performs I/O
-// => option because a missing document is not an error — it is a valid domain outcome
-// => RepositoryError because a DB failure is an infrastructure concern, not a domain one
-// => The application service passes this function to any code that needs to look up a document
+// Repository port as a record of functions — groups read and write together
+type TalkRepository =
+    { FindTalk: TalkId -> Async<Result<Talk option, RepositoryError>>
+      // => Async because the Npgsql adapter performs I/O
+      // => option because a missing talk is not an error — it is a valid domain outcome
+      SaveTalk: Talk -> Async<Result<unit, RepositoryError>>
+      // => unit success — the application service trusts the adapter to persist atomically
+      // => RepositoryError wraps Npgsql exceptions at the adapter boundary (Guide 7)
+    }
+// => Record-of-functions: groups both operations so the application service receives one parameter
+// => The Npgsql adapter satisfies this record; the in-memory test stub also satisfies it
 
-// Write port
-type SaveDocument = RegulatoryDocument -> Async<Result<unit, RepositoryError>>
-// => unit success — the application service trusts the adapter to persist atomically
-// => RepositoryError wraps Npgsql exceptions at the adapter boundary (Guide 7)
-// => The Npgsql adapter satisfies this type; the in-memory test stub also satisfies it
+// Event publisher port — single function alias
+type EventPublisher =
+    { Publish: DomainEvent -> Async<Result<unit, string>> }
+// => Record wrapping one function: extensible if more event operations are added
+// => The outbox adapter satisfies this in production; in-memory adapter satisfies it in tests
 ```
-
-_New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/application/`._
 
 **Trade-offs**: function type aliases are lightweight but single-method. When a port grows to five or six operations, grouping them in a record of functions keeps the application service parameter list manageable. A record-of-functions port is a natural next step when the function-alias approach feels like parameter explosion.
 
@@ -440,7 +430,7 @@ _New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseApp
 
 ### Why It Matters
 
-The Giraffe handler is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command, call the application service, and translate the domain result into an HTTP response. Nothing more. A handler that contains business logic, validates domain invariants, or directly opens a database connection has crossed out of the adapter layer and into the domain or infrastructure — the most common source of untestable, entangled production code. In `apps/ose-app-be`, `Handlers/HealthHandler.fs` is the only handler today, and it is a textbook primary adapter.
+The Giraffe handler is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command, call the application service, and translate the domain result into an HTTP response. Nothing more. A handler that contains business logic, validates domain invariants, or directly opens a database connection has crossed out of the adapter layer and into the domain or infrastructure — the most common source of untestable, entangled production code. In `talks-platform-be`, `Presentation/SubmissionHandlers.fs` holds the HTTP adapter for the submission context.
 
 ### Standard Library First
 
@@ -460,10 +450,8 @@ let healthHandler : RequestDelegate =
     fun (ctx: HttpContext) ->
         task {
             // => Imperative async workflow — Task CE
-            // => Each step inside is awaitable; no callback nesting
             let response = {| status = "healthy" |}
             // => Anonymous record — no type declaration needed
-            // => F# infers the type {| status: string |} at compile time
             ctx.Response.ContentType <- "application/json"
             // => Set content type manually — no automatic negotiation
             // => Giraffe's json combinator sets this for you (see Production Framework below)
@@ -479,110 +467,121 @@ let healthHandler : RequestDelegate =
         }
         :> Task
         // => Upcast to plain Task — RequestDelegate return type
-        // => The task CE produces Task<unit>; RequestDelegate expects Task
 ```
-
-_Illustrative snippet — not from `apps/ose-app-be`; demonstrates the stdlib RequestDelegate pattern that Giraffe supersedes._
 
 **Limitation for production**: composition is verbose. Chaining middleware, routing, and authorization requires manual `next` threading. Giraffe's `HttpHandler` type (`HttpContext -> Task<HttpContext option>`) composes cleanly with `>=>` (fish operator).
 
 ### Production Framework
 
-`Handlers/HealthHandler.fs` shows the minimal Giraffe handler — a live file you can read today:
+The health handler shows the minimal Giraffe adapter. A domain-backed handler for `POST /api/v1/talks` follows the same pattern but adds the translation steps:
 
 ```fsharp
-// Giraffe handler — primary (driving) adapter
-module OseAppBe.Handlers.HealthHandler
+// Giraffe handler — primary (driving) adapter for talk submission
+// src/TalksPlatform/Contexts/Submission/Presentation/SubmissionHandlers.fs
+module TalksPlatform.Contexts.Submission.Presentation.SubmissionHandlers
 
 open Giraffe
-// => Single import: Giraffe types and combinators — no domain import needed for a health check
+// => Giraffe types: HttpHandler, BindJsonAsync, RequestErrors, Successful, ServerErrors
+open TalksPlatform.Contexts.Submission.Domain
+// => Domain: Talk smart constructor, TalkId, Abstract, Format
+open TalksPlatform.Contexts.Submission.Application.Ports
+// => Ports: TalkRepository, EventPublisher, RepositoryError
+open TalksPlatform.Contexts.Submission.Application.SubmitTalk
+// => Application service and SubmitTalkError
+// => Four imports only: no Npgsql, no System.Text.Json — handler is a pure adapter
 
-let handle: HttpHandler = fun next ctx -> json {| status = "healthy" |} next ctx
-// => HttpHandler type: HttpFunc -> HttpContext -> HttpFuncResult
-// => 'next' is the continuation — Giraffe's composition primitive; 'ctx' is the ASP.NET Core HttpContext
-// => json: Giraffe combinator — serializes the anonymous record and sets Content-Type: application/json
-// => {| status = "healthy" |}: anonymous record — no DTO type declaration needed for trivial responses
-// => The whole handler is a single expression: no imperative block, no explicit status code
-```
+// Request DTO — deserialized from JSON by Giraffe's BindJsonAsync
+[<CLIMutable>]
+type SubmitTalkRequest =
+    { SpeakerId: System.Guid
+      // => CLIMutable: reflection-based setters required by Giraffe's BindJsonAsync
+      AbstractText: string
+      // => Raw string: smart constructor validates length and emptiness
+      Format: string
+      // => String format name: adapter maps "Lightning" → Format.Lightning etc.
+      Track: string }
+      // => String track name: adapter maps "Backend" → Track.Backend etc.
 
-Source: [apps/ose-app-be/src/OseAppBe/Handlers/HealthHandler.fs](../../../../../../ose-app-be/src/OseAppBe/Handlers/HealthHandler.fs)
+// Format string → Format DU mapping
+let private parseFormat = function
+    | "Lightning"  -> Ok Format.Lightning
+    // => Exact string match: the client must send "Lightning", not "lightning"
+    | "Standard"   -> Ok Format.Standard
+    | "Workshop"   -> Ok Format.Workshop
+    | other        -> Error (sprintf "Unknown format: %s" other)
+    // => Error carries the invalid string — the handler returns 400 with this message
 
-A domain-backed handler (e.g., POST /api/v1/regulatory-sources) follows the same pattern but adds the translation steps:
-
-```fsharp
-// Intended production handler for a domain command
-// New file — intended layout.
-// Scaffolding exists at apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/
-module OseAppBe.Contexts.RegulatorySource.Presentation.IngestHandler
-// => Presentation layer: the module lives inside the context but depends on Giraffe
-
-open Giraffe
-// => Giraffe types: HttpHandler, HttpFunc, RequestErrors, Successful, ServerErrors
-open OseAppBe.Contexts.RegulatorySource.Application
-// => Application layer: RegulatorySourceService.SaveDocument and Ports.RepositoryError
-open OseAppBe.Contracts.Wrappers
-// => Three imports only: Giraffe (HTTP types), application layer (service + port types), contracts (DTOs)
-// => Domain layer is NOT opened here — the handler works with DTOs and delegates to the service
-// => This import discipline is what makes the handler a pure adapter with no business logic
-
-let handle (ingest: RegulatorySourceService.SaveDocument) : HttpHandler =
-    // => Dependency injection via partial application: 'ingest' port provided by composition root
-    // => Returns HttpHandler — composes cleanly with Giraffe routing
-    // => Partial application binds 'ingest' at startup; the resulting HttpHandler is called per request
+// Handler factory: returns an HttpHandler with the ports partially applied
+let handleSubmit
+    (repo: TalkRepository)
+    (pub: EventPublisher)
+    // => Two ports injected by the composition root via partial application
+    : HttpHandler =
     fun next ctx ->
+        // => next: the next HttpHandler in the pipeline; ctx: ASP.NET Core HttpContext
         task {
-            let! dto = ctx.BindJsonAsync<IngestRegulatorySourceRequest>()
-            // => BindJsonAsync: Giraffe combinator deserializes request body into a DTO record
-            // => The DTO type lives in Contracts/ — no domain type here
-            // => Raises an exception on malformed JSON; global error handler returns 400
+            let! dto = ctx.BindJsonAsync<SubmitTalkRequest>()
+            // => Giraffe BindJsonAsync: deserializes the request body into the CLIMutable DTO
+            // => Throws on malformed JSON — global error middleware catches it and returns 400
 
-            // Translate DTO → domain aggregate (smart constructor validates invariants)
-            match RegulatorySourceDomain.createDocument dto.Title dto.IssuedBy dto.EffectiveDate with
-            // => Smart constructor enforces domain invariants — returns Result
-            // => Validation happens once here; the application service receives only valid aggregates
-            | Error validationMsg ->
-                return! RequestErrors.BAD_REQUEST validationMsg next ctx
-                // => HTTP 400: domain validation failed — translate error to HTTP at this boundary
-                // => The handler is the only place allowed to produce HTTP status codes
-            | Ok document ->
-                match! ingest document with
-                // => Call application service with validated domain aggregate — awaits async port
-                // => match! suspends the task CE until the Async<Result<_,_>> completes
-                | Error (Ports.UniqueConstraintViolation) ->
-                    return! RequestErrors.CONFLICT "Document already exists" next ctx
-                    // => HTTP 409: translate domain error to HTTP status code
-                    // => Pattern-match is exhaustive — compiler warns if a new RepositoryError variant is unhandled
-                | Error _ ->
-                    return! ServerErrors.INTERNAL_ERROR "Repository failure" next ctx
-                    // => HTTP 500: catch-all for infrastructure failures
-                    // => Logs the full error in production middleware before reaching this line
+            // Step 1: DTO → domain types via smart constructors
+            match createAbstract dto.AbstractText, parseFormat dto.Format with
+            // => Both smart constructors evaluated — tuple pattern handles both results
+            | Error msg, _ | _, Error msg ->
+                return! RequestErrors.BAD_REQUEST msg next ctx
+                // => HTTP 400: domain validation failed — translate at the adapter boundary
+            | Ok abstract', Ok format ->
+                // => Ok branch: both constructors validated their inputs
+
+                let talk =
+                    { Id = TalkId (System.Guid.NewGuid())
+                      // => New UUID v7-style ID — composition root can inject a Clock port for real UUID v7
+                      SpeakerId = SpeakerId dto.SpeakerId
+                      Abstract = abstract'
+                      Format = format
+                      Status = Draft }
+                // => Build the domain aggregate from validated value objects
+
+                // Step 2: aggregate → application service → domain result
+                match! submitTalk repo pub talk with
+                // => Application service: takes repo port, publisher port, domain aggregate
+                // => match! suspends the handler task until the Async<Result<_,_>> resolves
+                | Error (DuplicateSubmission id) ->
+                    return! RequestErrors.CONFLICT (sprintf "Talk %A already submitted" id) next ctx
+                    // => HTTP 409: typed pattern match, not string parsing
+                | Error (InvalidFormat msg) ->
+                    return! RequestErrors.BAD_REQUEST msg next ctx
+                    // => HTTP 400: format validation failed in the application service
+                | Error (RepositoryFailure ex) ->
+                    eprintfn "Repository failure: %A" ex
+                    // => Log the raw exception before discarding it from the response
+                    return! ServerErrors.INTERNAL_ERROR "Repository unavailable" next ctx
                 | Ok saved ->
-                    return! Successful.CREATED (toResponseDto saved) next ctx
-                    // => HTTP 201: translate domain aggregate to response DTO at this boundary
-                    // => toResponseDto lives in Contracts/ — the only serialization mapping in this context
+                    // => Step 3: domain aggregate → response DTO → HTTP 201
+                    return! Successful.CREATED {| talkId = saved.Id |} next ctx
+                    // => Successful.CREATED: sets 201 status and serializes the anonymous record
         }
 ```
 
-_New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseAppBe/contexts/regulatory-source/`._
-
-The routing wires the handler to a URL in `Program.fs`. See the live composition root:
+The routing wires the handler to a URL in `Program.fs`:
 
 ```fsharp
 // Program.fs: routes declare what handlers respond to what URLs
-let webApp: HttpHandler =
-    // => webApp is the single top-level HttpHandler registered with ASP.NET Core
+// src/TalksPlatform/Composition/Program.fs
+let webApp (repo: TalkRepository) (pub: EventPublisher) : HttpHandler =
+    // => webApp takes the ports as parameters — the composition root binds them at startup
     // => All routing lives here — no controller discovery, no attribute-based routing
     choose
         // => choose tries each handler in order and returns the first that matches
-        [ GET >=> route "/api/v1/health" >=> Handlers.HealthHandler.handle
-          // => GET /api/v1/health routes to the health handler
+        [ GET  >=> route "/api/v1/health"            >=> json {| status = "healthy" |}
+          // => GET /api/v1/health: inline health check — no domain port needed
           // => >=> is Giraffe's Kleisli composition: chain handlers left-to-right
-          // => Adding a new route: insert a new line before RequestErrors.NOT_FOUND
+          POST  >=> route "/api/v1/talks"             >=> Submission.Presentation.SubmissionHandlers.handleSubmit repo pub
+          // => POST /api/v1/talks: submission handler with ports partially applied
+          GET   >=> routef "/api/v1/talks/%O"        (fun talkId -> Submission.Presentation.SubmissionHandlers.handleGet repo talkId)
+          // => routef: extracts the talkId from the URL path — Giraffe parses the %O as Guid
           RequestErrors.NOT_FOUND "Not Found" ]
           // => Catch-all: any unmatched route returns 404
-          // => Must be last in the choose list — it matches every request
 ```
-
-Source: [apps/ose-app-be/src/OseAppBe/Program.fs](../../../../../../ose-app-be/src/OseAppBe/Program.fs)
 
 **Trade-offs**: Giraffe handlers are lightweight but require explicit `next ctx` threading everywhere. This is the price of composability — each handler must forward `next` to the continuation. For teams new to Giraffe the `>=>` operator and `HttpFuncResult` return type have a learning curve. The payoff is that handler composition (auth middleware, routing, error handling) is pure function composition with no magic.

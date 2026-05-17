@@ -3,13 +3,13 @@ title: "DDD + Hexagonal in Practice — F# in the Field"
 weight: 10000002
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Overview of the production wiring tutorial — how DDD aggregates flow through a real F# / Giraffe / Npgsql hexagonal codebase dogfooded against apps/ose-app-be"
-tags: ["ddd", "hexagonal-architecture", "f#", "in-the-field", "ose-app-be", "giraffe", "npgsql"]
+description: "Overview of the production wiring tutorial — how DDD aggregates flow through an F# / Giraffe / Npgsql hexagonal codebase running against a hypothetical Conference Talk Submission Platform"
+tags: ["ddd", "hexagonal-architecture", "f#", "in-the-field", "giraffe", "npgsql"]
 ---
 
-**You have finished the by-example tracks. You know what an aggregate is. You know what a port is. Now the question is: how do they wire together in a real production codebase that ships?** This tutorial answers that question using `apps/ose-app-be` — the F# / Giraffe / Npgsql backend of the OSE Platform — as the running domain.
+**You have finished the by-example tracks. You know what an aggregate is. You know what a port is. Now the question is: how do they wire together in a real production codebase that ships?** This tutorial answers that question using F# / Giraffe / Npgsql, running against a hypothetical Conference Talk Submission Platform.
 
-Every guide in this series traces a single wiring seam: how a Giraffe handler parses an HTTP request into a command, how a domain aggregate processes that command, how an output port carries the result to a Npgsql adapter, and how an integration test swaps that adapter for an in-memory stub. No toy examples. No order-taking stories. Real files, real modules, real production decisions.
+Every guide in this series traces a single wiring seam: how a Giraffe handler parses an HTTP request into a command, how a domain aggregate processes that command, how an output port carries the result to a Npgsql adapter, and how an integration test swaps that adapter for an in-memory stub. No toy examples. No order-taking stories. A single coherent domain — production-grade wiring decisions — carried consistently across all twenty-seven guides.
 
 ## Prerequisites
 
@@ -20,44 +20,55 @@ Every guide in this series traces a single wiring seam: how a Giraffe handler pa
 
 **This tutorial does NOT re-teach DDD or hexagonal fundamentals.** Terms like _aggregate_, _port_, _adapter_, _bounded context_, and _repository pattern_ are used without definition. If any of those feel unfamiliar, complete the prerequisite tracks first. The guides here are about wiring — how the pieces connect in production — not about what the pieces are.
 
-## Running Domain
+## Running Domain — Conference Talk Submission Platform
 
-The running domain for all guides is [`apps/ose-app-be`](../../../../../../ose-app-be/README.md) — the F# / Giraffe / Npgsql backend of the OSE Application platform.
+Every guide reasons against the same hypothetical service: **`talks-platform-be`**, the backend of a conference talk submission system. Picking a single coherent domain (instead of one toy example per guide) lets the wiring decisions in Guide 14 reference the port introduced in Guide 5 and the aggregate introduced in Guide 3 without re-establishing context.
 
-The codebase organizes around four bounded contexts:
+The platform organizes around four bounded contexts:
 
-| Bounded context | Responsibility |
-| --- | --- |
-| `regulatory-source` | Ingests and stores regulator-published rule documents |
-| `internal-policy` | Ingests and stores company-internal policy documents |
-| `gap-analysis` | Compares the regulatory corpus against the policy corpus |
-| `ai-orchestration` | Wraps AI provider calls behind a port, keeping the domain free of vendor lock-in |
+| Bounded context | Aggregate root | Responsibility                                                                              |
+| --------------- | -------------- | ------------------------------------------------------------------------------------------- |
+| `submission`    | `Talk`         | Accepts conference talk submissions from speakers; manages talk lifecycle until scheduling  |
+| `review`        | `ReviewRound`  | Coordinates blind peer review with a clarity / novelty / fit rubric and per-reviewer scores |
+| `scheduling`    | `Session`      | Allocates accepted talks to time slots within tracks across conference days                 |
+| `ai-assist`     | _(none)_       | Wraps AI provider calls for auto-tagging on submit and abstract summarization for reviewers |
 
-Current source lives under `apps/ose-app-be/src/OseAppBe/`. The codebase is mid-migration from a flat layout (`Domain/`, `Handlers/`, `Infrastructure/`, `Contracts/`) to the intended per-context layout (`contexts/<ctx>/{domain,application,infrastructure}/`). The `contexts/` subdirectories currently contain only `.gitkeep` files — the intended layout scaffolding exists, the feature files come in per-context feature plans.
+Cross-context domain events travel between contexts via the `EventPublisher` port. The most important events used across guides are summarized below; each event is reintroduced inline in the first guide that uses it.
 
-Both layouts appear in this tutorial. Mirror-mode guides cite populated files. Intended-layout guides describe the target structure and mark snippets explicitly.
+| Event                | Source context | Consumers                                     |
+| -------------------- | -------------- | --------------------------------------------- |
+| `TalkSubmitted`      | submission     | review (opens review round), ai-assist (tags) |
+| `ReviewRoundClosed`  | review         | submission (transitions Accepted / Rejected)  |
+| `TalkAccepted`       | submission     | scheduling (creates Unallocated Session)      |
+| `TalkRejected`       | submission     | speaker notifier (email)                      |
+| `SessionConfirmed`   | scheduling     | speaker notifier (email)                      |
+| `AbstractSummarized` | ai-assist      | review (attaches to reviewer pack)            |
 
-## Dogfooding Modes
+## Code Grounding
 
-Every code block in this tutorial is grounded in one of two modes:
+Every code block in this tutorial is **production-grade hypothetical F#**. That means:
 
-**Mirror mode** (preferred) — the snippet copies a real file at authoring time. A `Source:` line immediately following the block links to the original file. Example:
+- **Production-grade**: full error handling, observability hooks where the seam being taught calls for them, no "simplified for clarity" omissions.
+- **Hypothetical**: no `Source:` link to a real file. The snippets describe the wiring shape for the Conference Talk Submission Platform. The shape is real; the specific file at any given commit of any real service is not the point.
+- **Cross-guide consistent**: a port defined in Guide 5 keeps the same signature in Guide 11. A bounded-context folder shape introduced in Guide 2 stays consistent through Guide 22.
 
-> Source: [apps/ose-app-be/src/OseAppBe/Handlers/HealthHandler.fs](../../../../../../ose-app-be/src/OseAppBe/Handlers/HealthHandler.fs)
-
-**Intended-layout mode** — when the per-context scaffolding exists but the feature file does not yet, the snippet shows the target file. A callout marks this explicitly:
-
-> _New file — intended layout. Scaffolding exists at `apps/ose-app-be/src/OseAppBe/contexts/<context>/<layer>/`._
-
-Bare snippets without a source citation or an intended-layout callout are forbidden by the checker for this tutorial.
+If you want to see a real F# / Giraffe / Npgsql codebase that uses these patterns, look at any of the F#-track examples in the [Hexagonal Architecture — F# by Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/overview) prerequisite.
 
 ## Guide Numbering
 
-Guides are numbered monotonically across all difficulty tiers (1, 2, 3 … N). Guide 1 appears in the beginner tier, Guide N appears in the production tier. This makes cross-references unambiguous: "see Guide 5" means the same guide regardless of which tier page you are reading.
+Guides are numbered monotonically across all difficulty tiers (1, 2, 3 … 27). Guide 1 appears in the beginner tier, Guide 27 appears in the production tier. This makes cross-references unambiguous: "see Guide 5" means the same guide regardless of which tier page you are reading.
 
 ## Learning Path
 
-- [Beginner (Guides 1–6)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/beginner) — One context = one hexagon, reading the current flat layout, domain types without framework imports, application service signatures, output port as F# function type alias, Giraffe handler as primary adapter, and the composition root in `Program.fs`.
-- [Intermediate](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/intermediate) — Npgsql adapter behind the repository port, domain event publisher port, integration test seam wiring, and contract codegen consumed by a handler.
-- [Advanced](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/advanced) — Cross-context Anti-Corruption Layer, docker-compose integration harness, AI orchestration port + adapter swap, and domain event flow inside a context.
-- [Production](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/production) — Deployment hooks, observability port, failure-mode wiring, and migration notes.
+- [Beginner (Guides 1–6)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/beginner) — One context = one hexagon, per-context folder layout, domain types without framework imports, application service signatures, output port as F# function type alias, Giraffe handler as primary adapter.
+- [Intermediate (Guides 7–14)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/intermediate) — Npgsql adapter behind the repository port, in-memory test adapter, domain event publisher port, outbox adapter, full Giraffe pipeline, contract codegen, cross-context ACL, composition root in `Program.fs`.
+- [Advanced (Guides 15–22)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/advanced) — docker-compose integration harness, DbUp migrations, AI orchestration port + OpenRouter adapter, retry / circuit-breaker, end-to-end domain event flow, OpenTelemetry observability adapter, multi-tenancy, hexagonal anti-patterns.
+- [Production (Guides 23–27)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/production) — Kubernetes deployment topology, OpenTelemetry deployment wiring, failure-mode degraded adapters, configuration adapter at the deploy seam, background job adapter.
+
+## Sibling Tutorial
+
+The object-oriented parallel of this tutorial uses Java 25 / Spring Boot 4 against the same hypothetical Conference Talk Submission Platform:
+
+- [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/overview)
+
+Both tracks teach the same wiring concerns against the same domain; comparing the two side-by-side is the fastest way to see what changes when you swap functional F# wiring for object-oriented Java wiring.
