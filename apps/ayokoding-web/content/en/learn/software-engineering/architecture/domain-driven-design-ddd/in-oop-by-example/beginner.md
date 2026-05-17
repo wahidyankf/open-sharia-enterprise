@@ -15,7 +15,8 @@ Examples 1–25 walk through DDD tactical patterns using the `purchasing` bounde
 
 Every class name comes directly from the domain glossary that procurement specialists use. When code says `PurchaseRequisition`, `Money`, and `Quantity`, developers and business analysts share a single vocabulary with no silent translation layer.
 
-**Java**:
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
 ```java
 // Ubiquitous Language: class names match the purchasing domain glossary exactly
@@ -40,6 +41,63 @@ PurchaseRequisition req = new PurchaseRequisition(
     new Money("250.00", "USD")   // => currency embedded; cannot lose it
 );
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// Ubiquitous Language: Kotlin data classes mirror domain glossary vocabulary exactly
+// => "PurchaseRequisition" not "RequestForm"; domain names are non-negotiable
+data class PurchaseRequisition(
+    val id: RequisitionId,          // => typed id; compiler blocks RequisitionId/PurchaseOrderId swap
+    val skuCode: SkuCode,           // => domain concept; enforces catalog format at construction
+    val quantity: Quantity,         // => carries UnitOfMeasure — Int alone cannot express that
+    val estimatedCost: Money        // => currency embedded in value — Double cannot carry currency
+)
+
+// Anti-pattern: primitive obsession — all meaning lost in raw types
+// => String id, String sku — identical types; compiler cannot detect wrong-order args
+// => Double amount — currency is invisible; rounding mode is undefined
+data class AntiPattern(val id: String, val sku: String, val qty: Int, val amount: Double)
+
+// Ubiquitous Language version reads exactly like a procurement business requirement
+val req = PurchaseRequisition(
+    id           = RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"), // => typed; compile error if PurchaseOrderId used
+    skuCode      = SkuCode("OFF-001234"),                   // => validates regex at construction; "invalid" throws
+    quantity     = Quantity(10, UnitOfMeasure.BOX),         // => unit paired with count — inseparable
+    estimatedCost = Money("250.00", "USD")                  // => currency locked in; cannot become naked number
+)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// Ubiquitous Language: C# records use domain glossary names directly
+// => "PurchaseRequisition" not "RequestForm"; every name comes from the procurement glossary
+public sealed record PurchaseRequisition(
+    RequisitionId Id,            // => typed id; wrong-kind id is a compile error, not a runtime surprise
+    SkuCode       SkuCode,       // => domain concept; catalog format enforced at construction
+    Quantity      Quantity,      // => carries UnitOfMeasure — int alone cannot express procurement units
+    Money         EstimatedCost  // => currency embedded; decimal alone loses currency context
+);
+
+// Anti-pattern: primitive obsession — domain semantics are invisible
+// => string id, string sku — same type; compiler cannot block argument transposition
+// => decimal amount — what currency? what rounding convention?
+public sealed record AntiPattern(string Id, string Sku, int Qty, decimal Amount);
+
+// Ubiquitous Language version reads like a procurement specification
+var req = new PurchaseRequisition(
+    Id:            new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"), // => typed; PurchaseOrderId rejected at compile time
+    SkuCode:       new SkuCode("OFF-001234"),               // => validates regex; "invalid" throws ArgumentException
+    Quantity:      new Quantity(10, UnitOfMeasure.Box),     // => unit paired with count; no ambiguity
+    EstimatedCost: new Money("250.00", "USD")               // => currency bound; cannot strip it accidentally
+);
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway**: Name every domain type using exact vocabulary from the purchasing glossary. When code reads like a procurement business requirement, specification drift surfaces in code review rather than in production.
 
@@ -68,6 +126,9 @@ graph LR
     classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
 ```
+
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
 ```java
 import java.math.BigDecimal; // => exact decimal arithmetic; never use double for money
@@ -128,6 +189,126 @@ Money tax       = new Money("12.50", "USD");  // => tax = 12.50 USD
 Money grandTotal = total.add(tax);            // => grandTotal = 262.50 USD
 ```
 
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.math.BigDecimal // => exact decimal arithmetic; Double loses precision for monetary values
+
+// Value Object: no identity field; two Money instances with same amount+currency are equal
+// => Kotlin class marked final by default; no open keyword needed to prevent subclassing
+class Money(amount: String, currency: String) {
+    // => Properties are val (immutable); Kotlin enforces immutability at the language level
+    val amount:   BigDecimal // => stored as BigDecimal after validation
+    val currency: String     // => ISO 4217 three-letter code, uppercase
+
+    init {
+        // => init block runs at construction; replaces Java constructor body
+        // => Validate before assignment — invalid Money must never reach a usable state
+        requireNotNull(amount) { "amount is null" }          // => Kotlin stdlib guard; throws IllegalArgumentException
+        val bd = BigDecimal(amount)                          // => NumberFormatException if malformed string
+        require(bd >= BigDecimal.ZERO) { "amount must be >= 0" } // => domain invariant; negative money rejected
+        require(currency.length == 3) { "currency must be 3-letter ISO code" } // => "USDD" or "" rejected
+        this.amount   = bd                                   // => stored only after all checks pass
+        this.currency = currency.uppercase()                 // => normalise; "usd" == "USD"
+    }
+
+    // Operations return NEW instances — originals are structurally unchanged
+    fun add(other: Money): Money {                           // => returns Money, never Unit; immutable contract
+        require(currency == other.currency) { "Currency mismatch" } // => cross-currency add is a domain error
+        return Money(amount.add(other.amount).toPlainString(), currency)
+        // => new Money; neither this nor other is mutated
+    }
+
+    fun multiply(factor: Int): Money {                       // => scale line-item cost by quantity
+        require(factor > 0) { "factor must be > 0" }        // => multiply by 0 or negative is a domain error
+        return Money(amount.multiply(BigDecimal.valueOf(factor.toLong())).toPlainString(), currency)
+        // => new Money returned; this remains unchanged
+    }
+
+    // => Structural equality: two Money instances are equal when amount and currency match
+    override fun equals(other: Any?): Boolean {
+        if (other !is Money) return false                    // => smart cast; safe without explicit cast
+        return amount.compareTo(other.amount) == 0 && currency == other.currency
+        // => compareTo handles "10.00" vs "10" correctly; == would not
+    }
+    override fun hashCode(): Int = 31 * amount.stripTrailingZeros().hashCode() + currency.hashCode()
+    // => stripTrailingZeros ensures consistent hash when amounts are numerically equal
+    override fun toString(): String = "$amount $currency"   // => "250.00 USD"
+}
+
+val unitPrice  = Money("25.00", "USD")   // => unitPrice  = 25.00 USD
+val total      = unitPrice.multiply(10)  // => total      = 250.00 USD (new object; unitPrice unchanged)
+// => unitPrice is still "25.00 USD" — Kotlin val + immutable class guarantee this
+val tax        = Money("12.50", "USD")   // => tax        = 12.50 USD
+val grandTotal = total.add(tax)          // => grandTotal = 262.50 USD
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+// => System.Decimal is the idiomatic C# type for monetary values; avoids float/double imprecision
+
+// Value Object: no identity; structural equality defined by amount + currency
+// => sealed record: compiler generates Equals, GetHashCode, ToString from properties
+public sealed class Money
+{
+    // => Properties are init-only (C# 9+); once set in constructor they cannot change
+    public decimal Amount   { get; }  // => decimal: 28-digit precision; ideal for money
+    public string  Currency { get; }  // => ISO 4217 three-letter code, uppercase
+
+    public Money(string amount, string currency)
+    {
+        // => Validate before assignment — invalid Money must never reach a usable state
+        ArgumentNullException.ThrowIfNull(amount,   nameof(amount));   // => null guard; .NET 7+ API
+        ArgumentNullException.ThrowIfNull(currency, nameof(currency)); // => null guard
+        if (!decimal.TryParse(amount, out var parsed))                  // => parse safely; no exceptions from bad input
+            throw new ArgumentException($"amount is not a valid decimal: {amount}");
+        if (parsed < 0)                                                 // => domain invariant: non-negative
+            throw new ArgumentException("amount must be >= 0");
+        if (currency.Length != 3)                                       // => ISO 4217 = exactly 3 letters
+            throw new ArgumentException("currency must be 3-letter ISO code");
+        Amount   = parsed;                    // => stored only after all guards pass
+        Currency = currency.ToUpperInvariant(); // => normalise; "usd" → "USD"
+    }
+
+    // Operations return NEW instances; originals are unchanged
+    public Money Add(Money other)
+    {
+        // => domain rule: cross-currency addition is invalid; must be caught at the boundary
+        if (Currency != other.Currency)
+            throw new InvalidOperationException("Currency mismatch");
+        return new Money((Amount + other.Amount).ToString("G"), Currency);
+        // => new Money; neither this nor other is mutated
+    }
+
+    public Money Multiply(int factor)
+    {
+        if (factor <= 0)                      // => domain guard: scale factor must be positive
+            throw new ArgumentException("factor must be > 0");
+        return new Money((Amount * factor).ToString("G"), Currency);
+        // => new Money returned; this remains unchanged
+    }
+
+    // => Override Equals for structural (value) equality — default reference equality is wrong for VOs
+    public override bool Equals(object? obj) =>
+        obj is Money m && Amount == m.Amount && Currency == m.Currency;
+    public override int  GetHashCode() => HashCode.Combine(Amount, Currency); // => stable hash from fields
+    public override string ToString()  => $"{Amount} {Currency}";             // => "250.00 USD"
+}
+
+var unitPrice  = new Money("25.00", "USD");  // => unitPrice  = 25.00 USD
+var total      = unitPrice.Multiply(10);     // => total      = 250.00 USD (new object; unitPrice unchanged)
+// => unitPrice remains "25.00 USD" — C# readonly field + new-instance pattern enforces immutability
+var tax        = new Money("12.50", "USD");  // => tax        = 12.50 USD
+var grandTotal = total.Add(tax);             // => grandTotal = 262.50 USD
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Value Objects are immutable and identity-free. All operations return new instances, making shared-state bugs structurally impossible.
 
 **Why It Matters**: In procurement, prices appear on requisitions, purchase orders, invoices, and payment records simultaneously. If `Money` were mutable, a price change on one document could silently corrupt another. Immutability eliminates that entire class of concurrency and reference-sharing bugs — the JVM garbage collector handles disposal automatically.
@@ -137,6 +318,9 @@ Money grandTotal = total.add(tax);            // => grandTotal = 262.50 USD
 ### Example 3: Value Object — `SkuCode` with regex validation
 
 `SkuCode` wraps a plain string but enforces the procurement catalog format `^[A-Z]{3}-\d{4,8}$`. Once constructed, the code is guaranteed valid. Callers never need to re-validate.
+
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
 ```java
 import java.util.regex.Pattern; // => compile regex once; reuse for all validations
@@ -179,6 +363,100 @@ try {
 }
 // => bad was never created; invalid state structurally impossible
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Regex compiled once as a companion object property; shared across all SkuCode instances
+// => companion object is Kotlin's equivalent of Java static; initialised at class load time
+class SkuCode(value: String) {
+    companion object {
+        // => Regex.toRegex() compiles the pattern; stored in companion = compiled once
+        private val FORMAT = Regex("^[A-Z]{3}-\\d{4,8}$")
+    }
+
+    // => val: property is read-only after init block; Kotlin enforces immutability
+    val value: String
+
+    init {
+        // => requireNotNull + require: idiomatic Kotlin guards; both throw IllegalArgumentException
+        requireNotNull(value) { "SkuCode cannot be null" }       // => null guard (Kotlin String is non-null by type)
+        require(FORMAT.matches(value)) {                          // => regex check; matches() checks entire string
+            "SkuCode must match [A-Z]{3}-\\d{4,8}, got: $value"  // => template string; "invalid" or "AB-123" rejected
+        }
+        this.value = value // => stored only after both guards pass
+    }
+
+    // => equals and hashCode: delegate to the wrapped String value (structural equality)
+    override fun equals(other: Any?): Boolean = other is SkuCode && value == other.value
+    override fun hashCode(): Int = value.hashCode() // => consistent with equals
+    override fun toString(): String = value         // => "OFF-001234"
+}
+
+// Valid usage — construction succeeds
+val office = SkuCode("OFF-001234") // => office.value = "OFF-001234"
+val tools  = SkuCode("TLS-9999")  // => tools.value  = "TLS-9999"
+println(office)                    // => Output: OFF-001234
+
+// Invalid — throws at construction; bad is never assigned
+runCatching { SkuCode("invalid") }  // => runCatching captures the exception without try/catch syntax
+    .onFailure { println(it.message) } // => Output: SkuCode must match [A-Z]{3}-\d{4,8}, got: invalid
+// => SkuCode("invalid") was never created; invalid state is structurally impossible
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System.Text.RegularExpressions; // => Regex class; compiled regex avoids repeated compilation
+
+// Value Object with format invariant: every SkuCode in the system is guaranteed well-formed
+// => sealed: no subclass can bypass the validation logic in the constructor
+public sealed class SkuCode
+{
+    // => static readonly: compiled once at class load; RegexOptions.Compiled = JIT-compiled to IL
+    private static readonly Regex Format =
+        new Regex(@"^[A-Z]{3}-\d{4,8}$", RegexOptions.Compiled);
+
+    // => Property with private set: readable externally, writable only in constructor
+    public string Value { get; }
+
+    public SkuCode(string value)
+    {
+        // => ArgumentNullException for null; ArgumentException for format violation
+        ArgumentNullException.ThrowIfNull(value, nameof(value)); // => null guard first
+        if (!Format.IsMatch(value))                               // => regex check
+            throw new ArgumentException(
+                $"SkuCode must match [A-Z]{{3}}-\\d{{4,8}}, got: {value}"); // => "invalid" or "AB-123" rejected
+        Value = value; // => stored only after both guards pass
+    }
+
+    // => Override Equals for structural equality — two SkuCode instances with same Value are equal
+    public override bool   Equals(object? obj) => obj is SkuCode s && Value == s.Value;
+    public override int    GetHashCode()        => Value.GetHashCode(StringComparison.Ordinal);
+    public override string ToString()           => Value; // => "OFF-001234"
+}
+
+// Valid usage
+var office = new SkuCode("OFF-001234"); // => office.Value = "OFF-001234"
+var tools  = new SkuCode("TLS-9999");  // => tools.Value  = "TLS-9999"
+Console.WriteLine(office);             // => Output: OFF-001234
+
+// Invalid — throws at construction; bad is never assigned
+try
+{
+    var bad = new SkuCode("invalid");  // => ArgumentException; regex fails
+}
+catch (ArgumentException e)
+{
+    Console.WriteLine(e.Message);     // => Output: SkuCode must match [A-Z]{3}-\d{4,8}, got: invalid
+}
+// => bad was never created; invalid state is structurally impossible
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway**: Encode format invariants in the constructor so every `SkuCode` in the system is guaranteed valid. Downstream code never needs defensive checks.
 

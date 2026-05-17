@@ -34,4 +34,4 @@ draft: false
   - [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field)
 - [Finite State Machine (FSM)](/en/learn/software-engineering/architecture/finite-state-machine-fsm)
   - [Overview](/en/learn/software-engineering/architecture/finite-state-machine-fsm/overview)
-  - [By Example](/en/learn/software-engineering/architecture/finite-state-machine-fsm/by-example)
+  - [By Example](/en/learn/software-engineering/architecture/finite-state-machine-fsm/in-oop-by-example)

@@ -44,6 +44,9 @@ graph TD
     classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
 ```
 
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
+
 ```java
 // Zone 1: Domain — zero framework imports allowed
 // => Package: com.example.procurement.purchasing.domain
@@ -69,6 +72,70 @@ public record PurchaseOrder(
 package com.example.procurement.purchasing.adapter.in.web;
 ```
 
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// Zone 1: Domain — zero framework imports allowed
+// => Package: com.example.procurement.purchasing.domain
+// => Only Kotlin stdlib permitted; no framework on the classpath
+
+package com.example.procurement.purchasing.domain
+
+// PurchaseOrder: Kotlin data class — no @Entity, no @JsonProperty, no Spring annotations
+// => data class: compiler generates equals, hashCode, copy, toString automatically
+// => compiles and runs without Spring, JPA, or any external framework
+data class PurchaseOrder(
+    val id: PurchaseOrderId,        // => strongly-typed identity value object (format: po_<uuid>)
+    val supplierId: SupplierId,     // => distinct type; compiler prevents accidental swaps
+    val total: Money,               // => Money carries both amount and ISO 4217 currency code
+    val status: POStatus            // => sealed class or enum; exhaustive when enforced by compiler
+)
+// => immutable by convention: all properties are val (read-only); use copy() to derive new state
+
+// Zone 2: Application — imports domain only
+// => Package: com.example.procurement.purchasing.application
+// => May import domain.*; must not reference adapter packages
+
+// Zone 3: Adapter — imports application and framework
+// => Package: com.example.procurement.purchasing.adapter.in.web
+// => May import org.springframework.*, application.*
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// Zone 1: Domain — zero framework imports allowed
+// => Namespace: Procurement.Purchasing.Domain
+// => Only .NET BCL (System, System.Collections) permitted; no EF Core, no ASP.NET
+
+namespace Procurement.Purchasing.Domain;
+
+// PurchaseOrder: C# record — no [Entity], no [JsonProperty], no framework attributes
+// => record: compiler generates Equals, GetHashCode, ToString, and with-expressions
+// => immutable by default: init-only properties cannot be reassigned after construction
+public sealed record PurchaseOrder(
+    PurchaseOrderId Id,        // => strongly-typed identity value object (format: po_<uuid>)
+    SupplierId SupplierId,     // => distinct type; compiler prevents accidental argument swaps
+    Money Total,               // => Money record carrying Amount + ISO 4217 CurrencyCode
+    POStatus Status            // => enum or discriminated-union; exhaustive switch enforced
+);
+// => immutable: all constructor parameters become init-only properties automatically
+// => with-expression: var approved = po with { Status = POStatus.AwaitingApproval };
+
+// Zone 2: Application — references Domain only
+// => Namespace: Procurement.Purchasing.Application
+// => May use Domain.*; must not reference Adapter namespaces
+
+// Zone 3: Adapter — references Application and framework
+// => Namespace: Procurement.Purchasing.Adapter.In.Web
+// => May use Microsoft.AspNetCore.*, Application.*
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Domain knows nothing, application knows domain, adapters know application and frameworks.
 
 **Why It Matters**: When the domain zone has zero framework imports, every domain test runs with no server, no database, and no container — feedback loop collapses from minutes to milliseconds. Swapping any persistence or web framework becomes a one-zone change confined to the adapter layer.
@@ -80,6 +147,9 @@ package com.example.procurement.purchasing.adapter.in.web;
 A domain entity contains only business state and behaviour. Framework annotations (`@Entity`, `@Table`, `@JsonProperty`) are infrastructure concerns that belong in adapter-layer mapping classes. Placing them in the domain couples the domain to a specific framework and forces recompilation whenever that framework changes.
 
 **Anti-pattern — framework annotation in the domain**:
+
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
 ```java
 // WRONG: @Entity and @JsonProperty leak infrastructure into the domain
@@ -96,7 +166,49 @@ public class PurchaseOrder {
 // => coupling cost: framework deps forced into all domain tests
 ```
 
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// WRONG: @Entity and @JsonProperty leak infrastructure into the domain
+// => Kotlin data class now requires JPA at test time; cannot run without Hibernate
+import jakarta.persistence.Entity               // => infrastructure import pulled into domain zone
+import com.fasterxml.jackson.annotation.JsonProperty // => JSON serialisation concern in business class
+
+@Entity                                         // => couples PurchaseOrder to JPA container lifecycle
+data class PurchaseOrder(
+    @JsonProperty("supplier_id")                // => serialisation naming belongs in an adapter DTO
+    val supplierId: String                      // => raw String; typed safety and null-safety lost
+)
+// Problem: every unit test must load a JPA context and the Jackson runtime
+// => coupling cost: Hibernate + Jackson forced onto the domain test classpath
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// WRONG: [Table] and [JsonPropertyName] leak infrastructure into the domain
+// => record now requires EF Core at test time; cannot instantiate without the EF runtime
+using Microsoft.EntityFrameworkCore;            // => infrastructure namespace in domain zone
+using System.Text.Json.Serialization;           // => JSON serialisation concern in business class
+
+[Table("purchase_orders")]                      // => couples PurchaseOrder to EF Core schema
+public record PurchaseOrder(
+    [property: JsonPropertyName("supplier_id")] // => JSON naming belongs in an adapter DTO
+    string SupplierId                           // => raw string; typed safety and nullability lost
+);
+// Problem: every unit test must configure a DbContext and System.Text.Json
+// => coupling cost: EF Core + JSON runtime forced onto the domain test dependency graph
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 **Correct — clean domain record**:
+
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
 ```java
 // PurchaseOrder: zero framework imports; compiles with only the JDK
@@ -121,6 +233,63 @@ public record PurchaseOrder(       // => record = immutable; equals/hashCode/toS
 // Test: new PurchaseOrder(id, sup, money, DRAFT) — no framework; sub-millisecond
 ```
 
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// PurchaseOrder: zero framework imports; compiles with only the Kotlin stdlib
+// => No @Entity, no @Id, no @JsonProperty, no Spring, no Jackson
+package com.example.procurement.purchasing.domain
+
+data class PurchaseOrder(          // => data class: equals/hashCode/copy/toString generated
+    val id: PurchaseOrderId,       // => domain value object, not raw String
+    val supplierId: SupplierId,    // => distinct type; prevents id-kind mix-up at compile time
+    val total: Money,              // => Money(amount, currency); richer than BigDecimal alone
+    val status: POStatus           // => sealed class or enum; exhaustive when enforced by compiler
+) {
+    // Domain behaviour: pure function — no I/O, no framework calls
+    fun submit(): PurchaseOrder {              // => returns new PurchaseOrder via copy(); this unchanged
+        require(status == POStatus.DRAFT) {    // => Kotlin stdlib guard: throws IllegalArgumentException
+            "Can only submit a DRAFT PO"       // => domain rule expressed as lambda message
+        }
+        return copy(status = POStatus.AWAITING_APPROVAL)
+        // => copy() creates new instance; only status field changes; all others preserved
+        // => state transition: DRAFT → AWAITING_APPROVAL
+    }
+}
+// Test: PurchaseOrder(id, sup, money, DRAFT) — no framework; sub-millisecond
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// PurchaseOrder: zero framework references; compiles with only the .NET BCL
+// => No [Table], no [Key], no [JsonPropertyName], no EF Core, no ASP.NET
+namespace Procurement.Purchasing.Domain;
+
+public sealed record PurchaseOrder( // => sealed record: immutable; Equals/GetHashCode/ToString generated
+    PurchaseOrderId Id,             // => domain value object, not raw string
+    SupplierId SupplierId,          // => distinct type; compiler rejects accidental argument swaps
+    Money Total,                    // => Money(Amount, CurrencyCode); richer than decimal alone
+    POStatus Status                 // => enum; exhaustive switch expression enforced by compiler
+) {
+    // Domain behaviour: pure method — no I/O, no framework calls
+    public PurchaseOrder Submit()
+    {
+        if (Status != POStatus.Draft)           // => guard: only Draft orders may be submitted
+            throw new InvalidOperationException("Can only submit a Draft PO"); // => domain rule
+        return this with { Status = POStatus.AwaitingApproval };
+        // => with-expression: creates new record; only Status changes; all other fields preserved
+        // => state transition: Draft → AwaitingApproval
+    }
+}
+// Test: new PurchaseOrder(id, sup, money, Draft) — no framework; sub-millisecond
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Domain records carry only business state and rules. Zero framework annotations means zero framework test dependencies.
 
 **Why It Matters**: A domain class free of infrastructure annotations can be instantiated in a plain JUnit test in under a millisecond. Teams that enforce this boundary report that switching ORMs (e.g., JPA to jOOQ) touches only adapter files — thousands of lines of domain logic remain untouched.
@@ -130,6 +299,9 @@ public record PurchaseOrder(       // => record = immutable; equals/hashCode/toS
 ### Example 3: Value object — PurchaseOrderId and Money
 
 Value objects encapsulate a primitive value plus its invariants. They make illegal states unrepresentable at the type level and prevent the billion-dollar mistake of mixing up raw strings.
+
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
 ```java
 // Domain value objects: PurchaseOrderId and Money
@@ -185,6 +357,128 @@ public record Money(BigDecimal amount, String currency) {
     // => Money(new BigDecimal("500"), "US")       — throws; currency must be 3 letters
 }
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// Domain value objects: PurchaseOrderId and Money
+// => package com.example.procurement.purchasing.domain
+package com.example.procurement.purchasing.domain
+
+import java.math.BigDecimal
+
+// PurchaseOrderId: wraps a String but enforces the "po_<uuid>" format invariant
+// => value class: zero-overhead wrapper; JVM erases to plain String at call sites
+// => value property: generated by @JvmInline; no hand-written accessor needed
+@JvmInline
+value class PurchaseOrderId(val value: String) {
+    // init block: Kotlin's canonical place for constructor-time validation
+    // => runs after the primary constructor assigns the field; ideal for invariant checks
+    init {
+        requireNotNull(value) { "PurchaseOrderId must not be null" }
+        // => null guard: Kotlin non-nullable type already prevents null at call site;
+        // => explicit check documents the invariant and guards Java interop callers
+        require(value.startsWith("po_") && value.length >= 39) {
+            // => format invariant: "po_" prefix + 36-char UUID = minimum 39 chars
+            "Invalid PurchaseOrderId: $value"
+            // => string template: caller sees the invalid value in the error message
+        }
+    }
+    // => PurchaseOrderId("po_550e8400-e29b-41d4-a716-446655440000") — succeeds; 39 chars
+    // => PurchaseOrderId("abc") — throws IllegalArgumentException; fails startsWith check
+}
+
+// Money: immutable value object combining amount + ISO 4217 currency code
+// => data class: compiler generates equals(), hashCode(), copy(), toString()
+// => richer than BigDecimal alone: prevents silently mixing USD and EUR at compile time
+data class Money(val amount: BigDecimal, val currency: String) {
+    // init block: validates both fields before the data class is considered constructed
+    init {
+        require(amount >= BigDecimal.ZERO) {
+            // => invariant: negative money has no meaning in a P2P procurement domain
+            "Money amount must be >= 0"
+            // => caller sees clear message; amount value in scope for string template if needed
+        }
+        require(currency.length == 3) {
+            // => ISO 4217: all currency codes are exactly 3 uppercase letters (USD, EUR, IDR)
+            "Currency must be 3-letter ISO 4217 code"
+            // => "US" (2 chars) and "USDD" (4 chars) both fail this check
+        }
+    }
+    // => Money(BigDecimal("1000.00"), "USD") — succeeds; amount >= 0, currency = 3 chars
+    // => Money(BigDecimal("-1"), "USD")       — throws IllegalArgumentException; amount < 0
+    // => Money(BigDecimal("500"), "US")       — throws IllegalArgumentException; currency length != 3
+}
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// Domain value objects: PurchaseOrderId and Money
+// => Namespace: Procurement.Purchasing.Domain
+// => Only System and System.Diagnostics.CodeAnalysis from the BCL
+namespace Procurement.Purchasing.Domain;
+
+// PurchaseOrderId: wraps a string but enforces the "po_<uuid>" format invariant
+// => readonly record struct: value semantics + structural equality + zero heap allocation
+// => Value property: generated by the record; no hand-written getter needed
+public readonly record struct PurchaseOrderId(string Value)
+{
+    // Primary constructor guard via static factory — idiomatic for C# records
+    // => records cannot have instance constructors with validation in a compact form;
+    // => use a static Create method or a custom constructor as the validation entry point
+    public static PurchaseOrderId Create(string value)
+    {
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
+        // => null guard: fails fast at creation; no null PurchaseOrderId can exist
+        if (!value.StartsWith("po_", StringComparison.Ordinal) || value.Length < 39)
+        {
+            // => format invariant: "po_" prefix + 36-char UUID = minimum 39 chars
+            throw new ArgumentException($"Invalid PurchaseOrderId: {value}", nameof(value));
+            // => caller sees the invalid value interpolated into the exception message
+        }
+        return new PurchaseOrderId(value);
+        // => only valid instances are returned; invalid input never produces an instance
+    }
+    // => PurchaseOrderId.Create("po_550e8400-e29b-41d4-a716-446655440000") — succeeds; 39 chars
+    // => PurchaseOrderId.Create("abc") — throws ArgumentException; does not start with "po_"
+    // => PurchaseOrderId.Create(null)  — throws ArgumentNullException from ThrowIfNull above
+}
+
+// Money: immutable value object combining Amount + ISO 4217 CurrencyCode
+// => readonly record struct: structural equality compares both fields automatically
+// => richer than decimal alone: prevents silently mixing USD and EUR at compile time
+public readonly record struct Money(decimal Amount, string CurrencyCode)
+{
+    public static Money Create(decimal amount, string currencyCode)
+    {
+        ArgumentNullException.ThrowIfNull(currencyCode, nameof(currencyCode));
+        // => null guard: currency field cannot be null; empty string caught below
+        if (amount < 0)
+        {
+            // => invariant: negative money has no meaning in a P2P procurement domain
+            throw new ArgumentOutOfRangeException(nameof(amount), "Money amount must be >= 0");
+            // => caller sees clear message: "Money amount must be >= 0"
+        }
+        if (currencyCode.Length != 3)
+        {
+            // => ISO 4217: all currency codes are exactly 3 uppercase letters (USD, EUR, IDR)
+            throw new ArgumentException("CurrencyCode must be 3-letter ISO 4217 code", nameof(currencyCode));
+            // => "US" (2 chars) and "USDD" (4 chars) both fail this guard
+        }
+        return new Money(amount, currencyCode);
+        // => only valid instances reach callers; invalid state cannot be constructed
+    }
+    // => Money.Create(1000.00m, "USD") — succeeds; amount >= 0, currencyCode = 3 chars
+    // => Money.Create(-1m, "USD")       — throws ArgumentOutOfRangeException; amount < 0
+    // => Money.Create(500m, "US")       — throws ArgumentException; currencyCode length != 3
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway**: Value objects enforce invariants at construction, making invalid states impossible to represent downstream.
 
