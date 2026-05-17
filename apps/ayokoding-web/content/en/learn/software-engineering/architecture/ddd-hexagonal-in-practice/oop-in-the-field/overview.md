@@ -1,5 +1,5 @@
 ---
-title: "DDD + Hexagonal in Practice — Java in the Field"
+title: "Overview"
 weight: 10000011
 date: 2026-05-16T00:00:00+07:00
 draft: false
@@ -72,14 +72,13 @@ If you want to see real Java / Spring Boot codebases that use these patterns, lo
 
 ## Guide Numbering
 
-Guides are numbered monotonically across all difficulty tiers (1, 2, 3 … 27). Guide 1 appears in the beginner tier, Guide 27 appears in the production tier. This makes cross-references unambiguous: "see Guide 5" means the same guide regardless of which tier page you are reading.
+Guides are numbered monotonically across all difficulty tiers (1, 2, 3 … 27). Guide 1 appears in the beginner tier, Guide 27 appears at the end of the advanced tier. This makes cross-references unambiguous: "see Guide 5" means the same guide regardless of which tier page you are reading.
 
 ## Learning Path
 
 - [Beginner (Guides 1–7)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/beginner) — One context = one hexagon, per-context package layout, domain types without framework annotations, application service signatures, output port as Java interface, Spring `@RestController` as primary adapter, Spring `@Configuration` as composition root.
 - [Intermediate (Guides 8–15)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/intermediate) — Spring Data JDBC adapter behind the repository port, in-memory test adapter, domain event publisher port, outbox event adapter, full `@RestController` pipeline, contract codegen, cross-context ACL, composition root `@Configuration`.
-- [Advanced (Guides 16–22)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/advanced) — Testcontainers harness, Flyway migration adapter, banking port and Spring `RestClient` adapter, Resilience4j retry / circuit-breaker, Micrometer tracing observability adapter, end-to-end domain event flow, hexagonal anti-patterns.
-- [Production (Guides 23–27)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/production) — Kubernetes deployment topology, Micrometer + OTLP + Prometheus observability stack, failure-mode `HealthIndicator` wiring, Flyway at deploy time, configuration adapter (Secret to typed `@ConfigurationProperties`).
+- [Advanced (Guides 16–27)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/advanced) — Testcontainers harness, Flyway migration adapter, banking port and Spring `RestClient` adapter, Resilience4j retry / circuit-breaker, Micrometer tracing observability adapter, end-to-end domain event flow, hexagonal anti-patterns, Kubernetes deployment topology, Micrometer + OTLP + Prometheus observability stack, failure-mode `HealthIndicator` wiring, Flyway at deploy time, configuration adapter (Secret to typed `@ConfigurationProperties`).
 
 ## Sibling Tutorial
 

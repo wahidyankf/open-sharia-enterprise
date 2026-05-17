@@ -58,7 +58,7 @@ weight: 102
 - [Compilers and Interpreters](/en/learn/software-engineering/compilers-and-interpreters)
   - [Building a Lisp Interpreter in F#](/en/learn/software-engineering/compilers-and-interpreters/lisp-interpreter-in-fsharp)
   - [Building a Lisp Interpreter in Go](/en/learn/software-engineering/compilers-and-interpreters/lisp-interpreter-in-golang)
-  - [Overview: Compilers and Interpreters](/en/learn/software-engineering/compilers-and-interpreters/overview)
+  - [Overview](/en/learn/software-engineering/compilers-and-interpreters/overview)
   - [Terminology: Compilers and Interpreters](/en/learn/software-engineering/compilers-and-interpreters/terminology)
 - [Platform Linux](/en/learn/software-engineering/platform-linux)
   - [Tools](/en/learn/software-engineering/platform-linux/tools)

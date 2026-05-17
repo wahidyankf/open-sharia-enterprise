@@ -7,8 +7,7 @@ description: "Production wiring guides showing how DDD aggregates flow through a
 tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "in-the-field"]
 ---
 
-- [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/overview)
+- [Overview](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/overview)
 - [Beginner](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/beginner)
 - [Intermediate](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/intermediate)
 - [Advanced](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/advanced)
-- [Production](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/production)

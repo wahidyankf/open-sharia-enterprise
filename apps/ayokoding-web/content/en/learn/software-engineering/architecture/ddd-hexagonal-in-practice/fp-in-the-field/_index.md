@@ -7,8 +7,7 @@ description: "Production wiring guides showing how DDD aggregates flow through a
 tags: ["ddd", "hexagonal-architecture", "f#", "in-the-field", "functional-programming", "giraffe", "npgsql"]
 ---
 
-- [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview)
+- [Overview](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview)
 - [Beginner](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/beginner)
 - [Intermediate](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/intermediate)
 - [Advanced](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/advanced)
-- [Production](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/production)

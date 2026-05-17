@@ -1,5 +1,5 @@
 ---
-title: "Overview: Building a Lisp Interpreter in Go"
+title: "Overview"
 weight: 200000
 date: 2026-04-20T00:00:00+07:00
 draft: false
