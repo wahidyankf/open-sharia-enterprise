@@ -39,17 +39,13 @@ type RequisitionId = string
 // => RequisitionId is an alias for string; no boxing, no overhead
 
 type PurchaseOrderId = string
-// => Distinct alias even though both are strings
-// => Prevents accidentally mixing up the two identifiers in function signatures
+// => Distinct alias; prevents accidentally mixing RequisitionId and PurchaseOrderId in signatures
 
 type SupplierId = string
 // => Every important noun in the domain gets its own alias
 
 type SkuCode = string
-// => Stock-Keeping Unit code identifies what is being purchased
-// => Raw strings in a signature like (string -> string -> string -> unit)
-// => are unreadable; aliases (RequisitionId -> SupplierId -> SkuCode -> unit)
-// => are self-documenting
+// => SKU code alias; raw (string -> string -> string) becomes (RequisitionId -> SupplierId -> SkuCode) — self-documenting
 
 // Usage in a workflow function signature — pure documentation value
 type GetRequisitionById = RequisitionId -> string option
@@ -143,6 +139,22 @@ printfn "Event created: %A" submitted
 ### Example 3: Bounded Context as F# Module
 
 A bounded context is an explicit boundary within which a particular domain model applies. In F#, modules provide that boundary cheaply: all types and functions for the `purchasing` context live inside `module Purchasing`, keeping them isolated from the `supplier`, `receiving`, and `invoicing` contexts.
+
+```mermaid
+graph TD
+    P["module Purchasing\nRequisitionId, PurchaseOrder"]
+    S["module Supplier\nSupplierId, SupplierStatus"]
+    R["module Receiving\nGoodsReceiptNote"]
+    I["module Invoicing\nInvoice, Tolerance"]
+
+    P -.->|"publishes events\n(no direct type sharing)"| R
+    R -.->|"GoodsReceived event"| I
+
+    style P fill:#0173B2,stroke:#000,color:#fff
+    style S fill:#DE8F05,stroke:#000,color:#000
+    style R fill:#029E73,stroke:#000,color:#fff
+    style I fill:#CC78BC,stroke:#000,color:#000
+```
 
 ```fsharp
 // ── Each bounded context gets its own module (or namespace + module) ──────
@@ -961,6 +973,18 @@ match unitPrice with
 
 The full `PurchaseRequisition` lifecycle has six states: `Draft`, `Submitted`, `ManagerReview`, `Approved`, `Rejected`, and `ConvertedToPO`. Modelling these as a discriminated union, rather than a status string, makes illegal state transitions detectable at compile time.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Draft : create
+    Draft --> Submitted : submit
+    Submitted --> ManagerReview : route to manager
+    ManagerReview --> Approved : manager approves
+    ManagerReview --> Rejected : manager rejects
+    Approved --> ConvertedToPO : purchasing converts
+    ConvertedToPO --> [*]
+    Rejected --> [*]
+```
+
 ```fsharp
 // The full PurchaseRequisition lifecycle as a DU.
 // Each state can carry different payload — the type encodes what data
@@ -1018,6 +1042,14 @@ printfn "After submit: %A" submitted
 ### Example 16: State Machine Encoded Purely by Type Transitions
 
 State transitions in the procurement domain are pure functions from one state to the next. A `submitRequisition` function accepts a `Draft` state and returns a `Submitted` state. Calling it with any other state is a compile error.
+
+```mermaid
+stateDiagram-v2
+    [*] --> DraftRequisition : create
+    DraftRequisition --> SubmittedRequisition : submitRequisition (pure fn)
+    SubmittedRequisition --> ApprovedRequisition : approveRequisition (pure fn)
+    DraftRequisition --> [*] : cancelled
+```
 
 ```fsharp
 // State transitions as typed functions — illegal transitions are compile errors.
@@ -1436,6 +1468,32 @@ printfn "Line 2 total: %M" (lineTotal line2)
 
 The `PurchaseRequisition` is the aggregate root of the purchasing context at the beginner level. It groups an identity, a status, a list of validated line items, and metadata about who requested it. The aggregate record is the primary domain object passed through the approval workflow.
 
+```mermaid
+graph TD
+    PR["PurchaseRequisition\n(aggregate root)"]
+    ID["RequisitionId\n(identity)"]
+    ST["RequisitionStatus\n(lifecycle state)"]
+    LN["PurchaseRequisitionLine list\n(validated lines)"]
+    SKU["SkuCode"]
+    QTY["Quantity"]
+    UP["UnitPrice"]
+
+    PR --> ID
+    PR --> ST
+    PR --> LN
+    LN --> SKU
+    LN --> QTY
+    LN --> UP
+
+    style PR fill:#0173B2,stroke:#000,color:#fff
+    style LN fill:#DE8F05,stroke:#000,color:#000
+    style ID fill:#029E73,stroke:#000,color:#fff
+    style ST fill:#029E73,stroke:#000,color:#fff
+    style SKU fill:#CC78BC,stroke:#000,color:#000
+    style QTY fill:#CC78BC,stroke:#000,color:#000
+    style UP fill:#CC78BC,stroke:#000,color:#000
+```
+
 ```fsharp
 // PurchaseRequisition: the aggregate root of the purchasing context.
 // Groups identity, status, lines, and metadata into a single cohesive record.
@@ -1616,6 +1674,23 @@ match validatedLine1 with
 ### Example 24: Approval Level Derived from Requisition Total
 
 The `ApprovalLevel` of a purchase requisition is a domain rule derived from its total value. This derivation is a pure function — no side effects, fully deterministic — and the result is a constrained type that drives the approval routing workflow.
+
+```mermaid
+graph LR
+    T["Requisition Total\n(decimal)"]
+    L1["L1: ≤ $1,000\nDirect manager"]
+    L2["L2: $1,001–$10,000\nDepartment head"]
+    L3["L3: > $10,000\nCFO / Finance Committee"]
+
+    T -->|"≤ 1000"| L1
+    T -->|"1001–10000"| L2
+    T -->|"> 10000"| L3
+
+    style T fill:#0173B2,stroke:#000,color:#fff
+    style L1 fill:#029E73,stroke:#000,color:#fff
+    style L2 fill:#DE8F05,stroke:#000,color:#000
+    style L3 fill:#CC78BC,stroke:#000,color:#000
+```
 
 ```fsharp
 // Deriving ApprovalLevel from a requisition total is a pure domain rule.

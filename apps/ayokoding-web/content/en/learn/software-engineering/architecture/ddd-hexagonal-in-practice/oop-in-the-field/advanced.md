@@ -249,23 +249,31 @@ Every database integration test and every production deployment depends on the s
 // Demonstrates the raw JDBC migration approach that the Flyway adapter supersedes.
 
 import java.io.IOException;
+// => IOException: thrown by Files.readString if the file does not exist or cannot be read
 import java.nio.file.Files;
+// => Files: NIO utility class — readString reads a file's entire content in one call
 import java.nio.file.Path;
 // => Files.readString: reads a .sql file from the filesystem — no classpath scanning
 import java.sql.Connection;
+// => Connection: JDBC connection — must be provided by the caller; not managed here
 import java.sql.SQLException;
+// => SQLException: thrown by createStatement().execute() on any SQL error
 
 public class ManualMigrationRunner {
     public static void runMigration(Connection conn, Path sqlFile)
             throws IOException, SQLException {
         // => Two checked exceptions declared: I/O for file reading, SQL for execution
         // => No ordering enforcement — the caller must sort files by name manually
+        // => No version tracking: impossible to determine which migrations have already run
         String sql = Files.readString(sqlFile);
         // => Reads the entire SQL file as a string — no templating, no parameter binding
+        // => Large migration files are read entirely into memory — no streaming
         try (var stmt = conn.createStatement()) {
+            // => try-with-resources: Statement implements AutoCloseable — closed after execute
             stmt.execute(sql);
             // => execute: runs the entire file as one batch — DDL errors mid-file leave partial schema
             // => No journal table: if the script runs twice, CREATE TABLE throws a duplicate-object error
+            // => No transaction wrapping: if stmt.execute throws partway through, schema is partially applied
         }
     }
 }
@@ -509,20 +517,27 @@ public class RestClientBankingAdapter implements BankingPort {
 
     public RestClientBankingAdapter(
             RestClient.Builder restClientBuilder,
+            // => RestClient.Builder: Spring Boot 4 auto-configures one per application context
             @org.springframework.beans.factory.annotation.Value("${banking.api.base-url}")
+            // => @Value: injects the property value at construction time — reads from application.properties
             String baseUrl,
             @org.springframework.beans.factory.annotation.Value("${banking.api.key}")
+            // => @Value: injected from the Kubernetes Secret via BANKING_API_KEY environment variable
             String bankApiKey
     ) {
         this.restClient = restClientBuilder
             .baseUrl(baseUrl)
             // => baseUrl: all requests from this client use this prefix
+            // => Externalised via BANKING_API_BASE_URL env var in ConfigMap — no hardcoded URLs
             .defaultHeader("Authorization", "Bearer " + bankApiKey)
             // => defaultHeader: the Authorization header is set once — not repeated per request
+            // => Bearer token: the bank API uses OAuth2 bearer token authentication
             .requestFactory(factory -> factory.setConnectTimeout(Duration.ofSeconds(5)))
             // => connectTimeout: TCP handshake must complete within 5 seconds
+            // => No read timeout configured here — Guide 19 Resilience4j adds the overall deadline
             .build();
         this.bankApiKey = bankApiKey;
+        // => bankApiKey stored: used for logging or re-authentication if needed in future extensions
     }
 
     @Override
@@ -533,13 +548,20 @@ public class RestClientBankingAdapter implements BankingPort {
                 payment.bankAccount().iban(),
                 // => iban: extracted from the BankAccount value object — format-validated in the domain
                 payment.amount().amount().toPlainString(),
+                // => toPlainString(): avoids scientific notation — "1234.56" not "1.23456E3"
                 payment.amount().currency()
+                // => currency: ISO 4217 code from the Money value object — "USD", "EUR", "IDR"
             );
             var response = restClient.post()
+                // => post(): opens an HTTP POST request builder
                 .uri("/v1/disbursements")
+                // => uri: relative path — resolved against the base URL configured at construction
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                // => contentType: sets Content-Type: application/json — required by the bank API
                 .body(requestBody)
+                // => body: Jackson serialises DisbursementRequest to JSON automatically
                 .retrieve()
+                // => retrieve(): executes the request and checks the HTTP status code
                 .body(DisbursementResponse.class);
             // => body(Class): deserializes the response JSON into DisbursementResponse — Jackson mapping
             return new DisbursementConfirmation(response.reference(), response.status());
@@ -547,6 +569,7 @@ public class RestClientBankingAdapter implements BankingPort {
         } catch (RestClientException ex) {
             throw new BankingException("Bank disbursement API call failed: " + ex.getMessage(), ex);
             // => Wrap in BankingException to keep the application layer free of Spring imports
+            // => RestClientException hierarchy: non-2xx responses throw HttpStatusCodeException
         }
     }
 
@@ -554,14 +577,18 @@ public class RestClientBankingAdapter implements BankingPort {
     public boolean confirmDisbursement(String bankReference) throws BankingException {
         try {
             var response = restClient.get()
+                // => get(): opens an HTTP GET request builder
                 .uri("/v1/disbursements/{reference}", bankReference)
                 // => URI template: bankReference is URL-encoded by RestClient automatically
                 .retrieve()
+                // => retrieve(): executes the GET and asserts 2xx — 404 throws RestClientException
                 .body(DisbursementStatusResponse.class);
+            // => body(Class): Jackson deserialises the bank's status response JSON
             return "SETTLED".equalsIgnoreCase(response.status());
             // => Returns true only when status is SETTLED — "PENDING" and "PROCESSING" return false
         } catch (RestClientException ex) {
             throw new BankingException("Bank confirmation API call failed: " + ex.getMessage(), ex);
+            // => BankingException: the application layer catches this typed exception — no Spring leakage
         }
     }
 
@@ -696,8 +723,11 @@ public class ResilientPurchaseOrderRepository implements PurchaseOrderRepository
         return Retry.decorateSupplier(retry,
             CircuitBreaker.decorateSupplier(circuitBreaker,
                 () -> delegate.findById(id)
+                // => findById is also retried: transient DB timeouts on reads benefit from retry
+                // => CircuitBreaker counts read failures too — opens circuit if DB is fully down
             )
         ).get();
+        // => .get(): executes the decorated supplier — Retry and CircuitBreaker apply transparently
     }
 
     @Override
@@ -705,8 +735,10 @@ public class ResilientPurchaseOrderRepository implements PurchaseOrderRepository
         return Retry.decorateSupplier(retry,
             CircuitBreaker.decorateSupplier(circuitBreaker,
                 () -> delegate.existsById(id)
+                // => existsById retried: the existence check uses a lightweight COUNT query — worth retrying
             )
         ).get();
+        // => .get(): returns the boolean result from delegate.existsById() after retry + CB evaluation
     }
 }
 ```
@@ -830,29 +862,39 @@ public class TracedPurchaseOrderRepository implements PurchaseOrderRepository {
     @Override
     public Optional<PurchaseOrder> findById(PurchaseOrderId id) {
         Span span = tracer.nextSpan().name("purchase-order-repository.findById").start();
+        // => nextSpan(): creates a child span under the current trace if one is active
         try (var ignored = tracer.withSpan(span)) {
+            // => withSpan: sets the active span on the current thread for the duration of the try block
             span.tag("purchase_order.id", id.value().toString());
             // => Tag the queried ID: lets operators filter traces for a specific PO
             return delegate.findById(id);
+            // => Delegates to the resilient adapter: retry + circuit-breaker apply before the JDBC call
         } catch (Exception ex) {
             span.error(ex);
+            // => error(): marks the span as failed and records the exception — visible in Jaeger
             throw ex;
         } finally {
             span.end();
+            // => end(): closes the span and flushes it to the OTLP exporter — always called via finally
         }
     }
 
     @Override
     public boolean existsById(PurchaseOrderId id) {
         Span span = tracer.nextSpan().name("purchase-order-repository.existsById").start();
+        // => Span name: "purchase-order-repository.existsById" — distinguishes it from save and findById
         try (var ignored = tracer.withSpan(span)) {
             span.tag("purchase_order.id", id.value().toString());
+            // => Tag the checked ID: trace viewers can filter all existsById calls for a given PO
             return delegate.existsById(id);
+            // => Delegates to the resilient adapter — the existence check benefits from retry too
         } catch (Exception ex) {
             span.error(ex);
+            // => error(): marks the span as errored — the circuit-breaker counts this failure
             throw ex;
         } finally {
             span.end();
+            // => end(): span always closed — no leak even when the delegate throws
         }
     }
 }
@@ -914,15 +956,21 @@ Java `Consumer<T>` and a mutable listener registry both require manual registrat
 // Demonstrates the stdlib Consumer pattern that the Spring @EventListener supersedes.
 
 import java.util.ArrayList;
+// => ArrayList: mutable, unsynchronised — concurrent subscribe() calls corrupt the internal array
 import java.util.List;
+// => List: the handler registry type — parameterised on Consumer<T>
 import java.util.function.Consumer;
+// => Consumer<T>: functional interface with accept(T) — the callback invoked on each publish
 
 public class InMemoryBus<T> {
     private final List<Consumer<T>> handlers = new ArrayList<>();
     // => handlers: mutable list — not thread-safe if handlers are registered after startup
+    // => No synchronisation: concurrent subscribe() from multiple threads corrupts the list
 
     public void subscribe(Consumer<T> handler) {
         handlers.add(handler);
+        // => Registration is synchronous — all subscribers must register before the first publish
+        // => No deduplication: subscribing the same handler twice causes it to run twice per event
     }
 
     public void publish(T event) {
@@ -930,6 +978,7 @@ public class InMemoryBus<T> {
             handler.accept(event);
             // => Synchronous dispatch — slow handlers block the event publisher
             // => If a handler throws, remaining handlers are skipped silently
+            // => No retry, no dead-letter queue — failed handlers lose the event permanently
         }
     }
 }
@@ -944,27 +993,47 @@ The Spring `ApplicationEventPublisher` is the in-process publisher; `@EventListe
 ```java
 // IssuePurchaseOrderServiceImpl.java — publishes event after saving the aggregate
 package com.procurement.platform.purchasing.infrastructure;
+// => infrastructure/ package: @Service beans live here — they import ports, not vice versa
 
 import com.procurement.platform.purchasing.application.IssuePurchaseOrderService;
+// => IssuePurchaseOrderService: application port interface — the @Service must implement it
 import com.procurement.platform.purchasing.application.PurchaseOrderIssued;
+// => Domain event record: constructed here after the aggregate is saved and the transaction commits
 import com.procurement.platform.purchasing.application.PurchaseOrderRepository;
+// => Repository output port: the service never imports JdbcPurchaseOrderRepository directly
 import com.procurement.platform.purchasing.application.EventPublisher;
+// => EventPublisher output port: wired to the outbox or in-process adapter at the composition root
 import com.procurement.platform.purchasing.domain.PurchaseOrder;
+// => Domain aggregate: all state lives here — the service constructs and passes it to the repository
 import com.procurement.platform.purchasing.domain.PurchaseOrderId;
+// => Strongly-typed identity: wraps a UUID — prevents passing SupplierId where PurchaseOrderId is expected
 import com.procurement.platform.purchasing.domain.PurchaseOrderLine;
+// => Line value object: one ordered item — quantity, unit price, product reference
 import com.procurement.platform.purchasing.domain.SupplierId;
+// => Supplier identity: passed in from the controller — never constructed here from a raw String
 import com.procurement.platform.purchasing.domain.PurchaseOrderStatus;
+// => Status enum: Draft → AwaitingApproval → Approved → … → Closed — drives all state transitions
 import com.procurement.platform.purchasing.domain.ApprovalLevel;
+// => ApprovalLevel enum: derived from totalAmount — determines the approver tier for this PO
 import org.springframework.stereotype.Service;
+// => @Service: Spring registers this bean during component scan; synonym of @Component with semantics
 import org.springframework.transaction.annotation.Transactional;
+// => @Transactional: Spring wraps the annotated method in a database transaction boundary
 import java.math.BigDecimal;
+// => BigDecimal: arbitrary-precision arithmetic for currency totals — avoids floating-point rounding
 import java.time.Instant;
+// => Instant.now(): UTC timestamp attached to domain events — monotonically increasing across replicas
 import java.util.List;
+// => List<PurchaseOrderLine>: ordered line items passed in from the controller DTO
 import java.util.Optional;
+// => Optional: return type for findById — absence is a valid outcome, not an error
 import java.util.UUID;
+// => UUID.randomUUID(): identity generation strategy — client-generated, not database-generated
 
 @Service
+// => @Service: Spring discovers this bean via the root-package component scan
 public class IssuePurchaseOrderServiceImpl implements IssuePurchaseOrderService {
+    // => implements IssuePurchaseOrderService: the compiler verifies all port methods are present
 
     private final PurchaseOrderRepository repository;
     // => Port interface: wired to the decorated adapter stack (traced → resilient → JDBC)
@@ -976,6 +1045,7 @@ public class IssuePurchaseOrderServiceImpl implements IssuePurchaseOrderService 
         this.repository = repository;
         this.eventPublisher = eventPublisher;
         // => Constructor injection: Spring injects both beans automatically — no @Autowired needed
+        // => Both fields are final: immutable after construction — thread-safe for concurrent requests
     }
 
     @Override
@@ -992,9 +1062,11 @@ public class IssuePurchaseOrderServiceImpl implements IssuePurchaseOrderService 
                 .reduce(BigDecimal.ZERO, BigDecimal::add),
             lines.isEmpty() ? "USD" : lines.get(0).unitPrice().currency());
         // => totalAmount: sum of all line totals — derived from line items at issuance time
+        // => Currency: carried from the first line; if no lines, defaults to "USD"
         var approvalLevel = ApprovalLevel.fromAmount(totalAmount);
         // => approvalLevel: derived from totalAmount — L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
         var po = new PurchaseOrder(id, supplierId, lines, totalAmount, approvalLevel, PurchaseOrderStatus.Draft);
+        // => Draft status: all new POs begin in Draft — the approval workflow transitions the status
         repository.save(po);
         // => Persist the aggregate first — the event carries the committed state
         // => If save() throws, the transaction rolls back and publish() is never reached
@@ -1002,32 +1074,40 @@ public class IssuePurchaseOrderServiceImpl implements IssuePurchaseOrderService 
         // => Publish after save: the event payload reflects the committed aggregate
         // => With OutboxEventPublisher: the outbox row and the aggregate row commit atomically
         return po;
+        // => Returns the created aggregate: the controller maps it to the response DTO
     }
 
     @Override
     public Optional<PurchaseOrder> findById(PurchaseOrderId id) {
         return repository.findById(id);
         // => Delegate to the repository port — no event needed for a read operation
+        // => Optional.empty() returned when the PO does not exist — the controller maps this to 404
     }
 
     @Override
     @Transactional
+    // => @Transactional: cancel() modifies state — must run within a transaction boundary
     public PurchaseOrder cancel(PurchaseOrderId id)
             throws com.procurement.platform.purchasing.application.PurchaseOrderNotFoundException,
                    com.procurement.platform.purchasing.application.InvalidPurchaseOrderStateException {
         var po = repository.findById(id)
             .orElseThrow(() -> new com.procurement.platform.purchasing.application.PurchaseOrderNotFoundException(id));
+        // => orElseThrow: absence maps to a typed domain exception — the controller maps to HTTP 404
         if (po.status() == PurchaseOrderStatus.Paid || po.status() == PurchaseOrderStatus.Closed) {
             throw new com.procurement.platform.purchasing.application.InvalidPurchaseOrderStateException(
                 "PurchaseOrder " + id + " cannot be cancelled in status " + po.status());
+            // => InvalidPurchaseOrderStateException: typed domain exception — mapped to HTTP 422 globally
         }
         // => Business rule: POs in Paid or Closed state cannot be cancelled
         var cancelled = new PurchaseOrder(po.id(), po.supplierId(), po.lines(),
             po.totalAmount(), po.approvalLevel(), PurchaseOrderStatus.Cancelled);
         // => Immutable update: create a new record with updated status — the original is not mutated
         repository.save(cancelled);
+        // => Persist the cancelled aggregate — the save() upserts on conflict
         eventPublisher.publish(new PurchaseOrderCancelled(id, Instant.now()));
+        // => PurchaseOrderCancelled: event signals downstream contexts (e.g., receiving) to void GRN expectations
         return cancelled;
+        // => Returns the cancelled aggregate: the controller maps it to the response DTO
     }
 }
 ```
@@ -1035,19 +1115,26 @@ public class IssuePurchaseOrderServiceImpl implements IssuePurchaseOrderService 
 ```java
 // PurchaseOrderIssuedEventHandler.java — consumer in the receiving context
 package com.procurement.platform.receiving.infrastructure;
+// => receiving infrastructure/: the handler lives here — it accesses purchasing via the event record only
 
 import com.procurement.platform.purchasing.application.PurchaseOrderIssued;
 // => Import from the purchasing application package only — the handler accesses domain via the event
+// => No import from purchasing.domain: the event record carries the data the handler needs
 import org.slf4j.Logger;
+// => Logger: SLF4J API — decoupled from the underlying implementation (Logback, Log4j2)
 import org.slf4j.LoggerFactory;
+// => LoggerFactory.getLogger: creates a logger named after this class — appears in log output
 import org.springframework.context.event.EventListener;
 // => @EventListener: Spring registers this method as a synchronous in-process event consumer
 import org.springframework.stereotype.Component;
+// => @Component: Spring registers this bean during the receiving context component scan
 
 @Component
+// => @Component: Spring discovers this handler — no explicit registration in @Configuration needed
 public class PurchaseOrderIssuedEventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(PurchaseOrderIssuedEventHandler.class);
+    // => static final: one logger per class — not one per method call
 
     @EventListener
     // => @EventListener: Spring calls this method when PurchaseOrderIssued is published
@@ -1105,6 +1192,8 @@ sequenceDiagram
 ---
 
 ## Guide 22 — Hexagonal Anti-Patterns
+
+> **Note on structure**: This guide intentionally omits the Standard Library First → Limitation → Production Framework progression used in all other guides. An anti-patterns catalogue has no meaningful "standard library first" path — the patterns themselves are the subject. The guide uses ANTI-PATTERN → Correction pairs instead, which is the pedagogically appropriate structure for this topic.
 
 ### Why It Matters
 

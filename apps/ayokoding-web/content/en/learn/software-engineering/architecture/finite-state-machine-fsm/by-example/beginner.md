@@ -9,6 +9,8 @@ tags: ["fsm", "finite-state-machine", "state-management", "tutorial", "by-exampl
 
 This beginner tutorial introduces Finite State Machine fundamentals through 25 annotated code examples grounded in the `PurchaseOrder` aggregate from the `procurement-platform-be` backend. You will learn how to model states as sealed types, encode transitions as pure functions, enforce guard conditions, and reject invalid transitions at the type level or with explicit errors.
 
+> **Domain scope note**: The beginner `POState` covers the core approval-issuance lifecycle (Draft → AwaitingApproval → Approved → Issued → Acknowledged → Closed/Cancelled/Disputed). States from the full domain spec — `PartiallyReceived`, `Received`, `Invoiced`, and `Paid` — are intentionally deferred to intermediate and advanced levels, where multi-machine coordination and extended lifecycle patterns are introduced.
+
 ## What Is a Finite State Machine? (Examples 1-5)
 
 ### Example 1: States as a Sealed Type
@@ -28,7 +30,7 @@ stateDiagram-v2
     Approved --> Cancelled: cancel
 
     classDef draft fill:#0173B2,stroke:#000,color:#fff
-    classDef waiting fill:#DE8F05,stroke:#000,color:#fff
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
     classDef approved fill:#029E73,stroke:#000,color:#fff
     classDef terminal fill:#CA9161,stroke:#000,color:#fff
 
@@ -40,8 +42,8 @@ stateDiagram-v2
 ```
 
 ```typescript
-// Sealed union type: every valid PO state is listed exactly once
-// The compiler rejects any string not in this set
+// => Sealed union type: every valid PO state is listed exactly once
+// => The compiler rejects any string not in this set
 type POState =
   | "Draft" // => PO created, not yet submitted for approval
   | "AwaitingApproval" // => Submitted; waiting for manager decision
@@ -52,17 +54,17 @@ type POState =
   | "Cancelled" // => Abandoned before payment — terminal state
   | "Disputed"; // => Discrepancy detected; resolution required
 
-// Helper: check whether a state is terminal (no further transitions possible)
-// Pure function — no side effects, result determined solely by input
+// => Helper: check whether a state is terminal (no further transitions possible)
+// => Pure function — no side effects, result determined solely by input
 function isTerminal(state: POState): boolean {
   return state === "Closed" || state === "Cancelled"; // => Two terminal states
 }
 
-// Usage
+// => Usage
 const initial: POState = "Draft"; // => Type-checked: only valid states compile
 console.log(isTerminal(initial)); // => Output: false
 console.log(isTerminal("Closed")); // => Output: true
-// const bad: POState = "Pending"; // => Compile error: not in union — compiler catches typos
+// => const bad: POState = "Pending"; // => Compile error: not in union — compiler catches typos
 ```
 
 **Key Takeaway**: Sealed union types turn the FSM state set into a compile-time contract — invalid states are errors, not bugs found in production.
@@ -76,16 +78,16 @@ console.log(isTerminal("Closed")); // => Output: true
 The machine is the state plus the transition function. This example models the simplest possible PO FSM as a plain record holding the current state.
 
 ```typescript
-// A PO record holds id, current state, and the monetary total
-// No behaviour lives in the record — it is pure data
+// => A PO record holds id, current state, and the monetary total
+// => No behaviour lives in the record — it is pure data
 interface PurchaseOrder {
   readonly id: string; // => Immutable: format "po_<uuid>"
   readonly totalAmount: number; // => Monetary total in USD (used by guards later)
   readonly state: POState; // => Current FSM state
 }
 
-// Factory: construct a PO in its initial state
-// Pure function: takes id + amount, returns a new PO record
+// => Factory: construct a PO in its initial state
+// => Pure function: takes id + amount, returns a new PO record
 function createPO(id: string, totalAmount: number): PurchaseOrder {
   return {
     id, // => Short-hand: id: id
@@ -97,7 +99,7 @@ function createPO(id: string, totalAmount: number): PurchaseOrder {
 const po = createPO("po_abc123", 500);
 console.log(po.state); // => Output: Draft
 console.log(po.totalAmount); // => Output: 500
-// po.state = "Approved";   // => Compile error: readonly prevents mutation in place
+// => po.state = "Approved";   // => Compile error: readonly prevents mutation in place
 ```
 
 **Key Takeaway**: Keeping state in an immutable record and behaviour in separate functions is the functional FSM pattern — it makes transitions testable in isolation.
@@ -110,8 +112,40 @@ console.log(po.totalAmount); // => Output: 500
 
 A transition table maps `(currentState, event) → nextState`. Expressing it as data rather than nested `if`/`switch` statements makes the full machine inspectable and serialisable.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> AwaitingApproval: submit
+    Draft --> Cancelled: cancel
+    AwaitingApproval --> Approved: approve
+    AwaitingApproval --> Cancelled: reject / cancel
+    Approved --> Issued: issue
+    Approved --> Cancelled: cancel
+    Approved --> Disputed: dispute
+    Issued --> Acknowledged: acknowledge
+    Issued --> Cancelled: cancel
+    Issued --> Disputed: dispute
+    Acknowledged --> Closed: close
+    Acknowledged --> Cancelled: cancel
+    Acknowledged --> Disputed: dispute
+    Disputed --> Approved: approve
+    Disputed --> Cancelled: cancel
+
+    classDef start fill:#0173B2,stroke:#000,color:#fff
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
+    classDef active fill:#029E73,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+    classDef dispute fill:#CC78BC,stroke:#000,color:#fff
+
+    class Draft start
+    class AwaitingApproval waiting
+    class Approved,Issued,Acknowledged active
+    class Closed,Cancelled terminal
+    class Disputed dispute
+```
+
 ```typescript
-// Event union — every trigger that can change PO state
+// => Event union — every trigger that can change PO state
 type POEvent =
   | "submit" // => Buyer sends PO for approval
   | "approve" // => Manager approves
@@ -122,8 +156,8 @@ type POEvent =
   | "cancel" // => Abandon PO
   | "dispute"; // => Flag discrepancy
 
-// Transition table as an immutable map: [state][event] → nextState
-// undefined entry means the transition is not allowed
+// => Transition table as an immutable map: [state][event] → nextState
+// => undefined entry means the transition is not allowed
 const TRANSITIONS: Partial<Record<POState, Partial<Record<POEvent, POState>>>> = {
   Draft: { submit: "AwaitingApproval", cancel: "Cancelled" },
   AwaitingApproval: { approve: "Approved", reject: "Cancelled", cancel: "Cancelled" },
@@ -131,10 +165,10 @@ const TRANSITIONS: Partial<Record<POState, Partial<Record<POEvent, POState>>>> =
   Issued: { acknowledge: "Acknowledged", cancel: "Cancelled", dispute: "Disputed" },
   Acknowledged: { close: "Closed", cancel: "Cancelled", dispute: "Disputed" },
   Disputed: { approve: "Approved", cancel: "Cancelled" },
-  // Closed and Cancelled have no entries — they are terminal
+  // => Closed and Cancelled have no entries — they are terminal
 };
 
-// Lookup next state; return undefined if the transition is forbidden
+// => Lookup next state; return undefined if the transition is forbidden
 function nextState(current: POState, event: POEvent): POState | undefined {
   return TRANSITIONS[current]?.[event]; // => Optional chaining: safe on undefined
 }
@@ -155,11 +189,11 @@ console.log(nextState("Closed", "cancel")); // => Output: undefined (terminal)
 Wrapping the table lookup in a function that returns a `Result` type makes the FSM's success/failure contract explicit without throwing exceptions.
 
 ```typescript
-// Result type: either success with a new PO, or an error message
+// => Result type: either success with a new PO, or an error message
 type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
-// Pure transition function: (PO, event) → Result<PO>
-// Never mutates its input; always returns a new record or an error
+// => Pure transition function: (PO, event) → Result<PO>
+// => Never mutates its input; always returns a new record or an error
 function transition(po: PurchaseOrder, event: POEvent): Result<PurchaseOrder> {
   const next = nextState(po.state, event); // => Table lookup
 
@@ -172,16 +206,16 @@ function transition(po: PurchaseOrder, event: POEvent): Result<PurchaseOrder> {
   }
 
   // => Valid transition: return new PO with updated state
-  // Spread preserves all other fields (id, totalAmount) unchanged
+  // => Spread preserves all other fields (id, totalAmount) unchanged
   return { ok: true, value: { ...po, state: next } };
 }
 
-// Happy path
+// => Happy path
 const po = createPO("po_abc123", 500);
 const r1 = transition(po, "submit");
 if (r1.ok) console.log(r1.value.state); // => Output: AwaitingApproval
 
-// Invalid transition
+// => Invalid transition
 const r2 = transition(po, "close");
 if (!r2.ok) console.log(r2.error);
 // => Output: Invalid transition: Draft --close--> (no such transition)
@@ -198,8 +232,8 @@ if (!r2.ok) console.log(r2.error);
 Pattern-matching on the state with an exhaustive `switch` guarantees every state has been handled — the TypeScript compiler catches missing cases at compile time.
 
 ```typescript
-// Derive a human-readable label for each PO state
-// The `never` assertion in the default case catches missing states at compile time
+// => Derive a human-readable label for each PO state
+// => The `never` assertion in the default case catches missing states at compile time
 function stateLabel(state: POState): string {
   switch (state) {
     case "Draft":
@@ -243,20 +277,40 @@ console.log(stateLabel("Issued")); // => Output: Issued to Supplier
 
 The P2P domain defines approval thresholds: POs ≤ $1k need L1 approval, ≤ $10k need L2, and > $10k need L3. A guard function encodes this rule as a predicate that the transition checks before allowing the `approve` event.
 
+```mermaid
+stateDiagram-v2
+    [*] --> AwaitingApproval
+    AwaitingApproval --> Approved: approve [canApprove = true]
+    AwaitingApproval --> Rejected: approve [canApprove = false]
+    note right of AwaitingApproval
+        L1: amount ≤ $1k
+        L2: amount ≤ $10k
+        L3: amount > $10k
+    end note
+
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
+    classDef approved fill:#029E73,stroke:#000,color:#fff
+    classDef rejected fill:#CA9161,stroke:#000,color:#fff
+
+    class AwaitingApproval waiting
+    class Approved approved
+    class Rejected rejected
+```
+
 ```typescript
-// Approval level enum: L1 (low value), L2 (medium), L3 (high value)
+// => Approval level enum: L1 (low value), L2 (medium), L3 (high value)
 type ApprovalLevel = "L1" | "L2" | "L3";
 
-// Derive required approval level from PO total
-// Pure function: no side effects, result depends only on totalAmount
+// => Derive required approval level from PO total
+// => Pure function: no side effects, result depends only on totalAmount
 function requiredApprovalLevel(totalAmount: number): ApprovalLevel {
   if (totalAmount <= 1000) return "L1"; // => Up to $1,000: line manager sufficient
   if (totalAmount <= 10000) return "L2"; // => $1,001–$10,000: department head
   return "L3"; // => > $10,000: CFO / finance committee
 }
 
-// Guard: is the actor's level sufficient to approve this PO?
-// Returns true if the actor can approve, false if escalation is needed
+// => Guard: is the actor's level sufficient to approve this PO?
+// => Returns true if the actor can approve, false if escalation is needed
 function canApprove(po: PurchaseOrder, actorLevel: ApprovalLevel): boolean {
   const required = requiredApprovalLevel(po.totalAmount); // => What level does this PO need?
   const levels: ApprovalLevel[] = ["L1", "L2", "L3"]; // => Ordered lowest to highest
@@ -282,23 +336,23 @@ console.log(canApprove(highPO, "L3")); // => Output: true  (L3 is the highest le
 Composing the guard with the transition function produces a single `approve` operation that enforces both the FSM state check and the business-rule guard.
 
 ```typescript
-// Extended PO interface: carries the actor's approval level for the approve transition
+// => Extended PO interface: carries the actor's approval level for the approve transition
 interface ApprovableContext {
   po: PurchaseOrder;
   actorLevel: ApprovalLevel;
 }
 
-// Guarded approve: checks FSM state AND business guard before transitioning
+// => Guarded approve: checks FSM state AND business guard before transitioning
 function approvePO(ctx: ApprovableContext): Result<PurchaseOrder> {
   const { po, actorLevel } = ctx;
 
-  // Guard 1: FSM state must be AwaitingApproval
+  // => Guard 1: FSM state must be AwaitingApproval
   if (po.state !== "AwaitingApproval") {
     return { ok: false, error: `Cannot approve PO in state: ${po.state}` };
     // => FSM check: approval only valid from AwaitingApproval
   }
 
-  // Guard 2: actor must have sufficient approval level
+  // => Guard 2: actor must have sufficient approval level
   if (!canApprove(po, actorLevel)) {
     const required = requiredApprovalLevel(po.totalAmount);
     return {
@@ -308,7 +362,7 @@ function approvePO(ctx: ApprovableContext): Result<PurchaseOrder> {
     };
   }
 
-  // Both guards pass: perform transition
+  // => Both guards pass: perform transition
   return { ok: true, value: { ...po, state: "Approved" } };
   // => New PO record with state Approved; all other fields unchanged
 }
@@ -333,20 +387,20 @@ if (r2.ok) console.log(r2.value.state); // => Output: Approved
 A PO cannot move past `Approved` without at least one line item. This is a structural invariant, not an approval-level rule — it lives in its own guard.
 
 ```typescript
-// A PO line item: one product in the PO
+// => A PO line item: one product in the PO
 interface POLine {
   readonly skuCode: string; // => Product SKU, format SKU-XXXXX
   readonly quantity: number; // => Must be > 0 (domain invariant)
   readonly unitPrice: number; // => Price per unit in USD
 }
 
-// Extended PO with line items
+// => Extended PO with line items
 interface PurchaseOrderWithLines extends PurchaseOrder {
   readonly lines: readonly POLine[];
 }
 
-// Guard: PO must have at least one line to be issued
-// Returns an error string if the guard fails, undefined if it passes
+// => Guard: PO must have at least one line to be issued
+// => Returns an error string if the guard fails, undefined if it passes
 function guardAtLeastOneLine(po: PurchaseOrderWithLines): string | undefined {
   if (po.lines.length === 0) {
     return "Cannot issue PO: no line items (add at least one product line)";
@@ -359,7 +413,7 @@ function guardAtLeastOneLine(po: PurchaseOrderWithLines): string | undefined {
   return undefined; // => Guard passes: no error
 }
 
-// Guarded issue transition
+// => Guarded issue transition
 function issuePO(po: PurchaseOrderWithLines): Result<PurchaseOrderWithLines> {
   if (po.state !== "Approved") {
     return { ok: false, error: `Cannot issue PO in state ${po.state}` };
@@ -386,10 +440,31 @@ if (!r.ok) console.log(r.error);
 
 Once a PO is `Issued`, its lines must not change. Enforcing this at the state level — reject any line mutation when `state === "Issued"` — is a core FSM invariant.
 
+```mermaid
+stateDiagram-v2
+    Draft --> Approved: (line items mutable)
+    Approved --> Issued: issue
+    note right of Issued
+        Lines become IMMUTABLE
+        addLine() → Error
+        from this point forward
+    end note
+    Issued --> Acknowledged: acknowledge
+    Acknowledged --> Closed: close
+
+    classDef mutable fill:#0173B2,stroke:#000,color:#fff
+    classDef immutable fill:#029E73,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+
+    class Draft,Approved mutable
+    class Issued,Acknowledged immutable
+    class Closed terminal
+```
+
 ```typescript
-// Attempt to add a line to a PO; guard rejects if already Issued
+// => Attempt to add a line to a PO; guard rejects if already Issued
 function addLine(po: PurchaseOrderWithLines, line: POLine): Result<PurchaseOrderWithLines> {
-  // Guard: lines are immutable once Issued or beyond
+  // => Guard: lines are immutable once Issued or beyond
   const immutableStates: POState[] = ["Issued", "Acknowledged", "Closed"];
   if (immutableStates.includes(po.state)) {
     return {
@@ -399,13 +474,13 @@ function addLine(po: PurchaseOrderWithLines, line: POLine): Result<PurchaseOrder
     };
   }
 
-  // Guard: new line must have a positive quantity
+  // => Guard: new line must have a positive quantity
   if (line.quantity <= 0) {
     return { ok: false, error: "Line quantity must be > 0" };
     // => Domain invariant on the value object
   }
 
-  // Append line and return new record (immutable update)
+  // => Append line and return new record (immutable update)
   return {
     ok: true,
     value: { ...po, lines: [...po.lines, line] },
@@ -433,6 +508,27 @@ if (!r.ok) console.log(r.error);
 ### Example 10: Cancel From Any Pre-Paid State (Python)
 
 The same PO machine in Python illustrates how the "cancel from any pre-paid state" rule reads cleanly with a set of allowed source states.
+
+```mermaid
+stateDiagram-v2
+    Draft --> Cancelled: cancel ✓
+    AwaitingApproval --> Cancelled: cancel ✓
+    Approved --> Cancelled: cancel ✓
+    Issued --> Cancelled: cancel ✓
+    Acknowledged --> Cancelled: cancel ✓
+    Closed --> Cancelled: cancel ✗ (terminal)
+    note right of Cancelled
+        Terminal state — no further
+        transitions possible
+    end note
+
+    classDef cancellable fill:#0173B2,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+    classDef locked fill:#CC78BC,stroke:#000,color:#fff
+
+    class Draft,AwaitingApproval,Approved,Issued,Acknowledged cancellable
+    class Cancelled,Closed terminal
+```
 
 ```python
 from dataclasses import dataclass, replace
@@ -486,8 +582,30 @@ print(err2)  # => Output: Cannot cancel PO in state 'Closed'
 
 The `Disputed` state is an off-ramp from several states and resolves back to either `Approved` or `Cancelled`. Java enums model the state set with inherent exhaustiveness.
 
+```mermaid
+stateDiagram-v2
+    Approved --> Disputed: dispute
+    Issued --> Disputed: dispute
+    Acknowledged --> Disputed: dispute
+    Disputed --> Approved: resolve_approve
+    Disputed --> Cancelled: resolve_cancel
+    note right of Disputed
+        Resolution paths:
+        1. resolve_approve → back to Approved
+        2. resolve_cancel → terminal
+    end note
+
+    classDef active fill:#029E73,stroke:#000,color:#fff
+    classDef disputed fill:#CC78BC,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+
+    class Approved,Issued,Acknowledged active
+    class Disputed disputed
+    class Cancelled terminal
+```
+
 ```java
-// Java enum: every state is a named constant — no magic strings
+// => Java enum: every state is a named constant — no magic strings
 public enum POState {
     DRAFT, AWAITING_APPROVAL, APPROVED, ISSUED,
     ACKNOWLEDGED, DISPUTED, CLOSED, CANCELLED;
@@ -507,7 +625,7 @@ public record PurchaseOrder(String id, double totalAmount, POState state) {
     // => No setters — FSM transitions return new instances
 }
 
-// Dispute-aware transition: handles dispute entry and both resolution paths
+// => Dispute-aware transition: handles dispute entry and both resolution paths
 public static java.util.Optional<PurchaseOrder> transition(
         PurchaseOrder po, POEvent event) {
 
@@ -551,9 +669,44 @@ transition(closedPO,   DISPUTE)         → Optional.empty()
 
 Putting the complete PurchaseOrder state machine — all states and transitions including the dispute cycle — into a single transition map.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> AwaitingApproval: submit
+    Draft --> Cancelled: cancel
+    AwaitingApproval --> Approved: approve
+    AwaitingApproval --> Cancelled: reject
+    AwaitingApproval --> Cancelled: cancel
+    Approved --> Issued: issue
+    Approved --> Cancelled: cancel
+    Approved --> Disputed: dispute
+    Issued --> Acknowledged: acknowledge
+    Issued --> Cancelled: cancel
+    Issued --> Disputed: dispute
+    Acknowledged --> Closed: close
+    Acknowledged --> Cancelled: cancel
+    Acknowledged --> Disputed: dispute
+    Disputed --> Approved: resolve_approve
+    Disputed --> Cancelled: resolve_cancel
+    Closed --> [*]
+    Cancelled --> [*]
+
+    classDef draft fill:#0173B2,stroke:#000,color:#fff
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
+    classDef active fill:#029E73,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+    classDef dispute fill:#CC78BC,stroke:#000,color:#fff
+
+    class Draft draft
+    class AwaitingApproval waiting
+    class Approved,Issued,Acknowledged active
+    class Closed,Cancelled terminal
+    class Disputed dispute
+```
+
 ```typescript
-// Complete PO transition table — every valid (state, event) pair
-// Read as: from state X, on event Y, go to state Z
+// => Complete PO transition table — every valid (state, event) pair
+// => Read as: from state X, on event Y, go to state Z
 const PO_TRANSITIONS: Partial<Record<POState, Partial<Record<POEvent, POState>>>> = {
   Draft: {
     submit: "AwaitingApproval", // => Buyer submits for approval
@@ -583,10 +736,10 @@ const PO_TRANSITIONS: Partial<Record<POState, Partial<Record<POEvent, POState>>>
     approve: "Approved", // => RESOLVE_APPROVE: error corrected, reinstate
     cancel: "Cancelled", // => RESOLVE_CANCEL: unrecoverable
   },
-  // Closed and Cancelled: no entries — both are terminal states
+  // => Closed and Cancelled: no entries — both are terminal states
 };
 
-// Generic interpreter: table-driven FSM transition
+// => Generic interpreter: table-driven FSM transition
 function applyEvent(po: PurchaseOrder, event: POEvent): Result<PurchaseOrder> {
   const next = PO_TRANSITIONS[po.state]?.[event]; // => Safe navigation: undefined if not in table
   if (!next) {
@@ -597,7 +750,7 @@ function applyEvent(po: PurchaseOrder, event: POEvent): Result<PurchaseOrder> {
   // => Return new PO record; original unchanged
 }
 
-// Walk a happy path: Draft → AwaitingApproval → Approved → Issued
+// => Walk a happy path: Draft → AwaitingApproval → Approved → Issued
 let po: PurchaseOrder = createPO("po_full", 5000);
 const events: POEvent[] = ["submit", "approve", "issue"];
 for (const evt of events) {
@@ -619,13 +772,13 @@ for (const evt of events) {
 Every transition should append to an audit trail. This example extends the PO with a log of events that drove each state change.
 
 ```typescript
-// Extended PO: adds an immutable event log for audit purposes
+// => Extended PO: adds an immutable event log for audit purposes
 interface AuditedPO extends PurchaseOrder {
   readonly eventLog: readonly { event: POEvent; fromState: POState; toState: POState; timestamp: string }[];
   // => Log entry captures what happened, from where, to where, and when
 }
 
-// Audited transition: records each state change in the log
+// => Audited transition: records each state change in the log
 function auditedTransition(po: AuditedPO, event: POEvent): Result<AuditedPO> {
   const next = PO_TRANSITIONS[po.state]?.[event];
   if (!next) {
@@ -731,7 +884,7 @@ print(err2)       # => Output: Invalid: Approved --submit-->
 Java records and enums together produce the most concise idiomatic Java FSM implementation for the PurchaseOrder.
 
 ```java
-// Transition table as an immutable Map — built once at class load
+// => Transition table as an immutable Map — built once at class load
 import java.util.*;
 
 public class POStateMachine {
@@ -739,7 +892,7 @@ public class POStateMachine {
     public enum State  { DRAFT, AWAITING_APPROVAL, APPROVED, ISSUED, ACKNOWLEDGED, DISPUTED, CLOSED, CANCELLED }
     public enum Event  { SUBMIT, APPROVE, REJECT, ISSUE, ACKNOWLEDGE, CLOSE, CANCEL, DISPUTE, RESOLVE_APPROVE, RESOLVE_CANCEL }
 
-    // Static transition table: Map<currentState, Map<event, nextState>>
+    // => Static transition table: Map<currentState, Map<event, nextState>>
     private static final Map<State, Map<Event, State>> TABLE;
     static {
         TABLE = new EnumMap<>(State.class);
@@ -756,7 +909,7 @@ public class POStateMachine {
     public record PurchaseOrder(String id, double totalAmount, State state) {}
     // => record: immutable, auto-equals/hashCode/toString
 
-    // Transition: returns Optional.of(newPO) or Optional.empty() for invalid
+    // => Transition: returns Optional.of(newPO) or Optional.empty() for invalid
     public static Optional<PurchaseOrder> apply(PurchaseOrder po, Event event) {
         return Optional.ofNullable(TABLE.getOrDefault(po.state(), Map.of()).get(event))
                        .map(next -> new PurchaseOrder(po.id(), po.totalAmount(), next));
@@ -784,12 +937,31 @@ apply(new PO("po_j01", 1000, DISPUTED), RESOLVE_APPROVE) → Optional[PO{APPROVE
 
 When a PO enters `AwaitingApproval`, the system should route the approval request to the responsible manager. This side effect is an entry action — it runs when entering a state, not when leaving one.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> AwaitingApproval: submit
+    AwaitingApproval --> Approved: approve
+    note right of AwaitingApproval
+        Entry action fires on entering:
+        Route approval request to manager
+    end note
+
+    classDef draft fill:#0173B2,stroke:#000,color:#fff
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
+    classDef approved fill:#029E73,stroke:#000,color:#fff
+
+    class Draft draft
+    class AwaitingApproval waiting
+    class Approved approved
+```
+
 ```typescript
-// Entry action type: a function that fires when entering a particular state
-// Pure signature: receives the PO, returns a description of what it did (for testing)
+// => Entry action type: a function that fires when entering a particular state
+// => Pure signature: receives the PO, returns a description of what it did (for testing)
 type EntryAction = (po: PurchaseOrder) => string;
 
-// Entry action map: which actions fire on entering which states
+// => Entry action map: which actions fire on entering which states
 const ENTRY_ACTIONS: Partial<Record<POState, EntryAction>> = {
   AwaitingApproval: (po) => `Route approval request for PO ${po.id} ($${po.totalAmount}) to manager`,
   // => In production: calls ApprovalRouterPort — here returns string for testability
@@ -801,7 +973,7 @@ const ENTRY_ACTIONS: Partial<Record<POState, EntryAction>> = {
   // => In production: calls SupplierNotifierPort + accounting system
 };
 
-// Transition with entry action: perform the transition, then run the entry action
+// => Transition with entry action: perform the transition, then run the entry action
 function transitionWithEntry(
   po: PurchaseOrder,
   event: POEvent,
@@ -835,7 +1007,7 @@ console.log(submitted.sideEffect);
 When leaving `Issued` (via `acknowledge`), the system should log that the supplier acknowledged the PO. Exit actions fire when leaving a state.
 
 ```typescript
-// Exit action: runs when leaving a state
+// => Exit action: runs when leaving a state
 type ExitAction = (po: PurchaseOrder, event: POEvent) => string;
 
 const EXIT_ACTIONS: Partial<Record<POState, ExitAction>> = {
@@ -846,7 +1018,7 @@ const EXIT_ACTIONS: Partial<Record<POState, ExitAction>> = {
   // => Issued exit: either supplier acknowledged, or cancelled/disputed
 };
 
-// Transition with both entry and exit actions
+// => Transition with both entry and exit actions
 function transitionWithActions(
   po: PurchaseOrder,
   event: POEvent,
@@ -855,16 +1027,16 @@ function transitionWithActions(
   exitEffect?: string;
   entryEffect?: string;
 } {
-  // Step 1: run exit action BEFORE the transition (we are leaving current state)
+  // => Step 1: run exit action BEFORE the transition (we are leaving current state)
   const exitAction = EXIT_ACTIONS[po.state];
   const exitEffect = exitAction ? exitAction(po, event) : undefined;
   // => Exit action receives pre-transition PO and the triggering event
 
-  // Step 2: perform FSM transition
+  // => Step 2: perform FSM transition
   const result = applyEvent(po, event);
   if (!result.ok) return { result, exitEffect: undefined }; // => Invalid: discard exit action output
 
-  // Step 3: run entry action for the new state
+  // => Step 3: run entry action for the new state
   const entryAction = ENTRY_ACTIONS[result.value.state];
   const entryEffect = entryAction ? entryAction(result.value) : undefined;
 
@@ -890,7 +1062,7 @@ console.log(entryEffect); // => Output: undefined (no entry action for Acknowled
 FSMs built from pure functions and immutable records are trivially testable — no mocks, no database, no HTTP client.
 
 ```typescript
-// Minimal test framework simulation — use Jest/Vitest in production
+// => Minimal test framework simulation — use Jest/Vitest in production
 function expect(actual: unknown) {
   return {
     toBe: (expected: unknown) => {
@@ -904,7 +1076,7 @@ function expect(actual: unknown) {
   };
 }
 
-// Test: happy path Draft → AwaitingApproval
+// => Test: happy path Draft → AwaitingApproval
 function testSubmitTransition() {
   const po = createPO("po_t01", 1000); // => Start in Draft
   const r = applyEvent(po, "submit"); // => Submit event
@@ -913,14 +1085,14 @@ function testSubmitTransition() {
   // => New state should be AwaitingApproval
 }
 
-// Test: invalid transition — cannot approve from Draft
+// => Test: invalid transition — cannot approve from Draft
 function testInvalidApproveFromDraft() {
   const po = createPO("po_t02", 500); // => Draft
   const r = applyEvent(po, "approve"); // => approve event from Draft (invalid)
   expect(r.ok).toBeFalsy(); // => Must fail
 }
 
-// Test: cancel from any cancellable state
+// => Test: cancel from any cancellable state
 function testCancelFromApproved() {
   const approved: PurchaseOrder = { ...createPO("po_t03", 200), state: "Approved" };
   const r = applyEvent(approved, "cancel"); // => Cancel from Approved
@@ -928,7 +1100,7 @@ function testCancelFromApproved() {
   expect((r as { ok: true; value: PurchaseOrder }).value.state).toBe("Cancelled");
 }
 
-// Run tests
+// => Run tests
 testSubmitTransition();
 testInvalidApproveFromDraft();
 testCancelFromApproved();
@@ -946,8 +1118,8 @@ testCancelFromApproved();
 The PO's `totalAmount` should be computed from its line items, not stored as a free-standing number — a computed property enforces the invariant that total = sum of lines.
 
 ```typescript
-// Compute PO total from line items: quantity × unitPrice per line, then sum
-// Pure function: deterministic, no side effects
+// => Compute PO total from line items: quantity × unitPrice per line, then sum
+// => Pure function: deterministic, no side effects
 function computeTotal(lines: readonly POLine[]): number {
   return lines.reduce(
     (sum, line) => sum + line.quantity * line.unitPrice,
@@ -956,8 +1128,8 @@ function computeTotal(lines: readonly POLine[]): number {
   // => reduce: O(n) single pass over lines array
 }
 
-// Validate that the PO's stored total matches the computed total
-// Returns an error string if inconsistent, undefined if valid
+// => Validate that the PO's stored total matches the computed total
+// => Returns an error string if inconsistent, undefined if valid
 function validateTotal(po: PurchaseOrderWithLines): string | undefined {
   const computed = computeTotal(po.lines); // => Recompute from lines
   const delta = Math.abs(computed - po.totalAmount); // => Allow tiny floating-point error
@@ -1000,21 +1172,21 @@ console.log(validateTotal(inconsistentPO));
 A constructor function that validates all invariants before returning the `PurchaseOrder` record ensures the FSM always starts in a valid state.
 
 ```typescript
-// Validated constructor: checks all invariants, returns Result<PO> not a plain record
+// => Validated constructor: checks all invariants, returns Result<PO> not a plain record
 function buildPO(id: string, lines: readonly POLine[]): Result<PurchaseOrderWithLines> {
-  // Invariant 1: id must follow format po_<uuid>
+  // => Invariant 1: id must follow format po_<uuid>
   if (!id.startsWith("po_") || id.length < 7) {
     return { ok: false, error: `Invalid PO id format: ${id} (expected po_<uuid>)` };
     // => Format guard: fail fast before constructing anything
   }
 
-  // Invariant 2: must have at least one line
+  // => Invariant 2: must have at least one line
   if (lines.length === 0) {
     return { ok: false, error: "PO must have at least one line item" };
     // => Empty PO cannot be submitted
   }
 
-  // Invariant 3: all quantities > 0
+  // => Invariant 3: all quantities > 0
   const badLine = lines.find((l) => l.quantity <= 0);
   if (badLine) {
     return { ok: false, error: `Line ${badLine.skuCode} has invalid quantity ${badLine.quantity}` };
@@ -1056,7 +1228,7 @@ if (!r3.ok) console.log(r3.error);
 Instead of a flat string union, each state can carry its own data — a discriminated union that makes invalid state-data combinations impossible.
 
 ```typescript
-// Discriminated union: each state variant carries its own payload
+// => Discriminated union: each state variant carries its own payload
 type POStateVariant =
   | { kind: "Draft"; createdAt: string }
   // => Draft carries creation timestamp
@@ -1071,7 +1243,7 @@ type POStateVariant =
   | { kind: "Disputed"; disputeReason: string };
 // => Disputed carries why it was disputed
 
-// Usage: narrowing on `kind` gives access to state-specific fields
+// => Usage: narrowing on `kind` gives access to state-specific fields
 function describeState(s: POStateVariant): string {
   switch (s.kind) {
     case "Draft":
@@ -1105,7 +1277,7 @@ console.log(describeState(approvedState)); // => Output: Approved by mgr_001
 Production FSMs need structured logging of every transition — not just console output, but structured records that feed into tracing systems.
 
 ```typescript
-// Structured log entry for a state transition
+// => Structured log entry for a state transition
 interface TransitionLog {
   poId: string; // => Which PO transitioned
   event: POEvent; // => What event triggered it
@@ -1115,7 +1287,7 @@ interface TransitionLog {
   actorId?: string; // => Who triggered the event (optional: system events have no actor)
 }
 
-// In-memory log (in production: replace with structured logger / OpenTelemetry span)
+// => In-memory log (in production: replace with structured logger / OpenTelemetry span)
 const transitionLogs: TransitionLog[] = [];
 
 function loggedTransition(po: PurchaseOrder, event: POEvent, actorId?: string): Result<PurchaseOrder> {
@@ -1153,9 +1325,31 @@ console.log(transitionLogs[0].toState); // => Output: AwaitingApproval
 
 If all events are stored, the current state is derivable by replaying them from the initial state — the foundation of event sourcing.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Draft: createPO (initial)
+    Draft --> AwaitingApproval: replay: submit
+    AwaitingApproval --> Approved: replay: approve
+    Approved --> Issued: replay: issue
+    Issued --> Acknowledged: replay: acknowledge
+    note left of Draft
+        Replay restores state
+        by re-applying each
+        stored event in order
+    end note
+
+    classDef draft fill:#0173B2,stroke:#000,color:#fff
+    classDef active fill:#029E73,stroke:#000,color:#fff
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
+
+    class Draft draft
+    class AwaitingApproval waiting
+    class Approved,Issued,Acknowledged active
+```
+
 ```typescript
-// Replay: apply a list of events in order starting from initial state
-// Returns the final state, or an error if any event in the sequence is invalid
+// => Replay: apply a list of events in order starting from initial state
+// => Returns the final state, or an error if any event in the sequence is invalid
 function replay(id: string, totalAmount: number, events: readonly POEvent[]): Result<PurchaseOrder> {
   let po: PurchaseOrder = createPO(id, totalAmount); // => Start from initial state (Draft)
 
@@ -1175,14 +1369,14 @@ function replay(id: string, totalAmount: number, events: readonly POEvent[]): Re
   // => Final state after all events applied
 }
 
-// Replay a complete lifecycle
+// => Replay a complete lifecycle
 const history: POEvent[] = ["submit", "approve", "issue", "acknowledge"];
 const result = replay("po_replay01", 2000, history);
 if (result.ok) {
   console.log(result.value.state); // => Output: Acknowledged
 }
 
-// Replay an invalid sequence (approve before submit)
+// => Replay an invalid sequence (approve before submit)
 const badHistory: POEvent[] = ["approve"];
 const bad = replay("po_replay02", 500, badHistory);
 if (!bad.ok) console.log(bad.error);
@@ -1200,8 +1394,8 @@ if (!bad.ok) console.log(bad.error);
 A data-driven transition table can generate its own state diagram — no manual diagram maintenance.
 
 ```typescript
-// Generate a Graphviz DOT graph from the transition table
-// DOT is the input language for Graphviz — also accepted by many web renderers
+// => Generate a Graphviz DOT graph from the transition table
+// => DOT is the input language for Graphviz — also accepted by many web renderers
 function generateDOT(table: Partial<Record<POState, Partial<Record<POEvent, POState>>>>, title: string): string {
   const lines: string[] = [
     `digraph "${title}" {`,
@@ -1223,11 +1417,11 @@ function generateDOT(table: Partial<Record<POState, Partial<Record<POEvent, POSt
 const dot = generateDOT(PO_TRANSITIONS, "PurchaseOrder FSM");
 console.log(dot.split("\n").slice(0, 5).join("\n"));
 // => Output (first 5 lines of DOT):
-// digraph "PurchaseOrder FSM" {
-//   rankdir=LR;
-//   node [shape=box, style=rounded];
-//   "Draft" -> "AwaitingApproval" [label="submit"];
-//   "Draft" -> "Cancelled" [label="cancel"];
+// => digraph "PurchaseOrder FSM" {
+// =>   rankdir=LR;
+// =>   node [shape=box, style=rounded];
+// =>   "Draft" -> "AwaitingApproval" [label="submit"];
+// =>   "Draft" -> "Cancelled" [label="cancel"];
 ```
 
 **Key Takeaway**: Generating diagrams from the transition table guarantees the diagram matches the code — they cannot diverge because the diagram is derived from the code.
@@ -1240,12 +1434,42 @@ console.log(dot.split("\n").slice(0, 5).join("\n"));
 
 The final beginner example reframes the FSM: it is not just state management, it is a communication protocol between buyer, manager, supplier, and finance. The state names are the protocol verbs.
 
-```typescript
-// The PO state machine encodes the P2P protocol:
-// - Buyer submits, manager approves/rejects, finance issues, supplier acknowledges, system closes
-// Each state is a waiting point: "waiting for manager", "waiting for supplier", etc.
+```mermaid
+stateDiagram-v2
+    [*] --> Draft: Buyer creates PO
+    Draft --> AwaitingApproval: Buyer submits
+    AwaitingApproval --> Approved: Manager approves
+    AwaitingApproval --> Cancelled: Manager rejects
+    Approved --> Issued: Finance issues
+    Issued --> Acknowledged: Supplier acknowledges
+    Acknowledged --> Closed: System closes
+    note right of Draft
+        Actor: Buyer
+    end note
+    note right of AwaitingApproval
+        Actor: Manager
+    end note
+    note right of Issued
+        Actor: Supplier
+    end note
 
-// Protocol state machine: associates each state with who is expected to act next
+    classDef draft fill:#0173B2,stroke:#000,color:#fff
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
+    classDef active fill:#029E73,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+
+    class Draft draft
+    class AwaitingApproval waiting
+    class Approved,Issued,Acknowledged active
+    class Closed,Cancelled terminal
+```
+
+```typescript
+// => The PO state machine encodes the P2P protocol:
+// => - Buyer submits, manager approves/rejects, finance issues, supplier acknowledges, system closes
+// => Each state is a waiting point: "waiting for manager", "waiting for supplier", etc.
+
+// => Protocol state machine: associates each state with who is expected to act next
 const PO_PROTOCOL: Record<POState, { actor: string; expects: string }> = {
   Draft: { actor: "Buyer", expects: "submit the PO for approval" },
   // => Buyer drafts; nothing happens until buyer submits

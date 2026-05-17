@@ -279,10 +279,13 @@ let receiveGoods
         // => Generate GRN ID at receipt time
         let grn = {
             Id = grnId; PurchaseOrderId = poId; SupplierId = supplierId
+            // => Links GRN to its PO and supplier for traceability
             ReceivedAt = System.DateTimeOffset.UtcNow; Lines = lines; Status = status
+            // => Status is Open (no discrepancy) or Disputed (mismatch/quality issue)
         }
         let event = { GrnId = grnId; PurchaseOrderId = poId
                       ReceivedAt = grn.ReceivedAt; HasDiscrepancy = hasDiscrepancy }
+        // => Event carries HasDiscrepancy flag — invoicing context uses this to enable/block matching
         Ok (grn, event)
         // => Return both the new GRN and the event
 
@@ -312,6 +315,29 @@ match result with
 ### Example 59: Invoice Aggregate — Three-Way Matching
 
 The `Invoice` aggregate in the `invoicing` context registers supplier invoices and matches them against the PO and GRN. The match rule: invoice amount must equal `sum(GRN quantities × PO unit price)` within the configured `Tolerance` (default 2%).
+
+```mermaid
+graph LR
+    PO["PurchaseOrder\n(unit price per line)"]
+    GRN["GoodsReceiptNote\n(actual quantities)"]
+    INV["Invoice\n(supplier's billed amount)"]
+    MATCH["threeWayMatch\nInvoice ≈ GRN qty × PO price\n(within Tolerance)"]
+    OK["Matched\n→ schedule payment"]
+    ERR["Disputed\n→ block payment"]
+
+    PO --> MATCH
+    GRN --> MATCH
+    INV --> MATCH
+    MATCH -->|"within 2%"| OK
+    MATCH -->|"outside tolerance"| ERR
+
+    style PO fill:#0173B2,stroke:#000,color:#fff
+    style GRN fill:#029E73,stroke:#000,color:#fff
+    style INV fill:#DE8F05,stroke:#000,color:#000
+    style MATCH fill:#CA9161,stroke:#000,color:#000
+    style OK fill:#029E73,stroke:#000,color:#fff
+    style ERR fill:#CC78BC,stroke:#000,color:#000
+```
 
 ```fsharp
 // Invoice: aggregate root of the invoicing context.
@@ -460,10 +486,15 @@ type PoRepository = {
 
 type PoEvent =
     | DraftCreated      of { Id: PurchaseOrderId; Total: decimal }
+    // => Initial event — the PO comes into existence
     | ApprovalRequested of { Id: PurchaseOrderId }
+    // => Submitter asks for approval; status moves to AwaitingApproval
     | PurchaseOrderApproved       of { Id: PurchaseOrderId; ApprovedAt: System.DateTimeOffset }
+    // => Approver signed off; status moves to Approved
     | PurchaseOrderIssuedEv       of { Id: PurchaseOrderId; IssuedAt: System.DateTimeOffset }
+    // => PO sent to supplier; status moves to Issued
     | PurchaseOrderCancelledEv    of { Id: PurchaseOrderId; Reason: string }
+    // => Off-ramp from any pre-Paid state
 // => Each DU case represents one thing that happened to the PO
 
 type PoEventStore = {
@@ -499,18 +530,22 @@ let projectSnapshot (events: PoEvent list) : PoSnapshot option =
 // Test the projection
 let events = [
     DraftCreated { Id = PurchaseOrderId "po_e3d1"; Total = 2699.97m }
+    // => Event 1: PO created with $2,699.97 total; initial Status = "Draft"
     ApprovalRequested { Id = PurchaseOrderId "po_e3d1" }
+    // => Event 2: approval submitted; Status → "AwaitingApproval"
     PurchaseOrderApproved { Id = PurchaseOrderId "po_e3d1"; ApprovedAt = System.DateTimeOffset.UtcNow }
+    // => Event 3: approver signed off; Status → "Approved"
 ]
 // => Three events: Draft → AwaitingApproval → Approved
 
 let snapshot = projectSnapshot events
-// => Fold produces the current state from the event history
+// => Fold produces the current state from the event history; snapshot : PoSnapshot option = Some { Status = "Approved"; ... }
 
 match snapshot with
 | Some s -> printfn "Current state: %s total=%M" s.Status s.Total
 // => Output: Current state: Approved total=2699.9700M
 | None   -> printfn "No events"
+// => Only reached if events list is empty
 ```
 
 **Key Takeaway**: Event stores provide a complete audit trail by design — every state the PO was ever in is recoverable by replaying the event stream; traditional repositories provide faster current-state reads at the cost of losing history.
@@ -585,13 +620,27 @@ match issuedEvent with
 
 **Key Takeaway**: F# module visibility rules enforce bounded context boundaries — internal types stay hidden, and the only coupling between contexts is through explicitly exported types and functions.
 
-**Why It Matters**: The `InternalPoState` with its approval chain, line-item history, and status notes is a purchasing-specific implementation detail. If the receiving context depends on `InternalPoState` directly, every refactor of purchasing internals risks breaking receiving. By exporting only `PurchaseOrderIssuedPublic`, the purchasing context can freely evolve its internal model without affecting downstream contexts.
+**Why It Matters**: The `InternalPoState` with its approval chain, line-item history, and status notes is a purchasing-specific implementation detail. If the receiving context depends on `InternalPoState` directly, every refactor of purchasing internals risks breaking receiving. By exporting only `PurchaseOrderIssuedPublic`, the purchasing context can freely evolve its internal model without affecting downstream contexts. In production, this boundary prevents cascading compile errors across services when the purchasing team restructures approval logic.
 
 ---
 
 ### Example 62: ACL as a Translation Function Between Contexts
 
 An Anti-Corruption Layer (ACL) translates between two bounded context models. When the invoicing context needs to verify that a GRN exists and is valid, it calls through an ACL that translates the receiving context's `GoodsReceiptNote` into invoicing's `GrnSummary`.
+
+```mermaid
+graph LR
+    R["receiving context\nGoodsReceiptNote\n(internal type)"]
+    ACL["translateGrnToSummary\n(ACL function)"]
+    I["invoicing context\nGrnSummary\n(invoicing's view)"]
+
+    R -->|"internal type never crosses"| ACL
+    ACL -->|"translated summary"| I
+
+    style R fill:#DE8F05,stroke:#000,color:#000
+    style ACL fill:#CA9161,stroke:#000,color:#000
+    style I fill:#0173B2,stroke:#000,color:#fff
+```
 
 ```fsharp
 // ACL: a translation function between two bounded context models.
@@ -666,7 +715,7 @@ match summaryResult with
 
 **Key Takeaway**: An ACL translation function keeps the invoicing context decoupled from the receiving context's internal model — invoicing depends only on `GrnSummary`, not on `GoodsReceiptNote` or `GrnStatus`.
 
-**Why It Matters**: Without an ACL, invoicing would import `GrnStatus` from receiving. Any change to `GrnStatus` (adding a new case `PartiallyVerified`) would require updating invoicing code. The ACL absorbs these changes: only `translateGrnToSummary` needs updating, and the invoicing workflows that use `GrnSummary.IsValid` remain unchanged.
+**Why It Matters**: Without an ACL, invoicing would import `GrnStatus` from receiving. Any change to `GrnStatus` (adding a new case `PartiallyVerified`) would require updating invoicing code. The ACL absorbs these changes: only `translateGrnToSummary` needs updating, and the invoicing workflows that use `GrnSummary.IsValid` remain unchanged. In a procurement platform with dozens of context integrations, this pattern eliminates the coupling that turns a one-line domain change into a multi-team deployment.
 
 ---
 
@@ -685,38 +734,38 @@ type SupplierId      = SupplierId      of string
 type ProcurementPublishedEvent =
     // From purchasing context
     | PurchaseOrderIssuedV1 of {|
-        PurchaseOrderId: string
-        SupplierId:      string
-        IssuedAt:        System.DateTimeOffset
-        TotalAmount:     decimal
+        PurchaseOrderId: string  // => Raw string for JSON serialization across context boundaries
+        SupplierId:      string  // => Supplier that will receive the order
+        IssuedAt:        System.DateTimeOffset  // => Timestamp used by receiving for GRN due-date
+        TotalAmount:     decimal  // => Total locked at issuance — used by accounting
       |}
     // => V1 of PurchaseOrderIssued — consumed by receiving and supplier-notifier
     | RequisitionApprovedV1 of {|
-        RequisitionId:  string
-        ApprovedBy:     string
-        ApprovedAt:     System.DateTimeOffset
+        RequisitionId:  string  // => Links back to the originating requisition
+        ApprovedBy:     string  // => Approver employee ID for audit trail
+        ApprovedAt:     System.DateTimeOffset  // => Approval timestamp for SLA tracking
       |}
     // => V1 of RequisitionApproved — consumed by purchasing (auto-creates PO Draft)
     | PurchaseOrderCancelledV1 of {|
-        PurchaseOrderId: string
-        Reason:          string
-        CancelledAt:     System.DateTimeOffset
+        PurchaseOrderId: string  // => Which PO was cancelled
+        Reason:          string  // => Free-text reason for supplier notification
+        CancelledAt:     System.DateTimeOffset  // => Timestamp for supplier EDI message
       |}
     // => V1 of PurchaseOrderCancelled — consumed by supplier-notifier and accounting
     // From receiving context
     | GoodsReceivedV1 of {|
-        GrnId:           string
-        PurchaseOrderId: string
-        HasDiscrepancy:  bool
-        ReceivedAt:      System.DateTimeOffset
+        GrnId:           string  // => GRN identifier for traceability
+        PurchaseOrderId: string  // => Links GRN to the issued PO
+        HasDiscrepancy:  bool    // => True blocks invoice matching in invoicing context
+        ReceivedAt:      System.DateTimeOffset  // => Delivery timestamp for receiving SLA
       |}
     // => V1 of GoodsReceived — consumed by invoicing and purchasing
     // From invoicing context
     | InvoiceMatchedV1 of {|
-        InvoiceId:       string
-        PurchaseOrderId: string
-        MatchedAmount:   decimal
-        MatchedAt:       System.DateTimeOffset
+        InvoiceId:       string  // => Which invoice was matched
+        PurchaseOrderId: string  // => Identifies the PO for payment scheduling
+        MatchedAmount:   decimal  // => Approved payment amount
+        MatchedAt:       System.DateTimeOffset  // => Matching timestamp for payment run scheduling
       |}
     // => V1 of InvoiceMatched — consumed by payments (schedules payment run)
 
@@ -724,30 +773,38 @@ type ProcurementPublishedEvent =
 let handlePublishedEvent (event: ProcurementPublishedEvent) : string =
     match event with
     | PurchaseOrderIssuedV1 payload ->
+        // => Pattern match extracts the anonymous record payload
         sprintf "[receiving] Open GRN expectation for PO %s (supplier: %s)"
                 payload.PurchaseOrderId payload.SupplierId
     // => Receiving context opens a GRN expectation on PO issuance
     | GoodsReceivedV1 payload ->
         if payload.HasDiscrepancy then
+            // => Discrepancy flag blocks invoice matching until dispute is resolved
             sprintf "[invoicing] Block matching for GRN %s — discrepancy detected" payload.GrnId
         else
             sprintf "[invoicing] Enable matching for GRN %s" payload.GrnId
     // => Invoicing enables or blocks matching based on discrepancy flag
     | InvoiceMatchedV1 payload ->
+        // => Only InvoiceMatchedV1 triggers payment scheduling
         sprintf "[payments] Schedule payment for invoice %s amount=%M" payload.InvoiceId payload.MatchedAmount
     // => Payments schedules a payment run on successful invoice matching
     | RequisitionApprovedV1 payload ->
+        // => Purchasing auto-starts PO creation workflow on requisition approval
         sprintf "[purchasing] Auto-create PO Draft for requisition %s" payload.RequisitionId
     // => Purchasing auto-converts the approved requisition to a PO Draft
     | PurchaseOrderCancelledV1 payload ->
+        // => Cancellation event carries free-text reason for supplier communication
         sprintf "[supplier-notifier] Notify supplier of cancellation: %s" payload.Reason
     // => Supplier-notifier sends EDI/email on PO cancellation
 
 // Test
 let events = [
     PurchaseOrderIssuedV1 {| PurchaseOrderId = "po_e3d1"; SupplierId = "sup_acme"; IssuedAt = System.DateTimeOffset.UtcNow; TotalAmount = 2699.97m |}
+    // => First event: PO po_e3d1 issued to sup_acme for $2,699.97
     GoodsReceivedV1 {| GrnId = "grn_abc"; PurchaseOrderId = "po_e3d1"; HasDiscrepancy = false; ReceivedAt = System.DateTimeOffset.UtcNow |}
+    // => Second event: goods received without discrepancy — invoice matching enabled
     InvoiceMatchedV1 {| InvoiceId = "inv_xyz"; PurchaseOrderId = "po_e3d1"; MatchedAmount = 2699.97m; MatchedAt = System.DateTimeOffset.UtcNow |}
+    // => Third event: invoice matched — payment scheduled
 ]
 // => Three events flowing through the published language
 
@@ -759,7 +816,7 @@ events |> List.iter (handlePublishedEvent >> printfn "%s")
 
 **Key Takeaway**: The published language DU is the formal contract between bounded contexts — every cross-context event is named, versioned, and carries exactly what consumers need without exposing internal context structure.
 
-**Why It Matters**: Published language events are the most stable artifacts in a microservices architecture. Once `PurchaseOrderIssuedV1` is consumed by three downstream services, its shape cannot change without coordinating all three. The `V1` suffix makes the versioning explicit — `PurchaseOrderIssuedV2` can be added alongside `V1` for a transition period, enabling zero-downtime evolution.
+**Why It Matters**: Published language events are the most stable artifacts in a microservices architecture. Once `PurchaseOrderIssuedV1` is consumed by three downstream services, its shape cannot change without coordinating all three. The `V1` suffix makes the versioning explicit — `PurchaseOrderIssuedV2` can be added alongside `V1` for a transition period, enabling zero-downtime evolution. Without versioned published language, a single field rename in the purchasing context breaks every downstream consumer simultaneously.
 
 ---
 
@@ -777,8 +834,8 @@ type SupplierId      = SupplierId      of string
 
 // The inputs the factory needs
 type CreatePOInputs = {
-    RequisitionId: string
-    SupplierId:    SupplierId
+    RequisitionId: string         // => The requisition that originated this PO
+    SupplierId:    SupplierId     // => Which supplier will fulfil the order
     Lines:         (string * int * decimal) list
     // => (sku, quantity, unitPrice) validated tuples
 }
@@ -786,21 +843,21 @@ type CreatePOInputs = {
 
 // The outputs the factory produces
 type DraftPO = {
-    Id:            PurchaseOrderId
-    RequisitionId: string
-    SupplierId:    SupplierId
-    Lines:         (string * int * decimal) list
-    Total:         decimal
-    CreatedAt:     System.DateTimeOffset
+    Id:            PurchaseOrderId   // => Generated by the injected ID generator
+    RequisitionId: string            // => Links PO back to the originating requisition
+    SupplierId:    SupplierId        // => Supplier identifier
+    Lines:         (string * int * decimal) list  // => Locked line items — immutable after creation
+    Total:         decimal           // => Computed from lines; cached for approval threshold checks
+    CreatedAt:     System.DateTimeOffset  // => From the injected clock — deterministic in tests
 }
 // => DraftPO : the initial aggregate state — all fields set at creation
 
 type POCreatedEvent = {
-    PurchaseOrderId: PurchaseOrderId
-    RequisitionId:   string
-    SupplierId:      SupplierId
-    TotalAmount:     decimal
-    CreatedAt:       System.DateTimeOffset
+    PurchaseOrderId: PurchaseOrderId   // => ID of the newly created PO
+    RequisitionId:   string            // => Traceability — which requisition triggered creation
+    SupplierId:      SupplierId        // => Supplier context for downstream routing
+    TotalAmount:     decimal           // => Pre-computed total — consumers don't recompute
+    CreatedAt:       System.DateTimeOffset  // => Creation timestamp for purchasing projection
 }
 // => POCreatedEvent : the event emitted on creation — consumed by the purchasing projection
 
@@ -857,13 +914,31 @@ printfn "Event: %A at %O" event.PurchaseOrderId event.CreatedAt
 
 **Key Takeaway**: A factory function with injected `GenerateId` and `Clock` parameters is deterministically testable — the same inputs always produce the same output, enabling precise assertions on IDs and timestamps.
 
-**Why It Matters**: Without an injectable ID generator, testing PO creation requires either mocking `Guid.NewGuid()` (impossible in pure F#) or using string prefix matching in assertions (`actual.Id.StartsWith("po_")`). The factory function pattern makes creation fully deterministic in tests, enabling exact assertion on the created state and event payload.
+**Why It Matters**: Without an injectable ID generator, testing PO creation requires either mocking `Guid.NewGuid()` (impossible in pure F#) or using string prefix matching in assertions (`actual.Id.StartsWith("po_")`). The factory function pattern makes creation fully deterministic in tests, enabling exact assertion on the created state and event payload. Non-deterministic ID generation in production code silently breaks snapshot tests and audit log assertions whenever test execution order changes.
 
 ---
 
 ### Example 65: Repository as Function-Type Alias
 
 In functional F#, a repository is modelled as a set of function-type aliases — one per operation. These aliases are the port definition. The production adapter and the test adapter are both values of these function types.
+
+```mermaid
+graph TD
+    Port["Port (type alias)\nLoadPO : PurchaseOrderId → Async<PoData option>\nSavePO : PoData → Async<unit>"]
+    Prod["Production adapter\nNpgsql query"]
+    Test["Test adapter\nIn-memory map"]
+    WF["approvePOWorkflow\n(only sees the type alias)"]
+
+    Port -->|"satisfies"| Prod
+    Port -->|"satisfies"| Test
+    Prod -->|"wired at composition root"| WF
+    Test -->|"wired in tests"| WF
+
+    style Port fill:#0173B2,stroke:#000,color:#fff
+    style Prod fill:#DE8F05,stroke:#000,color:#000
+    style Test fill:#029E73,stroke:#000,color:#fff
+    style WF fill:#CC78BC,stroke:#000,color:#000
+```
 
 ```fsharp
 // Repository as function-type aliases — the purest form of the port pattern.
@@ -937,7 +1012,7 @@ store <- Map.add "po_e3d1" testPO store
 // => Seed: "po_e3d1" is now in the in-memory store
 
 // Wire in-memory adapters and run the workflow
-let result = Async.RunSynchronously (approvePOWorkflow inMemoryLoad inMemorysave (PurchaseOrderId "po_e3d1"))
+let result = Async.RunSynchronously (approvePOWorkflow inMemoryLoad inMemorySave (PurchaseOrderId "po_e3d1"))
 // => load finds testPO; status = "AwaitingApproval" → approved; save updates store
 
 match result with
@@ -984,20 +1059,25 @@ let issueWorkflowComplete
     // => Partial application of any four still produces a compile error — all five required
     async {
         let! opt = load poId
+        // => Step 1: load PO — None if not found or not in Approved state
         match opt with
         | None -> return Error "PO not found or not in Approved state"
+        // => Short-circuit without triggering any other I/O
         | Some (supplierId, total) ->
+            // => PO is in Approved state; supplierId and total are extracted
             let! eligible = check supplierId
-            // => Check supplier is still Approved (not Suspended/Blacklisted since PO creation)
+            // => Step 2: verify supplier is still Approved (not Suspended/Blacklisted since PO creation)
             if not eligible then return Error (sprintf "Supplier %A is no longer eligible" supplierId)
+            // => Supplier ineligibility blocks issuance — no save or publish
             else
                 let now = System.DateTimeOffset.UtcNow
+                // => Capture issuance timestamp — same value for save and event
                 do! save poId now
-                // => Persist the Issued state
+                // => Step 3: persist the Issued state
                 do! publish poId supplierId total
-                // => Publish PurchaseOrderIssued event
+                // => Step 4: publish PurchaseOrderIssued event
                 do! notify supplierId (sprintf "PO %A has been issued to you" poId)
-                // => Send supplier notification
+                // => Step 5: send supplier notification (EDI or email)
                 return Ok ()
                 // => All steps succeeded
     }
@@ -1008,10 +1088,15 @@ let issueWorkflowComplete
 
 // All five stubs must be supplied
 let stubLoad    _        = async { return Some (SupplierId "sup_acme", 2699.97m) }
+// => Returns fixed PO data for any ID — simulates Approved state
 let stubCheck   _        = async { return true }
+// => Always eligible — simulates an Approved supplier
 let stubSave    _ _      = async { return () }
+// => No-op save — discards the Issued state
 let stubPublish _ _ _    = async { return () }
+// => No-op publish — discards the event
 let stubNotify  _ msg    = async { printfn "[notify] %s" msg; return () }
+// => Prints instead of sending EDI/email
 
 let result = Async.RunSynchronously
                 (issueWorkflowComplete stubLoad stubCheck stubSave stubPublish stubNotify (PurchaseOrderId "po_e3d1"))
@@ -1032,6 +1117,28 @@ printfn "Result: %A" result
 ### Example 67: Cross-Context Consistency — Eventual vs Strong
 
 The procurement platform uses eventual consistency for cross-context updates: when a GRN is created in the receiving context, the invoicing context eventually learns via the `GoodsReceived` event. This example contrasts eventual consistency (event-driven) with strong consistency (single transaction).
+
+```mermaid
+graph TD
+    subgraph Strong["Strong Consistency (within one context)"]
+        TX["Single DB Transaction"]
+        TX --> PO["PO state saved"]
+        TX --> EV["Event saved to outbox"]
+    end
+    subgraph Eventual["Eventual Consistency (across contexts)"]
+        GRN["receiving: GRN created"]
+        Bus["Event Bus\nGoodsReceived published"]
+        INV["invoicing: GRN summary updated\n(after message delivery)"]
+        GRN --> Bus --> INV
+    end
+
+    style TX fill:#0173B2,stroke:#000,color:#fff
+    style PO fill:#029E73,stroke:#000,color:#fff
+    style EV fill:#029E73,stroke:#000,color:#fff
+    style GRN fill:#DE8F05,stroke:#000,color:#000
+    style Bus fill:#CA9161,stroke:#000,color:#000
+    style INV fill:#CC78BC,stroke:#000,color:#000
+```
 
 ```fsharp
 // Eventual vs strong consistency for cross-context updates.
@@ -1103,6 +1210,26 @@ Async.RunSynchronously (handleGoodsReceived grnEvent)
 ### Example 68: Property-Based Test for an Invariant — FsCheck
 
 Property-based testing generates hundreds of random inputs and verifies that an invariant holds for all of them. For the procurement domain, the invariant "approval level is always one of L1, L2, or L3 for any non-negative total" is a property.
+
+```mermaid
+graph LR
+    GEN["FsCheck Generator\n(random decimal inputs)"]
+    FN["deriveApprovalLevel\n(pure domain function)"]
+    PROP["Property assertion\nresult ∈ {L1, L2, L3}"]
+    PASS["PASS (100 samples)"]
+    FAIL["FAIL + shrink\n(counterexample found)"]
+
+    GEN -->|"random total"| FN
+    FN -->|"ApprovalLevel"| PROP
+    PROP -->|"all pass"| PASS
+    PROP -->|"one fails"| FAIL
+
+    style GEN fill:#DE8F05,stroke:#000,color:#000
+    style FN fill:#0173B2,stroke:#000,color:#fff
+    style PROP fill:#CA9161,stroke:#000,color:#000
+    style PASS fill:#029E73,stroke:#000,color:#fff
+    style FAIL fill:#CC78BC,stroke:#000,color:#000
+```
 
 ```fsharp
 // Property-based testing: verify invariants hold for all inputs, not just examples.
@@ -1254,8 +1381,11 @@ type SupplierId      = SupplierId      of string
 
 // Port types (same as Example 66)
 type LoadApprovedPO     = PurchaseOrderId -> Async<(SupplierId * decimal) option>
+// => Returns Some (supplierId, total) if PO is in Approved state; None otherwise
 type SaveIssuedPO        = PurchaseOrderId -> System.DateTimeOffset -> Async<unit>
+// => Persists the Issued state with the issuance timestamp
 type PublishPoIssued     = PurchaseOrderId -> SupplierId -> decimal -> Async<unit>
+// => Publishes the PurchaseOrderIssued event to the event bus
 
 // The workflow under test
 let issuePOWorkflow
@@ -1266,17 +1396,25 @@ let issuePOWorkflow
     : Async<Result<unit, string>> =
     async {
         let! opt = load poId
+        // => Step 1: load — returns None if PO not found or not in Approved state
         match opt with
         | None -> return Error "PO not found"
+        // => Short-circuit: no further I/O performed
         | Some (supplierId, total) ->
+            // => PO found in Approved state with supplierId and total
             let now = System.DateTimeOffset.UtcNow
+            // => Capture issuance timestamp — same value for save and publish
             do! save poId now
+            // => Step 2: persist Issued state; no Result wrapping — save always succeeds in this simplified version
             do! publish poId supplierId total
+            // => Step 3: publish event to event bus
             return Ok ()
+            // => All steps succeeded — return Ok to caller
     }
 
 // ── TEST CASE 1: Happy path ────────────────────────────────────────────────────
 let happilyLoad    _ = async { return Some (SupplierId "sup_acme", 2699.97m) }
+// => Always returns the PO for any ID — simulates Approved state
 let happilyCollect = System.Collections.Generic.List<string>()
 // => Collect published events for assertion
 
@@ -1379,7 +1517,7 @@ printfn "Global currency: %s" currency2
 
 **Key Takeaway**: Adding an `option` field to a domain aggregate is the lowest-friction evolution strategy — existing records migrate with `None` defaults, and new records can provide the value.
 
-**Why It Matters**: Procurement platforms evolve continuously: new regulatory requirements (preferred currency for cross-border suppliers), new business rules (multi-currency POs), and new supplier onboarding fields. Using `option` for new fields makes the evolution additive — no breaking changes to existing code, no mandatory database migration for every existing record.
+**Why It Matters**: Procurement platforms evolve continuously: new regulatory requirements (preferred currency for cross-border suppliers), new business rules (multi-currency POs), and new supplier onboarding fields. Using `option` for new fields makes the evolution additive — no breaking changes to existing code, no mandatory database migration for every existing record. Without this pattern, adding a single required field forces a coordinated migration across every service that reads supplier data.
 
 ---
 
@@ -1663,6 +1801,18 @@ eventTopology |> List.iter (fun route ->
 
 The PO approval process can span days (L3 approvals take up to 10 business days). A saga models this long-running workflow as a durable state machine that survives service restarts.
 
+```mermaid
+stateDiagram-v2
+    [*] --> WaitingForApprover : Start Saga
+    WaitingForApprover --> ApprovalReceived : Approver responds
+    WaitingForApprover --> Escalated : SLA deadline passed
+    Escalated --> ApprovalReceived : Escalated approver responds
+    ApprovalReceived --> Completed : PO transitioned to Approved
+    WaitingForApprover --> Completed : Rejected (Cancelled)
+    Escalated --> Completed : Rejected after escalation
+    Completed --> [*]
+```
+
 ```fsharp
 // Saga: a long-running workflow modelled as a durable state machine.
 // The saga persists its current state after each step — survives restarts.
@@ -1797,6 +1947,20 @@ printfn "Task result: %s" result
 
 CQRS (Command Query Responsibility Segregation) separates the write model (aggregates, commands, events) from the read model (projections optimised for query). For the procurement dashboard, the read model is a denormalised view of PO status and supplier name.
 
+```mermaid
+graph LR
+    Cmd["Command\n(ApprovePO, IssuePO)"] --> W["Write Model\nPoWriteModel aggregate"]
+    W -->|"emits events"| Proj["Projection\napplyStatusChange"]
+    Proj --> R["Read Model\nPoDashboardEntry\n(denormalised)"]
+    R --> Q["Dashboard Query\nO(1) table scan"]
+
+    style Cmd fill:#DE8F05,stroke:#000,color:#000
+    style W fill:#0173B2,stroke:#000,color:#fff
+    style Proj fill:#CA9161,stroke:#000,color:#000
+    style R fill:#029E73,stroke:#000,color:#fff
+    style Q fill:#CC78BC,stroke:#000,color:#000
+```
+
 ```fsharp
 // CQRS: write model (aggregate) and read model (projection) are separate.
 // The read model is optimised for query — denormalised, indexed, fast.
@@ -1885,10 +2049,10 @@ type InvoiceId       = InvoiceId       of string
 
 // Trigger: InvoiceMatched event from the invoicing context
 type InvoiceMatchedEvent = {
-    InvoiceId:       InvoiceId
-    PurchaseOrderId: PurchaseOrderId
-    MatchedAmount:   decimal
-    SupplierId:      string
+    InvoiceId:       InvoiceId        // => Identifies which invoice was matched
+    PurchaseOrderId: PurchaseOrderId  // => Links payment back to the originating PO
+    MatchedAmount:   decimal          // => The approved payment amount from three-way matching
+    SupplierId:      string           // => Bank beneficiary identifier
 }
 // => InvoiceMatchedEvent : trigger for the payment workflow
 
@@ -1898,12 +2062,12 @@ type PaymentState = Scheduled | Disbursed | Failed | Reversed
 
 // Payment aggregate
 type Payment = {
-    Id:          string   // => "pay_<uuid>"
-    InvoiceId:   InvoiceId
-    Amount:      decimal
-    SupplierId:  string
-    State:       PaymentState
-    ScheduledAt: System.DateTimeOffset
+    Id:          string               // => "pay_<uuid>"
+    InvoiceId:   InvoiceId            // => Links payment to the matched invoice
+    Amount:      decimal              // => Payment amount from InvoiceMatchedEvent.MatchedAmount
+    SupplierId:  string               // => Bank beneficiary — same as InvoiceMatchedEvent.SupplierId
+    State:       PaymentState         // => Starts as Scheduled; transitions to Disbursed or Failed
+    ScheduledAt: System.DateTimeOffset  // => When the disbursement job was queued
     DisbursedAt: System.DateTimeOffset option
     // => None until confirmed by the bank
 }
@@ -1911,10 +2075,10 @@ type Payment = {
 
 // Domain event emitted on successful disbursement
 type PaymentDisbursedEvent = {
-    PaymentId:       string
-    PurchaseOrderId: PurchaseOrderId
-    Amount:          decimal
-    DisbursedAt:     System.DateTimeOffset
+    PaymentId:       string           // => Identifies the payment record
+    PurchaseOrderId: PurchaseOrderId  // => Tells purchasing to mark PO as Paid
+    Amount:          decimal          // => Amount disbursed — used by supplier for remittance reconciliation
+    DisbursedAt:     System.DateTimeOffset  // => Bank confirmation timestamp
 }
 // => PaymentDisbursed : consumed by Purchasing (marks PO as Paid) and Supplier (remittance advice)
 
@@ -1932,12 +2096,17 @@ let handleInvoiceMatched
     async {
         let payment = {
             Id          = "pay_" + System.Guid.NewGuid().ToString("N").[..7]
+            // => Generates short payment ID like "pay_a1b2c3d4"
             InvoiceId   = event.InvoiceId
+            // => Copied from trigger event — links payment to invoice
             Amount      = event.MatchedAmount
+            // => Approved amount from three-way matching
             SupplierId  = event.SupplierId
+            // => Beneficiary for the bank disbursement
             State       = Scheduled
             // => Starts in Scheduled state — bank disbursement is queued
             ScheduledAt = System.DateTimeOffset.UtcNow
+            // => Timestamp of scheduling — used for payment run SLA tracking
             DisbursedAt = None
             // => Not yet disbursed — updated when the bank confirms
         }
@@ -1953,9 +2122,13 @@ let stubSchedule (p: Payment) = async { printfn "[payments] Scheduled: %s amount
 
 let matchEvent = {
     InvoiceId       = InvoiceId "inv_xyz"
+    // => Test invoice ID
     PurchaseOrderId = PurchaseOrderId "po_e3d1"
+    // => The PO that originated this invoice
     MatchedAmount   = 2699.97m
+    // => Amount approved by three-way matching
     SupplierId      = "sup_acme"
+    // => Bank beneficiary
 }
 // => matchEvent : InvoiceMatchedEvent — the trigger for the workflow
 
@@ -1978,6 +2151,20 @@ printfn "Payment for invoice: %A" payment.InvoiceId
 ### Example 79: Domain Model Evolution — Adding a New State
 
 When the business requires a new `OnHold` state for POs pending budget confirmation, the F# type system surfaces every place in the codebase that needs updating — a compile-time migration guide.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> AwaitingApproval
+    AwaitingApproval --> Approved
+    AwaitingApproval --> OnHold : budget hold (NEW)
+    OnHold --> AwaitingApproval : hold released
+    OnHold --> Cancelled : cancelled while on hold
+    Approved --> Issued
+    Issued --> Cancelled
+    Cancelled --> [*]
+    Issued --> [*]
+```
 
 ```fsharp
 // Adding a new state to the PurchaseOrder DU: the compiler guides the migration.
@@ -2048,26 +2235,35 @@ This final example sketches the full procurement platform system as a compositio
 // assemble into a coherent, type-safe, testable procurement system.
 
 // ── TYPES (from beginner section) ───────────────────────────────────────────
-type RequisitionId   = RequisitionId   of string
-type PurchaseOrderId = PurchaseOrderId of string
-type SupplierId      = SupplierId      of string
+type RequisitionId   = RequisitionId   of string  // => Typed wrapper for requisition IDs
+type PurchaseOrderId = PurchaseOrderId of string  // => Typed wrapper for PO IDs
+type SupplierId      = SupplierId      of string  // => Typed wrapper for supplier IDs
 type ApprovalLevel   = L1 | L2 | L3
 // => Ubiquitous language encoded as F# types — foundation of the system
 
 // ── DOMAIN EVENTS (cross-context published language) ────────────────────────
 type ProcurementEvent =
     | RequisitionSubmitted  of reqId: string * level: ApprovalLevel * total: decimal
+    // => Trigger for purchasing to create a PO Draft
     | RequisitionApproved   of reqId: string * approvedAt: System.DateTimeOffset
+    // => Approver confirmed; purchasing auto-creates a PO
     | PurchaseOrderIssued   of poId: string * supplierId: string * total: decimal
+    // => PO sent to supplier; receiving opens a GRN expectation
     | GoodsReceived         of grnId: string * poId: string * hasDiscrepancy: bool
+    // => Physical receipt confirmed; invoicing enables/blocks matching
     | InvoiceMatched        of invId: string * poId: string * amount: decimal
+    // => Three-way match passed; payments schedules disbursement
     | PaymentDisbursed      of payId: string * poId: string * amount: decimal
+    // => Bank confirmed disbursement; purchasing marks PO as Paid
 // => Published language: the complete set of cross-context events
 
 // ── PORTS (function-type aliases) ────────────────────────────────────────────
 type LoadRequisition  = RequisitionId   -> Async<(string * decimal) option>
+// => Returns (requestedBy, total) or None if not found
 type SavePO           = PurchaseOrderId -> string -> decimal -> Async<unit>
+// => Persists the Draft PO with its supplier ID and total
 type PublishEvent     = ProcurementEvent -> Async<unit>
+// => Publishes to the event bus (Kafka or outbox table)
 // => Three representative ports — a full system would have all 14 from the spec
 
 // ── PURE CORE (decisions and transitions) ────────────────────────────────────
@@ -2090,26 +2286,32 @@ let approveCycle
     async {
         // ── LOAD (I/O) ────────────────────────────────────────────────────
         let! reqOpt = loadReq reqId
+        // => I/O: load the requisition from the repository
         match reqOpt with
         | None -> return Error (sprintf "Requisition %A not found" reqId)
+        // => Short-circuit: no further I/O or domain logic
         | Some (requestedBy, total) ->
+        // => Destructure: requestedBy = employee ID, total = requisition total
 
         // ── PURE CORE ──────────────────────────────────────────────────────
         let level = deriveLevel total
-        // => Derive approval level — pure
+        // => Derive approval level — pure; L1/L2/L3 based on total
         let (RequisitionId rawReqId) = reqId
+        // => Unwrap the typed RequisitionId to a raw string for event payload
         let (SupplierId rawSup) = supplierId
+        // => Unwrap the typed SupplierId for the SavePO port call
         let poId = buildPOId rawReqId
-        // => Generate PO ID — pure
+        // => Generate PO ID — pure; deterministic in tests with fixed generator
 
         // ── SAVE + PUBLISH (I/O) ───────────────────────────────────────────
         do! savePO poId rawSup total
-        // => Persist the new Draft PO — I/O
+        // => I/O: persist the new Draft PO — effect at the edge
         let (PurchaseOrderId rawPoId) = poId
+        // => Unwrap PO ID for the published event payload
         do! publishEv (RequisitionApproved (rawReqId, System.DateTimeOffset.UtcNow))
-        // => Publish RequisitionApproved — I/O
+        // => Publish RequisitionApproved — purchasing reads this to track approval history
         do! publishEv (PurchaseOrderIssued (rawPoId, rawSup, total))
-        // => Publish PurchaseOrderIssued — I/O (simplified: skips intermediate states)
+        // => Publish PurchaseOrderIssued — receiving opens GRN expectation on receipt
         return Ok poId
         // => Return the new PO ID to the caller
     }

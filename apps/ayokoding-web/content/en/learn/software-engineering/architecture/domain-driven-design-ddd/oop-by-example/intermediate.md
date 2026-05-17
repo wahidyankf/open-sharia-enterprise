@@ -3,11 +3,11 @@ title: "Intermediate"
 weight: 10000004
 date: 2026-05-09T00:00:00+07:00
 draft: false
-description: "Examples 26-45: DDD aggregate roots, state machines, domain events, and repository interfaces in Java 21+, with Kotlin and C# sprinkled for variety (40-75% coverage)"
+description: "Examples 26-51: DDD aggregate roots, state machines, domain events, repository interfaces, CQRS, hexagonal architecture, and bounded context packaging in Java 21+ (40-75% coverage)"
 tags: ["ddd", "domain-driven-design", "tutorial", "by-example", "oop", "java", "kotlin", "csharp", "intermediate"]
 ---
 
-Examples 26–45 extend the beginner building blocks into the intermediate tier of DDD: aggregate roots, state-machine enforcement, immutable domain events, factory methods, and repository interfaces. Every code block is self-contained with all necessary type definitions. The domain stays in the `purchasing` and `supplier` bounded contexts of the Procure-to-Pay (P2P) platform introduced in the beginner section.
+Examples 26–51 extend the beginner building blocks into the intermediate tier of DDD: aggregate roots, state-machine enforcement, immutable domain events, factory methods, repository interfaces, CQRS, hexagonal architecture, domain exception hierarchies, and bounded context packaging. Every code block is self-contained with all necessary type definitions. The domain stays in the `purchasing` and `supplier` bounded contexts of the Procure-to-Pay (P2P) platform introduced in the beginner section.
 
 ## Aggregate Root Basics (Examples 26–29)
 
@@ -48,25 +48,24 @@ import java.util.List;
 record PurchaseOrderId(String value) {           // => record PurchaseOrderId
     PurchaseOrderId {                            // => compact constructor (Java 16+)
         if (value == null || !value.startsWith("po_"))  // => format rule: po_<uuid>
-            throw new IllegalArgumentException("PurchaseOrderId must start with po_");
+            throw new IllegalArgumentException("PurchaseOrderId must start with po_"); // => "po_" prefix guards the identity
     }
 }
 record SupplierId(String value) {               // => record SupplierId
     SupplierId {
         if (value == null || !value.startsWith("sup_")) // => format rule: sup_<uuid>
-            throw new IllegalArgumentException("SupplierId must start with sup_");
+            throw new IllegalArgumentException("SupplierId must start with sup_"); // => "sup_" prefix guards supplier identity
     }
 }
 record Money(BigDecimal amount, String currency) {  // => record Money
     Money {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) // => non-negative
-            throw new IllegalArgumentException("Money amount must be >= 0");
+            throw new IllegalArgumentException("Money amount must be >= 0"); // => negative amounts are domain violations
     }
 }
 enum UnitOfMeasure { EACH, BOX, KG, LITRE, HOUR }  // => closed enum from spec
 record Quantity(int value, UnitOfMeasure unit) {    // => record Quantity
-    Quantity { if (value <= 0) throw new IllegalArgumentException("Quantity.value > 0"); }
-}
+    Quantity { if (value <= 0) throw new IllegalArgumentException("Quantity.value > 0"); } // => zero/negative quantity is not a quantity
 
 // ── Line item — owned by PurchaseOrder, NOT an aggregate root itself ─────────
 record PurchaseOrderLine(                       // => record PurchaseOrderLine
@@ -1746,5 +1745,594 @@ System.out.println(unknownResult.warnings().get(0));
 ```
 
 **Key Takeaway**: The ACL lives at the boundary between external and domain models. It takes responsibility for all translation — prefix normalisation, status mapping, default handling — keeping domain classes clean of legacy concerns.
+
+**Why It Matters**: Enterprise integrations routinely connect new domain models to decade-old ERPs that encode business rules as cryptic flag strings. Without an ACL, every domain class that touches supplier data must understand "A", "S", "B" flags. With the ACL, that knowledge lives in one translator; the domain model always speaks in `APPROVED`, `SUSPENDED`, `BLACKLISTED`. When the legacy system adds a new flag, only one class changes.
+
+---
+
+## Bounded Context Packaging and Module Separation (Examples 46–51)
+
+### Example 46: Bounded context as a Java package — module boundary enforcement
+
+A bounded context maps directly to a Java package (or module in Java 9+). Classes in `purchasing` are not imported directly by `receiving`; instead, only integration events cross the boundary.
+
+```java
+// ── purchasing package (package purchasing;) ──────────────────────────────────
+// => All classes below belong to: package purchasing;
+
+record PurchaseOrderId(String value) {             // => strong ID in purchasing context
+    PurchaseOrderId {
+        if (value == null || !value.startsWith("po_"))
+            throw new IllegalArgumentException("PurchaseOrderId must start with po_");
+        // => enforces po_<uuid> format at context boundary
+    }
+}
+
+// Integration event — the ONLY thing that crosses to other contexts
+record PurchaseOrderIssuedIntegrationEvent(
+    String purchaseOrderId,   // => serialised as String — no typed IDs cross context boundary
+    String supplierId,        // => same: String, not SupplierId record
+    java.util.List<String> skuCodes // => simplified line summary
+) {}
+// => Integration events are plain data; domain types stay inside the context
+
+// ── receiving package (package receiving;) ────────────────────────────────────
+// => Receiving imports the integration event — NOT PurchaseOrderId or Money
+// => receiving never imports: import purchasing.PurchaseOrderId;  ← FORBIDDEN
+
+record ExpectedDeliveryId(String value) {}         // => receiving's own ID type
+record ExpectedDelivery(
+    ExpectedDeliveryId id,
+    String purchaseOrderRef,   // => stores po id as String — no coupling to purchasing type
+    java.util.List<String> skuCodes
+) {}
+
+class ExpectedDeliveryFactory {
+    // => Creates receiving aggregate from purchasing integration event
+    public static ExpectedDelivery fromIntegrationEvent(PurchaseOrderIssuedIntegrationEvent event) {
+        var id = new ExpectedDeliveryId("ed_" + java.util.UUID.randomUUID());
+        // => ExpectedDeliveryId is receiving's own concept; not reusing purchasing's ID
+        return new ExpectedDelivery(id, event.purchaseOrderId(), event.skuCodes());
+        // => purchaseOrderRef stored as String — reference only, no object coupling
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var event = new PurchaseOrderIssuedIntegrationEvent(
+    "po_abc123",                          // => purchasing emits this over message bus
+    "sup_xyz789",
+    java.util.List.of("OFF-001", "OFF-002")
+);
+var delivery = ExpectedDeliveryFactory.fromIntegrationEvent(event);
+System.out.println(delivery.purchaseOrderRef()); // => Output: po_abc123
+System.out.println(delivery.skuCodes());         // => Output: [OFF-001, OFF-002]
+// => receiving knows the PO reference but has no dependency on purchasing package
+```
+
+**Key Takeaway**: A bounded context is a hard package boundary. Integration events carry only primitive types across; domain types never cross.
+
+**Why It Matters**: When teams enforce package boundaries statically — via Java modules or ArchUnit rules — cross-context import violations become compile errors. Teams can evolve their domain models independently, deploy separately, and avoid the "big ball of mud" that emerges when context boundaries are treated as advisory rather than enforced. Netflix's platform teams each own their own domain packages; no cross-team imports are permitted at compile time.
+
+---
+
+### Example 47: Specification pattern — composing query predicates from domain concepts
+
+A `Specification<T>` encapsulates a named business predicate. Specifications compose with `and`, `or`, `not` — building complex queries from simple, tested, domain-language predicates.
+
+```mermaid
+graph LR
+    A["AwaitingApprovalSpec"]:::blue
+    B["HighValueSpec"]:::orange
+    C["combined.and()"]:::teal
+    D["PurchaseOrderRepository.findAll(combined)"]:::purple
+
+    A --> C
+    B --> C
+    C --> D
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+```java
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.function.Predicate;
+
+// ── Domain types ──────────────────────────────────────────────────────────────
+record Money(BigDecimal amount, String currency) {}
+enum PurchaseOrderStatus { DRAFT, AWAITING_APPROVAL, APPROVED, ISSUED, CANCELLED }
+record PurchaseOrderId(String value) {}
+record PurchaseOrderSummary(              // => lightweight summary for queries
+    PurchaseOrderId id,
+    PurchaseOrderStatus status,
+    Money totalValue                      // => total line value in currency
+) {}
+
+// ── Specification interface ───────────────────────────────────────────────────
+@FunctionalInterface
+interface Specification<T> {
+    boolean isSatisfiedBy(T candidate);  // => returns true if candidate meets the predicate
+    // => composable: and(), or(), not() default methods below
+
+    default Specification<T> and(Specification<T> other) {
+        return candidate -> this.isSatisfiedBy(candidate) && other.isSatisfiedBy(candidate);
+        // => logical AND; short-circuits on first false
+    }
+    default Specification<T> or(Specification<T> other) {
+        return candidate -> this.isSatisfiedBy(candidate) || other.isSatisfiedBy(candidate);
+        // => logical OR; short-circuits on first true
+    }
+    default Specification<T> not() {
+        return candidate -> !this.isSatisfiedBy(candidate);
+        // => logical NOT; useful for exclusion queries
+    }
+}
+
+// ── Named specifications — domain language predicates ─────────────────────────
+class AwaitingApprovalSpec implements Specification<PurchaseOrderSummary> {
+    public boolean isSatisfiedBy(PurchaseOrderSummary po) {
+        return po.status() == PurchaseOrderStatus.AWAITING_APPROVAL;
+        // => true only for POs sitting in the approval queue
+    }
+}
+
+class HighValueSpec implements Specification<PurchaseOrderSummary> {
+    private final BigDecimal threshold;
+    HighValueSpec(BigDecimal threshold) { this.threshold = threshold; }
+    // => threshold is injected — reusable with different L2 / L3 limits
+
+    public boolean isSatisfiedBy(PurchaseOrderSummary po) {
+        return po.totalValue().amount().compareTo(threshold) > 0;
+        // => true when PO total exceeds threshold; triggers senior-manager routing
+    }
+}
+
+// ── In-memory repository stub (illustrates specification usage) ───────────────
+class InMemoryPurchaseOrderQueryService {
+    private final List<PurchaseOrderSummary> store;
+    InMemoryPurchaseOrderQueryService(List<PurchaseOrderSummary> store) {
+        this.store = List.copyOf(store);  // => defensive copy; query service is read-only
+    }
+    public List<PurchaseOrderSummary> findAll(Specification<PurchaseOrderSummary> spec) {
+        return store.stream()
+            .filter(spec::isSatisfiedBy)  // => applies predicate; no SQL here
+            .toList();                    // => returns matching summaries
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var pos = List.of(
+    new PurchaseOrderSummary(new PurchaseOrderId("po_001"), PurchaseOrderStatus.AWAITING_APPROVAL, new Money(new BigDecimal("15000"), "USD")),
+    new PurchaseOrderSummary(new PurchaseOrderId("po_002"), PurchaseOrderStatus.AWAITING_APPROVAL, new Money(new BigDecimal("500"),   "USD")),
+    new PurchaseOrderSummary(new PurchaseOrderId("po_003"), PurchaseOrderStatus.APPROVED,          new Money(new BigDecimal("20000"), "USD"))
+);
+var service = new InMemoryPurchaseOrderQueryService(pos);
+
+var awaitingApproval = new AwaitingApprovalSpec();
+var highValue        = new HighValueSpec(new BigDecimal("10000"));
+var combined         = awaitingApproval.and(highValue);  // => composite predicate
+
+var results = service.findAll(combined);
+System.out.println(results.size());                     // => Output: 1
+System.out.println(results.get(0).id().value());        // => Output: po_001
+// => po_002 excluded: awaiting but low-value; po_003 excluded: high-value but not awaiting
+```
+
+**Key Takeaway**: Specifications encode named business predicates that compose algebraically; they are tested in isolation and applied to repositories or in-memory collections without SQL leaking into domain logic.
+
+**Why It Matters**: Procurement dashboards routinely need queries like "show all POs awaiting approval with value above L2 threshold assigned to Category A". Without specifications, this logic scatters across SQL WHERE clauses in repositories, controller query params, and frontend filters — impossible to test as a unit. Specifications centralise the predicate in domain language, making it testable with any list of in-memory objects before the database exists.
+
+---
+
+### Example 48: CQRS split — separate read model for the approval dashboard
+
+Command Query Responsibility Segregation (CQRS) separates writes (commands against the domain aggregate) from reads (queries against a denormalised read model). The read model is shaped for the UI, not for domain invariants.
+
+```java
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+// ── Write side: aggregate for commands ───────────────────────────────────────
+// (same PurchaseOrder aggregate from earlier examples — abbreviated here)
+enum PurchaseOrderStatus { DRAFT, AWAITING_APPROVAL, APPROVED, ISSUED, CANCELLED }
+record PurchaseOrderId(String value) {}
+record Money(BigDecimal amount, String currency) {}
+
+class PurchaseOrder {                          // => aggregate root on the write side
+    private final PurchaseOrderId id;
+    private PurchaseOrderStatus status;
+    private Money totalValue;
+    private String requestorName;
+    private LocalDate requestedDate;
+
+    PurchaseOrder(PurchaseOrderId id, String requestorName, Money totalValue) {
+        this.id            = id;
+        this.status        = PurchaseOrderStatus.DRAFT;       // => initial state
+        this.totalValue    = totalValue;
+        this.requestorName = requestorName;
+        this.requestedDate = LocalDate.now();
+    }
+
+    void submitForApproval() {
+        if (status != PurchaseOrderStatus.DRAFT)
+            throw new IllegalStateException("Only DRAFT POs can be submitted");
+        // => enforce domain invariant: submission only from DRAFT
+        status = PurchaseOrderStatus.AWAITING_APPROVAL;       // => state transition
+    }
+
+    PurchaseOrderId getId()       { return id; }
+    PurchaseOrderStatus getStatus(){ return status; }
+    Money getTotalValue()         { return totalValue; }
+    String getRequestorName()     { return requestorName; }
+    LocalDate getRequestedDate()  { return requestedDate; }
+}
+
+// ── Read side: flat read model shaped for the approval dashboard ──────────────
+// => NOT the aggregate; no invariants here — just data the dashboard needs
+record ApprovalDashboardRow(          // => read model: one row per PO awaiting approval
+    String poId,                      // => String, not PurchaseOrderId — no domain type on read side
+    String requestor,
+    String totalDisplay,              // => pre-formatted "USD 15,000.00" — view-ready
+    String requestedDate,             // => pre-formatted "2026-05-15" — view-ready
+    String statusLabel                // => human label: "Awaiting Approval"
+) {}
+
+// ── Read model projector — updates read model from domain events ──────────────
+// => In real CQRS this is an event handler; here simplified as a direct updater
+class ApprovalDashboardProjector {
+    private final java.util.List<ApprovalDashboardRow> rows = new java.util.ArrayList<>();
+
+    public void project(PurchaseOrder po) {
+        // => Only project POs that belong on the dashboard
+        if (po.getStatus() != PurchaseOrderStatus.AWAITING_APPROVAL) return;
+
+        var row = new ApprovalDashboardRow(
+            po.getId().value(),
+            po.getRequestorName(),
+            po.getTotalValue().currency() + " " + po.getTotalValue().amount().toPlainString(),
+            // => formatted at projection time — not at query time
+            po.getRequestedDate().toString(),
+            "Awaiting Approval"
+        );
+        rows.add(row);                        // => append to read model store
+    }
+
+    public java.util.List<ApprovalDashboardRow> getRows() {
+        return java.util.Collections.unmodifiableList(rows); // => read-only view
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var po = new PurchaseOrder(new PurchaseOrderId("po_001"), "Alice", new Money(new BigDecimal("15000"), "USD"));
+po.submitForApproval();                       // => DRAFT → AWAITING_APPROVAL
+
+var projector = new ApprovalDashboardProjector();
+projector.project(po);                        // => read model updated
+
+var dashboard = projector.getRows();
+System.out.println(dashboard.size());         // => Output: 1
+System.out.println(dashboard.get(0).totalDisplay()); // => Output: USD 15000
+System.out.println(dashboard.get(0).statusLabel());  // => Output: Awaiting Approval
+// => Read model is flat, denormalised, pre-formatted — no joins at query time
+```
+
+**Key Takeaway**: CQRS separates the write model (aggregate enforcing invariants) from the read model (denormalised, view-shaped data). Each is optimised for its purpose.
+
+**Why It Matters**: A procurement approval dashboard may serve hundreds of managers simultaneously while a purchase order aggregate is written to infrequently. With CQRS, the dashboard queries a denormalised read table — no joins, no aggregate reconstitution, sub-millisecond response. The write side remains lean and invariant-focused. Major ERP vendors like SAP use this separation internally; procurement dashboards are read-optimised views, not ORM-mapped aggregate queries.
+
+---
+
+### Example 49: Hexagonal architecture — port and adapter for `PurchaseOrderRepository`
+
+The hexagonal (ports-and-adapters) architecture separates the domain from infrastructure. The domain defines a `port` (interface); infrastructure provides the `adapter` (implementation). Tests swap adapters freely.
+
+```mermaid
+graph LR
+    A["Application Service"]:::blue
+    B["PurchaseOrderRepository port"]:::teal
+    C["JpaPurchaseOrderAdapter<br/>(infrastructure)"]:::orange
+    D["InMemoryPurchaseOrderAdapter<br/>(test)"]:::purple
+
+    A -->|uses| B
+    B -->|implemented by| C
+    B -->|implemented by| D
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+```java
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+// ── Domain types (abbreviated) ────────────────────────────────────────────────
+record PurchaseOrderId(String value) {}
+record Money(BigDecimal amount, String currency) {}
+enum PurchaseOrderStatus { DRAFT, AWAITING_APPROVAL, APPROVED }
+
+class PurchaseOrder {                          // => aggregate root (abbreviated)
+    final PurchaseOrderId id;
+    PurchaseOrderStatus status = PurchaseOrderStatus.DRAFT;
+    final Money totalValue;
+    PurchaseOrder(PurchaseOrderId id, Money totalValue) {
+        this.id = id; this.totalValue = totalValue;
+    }
+}
+
+// ── PORT: domain-owned interface ──────────────────────────────────────────────
+// => Lives in the domain package; no import of JPA, JDBC, or Spring here
+interface PurchaseOrderRepository {            // => the port
+    void save(PurchaseOrder po);               // => persist or update
+    Optional<PurchaseOrder> findById(PurchaseOrderId id); // => retrieve by identity
+    // => No SQL, no EntityManager; purely domain concepts
+}
+
+// ── ADAPTER (in-memory, used in unit tests) ────────────────────────────────────
+class InMemoryPurchaseOrderAdapter implements PurchaseOrderRepository {
+    // => test adapter: stores POs in a Map — no database needed
+    private final Map<String, PurchaseOrder> store = new HashMap<>();
+
+    public void save(PurchaseOrder po) {
+        store.put(po.id.value(), po);          // => key is the String value of PurchaseOrderId
+        // => simple HashMap.put; fulfils port contract without JPA
+    }
+    public Optional<PurchaseOrder> findById(PurchaseOrderId id) {
+        return Optional.ofNullable(store.get(id.value())); // => returns empty if not found
+    }
+}
+
+// ── APPLICATION SERVICE: depends only on the port ─────────────────────────────
+class ApprovePurchaseOrderService {
+    private final PurchaseOrderRepository repo; // => depends on PORT, not adapter
+    ApprovePurchaseOrderService(PurchaseOrderRepository repo) {
+        this.repo = repo;                      // => injected — adapter chosen at wiring time
+    }
+    public void approve(PurchaseOrderId id) {
+        var po = repo.findById(id).orElseThrow(() ->
+            new IllegalArgumentException("PurchaseOrder not found: " + id.value()));
+        // => throws domain-meaningful error if PO missing
+        po.status = PurchaseOrderStatus.APPROVED; // => domain state transition
+        repo.save(po);                           // => persist via port — adapter handles SQL
+    }
+}
+
+// ── Usage (no database required) ─────────────────────────────────────────────
+var adapter = new InMemoryPurchaseOrderAdapter();    // => swap for JpaAdapter in production
+var po = new PurchaseOrder(new PurchaseOrderId("po_001"), new Money(new BigDecimal("5000"), "USD"));
+adapter.save(po);                                   // => stored in memory
+
+var service = new ApprovePurchaseOrderService(adapter);
+service.approve(new PurchaseOrderId("po_001"));     // => service uses port; no JPA knowledge
+System.out.println(adapter.findById(new PurchaseOrderId("po_001")).get().status);
+// => Output: APPROVED
+// => In tests: swap adapter for InMemoryPurchaseOrderAdapter; in prod: use JpaAdapter
+```
+
+**Key Takeaway**: Ports (interfaces) belong to the domain; adapters (implementations) belong to infrastructure. The application service depends only on the port — it never imports JPA, JDBC, or any framework class.
+
+**Why It Matters**: Procurement system tests that spin up a real database are slow (30–120 seconds per suite) and flaky. With hexagonal architecture, the entire domain and application layer is tested using in-memory adapters in milliseconds. When the JPA adapter is swapped in at runtime, no domain code changes. Teams at Zalando and ThoughtWorks routinely enforce this with ArchUnit — domain packages must not import `javax.persistence` or `org.springframework.data`.
+
+---
+
+### Example 50: Domain exception hierarchy — modelling procurement failures
+
+Domain exceptions carry business meaning. A flat `IllegalArgumentException` tells a caller nothing about _which_ invariant fired; a typed exception hierarchy enables callers to distinguish `BudgetExceededException` from `SupplierNotApprovedEx`.
+
+```java
+// ── Domain exception hierarchy — purchasing bounded context ───────────────────
+// => All exceptions extend PurchasingDomainException; never RuntimeException directly
+class PurchasingDomainException extends RuntimeException {
+    PurchasingDomainException(String message) { super(message); }
+    // => base class for all purchasing domain errors; callers can catch at this level
+}
+
+class BudgetExceededException extends PurchasingDomainException {
+    final java.math.BigDecimal requested;
+    final java.math.BigDecimal remaining;
+    BudgetExceededException(java.math.BigDecimal requested, java.math.BigDecimal remaining) {
+        super("Budget exceeded: requested " + requested + " but only " + remaining + " remaining");
+        // => message is human-readable; fields are machine-readable for API error responses
+        this.requested = requested;
+        this.remaining = remaining;
+    }
+}
+
+class SupplierNotApprovedException extends PurchasingDomainException {
+    final String supplierId;
+    SupplierNotApprovedException(String supplierId) {
+        super("Supplier " + supplierId + " is not approved for procurement");
+        // => includes supplier id; ops team can look up the supplier directly from the error
+        this.supplierId = supplierId;
+    }
+}
+
+class DuplicatePurchaseOrderException extends PurchasingDomainException {
+    final String existingPoId;
+    DuplicatePurchaseOrderException(String existingPoId) {
+        super("Duplicate purchase order; existing PO: " + existingPoId);
+        // => caller can redirect user to the existing PO instead of retrying
+        this.existingPoId = existingPoId;
+    }
+}
+
+// ── Aggregate using the hierarchy ─────────────────────────────────────────────
+record PurchaseOrderId(String value) {}
+record Money(java.math.BigDecimal amount, String currency) {}
+record SupplierId(String value) {}
+
+class PurchaseOrderFactory {
+    private final java.math.BigDecimal remainingBudget;
+    private final java.util.Set<String> approvedSupplierIds;
+    private final java.util.Set<String> existingPoIds;
+
+    PurchaseOrderFactory(java.math.BigDecimal remainingBudget,
+                         java.util.Set<String> approvedSupplierIds,
+                         java.util.Set<String> existingPoIds) {
+        this.remainingBudget     = remainingBudget;
+        this.approvedSupplierIds = approvedSupplierIds;
+        this.existingPoIds       = existingPoIds;
+    }
+
+    public PurchaseOrderId create(SupplierId supplier, Money total, String idempotencyKey) {
+        // => guard: supplier approved?
+        if (!approvedSupplierIds.contains(supplier.value()))
+            throw new SupplierNotApprovedException(supplier.value());
+        // => guard: budget available?
+        if (total.amount().compareTo(remainingBudget) > 0)
+            throw new BudgetExceededException(total.amount(), remainingBudget);
+        // => guard: duplicate?
+        if (existingPoIds.contains(idempotencyKey))
+            throw new DuplicatePurchaseOrderException(idempotencyKey);
+        var newId = new PurchaseOrderId("po_" + java.util.UUID.randomUUID());
+        existingPoIds.add(idempotencyKey);     // => mark idempotency key as used
+        return newId;                          // => returns new PO identity; caller persists
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var factory = new PurchaseOrderFactory(
+    new java.math.BigDecimal("10000"),         // => remaining budget
+    java.util.Set.of("sup_abc"),               // => approved suppliers
+    new java.util.HashSet<>()                  // => no existing POs yet
+);
+
+try {
+    factory.create(new SupplierId("sup_xyz"),  // => sup_xyz is NOT approved
+        new Money(new java.math.BigDecimal("500"), "USD"), "idem-001");
+} catch (SupplierNotApprovedException e) {
+    System.out.println(e.getMessage());        // => Output: Supplier sup_xyz is not approved for procurement
+    System.out.println(e.supplierId);          // => Output: sup_xyz
+}
+
+try {
+    factory.create(new SupplierId("sup_abc"),  // => approved; but amount exceeds budget
+        new Money(new java.math.BigDecimal("50000"), "USD"), "idem-002");
+} catch (BudgetExceededException e) {
+    System.out.println(e.getMessage());        // => Output: Budget exceeded: requested 50000 but only 10000 remaining
+    System.out.println(e.remaining);           // => Output: 10000
+}
+```
+
+**Key Takeaway**: A typed domain exception hierarchy communicates _which_ business invariant was violated, not just that something went wrong. Each exception class carries machine-readable fields alongside a human-readable message.
+
+**Why It Matters**: REST APIs that catch `RuntimeException` and return HTTP 500 for every domain error force clients to parse error messages to determine recovery strategy. With a typed exception hierarchy, the application layer maps `BudgetExceededException` → HTTP 422 with a structured body, `SupplierNotApprovedException` → HTTP 409, giving API clients enough information to prompt users with actionable next steps rather than generic error pages.
+
+---
+
+### Example 51: Domain service — three-currency budget check across `purchasing` lines
+
+A domain service encapsulates logic that naturally operates across multiple aggregates or value objects without belonging to any single aggregate. Here, `BudgetCheckService` validates a multi-currency purchase requisition against a budget expressed in a base currency.
+
+```java
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Map;
+
+// ── Value objects ──────────────────────────────────────────────────────────────
+record Money(BigDecimal amount, String currency) {
+    Money {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("Money.amount must be >= 0");
+        // => non-negative invariant enforced at construction
+        if (currency == null || currency.isBlank())
+            throw new IllegalArgumentException("Money.currency must not be blank");
+        // => currency code required; blank string is not a valid ISO 4217 code
+    }
+    Money add(Money other) {
+        if (!currency.equals(other.currency()))
+            throw new IllegalArgumentException("Cannot add different currencies: " + currency + " + " + other.currency());
+        // => same-currency guard; cross-currency addition requires explicit conversion
+        return new Money(amount.add(other.amount()), currency);
+    }
+}
+
+record RequisitionLine(String skuCode, Money unitPrice, int quantity) {
+    Money lineTotal() {
+        return new Money(unitPrice.amount().multiply(BigDecimal.valueOf(quantity)), unitPrice.currency());
+        // => lineTotal = unitPrice × quantity; inherits the line's currency
+    }
+}
+
+// ── FX rate provider interface (port — infra implements this) ─────────────────
+interface FxRateProvider {
+    BigDecimal rateToBase(String fromCurrency, String baseCurrency);
+    // => returns how many baseCurrency units equal 1 fromCurrency unit
+}
+
+// ── Domain service — no aggregate state, pure logic ───────────────────────────
+class BudgetCheckService {
+    private final FxRateProvider fxProvider;
+    private final String baseCurrency;         // => e.g. "USD"
+
+    BudgetCheckService(FxRateProvider fxProvider, String baseCurrency) {
+        this.fxProvider   = fxProvider;
+        this.baseCurrency = baseCurrency;
+    }
+
+    public record BudgetCheckResult(boolean approved, BigDecimal totalInBase, BigDecimal budget) {}
+
+    public BudgetCheckResult check(List<RequisitionLine> lines, Money budget) {
+        if (!budget.currency().equals(baseCurrency))
+            throw new IllegalArgumentException("Budget must be in base currency " + baseCurrency);
+        // => budget currency must match service base currency for meaningful comparison
+
+        BigDecimal totalInBase = lines.stream()
+            .map(line -> {
+                var lineTotal = line.lineTotal();  // => unitPrice × qty in line's currency
+                if (lineTotal.currency().equals(baseCurrency)) {
+                    return lineTotal.amount();     // => already in base; no conversion needed
+                }
+                var rate = fxProvider.rateToBase(lineTotal.currency(), baseCurrency);
+                return lineTotal.amount().multiply(rate).setScale(2, RoundingMode.HALF_UP);
+                // => convert to base currency; round to 2 dp for monetary precision
+            })
+            .reduce(BigDecimal.ZERO, BigDecimal::add); // => sum all line totals in base
+
+        boolean approved = totalInBase.compareTo(budget.amount()) <= 0;
+        // => approved when total does not exceed budget
+        return new BudgetCheckResult(approved, totalInBase, budget.amount());
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+// Stub FX rates: 1 EUR = 1.08 USD, 1 GBP = 1.27 USD
+FxRateProvider fxStub = (from, base) -> switch (from) {
+    case "EUR" -> new BigDecimal("1.08");
+    case "GBP" -> new BigDecimal("1.27");
+    default    -> BigDecimal.ONE;
+};
+
+var service = new BudgetCheckService(fxStub, "USD");
+
+var lines = List.of(
+    new RequisitionLine("OFF-001", new Money(new BigDecimal("500"),  "USD"), 10),
+    // => 500 USD × 10 = 5000 USD (no conversion)
+    new RequisitionLine("OFF-002", new Money(new BigDecimal("200"),  "EUR"), 5),
+    // => 200 EUR × 5 = 1000 EUR → 1080 USD
+    new RequisitionLine("OFF-003", new Money(new BigDecimal("100"),  "GBP"), 3)
+    // => 100 GBP × 3 = 300 GBP → 381 USD
+);
+
+var result = service.check(lines, new Money(new BigDecimal("10000"), "USD"));
+System.out.println(result.totalInBase());  // => Output: 6461.00
+System.out.println(result.approved());     // => Output: true  (6461 <= 10000)
+
+var tightBudget = new Money(new BigDecimal("5000"), "USD");
+var tightResult = service.check(lines, tightBudget);
+System.out.println(tightResult.approved()); // => Output: false (6461 > 5000)
+System.out.println(tightResult.totalInBase()); // => Output: 6461.00
+```
+
+**Key Takeaway**: Domain services house stateless logic that spans multiple value objects or aggregates and does not belong to any single one. They depend on ports (interfaces), not infrastructure adapters.
+
+**Why It Matters**: Multi-currency procurement is the norm in global organisations. A budget check that ignores currency conversion approves orders that exceed budget when converted to the base currency — resulting in finance team escalations and PO cancellations after supplier commitment. Placing the conversion logic in a domain service keeps it testable with a stub FX provider and separates it cleanly from any individual aggregate's responsibility.
 
 **Why It Matters**: Legacy ERP systems are rarely rewritten; procurement platforms integrate with them for years. Without an ACL, ERP quirks leak into domain aggregates: a `statusFlag` field with magic strings pollutes `Supplier` domain logic and forces every domain test to import legacy knowledge. The ACL is the quarantine zone — it absorbs all integration complexity so the domain stays expressive and stable.

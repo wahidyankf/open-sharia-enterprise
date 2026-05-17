@@ -82,12 +82,12 @@ public final class Money { // => final: no subclass can weaken immutability guar
     public Money(String amount, String currency) { // => String input: avoids double imprecision
         // => Validate before storing — invalid Money must never exist as an object
         if (amount == null)                                    // => null guard
-            throw new IllegalArgumentException("amount is null");
+            throw new IllegalArgumentException("amount is null"); // => fails fast; no null Money
         BigDecimal bd = new BigDecimal(amount);               // => NumberFormatException if malformed
         if (bd.compareTo(BigDecimal.ZERO) < 0)                // => domain invariant: amount >= 0
-            throw new IllegalArgumentException("amount must be >= 0");
+            throw new IllegalArgumentException("amount must be >= 0"); // => negative money rejected
         if (currency == null || currency.length() != 3)       // => ISO 4217 = 3 uppercase letters
-            throw new IllegalArgumentException("currency must be 3-letter ISO code");
+            throw new IllegalArgumentException("currency must be 3-letter ISO code"); // => "USDD" or "" rejected
         this.amount   = bd;       // => stored only after validation passes
         this.currency = currency.toUpperCase(); // => normalise; "usd" == "USD"
     }
@@ -95,14 +95,14 @@ public final class Money { // => final: no subclass can weaken immutability guar
     // Operations return NEW instances; originals are unchanged
     public Money add(Money other) { // => never void; immutable design principle
         if (!this.currency.equals(other.currency))            // => domain rule: cannot add USD + IDR
-            throw new IllegalArgumentException("Currency mismatch");
+            throw new IllegalArgumentException("Currency mismatch"); // => cross-currency add is a domain error
         return new Money(this.amount.add(other.amount).toPlainString(), this.currency);
         // => new Money; neither this nor other is mutated
     }
 
     public Money multiply(int factor) { // => scale quantity cost in line items
         if (factor <= 0)                                      // => domain guard: factor must be positive
-            throw new IllegalArgumentException("factor must be > 0");
+            throw new IllegalArgumentException("factor must be > 0"); // => multiply by 0 or negative makes no sense
         return new Money(this.amount.multiply(BigDecimal.valueOf(factor)).toPlainString(), this.currency);
         // => new Money returned; this is unchanged
     }
@@ -150,10 +150,10 @@ public final class SkuCode {
 
     public SkuCode(String value) {           // => smart constructor enforces invariant
         if (value == null)                   // => null guard first
-            throw new IllegalArgumentException("SkuCode cannot be null");
+            throw new IllegalArgumentException("SkuCode cannot be null"); // => null SkuCode is not a SKU
         if (!FORMAT.matcher(value).matches()) // => regex check
             throw new IllegalArgumentException(
-                "SkuCode must match [A-Z]{3}-\\d{4,8}, got: " + value);
+                "SkuCode must match [A-Z]{3}-\\d{4,8}, got: " + value); // => e.g. "invalid" or "AB-123" rejected
         this.value = value; // => stored only after validation passes
     }
 

@@ -180,22 +180,28 @@ spec:
 ```yaml
 # apps/procurement-platform-be/deploy/k8s/service.yaml
 apiVersion: v1
+# => apiVersion: v1 — Service is a core Kubernetes resource
 kind: Service
+# => Service: stable network endpoint for the pod replicas — DNS-resolvable cluster-internal address
 metadata:
   name: procurement-platform-be-svc
   # => name: DNS name for in-cluster callers — procurement-platform-be-svc.procurement-platform.svc.cluster.local
   namespace: procurement-platform
+  # => namespace: same as the Deployment — Service routes to pods in the same namespace
 spec:
   selector:
     app: procurement-platform-be
+    # => selector: matches pods with label app=procurement-platform-be from the Deployment template
   ports:
     - name: http
       port: 80
+      # => port 80: the cluster-internal port — callers use port 80, pods receive on 8080
       targetPort: 8080
       # => targetPort 8080: routes cluster port 80 to container port 8080
     - name: management
       port: 8081
       targetPort: 8081
+      # => management port exposed separately — Prometheus scrapes 8081, not 80
   type: ClusterIP
   # => ClusterIP: reachable within the cluster only — the Ingress resource handles external traffic
 ```
@@ -276,23 +282,29 @@ public class JvmMetricsDump {
 // TracingConfig.java — enables Micrometer Tracing sources for procurement-platform-be contexts
 package com.procurement.platform.shared.observability;
 // => shared/observability/ package: cross-cutting tracing configuration lives here
+// => One @Configuration for all bounded contexts — tracing is a shared infrastructure concern
 
 import io.micrometer.tracing.Tracer;
 // => Tracer: Micrometer abstraction over the underlying tracing backend (Brave or OTel)
 // => Application code imports Tracer — never imports Brave or OpenTelemetry directly
 import org.springframework.context.annotation.Bean;
+// => @Bean: Spring calls this method and registers the returned object as a singleton bean
 import org.springframework.context.annotation.Configuration;
+// => @Configuration: Spring registers this class as a bean factory — all @Bean methods are called at startup
 import io.micrometer.observation.ObservationRegistry;
 // => ObservationRegistry: Micrometer 1.11+ unified observation API — spans and metrics share one entry point
 
 @Configuration
+// => @Configuration: Spring discovers this class during the root package component scan
 public class TracingConfig {
 
     @Bean
     public io.micrometer.tracing.brave.bridge.BraveBaggageManager braveBaggageManager() {
         // => BraveBaggageManager: bridges Micrometer baggage API to Brave — required for W3C baggage propagation
         // => W3C baggage: carries trace context across HTTP calls to downstream adapters (bank API)
+        // => Without this bean, baggage headers are not propagated through RestClient calls
         return new io.micrometer.tracing.brave.bridge.BraveBaggageManager();
+        // => Returns a singleton: Spring Boot injects this into Micrometer's baggage propagator
     }
 }
 ```
@@ -384,28 +396,37 @@ A plain `try-catch` at the controller layer is the minimal fallback Java SE prov
 // Demonstrates the handler-level catch approach that HealthIndicator and degraded adapters supersede.
 
 import org.springframework.http.ResponseEntity;
+// => ResponseEntity: wraps HTTP status code + body — used here to return 503 on DB failure
 import org.springframework.web.bind.annotation.GetMapping;
+// => @GetMapping: maps HTTP GET to listPurchaseOrders()
 import org.springframework.web.bind.annotation.RestController;
+// => @RestController: Spring bean that serialises return values to JSON
 
 @RestController
+// => @RestController: Spring discovers this bean and maps @GetMapping to the URL
 public class PurchaseOrderControllerFallback {
 
     private final com.procurement.platform.purchasing.application.IssuePurchaseOrderService service;
+    // => Application service interface — the controller never sees the @Service implementation
 
     public PurchaseOrderControllerFallback(com.procurement.platform.purchasing.application.IssuePurchaseOrderService service) {
         this.service = service;
+        // => Constructor injection: Spring wires the service bean at context startup
     }
 
     @GetMapping("/api/v1/purchase-orders")
+    // => @GetMapping: maps HTTP GET /api/v1/purchase-orders to this method
     public ResponseEntity<?> listPurchaseOrders() {
         try {
             var po = service.findById(null);
+            // => findById(null): illustrative only — null ID causes a NullPointerException in production
             return ResponseEntity.ok(po);
         } catch (org.springframework.dao.DataAccessException ex) {
             // => DataAccessException: Spring's DB exception hierarchy — catches all SQL/JDBC failures
             // => Problem: every @RestController method must duplicate this catch block
             return ResponseEntity.status(503).body("Service temporarily unavailable");
             // => No health signal: Kubernetes keeps routing traffic to this pod even when every request fails
+            // => No cached response: the caller receives an error, not stale data
         }
     }
 }
@@ -420,20 +441,27 @@ The degraded-mode pattern introduces a `CachedPurchaseOrderReadAdapter` that ret
 ```java
 // CachedPurchaseOrderReadAdapter.java — returns cached PO list when the DB port fails
 package com.procurement.platform.purchasing.infrastructure;
+// => infrastructure/ package: adapters with framework dependencies live here
 
 import com.procurement.platform.purchasing.application.PurchaseOrderRepository;
 // => PurchaseOrderRepository: output port interface — CachedPurchaseOrderReadAdapter satisfies the same interface
 import com.procurement.platform.purchasing.domain.PurchaseOrder;
+// => PurchaseOrder domain aggregate: stored in the cache snapshot, returned on degraded reads
 import com.procurement.platform.purchasing.domain.PurchaseOrderId;
+// => PurchaseOrderId: used to filter the cache on findById and existsById calls
 import org.springframework.stereotype.Component;
+// => @Component: Spring registers this bean — wired at the composition root only in degraded mode
 import java.util.List;
+// => List<PurchaseOrder>: the full snapshot passed to populateCache by the health-check thread
 import java.util.Optional;
+// => Optional: return type for findById — absence communicated without null
 import java.util.concurrent.CopyOnWriteArrayList;
 // => CopyOnWriteArrayList: thread-safe list — cache written by health-check thread, read by request threads
 import java.util.concurrent.atomic.AtomicBoolean;
 // => AtomicBoolean: lock-free degraded flag — updated by the circuit-breaker callback, read per request
 
 @Component
+// => @Component: Spring discovers this bean; the composition root wires it behind the port in degraded mode
 public class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
     // => implements PurchaseOrderRepository: satisfies the output port contract
 
@@ -445,12 +473,15 @@ public class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
 
     public void populateCache(List<PurchaseOrder> snapshot) {
         cache.clear();
+        // => clear() first: replaces stale entries atomically before addAll
         cache.addAll(snapshot);
         // => Replaces all entries with the latest snapshot from PostgreSQL
+        // => CopyOnWriteArrayList: concurrent readers see the new snapshot after addAll completes
     }
 
     public void setDegraded(boolean value) {
         degraded.set(value);
+        // => AtomicBoolean.set: visible to all threads immediately — no synchronisation block needed
     }
 
     public boolean isDegraded() {
@@ -464,8 +495,10 @@ public class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
             throw new com.procurement.platform.purchasing.application.RepositoryException(
                 "Writes unavailable in degraded mode", null);
             // => Write operations are not supported in degraded mode — callers receive RepositoryException
+            // => The application service propagates this exception to the controller → HTTP 503
         }
         throw new UnsupportedOperationException("CachedPurchaseOrderReadAdapter is not the active write path");
+        // => Normal operation: the JDBC adapter handles writes; this adapter is only active in degraded mode
     }
 
     @Override
@@ -473,14 +506,17 @@ public class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
         if (degraded.get()) {
             return cache.stream().filter(p -> p.id().equals(id)).findFirst();
             // => Degraded mode: return from the cached snapshot without touching the database
+            // => findFirst(): returns Optional.empty() when no match — port contract preserved
         }
         throw new UnsupportedOperationException("CachedPurchaseOrderReadAdapter is not the active read path");
+        // => Normal operation: the JDBC adapter handles reads; this adapter is only active in degraded mode
     }
 
     @Override
     public boolean existsById(PurchaseOrderId id) {
         if (degraded.get()) {
             return cache.stream().anyMatch(p -> p.id().equals(id));
+            // => anyMatch: returns false for unknown IDs — callers can still perform existence checks
         }
         throw new UnsupportedOperationException("CachedPurchaseOrderReadAdapter is not the active read path");
     }
@@ -490,19 +526,28 @@ public class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
 ```java
 // NullEventPublisher.java — silently drops events when the broker port is unavailable
 package com.procurement.platform.purchasing.infrastructure;
+// => infrastructure/ package: the null adapter lives here — same package as OutboxEventPublisher
 
 import com.procurement.platform.purchasing.application.EventPublisher;
+// => EventPublisher: the output port interface — NullEventPublisher satisfies it with a no-op body
 import com.procurement.platform.purchasing.application.PurchaseOrderIssued;
+// => Domain event record: the publisher receives it but does not relay it to the broker
 import com.procurement.platform.purchasing.application.PurchaseOrderCancelled;
+// => Second event type: also dropped silently — the null adapter handles all EventPublisher overloads
 import org.slf4j.Logger;
+// => SLF4J Logger API — decoupled from the logging backend (Logback, Log4j2)
 import org.slf4j.LoggerFactory;
+// => LoggerFactory.getLogger: creates a logger bound to this class name
 import org.springframework.stereotype.Component;
+// => @Component: Spring registers this bean — wired at the composition root only in degraded mode
 
 @Component
+// => @Component: Spring discovers this bean; the composition root wires it instead of OutboxEventPublisher
 public class NullEventPublisher implements EventPublisher {
     // => Null object pattern: replaces the real adapter without changing the application service
 
     private static final Logger log = LoggerFactory.getLogger(NullEventPublisher.class);
+    // => static final: one logger per class — not one per method invocation
 
     @Override
     public void publish(PurchaseOrderIssued event) {
@@ -511,12 +556,15 @@ public class NullEventPublisher implements EventPublisher {
         // => WARN level: not an error (the system degrades gracefully), but not silent — visible in the trace
         // => Silent drop: the application service proceeds as if the event was published
         // => At-least-once guarantee is lost — switch to an outbox adapter to preserve delivery
+        // => Downstream contexts (receiving) will not receive the PurchaseOrderIssued signal during outage
     }
 
     @Override
     public void publish(PurchaseOrderCancelled event) {
         log.warn("Null event publisher: dropping PurchaseOrderCancelled {} — outbox unavailable",
             event.purchaseOrderId().value());
+        // => Same null-object behaviour for the cancellation event — both overloads must be implemented
+        // => WARN logged for observability: log aggregation shows the volume of dropped events during outage
     }
 }
 ```
@@ -577,15 +625,21 @@ Guide 17 introduced Flyway as the schema-migration adapter. At the deployment se
 // Demonstrates the manual DDL approach that Flyway supersedes.
 
 import java.sql.Connection;
+// => Connection: JDBC connection to the database — must be closed after use or the pool leaks
 import java.sql.DriverManager;
+// => DriverManager: JDBC entry point — finds a registered driver matching the URL scheme
 import java.sql.SQLException;
+// => SQLException: checked exception on every JDBC operation — callers must handle or declare throws
 
 public class ManualSchemaMigration {
     public static void main(String[] args) throws SQLException {
         String url = System.getenv("SPRING_DATASOURCE_URL");
         // => Reads the JDBC URL from an environment variable — must be set before this runs
+        // => Returns null if the variable is absent — DriverManager.getConnection throws NullPointerException
         try (Connection conn = DriverManager.getConnection(url, "procurement", "procurement")) {
+            // => try-with-resources: Connection implements AutoCloseable — conn.close() is guaranteed
             conn.createStatement().execute(
+                // => createStatement: plain statement, no parameters — suitable for DDL only
                 "CREATE SCHEMA IF NOT EXISTS purchasing;" +
                 "CREATE TABLE IF NOT EXISTS purchasing.purchase_orders (" +
                 "  id UUID PRIMARY KEY," +
@@ -596,6 +650,7 @@ public class ManualSchemaMigration {
                 ")"
                 // => No version number: impossible to determine which state the schema is in
                 // => No rollback: if a second migration fails after the first succeeds, schema is partially upgraded
+                // => Running this twice: CREATE TABLE IF NOT EXISTS is idempotent, but ALTER TABLE is not
             );
         }
     }
@@ -673,19 +728,27 @@ The `ApplicationRunner` strategy — running Flyway inside `SpringApplication.ru
 ```java
 // FlywayMigrationRunner.java — ApplicationRunner strategy (alternative to Kubernetes Job)
 package com.procurement.platform.shared.config;
+// => shared/config/: cross-cutting configuration lives here — not in a single context package
 
 import org.flywaydb.core.Flyway;
+// => Flyway: the migration engine — scans classpath:db/migration for versioned SQL scripts
 import org.springframework.boot.ApplicationArguments;
+// => ApplicationArguments: command-line arguments passed to run() — unused here but required by the interface
 import org.springframework.boot.ApplicationRunner;
+// => ApplicationRunner: Spring lifecycle hook — run() is called after the ApplicationContext starts
 import org.springframework.context.annotation.Profile;
 // => @Profile: activates this runner only in specified profiles — suppressed in the k8s profile
 import org.springframework.stereotype.Component;
+// => @Component: Spring discovers this bean during component scan — active only in non-k8s profiles
 
 import javax.sql.DataSource;
+// => DataSource: the HikariCP connection pool — Flyway uses it to acquire a migration-lock connection
 
 @Component
+// => @Component: Spring registers this bean — run() is called once at startup
 @Profile("!k8s")
 // => @Profile("!k8s"): disabled in the k8s Spring profile — the Kubernetes Job owns migration in that profile
+// => Activate the k8s profile in application.yml: spring.profiles.active: k8s
 public class FlywayMigrationRunner implements ApplicationRunner {
 
     private final DataSource dataSource;
@@ -693,6 +756,7 @@ public class FlywayMigrationRunner implements ApplicationRunner {
 
     public FlywayMigrationRunner(DataSource dataSource) {
         this.dataSource = dataSource;
+        // => Constructor injection: Spring wires the DataSource bean — no @Autowired annotation needed
     }
 
     @Override
@@ -702,13 +766,17 @@ public class FlywayMigrationRunner implements ApplicationRunner {
         Flyway flyway = Flyway.configure()
             .dataSource(dataSource)
             // => dataSource: the same HikariCP pool — Flyway acquires a connection for the migration lock
+            // => One migration runs at a time: Flyway uses a database-level advisory lock
             .locations("classpath:db/migration")
+            // => classpath:db/migration: directory of versioned SQL files — V1__create_schema.sql, V2__...
             .validateOnMigrate(true)
             // => validateOnMigrate: Flyway checksums applied migrations — detects edits to already-run scripts
+            // => Fails fast if a past migration file is modified — prevents silent schema drift
             .load();
         flyway.migrate();
         // => migrate(): applies all pending versioned migrations in order
         // => Acquires a database-level advisory lock — only one JVM migrates at a time
+        // => Returns MigrateResult with counts of applied, pending, and failed migrations
     }
 }
 ```

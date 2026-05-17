@@ -3,29 +3,27 @@ title: "Overview"
 weight: 10000002
 date: 2026-05-15T00:00:00+07:00
 draft: false
-description: "Hexagonal Architecture Using OOP by example: 80 annotated examples in Java 21+, Kotlin, and C# 12+ using the procurement-platform-be domain — covering port interfaces, adapter implementations, application services, and strategic design"
-tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java", "kotlin", "csharp"]
+description: "Hexagonal Architecture Using OOP by example: 75 annotated examples in Java 21+ using the procurement-platform-be domain — covering port interfaces, adapter implementations, application services, and strategic design"
+tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java"]
 ---
 
-**Want to apply Hexagonal Architecture with modern OOP languages?** This tutorial teaches the Ports and Adapters pattern through 80 side-by-side annotated examples in Java 21+, Kotlin, and C# 12+.
+**Want to apply Hexagonal Architecture with modern Java?** This tutorial teaches the Ports and Adapters pattern through 75 heavily annotated examples in Java 21+.
 
 ## What This Tutorial Is
 
-This tutorial presents 80 examples showing identical hexagonal architecture concepts implemented three times in parallel — once in modern Java, once in idiomatic Kotlin, and once in modern C#. Seeing the same structural pattern expressed across three language idioms simultaneously sharpens your understanding of the pattern itself rather than any single language's syntax.
+This tutorial presents 75 examples showing hexagonal architecture concepts implemented in idiomatic Java 21+. Every example is self-contained, runnable, and annotated with `// =>` markers that show values, states, and effects at each step. Examples build progressively from three-zone structure through advanced multi-context patterns.
 
 Each example demonstrates a focused hexagonal concept. Examples build progressively: the three-zone structure and basic port/adapter separation appear first, application service orchestration and infrastructure adapters follow, and strategic multi-context patterns close the tutorial. Every example follows a consistent five-part structure (see below).
 
 ## Prerequisites
 
-- Comfortable with at least one of Java, Kotlin, or C# at an intermediate level
+- Comfortable with Java at an intermediate level
 - Familiar with OOP fundamentals: classes, interfaces, inheritance, and composition
 - Has read the paradigm-agnostic overview at [Hexagonal Architecture Overview](/en/learn/software-engineering/architecture/hexagonal-architecture/overview)
 
 ## How to Read This Tutorial
 
-This tutorial is code-first. Each example leads with working, self-contained code annotated with `// =>` markers that show values, types, zones, and effects at each step.
-
-Read one language deeply if you want to build fluency in that language's hexagonal idioms. Scan all three languages on each example if you want cross-language insight into how the same structural boundary maps onto different type systems and frameworks. Language contrasts are noted in examples where the difference matters to the hexagonal pattern.
+This tutorial is code-first. Each example leads with working, self-contained Java code annotated with `// =>` markers that show values, types, zones, and effects at each step.
 
 The running domain across all examples is **procurement-platform-be** — a Procure-to-Pay (P2P) platform where employees request goods and services, managers approve, suppliers fulfill, and finance pays. The same domain is used in the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/overview), letting you see how hexagonal boundaries fit around DDD building blocks.
 
@@ -39,7 +37,7 @@ The running domain across all examples is **procurement-platform-be** — a Proc
 - Primary adapters — HTTP controllers, CLI handlers, message consumers
 - Secondary adapters — database repositories, email senders, external API clients
 - In-memory adapters — fast, deterministic implementations for tests
-- Dependency injection wiring — Spring, ASP.NET Core DI, Koin
+- Dependency injection wiring — Spring `@Configuration` and manual constructor injection
 
 **Intermediate patterns**:
 
@@ -61,9 +59,9 @@ The running domain across all examples is **procurement-platform-be** — a Proc
 
 ## What This Tutorial Does NOT Cover
 
-- Language tutorials: Java, Kotlin, and C# each have their own by-example tutorials for language fundamentals
+- Language tutorials: Java has its own by-example tutorial for language fundamentals
 - DDD tactical patterns in depth: read the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/overview) for entities, aggregates, value objects, and domain services
-- Framework setup and project bootstrapping (Spring Boot, ASP.NET Core, Ktor)
+- Framework setup and project bootstrapping (Spring Boot initialisation, Gradle/Maven configuration)
 - Kubernetes, Docker, or deployment infrastructure
 
 ## Sibling Tutorial: Functional Programming Approach
@@ -76,12 +74,12 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation**: What hexagonal concept the example demonstrates (2–3 sentences).
 2. **Optional Diagram**: A Mermaid diagram when concept relationships are complex enough to warrant visual representation. Skipped for straightforward code definitions.
-3. **Three Code Blocks**: Java, Kotlin, and C# implementations with `// =>` annotations explaining values, states, zones, and effects. Brief text between blocks notes meaningful language idiom differences.
+3. **Code Block(s)**: Java 21+ implementation(s) with `// =>` annotations explaining values, states, zones, and effects. Multi-block examples separate distinct approaches with explanatory text between blocks.
 4. **Key Takeaway**: The core hexagonal principle to retain (1–2 sentences).
 5. **Why It Matters**: Real-world business and production system impact (50–100 words).
 
 ## Tutorial Structure
 
-- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/beginner) — The three zones, port interfaces, adapter classes, package structure, dependency direction, in-memory adapters, application service wiring, and the full request/response flow — all using the `purchasing` context of `procurement-platform-be`.
-- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/intermediate) — CQRS ports, `EventPublisher`, `ApprovalRouterPort`, infrastructure ports, retry and circuit-breaker in adapters, ACL between `purchasing` and `supplier` contexts, and integration testing strategies.
-- [Advanced (Examples 56–80)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/advanced) — Strategic multi-hexagon design across `purchasing`, `receiving`, `invoicing`, and `payments` contexts; `BankingPort` with retry decorator; `SupplierNotifierPort`; `Observability` adapter; domain evolution; adapter replacement; anti-patterns; and a full production reference architecture.
+- [Beginner (Examples 1–20)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/beginner) — The three zones, port interfaces, adapter classes, package structure, dependency direction, in-memory adapters, application service wiring, and the full request/response flow — all using the `purchasing` context of `procurement-platform-be`.
+- [Intermediate (Examples 21–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/intermediate) — `SupplierRepository`, `EventPublisher`, `ApprovalRouterPort`, adapter swapping, anti-corruption layer, integration test seam, composition root via Spring `@Configuration`, and CQRS command/query port split — purchasing and supplier contexts.
+- [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/advanced) — Strategic multi-hexagon design across `purchasing`, `receiving`, `invoicing`, and `payments` contexts; `BankingPort` with retry decorator; `SupplierNotifierPort`; `Observability` adapter; domain evolution; adapter replacement; anti-patterns; and a full production reference architecture.

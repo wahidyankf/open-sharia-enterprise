@@ -92,7 +92,7 @@ classDiagram
 
 **Key Takeaway**: Model aggregate methods as returning domain events. Side-effect event emission hides events from unit tests and callers; return-based emission makes them visible and testable.
 
-**Why It Matters**: Aggregates that emit events via side effects (e.g., directly calling an event bus) cannot be unit tested without a live event bus. Return-based event collection enables complete aggregate unit tests with zero infrastructure dependencies.
+**Why It Matters**: Aggregates that emit events via side effects (e.g., directly calling an event bus) cannot be unit tested without a live event bus. Return-based event collection enables complete aggregate unit tests with zero infrastructure dependencies. Infrastructure-free aggregate tests run in milliseconds and can be executed on every commit, making test-driven development of P2P business rules practical without spinning up Kafka or a message broker.
 
 ---
 
@@ -146,7 +146,7 @@ flowchart TD
 
 **Key Takeaway**: Order FSM guards from cheapest to most expensive. State guard first, domain rule guard second, authorization guard last. This minimizes computation on invalid requests.
 
-**Why It Matters**: Approval guard logic that allows a Buyer to approve their own requisition (missing authority check) or allows approval of a PO already in `Approved` state (missing state guard) produces a corrupted audit trail that undermines financial control compliance.
+**Why It Matters**: Approval guard logic that allows a Buyer to approve their own requisition (missing authority check) or allows approval of a PO already in `Approved` state (missing state guard) produces a corrupted audit trail that undermines financial control compliance. When authorization checks are documented at the code-diagram level, compliance reviewers can confirm that segregation-of-duties requirements are enforced in the domain model without reading source code or waiting for an external audit finding.
 
 ---
 
@@ -194,7 +194,7 @@ stateDiagram-v2
 
 **Key Takeaway**: Use stateDiagram-v2 for FSM documentation. The diagram serves as a specification document for QA, product, and compliance teams — all of whom have authority over the transition rules.
 
-**Why It Matters**: PO state machine violations (approving a Cancelled PO, issuing a Disputed PO) are financial controls failures. A published state machine diagram gives compliance and audit teams a verifiable specification to test against.
+**Why It Matters**: PO state machine violations (approving a Cancelled PO, issuing a Disputed PO) are financial controls failures. A published state machine diagram gives compliance and audit teams a verifiable specification to test against. State machine diagrams also serve as the definitive test specification — each valid transition becomes a positive test case and each invalid transition becomes a rejection test, ensuring complete behavioral coverage of the PO lifecycle.
 
 ---
 
@@ -224,7 +224,7 @@ stateDiagram-v2
 
 **Key Takeaway**: Model requisition and purchase order as separate aggregates with separate state machines. Their lifecycles diverge at approval: rejected requisitions terminate, approved ones spawn a PO.
 
-**Why It Matters**: Requisition-to-PO conversion tracking is a key procurement KPI (conversion rate, approval cycle time). Separate aggregates make this tracking straightforward — one aggregate for the request lifecycle, one for the fulfillment lifecycle.
+**Why It Matters**: Requisition-to-PO conversion tracking is a key procurement KPI (conversion rate, approval cycle time). Separate aggregates make this tracking straightforward — one aggregate for the request lifecycle, one for the fulfillment lifecycle. When every state transition is a domain event with a timestamp, procurement analytics dashboards can be built directly on the event log without requiring a separate reporting data model or custom ETL jobs.
 
 ---
 
@@ -264,7 +264,7 @@ classDiagram
 
 **Key Takeaway**: Code-level diagrams for value objects should show immutability (no setters), validation (constructor invariants), and equality semantics. These three properties define a valid value object.
 
-**Why It Matters**: Systems that accept arbitrary strings as PO identifiers routinely encounter SQL injection vectors, cross-tenant ID guessing, and index scan inefficiencies. Format-validated value objects close all three risks at the type level.
+**Why It Matters**: Systems that accept arbitrary strings as PO identifiers routinely encounter SQL injection vectors, cross-tenant ID guessing, and index scan inefficiencies. Format-validated value objects close all three risks at the type level. Value Objects also make domain language explicit in the type system, enabling compilers to catch category errors — such as passing a SupplierId where a PurchaseOrderId is required — at compile time rather than at runtime during production transactions.
 
 ---
 
@@ -299,7 +299,7 @@ classDiagram
 
 **Key Takeaway**: Money arithmetic must be currency-aware and immutable. Unchecked arithmetic on money amounts (treating them as plain floats) produces currency mismatch bugs and floating-point rounding errors that corrupt payment amounts.
 
-**Why It Matters**: ISO 20022 payment files carry exact decimal amounts. A float-based Money type that introduces rounding at the 15th decimal place produces payment amounts that differ from the invoice amount — triggering bank rejection or supplier disputes.
+**Why It Matters**: ISO 20022 payment files carry exact decimal amounts. A float-based Money type that introduces rounding at the 15th decimal place produces payment amounts that differ from the invoice amount — triggering bank rejection or supplier disputes. Centralizing arithmetic in the Money Value Object ensures that currency conversion, rounding modes, and scale are applied consistently across all payment calculations rather than being implemented independently in each service.
 
 ---
 
@@ -350,7 +350,7 @@ classDiagram
 
 **Key Takeaway**: Tolerance checking must be per-line, not per-total. Total-quantity tolerance allows SKU substitution fraud that per-line checking prevents.
 
-**Why It Matters**: Suppliers who ship substituted goods (cheaper SKU in place of ordered SKU) exploit total-quantity tolerance checks. Per-line checking, modeled at code level with explicit `withinTolerance()` semantics, closes this audit gap.
+**Why It Matters**: Suppliers who ship substituted goods (cheaper SKU in place of ordered SKU) exploit total-quantity tolerance checks. Per-line checking, modeled at code level with explicit `withinTolerance()` semantics, closes this audit gap. Code-level diagrams showing GRN line item validation make it clear that receiving-api must capture SKU-level quantities and apply tolerance checks per line, not just per shipment total, enabling finance teams to detect substitution before payment is authorized.
 
 ---
 
@@ -407,7 +407,7 @@ classDiagram
 
 **Key Takeaway**: Include enough payload in domain events to satisfy common consumer needs without requiring callbacks into the producing context. Fat events reduce inter-service coupling at the cost of event schema versioning.
 
-**Why It Matters**: Thin events (carrying only IDs) force consumers to query the producing service synchronously, creating temporal coupling. When purchasing-api is down, receiving-api cannot process a thin `PurchaseOrderIssued` event. Fat events with line summaries allow receiving-api to process the event independently.
+**Why It Matters**: Thin events (carrying only IDs) force consumers to query the producing service synchronously, creating temporal coupling. When purchasing-api is down, receiving-api cannot process a thin `PurchaseOrderIssued` event. Fat events with line summaries allow receiving-api to process the event independently. Event payload diagrams also function as schema contracts that consumer teams use to write deserializers and that schema registries use to enforce backward compatibility before breaking changes reach production.
 
 ---
 
@@ -449,7 +449,7 @@ sequenceDiagram
 
 **Key Takeaway**: Dynamic diagrams reveal the exact ordering of operations across containers. Use sequence diagrams to validate that the order of operations matches the desired user experience and consistency guarantees.
 
-**Why It Matters**: Teams that do not draw sequence diagrams for key P2P flows routinely discover that their "successful submission" response is sent after Kafka publish — meaning a Kafka outage prevents users from submitting requisitions. The outbox pattern (publish after response) prevents this coupling.
+**Why It Matters**: Teams that do not draw sequence diagrams for key P2P flows routinely discover that their "successful submission" response is sent after Kafka publish — meaning a Kafka outage prevents users from submitting requisitions. The outbox pattern (publish after response) prevents this coupling. Walking through the sequence diagram with QA engineers before coding also generates the integration test scenarios that validate the complete flow in the staging environment against real infrastructure.
 
 ---
 
@@ -494,7 +494,7 @@ sequenceDiagram
 
 **Key Takeaway**: Model error paths in sequence diagrams using `alt` blocks. Error paths that return the same status code obscure the distinction between business rule failures and authorization failures.
 
-**Why It Matters**: Approval UIs that cannot distinguish "wrong approver" (403) from "already approved" (409) display incorrect error messages, leading to support tickets and user frustration. Dynamic diagrams that show error branches drive correct API design.
+**Why It Matters**: Approval UIs that cannot distinguish "wrong approver" (403) from "already approved" (409) display incorrect error messages, leading to support tickets and user frustration. Dynamic diagrams that show error branches drive correct API design. Explicit status codes in the sequence diagram also serve as the acceptance criteria that front-end engineers use to implement differentiated error handling in the approval interface, preventing generic error messages that confuse managers.
 
 ---
 
@@ -539,7 +539,7 @@ sequenceDiagram
 
 **Key Takeaway**: Goods receipt dynamic diagrams must show both the success and discrepancy paths. The discrepancy path triggers downstream blocking that can halt the entire P2P cycle — it must be designed explicitly.
 
-**Why It Matters**: GRN discrepancies that are not surfaced immediately to warehouse operators result in delayed invoice matching, payment delays, and supplier relationship damage. Same-day resolution via explicit 422 responses is the difference between a well-designed and a poorly-designed receiving flow.
+**Why It Matters**: GRN discrepancies that are not surfaced immediately to warehouse operators result in delayed invoice matching, payment delays, and supplier relationship damage. Same-day resolution via explicit 422 responses is the difference between a well-designed and a poorly-designed receiving flow. Making discrepancy handling visible in the sequence diagram also prompts agreement on resolution SLAs — how long a warehouse operator has to confirm or dispute a quantity mismatch before the system automatically escalates to management.
 
 ---
 
@@ -586,7 +586,7 @@ sequenceDiagram
 
 **Key Takeaway**: Three-way match must be modeled as a dynamic diagram to expose the three failure modes. Each failure mode requires a different response to the supplier and a different state in the invoice aggregate.
 
-**Why It Matters**: Invoice matching disputes are the single largest cause of payment delays in P2P. A matching flow that provides actionable error details (exact delta, missing GRN) reduces average dispute resolution from days to hours.
+**Why It Matters**: Invoice matching disputes are the single largest cause of payment delays in P2P. A matching flow that provides actionable error details (exact delta, missing GRN) reduces average dispute resolution from days to hours. Walking the matching sequence diagram with finance stakeholders before implementation also confirms which discrepancy conditions require human review versus automatic approval, aligning the system's behavior with the finance team's actual workflow.
 
 ---
 
@@ -632,7 +632,7 @@ sequenceDiagram
 
 **Key Takeaway**: Every payment flow must begin with an idempotency check. At-least-once Kafka delivery makes duplicate event processing inevitable — only idempotency makes it safe.
 
-**Why It Matters**: Double-payments discovered after bank settlement require manual reversal processes that take days and damage supplier relationships. Idempotency checks that cost one database read prevent financial errors that cost thousands of person-hours to resolve.
+**Why It Matters**: Double-payments discovered after bank settlement require manual reversal processes that take days and damage supplier relationships. Idempotency checks that cost one database read prevent financial errors that cost thousands of person-hours to resolve. The payment run sequence diagram also serves as the runbook for on-call engineers investigating payment anomalies, reducing mean time to diagnosis during production incidents by providing a reference for expected system behavior.
 
 ---
 
@@ -680,7 +680,7 @@ sequenceDiagram
 
 **Key Takeaway**: Model dispute resolution as a complete dynamic diagram. Disputes that are resolved without re-running the match algorithm allow incorrect invoices to be cleared — a financial controls failure.
 
-**Why It Matters**: Invoice disputes are the highest-risk transaction type in P2P. Dynamic diagrams that show the full dispute-to-resolution flow, including event chains across containers, enable compliance teams to audit the exact resolution path for any disputed invoice.
+**Why It Matters**: Invoice disputes are the highest-risk transaction type in P2P. Dynamic diagrams that show the full dispute-to-resolution flow, including event chains across containers, enable compliance teams to audit the exact resolution path for any disputed invoice. Dispute resolution diagrams also define the state transitions that auditors check when investigating payment delays, making the audit trail verifiable against the design specification rather than requiring code inspection.
 
 ---
 
@@ -719,7 +719,7 @@ sequenceDiagram
 
 **Key Takeaway**: Cancellation flows must explicitly show every downstream consumer that must react. Missing a consumer in the cancellation flow creates zombie workflows — processes that continue operating on cancelled orders.
 
-**Why It Matters**: PO cancellations that do not notify receiving-api result in warehouse staff receiving goods that cannot be matched to any active PO, creating unmatched GRN records that require manual audit resolution.
+**Why It Matters**: PO cancellations that do not notify receiving-api result in warehouse staff receiving goods that cannot be matched to any active PO, creating unmatched GRN records that require manual audit resolution. Including the cancellation sequence in architecture documentation also establishes the integration test scenario for receiving-api — verifying that it rejects GRN submissions against cancelled POs rather than silently accepting shipments that can never be matched.
 
 ---
 
@@ -763,7 +763,7 @@ sequenceDiagram
 
 **Key Takeaway**: Maintain both a detailed sequence diagram per flow and an abbreviated end-to-end diagram. The abbreviated diagram enables onboarding; the detailed diagrams enable debugging.
 
-**Why It Matters**: New team members who understand the full P2P happy path from an abbreviated diagram can orient themselves in the codebase faster, reducing the time from onboarding to productive contribution.
+**Why It Matters**: New team members who understand the full P2P happy path from an abbreviated diagram can orient themselves in the codebase faster, reducing the time from onboarding to productive contribution. An abbreviated happy-path diagram also provides QA engineers with the end-to-end test scenario skeleton that exercises every service boundary in the P2P flow without requiring knowledge of every edge case or error branch.
 
 ---
 
@@ -806,7 +806,7 @@ sequenceDiagram
 
 **Key Takeaway**: Model Murabaha financing as a distinct dynamic flow, not as a variation of the standard payment flow. The three-party contract structure requires different containers and events from the two-party standard payment.
 
-**Why It Matters**: Organizations entering Islamic finance markets that retrofit Murabaha into a standard payment architecture routinely violate the contractual structure of the Murabaha contract, creating Sharia compliance failures that invalidate the financing arrangement.
+**Why It Matters**: Organizations entering Islamic finance markets that retrofit Murabaha into a standard payment architecture routinely violate the contractual structure of the Murabaha contract, creating Sharia compliance failures that invalidate the financing arrangement. An architecture-level Murabaha sequence diagram also gives Sharia scholars a reviewable artifact that does not require reading source code to assess whether the profit-rate, contract-acceptance, and disbursement steps follow the correct Sharia-compliant order.
 
 ---
 
@@ -877,7 +877,7 @@ graph TD
 
 **Key Takeaway**: Use separate Kubernetes namespaces per bounded context. Namespace isolation enforces the container-level data ownership decisions made in the Component diagrams.
 
-**Why It Matters**: Kubernetes clusters without namespace isolation allow any pod to reach any database port. Namespace-scoped NetworkPolicy translates the bounded context boundaries from architectural diagrams into enforced network rules.
+**Why It Matters**: Kubernetes clusters without namespace isolation allow any pod to reach any database port. Namespace-scoped NetworkPolicy translates the bounded context boundaries from architectural diagrams into enforced network rules. Infrastructure engineers who provision clusters from deployment diagrams rather than from memory produce infrastructure-as-code that matches the architecture specification, reducing configuration drift between development, staging, and production environments.
 
 ---
 
@@ -921,7 +921,7 @@ graph TD
 
 **Key Takeaway**: Set readiness probe failure threshold to 1 for database-dependent APIs. Tolerating readiness failures routes user traffic to pods that cannot handle requests — directly causing user-visible errors.
 
-**Why It Matters**: P2P platforms that experience partial rolling update failures (some pods ready, one without DB connection) produce intermittent 500 errors during deployment windows. Strict readiness probes make the failure complete and self-healing rather than intermittent and user-visible.
+**Why It Matters**: P2P platforms that experience partial rolling update failures (some pods ready, one without DB connection) produce intermittent 500 errors during deployment windows. Strict readiness probes make the failure complete and self-healing rather than intermittent and user-visible. Documenting the rolling update strategy in a deployment diagram also gives SREs the reference they need to configure `maxUnavailable` and `maxSurge` settings that match the platform's availability requirements before the first production deployment.
 
 ---
 
@@ -957,7 +957,7 @@ graph TD
 
 **Key Takeaway**: Scale event-driven containers on consumer lag in addition to CPU. CPU-only scaling is insufficient for containers whose bottleneck is event processing throughput rather than compute.
 
-**Why It Matters**: purchasing-api that falls behind on Kafka consumer lag during peak PO submission windows will miss `PaymentDisbursed` events, leaving POs stuck in `Invoiced` state indefinitely. Lag-based autoscaling prevents this accumulation.
+**Why It Matters**: purchasing-api that falls behind on Kafka consumer lag during peak PO submission windows will miss `PaymentDisbursed` events, leaving POs stuck in `Invoiced` state indefinitely. Lag-based autoscaling prevents this accumulation. HPA configuration visible in deployment diagrams also allows SREs and product managers to agree on the scaling boundary — maximum replica count, cost ceiling, and lag threshold — before auto-scaling decisions are made independently by the cluster.
 
 ---
 
@@ -1015,7 +1015,7 @@ graph TD
 
 **Key Takeaway**: Multi-region active-active deployments require region-local write stores. Cross-region synchronous writes create latency that defeats the purpose of multi-region deployment.
 
-**Why It Matters**: Global procurement platforms that share a single database region force all writes through the primary region's network latency. APAC buyers submitting POs against an EU-hosted database experience 200ms+ latency for every transaction — an unacceptable UX degradation for a process that runs thousands of times daily.
+**Why It Matters**: Global procurement platforms that share a single database region force all writes through the primary region's network latency. APAC buyers submitting POs against an EU-hosted database experience 200ms+ latency for every transaction — an unacceptable UX degradation for a process that runs thousands of times daily. Multi-region deployment diagrams also surface the conflict resolution strategy for concurrent writes, a requirement that must be agreed upon by finance and engineering stakeholders before implementation.
 
 ---
 
@@ -1104,7 +1104,7 @@ graph LR
 
 **Key Takeaway**: Always use backward-compatible (expand/contract) migrations for P2P schemas. A migration that causes old pods to fail produces downtime that cannot be resolved without a rollback of both code and schema.
 
-**Why It Matters**: P2P schema migrations that cause downtime block purchase orders in flight from being saved to the database. Transactions in progress that cannot commit result in lost requisition data and angry buyers.
+**Why It Matters**: P2P schema migrations that cause downtime block purchase orders in flight from being saved to the database. Transactions in progress that cannot commit result in lost requisition data and angry buyers. Documenting the migration sequence in a deployment diagram also gives DBAs and release engineers a shared reference that prevents the expand-contract pattern from being skipped under delivery pressure, ensuring zero-downtime migrations even when timelines are tight.
 
 ---
 
@@ -1169,7 +1169,7 @@ graph TD
 
 **Key Takeaway**: Model the full observability stack as a deployment diagram. Observability is infrastructure — it has deployment topology, resource requirements, and failure modes that must be designed and documented.
 
-**Why It Matters**: On-call engineers investigating P2P incidents without distributed traces spend hours on manual log correlation across purchasing-api, invoicing-api, and payments-worker. Distributed traces that correlate a single `purchaseOrderId` across all containers reduce mean time to resolution from hours to minutes.
+**Why It Matters**: On-call engineers investigating P2P incidents without distributed traces spend hours on manual log correlation across purchasing-api, invoicing-api, and payments-worker. Distributed traces that correlate a single `purchaseOrderId` across all containers reduce mean time to resolution from hours to minutes. Observability infrastructure visible in deployment diagrams also defines the data retention and sampling rate decisions that must be made before the stack is deployed, when they are inexpensive to change.
 
 ---
 
@@ -1212,4 +1212,4 @@ graph TD
 
 **Key Takeaway**: Store C4 diagrams as Mermaid text in the same repository as the application code. Treat diagram updates as a required change in PRs that introduce new containers or components.
 
-**Why It Matters**: Architecture diagrams that are not version-controlled drift from the implementation within months. A P2P platform where the Container diagram no longer reflects the actual deployment topology is a platform where on-call engineers cannot trust architectural documentation during incidents — when correct documentation is most critical.
+**Why It Matters**: Architecture diagrams that are not version-controlled drift from the implementation within months. A P2P platform where the Container diagram no longer reflects the actual deployment topology is a platform where on-call engineers cannot trust architectural documentation during incidents — when correct documentation is most critical. Version-controlled diagrams also enable automated checks — such as CI pipeline steps that verify diagram syntax and flag diagrams not updated when related source files change.

@@ -132,40 +132,57 @@ public record PurchaseOrder(       // => record = immutable; equals/hashCode/toS
 Value objects encapsulate a primitive value plus its invariants. They make illegal states unrepresentable at the type level and prevent the billion-dollar mistake of mixing up raw strings.
 
 ```java
+// Domain value objects: PurchaseOrderId and Money
+// => package com.example.procurement.purchasing.domain
 package com.example.procurement.purchasing.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 // PurchaseOrderId: wraps a String but enforces the "po_<uuid>" format invariant
-// => using a record eliminates the need to hand-write equals/hashCode
+// => record: compiler generates equals, hashCode, toString automatically
+// => value(): generated accessor — no need to hand-write getter
 public record PurchaseOrderId(String value) {
-    // Compact canonical constructor — runs before the implicit one
+    // Compact canonical constructor: runs validation before the implicit record constructor
+    // => compact form omits parameter list; implicit this.value = value assignment still runs
     public PurchaseOrderId {
-        Objects.requireNonNull(value, "PurchaseOrderId must not be null"); // => null guard
-        if (!value.startsWith("po_") || value.length() < 39) { // => format: "po_" + 36-char UUID
+        Objects.requireNonNull(value, "PurchaseOrderId must not be null");
+        // => null guard: fails fast at construction; no null PurchaseOrderId can exist
+        if (!value.startsWith("po_") || value.length() < 39) {
+            // => format invariant: "po_" prefix + 36-char UUID = minimum 39 chars
             throw new IllegalArgumentException("Invalid PurchaseOrderId: " + value);
-            // => invariant enforced at construction; caller cannot create a bad id
+            // => construction fails: caller sees the invalid value in the error message
         }
     }
-    // => PurchaseOrderId("po_550e8400-...") succeeds; PurchaseOrderId("abc") throws
+    // => PurchaseOrderId("po_550e8400-e29b-41d4-a716-446655440000") — succeeds; 39 chars
+    // => PurchaseOrderId("abc") — throws IllegalArgumentException; does not start with "po_"
+    // => PurchaseOrderId(null)  — throws NullPointerException from requireNonNull above
 }
 
-// Money: amount + ISO 4217 currency — richer than a raw BigDecimal
-// => prevents mixing USD amounts with EUR amounts silently
+// Money: immutable value object combining amount + ISO 4217 currency code
+// => richer than BigDecimal alone: prevents silently mixing USD and EUR amounts
+// => record: generated equals() compares both amount and currency fields
 public record Money(BigDecimal amount, String currency) {
+    // Compact canonical constructor: validates both fields before the record is built
     public Money {
-        Objects.requireNonNull(amount, "amount required");   // => null guard
-        Objects.requireNonNull(currency, "currency required"); // => null guard
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {         // => invariant: amount >= 0
+        Objects.requireNonNull(amount, "amount required");
+        // => null guard: amount field cannot be null; BigDecimal.ZERO is valid
+        Objects.requireNonNull(currency, "currency required");
+        // => null guard: currency field cannot be null; empty string caught below
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            // => invariant: negative money is not meaningful in the P2P domain
             throw new IllegalArgumentException("Money amount must be >= 0");
+            // => caller sees clear message: "Money amount must be >= 0"
         }
-        if (currency.length() != 3) {                        // => ISO 4217 is exactly 3 letters
+        if (currency.length() != 3) {
+            // => ISO 4217: all currency codes are exactly 3 uppercase letters (USD, EUR, IDR)
             throw new IllegalArgumentException("Currency must be 3-letter ISO 4217 code");
+            // => "US" (2 chars) and "USDD" (4 chars) both fail here
         }
     }
-    // => Money(new BigDecimal("1000.00"), "USD") succeeds
-    // => Money(new BigDecimal("-1"), "USD") throws at construction time
+    // => Money(new BigDecimal("1000.00"), "USD") — succeeds; amount >= 0, currency = 3 chars
+    // => Money(new BigDecimal("-1"), "USD")       — throws; amount < 0 violates invariant
+    // => Money(new BigDecimal("500"), "US")       — throws; currency must be 3 letters
 }
 ```
 
@@ -179,39 +196,80 @@ public record Money(BigDecimal amount, String currency) {
 
 The dependency rule is the single most important invariant in hexagonal architecture: dependencies always point inward. Outer zones depend on inner zones; inner zones never depend on outer zones. This is enforced by package visibility, module boundaries, or architectural tests.
 
+**Legal imports (inward dependencies only)**:
+
 ```java
-// Dependency direction: Adapter → Application → Domain (never reversed)
-// => if Domain imports an Adapter class, the architecture is broken
-
-// LEGAL: Application imports Domain
+// Application zone: may import domain types — inward dependency is always legal
 // => package com.example.procurement.purchasing.application
-import com.example.procurement.purchasing.domain.PurchaseOrder; // => ok: inward dependency
-import com.example.procurement.purchasing.domain.PurchaseOrderId; // => ok: inward
+import com.example.procurement.purchasing.domain.PurchaseOrder;   // => ok: inward dependency
+import com.example.procurement.purchasing.domain.PurchaseOrderId; // => ok: inward direction
+import com.example.procurement.purchasing.domain.Money;            // => ok: domain value object
 
-// LEGAL: Adapter imports Application
+// Adapter zone: may import application types — one step further outward
 // => package com.example.procurement.purchasing.adapter.in.web
-import com.example.procurement.purchasing.application.IssuePurchaseOrderUseCase; // => ok
+import com.example.procurement.purchasing.application.IssuePurchaseOrderUseCase; // => ok: inward
+```
 
-// ILLEGAL: Domain importing Application (outward dependency)
+**Illegal imports (outward dependencies — architecture violations)**:
+
+```java
+// Domain zone importing Application: FORBIDDEN
 // => package com.example.procurement.purchasing.domain
-// import com.example.procurement.purchasing.application.*; // => NEVER — breaks hexagon
-// => domain would depend on orchestration layer — circular when service imports domain
+// import com.example.procurement.purchasing.application.IssuePurchaseOrderService; // => NEVER
+// => domain would depend on orchestration; creates circular compile dependency
 
-// ILLEGAL: Application importing an Adapter (outward dependency)
+// Application zone importing Adapter: FORBIDDEN
 // => package com.example.procurement.purchasing.application
-// import com.example.procurement.purchasing.adapter.in.web.*; // => NEVER
-// => application logic would be coupled to Spring/HTTP — untestable without server
+// import com.example.procurement.purchasing.adapter.in.web.PurchaseOrderHttpController; // => NEVER
+// => application logic coupled to Spring; cannot test without web container
+```
 
-// Enforced with ArchUnit in CI:
-// noClasses().that().resideInPackage("..domain..")
-//     .should().dependOnClassesThat()
-//     .resideInPackage("..application..")  // => ArchUnit test fails if rule violated
-// => run in test:unit; acts as compile-time-equivalent guard on import graph
+**ArchUnit test enforcing the dependency rule in CI**:
+
+```java
+// ArchUnit: dependency rule as an executable test — runs in < 500ms
+// => package com.example.procurement.architecture
+package com.example.procurement.architecture;
+
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import org.junit.jupiter.api.Test;
+
+class HexagonDependencyTest {
+
+    private static final var classes =
+        new ClassFileImporter().importPackages("com.example.procurement");
+    // => classes: all compiled .class files in the procurement package tree
+
+    @Test void domain_must_not_depend_on_application() {
+        noClasses().that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAPackage("..application..")
+            .check(classes);
+        // => fails: any domain class that imports an application type → CI build broken
+        // => passes: domain imports only java.* and sibling domain types
+    }
+
+    @Test void domain_must_not_depend_on_adapters() {
+        noClasses().that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAPackage("..adapter..")
+            .check(classes);
+        // => fails: @Entity or @RestController imported in domain → caught immediately
+    }
+
+    @Test void application_must_not_depend_on_adapters() {
+        noClasses().that().resideInAPackage("..application..")
+            .should().dependOnClassesThat().resideInAPackage("..adapter..")
+            .check(classes);
+        // => fails: application service imports PgPurchaseOrderRepository directly
+        // => passes: application imports only domain types and port interfaces
+    }
+}
+// => all three ArchUnit tests run as part of test:unit; sub-second; zero infrastructure
 ```
 
 **Key Takeaway**: Dependencies always point inward — domain ← application ← adapters. The reverse direction is always an architectural violation.
 
-**Why It Matters**: Enforcing the dependency rule with ArchUnit turns a convention into a compile-like gate. Any future commit that accidentally imports a Spring class into the domain will fail the CI build immediately, before it reaches code review.
+**Why It Matters**: Enforcing the dependency rule with ArchUnit turns a convention into a compile-like gate. Any future commit that accidentally imports a Spring class into the domain will fail the CI build immediately, before it reaches code review. In a growing P2P platform, this protection becomes increasingly valuable — as the team scales from 5 to 50 developers, manual enforcement of architectural rules is unreliable. ArchUnit makes the hexagon self-defending: the architecture test suite rejects rule violations the same way a compiler rejects type errors.
 
 ---
 
@@ -375,69 +433,87 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 // JPA entity: lives in adapter layer; domain record stays annotation-free
-// => @Entity: JPA maps this class to the "purchase_orders" table — adapter concern only
+// => @Entity tells JPA to manage this class as a persistent entity
+// => @Table maps the class to the "purchase_orders" table — adapter concern only
 @Entity @Table(name = "purchase_orders")
 class PurchaseOrderJpaEntity {
-    @Id String id;               // => JPA primary key; raw String ok here (adapter layer)
-    String supplierId;           // => raw String; typed domain value object mapped on load
-    BigDecimal totalAmount;      // => stored as DECIMAL; currency stored separately
-    String totalCurrency;        // => ISO 4217 code; reconstructed into Money on load
-    String status;               // => stored as string enum name
+    @Id String id;               // => @Id: JPA primary key column; raw String ok (adapter layer)
+    String supplierId;           // => raw String; reconstructed to typed SupplierId on load
+    BigDecimal totalAmount;      // => stored as DECIMAL(19,4); currency stored in separate column
+    String totalCurrency;        // => ISO 4217 code e.g. "USD"; reconstructed into Money on load
+    String status;               // => stored as enum name string e.g. "AWAITING_APPROVAL"
+    // => no domain annotations (@Entity, @Table) leak to the domain record — adapter boundary holds
 }
 
-// Spring Data JPA repository interface — adapter-internal, not the output port
-// => JpaPoRepository is NOT exposed to the application layer
+// Spring Data JPA repository interface — adapter-internal; never exposed to application layer
+// => extends JpaRepository: Spring generates all CRUD methods at boot time via reflection
+// => @Repository: Spring marks this as a persistence component; exception translation enabled
 @Repository
 interface JpaPoRepository extends JpaRepository<PurchaseOrderJpaEntity, String> {}
-// => Spring generates implementation at boot time
+// => Spring creates a proxy at startup; no handwritten SQL for basic CRUD operations
 
-// PgPurchaseOrderRepository: the actual output port implementation
-// => Implements the domain-facing interface; maps to/from JPA entity internally
+// PgPurchaseOrderRepository: the actual output port implementation used in production
+// => implements PurchaseOrderRepository (domain-facing interface) using JPA internally
+// => application service depends on PurchaseOrderRepository; never sees this class
 public class PgPurchaseOrderRepository implements PurchaseOrderRepository {
 
-    private final JpaPoRepository jpa; // => Spring Data JPA — adapter-internal detail
+    private final JpaPoRepository jpa; // => Spring Data JPA — adapter-internal detail only
 
+    // Constructor injection: jpa is injected by the composition root (Spring @Configuration)
+    // => no @Autowired on fields; domain and application zones never use @Autowired
     public PgPurchaseOrderRepository(JpaPoRepository jpa) {
-        this.jpa = jpa; // => constructor injection; no field @Autowired in domain/application
+        this.jpa = jpa; // => stored for use in save(), findById(), existsById()
     }
 
     @Override
     public PurchaseOrder save(PurchaseOrder po) {
-        jpa.save(toEntity(po));   // => maps domain record → JPA entity; JPA persists it
-        return po;                // => return domain record; caller never sees JPA entity
+        jpa.save(toEntity(po));  // => toEntity(): domain record → JPA entity mapping
+        // => jpa.save(): Spring Data issues INSERT or UPDATE; returns managed entity (ignored)
+        return po;               // => return original domain record; caller sees domain type only
+        // => JPA entity never leaks past this method; boundary maintained
     }
 
     @Override
     public Optional<PurchaseOrder> findById(PurchaseOrderId id) {
-        return jpa.findById(id.value()) // => JPA finds by raw String id
-                  .map(this::toDomain); // => maps JPA entity → domain record on the way out
+        return jpa.findById(id.value())  // => id.value(): unwrap typed id to raw String for JPA
+                  .map(this::toDomain);  // => toDomain(): JPA entity → domain record on the way out
+        // => Optional.empty() when row not found; Optional<PurchaseOrder> propagated to caller
     }
 
     @Override
     public boolean existsById(PurchaseOrderId id) {
-        return jpa.existsById(id.value()); // => delegates to Spring Data; O(1) COUNT query
+        return jpa.existsById(id.value());
+        // => Spring Data: SELECT COUNT(*) WHERE id=?; returns boolean; O(1) cost
+        // => id.value(): raw String unwrapped from typed PurchaseOrderId for JPA query
     }
 
-    // Mapping helpers: adapter-internal; domain never sees these methods
+    // toEntity: translate domain record → JPA entity (adapter-internal; domain never calls this)
+    // => all field assignments are primitive unwrappings from typed value objects
     private PurchaseOrderJpaEntity toEntity(PurchaseOrder po) {
         var e = new PurchaseOrderJpaEntity();
-        e.id = po.id().value();                         // => unwrap typed id to raw String
-        e.supplierId = po.supplierId().value();         // => unwrap SupplierId
-        e.totalAmount = po.total().amount();            // => extract BigDecimal
-        e.totalCurrency = po.total().currency();        // => extract ISO code
-        e.status = po.status().name();                  // => enum to String
+        e.id = po.id().value();            // => PurchaseOrderId → raw String for @Id column
+        e.supplierId = po.supplierId().value(); // => SupplierId → raw String for supplier_id column
+        e.totalAmount = po.total().amount();    // => Money.amount() → BigDecimal for DECIMAL column
+        e.totalCurrency = po.total().currency(); // => Money.currency() → String for currency column
+        e.status = po.status().name();          // => POStatus enum → String name for status column
         return e;
+        // => e: fully populated JPA entity; passed to jpa.save(); adapter-internal only
     }
 
+    // toDomain: translate JPA entity → domain record (adapter-internal; called only from findById)
+    // => reconstructs each typed value object from the raw DB column values
     private PurchaseOrder toDomain(PurchaseOrderJpaEntity e) {
         return new PurchaseOrder(
-            new PurchaseOrderId(e.id),           // => reconstruct typed value object
-            new SupplierId(e.supplierId),         // => reconstruct typed value object
-            new Money(e.totalAmount, e.totalCurrency), // => reconstruct Money
-            POStatus.valueOf(e.status)            // => String back to domain enum
+            new PurchaseOrderId(e.id),              // => raw String → typed PurchaseOrderId
+            new SupplierId(e.supplierId),            // => raw String → typed SupplierId
+            new Money(e.totalAmount, e.totalCurrency), // => BigDecimal + String → Money value object
+            POStatus.valueOf(e.status)               // => String name → domain enum constant
         );
+        // => domain record: fully reconstructed with typed value objects; no raw Strings visible
     }
 }
+// => domain record PurchaseOrder has zero JPA annotations; compiles without jakarta.persistence
+// => swapping to jOOQ: replace toEntity/toDomain + JpaPoRepository; application service unchanged
 ```
 
 **Key Takeaway**: The JPA adapter maps between the domain record and a JPA entity. All `@Entity` annotations stay in the adapter layer; the domain record remains annotation-free.
@@ -586,7 +662,7 @@ class PurchaseOrderHttpController {}   // => primary adapter; HTTP in-bound
 
 **Key Takeaway**: Output ports end in `Repository`/`Port`, input ports end in `UseCase`, services end in `Service`, adapters are prefixed with their technology (`InMemory`, `Pg`, `Http`).
 
-**Why It Matters**: When the naming convention is universally applied, a developer can locate the Postgres persistence adapter for `PurchaseOrder` by searching for `PgPurchaseOrder` — no IDE navigation required. Onboarding a new engineer to the codebase takes hours, not days.
+**Why It Matters**: When the naming convention is universally applied, a developer can locate the Postgres persistence adapter for `PurchaseOrder` by searching for `PgPurchaseOrder` — no IDE navigation required. Onboarding a new engineer to the codebase takes hours, not days. Consistent suffixes also make grep-based audits possible: finding all use cases is `grep -r "UseCase" src/`, and all adapters is `grep -r "implements.*Repository" src/`. Convention consistency pays compound interest as the team grows.
 
 ---
 
@@ -631,7 +707,7 @@ The package structure enforces the three-zone separation at the filesystem level
 
 **Key Takeaway**: Package paths encode the hexagonal zone (`domain`, `application`, `adapter.in.*`, `adapter.out.*`). The directory tree is the architecture diagram.
 
-**Why It Matters**: Tools like ArchUnit can assert dependency rules by package path pattern — `noClasses().that().resideIn("..domain..").should().dependOn("..adapter..")`. Making the package structure match the architecture prevents silent violations that accumulate over months.
+**Why It Matters**: Tools like ArchUnit can assert dependency rules by package path pattern — `noClasses().that().resideIn("..domain..").should().dependOn("..adapter..")`. Making the package structure match the architecture prevents silent violations that accumulate over months. When a new developer joins, the directory layout itself communicates the architecture without needing a whiteboard session. The package tree is the cheapest always-up-to-date architectural documentation in the codebase.
 
 ---
 
@@ -652,44 +728,54 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 // CreatePORequest: inbound DTO — adapter-layer record; never crosses into domain
-// => Fields are Strings; the application service parses/validates them into domain types
+// => all fields are String: raw JSON values; application service parses and validates them
+// => record: immutable; generated equals/hashCode; Jackson deserialises from JSON body
 record CreatePORequest(String supplierId, String totalAmount, String totalCurrency) {}
+// => JSON example: {"supplierId":"550e...","totalAmount":"1500.00","totalCurrency":"USD"}
 
-// CreatePOResponse: outbound DTO — adapter-layer record; built from domain object
-// => Domain types are unwrapped to primitives for JSON serialisation
+// CreatePOResponse: outbound DTO — adapter-layer record; built from domain types
+// => domain typed fields are unwrapped to primitives for JSON serialisation
+// => record: Spring's Jackson converter serialises all accessor methods to JSON fields
 record CreatePOResponse(String id, String supplierId, String status) {}
+// => JSON output: {"id":"po_...","supplierId":"sup_...","status":"AWAITING_APPROVAL"}
 
 // PurchaseOrderHttpController: primary adapter — thin; zero business logic
-// => @RestController: Spring annotation lives here, not in domain or application
+// => @RestController: Spring annotation; marks this class as an HTTP adapter
+// => @RequestMapping: all endpoints in this class are under /api/v1/purchase-orders
 @RestController
 @RequestMapping("/api/v1/purchase-orders")
 public class PurchaseOrderHttpController {
 
-    private final IssuePurchaseOrderUseCase useCase; // => input port; not the concrete service
-    // => depends on interface: swappable adapter in tests without Spring context
+    private final IssuePurchaseOrderUseCase useCase; // => input port interface; not the concrete service
+    // => depends on interface: controller can be tested with a stub without Spring context
 
     public PurchaseOrderHttpController(IssuePurchaseOrderUseCase useCase) {
-        this.useCase = useCase; // => constructor injection; Spring populates from DI container
+        this.useCase = useCase; // => constructor injection; Spring DI populates this from @Bean
+        // => no @Autowired on field; explicit constructor dependency is visible and testable
     }
 
+    // create: handles POST /api/v1/purchase-orders
+    // => @PostMapping: maps HTTP POST to this method; @RequestBody: deserialises JSON body
     @PostMapping
     public ResponseEntity<CreatePOResponse> create(@RequestBody CreatePORequest req) {
-        // Translate HTTP request → command (no business logic here)
+        // Step 1: Translate HTTP inbound DTO → application command (no business logic)
         var command = new IssuePurchaseOrderUseCase.IssuePOCommand(
             req.supplierId(), req.totalAmount(), req.totalCurrency()
-        ); // => command: inbound DTO → application-layer command record
+        );
+        // => command: adapter-layer fields forwarded to application-layer command record
 
-        // Delegate to use case (all logic lives there)
-        PurchaseOrder po = useCase.execute(command); // => port call; adapter does not care about impl
+        // Step 2: Delegate to use case — all business logic lives in the service
+        PurchaseOrder po = useCase.execute(command);
+        // => execute(): port call; returns domain PurchaseOrder; adapter never sees service impl
 
-        // Translate domain result → HTTP response
+        // Step 3: Translate domain result → HTTP outbound DTO
         var response = new CreatePOResponse(
-            po.id().value(),          // => unwrap typed id to String for JSON
-            po.supplierId().value(),  // => unwrap SupplierId
-            po.status().name()        // => domain enum to String
+            po.id().value(),          // => PurchaseOrderId → raw String for JSON "id" field
+            po.supplierId().value(),  // => SupplierId → raw String for JSON "supplierId" field
+            po.status().name()        // => POStatus enum → String name for JSON "status" field
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        // => 201 Created; body is the outbound DTO
+        // => HTTP 201 Created; JSON body: {"id":"po_...","supplierId":"sup_...","status":"AWAITING_APPROVAL"}
     }
 }
 ```
@@ -980,7 +1066,7 @@ class IssuePurchaseOrderServiceTest {
 
 **Key Takeaway**: The in-memory adapter makes application service tests framework-free, instant, and 100% deterministic.
 
-**Why It Matters**: A suite of 200 application service tests that runs in under two seconds enables fearless refactoring. Developers run the full suite on every save. When a domain rule changes, the relevant test fails immediately — not after a 90-second Docker boot.
+**Why It Matters**: A suite of 200 application service tests that runs in under two seconds enables fearless refactoring. Developers run the full suite on every save. When a domain rule changes, the relevant test fails immediately — not after a 90-second Docker boot. In a P2P platform context, this means that adding a new approval level or changing a PO state machine rule produces CI feedback in seconds rather than minutes, reducing the cycle time for every developer on the team.
 
 ---
 
@@ -1038,7 +1124,7 @@ public PurchaseOrder submit() {
 
 **Key Takeaway**: Domain errors are typed exceptions. The adapter layer catches specific types and maps them to HTTP status codes — no domain logic in the error handler.
 
-**Why It Matters**: Typed domain exceptions make the domain's error contract explicit. A new adapter (CLI, GraphQL, gRPC) can map the same exception to its own protocol-specific error format without changing the domain or the application service.
+**Why It Matters**: Typed domain exceptions make the domain's error contract explicit. A new adapter (CLI, GraphQL, gRPC) can map the same exception to its own protocol-specific error format without changing the domain or the application service. In a P2P platform, the same `InvalidStateTransitionException` maps to HTTP 409 in the REST adapter, an exit code 2 in the CLI adapter, and a `BAD_USER_INPUT` GraphQL error in the GraphQL adapter — one exception class, multiple protocol mappings, zero duplication of the domain rule that triggered it.
 
 ---
 

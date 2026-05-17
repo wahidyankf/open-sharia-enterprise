@@ -111,6 +111,7 @@ The Npgsql adapter in the infrastructure layer satisfies the port record. It ope
 // Production Npgsql adapter — infrastructure layer only
 // src/ProcurementPlatform/Contexts/Purchasing/Infrastructure/NpgsqlPurchaseOrderRepository.fs
 module ProcurementPlatform.Contexts.Purchasing.Infrastructure.NpgsqlPurchaseOrderRepository
+// => Infrastructure layer: the only layer that may import Npgsql and Dapper
 
 open Npgsql
 // => Npgsql confined to infrastructure — the seam absorbs the framework dependency
@@ -126,60 +127,79 @@ let npgsqlPurchaseOrderRepository (connStr: string) : PurchaseOrderRepository =
     // => connStr: injected by the composition root at startup from AppConfig
     // => Returns the record literal — each field is a function closed over connStr
     { SavePurchaseOrder =
+        // => SavePurchaseOrder: satisfies the write side of PurchaseOrderRepository
+        // => record literal field: assigned a function value — closed over connStr at construction time
         fun po ->
             // => fun po: the per-call argument — connStr is already bound
             async {
+            // => async { }: F# computation expression — execution is lazy until Async.RunSynchronously or Async.StartImmediately
                 use conn = new NpgsqlConnection(connStr)
                 // => use: IDisposable — returns connection to the pool when the binding exits
                 // => NpgsqlConnection pool is managed by Npgsql; no explicit pool initialization needed
                 try
+                    // => try/with: wraps Npgsql I/O — exceptions are translated at the seam boundary
                     let! _ =
                         conn.ExecuteAsync(
                             "INSERT INTO purchasing.purchase_orders (po_id, supplier_id, total_amount, currency, status, created_at) VALUES (@PoId, @SupplierId, @TotalAmount, @Currency, @Status, @CreatedAt)",
                             { PoId       = let (PurchaseOrderId id) = po.Id in id
+                              // => Unwrap the single-case DU to get the raw Guid for the SQL parameter
                               SupplierId = let (SupplierId id) = po.SupplierId in id
+                              // => Same pattern: SupplierId DU → raw Guid
                               TotalAmount = po.TotalAmount.Amount
+                              // => Decimal amount extracted from the Money value object
                               Currency    = po.TotalAmount.Currency
+                              // => ISO 4217 currency code stored separately from the amount
                               Status      = sprintf "%A" po.Status
+                              // => Status DU serialized to string — stored as varchar in the DB
                               CreatedAt   = po.CreatedAt })
+                              // => UTC timestamp — the DB column is timestamptz
                         |> Async.AwaitTask
                     // => ExecuteAsync: issues the INSERT via Npgsql — actual network I/O here
                     // => Async.AwaitTask: bridges .NET Task to F# Async without thread blocking
                     return Ok ()
-                    // => Success: the row is committed; caller receives unit
+                    // => Ok (): the INSERT committed — callers do not re-read after a successful save
                 with
                 | :? PostgresException as ex when ex.SqlState = "23505" ->
                     // => SqlState "23505" is PostgreSQL's unique_violation error code
                     // => Translate to typed RepositoryError — application layer never sees the raw exception
                     return Error UniqueConstraintViolation
+                    // => UniqueConstraintViolation: caller can return HTTP 409 without inspecting exceptions
                 | ex ->
                     // => All other exceptions: connection timeout, other constraint failures
                     return Error (ConnectionFailure ex)
                     // => Carry the raw exception for logging — the caller logs and returns HTTP 500
             }
       FindPurchaseOrder =
+        // => FindPurchaseOrder: satisfies the read side of PurchaseOrderRepository
         fun (PurchaseOrderId poId) ->
             // => Destructure the single-case DU — poId is the raw Guid
             async {
+                // => async { }: same pattern as SavePurchaseOrder — all DB I/O is async
                 use conn = new NpgsqlConnection(connStr)
                 // => Fresh connection per call — pool manages the underlying socket
                 try
+                    // => try/with: catches Npgsql I/O failures — translates to ConnectionFailure
                     let! row =
                         conn.QueryFirstOrDefaultAsync<PurchaseOrderRow>(
                             "SELECT * FROM purchasing.purchase_orders WHERE po_id = @PoId",
                             {| PoId = poId |})
                         |> Async.AwaitTask
+                    // => |> Async.AwaitTask: bridges the .NET Task returned by Dapper to F# Async
                     // => QueryFirstOrDefaultAsync: returns null if no row found — mapped to None below
+                    // => Anonymous record {| PoId = poId |}: Dapper maps this to the @PoId SQL parameter
                     match box row with
                     // => box: wraps F# value in obj to enable null check — F# records are non-nullable
                     | null -> return Ok None
                     // => No row found: valid domain outcome — caller decides what to do
+                    // => Ok None rather than Error: absence of a row is not an infrastructure failure
                     | _ ->
                         return Ok (Some (purchaseOrderRowToDomain row))
                         // => purchaseOrderRowToDomain: maps the DB row record to the PurchaseOrder domain aggregate
+                        // => Some: row was found — wrap in option to match the port contract
                 with ex ->
                     return Error (ConnectionFailure ex)
                     // => Any database error becomes ConnectionFailure — the caller logs and returns 500
+                    // => Includes connection timeouts, SSL errors, and unexpected PostgreSQL errors
             }
     }
 ```
@@ -280,6 +300,7 @@ A test wires the in-memory adapter at the application service seam:
 // Integration test using the in-memory adapter — no Docker, no PostgreSQL
 // Tests/Purchasing/SubmitPurchaseOrderTests.fs
 module ProcurementPlatform.Tests.Purchasing.SubmitPurchaseOrderTests
+// => Test module: sits in the Tests/ folder, never imported by production code
 
 open Xunit
 // => xUnit: test framework — discovers [<Fact>] methods and reports pass/fail
@@ -306,9 +327,13 @@ let ``submitPurchaseOrder stores a valid PO`` () =
         // => defaultWith failwith: fails the test if the Money is invalid
         let po =
             { Id = PurchaseOrderId (System.Guid.NewGuid())
+              // => New Guid wrapped in single-case DU — uniquely identifies this PO
               SupplierId = SupplierId (System.Guid.NewGuid())
+              // => Supplier identity — irrelevant for this test; any valid Guid works
               TotalAmount = money
+              // => Validated Money value — 500 USD passed the smart constructor
               Status = Draft
+              // => Initial state: all POs start as Draft before submission
               CreatedAt = System.DateTimeOffset.UtcNow }
         // => Domain aggregate constructed from validated value objects
 
@@ -502,6 +527,7 @@ let makeInMemoryPublisher () =
 // Outbox event publisher adapter — writes event rows in the same Npgsql transaction
 // src/ProcurementPlatform/Contexts/Purchasing/Infrastructure/OutboxEventPublisher.fs
 module ProcurementPlatform.Contexts.Purchasing.Infrastructure.OutboxEventPublisher
+// => Infrastructure layer: holds the Npgsql dependency — application layer never imports this
 
 open System.Text.Json
 // => System.Text.Json: serialize the event payload to a JSON string for the outbox row
@@ -512,12 +538,13 @@ open ProcurementPlatform.Contexts.Purchasing.Application.Ports
 
 // Outbox row shape — persisted in purchasing.outbox_events
 type OutboxRow =
+    // => CLIMutable not needed: Dapper uses the record field names directly for parameterized INSERT
     { id: System.Guid
       // => UUID primary key — generated at publish time, not by the DB
       event_type: string
       // => DomainEvent case name as a string — used by the relay worker to dispatch
       payload: string
-      // => JSON serialization of the event payload — relay worker deserializes this
+      // => JSON serialization of the event payload — relay worker deserializes with the same schema
       created_at: System.DateTimeOffset
       // => UTC timestamp: relay worker uses this for ordering and age-based alerting
       processed_at: System.DateTimeOffset option }
@@ -527,12 +554,16 @@ type OutboxRow =
 let makeOutboxPublisher (connStr: string) : EventPublisher =
     // => connStr: injected by the composition root — same schema as the purchasing.purchase_orders table
     { Publish =
+        // => Record literal: satisfies the EventPublisher port — must match the record shape exactly
         fun event ->
+            // => event: the DomainEvent DU case dispatched by the application service
             async {
+                // => async { }: F# computation expression — .NET Task under the hood
                 use conn = new NpgsqlConnection(connStr)
                 // => Separate connection for simplicity; in production, share the transaction
                 // => for atomic aggregate + outbox commit, use NpgsqlTransaction across both INSERTs
                 let row =
+                    // => Construct the outbox row from the event — no domain logic here
                     { id          = System.Guid.NewGuid()
                       // => New UUID per event — idempotency key for the relay worker
                       event_type  = event.GetType().Name
@@ -548,7 +579,8 @@ let makeOutboxPublisher (connStr: string) : EventPublisher =
                         "INSERT INTO purchasing.outbox_events (id, event_type, payload, created_at, processed_at) VALUES (@id, @event_type, @payload, @created_at, @processed_at)",
                         row)
                     |> Async.AwaitTask
-                // => INSERT the outbox row — no I/O until this line
+                // => ExecuteAsync: actual network I/O — inserts the outbox row into the database
+                // => Async.AwaitTask: bridges .NET Task to F# Async
                 return Ok ()
                 // => Ok (): the publisher contract is fire-and-confirm, not fire-and-forget
             }
@@ -580,11 +612,14 @@ let app = WebApplication.Create()
 // => Minimal API host — simpler than the builder pattern in Program.fs
 
 app.MapPost("/api/v1/purchase-orders", fun (ctx: HttpContext) ->
+    // => MapPost: route registration — handler closure captures the HttpContext per request
     task {
+        // => task { }: C#-style async computation — required by MapPost's delegate signature
         let! dto = ctx.Request.ReadFromJsonAsync<{| supplierId: string; totalAmount: decimal; currency: string |}>()
         // => Deserialize with BCL's HttpContext extension — no BindJsonAsync helper
         // => Anonymous record DTO: no generated contract types, no CLIMutable attribute
         if dto.totalAmount <= 0m then
+            // => Validation inline in the handler — duplicated at every endpoint
             ctx.Response.StatusCode <- 400
             // => Magic number 400: no typed RequestErrors combinator — repeated at every endpoint
             do! ctx.Response.WriteAsJsonAsync({| error = "totalAmount must be positive" |})
@@ -595,6 +630,7 @@ app.MapPost("/api/v1/purchase-orders", fun (ctx: HttpContext) ->
             do! ctx.Response.WriteAsJsonAsync({| id = System.Guid.NewGuid(); currency = dto.currency |})
             // => Business logic (ID generation) leaks into the handler — no application service boundary
     }) |> ignore
+// => |> ignore: MapPost returns RouteHandlerBuilder — ignore discards it; the route is already registered
 ```
 
 **Limitation for production**: validation logic duplicated across every `MapPost` lambda. Business logic in the handler. No typed error discrimination — status codes are magic numbers. The flat closure cannot compose with Giraffe middleware.
@@ -607,6 +643,7 @@ The full Giraffe handler pipeline enforces a strict translation discipline:
 // Full Giraffe handler pipeline — DTO → smart constructors → service → response DTO
 // src/ProcurementPlatform/Contexts/Purchasing/Presentation/PurchasingHandlers.fs
 module ProcurementPlatform.Contexts.Purchasing.Presentation.PurchasingHandlers
+// => Presentation layer: the only layer allowed to import both domain and HTTP concerns
 
 open Giraffe
 // => Giraffe: HttpHandler, BindJsonAsync, RequestErrors, Successful, ServerErrors
@@ -620,25 +657,34 @@ open ProcurementPlatform.Contexts.Purchasing.Application.SubmitPurchaseOrder
 
 // Request DTO — deserialized from JSON
 [<CLIMutable>]
+// => CLIMutable: reflection-based setters required by Giraffe's BindJsonAsync
 type SubmitPurchaseOrderRequest =
     { SupplierId: System.Guid
+      // => Guid: no strongly-typed wrapper at the boundary — the smart constructor wraps it
       TotalAmount: decimal
-      // => CLIMutable: reflection-based setters required by Giraffe's BindJsonAsync
+      // => Raw decimal: validated by createMoney before entering the domain
       Currency: string
+      // => ISO 4217 currency code — validated by createMoney smart constructor
       Notes: string option }
+      // => Optional free-text note — not used in domain logic; stored for audit trail
 
 // Response DTO — serialized to JSON
 type SubmitPurchaseOrderResponse =
+    // => Record type: serialized to JSON by Giraffe's System.Text.Json serializer
     { PurchaseOrderId: System.Guid
+      // => Unwrapped Guid: clients do not need the strongly-typed DU
       Status: string
+      // => String projection of the Status DU — human-readable, stable across versions
       ApprovalLevel: string }
 // => Response DTO: only the fields the client needs — not the full domain aggregate
 
 // DTO → response DTO mapping (lives in Presentation layer, not Domain or Application)
 let private toResponse (po: PurchaseOrder) : SubmitPurchaseOrderResponse =
+// => private: this mapping function is not visible outside the Presentation module
     { PurchaseOrderId = (let (PurchaseOrderId id) = po.Id in id)
       // => Unwrap the strongly-typed PurchaseOrderId to a Guid for the response
       Status = sprintf "%A" po.Status
+      // => sprintf "%A": F# pretty-print of the DU case — "Draft", "Submitted", etc.
       ApprovalLevel = sprintf "%A" po.ApprovalLevel }
 // => toResponse knows both the domain type and the response DTO shape
 // => Domain and Application layers never import response DTO types
@@ -646,25 +692,36 @@ let private toResponse (po: PurchaseOrder) : SubmitPurchaseOrderResponse =
 // Handler factory: returns an HttpHandler with the ports partially applied
 let handleSubmit
     (repo: PurchaseOrderRepository)
+    // => Injected at composition root — Npgsql adapter in production, in-memory in tests
     (pub: EventPublisher)
+    // => Outbox publisher in production — stores event row in the same DB as the aggregate
     (clock: Clock)
+    // => Clock port: DateTimeOffset.UtcNow in production, frozen in tests
     : HttpHandler =
     fun next ctx ->
+        // => HttpHandler: Giraffe's function type — (HttpFunc -> HttpContext -> Task<HttpContext option>)
         task {
+            // => task { }: C#-compatible async computation — required by Giraffe's middleware chain
             let! dto = ctx.BindJsonAsync<SubmitPurchaseOrderRequest>()
             // => Giraffe BindJsonAsync: deserializes the request body into the CLIMutable DTO
 
             // Step 1: DTO → domain value objects via smart constructors
             match createMoney dto.TotalAmount dto.Currency with
+            // => createMoney validates amount > 0 and currency is a known ISO 4217 code
             | Error msg ->
                 return! RequestErrors.BAD_REQUEST msg next ctx
                 // => HTTP 400: domain validation failed — translate at the adapter boundary
             | Ok money ->
+                // => money: validated Money value — smart constructor confirmed amount > 0 and valid currency
                 let po =
+                    // => Assemble the domain aggregate from all validated value objects
                     { Id = PurchaseOrderId (System.Guid.NewGuid())
+                      // => New UUID per request — the client does not supply the PO ID
                       SupplierId = SupplierId dto.SupplierId
+                      // => Wrap the raw Guid in the strongly-typed DU
                       TotalAmount = money
                       Status = Draft
+                      // => Initial status is always Draft — state machine starts here
                       ApprovalLevel = computeApprovalLevel money
                       // => computeApprovalLevel: pure domain function — no I/O, no DB call
                       CreatedAt = clock () }
@@ -674,15 +731,19 @@ let handleSubmit
                 match! submitPurchaseOrder repo pub po with
                 | Error (DuplicatePurchaseOrder id) ->
                     return! RequestErrors.CONFLICT (sprintf "PurchaseOrder %A already exists" id) next ctx
-                    // => HTTP 409: typed pattern match
+                    // => HTTP 409: typed pattern match — no magic status number in handler code
                 | Error (InvalidPurchaseOrder msg) ->
                     return! RequestErrors.BAD_REQUEST msg next ctx
+                    // => HTTP 400: domain rule violation surfaced from application service
                 | Error (RepositoryFailure ex) ->
                     eprintfn "Repository failure: %A" ex
+                    // => Log the raw exception for diagnostics — never send details to the client
                     return! ServerErrors.INTERNAL_ERROR "Repository unavailable" next ctx
+                    // => HTTP 500: infrastructure failure — client receives a safe error message
                 | Ok saved ->
                     // => Step 3: domain aggregate → response DTO → HTTP 201
                     return! Successful.CREATED (toResponse saved) next ctx
+                    // => HTTP 201 Created: body is the response DTO serialized to JSON
         }
 ```
 
@@ -852,6 +913,7 @@ type GoodsReceiptRepository =
 // ACL adapter in receiving infrastructure: translates purchasing types
 // src/ProcurementPlatform/Contexts/Receiving/Infrastructure/PurchasingAcl.fs
 module ProcurementPlatform.Contexts.Receiving.Infrastructure.PurchasingAcl
+// => ACL lives in receiving's Infrastructure layer — it is an adapter, not a domain concern
 
 open ProcurementPlatform.Contexts.Purchasing.Application.Ports
 // => ACL imports the purchasing APPLICATION port (not the domain) — query model only
@@ -863,13 +925,16 @@ open ProcurementPlatform.Contexts.Receiving.Application.Ports
 // ACL adapter factory
 let makePurchasingAcl (findPO: PurchaseOrderRepository) : PurchaseOrderSummaryPort =
     // => findPO: the purchasing PurchaseOrderRepository — injected by the composition root
+    // => Returns a PurchaseOrderSummaryPort function — satisfies receiving's application layer port
     fun poId ->
         // => Guid input: the receiving context passes a raw Guid; the ACL wraps it in PurchaseOrderId
         async {
+            // => async { }: I/O is required to call findPO.FindPurchaseOrder — must be async
             let! result = findPO.FindPurchaseOrder (PurchaseOrderId poId)
             // => Wrap the raw Guid in purchasing's PurchaseOrderId DU — the ACL owns this translation
             match result with
             | Ok (Some po) ->
+                // => PO found: translate from purchasing's domain type to receiving's summary type
                 return Ok (Some
                     { PurchaseOrderId = poId
                       // => Pass the Guid through — receiving's PurchaseOrderSummary uses plain Guid
@@ -879,10 +944,11 @@ let makePurchasingAcl (findPO: PurchaseOrderRepository) : PurchaseOrderSummaryPo
                 // => Map purchasing's Money value object to a decimal — receiving's needs are simpler
             | Ok None ->
                 return Ok None
-                // => No PO found: return Ok None — not an error
+                // => No PO found: return Ok None — not an error; receiving decides how to handle absence
             | Error e ->
                 return Error (sprintf "ACL translation failure: %A" e)
                 // => Translate the RepositoryError into receiving's error string
+                // => receiving's application layer never sees purchasing's RepositoryError type
         }
 ```
 
@@ -923,6 +989,7 @@ let handleRequest () =
 // Program.fs: composition root wiring all context ports
 // src/ProcurementPlatform/Composition/Program.fs
 module ProcurementPlatform.Composition.Program
+// => Composition layer: wires all adapters to ports — the only layer that imports both domain and infrastructure
 
 open System
 // => System: Environment, DateTimeOffset — used by startup and config helpers
@@ -938,13 +1005,16 @@ type Marker = class end
 // => Marker gives the test harness an assembly anchor without exposing Program internals
 
 [<EntryPoint>]
+// => EntryPoint: .NET convention — exactly one function in the assembly can carry this attribute
 let main _ =
+    // => _ : ignores CLI args — config comes from environment variables and appsettings.json
     let builder = WebApplication.CreateBuilder()
     // => CreateBuilder: initializes the host with default config sources
     builder.Services.AddGiraffe() |> ignore
     // => AddGiraffe: registers Giraffe's middleware and JSON serializer
 
     let cfg = builder.Configuration
+    // => builder.Configuration: reads env vars, appsettings.json, and appsettings.{env}.json
     let connStr = cfg.["DATABASE_URL"]
     // => DATABASE_URL: injected as env var in Kubernetes (Guide 23) or docker-compose
     let clock : Clock = fun () -> DateTimeOffset.UtcNow
@@ -962,6 +1032,7 @@ let main _ =
     let supplierRepo =
         Supplier.Infrastructure.NpgsqlSupplierRepository.make connStr
     // => SupplierRepository record for the supplier context
+    // => Adapter is stateless: shared per process; no per-request allocation
     let approvalRouter =
         Supplier.Infrastructure.WorkflowApprovalRouter.make cfg
     // => ApprovalRouterPort: routes PO approval requests to the workflow engine
@@ -970,13 +1041,17 @@ let main _ =
     let grnRepo =
         Receiving.Infrastructure.NpgsqlGoodsReceiptRepository.make connStr
     // => GoodsReceiptRepository for the receiving context
+    // => GoodsReceiptNote persisted in the receiving context's schema — not the purchasing schema
     let purchasingAcl =
         Receiving.Infrastructure.PurchasingAcl.makePurchasingAcl poRepo
     // => ACL adapter: wires purchasing's PurchaseOrderRepository into receiving's PurchaseOrderSummaryPort
+    // => The ACL is a read-only adapter — it never writes to purchasing's data
 
     // Routing: bind all context handlers to URL paths
     let webApp =
+        // => webApp: the top-level HttpHandler — Giraffe evaluates handlers in sequence until one matches
         choose
+            // => choose: tries each handler in turn; first match wins
             [ GET  >=> route "/api/v1/health"
                        >=> json {| status = "healthy" |}
               // => Health check: no port needed — simple inline response
@@ -988,7 +1063,7 @@ let main _ =
               // => Submit PO: wires both repository and event publisher
               GET  >=> routef "/api/v1/purchase-orders/%O"
                        (Purchasing.Presentation.PurchasingHandlers.handleGet poRepo)
-              // => Get PO by ID: routef extracts the Guid from the URL
+              // => Get PO by ID: routef extracts the Guid from the URL path segment
               POST >=> routef "/api/v1/purchase-orders/%O/approve"
                        (Purchasing.Presentation.PurchasingHandlers.handleApprove poRepo eventPub approvalRouter clock)
               // => Approve PO: wires repo, publisher, and approval router
@@ -996,6 +1071,7 @@ let main _ =
                        >=> Receiving.Presentation.ReceivingHandlers.handleCreateGrn grnRepo purchasingAcl eventPub
               // => Create GRN: cross-context — receiving reads from purchasing via ACL
               RequestErrors.NOT_FOUND "Not Found" ]
+              // => NOT_FOUND: catch-all for unmatched routes — returns HTTP 404
     // => All routes declared in one place — audit what runs in production here
 
     let app = builder.Build()
@@ -1004,6 +1080,7 @@ let main _ =
     // => UseGiraffe: registers the webApp HttpHandler with ASP.NET Core middleware
     app.Run()
     // => Run: starts the Kestrel HTTP server; blocks until shutdown signal
+    // => Blocking call: returns only on SIGTERM, SIGINT, or explicit app.StopAsync()
     0
     // => Exit code 0: convention for successful process completion
 ```

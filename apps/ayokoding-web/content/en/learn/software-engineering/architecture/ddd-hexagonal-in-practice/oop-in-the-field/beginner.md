@@ -84,6 +84,7 @@ public record PurchaseOrderId(UUID value) {
     // => Strongly-typed wrapper: prevents passing a supplier ID where a PO ID is expected
     // => Java record provides equals, hashCode, toString automatically
     // => Compact constructor adds validation
+    // => Internal representation wraps a UUID; the REST API layer formats it as "po_<uuid>" in response DTOs
     public PurchaseOrderId {
         Objects.requireNonNull(value, "PurchaseOrderId value must not be null");
         // => Canonical constructor validation — throws NullPointerException if null
@@ -159,16 +160,18 @@ import java.util.Objects;
 public record Money(BigDecimal amount, String currency) {
     // => Value object wrapping an amount and a 3-letter ISO 4217 currency code
     // => Compact constructor enforces invariants at object boundary
+    // => Java record: immutable after construction — no setter methods generated
     public Money {
         Objects.requireNonNull(amount, "Money amount must not be null");
         // => Null guard: enforced at construction — never a null amount in the domain
         if (amount.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("Money amount must not be negative");
-        // => Domain invariant: monetary amounts are non-negative
+        // => Domain invariant: monetary amounts are non-negative — a negative purchase order total is invalid
         Objects.requireNonNull(currency, "Money currency must not be null");
+        // => Null guard for currency: prevents NullPointerException in the SQL adapter's CHAR(3) column mapping
         if (currency.length() != 3)
             throw new IllegalArgumentException("Currency must be a 3-letter ISO 4217 code");
-        // => Domain invariant: ISO 4217 codes are exactly 3 characters
+        // => Domain invariant: ISO 4217 codes are exactly 3 characters — "USD", "EUR", "IDR" are valid
     }
 }
 ```
@@ -606,7 +609,9 @@ import org.springframework.web.bind.annotation.*;
 // => Spring MVC annotations only — no JPA, no domain construction in the annotation block
 
 import java.util.List;
+// => List<PurchaseOrderLineRequest>: the ordered line items in the request DTO — mapped to domain PurchaseOrderLine
 import java.util.UUID;
+// => UUID.fromString: parses String supplierId from the request body — throws IllegalArgumentException on malformed input
 
 public record IssuePurchaseOrderRequest(String supplierId, List<PurchaseOrderLineRequest> lines) {}
 // => Request DTO as a Java record: immutable, no validation annotations at this level
@@ -642,10 +647,13 @@ public class PurchaseOrderController {
         // => Returns ResponseEntity to control the HTTP status code explicitly
         var supplierId = new SupplierId(UUID.fromString(request.supplierId()));
         // => Translate DTO -> domain value object: UUID.fromString throws on malformed input
+        // => SupplierId: strongly-typed wrapper — the service receives SupplierId, not a raw UUID
         var lines = request.lines().stream()
             .map(l -> new PurchaseOrderLine(new SkuCode(l.skuCode()), new Quantity(l.quantity(), UnitOfMeasure.valueOf(l.unit())), new Money(l.unitPrice(), l.currency())))
+            // => Each request line becomes a domain PurchaseOrderLine — Money enforces invariants at construction
             .toList();
         // => Map each request line to a domain value object — the domain rejects invalid values
+        // => toList(): immutable List — domain invariants prevent mutation after issuance
         var po = issueService.issue(supplierId, lines);
         // => Application service enforces domain invariants and persists the aggregate
         var response = new PurchaseOrderResponse(

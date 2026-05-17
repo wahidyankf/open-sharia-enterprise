@@ -3,7 +3,7 @@ title: "Intermediate"
 date: 2026-05-15T00:00:00+07:00
 draft: false
 weight: 10000004
-description: "Examples 26-43: Composition root, adapter swapping, integration test seams, CQRS ports, infrastructure ports, event publishing, approval routing, and dependency rejection in F# with the procurement-platform-be domain"
+description: "Examples 26-55: Composition root, adapter swapping, integration test seams, CQRS ports, infrastructure ports, event publishing, approval routing, dependency rejection, cross-context event flow, port contracts, and conditional adapter selection in F# with the procurement-platform-be domain"
 tags:
   [
     "hexagonal-architecture",
@@ -88,13 +88,17 @@ type IssuingPOError =
 The domain aggregate is the source of truth for write operations; the read model is the source of truth for query operations. These are structurally different types served by structurally different ports, which allows each to evolve independently.
 
 ```fsharp
+// ── Infrastructure error type ─────────────────────────────────────────────
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error DU — consistent with the canonical PurchaseOrderRepository from beginner section
+
 // ── Domain aggregate port (command pipeline) ──────────────────────────────
 // PurchaseOrderRepository is defined in beginner.md and used unchanged here.
 // It returns the full domain aggregate — a rich type with all domain rules.
 type PurchaseOrderRepository = {
-    save : PurchaseOrder -> Async<Result<unit, string>>
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
     // => Persist a PO — upsert semantics; both insert and update use this field
-    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, string>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
     // => Load by identity — None signals not-found without raising exceptions
 }
 
@@ -505,17 +509,21 @@ graph TD
 ```fsharp
 open System.Collections.Generic
 
+// ── Infrastructure error type ─────────────────────────────────────────────────
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error DU — canonical across all examples; ConnectionTimeout enables retry logic
+
 // ── Port type: repository record ────────────────────────────────────────────
 // A record of functions is the idiomatic F# alternative to an interface.
 // All operations are co-located — one value to inject, not two separate parameters.
 // The signature matches exactly what beginner.md established.
 type PurchaseOrderRepository = {
-    save : PurchaseOrder -> Async<Result<unit, string>>
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
     // => Upsert semantics — create or update; caller does not distinguish
     // => Returns unit on success — the persisted state is what was passed in
-    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, string>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
     // => Load by identity — None signals not-found without raising exceptions
-    // => Error string on infrastructure failure (DB unavailable, timeout, etc.)
+    // => Error RepoError on infrastructure failure (DB unavailable, timeout, etc.)
 }
 
 // ── In-memory implementation ─────────────────────────────────────────────────
@@ -550,14 +558,14 @@ let makeInMemoryPORepo () : PurchaseOrderRepository =
 let loadAndPrintPO (repo: PurchaseOrderRepository) (id: PurchaseOrderId) =
     async {
         let! result = repo.load id
-        // => result : Result<PurchaseOrder option, string>
+        // => result : Result<PurchaseOrder option, RepoError>
         match result with
         | Ok (Some po) -> printfn "Loaded PO: %s, Status: %s" po.Id po.Status
         // => Output: Loaded PO: po_001, Status: Approved
         | Ok None      -> printfn "PO not found: %s" id
         // => Output when ID does not exist in the adapter's store
-        | Error msg    -> printfn "Repository error: %s" msg
-        // => Output on infrastructure failure
+        | Error e      -> printfn "Repository error: %A" e
+        // => Output on infrastructure failure — named error case
     }
 
 // ── Demonstration ─────────────────────────────────────────────────────────────
@@ -1557,3 +1565,1204 @@ Async.RunSynchronously (runFullFlow ())
 **Key Takeaway**: The full flow — HTTP adapter translates, application service orchestrates, domain validates, ports persist and publish — passes through each zone boundary exactly once, with the Result type carrying the outcome from domain to HTTP response.
 
 **Why It Matters**: Tracing a request from HTTP handler to database write to event publish in a single readable flow is the acid test for a Hexagonal Architecture implementation. When each zone does exactly one job — translate, orchestrate, validate, store, publish — the code is readable top-to-bottom, each concern is independently testable, and future changes (new HTTP framework, new database, new event bus) touch exactly one zone. This is the architecture paying its promises back in full.
+
+---
+
+## Cross-Context Patterns and Port Contracts (Examples 44–55)
+
+### Example 44: Port Contract Testing — Verifying Every Adapter Satisfies the Same Spec
+
+A port contract test suite runs the same assertions against every adapter implementation. Passing the same test suite against the in-memory adapter and the Postgres adapter proves they are interchangeable without any coupling between them.
+
+```mermaid
+graph LR
+    CONTRACT["Port Contract\nTest Suite"]:::blue
+    INMEM["In-Memory\nAdapter"]:::teal
+    PG["Postgres\nAdapter (stub)"]:::purple
+
+    CONTRACT -->|"same tests"| INMEM
+    CONTRACT -->|"same tests"| PG
+    INMEM -->|"passes"| OK1["All Green"]:::teal
+    PG -->|"passes"| OK2["All Green"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#fff
+```
+
+```fsharp
+open System.Collections.Generic
+
+// ── Canonical port and types ───────────────────────────────────────────────
+type PurchaseOrderId = string
+// => Format po_<uuid> — used as Dictionary key and DB primary key
+type PurchaseOrder = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — both adapters store and return this type
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error DU — adapters must produce cases from this union only
+
+type PurchaseOrderRepository = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    // => Upsert semantics: insert on first save, update on subsequent saves
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+    // => Returns None on not-found, Error on infrastructure failure
+}
+
+// ── In-memory adapter ──────────────────────────────────────────────────────
+let makeInMemoryRepo () : PurchaseOrderRepository =
+    let store = Dictionary<PurchaseOrderId, PurchaseOrder>()
+    // => Closed-over mutable store — isolated per factory call
+    { save = fun po -> async { store.[po.Id] <- po; return Ok () }
+      // => Dictionary write always succeeds — no ConnectionTimeout in-memory
+      load = fun id ->
+          async {
+              match store.TryGetValue(id) with
+              | true, po -> return Ok (Some po)
+              // => Found — PO was previously saved
+              | false, _ -> return Ok None
+              // => Not found — honest None, not an error
+          } }
+
+// ── Postgres stub adapter (mimics Postgres without a DB connection) ─────────
+let makePostgresStubRepo (data: Map<PurchaseOrderId, PurchaseOrder>) : PurchaseOrderRepository =
+    // => Pre-seeded map simulates a database snapshot for contract testing
+    { save = fun po -> async { return Ok () }
+      // => Stub: acknowledges save without modifying the seed map
+      load = fun id ->
+          async {
+              match Map.tryFind id data with
+              | Some po -> return Ok (Some po)
+              // => Found in seed data — simulates a successful DB read
+              | None    -> return Ok None
+              // => Not in seed data — simulates a missing row
+          } }
+
+// ── Port contract test runner ──────────────────────────────────────────────
+// The SAME assertions run against BOTH adapters — this is the contract test.
+let runPortContractTests (name: string) (repo: PurchaseOrderRepository) =
+    async {
+        let po = { Id = "po_ct_001"; SupplierId = "sup_001"; TotalAmount = 500m; Status = "Draft" }
+
+        // Contract test 1: save then load returns the same PO
+        let! _ = repo.save po
+        // => save must not fail for a valid PO
+        let! loaded = repo.load "po_ct_001"
+        // => load must return the PO we just saved
+
+        // Contract test 2: load of unknown ID returns None (not Error)
+        let! missing = repo.load "po_does_not_exist"
+        // => None — not-found is not an infrastructure failure
+
+        printfn "[%s] save→load: %A" name loaded
+        // => Output: [In-Memory] save→load: Ok (Some { Id = "po_ct_001"; ... })
+        printfn "[%s] missing:   %A" name missing
+        // => Output: [In-Memory] missing:   Ok None
+    }
+
+// ── Run contract suite against both adapters ──────────────────────────────
+let inMemRepo   = makeInMemoryRepo ()
+let pgStubRepo  = makePostgresStubRepo Map.empty
+// => Both are PurchaseOrderRepository values — same type, different implementations
+
+Async.RunSynchronously (runPortContractTests "In-Memory" inMemRepo)
+// => Output: [In-Memory] save→load: Ok (Some { ... })
+Async.RunSynchronously (runPortContractTests "PG Stub"   pgStubRepo)
+// => Output: [PG Stub] save→load: Ok None  (stub does not persist)
+// => The contract reveals the stub's limitation — a full Postgres contract test uses TestContainers
+```
+
+**Key Takeaway**: Running the same assertion suite against every adapter proves substitutability — if all adapters pass the same contract tests, the composition root can swap them freely.
+
+**Why It Matters**: Adapter drift is the silent killer of port abstraction. Two adapters that both satisfy the type checker may behave differently for edge cases (empty result vs error, idempotency, ordering). A shared contract test suite catches behavioural drift before it reaches production. The discipline of writing the contract suite at port-definition time also clarifies exactly what the port's behavioural promises are.
+
+---
+
+### Example 45: Approval Router Port — Routing Based on PO Total
+
+The `ApprovalRouterPort` determines which approval level (L1/L2/L3) a PO requires. It is an output port — the application service calls it but does not implement it. Different implementations can route to different systems (email, Slack, ERP) without any change to the application service.
+
+```fsharp
+// ── Domain types ──────────────────────────────────────────────────────────
+type PurchaseOrderId = string
+// => Format po_<uuid>
+type ApprovalLevel = L1 | L2 | L3
+// => L1: ≤ $1k, L2: ≤ $10k, L3: > $10k — domain rule, not infrastructure rule
+type PurchaseOrder = { Id: PurchaseOrderId; TotalAmount: decimal; Status: string }
+// => Aggregate — TotalAmount drives ApprovalLevel selection
+
+// ── Approval router port ───────────────────────────────────────────────────
+type ApprovalRouterPort = {
+    route : PurchaseOrder -> Async<Result<ApprovalLevel, string>>
+    // => Determines the required approval level for a given PO
+    // => Async because a real router may call an external approval service
+    // => Result because the approval service may be unreachable
+}
+
+// ── Domain rule: derive ApprovalLevel from PO total ─────────────────────────
+let deriveApprovalLevel (totalAmount: decimal) : ApprovalLevel =
+    if   totalAmount <= 1000m  then L1
+    // => L1: routine purchases — manager approval only
+    elif totalAmount <= 10000m then L2
+    // => L2: significant spend — department head approval
+    else                            L3
+    // => L3: large spend — VP or CFO approval required
+
+// ── In-process adapter: derives level locally ─────────────────────────────
+let inProcessApprovalRouter : ApprovalRouterPort = {
+    route = fun po ->
+        async {
+            let level = deriveApprovalLevel po.TotalAmount
+            // => Pure domain function — no I/O; result is deterministic
+            printfn "[Router] PO %s routed to %A (total: %.2f)" po.Id level po.TotalAmount
+            // => Output: [Router] PO po_001 routed to L2 (total: 5000.00)
+            return Ok level
+            // => Returns the level — always succeeds for in-process routing
+        }
+}
+
+// ── Application service using the router port ────────────────────────────
+let submitForApproval (router: ApprovalRouterPort) (po: PurchaseOrder) =
+    // => router is injected — application service does not name the adapter
+    async {
+        let! routeResult = router.route po
+        // => Delegate routing decision to the injected port
+        return
+            match routeResult with
+            | Ok L1  -> sprintf "PO %s sent to line manager (L1)" po.Id
+            // => Low-value PO — fast approval path
+            | Ok L2  -> sprintf "PO %s sent to department head (L2)" po.Id
+            // => Mid-value PO — standard approval path
+            | Ok L3  -> sprintf "PO %s escalated to finance VP (L3)" po.Id
+            // => High-value PO — senior approval required
+            | Error msg -> sprintf "Routing failed: %s" msg
+            // => Router unreachable — caller should retry or queue the PO
+    }
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+let smallPO = { Id = "po_001"; TotalAmount = 500m;   Status = "AwaitingApproval" }
+let largePO = { Id = "po_002"; TotalAmount = 50000m; Status = "AwaitingApproval" }
+
+let r1 = submitForApproval inProcessApprovalRouter smallPO |> Async.RunSynchronously
+printfn "%s" r1
+// => Output: PO po_001 sent to line manager (L1)
+
+let r2 = submitForApproval inProcessApprovalRouter largePO |> Async.RunSynchronously
+printfn "%s" r2
+// => Output: PO po_002 escalated to finance VP (L3)
+```
+
+**Key Takeaway**: Expressing approval routing as an output port keeps the business rule (L1/L2/L3 thresholds) in the domain while deferring the delivery mechanism (email, Slack, ERP notification) to the adapter.
+
+**Why It Matters**: Approval routing rules change over budget cycles. Wiring the domain threshold logic to a specific notification system means changing thresholds requires touching infrastructure code. The port boundary separates the "what level?" question (domain) from the "how to notify?" question (adapter). A new ERP integration is a new adapter, not a domain change.
+
+---
+
+### Example 46: Dependency Rejection — Refusing Infrastructure at the Domain Boundary
+
+The domain function must refuse to accept infrastructure types. If the domain imports a database module or uses `Async`, it has crossed into the adapter zone. This example shows the before/after of a dependency rejection refactor.
+
+```fsharp
+// ── BEFORE: domain function that touches infrastructure (WRONG) ───────────
+// This function is in the domain zone but calls a repository directly.
+// Domain rule (approval level derivation) is buried inside infrastructure code.
+// The function cannot be tested without a database connection.
+
+// module Domain.Wrong =
+//     open Npgsql  // ← infrastructure import in the domain zone — violation
+//     let submitPurchaseOrder (conn: NpgsqlConnection) (po: PurchaseOrder) =
+//         async {
+//             let! result = conn.ExecuteAsync("INSERT INTO pos VALUES (@Id)", po)
+//             // => Domain function now depends on Npgsql — impossible to unit test
+//             return result
+//         }
+
+// ── AFTER: domain function with all infrastructure removed (CORRECT) ───────
+// The domain function is pure — no database, no Async, no I/O of any kind.
+// All infrastructure is pushed to the application service and adapter zones.
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Domain aggregate — no infrastructure fields, no Async wrappers
+
+type DomainError = InvalidId of string | NegativeAmount of decimal
+// => Domain errors — named cases; infrastructure errors live in RepoError (adapter zone)
+
+let validatePurchaseOrder (draft: {| Id: string; SupplierId: string; TotalAmount: decimal |}) : Result<PurchaseOrder, DomainError> =
+    // => Pure function — no I/O, no Async, deterministic for identical inputs
+    if System.String.IsNullOrWhiteSpace(draft.Id) then
+        Error (InvalidId "PO Id must not be blank")
+        // => Domain rule enforced at the type level: invalid input → Error
+    elif draft.TotalAmount < 0m then
+        Error (NegativeAmount draft.TotalAmount)
+        // => Domain invariant: a PO cannot have a negative total amount
+    else
+        Ok { Id = draft.Id; SupplierId = draft.SupplierId
+             TotalAmount = draft.TotalAmount; Status = "AwaitingApproval" }
+        // => Valid PO — state: Draft → AwaitingApproval
+
+// ── Application service: calls domain function, then port ─────────────────
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Infrastructure error DU — lives in the adapter zone, not the domain
+
+type PurchaseOrderRepository = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    load : string        -> Async<Result<PurchaseOrder option, RepoError>>
+}
+// => Output port — the application service depends on this type
+
+let submitPurchaseOrder (repo: PurchaseOrderRepository) (draft: {| Id: string; SupplierId: string; TotalAmount: decimal |}) =
+    // => Application service: orchestrates domain + ports — has Async, no infrastructure imports
+    async {
+        match validatePurchaseOrder draft with
+        // => Call the pure domain function first — no I/O needed for validation
+        | Error domainErr ->
+            return Error (sprintf "Validation: %A" domainErr)
+            // => Domain rejection — no port call needed
+        | Ok po ->
+        let! saveResult = repo.save po
+        // => Port call — infrastructure lives here, not in validatePurchaseOrder
+        return
+            match saveResult with
+            | Ok ()  -> Ok po
+            | Error e -> Error (sprintf "Save failed: %A" e)
+    }
+
+// ── Domain function can be tested with zero infrastructure ─────────────────
+let validResult   = validatePurchaseOrder {| Id = "po_001"; SupplierId = "sup_1"; TotalAmount = 100m |}
+printfn "Valid: %A" validResult
+// => Output: Valid: Ok { Id = "po_001"; SupplierId = "sup_1"; TotalAmount = 100M; Status = "AwaitingApproval" }
+
+let invalidResult = validatePurchaseOrder {| Id = ""; SupplierId = "sup_1"; TotalAmount = 100m |}
+printfn "Invalid: %A" invalidResult
+// => Output: Invalid: Error (InvalidId "PO Id must not be blank")
+```
+
+**Key Takeaway**: Domain functions that contain infrastructure imports or `Async` have crossed zone boundaries — the fix is to extract all I/O into the application service and leave only pure logic in the domain.
+
+**Why It Matters**: Domain logic mixed with infrastructure is the most common failure mode in supposedly hexagonal systems. Once `Npgsql` is imported inside a domain function, every domain test needs a database connection, CI becomes slow, and refactoring the database schema forces domain rewrites. A pure domain function tests in microseconds, runs identically in CI with no infrastructure, and is safe to refactor without fear of breaking infrastructure wiring.
+
+---
+
+### Example 47: Port Versioning — Evolving a Port Without Breaking Adapters
+
+When a port's contract needs to change (new operation, changed signature), the safest strategy is to introduce a v2 port type alongside v1 rather than mutating v1. Adapters opt in to v2 explicitly.
+
+```fsharp
+// ── v1 port (original) ─────────────────────────────────────────────────────
+// The initial PurchaseOrderRepository supports save and load only.
+type PurchaseOrderId = string
+type PurchaseOrder   = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+type RepoError       = DatabaseError of string | ConnectionTimeout
+
+type PurchaseOrderRepositoryV1 = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    // => Original operation — all v1 adapters implement this
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+    // => Original operation — all v1 adapters implement this
+}
+
+// ── v2 port (extended) ────────────────────────────────────────────────────
+// v2 adds a listByStatus operation — needed for approval dashboard queries.
+// v1 adapters continue to work; new adapters implement the v2 field too.
+type PurchaseOrderRepositoryV2 = {
+    save         : PurchaseOrder -> Async<Result<unit, RepoError>>
+    // => Identical to v1 — adapters that already implement save are reusable
+    load         : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+    // => Identical to v1 — adapters that already implement load are reusable
+    listByStatus : string -> Async<Result<PurchaseOrder list, RepoError>>
+    // => New operation — returns all POs matching the given status string
+    // => Adapters that do not need this can stub it with an error return
+}
+
+// ── Upgrading an existing v1 adapter to v2 ───────────────────────────────
+open System.Collections.Generic
+let makeInMemoryRepoV2 () : PurchaseOrderRepositoryV2 =
+    let store = Dictionary<PurchaseOrderId, PurchaseOrder>()
+    // => Same mutable store as v1 — add the new operation without changing existing ones
+    { save = fun po -> async { store.[po.Id] <- po; return Ok () }
+      // => Unchanged from v1
+      load = fun id ->
+          async {
+              match store.TryGetValue(id) with
+              | true, po -> return Ok (Some po)
+              | false, _ -> return Ok None
+          }
+      // => Unchanged from v1
+      listByStatus = fun status ->
+          async {
+              let matching = store.Values |> Seq.filter (fun po -> po.Status = status) |> Seq.toList
+              // => Linear scan — acceptable for test adapter; Postgres adapter uses indexed query
+              return Ok matching
+              // => Returns the list — always Ok for in-memory; real adapter may return Error
+          } }
+
+// ── Application service using v2 ─────────────────────────────────────────
+let getPendingPOs (repo: PurchaseOrderRepositoryV2) =
+    // => Application service opts in to v2 — accepts the extended port type
+    async {
+        let! result = repo.listByStatus "AwaitingApproval"
+        // => New operation — retrieves all POs awaiting approval
+        return
+            match result with
+            | Ok pos -> sprintf "Pending approvals: %d POs" pos.Length
+            // => Count of POs in the approval queue
+            | Error e -> sprintf "Query failed: %A" e
+            // => Infrastructure failure — caller may retry
+    }
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+let repoV2 = makeInMemoryRepoV2 ()
+let po1 = { Id = "po_v2_001"; SupplierId = "sup_1"; TotalAmount = 300m; Status = "AwaitingApproval" }
+let po2 = { Id = "po_v2_002"; SupplierId = "sup_2"; TotalAmount = 800m; Status = "Draft" }
+
+Async.RunSynchronously (async {
+    let! _ = repoV2.save po1
+    let! _ = repoV2.save po2
+    // => Two POs saved — one AwaitingApproval, one Draft
+    let! summary = getPendingPOs repoV2
+    printfn "%s" summary
+    // => Output: Pending approvals: 1 POs
+})
+```
+
+**Key Takeaway**: Introducing a v2 port type alongside v1 preserves all existing adapters while allowing new application services to opt into the extended contract.
+
+**Why It Matters**: Mutating a port type in place is a breaking change — every adapter must be updated simultaneously, which is impractical across team boundaries. A versioned port type strategy lets different parts of the system migrate to v2 at their own pace. The type checker catches any adapter that tries to pass a v1 repo where v2 is required, making the migration mechanical rather than error-prone.
+
+---
+
+### Example 48: Receiving Context — `GoodsReceiptNote` Repository Port
+
+The `receiving` bounded context records delivery of goods against an issued PO. Its repository port follows the same record-of-functions pattern as `PurchaseOrderRepository` but stores `GoodsReceiptNote` aggregates.
+
+```fsharp
+// ── Receiving context types ────────────────────────────────────────────────
+type GoodsReceiptNoteId = string
+// => Format grn_<uuid> — unique identifier for a delivery receipt
+type PurchaseOrderId    = string
+// => Cross-context reference — the PO that was delivered against
+
+type GoodsReceiptNote = {
+    Id          : GoodsReceiptNoteId
+    // => Primary key — format grn_<uuid>
+    PurchaseOrderId : PurchaseOrderId
+    // => The PO that triggered this delivery — cross-context reference
+    ReceivedQty : decimal
+    // => Quantity actually received — may be partial (ReceivedQty < PO quantity)
+    ReceivedAt  : System.DateTimeOffset
+    // => Wall-clock timestamp of goods receipt — supplied by the Clock port
+    HasQcFlag   : bool
+    // => True when goods failed QC inspection — triggers dispute workflow
+}
+
+type GrnError = GrnNotFound of string | InfrastructureError of string
+// => Named error DU for the receiving context — distinct from purchasing RepoError
+
+// ── GRN repository port ───────────────────────────────────────────────────
+type GoodsReceiptNoteRepository = {
+    save           : GoodsReceiptNote -> Async<Result<unit, GrnError>>
+    // => Persist a new GRN — insert semantics; GRNs are immutable once created
+    loadByPOId     : PurchaseOrderId  -> Async<Result<GoodsReceiptNote list, GrnError>>
+    // => Load all GRNs for a given PO — supports partial-receipt tracking
+    // => Returns empty list when no GRNs exist — not an error
+}
+
+// ── In-memory GRN adapter ─────────────────────────────────────────────────
+open System.Collections.Generic
+let makeInMemoryGrnRepo () : GoodsReceiptNoteRepository =
+    let store = ResizeArray<GoodsReceiptNote>()
+    // => List (not Dictionary) — GRNs are looked up by PO ID, not GRN ID
+    { save = fun grn ->
+          async {
+              store.Add(grn)
+              // => Append-only: GRNs are never deleted or updated once created
+              return Ok ()
+          }
+      loadByPOId = fun poId ->
+          async {
+              let matching = store |> Seq.filter (fun g -> g.PurchaseOrderId = poId) |> Seq.toList
+              // => Filter all GRNs by PO reference — returns empty list if none
+              return Ok matching
+          } }
+
+// ── Application service: record a goods receipt ───────────────────────────
+type Clock = unit -> System.DateTimeOffset
+// => Time port — synchronous, infallible; deterministic in tests
+
+let recordGoodsReceipt
+    (grnRepo : GoodsReceiptNoteRepository)
+    (clock   : Clock)
+    (poId    : PurchaseOrderId)
+    (qty     : decimal)
+    (hasQcFlag : bool) =
+    // => Application service: orchestrates clock port + GRN repository port
+    async {
+        let grn = {
+            Id              = sprintf "grn_%s" (System.Guid.NewGuid().ToString("N").[..5])
+            // => Generate a short unique ID — real system uses a proper UUID generator port
+            PurchaseOrderId = poId
+            // => Cross-context reference — ties the GRN to the originating PO
+            ReceivedQty     = qty
+            // => Quantity delivered in this receipt
+            ReceivedAt      = clock ()
+            // => Timestamp from the injected clock — deterministic in tests
+            HasQcFlag       = hasQcFlag
+            // => QC result — drives downstream dispute workflow
+        }
+        let! result = grnRepo.save grn
+        // => Persist the GRN via the repository port
+        return
+            match result with
+            | Ok ()  -> Ok grn
+            // => Return the created GRN to the calling adapter
+            | Error e -> Error (sprintf "GRN save failed: %A" e)
+    }
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+let grnRepo = makeInMemoryGrnRepo ()
+let clock   = fun () -> System.DateTimeOffset.UtcNow
+// => Fixed or live clock — swapped for a frozen timestamp in tests
+
+let result = recordGoodsReceipt grnRepo clock "po_001" 10m false |> Async.RunSynchronously
+printfn "GRN created: %A" result
+// => Output: GRN created: Ok { Id = "grn_..."; PurchaseOrderId = "po_001"; ReceivedQty = 10M; HasQcFlag = false; ... }
+```
+
+**Key Takeaway**: Each bounded context defines its own repository port using the same record-of-functions pattern — the structural consistency across contexts is the key property that makes multi-context wiring predictable.
+
+**Why It Matters**: When receiving context ports follow a different structural pattern from purchasing context ports, developers must learn a new injection idiom for every context they work in. Consistent port structure — record of typed functions, factory function returning the record, application service accepting the record — means the mental model transfers from `PurchaseOrderRepository` to `GoodsReceiptNoteRepository` immediately.
+
+---
+
+### Example 49: Three-Way Match Port — Invoicing Context
+
+The `invoicing` context performs a three-way match: PO line items, GRN quantities, and invoice amounts must agree within tolerance. The match port is an output port that calls into the purchasing and receiving contexts via their ports.
+
+```fsharp
+// ── Invoicing context types ────────────────────────────────────────────────
+type InvoiceId = string
+// => Format inv_<uuid>
+type PurchaseOrderId = string
+// => Cross-context reference — the PO being invoiced
+type GoodsReceiptNoteId = string
+// => Cross-context reference — the GRN proving delivery
+
+type Invoice = {
+    Id              : InvoiceId
+    // => Primary key of the invoice aggregate
+    PurchaseOrderId : PurchaseOrderId
+    // => The PO this invoice claims to settle
+    GrnId           : GoodsReceiptNoteId
+    // => The GRN proving delivery was made before invoicing
+    InvoicedAmount  : decimal
+    // => The amount the supplier is claiming — subject to three-way match
+    Status          : string
+    // => Draft | MatchPassed | MatchFailed | Paid
+}
+
+type MatchError = ToleanceBreached of string | MissingGrn of string | InfrastructureError of string
+// => Named error cases for the three-way match operation
+
+// ── Three-way match port ───────────────────────────────────────────────────
+type ThreeWayMatchPort = {
+    matchInvoice : InvoiceId -> PurchaseOrderId -> GoodsReceiptNoteId -> Async<Result<bool, MatchError>>
+    // => Returns true when all three documents agree within the tolerance threshold
+    // => Returns false when the match fails but the discrepancy is within dispute range
+    // => Returns Error for infrastructure failures or missing reference documents
+}
+
+// ── In-process adapter: performs the match with locally available data ─────
+let makeInProcessMatchPort (tolerance: decimal) : ThreeWayMatchPort = {
+    matchInvoice = fun invId poId grnId ->
+        async {
+            // In a real system: load Invoice, PO, and GRN from their respective repos
+            // Here: simulated values for illustration
+            let poAmount  = 1000m
+            // => The agreed PO total — loaded from the purchasing context repository
+            let grnQty    = 9.5m
+            // => Quantity delivered per GRN — partial delivery is within tolerance
+            let invAmount = 990m
+            // => Amount claimed on the invoice — close to PO amount
+
+            let poReceived = poAmount * grnQty / 10m
+            // => Estimated value of goods received (simplified: grnQty/10 × poAmount)
+            let difference = abs (invAmount - poReceived)
+            // => Absolute difference between invoice and delivery value
+            let toleranceAmount = poAmount * tolerance
+            // => Maximum acceptable difference (e.g. 2% of PO total = $20)
+
+            let matched = difference <= toleranceAmount
+            // => True when discrepancy is within tolerance
+            printfn "[Match] inv=%s po=%s grn=%s diff=%.2f tol=%.2f matched=%b"
+                invId poId grnId difference toleranceAmount matched
+            // => Output: [Match] inv=inv_001 po=po_001 grn=grn_001 diff=4.00 tol=20.00 matched=true
+            return Ok matched
+        }
+}
+
+// ── Application service: orchestrate the three-way match ─────────────────
+let approveInvoice (matchPort: ThreeWayMatchPort) (inv: Invoice) =
+    // => Application service: calls match port, updates invoice status
+    async {
+        let! matchResult = matchPort.matchInvoice inv.Id inv.PurchaseOrderId inv.GrnId
+        // => Delegate three-way match decision to the injected port
+        return
+            match matchResult with
+            | Ok true  -> Ok { inv with Status = "MatchPassed" }
+            // => All three documents agree — invoice approved for payment
+            | Ok false -> Ok { inv with Status = "MatchFailed" }
+            // => Discrepancy exceeds tolerance — invoice goes to dispute workflow
+            | Error (ToleanceBreached msg) -> Error (sprintf "Tolerance config error: %s" msg)
+            // => Configuration error — check tolerance percentage
+            | Error (MissingGrn id) -> Error (sprintf "GRN not found: %s" id)
+            // => GRN missing — goods receipt was not recorded before invoicing
+            | Error (InfrastructureError msg) -> Error (sprintf "Infrastructure: %s" msg)
+            // => DB or network failure — retry
+    }
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+let matchPort = makeInProcessMatchPort 0.02m
+// => 2% tolerance — invoices within 2% of PO+GRN value are auto-approved
+
+let invoice = { Id = "inv_001"; PurchaseOrderId = "po_001"; GrnId = "grn_001"
+                InvoicedAmount = 990m; Status = "Draft" }
+
+let matchOutcome = approveInvoice matchPort invoice |> Async.RunSynchronously
+printfn "Invoice status: %A" (matchOutcome |> Result.map (fun i -> i.Status))
+// => Output: Invoice status: Ok "MatchPassed"
+```
+
+**Key Takeaway**: Expressing the three-way match as an output port decouples the invoicing application service from the data sources (purchasing repo, receiving repo) — the adapter assembles all three documents while the application service only sees the match result.
+
+**Why It Matters**: Three-way match logic is business-critical and changes when procurement policies change (different tolerances per supplier tier, different matching rules for partial deliveries). If the match logic lives inside a repository query or a stored procedure, it is invisible to domain tests. Behind a port, it is testable, replaceable, and evolvable without touching the invoicing application service.
+
+---
+
+### Example 50: Retry Adapter Wrapper — Adding Resilience Without Touching Application Services
+
+A retry adapter wraps an existing port and retries on `ConnectionTimeout` errors without the application service knowing. The application service continues to receive either `Ok` or a non-retriable `Error`.
+
+```fsharp
+open System.Collections.Generic
+
+// ── Port types ─────────────────────────────────────────────────────────────
+type PurchaseOrderId = string
+type PurchaseOrder   = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+type RepoError       = DatabaseError of string | ConnectionTimeout
+// => ConnectionTimeout is the retriable case — DatabaseError is permanent
+
+type PurchaseOrderRepository = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+}
+
+// ── Retry adapter: wraps any PurchaseOrderRepository ─────────────────────
+let withRetry (maxAttempts: int) (inner: PurchaseOrderRepository) : PurchaseOrderRepository =
+    // => Returns a NEW PurchaseOrderRepository that retries on ConnectionTimeout
+    // => inner is the wrapped adapter — Postgres, in-memory, or another wrapper
+    let retryAsync (attempt: unit -> Async<Result<'a, RepoError>>) =
+        let rec loop n =
+            async {
+                let! result = attempt ()
+                // => Run the inner operation
+                match result with
+                | Error ConnectionTimeout when n < maxAttempts ->
+                    printfn "[Retry] ConnectionTimeout — attempt %d of %d" n maxAttempts
+                    // => Output: [Retry] ConnectionTimeout — attempt 1 of 3
+                    return! loop (n + 1)
+                    // => Recurse — try again up to maxAttempts
+                | other ->
+                    return other
+                    // => Return Ok, DatabaseError, or ConnectionTimeout after max retries
+            }
+        loop 1
+    { save = fun po -> retryAsync (fun () -> inner.save po)
+      // => save retries on ConnectionTimeout; DatabaseError is not retried
+      load = fun id -> retryAsync (fun () -> inner.load id)
+      // => load retries on ConnectionTimeout; not-found (Ok None) is not retried
+    }
+
+// ── Flaky adapter for demonstration ───────────────────────────────────────
+let makeFlakySaveRepo (failUntilAttempt: int) : PurchaseOrderRepository =
+    let mutable callCount = 0
+    // => Mutable counter — simulates transient failures followed by success
+    { save = fun po ->
+          async {
+              callCount <- callCount + 1
+              if callCount < failUntilAttempt then
+                  return Error ConnectionTimeout
+                  // => Transient failure — the retry wrapper handles this
+              else
+                  printfn "[Flaky] Save succeeded on attempt %d" callCount
+                  // => Output: [Flaky] Save succeeded on attempt 3
+                  return Ok ()
+          }
+      load = fun _ -> async { return Ok None } }
+
+// ── Composition: wrap flaky adapter with retry ────────────────────────────
+let flaky = makeFlakySaveRepo 3
+// => Will fail twice, succeed on third attempt
+let resilient = withRetry 3 flaky
+// => Wraps flaky — application service uses resilient and never sees the retries
+
+let po = { Id = "po_retry_001"; SupplierId = "sup_1"; TotalAmount = 200m; Status = "Draft" }
+let result = resilient.save po |> Async.RunSynchronously
+printfn "Final result: %A" result
+// => Output: [Retry] ConnectionTimeout — attempt 1 of 3
+// => Output: [Retry] ConnectionTimeout — attempt 2 of 3
+// => Output: [Flaky] Save succeeded on attempt 3
+// => Output: Final result: Ok ()
+```
+
+**Key Takeaway**: A retry wrapper satisfies the same port type as the inner adapter — the application service injects `withRetry 3 postgresRepo` and receives a `PurchaseOrderRepository` it cannot distinguish from the raw adapter.
+
+**Why It Matters**: Retry logic mixed into application services clutters domain intent with infrastructure concerns and makes retry behaviour hard to test and tune. A composable retry adapter applies the concern once, at the composition root, for any adapter of any port type. The application service is unchanged when retry policy changes from 3 to 5 attempts.
+
+---
+
+### Example 51: Caching Adapter Wrapper — Read-Through Cache at the Port
+
+A caching adapter wraps the load operation of a `PurchaseOrderRepository` to return cached results on repeated reads. The cache is invalidated on save. The application service is unaware of the caching layer.
+
+```fsharp
+open System.Collections.Generic
+
+// ── Port types ─────────────────────────────────────────────────────────────
+type PurchaseOrderId = string
+type PurchaseOrder   = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+type RepoError       = DatabaseError of string | ConnectionTimeout
+
+type PurchaseOrderRepository = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+}
+
+// ── Caching adapter wrapper ────────────────────────────────────────────────
+let withCache (inner: PurchaseOrderRepository) : PurchaseOrderRepository =
+    let cache = Dictionary<PurchaseOrderId, PurchaseOrder>()
+    // => In-process dictionary cache — invalidated on save; consistent with write-through policy
+    { save = fun po ->
+          async {
+              let! result = inner.save po
+              // => Delegate to inner adapter — persist first
+              match result with
+              | Ok () ->
+                  cache.[po.Id] <- po
+                  // => Write-through: update cache on successful save
+                  return Ok ()
+              | Error e ->
+                  return Error e
+                  // => Propagate error — cache is not updated on failure
+          }
+      load = fun id ->
+          async {
+              match cache.TryGetValue(id) with
+              | true, po ->
+                  printfn "[Cache] HIT for %s" id
+                  // => Output: [Cache] HIT for po_001
+                  return Ok (Some po)
+                  // => Cache hit — return without calling inner adapter
+              | false, _ ->
+                  printfn "[Cache] MISS for %s — loading from inner adapter" id
+                  // => Output: [Cache] MISS for po_001 — loading from inner adapter
+                  let! result = inner.load id
+                  // => Cache miss — delegate to the inner adapter
+                  match result with
+                  | Ok (Some po) ->
+                      cache.[po.Id] <- po
+                      // => Populate cache on successful load
+                      return Ok (Some po)
+                  | other -> return other
+                  // => Propagate Ok None or Error unchanged
+          } }
+
+// ── Usage: wrap an in-memory repo with caching ────────────────────────────
+let innerRepo  =
+    let store = Dictionary<PurchaseOrderId, PurchaseOrder>()
+    { save = fun po -> async { store.[po.Id] <- po; return Ok () }
+      load = fun id -> async {
+          match store.TryGetValue(id) with
+          | true, po -> return Ok (Some po)
+          | false, _ -> return Ok None } }
+// => Inner in-memory repo — will be called on cache miss
+
+let cachedRepo = withCache innerRepo
+// => Application service uses cachedRepo — a PurchaseOrderRepository like any other
+
+let po = { Id = "po_cache_001"; SupplierId = "sup_1"; TotalAmount = 300m; Status = "Approved" }
+
+Async.RunSynchronously (async {
+    let! _ = cachedRepo.save po
+    // => Saves to inner AND populates cache
+    let! r1 = cachedRepo.load "po_cache_001"
+    // => Cache HIT — inner adapter not called
+    let! r2 = cachedRepo.load "po_cache_001"
+    // => Cache HIT again
+    printfn "Load 1: %A" (r1 |> Result.map (Option.map (fun p -> p.Id)))
+    // => Output: Load 1: Ok (Some "po_cache_001")
+    printfn "Load 2: %A" (r2 |> Result.map (Option.map (fun p -> p.Id)))
+    // => Output: Load 2: Ok (Some "po_cache_001")
+})
+```
+
+**Key Takeaway**: A caching adapter satisfies the same `PurchaseOrderRepository` type as the inner adapter — the composition root decides whether to add caching, and the application service is unchanged.
+
+**Why It Matters**: Adding caching to an application service contaminates business logic with cache management: invalidation logic, cache key construction, and TTL decisions all appear alongside domain rules. A caching adapter separates this concern completely. The composition root wires `withCache (withRetry 3 postgresRepo)` — two adapters composed — and the application service receives a `PurchaseOrderRepository` that is both cached and retry-enabled.
+
+---
+
+### Example 52: Audit Log Adapter — Side-Effecting Wrapper
+
+An audit log adapter wraps a port and records every save call in an append-only audit log, without the application service knowing the log exists. This is a cross-cutting concern implemented at the port boundary.
+
+```fsharp
+open System
+
+// ── Port and domain types ──────────────────────────────────────────────────
+type PurchaseOrderId = string
+type PurchaseOrder   = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+type RepoError       = DatabaseError of string | ConnectionTimeout
+
+type PurchaseOrderRepository = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+}
+
+// ── Audit log entry type ───────────────────────────────────────────────────
+type AuditEntry = {
+    PoId       : PurchaseOrderId
+    // => The PO that was saved
+    OccurredAt : DateTimeOffset
+    // => Wall-clock timestamp of the save operation
+    Status     : string
+    // => The status of the PO at the time of save — the key audit field
+}
+
+// ── Audit log adapter wrapper ──────────────────────────────────────────────
+let withAuditLog (log: AuditEntry -> unit) (clock: unit -> DateTimeOffset) (inner: PurchaseOrderRepository) : PurchaseOrderRepository =
+    // => log: append-only function — in production, writes to audit_events table or Kafka
+    // => clock: timestamp port — deterministic in tests
+    { save = fun po ->
+          async {
+              let! result = inner.save po
+              // => Delegate to inner adapter — save happens first
+              match result with
+              | Ok () ->
+                  let entry = { PoId = po.Id; OccurredAt = clock (); Status = po.Status }
+                  // => Build audit entry from the saved PO
+                  log entry
+                  // => Append to audit log — after successful save only
+                  return Ok ()
+              | Error e ->
+                  return Error e
+                  // => Failed saves are NOT audited — the PO was never persisted
+          }
+      load = fun id -> inner.load id
+      // => load is a read — not audited; audit is for writes only
+    }
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+let auditLog = System.Collections.Generic.List<AuditEntry>()
+// => In-memory audit log — real system uses append-only DB table or event stream
+
+let innerRepo =
+    let store = System.Collections.Generic.Dictionary<PurchaseOrderId, PurchaseOrder>()
+    { save = fun po -> async { store.[po.Id] <- po; return Ok () }
+      load = fun id -> async {
+          match store.TryGetValue(id) with
+          | true, po -> return Ok (Some po)
+          | false, _ -> return Ok None } }
+
+let auditedRepo = withAuditLog auditLog.Add (fun () -> DateTimeOffset.UtcNow) innerRepo
+// => Wrap inner repo — every successful save is appended to auditLog
+
+let po1 = { Id = "po_audit_001"; SupplierId = "sup_1"; TotalAmount = 5000m; Status = "Approved" }
+Async.RunSynchronously (auditedRepo.save po1)
+
+printfn "Audit entries: %d" auditLog.Count
+// => Output: Audit entries: 1
+printfn "Audited PO: %s at %A" auditLog.[0].PoId auditLog.[0].OccurredAt
+// => Output: Audited PO: po_audit_001 at [timestamp]
+```
+
+**Key Takeaway**: Cross-cutting concerns like audit logging are implemented as adapter wrappers — they compose at the port boundary without touching application services or domain functions.
+
+**Why It Matters**: Injecting audit logic into application services scatters audit calls across every service method, making it easy to miss an auditable operation. An audit wrapper applied at the composition root guarantees that every save through that port is audited, regardless of which application service triggers it. Audit completeness becomes a composition property, not a discipline property.
+
+---
+
+### Example 53: Input Port Multiplexer — Routing One Input to Multiple Handlers
+
+An input port multiplexer calls multiple downstream handlers when a single input arrives. This is useful for fan-out: a `PurchaseOrderSubmitted` event dispatched to both the approval router and the notification service.
+
+```fsharp
+// ── Domain event ──────────────────────────────────────────────────────────
+type PurchaseOrderId = string
+type PurchaseOrder   = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+
+type PurchaseOrderSubmitted = {
+    OrderId    : PurchaseOrderId
+    // => The PO that was just submitted for approval
+    SubmittedAt : System.DateTimeOffset
+    // => Timestamp of submission
+}
+
+// ── Handler port type ──────────────────────────────────────────────────────
+type PurchaseOrderSubmittedHandler =
+    PurchaseOrderSubmitted -> Async<Result<unit, string>>
+// => Input port: any handler of PO submission events satisfies this type
+
+// ── Concrete handlers ──────────────────────────────────────────────────────
+let routeToApproval : PurchaseOrderSubmittedHandler =
+    fun event ->
+        async {
+            printfn "[ApprovalRouter] PO %s routed for approval" event.OrderId
+            // => Output: [ApprovalRouter] PO po_001 routed for approval
+            return Ok ()
+            // => Approval routing always succeeds in this stub
+        }
+
+let notifyPurchaser : PurchaseOrderSubmittedHandler =
+    fun event ->
+        async {
+            printfn "[Notifier] Purchaser notified: PO %s submitted at %A" event.OrderId event.SubmittedAt
+            // => Output: [Notifier] Purchaser notified: PO po_001 submitted at ...
+            return Ok ()
+            // => Notification always succeeds in this stub
+        }
+
+// ── Multiplexer: fan-out to all handlers ──────────────────────────────────
+let multiplexHandler (handlers: PurchaseOrderSubmittedHandler list) : PurchaseOrderSubmittedHandler =
+    // => Returns a single handler that calls every handler in the list
+    fun event ->
+        async {
+            let! results =
+                handlers
+                |> List.map (fun h -> h event)
+                |> Async.Parallel
+            // => Call all handlers in parallel — order not guaranteed
+            let errors =
+                results
+                |> Array.choose (function Error e -> Some e | Ok _ -> None)
+                |> Array.toList
+            // => Collect all errors — partial failure is surfaced
+            return
+                if errors.IsEmpty then Ok ()
+                // => All handlers succeeded — event fully processed
+                else Error (System.String.Join("; ", errors))
+                // => One or more handlers failed — caller may retry or dead-letter
+        }
+
+// ── Composition: wire the multiplexer ─────────────────────────────────────
+let allHandlers = multiplexHandler [ routeToApproval; notifyPurchaser ]
+// => allHandlers is a PurchaseOrderSubmittedHandler — composed of two handlers
+
+let event = { OrderId = "po_001"; SubmittedAt = System.DateTimeOffset.UtcNow }
+let result = allHandlers event |> Async.RunSynchronously
+printfn "Dispatch result: %A" result
+// => Output: [ApprovalRouter] PO po_001 routed for approval
+// => Output: [Notifier] Purchaser notified: PO po_001 submitted at ...
+// => Output: Dispatch result: Ok ()
+```
+
+**Key Takeaway**: A multiplexer composes multiple handlers of the same input port type into a single handler — the caller is unaware of the fan-out, and the composition root controls which handlers participate.
+
+**Why It Matters**: Hardcoding multiple handler calls inside an application service creates tight coupling between the submission workflow and every downstream concern (approvals, notifications, analytics). A multiplexer is a composable adapter that adds handlers at the composition root without modifying any existing handler or the application service that raises the event.
+
+---
+
+### Example 54: Observability Port — Structured Metrics Without Infrastructure Imports
+
+An `ObservabilityPort` injects structured telemetry (counters, timers, traces) into application services without importing OpenTelemetry or Prometheus directly. The observability library is used only in the adapter — never in the application layer.
+
+```fsharp
+open System
+
+// ── Observability port ─────────────────────────────────────────────────────
+type ObservabilityPort = {
+    incrementCounter : string -> unit
+    // => Increment a named counter (e.g. "po.submitted", "po.approved")
+    // => Synchronous and infallible — telemetry failure must not break business logic
+    recordDuration   : string -> TimeSpan -> unit
+    // => Record a named operation duration (e.g. "repo.save.duration")
+    // => Enables latency percentile dashboards without touching domain code
+}
+
+// ── No-op adapter (default for tests) ─────────────────────────────────────
+let noOpObservability : ObservabilityPort = {
+    incrementCounter = fun _ -> ()
+    // => Silently discards all counter increments — zero overhead in tests
+    recordDuration   = fun _ _ -> ()
+    // => Silently discards all duration measurements
+}
+
+// ── Console adapter (development) ─────────────────────────────────────────
+let consoleObservability : ObservabilityPort = {
+    incrementCounter = fun name ->
+        printfn "[Metrics] counter=%s value=+1" name
+        // => Output: [Metrics] counter=po.submitted value=+1
+    recordDuration = fun name duration ->
+        printfn "[Metrics] timer=%s ms=%.1f" name duration.TotalMilliseconds
+        // => Output: [Metrics] timer=repo.save.duration ms=5.2
+}
+
+// ── Application service using the observability port ──────────────────────
+type PurchaseOrderId = string
+type PurchaseOrder   = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+type RepoError       = DatabaseError of string | ConnectionTimeout
+type PurchaseOrderRepository = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+}
+
+let submitPO
+    (repo  : PurchaseOrderRepository)
+    (obs   : ObservabilityPort)
+    (po    : PurchaseOrder)
+    : Async<Result<unit, RepoError>> =
+    async {
+        obs.incrementCounter "po.submitted"
+        // => Record intent — the counter fires even if the save fails
+        let start = DateTimeOffset.UtcNow
+        // => Capture start time for duration measurement
+        let! result = repo.save po
+        // => Delegate to the repository port
+        let elapsed = DateTimeOffset.UtcNow - start
+        // => Compute elapsed duration
+        obs.recordDuration "repo.save.duration" elapsed
+        // => Record duration regardless of success or failure
+        match result with
+        | Ok () ->
+            obs.incrementCounter "po.save.success"
+            // => Track success rate in dashboards
+        | Error _ ->
+            obs.incrementCounter "po.save.failure"
+            // => Track failure rate — drives alerts
+        return result
+    }
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+let inMemRepo =
+    let store = System.Collections.Generic.Dictionary<PurchaseOrderId, PurchaseOrder>()
+    { save = fun po -> async { store.[po.Id] <- po; return Ok () }
+      load = fun id -> async {
+          match store.TryGetValue(id) with
+          | true, po -> return Ok (Some po)
+          | false, _ -> return Ok None } }
+
+let po = { Id = "po_obs_001"; SupplierId = "sup_1"; TotalAmount = 2500m; Status = "AwaitingApproval" }
+
+Async.RunSynchronously (async {
+    let! _ = submitPO inMemRepo consoleObservability po
+    // => Output: [Metrics] counter=po.submitted value=+1
+    // => Output: [Metrics] timer=repo.save.duration ms=...
+    // => Output: [Metrics] counter=po.save.success value=+1
+    printfn "Observability demo complete"
+    // => Output: Observability demo complete
+})
+```
+
+**Key Takeaway**: The `ObservabilityPort` injects telemetry into application services as a first-class dependency — telemetry is testable, replaceable, and never coupled to a specific observability vendor.
+
+**Why It Matters**: Direct OpenTelemetry or Prometheus imports in application services create vendor coupling — migrating to a different observability stack requires touching every service that emits metrics. An `ObservabilityPort` records the same semantic metrics regardless of backend. The no-op adapter keeps tests fast and noise-free, while the real adapter emits to Prometheus or Grafana without any application service changes.
+
+---
+
+### Example 55: Composition Root for the Full Purchasing + Receiving Flow
+
+This final intermediate example shows a composition root that wires the `purchasing` and `receiving` contexts together: `PurchaseOrderRepository`, `GoodsReceiptNoteRepository`, `ApprovalRouterPort`, and `ObservabilityPort` — all assembled in one place, with the application services accepting only port types.
+
+```mermaid
+graph LR
+    ROOT["Composition Root"]:::orange
+    REPO["PurchaseOrderRepository\nPostgres adapter"]:::purple
+    GRN["GoodsReceiptNoteRepository\nPostgres adapter"]:::purple
+    ROUTER["ApprovalRouterPort\nIn-process adapter"]:::purple
+    OBS["ObservabilityPort\nConsole adapter"]:::teal
+    SVC1["submitPO service"]:::blue
+    SVC2["recordGRN service"]:::blue
+
+    ROOT --> REPO
+    ROOT --> GRN
+    ROOT --> ROUTER
+    ROOT --> OBS
+    ROOT --> SVC1
+    ROOT --> SVC2
+    REPO --> SVC1
+    GRN  --> SVC2
+    ROUTER --> SVC1
+    OBS --> SVC1
+    OBS --> SVC2
+
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef purple fill:#CC78BC,stroke:#000,color:#fff
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+```
+
+```fsharp
+open System
+open System.Collections.Generic
+
+// ── Shared domain types ────────────────────────────────────────────────────
+type PurchaseOrderId    = string
+type GoodsReceiptNoteId = string
+type PurchaseOrder      = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Purchasing aggregate — the central entity in the P2P workflow
+
+type GoodsReceiptNote = {
+    Id              : GoodsReceiptNoteId
+    PurchaseOrderId : PurchaseOrderId
+    ReceivedQty     : decimal
+    ReceivedAt      : DateTimeOffset
+    HasQcFlag       : bool
+}
+// => Receiving aggregate — created when goods arrive at the warehouse
+
+// ── Port types ─────────────────────────────────────────────────────────────
+type RepoError    = DatabaseError of string | ConnectionTimeout
+type GrnError     = GrnNotFound of string   | InfrastructureError of string
+type ApprovalLevel = L1 | L2 | L3
+
+type PurchaseOrderRepository = {
+    save : PurchaseOrder -> Async<Result<unit, RepoError>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+}
+
+type GoodsReceiptNoteRepository = {
+    save       : GoodsReceiptNote -> Async<Result<unit, GrnError>>
+    loadByPOId : PurchaseOrderId  -> Async<Result<GoodsReceiptNote list, GrnError>>
+}
+
+type ApprovalRouterPort = {
+    route : PurchaseOrder -> Async<Result<ApprovalLevel, string>>
+}
+
+type ObservabilityPort = {
+    incrementCounter : string -> unit
+    recordDuration   : string -> TimeSpan -> unit
+}
+
+// ── Adapter factories ──────────────────────────────────────────────────────
+// In production: replace these with real Npgsql or EF Core adapters
+let makePORepo () : PurchaseOrderRepository =
+    let store = Dictionary<PurchaseOrderId, PurchaseOrder>()
+    { save = fun po -> async { store.[po.Id] <- po; return Ok () }
+      load = fun id -> async {
+          match store.TryGetValue(id) with
+          | true, po -> return Ok (Some po)
+          | false, _ -> return Ok None } }
+// => In-memory PO repo — swap for Postgres adapter at production boot
+
+let makeGrnRepo () : GoodsReceiptNoteRepository =
+    let store = ResizeArray<GoodsReceiptNote>()
+    { save = fun grn -> async { store.Add(grn); return Ok () }
+      loadByPOId = fun poId ->
+          async { return Ok (store |> Seq.filter (fun g -> g.PurchaseOrderId = poId) |> Seq.toList) } }
+// => In-memory GRN repo — append-only; matches the receiving context semantics
+
+let makeApprovalRouter () : ApprovalRouterPort = {
+    route = fun po ->
+        async {
+            let level =
+                if   po.TotalAmount <= 1000m  then L1
+                elif po.TotalAmount <= 10000m then L2
+                else                               L3
+            // => Domain rule: level derived from PO total — same rule as in Example 45
+            return Ok level
+        }
+}
+// => In-process router — no external service call; swap for ERP adapter if needed
+
+let makeConsoleObs () : ObservabilityPort = {
+    incrementCounter = fun name -> printfn "[OBS] +1 %s" name
+    // => Output: [OBS] +1 po.submitted (etc.)
+    recordDuration   = fun name d  -> printfn "[OBS] %s %.1fms" name d.TotalMilliseconds
+}
+// => Console observability — swap for Prometheus adapter in production
+
+// ── Application services ───────────────────────────────────────────────────
+let submitAndRoutePO
+    (poRepo  : PurchaseOrderRepository)
+    (router  : ApprovalRouterPort)
+    (obs     : ObservabilityPort)
+    (po      : PurchaseOrder) =
+    async {
+        obs.incrementCounter "po.submit.attempt"
+        // => Track submission attempts
+        let! saveResult = poRepo.save po
+        // => Persist the PO first — then route
+        match saveResult with
+        | Error e -> return Error (sprintf "Save failed: %A" e)
+        | Ok () ->
+        let! routeResult = router.route po
+        // => Determine approval level after successful save
+        match routeResult with
+        | Error msg -> return Error (sprintf "Routing failed: %s" msg)
+        | Ok level ->
+        obs.incrementCounter (sprintf "po.routed.%A" level)
+        // => Track routing breakdown by level
+        return Ok (po, level)
+    }
+
+let recordReceipt
+    (grnRepo : GoodsReceiptNoteRepository)
+    (clock   : unit -> DateTimeOffset)
+    (obs     : ObservabilityPort)
+    (poId    : PurchaseOrderId)
+    (qty     : decimal) =
+    async {
+        let grn = {
+            Id              = sprintf "grn_%s" (Guid.NewGuid().ToString("N").[..5])
+            PurchaseOrderId = poId
+            ReceivedQty     = qty
+            ReceivedAt      = clock ()
+            HasQcFlag       = false
+        }
+        let! result = grnRepo.save grn
+        // => Persist the GRN
+        match result with
+        | Ok () -> obs.incrementCounter "grn.created"; return Ok grn
+        | Error e -> return Error (sprintf "GRN save failed: %A" e)
+    }
+
+// ── Composition root — wires everything together ───────────────────────────
+let buildServices () =
+    let poRepo  = makePORepo ()
+    // => PO repository adapter — in-memory for this demo
+    let grnRepo = makeGrnRepo ()
+    // => GRN repository adapter — in-memory for this demo
+    let router  = makeApprovalRouter ()
+    // => Approval router — in-process; swap for ERP adapter in production
+    let obs     = makeConsoleObs ()
+    // => Observability — console; swap for Prometheus adapter in production
+    let clock   = fun () -> DateTimeOffset.UtcNow
+    // => Clock port — live time; swap for fixed timestamp in tests
+
+    let submitService  = submitAndRoutePO poRepo router obs
+    // => Partially applied — caller only provides the PO
+    let receiptService = recordReceipt grnRepo clock obs
+    // => Partially applied — caller provides poId and qty
+
+    submitService, receiptService
+// => Returns the wired services — the HTTP router calls them
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+let (submitSvc, receiptSvc) = buildServices ()
+
+Async.RunSynchronously (async {
+    let po = { Id = "po_full_001"; SupplierId = "sup_1"; TotalAmount = 8000m; Status = "Draft" }
+    let! submitResult = submitSvc po
+    // => Output: [OBS] +1 po.submit.attempt
+    // => Output: [OBS] +1 po.routed.L2
+    printfn "Submit: %A" (submitResult |> Result.map (fun (_, level) -> sprintf "Routed to %A" level))
+    // => Output: Submit: Ok "Routed to L2"
+
+    let! receiptResult = receiptSvc "po_full_001" 10m
+    // => Output: [OBS] +1 grn.created
+    printfn "GRN: %A" (receiptResult |> Result.map (fun g -> g.Id))
+    // => Output: GRN: Ok "grn_..."
+})
+```
+
+**Key Takeaway**: The composition root is the only place that names adapter implementations — every application service receives port types and remains infrastructure-agnostic, making the entire purchasing + receiving flow independently testable with in-memory adapters.
+
+**Why It Matters**: A well-structured composition root is the proof that a system is truly hexagonal. If application services name concrete adapters, they are not hexagonal — they are layered with extra steps. When the composition root assembles all adapters and partially applies them into services, the system achieves the hexagonal promise: any adapter can be swapped by changing one factory call, and the entire business logic is testable without infrastructure.

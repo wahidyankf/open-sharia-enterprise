@@ -708,8 +708,11 @@ import com.procurement.platform.purchasing.application.EventPublisher;
 import org.springframework.jdbc.core.simple.JdbcClient;
 // => JdbcClient: shares the DataSource connection pool — outbox INSERT and aggregate INSERT are in the same transaction
 import org.springframework.stereotype.Component;
+// => @Component: Spring registers this bean and wires it to EventPublisher in PurchasingContextConfiguration
 import java.time.Instant;
+// => Instant.now(): UTC timestamp for the outbox row's created_at column — monotonically increasing
 import java.util.UUID;
+// => UUID.randomUUID(): unique idempotency key for the outbox row — the relay deduplicates by this value
 
 @Component
 // => @Component: wired to the EventPublisher port in PurchasingContextConfiguration (Guide 15)
@@ -719,17 +722,20 @@ public class OutboxEventPublisher implements EventPublisher {
     // => Same JdbcClient as JdbcPurchaseOrderRepository — both adapters share a DataSource,
     //    their writes participate in the same Spring-managed JDBC transaction
     private final ObjectMapper objectMapper;
+    // => ObjectMapper: Jackson bean auto-configured by spring-boot-starter-web — serialises domain records to JSON
 
     public OutboxEventPublisher(JdbcClient jdbc, ObjectMapper objectMapper) {
         this.jdbc = jdbc;
         this.objectMapper = objectMapper;
         // => Fields are final: immutable after construction — thread-safe for concurrent requests
+        // => Constructor injection: Spring wires both beans automatically — no @Autowired annotation
     }
 
     @Override
     public void publish(PurchaseOrderIssued event) {
         insertOutboxRow("PurchaseOrderIssued", event);
         // => The outbox row commits atomically with the aggregate row in the same JDBC transaction
+        // => If the caller's transaction rolls back, this INSERT also rolls back
     }
 
     @Override
@@ -755,9 +761,11 @@ public class OutboxEventPublisher implements EventPublisher {
                 .param("eventType", eventType)
                 // => String eventType: the relay worker dispatches to the correct handler by this value
                 .param("payload", json)
+                // => JSON string: CAST to JSONB by PostgreSQL — enables efficient field-level filtering
                 .param("createdAt", Instant.now().toString())
                 // => ISO-8601 string — PostgreSQL timestamptz column accepts this format
                 .update();
+            // => update(): executes the INSERT and returns the affected row count — typically 1
         } catch (Exception ex) {
             throw new RuntimeException("Failed to write outbox row for " + eventType, ex);
             // => Spring's transaction manager rolls back the entire transaction on exception
@@ -821,6 +829,7 @@ The full Spring `@RestController` pipeline enforces the four-step translation di
 ```java
 // Full four-step controller pipeline for PO issuance
 package com.procurement.platform.purchasing.presentation;
+// => presentation/ package: HTTP boundary — DTOs and domain value object constructors allowed here
 
 import com.procurement.platform.purchasing.application.DuplicatePurchaseOrderException;
 // => Typed exception from application/: mapped to HTTP 409 by the controller's catch block
@@ -837,12 +846,19 @@ import com.procurement.platform.purchasing.domain.PurchaseOrderId;
 import com.procurement.platform.purchasing.domain.SupplierId;
 // => Domain value objects: constructed from the DTO fields before calling the service
 import org.springframework.http.HttpStatus;
+// => HttpStatus: Spring enum for HTTP status codes — used to build ProblemDetail and ResponseEntity
 import org.springframework.http.ProblemDetail;
+// => ProblemDetail: RFC 9457 error body — Spring Boot 4's default structured error format
 import org.springframework.http.ResponseEntity;
+// => ResponseEntity: wraps HTTP status + headers + body — allows fine-grained HTTP response control
 import org.springframework.web.bind.annotation.*;
+// => @RestController, @RequestMapping, @PostMapping, @GetMapping, @RequestBody, @PathVariable
 import java.net.URI;
+// => URI.create: used to build the Location header value for the 201 Created response
 import java.time.Instant;
+// => Instant.now(): UTC timestamp for the domain event — monotonically increasing across JVM restarts
 import java.util.UUID;
+// => UUID.fromString: parses String path variable — throws IllegalArgumentException on malformed input
 
 public record IssuePurchaseOrderRequest(String supplierId) {}
 // => Request DTO as a Java record: Jackson deserialises JSON to a record via the canonical constructor
@@ -983,6 +999,7 @@ A `@RestController` consuming generated types from the codegen pipeline:
 ```java
 // Controller consuming generated contract types from the procurement-platform codegen pipeline
 package com.procurement.platform.purchasing.presentation;
+// => presentation/ package: HTTP boundary — only generated DTO types and domain types enter here
 
 import org.openapitools.model.IssuePurchaseOrderRequestBody;
 // => Generated from the OpenAPI requestBody schema for POST /api/v1/purchase-orders
@@ -990,19 +1007,30 @@ import org.openapitools.model.IssuePurchaseOrderRequestBody;
 import org.openapitools.model.PurchaseOrderResponseBody;
 // => Generated from the OpenAPI response schema — adding a field and re-running codegen emits a new setter
 import com.procurement.platform.purchasing.application.IssuePurchaseOrderService;
+// => Application service port — the controller never imports the @Service implementation class directly
 import com.procurement.platform.purchasing.application.EventPublisher;
+// => EventPublisher port — decoupled from the outbox or in-process adapter
 import com.procurement.platform.purchasing.domain.PurchaseOrder;
+// => Domain aggregate — received from the service, mapped to PurchaseOrderResponseBody in toResponse()
 import org.springframework.http.ResponseEntity;
+// => ResponseEntity: wraps HTTP status code + body — the controller controls the HTTP response shape
 import org.springframework.web.bind.annotation.*;
+// => @RestController, @RequestMapping, @PostMapping, @GetMapping, @RequestBody, @PathVariable
 import java.net.URI;
+// => URI.create: constructs the Location header value for the 201 Created response
 import java.time.Instant;
+// => Instant.now(): timestamp attached to PurchaseOrderIssued event — captures the moment of issuance
 import java.util.UUID;
+// => UUID.fromString: parses the String supplierId from the request body — throws on malformed input
 
 @RestController
+// => @RestController: Spring registers this bean; all methods serialise return values to JSON automatically
 @RequestMapping("/api/v1/purchase-orders")
+// => Base path: scoped to the purchasing context — each context owns its URL prefix
 public class PurchaseOrderContractController {
 
     private final IssuePurchaseOrderService issueService;
+    // => Application service interface — the controller never sees IssuePurchaseOrderServiceImpl
     private final EventPublisher eventPublisher;
     // => Same interfaces as Guide 12 — generated DTOs are invisible to the application layer
 
@@ -1010,29 +1038,41 @@ public class PurchaseOrderContractController {
             EventPublisher eventPublisher) {
         this.issueService = issueService;
         this.eventPublisher = eventPublisher;
+        // => Constructor injection: Spring wires both beans at context startup — no @Autowired annotation
+        // => Both fields are final — immutable after construction, thread-safe for concurrent requests
     }
 
     @PostMapping
+    // => @PostMapping: maps HTTP POST /api/v1/purchase-orders to this method
     public ResponseEntity<PurchaseOrderResponseBody> issuePurchaseOrder(
             @RequestBody IssuePurchaseOrderRequestBody request) {
+        // => @RequestBody: Jackson deserialises the HTTP body into IssuePurchaseOrderRequestBody
         // => IssuePurchaseOrderRequestBody: generated type — getSupplierId() is spec-authoritative
         var supplierId = new com.procurement.platform.purchasing.domain.SupplierId(
             UUID.fromString(request.getSupplierId()));
+        // => UUID.fromString: throws IllegalArgumentException on malformed UUID — mapped to HTTP 400 globally
         // => If codegen re-runs after a spec rename to "vendor_id", getSupplierId() no longer compiles
         var po = issueService.issue(supplierId, java.util.List.of());
+        // => issue(): creates and persists the PurchaseOrder aggregate — invariants validated inside
         eventPublisher.publish(new com.procurement.platform.purchasing.application.PurchaseOrderIssued(
             po.id(), po.supplierId(), Instant.now()));
+        // => Publish after issue() returns: the event payload reflects the committed aggregate state
         return ResponseEntity
             .created(URI.create("/api/v1/purchase-orders/" + po.id().value()))
+            // => 201 Created + Location header: REST convention for successful resource creation
             .body(toResponse(po));
+        // => toResponse: maps domain aggregate → generated response DTO — single translation point
     }
 
     private PurchaseOrderResponseBody toResponse(PurchaseOrder po) {
         var body = new PurchaseOrderResponseBody();
+        // => PurchaseOrderResponseBody: codegen-produced mutable POJO — setters correspond to spec fields
         body.setId(po.id().value().toString());
         // => setId: spec-authoritative setter — changing the spec field name changes this method
         body.setSupplierId(po.supplierId().value().toString());
+        // => setSupplierId: UUID converted to String — the spec defines supplierId as a string field
         body.setStatus(po.status().name());
+        // => status().name(): enum to String — matches the spec's string enum values
         body.setApprovalLevel(po.approvalLevel().name());
         // => The compile error at any missing or renamed setter enforces spec fidelity at build time
         return body;
@@ -1284,11 +1324,16 @@ A test `@TestConfiguration` overrides the production one without modifying any p
 // Test @TestConfiguration: swaps production adapters for in-memory ones
 package com.procurement.platform.purchasing.infrastructure;
 // => Test-classpath package: src/test/java/ — not included in production JAR builds
+// => Overrides PurchasingContextConfiguration for the test Spring context only
 
 import com.procurement.platform.purchasing.application.PurchaseOrderRepository;
+// => Output port interface: the @Bean method must declare this return type — not InMemoryPurchaseOrderRepository
 import com.procurement.platform.purchasing.application.EventPublisher;
+// => Event publisher port: declared as return type — hides InMemoryEventPublisher from the Spring context
 import org.springframework.boot.test.context.TestConfiguration;
+// => @TestConfiguration: Spring Boot test annotation — replaces matching production beans in test contexts
 import org.springframework.context.annotation.Bean;
+// => @Bean: each annotated method produces a bean registered in the test ApplicationContext
 
 @TestConfiguration
 // => @TestConfiguration: loaded in place of PurchasingContextConfiguration during the test Spring context startup
@@ -1298,6 +1343,7 @@ public class PurchasingTestContextConfiguration {
     public PurchaseOrderRepository purchaseOrderRepository() {
         return new InMemoryPurchaseOrderRepository();
         // => InMemoryPurchaseOrderRepository: same PurchaseOrderRepository interface — zero database, zero Docker required
+        // => ConcurrentHashMap-backed: thread-safe for parallel Cucumber step execution
     }
 
     @Bean
@@ -1305,6 +1351,7 @@ public class PurchasingTestContextConfiguration {
         return new InMemoryEventPublisher();
         // => InMemoryEventPublisher: captures events in a per-test list for @Then step assertions
         // => Cast the bean to InMemoryEventPublisher in @Then steps to call getPublished() for assertions
+        // => reset() is called in @Before Cucumber hook to clear events between scenarios
     }
 }
 ```

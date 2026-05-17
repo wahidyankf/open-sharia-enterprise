@@ -268,18 +268,22 @@ type PurchaseOrder = {
     Status     : string
 }
 
+// ── Infrastructure error type ─────────────────────────────────────────────
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error cases — DatabaseError carries the message; ConnectionTimeout signals retry
+
 // ── Output port: the canonical PurchaseOrderRepository definition ─────────
 // This record type is THE port contract. Every adapter must provide a value
 // of this type. No adapter name, no SQL, no Npgsql — just function signatures.
 type PurchaseOrderRepository = {
-    save: PurchaseOrder -> Async<Result<unit, string>>
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
     // => Persist a PO — upsert semantics recommended
     // => Async because disk/network I/O is involved
-    // => Result because the database can fail
-    load: PurchaseOrderId -> Async<Result<PurchaseOrder option, string>>
+    // => Result<unit, RepoError> because the database can fail with named cases
+    load: PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
     // => Load a PO by its ID
     // => Returns None when the PO does not exist (not an error)
-    // => Returns Error string on infrastructure failure
+    // => Returns Error RepoError on infrastructure failure
 }
 // => This exact record type signature is used in every example that touches the repository port
 
@@ -570,11 +574,14 @@ type OverSpecifiedRepository = {
 type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
 // => Domain type — no infrastructure fields
 
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error DU — canonical error type for all PurchaseOrderRepository ports
+
 type PurchaseOrderRepository = {
     // => Minimal: the application service needs exactly these two operations
-    save: PurchaseOrder -> Async<Result<unit, string>>
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
     // => CORRECT: no connection string, no transaction — adapter manages those internally
-    load: string        -> Async<Result<PurchaseOrder option, string>>
+    load: string        -> Async<Result<PurchaseOrder option, RepoError>>
     // => CORRECT: only the identity is needed — the adapter knows where to look
 }
 // => The connection string is a constructor parameter of the adapter, not a port parameter
@@ -821,9 +828,12 @@ open System
 type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
 // => Aggregate root — used across multiple ports
 
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error DU — canonical error type for PurchaseOrderRepository
+
 type PurchaseOrderRepository = {
-    save: PurchaseOrder -> Async<Result<unit, string>>
-    load: string        -> Async<Result<PurchaseOrder option, string>>
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
+    load: string        -> Async<Result<PurchaseOrder option, RepoError>>
 }
 // => Persistence port — same canonical definition
 
@@ -859,8 +869,8 @@ let submitPurchaseOrder
         let! saveResult = repo.save po
         // => Persist the PO — Postgres in production, Dictionary in tests
         match saveResult with
-        | Error msg -> return Error (sprintf "Save failed: %s" msg)
-        // => Propagate infrastructure failure to the caller
+        | Error e -> return Error (sprintf "Save failed: %A" e)
+        // => Propagate named RepoError to the caller
         | Ok () ->
         printfn "[%A] PO %s submitted for approval" submittedAt po.Id
         // => Log: real adapter would use Serilog or OpenTelemetry

@@ -75,7 +75,7 @@ graph TD
 
 **Key Takeaway**: Three element types — Person, Software System, External System — cover every actor at Level 1. Consistent labeling removes ambiguity for mixed technical/non-technical audiences.
 
-**Why It Matters**: Ambiguous diagrams drive ambiguous conversations. When a product manager sees `[Person] Buyer Employee` instead of just `Employee`, they immediately grasp the human-to-system boundary, which anchors feature discussions in the right scope.
+**Why It Matters**: Ambiguous diagrams drive ambiguous conversations. When a product manager sees `[Person] Buyer Employee` instead of just `Employee`, they immediately grasp the human-to-system boundary, which anchors feature discussions in the right scope. Consistent notation across all diagrams also reduces the onboarding friction for new team members who must quickly understand who interacts with the system.
 
 ---
 
@@ -108,7 +108,7 @@ graph TD
 
 **Key Takeaway**: Always label relationships with a purposeful verb phrase. Adding protocol hints costs nothing and immediately answers "how do they talk?" for engineers in the room.
 
-**Why It Matters**: In cross-team discussions, unlabeled arrows cause ten-minute debates about what the arrow means. Purposeful labels prevent those debates and double as documentation that survives meeting notes.
+**Why It Matters**: In cross-team discussions, unlabeled arrows cause ten-minute debates about what the arrow means. Purposeful labels prevent those debates and double as documentation that survives meeting notes. Adding protocol hints such as `[REST]` or `[ISO 20022]` also gives engineers the integration contracts they need without requiring a separate API specification document at early architecture stages.
 
 ---
 
@@ -144,7 +144,7 @@ graph TD
 
 **Key Takeaway**: Use a boundary box whenever the system scope is non-obvious or when you are presenting to an audience unfamiliar with your organizational landscape.
 
-**Why It Matters**: Scope disagreements between teams often trace back to diagrams with no explicit boundary. The boundary box is the cheapest contract you can draw.
+**Why It Matters**: Scope disagreements between teams often trace back to diagrams with no explicit boundary. The boundary box is the cheapest contract you can draw. When ownership is visible at a glance, engineering teams can escalate cross-boundary decisions to the right stakeholders without ambiguity, reducing the cycle time for architecture reviews and preventing duplicate ownership claims over shared services.
 
 ---
 
@@ -188,7 +188,7 @@ graph TD
 
 **Key Takeaway**: Always ask "who reads this and what decision do they need to make?" before opening your diagram tool. The answer determines your level.
 
-**Why It Matters**: Over-detailed diagrams for business audiences and under-detailed diagrams for engineers are equal failures. Selecting the right level is the single most impactful C4 skill.
+**Why It Matters**: Over-detailed diagrams for business audiences and under-detailed diagrams for engineers are equal failures. Selecting the right level is the single most impactful C4 skill. A business stakeholder overwhelmed by Kafka topic names disengages; an engineer shown only a single-box system cannot make implementation decisions — matching diagram depth to audience ensures every meeting produces actionable outcomes.
 
 ---
 
@@ -219,7 +219,7 @@ graph TD
 
 **Key Takeaway**: Start with the minimum viable Context diagram. Add actors only when the additional relationship changes a decision or reveals a dependency.
 
-**Why It Matters**: Most system presentations overwhelm stakeholders on the first diagram. Starting minimal builds a shared mental model before adding complexity, reducing misunderstanding in architectural reviews.
+**Why It Matters**: Most system presentations overwhelm stakeholders on the first diagram. Starting minimal builds a shared mental model before adding complexity, reducing misunderstanding in architectural reviews. Progressive disclosure also makes it easier to identify which relationships are in scope for a particular sprint or milestone, preventing premature architecture debates that derail planning sessions.
 
 ---
 
@@ -252,7 +252,7 @@ graph TD
 
 **Key Takeaway**: When a relationship has different protocols in each direction, draw separate labeled arrows. Bidirectional arrows hide protocol complexity.
 
-**Why It Matters**: Integration decisions made early in a project (EDI vs. REST vs. portal) have long-term cost and maintenance implications. Surfacing them at Context level brings them into architectural conversations before contracts are signed.
+**Why It Matters**: Integration decisions made early in a project (EDI vs. REST vs. portal) have long-term cost and maintenance implications. Surfacing them at Context level brings them into architectural conversations before contracts are signed. Discovering integration format requirements at diagram time costs nothing; discovering them after development is complete can delay go-live by months and require expensive supplier re-onboarding.
 
 ---
 
@@ -289,7 +289,7 @@ graph TD
 
 **Key Takeaway**: Use protocol and standard names (ISO 20022, EDI 850) as labels when they carry compliance or contractual weight. This surfaces non-functional requirements early.
 
-**Why It Matters**: Financial integrations carry regulatory obligations. A Context diagram that names the payment standard anchors compliance discussions at the correct level of abstraction, preventing expensive late-stage discoveries.
+**Why It Matters**: Financial integrations carry regulatory obligations. A Context diagram that names the payment standard anchors compliance discussions at the correct level of abstraction, preventing expensive late-stage discoveries. Teams that treat the Bank as an invisible dependency often discover compliance requirements — such as PCI-DSS scope or ISO 20022 format mandates — only during pre-production audits, when remediation costs are highest.
 
 ---
 
@@ -330,7 +330,7 @@ graph TD
 
 **Key Takeaway**: Show bidirectional ERP relationships explicitly. Hidden data dependencies on ERP master data are among the most common causes of P2P implementation delays.
 
-**Why It Matters**: Finance and IT teams often treat ERP integration as an afterthought. A Context diagram that shows ERP as a dependency from day one forces the conversation onto the project timeline before it becomes a blocker.
+**Why It Matters**: Finance and IT teams often treat ERP integration as an afterthought. A Context diagram that shows ERP as a dependency from day one forces the conversation onto the project timeline before it becomes a blocker. Omitting ERP from early architecture discussions commonly leads to last-minute schema mismatches between the GL chart of accounts and what the P2P platform expects to post during go-live.
 
 ---
 
@@ -354,7 +354,7 @@ graph TD
     Platform -->|"Disburses payments [ISO 20022]"| Bank
     Bank -->|"Confirms payment status [webhook]"| Platform
     Platform -->|"Posts accounting entries [REST]"| ERP
-    ERP -->|"Provides GL codes and chart of accounts [REST]"| ERP
+    ERP -->|"Provides GL codes and chart of accounts [REST]"| Platform
 
     style Buyer fill:#029E73,stroke:#000,color:#fff
     style Manager fill:#029E73,stroke:#000,color:#fff
@@ -374,7 +374,7 @@ graph TD
 
 **Key Takeaway**: A complete Level 1 diagram fits on one slide and tells the full system story. If it requires more than six actors to be comprehensible, consider splitting into multiple context diagrams.
 
-**Why It Matters**: Executive sign-off on a platform investment requires understanding scope and boundary. This diagram provides that understanding in thirty seconds, enabling faster and more informed decision-making.
+**Why It Matters**: Executive sign-off on a platform investment requires understanding scope and boundary. This diagram provides that understanding in thirty seconds, enabling faster and more informed decision-making. Showing all actors — Buyer, Approving Manager, Supplier, Bank, and ERP — in a single view surfaces integration complexity and compliance obligations at a level executives can assess without needing technical details from individual engineers.
 
 ---
 
@@ -411,7 +411,7 @@ graph TD
 
 **Key Takeaway**: When approval chains have business-defined tiers, model each tier as a distinct person in the Context diagram. This makes the routing logic visible to business stakeholders who own the rules.
 
-**Why It Matters**: Approval threshold rules change frequently as organizations grow. Surfacing them at Context level keeps business owners accountable for defining and maintaining them, rather than burying the rules in code.
+**Why It Matters**: Approval threshold rules change frequently as organizations grow. Surfacing them at Context level keeps business owners accountable for defining and maintaining them, rather than burying the rules in code. When approval actors are invisible in architecture diagrams, threshold changes require both code deployments and undocumented process updates, increasing the risk that a limit change is applied inconsistently across environments.
 
 ---
 
@@ -446,7 +446,7 @@ graph TD
 
 **Key Takeaway**: Model different integration patterns for the same logical actor as separate elements when they require different implementations. Conflating them hides adapter complexity.
 
-**Why It Matters**: EDI integration with large suppliers is contractually mandated in many industries. Discovering this requirement at the Context level prevents the late-stage realization that a portal-only implementation cannot onboard key suppliers.
+**Why It Matters**: EDI integration with large suppliers is contractually mandated in many industries. Discovering this requirement at the Context level prevents the late-stage realization that a portal-only implementation cannot onboard key suppliers. Treating a supplier as a simple REST endpoint when they require ANSI X12 or EDIFACT format is a common and expensive architecture mistake that only surfaces during supplier onboarding.
 
 ---
 
@@ -481,7 +481,7 @@ graph TD
 
 **Key Takeaway**: Use standard message type identifiers (pain.001, EDI 810) as labels when they carry compliance or contractual weight. This prevents implementation teams from choosing incompatible formats.
 
-**Why It Matters**: Payment file format is often mandated by the bank. Discovering a pain.001 requirement after building a custom CSV-based integration forces a complete rewrite — a costly lesson that a labeled Context diagram prevents.
+**Why It Matters**: Payment file format is often mandated by the bank. Discovering a pain.001 requirement after building a custom CSV-based integration forces a complete rewrite — a costly lesson that a labeled Context diagram prevents. Naming the Bank explicitly in the Context diagram also triggers the security review needed to classify payment infrastructure under PCI-DSS scope before the team begins implementation.
 
 ---
 
@@ -513,7 +513,7 @@ graph TD
 
 **Key Takeaway**: Show all ERP integration points including read dependencies. Hidden master-data dependencies on ERP are the most common P2P integration blocker.
 
-**Why It Matters**: Accrual accounting is a generally accepted accounting principle (GAAP) requirement in many organizations. Surfacing it at Context level brings the finance team into the design conversation before the posting architecture is locked.
+**Why It Matters**: Accrual accounting is a generally accepted accounting principle (GAAP) requirement in many organizations. Surfacing it at Context level brings the finance team into the design conversation before the posting architecture is locked. A Context diagram that shows the chart-of-accounts dependency ensures that finance architects review the GL integration design before development, not during audit remediation when changes are far more expensive.
 
 ---
 
@@ -549,7 +549,7 @@ graph TD
 
 **Key Takeaway**: When a single business action (notify supplier) involves multiple external systems, draw each external system as a separate node. Lumping them into one box hides adapter complexity.
 
-**Why It Matters**: Supplier experience directly affects supply chain reliability. Platform teams that treat notification as a single checkbox find supplier complaints about missed POs are often a system integration problem, not a human one.
+**Why It Matters**: Supplier experience directly affects supply chain reliability. Platform teams that treat notification as a single checkbox find supplier complaints about missed POs are often a system integration problem, not a human one. A Context diagram that makes the Notification System visible ensures that supplier communication SLAs are agreed upon and tested before launch, not added as afterthoughts when delivery delays surface.
 
 ---
 
@@ -582,7 +582,7 @@ graph TD
 
 **Key Takeaway**: Include secret management infrastructure in Context diagrams. Treating credentials as a deploy-time concern rather than a runtime integration produces systems that fail silently when credentials rotate.
 
-**Why It Matters**: Credential leaks are the most common cause of cloud data breaches. Architectural diagrams that normalize secret management at the system boundary set the security standard for the entire implementation team.
+**Why It Matters**: Credential leaks are the most common cause of cloud data breaches. Architectural diagrams that normalize secret management at the system boundary set the security standard for the entire implementation team. A Context diagram that names Secret Manager as an explicit dependency forces the security team to review secret rotation policies and access control boundaries during the design phase rather than after a credential exposure incident.
 
 ---
 
@@ -619,7 +619,7 @@ graph TD
 
 **Key Takeaway**: Model optional financing paths as separate external system relationships. Murabaha financing is architecturally distinct from standard bank disbursement and must not be conflated.
 
-**Why It Matters**: Islamic finance compliance is a regulatory requirement in many markets. Surfacing the Murabaha Bank as a distinct external system anchors legal, finance, and engineering conversations in the correct contractual structure from the first design session.
+**Why It Matters**: Islamic finance compliance is a regulatory requirement in many markets. Surfacing the Murabaha Bank as a distinct external system anchors legal, finance, and engineering conversations in the correct contractual structure from the first design session. Retrofitting profit-rate accounting and Sharia audit trails into a platform designed for conventional lending is a multi-sprint rework that early architecture visibility prevents entirely.
 
 ---
 
@@ -654,7 +654,7 @@ graph TD
 
 **Key Takeaway**: Model compliance and audit infrastructure as distinct external systems, not as features of the primary database. Tamper-evident audit trails require architectural separation, not just a log table.
 
-**Why It Matters**: Regulatory audits that discover audit trails co-mingled with operational data can result in findings that invalidate the entire audit. Architectural separation is not optional in regulated procurement environments.
+**Why It Matters**: Regulatory audits that discover audit trails co-mingled with operational data can result in findings that invalidate the entire audit. Architectural separation is not optional in regulated procurement environments. Regulatory frameworks such as SOX and ISO 27001 require immutable audit logs that are accessible independently of the operational system, making early architectural separation a compliance prerequisite rather than a design preference.
 
 ---
 
@@ -696,7 +696,7 @@ graph TD
 
 **Key Takeaway**: Introduce a notification mediator when multi-channel delivery is required. Letting the platform call each channel directly creates tight coupling that makes channel changes expensive.
 
-**Why It Matters**: Notification channel preferences change. SMS costs, email deliverability issues, and push notification adoption each affect channel strategy. Decoupling through a notification service makes channel changes a configuration concern, not a code change.
+**Why It Matters**: Notification channel preferences change. SMS costs, email deliverability issues, and push notification adoption each affect channel strategy. Decoupling through a notification service makes channel changes a configuration concern, not a code change. This abstraction also enables suppliers and buyers to set their own preferred channels without requiring platform re-deployment or cross-team coordination for each channel addition.
 
 ---
 
@@ -736,7 +736,7 @@ graph TD
 
 **Key Takeaway**: Model observability infrastructure in Context diagrams. Teams that treat monitoring as a post-launch concern regularly deploy platforms that are blind in production.
 
-**Why It Matters**: P2P platforms handle financial transactions. Production incidents with no telemetry result in extended outages and financial data integrity questions. Observability is an architectural requirement, not an operational nicety.
+**Why It Matters**: P2P platforms handle financial transactions. Production incidents with no telemetry result in extended outages and financial data integrity questions. Observability is an architectural requirement, not an operational nicety. A Context diagram that makes Observability a named external system ensures monitoring budgets, SLA definitions, and alerting thresholds are agreed upon during architecture review rather than negotiated reactively during an incident.
 
 ---
 
@@ -776,7 +776,7 @@ graph TD
 
 **Key Takeaway**: Label relationship synchronicity in Context diagrams. Synchronous dependencies create cascading latency risk; asynchronous dependencies create eventual consistency risk. Both risks must be acknowledged.
 
-**Why It Matters**: P2P platforms often fail performance SLAs because synchronous ERP dependencies were not visible at design time. Making synchronicity explicit at Context level forces the team to plan for circuit breakers or caching.
+**Why It Matters**: P2P platforms often fail performance SLAs because synchronous ERP dependencies were not visible at design time. Making synchronicity explicit at Context level forces the team to plan for circuit breakers or caching. Identifying that ERP chart-of-accounts calls are synchronous allows architects to implement response caching before those calls become the bottleneck under peak purchase order volume in production.
 
 ---
 
@@ -817,7 +817,7 @@ graph TD
 
 **Key Takeaway**: Model each approval role as a distinct person with threshold labels. Collapsing all approvers into one generic "Manager" actor hides routing logic that the platform must implement.
 
-**Why It Matters**: Approval routing errors are a primary audit finding in P2P systems. Incorrect routing allows purchases above an employee's authority threshold to be approved without appropriate oversight — a financial controls failure.
+**Why It Matters**: Approval routing errors are a primary audit finding in P2P systems. Incorrect routing allows purchases above an employee's authority threshold to be approved without appropriate oversight — a financial controls failure. A Context diagram that makes approval tiers visible ensures that finance and compliance stakeholders validate the routing logic during architecture review before it is encoded in the system and before any purchases are processed.
 
 ---
 
@@ -854,7 +854,7 @@ graph TD
 
 **Key Takeaway**: Model the boundary between physical and digital accurately. Physical events (goods delivery) happen outside the system; the platform records only the human-entered acknowledgment.
 
-**Why It Matters**: Three-way matching (PO ↔ GRN ↔ Invoice) is the cornerstone of P2P fraud prevention. The matching cannot succeed if goods receipt data is incomplete. Showing the Warehouse Operator as a first-class actor signals the data quality dependency to operations teams.
+**Why It Matters**: Three-way matching (PO ↔ GRN ↔ Invoice) is the cornerstone of P2P fraud prevention. The matching cannot succeed if goods receipt data is incomplete. Showing the Warehouse Operator as a first-class actor signals the data quality dependency to operations teams. Naming this actor in the Context diagram also prompts the decision to build a GRN portal or mobile interface before development begins, not after matching failures surface in production.
 
 ---
 
@@ -892,7 +892,7 @@ graph TD
 
 **Key Takeaway**: Model every human touchpoint in the P2P process as a distinct Person actor. Hidden manual steps lead to under-designed user interfaces and process bottlenecks.
 
-**Why It Matters**: Invoice matching exceptions are the most common cause of payment delays in P2P. A platform that makes the exception resolution workflow invisible during design will deliver a poor finance user experience, resulting in slow payment runs and supplier relationship damage.
+**Why It Matters**: Invoice matching exceptions are the most common cause of payment delays in P2P. A platform that makes the exception resolution workflow invisible during design will deliver a poor finance user experience, resulting in slow payment runs and supplier relationship damage. Making the Finance Clerk explicit in the Context diagram ensures that the exception management interface, notification flows, and SLA targets are scoped during architecture review rather than discovered during user acceptance testing.
 
 ---
 
@@ -943,7 +943,7 @@ graph LR
 
 **Key Takeaway**: For process-oriented systems, number the relationship arrows in execution order. This converts a static view into an interactive walkthrough for business stakeholder meetings.
 
-**Why It Matters**: P2P process reviews with stakeholders often uncover missing steps, incorrect approval routing, or missing actors. A numbered-arrow Context diagram makes these gaps findable in a meeting rather than in a production incident.
+**Why It Matters**: P2P process reviews with stakeholders often uncover missing steps, incorrect approval routing, or missing actors. A numbered-arrow Context diagram makes these gaps findable in a meeting rather than in a production incident. When all roles and external systems appear in a single diagram with numbered flow steps, finance, procurement, and IT stakeholders can jointly verify completeness in a single review session.
 
 ---
 
@@ -991,7 +991,7 @@ graph TD
 
 **Key Takeaway**: Draw the out-of-scope boundary explicitly. Unspecified scope is assumed to be in-scope by stakeholders, leading to scope creep and budget overruns.
 
-**Why It Matters**: P2P implementations frequently expand to absorb inventory management, ERP functionality, and supplier master data management — all out of scope for a P2P backend. A boundary diagram prevents these expansions from silently entering the project.
+**Why It Matters**: P2P implementations frequently expand to absorb inventory management, ERP functionality, and supplier master data management — all out of scope for a P2P backend. A boundary diagram prevents these expansions from silently entering the project. When boundaries are documented in an architecture diagram, adding out-of-scope features requires an explicit architecture review decision rather than a quiet addition to the backlog that bypasses scope governance.
 
 ---
 
@@ -1032,7 +1032,7 @@ graph TD
 
 **Key Takeaway**: Model multi-tenancy at Context level with explicit tenant labels on actor-to-system arrows. Invisible multi-tenancy in diagrams produces invisible data isolation bugs in production.
 
-**Why It Matters**: Cross-tenant data leaks in SaaS procurement platforms expose supplier pricing and purchase volumes — commercially sensitive data that damages customer trust and triggers regulatory action. Architectural visibility is the first line of defense.
+**Why It Matters**: Cross-tenant data leaks in SaaS procurement platforms expose supplier pricing and purchase volumes — commercially sensitive data that damages customer trust and triggers regulatory action. Architectural visibility is the first line of defense. Retrofitting row-level tenant isolation into a schema designed without it requires full table migrations and extended downtime — a cost that early architecture visibility eliminates entirely.
 
 ---
 
@@ -1082,7 +1082,7 @@ graph TD
 
 **Key Takeaway**: Show regional deployments and data residency constraints at Context level. Data sovereignty requirements discovered post-deployment require expensive re-architecture.
 
-**Why It Matters**: GDPR fines for cross-border data transfers reach 4% of global annual turnover. Architectural diagrams that make data residency constraints explicit from day one prevent regulatory exposure.
+**Why It Matters**: GDPR fines for cross-border data transfers reach 4% of global annual turnover. Architectural diagrams that make data residency constraints explicit from day one prevent regulatory exposure. Teams that discover cross-border data residency requirements after deployment must retrofit data partitioning, replication boundaries, and consent mechanisms under regulatory deadline pressure — a far more expensive remediation than early design clarity.
 
 ---
 
@@ -1128,7 +1128,7 @@ graph TD
 
 **Key Takeaway**: Model security trust zones explicitly in Context diagrams for security-sensitive systems. Each zone boundary represents a distinct authentication/authorization enforcement point.
 
-**Why It Matters**: P2P platforms hold payment credentials and supplier contracts — high-value targets. Security architecture decisions made at Context level (DMZ, mTLS, private DB) drive implementation decisions across every container and component in the system.
+**Why It Matters**: P2P platforms hold payment credentials and supplier contracts — high-value targets. Security architecture decisions made at Context level (DMZ, mTLS, private DB) drive implementation decisions across every container and component in the system. Security architects can annotate trust boundaries directly on the Context diagram, creating a shared threat model that engineers reference during implementation and reviewers verify during security assessments.
 
 ---
 
@@ -1178,4 +1178,4 @@ graph TD
 
 **Key Takeaway**: Level 1 Context diagrams contain only three element types: Person, Software System, External System. If you see a database, cache, or queue in a Context diagram, the diagram is at the wrong level.
 
-**Why It Matters**: Context diagrams that mix abstraction levels confuse both technical and non-technical audiences. Business stakeholders disengage when they see Redis; engineers miss the boundary-level relationships because their eyes go to the technology they recognize. Pure Level 1 diagrams serve both audiences cleanly.
+**Why It Matters**: Context diagrams that mix abstraction levels confuse both technical and non-technical audiences. Business stakeholders disengage when they see Redis; engineers miss the boundary-level relationships because their eyes go to the technology they recognize. Pure Level 1 diagrams serve both audiences cleanly. Documenting anti-patterns in a shared reference also enables reviewers to reject non-compliant diagrams during pull request reviews with a concrete, agreed-upon standard rather than subjective feedback.

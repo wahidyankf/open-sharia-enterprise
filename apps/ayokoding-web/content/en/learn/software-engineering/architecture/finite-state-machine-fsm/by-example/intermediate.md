@@ -27,7 +27,7 @@ stateDiagram-v2
     Paid --> [*]
 
     classDef registered fill:#0173B2,stroke:#000,color:#fff
-    classDef matching fill:#DE8F05,stroke:#000,color:#fff
+    classDef matching fill:#DE8F05,stroke:#000,color:#000
     classDef matched fill:#029E73,stroke:#000,color:#fff
     classDef disputed fill:#CC78BC,stroke:#000,color:#fff
     classDef terminal fill:#CA9161,stroke:#000,color:#fff
@@ -40,7 +40,7 @@ stateDiagram-v2
 ```
 
 ```typescript
-// Invoice state sealed type — every valid invoice condition
+// => Invoice state sealed type — every valid invoice condition
 type InvoiceState =
   | "Registered" // => Supplier submitted invoice; not yet matched
   | "Matching" // => Three-way match in progress
@@ -49,7 +49,7 @@ type InvoiceState =
   | "ScheduledForPayment" // => Finance scheduled payment run
   | "Paid"; // => Bank disbursement confirmed — terminal
 
-// Invoice event alphabet
+// => Invoice event alphabet
 type InvoiceEvent =
   | "start_match" // => Begin the three-way matching process
   | "match_ok" // => Match succeeded within tolerance
@@ -58,7 +58,7 @@ type InvoiceEvent =
   | "schedule" // => Finance schedules payment
   | "pay"; // => Bank confirms disbursement
 
-// Invoice data record (immutable)
+// => Invoice data record (immutable)
 interface Invoice {
   readonly id: string; // => Format: inv_<uuid>
   readonly poId: string; // => Links to PurchaseOrder
@@ -66,7 +66,7 @@ interface Invoice {
   readonly state: InvoiceState;
 }
 
-// Transition table for Invoice FSM
+// => Transition table for Invoice FSM
 const INVOICE_TRANSITIONS: Partial<Record<InvoiceState, Partial<Record<InvoiceEvent, InvoiceState>>>> = {
   Registered: { start_match: "Matching" },
   // => Registration triggers matching workflow
@@ -78,7 +78,7 @@ const INVOICE_TRANSITIONS: Partial<Record<InvoiceState, Partial<Record<InvoiceEv
   // => Finance approves the matched invoice for payment run
   ScheduledForPayment: { pay: "Paid" },
   // => Bank confirms disbursement
-  // Paid: terminal — no outgoing transitions
+  // => Paid: terminal — no outgoing transitions
 };
 ```
 
@@ -92,26 +92,47 @@ const INVOICE_TRANSITIONS: Partial<Record<InvoiceState, Partial<Record<InvoiceEv
 
 The `match_ok` event is only valid if the invoice amount falls within tolerance of the expected amount derived from the GRN and PO unit prices.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Matching
+    Matching --> Matched: match_ok [within tolerance]
+    Matching --> Disputed: match_fail [outside tolerance]
+    note right of Matching
+        Three-way match:
+        Invoice ≈ GRN × PO price
+        (within 2% tolerance)
+    end note
+    Disputed --> Matching: resubmit
+
+    classDef matching fill:#DE8F05,stroke:#000,color:#000
+    classDef matched fill:#029E73,stroke:#000,color:#fff
+    classDef disputed fill:#CC78BC,stroke:#000,color:#fff
+
+    class Matching matching
+    class Matched matched
+    class Disputed disputed
+```
+
 ```typescript
-// Tolerance: the maximum allowed percentage discrepancy in the three-way match
+// => Tolerance: the maximum allowed percentage discrepancy in the three-way match
 interface Tolerance {
   percentage: number; // => 0.02 = 2%, per domain spec (max 10%)
 }
 
-// Goods Receipt Note line: what was physically received
+// => Goods Receipt Note line: what was physically received
 interface GRNLine {
   skuCode: string; // => Must match PO line SKU
   receivedQty: number; // => Actual quantity received
 }
 
-// PO line for matching: provides the agreed unit price
+// => PO line for matching: provides the agreed unit price
 interface POLineForMatch {
   skuCode: string;
   unitPrice: number; // => Agreed price in PO — the reference for matching
 }
 
-// Compute the expected invoice amount from GRN quantities and PO unit prices
-// Pure function: no side effects
+// => Compute the expected invoice amount from GRN quantities and PO unit prices
+// => Pure function: no side effects
 function computeExpectedAmount(grnLines: readonly GRNLine[], poLines: readonly POLineForMatch[]): number {
   const priceMap = new Map(poLines.map((l) => [l.skuCode, l.unitPrice]));
   // => Build SKU → unitPrice lookup map for O(1) per-line access
@@ -124,7 +145,7 @@ function computeExpectedAmount(grnLines: readonly GRNLine[], poLines: readonly P
   }, 0);
 }
 
-// Three-way match guard: returns true if invoice amount is within tolerance
+// => Three-way match guard: returns true if invoice amount is within tolerance
 function threeWayMatchPasses(
   invoice: Invoice,
   grnLines: readonly GRNLine[],
@@ -140,7 +161,7 @@ function threeWayMatchPasses(
   // => Within 2% tolerance (default) → match passes
 }
 
-// Example: 10 units × $50 = $500 expected; supplier invoices $508 (1.6% delta)
+// => Example: 10 units × $50 = $500 expected; supplier invoices $508 (1.6% delta)
 const grn: GRNLine[] = [{ skuCode: "ELC-0042", receivedQty: 10 }];
 const po: POLineForMatch[] = [{ skuCode: "ELC-0042", unitPrice: 50 }];
 const inv: Invoice = { id: "inv_001", poId: "po_001", supplierAmount: 508, state: "Matching" };
@@ -165,7 +186,7 @@ console.log(threeWayMatchPasses(highInv, grn, po, tol));
 Wrapping the three-way match guard in the transition function produces the complete `match` operation.
 
 ```typescript
-// Context passed to the match transition — all data needed for the guard
+// => Context passed to the match transition — all data needed for the guard
 interface MatchContext {
   invoice: Invoice;
   grnLines: readonly GRNLine[];
@@ -173,20 +194,20 @@ interface MatchContext {
   tolerance: Tolerance;
 }
 
-// Result type re-used from beginner examples
+// => Result type re-used from beginner examples
 type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
-// Guarded match transition: applies the three-way match guard before transitioning
+// => Guarded match transition: applies the three-way match guard before transitioning
 function applyMatch(ctx: MatchContext): Result<Invoice> {
   const { invoice, grnLines, poLines, tolerance } = ctx;
 
-  // FSM check: must be in Matching state to attempt a match
+  // => FSM check: must be in Matching state to attempt a match
   if (invoice.state !== "Matching") {
     return { ok: false, error: `Cannot match invoice in state: ${invoice.state}` };
     // => FSM structural guard: matching only valid from Matching state
   }
 
-  // Business guard: three-way match must pass
+  // => Business guard: three-way match must pass
   if (threeWayMatchPasses(invoice, grnLines, poLines, tolerance)) {
     return { ok: true, value: { ...invoice, state: "Matched" } };
     // => Guard passes: invoice transitions to Matched
@@ -196,8 +217,8 @@ function applyMatch(ctx: MatchContext): Result<Invoice> {
   }
 }
 
-// Note: match_ok and match_fail are computed outcomes, not caller-chosen events
-// The guard determines which of the two transitions fires — the caller only provides data
+// => Note: match_ok and match_fail are computed outcomes, not caller-chosen events
+// => The guard determines which of the two transitions fires — the caller only provides data
 
 const matchCtx: MatchContext = {
   invoice: { id: "inv_002", poId: "po_002", supplierAmount: 508, state: "Matching" },
@@ -224,8 +245,31 @@ if (r2.ok) console.log(r2.value.state); // => Output: Disputed (600 is 20% over 
 
 When an Invoice is matched, the corresponding PurchaseOrder should transition to `Invoiced`. This cross-machine coordination models the domain event `InvoiceMatched` propagating to the `purchasing` context.
 
+```mermaid
+stateDiagram-v2
+    state PurchaseOrderFSM {
+        [*] --> Acknowledged
+        Acknowledged --> Invoiced: invoice_matched event
+        Invoiced --> Closed: close
+    }
+
+    state InvoiceFSM {
+        [*] --> Matching
+        Matching --> Matched: match_ok
+        Matched --> ScheduledForPayment: schedule
+    }
+
+    InvoiceFSM --> PurchaseOrderFSM: InvoiceMatched domain event
+
+    classDef po fill:#0173B2,stroke:#000,color:#fff
+    classDef inv fill:#029E73,stroke:#000,color:#fff
+
+    class Acknowledged,Invoiced,Closed po
+    class Matching,Matched,ScheduledForPayment inv
+```
+
 ```typescript
-// Domain event emitted by the Invoice FSM when matching succeeds
+// => Domain event emitted by the Invoice FSM when matching succeeds
 interface InvoiceMatched {
   readonly kind: "InvoiceMatched"; // => Discriminant
   readonly invoiceId: string; // => Which invoice matched
@@ -233,13 +277,13 @@ interface InvoiceMatched {
   readonly timestamp: string; // => When the match completed
 }
 
-// PO FSM: add Invoiced state to the state type (extends from beginner)
+// => PO FSM: add Invoiced state to the state type (extends from beginner)
 type ExtendedPOState = POState | "Invoiced"; // => Adds Invoiced to the beginner union
 
-// Handle InvoiceMatched event on the PurchaseOrder
-// Pure function: takes current PO state, returns Result<new state>
+// => Handle InvoiceMatched event on the PurchaseOrder
+// => Pure function: takes current PO state, returns Result<new state>
 function handleInvoiceMatched(poState: ExtendedPOState, event: InvoiceMatched): Result<ExtendedPOState> {
-  // Guard: PO must be in Acknowledged state to accept invoice matching
+  // => Guard: PO must be in Acknowledged state to accept invoice matching
   if (poState !== "Acknowledged") {
     return {
       ok: false,
@@ -367,7 +411,7 @@ public class InvoiceFSM {
     public record Invoice(String id, String poId, double supplierAmount, InvoiceState state) {}
     // => Immutable record: state transitions return new Invoice instances
 
-    // Transition table as an immutable EnumMap
+    // => Transition table as an immutable EnumMap
     private static final Map<InvoiceState, Map<String, InvoiceState>> TABLE;
     static {
         TABLE = new EnumMap<>(InvoiceState.class);
@@ -379,14 +423,14 @@ public class InvoiceFSM {
         // => PAID: no entry — terminal
     }
 
-    // Pure transition: returns Optional.of(newInvoice) or Optional.empty()
+    // => Pure transition: returns Optional.of(newInvoice) or Optional.empty()
     public static Optional<Invoice> apply(Invoice inv, String event) {
         return Optional.ofNullable(TABLE.getOrDefault(inv.state(), Map.of()).get(event))
                        .map(next -> new Invoice(inv.id(), inv.poId(), inv.supplierAmount(), next));
         // => Same Optional chain as PO FSM — consistent across both machines
     }
 
-    // Three-way match: returns "match_ok" or "match_fail" based on guard
+    // => Three-way match: returns "match_ok" or "match_fail" based on guard
     public static String evaluateMatch(double supplierAmount, double expectedAmount, double tolerancePct) {
         if (expectedAmount == 0) return "match_fail";
         // => No goods received: cannot match
@@ -398,7 +442,7 @@ public class InvoiceFSM {
 ```
 
 ```
-// Usage:
+// => Usage:
 String event = InvoiceFSM.evaluateMatch(508.0, 500.0, 0.02); // => "match_ok"
 Optional<Invoice> next = InvoiceFSM.apply(matchingInvoice, event);
 // => Optional[Invoice{state=MATCHED}]
@@ -421,8 +465,8 @@ Optional<Invoice> next2 = InvoiceFSM.apply(matchingInvoice, event2);
 XState (JavaScript/TypeScript) separates machine configuration from execution — the machine definition is data, and the `createMachine` factory interprets it.
 
 ```typescript
-// XState-style machine configuration: pure data describing the FSM
-// (Illustrative — run with: npm install xstate@5)
+// => XState-style machine configuration: pure data describing the FSM
+// => (Illustrative — run with: npm install xstate@5)
 const invoiceMachineConfig = {
   id: "invoice", // => Machine identifier for debugging
   initial: "Registered", // => Starting state
@@ -434,7 +478,7 @@ const invoiceMachineConfig = {
       },
     },
     Matching: {
-      // Entry action: fired when entering Matching state
+      // => Entry action: fired when entering Matching state
       entry: "logMatchingStarted",
       // => Declarative: action name resolved by the interpreter, not called directly here
       on: {
@@ -466,7 +510,7 @@ const invoiceMachineConfig = {
 } as const;
 // => `as const`: TypeScript infers the literal types, enabling exhaustive checks
 
-// Action implementations: pure functions referenced by name in config
+// => Action implementations: pure functions referenced by name in config
 const invoiceActions = {
   logMatchingStarted: (ctx: { invoiceId: string }) => console.log(`Matching started for invoice ${ctx.invoiceId}`),
   // => Entry action for Matching state
@@ -479,7 +523,7 @@ const invoiceActions = {
   // => Entry action for Disputed state
 };
 
-// In production: const machine = createMachine(invoiceMachineConfig, { actions: invoiceActions });
+// => In production: const machine = createMachine(invoiceMachineConfig, { actions: invoiceActions });
 // => createMachine wires config + actions into an executable machine
 console.log("Machine initial state:", invoiceMachineConfig.initial); // => Output: Registered
 console.log("Matching transitions:", Object.keys(invoiceMachineConfig.states.Matching.on));
@@ -497,9 +541,9 @@ console.log("Matching transitions:", Object.keys(invoiceMachineConfig.states.Mat
 XState guards are named predicates referenced in the machine configuration — the guard function is supplied separately from the machine definition.
 
 ```typescript
-// Guard functions: named predicates used in machine config
+// => Guard functions: named predicates used in machine config
 const invoiceGuards = {
-  // Guard for the match_ok transition: checks three-way match
+  // => Guard for the match_ok transition: checks three-way match
   matchPasses: (context: { supplierAmount: number; expectedAmount: number; tolerancePct: number }) => {
     const { supplierAmount, expectedAmount, tolerancePct } = context;
     if (expectedAmount === 0) return false; // => No expected amount: guard fails
@@ -508,7 +552,7 @@ const invoiceGuards = {
   },
 };
 
-// Machine config with guarded transitions
+// => Machine config with guarded transitions
 const guardedInvoiceConfig = {
   id: "invoice-guarded",
   initial: "Matching" as const,
@@ -534,16 +578,16 @@ const guardedInvoiceConfig = {
   },
 };
 
-// Simulate the guard evaluation (manual, without XState runtime)
+// => Simulate the guard evaluation (manual, without XState runtime)
 function simulateGuardedTransition(
   state: "Matching",
   event: "evaluate",
   context: { supplierAmount: number; expectedAmount: number; tolerancePct: number },
 ): "Matched" | "Disputed" {
-  // First candidate: guarded Matched
+  // => First candidate: guarded Matched
   if (invoiceGuards.matchPasses(context)) return "Matched";
   // => Guard passed: first candidate wins
-  // Second candidate: unguarded Disputed
+  // => Second candidate: unguarded Disputed
   return "Disputed";
   // => No guard: always fires as fallback
 }
@@ -569,20 +613,49 @@ console.log(
 
 Entry actions are the natural place to trigger notifications. This example shows how to structure entry actions for the Invoice machine so they can be tested without sending real emails.
 
+```mermaid
+stateDiagram-v2
+    Matching --> Disputed: match_fail
+    note right of Disputed
+        Entry action fires:
+        Notify supplier of dispute
+    end note
+    Matching --> Matched: match_ok
+    note right of Matched
+        Entry action fires:
+        Notify AP team to schedule
+    end note
+    Matched --> ScheduledForPayment: schedule
+    note right of ScheduledForPayment
+        Entry action fires:
+        Notify supplier of payment date
+    end note
+
+    classDef matching fill:#DE8F05,stroke:#000,color:#000
+    classDef matched fill:#029E73,stroke:#000,color:#fff
+    classDef disputed fill:#CC78BC,stroke:#000,color:#fff
+    classDef scheduled fill:#CA9161,stroke:#000,color:#fff
+
+    class Matching matching
+    class Matched matched
+    class Disputed disputed
+    class ScheduledForPayment scheduled
+```
+
 ```typescript
-// Notification interface: abstraction over email, EDI, webhook, etc.
-// In production: replace with SupplierNotifierPort implementation
+// => Notification interface: abstraction over email, EDI, webhook, etc.
+// => In production: replace with SupplierNotifierPort implementation
 interface Notifier {
   send: (to: string, message: string) => void;
 }
 
-// Console notifier for testing/development
+// => Console notifier for testing/development
 const consoleNotifier: Notifier = {
   send: (to, message) => console.log(`[NOTIFY] ${to}: ${message}`),
   // => In tests: replace with a mock that records calls without I/O
 };
 
-// Entry actions for Invoice states — each returns a description for testing
+// => Entry actions for Invoice states — each returns a description for testing
 function invoiceEntryAction(state: InvoiceState, invoice: Invoice, notifier: Notifier): void {
   switch (state) {
     case "Matching":
@@ -610,7 +683,7 @@ function invoiceEntryAction(state: InvoiceState, invoice: Invoice, notifier: Not
   }
 }
 
-// Transition with entry action
+// => Transition with entry action
 function transitionInvoice(inv: Invoice, event: InvoiceEvent, notifier: Notifier): Result<Invoice> {
   const next = INVOICE_TRANSITIONS[inv.state]?.[event];
   if (!next) return { ok: false, error: `${inv.state} --${event}--> (forbidden)` };
@@ -636,19 +709,19 @@ transitionInvoice(inv, "start_match", consoleNotifier);
 An invoice that goes through Disputed → Matching → Matched → Disputed cycles needs a resubmission counter — the FSM state alone does not capture this history.
 
 ```typescript
-// Extended invoice: adds resubmission counter
+// => Extended invoice: adds resubmission counter
 interface InvoiceWithHistory extends Invoice {
   readonly resubmissionCount: number; // => How many times the supplier has resubmitted
   readonly maxResubmissions: number; // => Policy limit (e.g., 3 attempts before escalation)
 }
 
-// Guard: can the invoice be resubmitted?
+// => Guard: can the invoice be resubmitted?
 function canResubmit(inv: InvoiceWithHistory): boolean {
   return inv.resubmissionCount < inv.maxResubmissions;
   // => Below limit: resubmission allowed; at or above: escalation required
 }
 
-// Resubmit transition with counter increment
+// => Resubmit transition with counter increment
 function resubmitInvoice(inv: InvoiceWithHistory): Result<InvoiceWithHistory> {
   if (inv.state !== "Disputed") {
     return { ok: false, error: `Cannot resubmit invoice in state ${inv.state}` };
@@ -700,9 +773,32 @@ if (!r2.ok) console.log(r2.error);
 
 The FSM enforces the invoice lifecycle as a strict protocol. Events sent out of order are rejected — this prevents integration bugs where an upstream system sends events in the wrong sequence.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Registered
+    Registered --> Matching: start_match ✓
+    Matching --> Matched: match_ok ✓
+    Matching --> Disputed: match_fail ✓
+    Disputed --> Matching: resubmit ✓
+    Matched --> ScheduledForPayment: schedule ✓
+    ScheduledForPayment --> Paid: pay ✓
+    Registered --> Paid: pay ✗ REJECTED
+    Matching --> Paid: pay ✗ REJECTED
+
+    classDef valid fill:#029E73,stroke:#000,color:#fff
+    classDef waiting fill:#DE8F05,stroke:#000,color:#000
+    classDef disputed fill:#CC78BC,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+
+    class Registered,ScheduledForPayment waiting
+    class Matching,Matched valid
+    class Disputed disputed
+    class Paid terminal
+```
+
 ```typescript
-// Protocol enforcer: wraps the FSM to produce human-readable rejection messages
-// used by API controllers to return 400/409 responses
+// => Protocol enforcer: wraps the FSM to produce human-readable rejection messages
+// => used by API controllers to return 400/409 responses
 function enforceInvoiceProtocol(
   inv: Invoice,
   event: InvoiceEvent,
@@ -723,26 +819,26 @@ function enforceInvoiceProtocol(
   // => Protocol allows this transition: provide the new state
 }
 
-// Simulate an integration partner sending events out of order
+// => Simulate an integration partner sending events out of order
 const inv: Invoice = { id: "inv_006", poId: "po_006", supplierAmount: 500, state: "Registered" };
 
-// Correct: start_match from Registered
+// => Correct: start_match from Registered
 const r1 = enforceInvoiceProtocol(inv, "start_match");
 console.log(r1.allowed, r1.newState); // => Output: true Matching
 
-// Incorrect: partner sends 'pay' before matching
+// => Incorrect: partner sends 'pay' before matching
 const r2 = enforceInvoiceProtocol(inv, "pay");
 console.log(r2.allowed); // => Output: false
 console.log(r2.reason);
 // => Output: Protocol violation: cannot send 'pay' to invoice in state 'Registered'.
-//            Allowed events: [start_match]
+// =>            Allowed events: [start_match]
 
-// Incorrect: double-match attempt
+// => Incorrect: double-match attempt
 const matching: Invoice = { ...inv, state: "Matched" };
 const r3 = enforceInvoiceProtocol(matching, "match_ok");
 console.log(r3.reason);
 // => Output: Protocol violation: cannot send 'match_ok' to invoice in state 'Matched'.
-//            Allowed events: [schedule]
+// =>            Allowed events: [schedule]
 ```
 
 **Key Takeaway**: The FSM's rejection of invalid transitions is the first line of defence against integration bugs — the protocol enforcer converts FSM rejections into actionable API error messages.
@@ -757,8 +853,27 @@ console.log(r3.reason);
 
 The full PO machine includes `PartiallyReceived` for cases where a supplier ships goods in multiple batches. This intermediate example extends the beginner machine.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Acknowledged
+    Acknowledged --> PartiallyReceived: receive_partial
+    PartiallyReceived --> PartiallyReceived: receive_partial
+    PartiallyReceived --> Received: receive_final
+    Acknowledged --> Received: receive_final
+    Received --> Invoiced: invoice_matched
+    Invoiced --> Closed: close
+
+    classDef active fill:#029E73,stroke:#000,color:#fff
+    classDef partial fill:#CC78BC,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+
+    class Acknowledged,Received,Invoiced active
+    class PartiallyReceived partial
+    class Closed terminal
+```
+
 ```typescript
-// Extended PO state: adds receiving substates
+// => Extended PO state: adds receiving substates
 type FullPOState =
   | "Draft"
   | "AwaitingApproval"
@@ -773,7 +888,7 @@ type FullPOState =
   | "Cancelled"
   | "Disputed";
 
-// Extended event type
+// => Extended event type
 type FullPOEvent =
   | "submit"
   | "approve"
@@ -788,9 +903,9 @@ type FullPOEvent =
   | "pay"
   | "close";
 
-// Receiving transitions: from Acknowledged and PartiallyReceived
+// => Receiving transitions: from Acknowledged and PartiallyReceived
 const FULL_PO_TRANSITIONS: Partial<Record<FullPOState, Partial<Record<FullPOEvent, FullPOState>>>> = {
-  // ... (beginner entries omitted for brevity)
+  // => ... (beginner entries omitted for brevity)
   Acknowledged: {
     partial_receive: "PartiallyReceived", // => First shipment received; more coming
     full_receive: "Received", // => Single shipment covers entire PO
@@ -816,7 +931,7 @@ const FULL_PO_TRANSITIONS: Partial<Record<FullPOState, Partial<Record<FullPOEven
   },
 };
 
-// Demonstrate the self-loop: PartiallyReceived → PartiallyReceived
+// => Demonstrate the self-loop: PartiallyReceived → PartiallyReceived
 const partialPO: PurchaseOrder = {
   id: "po_partial",
   totalAmount: 2000,
@@ -837,7 +952,7 @@ console.log(next); // => Output: PartiallyReceived (self-loop for additional shi
 In production, the two FSMs live in separate services. They coordinate via domain events on a message bus. This example simulates the coordination.
 
 ```typescript
-// Minimal in-memory event bus simulation
+// => Minimal in-memory event bus simulation
 interface DomainEvent {
   kind: string;
   payload: Record<string, unknown>;
@@ -861,20 +976,20 @@ class EventBus {
 
 const bus = new EventBus();
 
-// Invoice context publishes InvoiceMatched when matching succeeds
+// => Invoice context publishes InvoiceMatched when matching succeeds
 function invoiceMatchSucceeded(invoiceId: string, poId: string): void {
   bus.publish({ kind: "InvoiceMatched", payload: { invoiceId, poId } });
   // => Domain event: InvoiceMatched flows from invoicing → purchasing context
 }
 
-// Purchasing context subscribes to InvoiceMatched
+// => Purchasing context subscribes to InvoiceMatched
 bus.subscribe("InvoiceMatched", (e) => {
   const { poId, invoiceId } = e.payload as { poId: string; invoiceId: string };
   console.log(`PO ${poId} receives InvoiceMatched from invoice ${invoiceId} → transition to Invoiced`);
   // => In production: load PO from repository, apply invoice_matched event, save
 });
 
-// Simulate the invoice matching completing
+// => Simulate the invoice matching completing
 invoiceMatchSucceeded("inv_bus_01", "po_bus_01");
 // => Output: PO po_bus_01 receives InvoiceMatched from invoice inv_bus_01 → transition to Invoiced
 ```
@@ -890,16 +1005,16 @@ invoiceMatchSucceeded("inv_bus_01", "po_bus_01");
 Unit-testing the coordination between Invoice and PurchaseOrder FSMs without a real event bus.
 
 ```typescript
-// Test the coordination logic without I/O
+// => Test the coordination logic without I/O
 function testInvoiceMatchedUpdatesPO() {
-  // Setup: PO in Received state (all goods in, waiting for invoice match)
+  // => Setup: PO in Received state (all goods in, waiting for invoice match)
   const po: PurchaseOrder = {
     id: "po_test01",
     totalAmount: 1000,
     state: "Received" as unknown as POState,
   };
 
-  // Simulate InvoiceMatched event handler
+  // => Simulate InvoiceMatched event handler
   const event: InvoiceMatched = {
     kind: "InvoiceMatched",
     invoiceId: "inv_test01",
@@ -915,7 +1030,7 @@ function testInvoiceMatchedUpdatesPO() {
   // => Assertion: PO moves to Invoiced state
   console.log(`  New state: ${result.value}`); // => Output: Invoiced
 
-  // Negative test: PO must be in Received (not Acknowledged) to accept InvoiceMatched
+  // => Negative test: PO must be in Received (not Acknowledged) to accept InvoiceMatched
   const prematurePO = "Acknowledged" as unknown as ExtendedPOState;
   const r2 = handleInvoiceMatched(prematurePO, event);
   if (r2.ok) throw new Error("Expected error for premature InvoiceMatched");
@@ -925,10 +1040,10 @@ function testInvoiceMatchedUpdatesPO() {
 
 testInvoiceMatchedUpdatesPO();
 // => Output:
-// PASS: PO transitions to Invoiced on InvoiceMatched
-//   New state: Invoiced
-// PASS: InvoiceMatched rejected when PO not in Received
-//   Error: PO cannot accept InvoiceMatched in state Acknowledged ...
+// => PASS: PO transitions to Invoiced on InvoiceMatched
+// =>   New state: Invoiced
+// => PASS: InvoiceMatched rejected when PO not in Received
+// =>   Error: PO cannot accept InvoiceMatched in state Acknowledged ...
 ```
 
 **Key Takeaway**: Testing coordination between two FSMs requires only the event handler function and typed test data — no running services, no Kafka, no database.
@@ -941,8 +1056,29 @@ testInvoiceMatchedUpdatesPO();
 
 Rather than returning on the first validation failure, accumulate all errors and return them together — better UX for complex invoice validation.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Validating
+    Validating --> Valid: all checks pass
+    Validating --> AccumulatingErrors: any check fails
+    AccumulatingErrors --> AccumulatingErrors: more checks fail
+    AccumulatingErrors --> Invalid: all checks complete
+    Valid --> Disputed: resubmit allowed
+    Invalid --> StillDisputed: resubmit blocked
+
+    classDef validating fill:#DE8F05,stroke:#000,color:#000
+    classDef valid fill:#029E73,stroke:#000,color:#fff
+    classDef invalid fill:#CA9161,stroke:#000,color:#fff
+    classDef acc fill:#CC78BC,stroke:#000,color:#fff
+
+    class Validating validating
+    class AccumulatingErrors acc
+    class Valid,Disputed valid
+    class Invalid,StillDisputed invalid
+```
+
 ```typescript
-// Collect multiple validation errors from a single invoice validation pass
+// => Collect multiple validation errors from a single invoice validation pass
 function validateInvoiceForSubmission(
   inv: InvoiceWithHistory,
   grnLines: readonly GRNLine[],
@@ -951,25 +1087,25 @@ function validateInvoiceForSubmission(
 ): string[] {
   const errors: string[] = [];
 
-  // Validation 1: invoice must be in Disputed to be resubmitted
+  // => Validation 1: invoice must be in Disputed to be resubmitted
   if (inv.state !== "Disputed") {
     errors.push(`Invoice is in state '${inv.state}'; only Disputed invoices can be resubmitted`);
     // => Wrong state: no further validation makes sense, but we continue to collect all errors
   }
 
-  // Validation 2: resubmission limit
+  // => Validation 2: resubmission limit
   if (!canResubmit(inv)) {
     errors.push(`Resubmission limit (${inv.maxResubmissions}) reached`);
     // => Policy violation: cannot resubmit again
   }
 
-  // Validation 3: supplier amount must be positive
+  // => Validation 3: supplier amount must be positive
   if (inv.supplierAmount <= 0) {
     errors.push(`Supplier amount must be > 0 (got ${inv.supplierAmount})`);
     // => Data integrity: zero or negative amount is clearly wrong
   }
 
-  // Validation 4: match must now pass (point of submitting is to fix the discrepancy)
+  // => Validation 4: match must now pass (point of submitting is to fix the discrepancy)
   const expected = computeExpectedAmount(grnLines, poLines);
   if (expected > 0 && !threeWayMatchPasses(inv, grnLines, poLines, tolerance)) {
     const delta = Math.abs(inv.supplierAmount - expected) / expected;
@@ -998,10 +1134,10 @@ const errors = validateInvoiceForSubmission(
 );
 errors.forEach((e) => console.log(`- ${e}`));
 // => Output (multiple lines):
-// - Invoice is in state 'Registered'; only Disputed invoices can be resubmitted
-// - Resubmission limit (3) reached
-// - Supplier amount must be > 0 (got -100)
-// - Amount still outside tolerance: ...
+// => - Invoice is in state 'Registered'; only Disputed invoices can be resubmitted
+// => - Resubmission limit (3) reached
+// => - Supplier amount must be > 0 (got -100)
+// => - Amount still outside tolerance: ...
 ```
 
 **Key Takeaway**: Accumulating validation errors before attempting a transition gives callers actionable feedback — fix all issues at once rather than discovering them one at a time.
@@ -1014,17 +1150,40 @@ errors.forEach((e) => console.log(`- ${e}`));
 
 The Invoice FSM runs inside the PO lifecycle: a PO moves from `Received` to `Invoiced` only after the Invoice FSM completes its `Matched` → `ScheduledForPayment` → `Paid` cycle. This composition is modelled by making the PO FSM listen for the Invoice terminal state.
 
-```typescript
-// Composition model: PO FSM is the outer machine; Invoice FSM is inner
-// The inner machine's terminal state (Paid) emits an event to the outer machine
+```mermaid
+stateDiagram-v2
+    state "PO FSM (Outer)" as PO {
+        [*] --> Received
+        Received --> Invoiced: InvoicePaid event
+        Invoiced --> Closed: close
+    }
 
-// Full coordination state: tracks both FSMs
+    state "Invoice FSM (Inner)" as Inv {
+        [*] --> Matched
+        Matched --> ScheduledForPayment: schedule
+        ScheduledForPayment --> Paid: pay
+    }
+
+    Inv --> PO: Paid → emits InvoicePaid domain event
+
+    classDef po fill:#0173B2,stroke:#000,color:#fff
+    classDef inv fill:#029E73,stroke:#000,color:#fff
+
+    class Received,Invoiced,Closed po
+    class Matched,ScheduledForPayment,Paid inv
+```
+
+```typescript
+// => Composition model: PO FSM is the outer machine; Invoice FSM is inner
+// => The inner machine's terminal state (Paid) emits an event to the outer machine
+
+// => Full coordination state: tracks both FSMs
 interface P2PWorkflow {
   po: PurchaseOrder; // => Outer FSM state
   invoice?: Invoice; // => Inner FSM state (undefined until invoice registered)
 }
 
-// Step 1: Invoice registered — inner FSM starts
+// => Step 1: Invoice registered — inner FSM starts
 function registerInvoice(workflow: P2PWorkflow, invoiceId: string, supplierAmount: number): Result<P2PWorkflow> {
   if (workflow.po.state !== ("Received" as unknown as POState)) {
     return { ok: false, error: "Cannot register invoice: PO goods not yet received" };
@@ -1040,7 +1199,7 @@ function registerInvoice(workflow: P2PWorkflow, invoiceId: string, supplierAmoun
   // => Inner FSM starts in Registered
 }
 
-// Step 2: Invoice paid — inner FSM complete; outer FSM advances
+// => Step 2: Invoice paid — inner FSM complete; outer FSM advances
 function invoicePaid(workflow: P2PWorkflow): Result<P2PWorkflow> {
   if (!workflow.invoice || workflow.invoice.state !== "Paid") {
     return { ok: false, error: "Cannot advance PO: invoice not yet paid" };
@@ -1057,7 +1216,7 @@ const wf: P2PWorkflow = {
 const r1 = registerInvoice(wf, "inv_comp01", 505);
 if (r1.ok) {
   console.log(r1.value.invoice?.state); // => Output: Registered
-  // ... (match and pay steps omitted)
+  // => ... (match and pay steps omitted)
 }
 ```
 
@@ -1144,15 +1303,15 @@ public class InvoiceFSMRunner {
     public enum State { REGISTERED, MATCHING, MATCHED, DISPUTED, SCHEDULED_FOR_PAYMENT, PAID }
     public record Invoice(String id, String poId, double supplierAmount, State state) {}
 
-    // Guard type: BiPredicate on Invoice + context map
+    // => Guard type: BiPredicate on Invoice + context map
     private final Map<String, BiPredicate<Invoice, Map<String, Object>>> guards = new HashMap<>();
     // => Guards keyed by event name; receives invoice + extra context
 
-    // Entry action type: Consumer run when entering a new state
+    // => Entry action type: Consumer run when entering a new state
     private final Map<State, Consumer<Invoice>> entryActions = new EnumMap<>(State.class);
     // => Actions keyed by state; fired after transition
 
-    // Transition table
+    // => Transition table
     private static final Map<State, Map<String, State>> TABLE;
     static {
         TABLE = new EnumMap<>(State.class);
@@ -1164,7 +1323,7 @@ public class InvoiceFSMRunner {
     }
 
     public InvoiceFSMRunner() {
-        // Register match guard: match_ok only fires if tolerance check passes
+        // => Register match guard: match_ok only fires if tolerance check passes
         guards.put("match_ok", (inv, ctx) -> {
             double expected = (double) ctx.getOrDefault("expected", 0.0);
             double tolerance = (double) ctx.getOrDefault("tolerance", 0.02);
@@ -1173,7 +1332,7 @@ public class InvoiceFSMRunner {
             // => Guard: three-way match within tolerance
         });
 
-        // Register entry action for Disputed: notify supplier
+        // => Register entry action for Disputed: notify supplier
         entryActions.put(State.DISPUTED, inv ->
             System.out.println("Notify supplier: invoice " + inv.id() + " disputed"));
         // => Entry action: supplier notified when invoice enters Disputed
@@ -1200,7 +1359,7 @@ public class InvoiceFSMRunner {
 ```
 
 ```
-// Usage:
+// => Usage:
 InvoiceFSMRunner runner = new InvoiceFSMRunner();
 Invoice inv = new Invoice("inv_j01", "po_j01", 508.0, State.MATCHING);
 Map<String, Object> ctx = Map.of("expected", 500.0, "tolerance", 0.02);
@@ -1224,7 +1383,7 @@ Optional<Invoice> rejected = runner.apply(inv, "match_ok", Map.of("expected", 60
 A tabular view of all states across both machines helps confirm the tutorial covers the full domain specification.
 
 ```typescript
-// Domain coverage snapshot: list all states with their context and role
+// => Domain coverage snapshot: list all states with their context and role
 const DOMAIN_STATES = {
   PurchaseOrder: {
     states: [
@@ -1258,7 +1417,7 @@ const DOMAIN_STATES = {
   },
 };
 
-// Coverage report: count total states and transitions across both machines
+// => Coverage report: count total states and transitions across both machines
 function coverageReport(): void {
   for (const [machine, def] of Object.entries(DOMAIN_STATES)) {
     console.log(
@@ -1272,9 +1431,9 @@ function coverageReport(): void {
 
 coverageReport();
 // => Output:
-// PurchaseOrder: 12 states, 2 terminal, 2 off-ramp(s)
-// Invoice: 6 states, 1 terminal, 1 off-ramp(s)
-// Total domain states covered: 18
+// => PurchaseOrder: 12 states, 2 terminal, 2 off-ramp(s)
+// => Invoice: 6 states, 1 terminal, 1 off-ramp(s)
+// => Total domain states covered: 18
 ```
 
 **Key Takeaway**: Maintaining a coverage snapshot as code — not a separate document — ensures the diagram, the code, and the coverage report always refer to the same machine definition.
@@ -1290,14 +1449,14 @@ coverageReport();
 In distributed systems, events can be delivered more than once. An idempotent transition handler returns the same result for the same event applied to the same state, whether called once or ten times.
 
 ```typescript
-// Idempotent transition: if already in the target state, return success (no error)
+// => Idempotent transition: if already in the target state, return success (no error)
 function idempotentTransition(inv: Invoice, event: InvoiceEvent): Result<Invoice> {
   const next = INVOICE_TRANSITIONS[inv.state]?.[event];
 
-  // If no transition found, check if we are already in the intended target state
-  // This handles the case where the event was processed before but the ACK was lost
+  // => If no transition found, check if we are already in the intended target state
+  // => This handles the case where the event was processed before but the ACK was lost
   if (next === undefined) {
-    // Look for the event in any state's transitions; find what the target would have been
+    // => Look for the event in any state's transitions; find what the target would have been
     for (const [, events] of Object.entries(INVOICE_TRANSITIONS)) {
       if (events?.[event] === inv.state) {
         // => Current state IS the target of this event: idempotent success
@@ -1313,14 +1472,14 @@ function idempotentTransition(inv: Invoice, event: InvoiceEvent): Result<Invoice
   // => Normal transition: advance to next state
 }
 
-// Simulate duplicate event delivery: 'start_match' delivered twice
+// => Simulate duplicate event delivery: 'start_match' delivered twice
 const inv: Invoice = { id: "inv_idem", poId: "po_idem", supplierAmount: 500, state: "Registered" };
 const r1 = idempotentTransition(inv, "start_match");
 // => First delivery: Registered → Matching
 const matchingInv = r1.ok ? r1.value : inv;
 console.log(matchingInv.state); // => Output: Matching
 
-// Simulate second delivery of the same event (duplicate)
+// => Simulate second delivery of the same event (duplicate)
 const r2 = idempotentTransition(matchingInv, "start_match");
 // => Matching is already the target of start_match from Registered
 // => Idempotent: return current state
@@ -1339,7 +1498,7 @@ console.log(r2.ok ? (r2 as { ok: true; value: Invoice }).value.state : ""); // =
 When the state machine evolves, stored state values might use old names. A migration function maps old state names to new ones.
 
 ```typescript
-// Old state name (deprecated) → new state name (current)
+// => Old state name (deprecated) → new state name (current)
 const STATE_MIGRATIONS: Partial<Record<string, InvoiceState>> = {
   InProgress: "Matching", // => v1 called it InProgress; v2 calls it Matching
   Approved: "Matched", // => v1 called it Approved; ambiguous with PO
@@ -1347,7 +1506,7 @@ const STATE_MIGRATIONS: Partial<Record<string, InvoiceState>> = {
   ReadyToPay: "ScheduledForPayment", // => v1 short name; v2 uses full name
 };
 
-// Migrate an invoice loaded from persistent storage that might use old state names
+// => Migrate an invoice loaded from persistent storage that might use old state names
 function migrateInvoiceState(rawState: string): InvoiceState {
   const migrated = STATE_MIGRATIONS[rawState];
   // => Look up migration: undefined if state name is current
@@ -1355,7 +1514,7 @@ function migrateInvoiceState(rawState: string): InvoiceState {
     console.log(`Migrated invoice state: '${rawState}' → '${migrated}'`);
     return migrated; // => Use migrated name
   }
-  // Validate: must be a known current state
+  // => Validate: must be a known current state
   const valid: InvoiceState[] = ["Registered", "Matching", "Matched", "Disputed", "ScheduledForPayment", "Paid"];
   if (!valid.includes(rawState as InvoiceState)) {
     throw new Error(`Unknown invoice state: '${rawState}' — check migration table`);
@@ -1366,7 +1525,7 @@ function migrateInvoiceState(rawState: string): InvoiceState {
 
 console.log(migrateInvoiceState("InProgress")); // => Output: Migrated → Matching / Output: Matching
 console.log(migrateInvoiceState("Matched")); // => Output: Matched (no migration needed)
-// migrateInvoiceState("OldBroken");               // => Would throw: Unknown invoice state
+// => migrateInvoiceState("OldBroken");               // => Would throw: Unknown invoice state
 ```
 
 **Key Takeaway**: State migration functions isolate the versioning concern from the FSM logic — the machine always works with current state names; the migration layer translates at the persistence boundary.
@@ -1380,20 +1539,20 @@ console.log(migrateInvoiceState("Matched")); // => Output: Matched (no migration
 FSM state often drives UI rendering. Pure query functions over the state model are preferable to imperative conditional blocks in the UI layer.
 
 ```typescript
-// UI query: which actions are available for a given invoice state?
+// => UI query: which actions are available for a given invoice state?
 function availableActions(state: InvoiceState): InvoiceEvent[] {
   return Object.keys(INVOICE_TRANSITIONS[state] ?? {}) as InvoiceEvent[];
   // => Read directly from transition table: the table IS the specification of available actions
 }
 
-// UI query: is this invoice in a state that requires user action?
+// => UI query: is this invoice in a state that requires user action?
 function requiresUserAction(state: InvoiceState): boolean {
   const userActionStates: InvoiceState[] = ["Disputed"];
   // => Only Disputed requires supplier action; all others are system-driven
   return userActionStates.includes(state);
 }
 
-// UI query: display label for each state
+// => UI query: display label for each state
 function stateDisplayLabel(state: InvoiceState): string {
   const labels: Record<InvoiceState, string> = {
     Registered: "Invoice Received",
@@ -1445,7 +1604,9 @@ sequenceDiagram
     Bus->>Buyer: notify payment scheduled
 ```
 
-**Why this diagram matters**: The sequence shows the asynchronous handoff between the two FSMs — neither machine directly calls the other. They communicate via domain events on the bus. This decoupling is the reason both machines can be tested and deployed independently.
+**Key Takeaway**: The sequence diagram confirms that neither FSM calls the other directly — they coordinate exclusively via domain events on the event bus, enabling independent deployment and testing.
+
+**Why It Matters**: The sequence shows the asynchronous handoff between the two FSMs — neither machine directly calls the other. They communicate via domain events on the bus. This decoupling is the reason both machines can be tested and deployed independently.
 
 ---
 
@@ -1454,7 +1615,7 @@ sequenceDiagram
 Each state can carry a maximum dwell time — the SLA for how long the workflow can stay in that state before escalation.
 
 ```typescript
-// SLA definition: max hours in a given state before escalation
+// => SLA definition: max hours in a given state before escalation
 interface StateSLA {
   maxHours: number; // => Maximum hours in this state
   escalateTo: string; // => Who to notify on breach (role or system)
@@ -1474,7 +1635,7 @@ const INVOICE_SLAS: Partial<Record<InvoiceState, StateSLA>> = {
   },
 };
 
-// Check if an invoice has breached its SLA
+// => Check if an invoice has breached its SLA
 function checkSLA(
   inv: Invoice,
   enteredAt: Date,
@@ -1510,7 +1671,7 @@ console.log(check.hoursElapsed); // => Output: 72
 The final intermediate example synthesises what the Invoice and PO machines together encode: the complete P2P business protocol as a formal system.
 
 ```typescript
-// The P2P workflow as a formal FSM system: two machines, one protocol
+// => The P2P workflow as a formal FSM system: two machines, one protocol
 const P2P_SYSTEM = {
   machines: {
     PurchaseOrder: {
@@ -1532,7 +1693,7 @@ const P2P_SYSTEM = {
   // => Two machines, zero direct coupling, one coordination protocol
 };
 
-// Print system summary
+// => Print system summary
 console.log("P2P FSM System:");
 for (const [name, def] of Object.entries(P2P_SYSTEM.machines)) {
   console.log(`  ${name} [${def.context}]: ${def.states} states, ${def.events} events`);
@@ -1540,11 +1701,11 @@ for (const [name, def] of Object.entries(P2P_SYSTEM.machines)) {
 }
 console.log(`  Coordination: ${P2P_SYSTEM.coordination}`);
 // => Output:
-//   PurchaseOrder [purchasing]: 12 states, 10 events
-//     Protocol: Buyer → Manager → Finance → Supplier → Finance → System
-//   Invoice [invoicing]: 6 states, 6 events
-//     Protocol: Supplier → System (three-way match) → Finance → Bank
-//   Coordination: Domain events via Event Bus ...
+// =>   PurchaseOrder [purchasing]: 12 states, 10 events
+// =>     Protocol: Buyer → Manager → Finance → Supplier → Finance → System
+// =>   Invoice [invoicing]: 6 states, 6 events
+// =>     Protocol: Supplier → System (three-way match) → Finance → Bank
+// =>   Coordination: Domain events via Event Bus ...
 ```
 
 **Key Takeaway**: Two FSMs coordinating via domain events implement a complete business process without a general-purpose workflow engine — the FSMs are the protocol, the event bus is the channel.

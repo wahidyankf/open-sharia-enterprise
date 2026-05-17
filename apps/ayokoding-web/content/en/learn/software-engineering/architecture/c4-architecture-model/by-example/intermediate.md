@@ -39,7 +39,7 @@ graph TD
 
 **Key Takeaway**: Begin Container diagrams with the user-facing containers and their primary relationship. Add internal plumbing (databases, queues) only once the primary data flow is clear.
 
-**Why It Matters**: Container diagrams are the primary communication tool for engineering teams planning deployment topology. Starting with the user-facing path grounds the conversation in user value before infrastructure detail.
+**Why It Matters**: Container diagrams are the primary communication tool for engineering teams planning deployment topology. Starting with the user-facing path grounds the conversation in user value before infrastructure detail. Progressive disclosure from the user-facing container outward also ensures that infrastructure decisions are driven by actual user flows rather than by technology preferences, reducing over-engineering of back-end containers that do not serve the primary user path.
 
 ---
 
@@ -72,7 +72,7 @@ graph TD
 
 **Key Takeaway**: Show separate read and write relationships between an API and its database. This makes query optimization, read replicas, and CQRS patterns visible at Container level.
 
-**Why It Matters**: P2P systems have read-heavy query patterns (order tracking, status checks) and write-heavy command patterns (approvals, PO issuance). Treating reads and writes identically in the diagram produces a database that is over-provisioned for writes and under-provisioned for reads.
+**Why It Matters**: P2P systems have read-heavy query patterns (order tracking, status checks) and write-heavy command patterns (approvals, PO issuance). Treating reads and writes identically in the diagram produces a database that is over-provisioned for writes and under-provisioned for reads. Teams that surface this distinction at Container diagram time can plan for read replicas and connection pooling before the first performance test reveals the bottleneck under production-scale query volume.
 
 ---
 
@@ -108,7 +108,7 @@ graph TD
 
 **Key Takeaway**: Show Kafka topic names and domain event names in Container diagrams. Generic "sends message" labels hide the event contract that drives cross-container consistency.
 
-**Why It Matters**: Event schema mismatches between producer and consumer cause silent data corruption in P2P. A Kafka consumer expecting `PurchaseOrderIssued` with a `supplierId` field that the producer drops will silently skip notifications — a failure that surfaces weeks later in supplier audits.
+**Why It Matters**: Event schema mismatches between producer and consumer cause silent data corruption in P2P. A Kafka consumer expecting `PurchaseOrderIssued` with a `supplierId` field that the producer drops will silently skip notifications — a failure that surfaces weeks later in supplier audits. Naming Kafka as a Container also triggers the schema registry discussion, ensuring that event contracts are version-controlled and consumer teams are notified before breaking schema changes are published.
 
 ---
 
@@ -148,7 +148,7 @@ graph TD
 
 **Key Takeaway**: Model background workers as distinct Container elements with their own type label. Workers have different deployment, scaling, and failure characteristics from REST APIs — conflating them hides operational complexity.
 
-**Why It Matters**: Payment workers that share infrastructure with REST APIs suffer from noisy-neighbor problems during payment runs. Container separation makes the case for isolated worker nodes with dedicated resources during batch disbursement windows.
+**Why It Matters**: Payment workers that share infrastructure with REST APIs suffer from noisy-neighbor problems during payment runs. Container separation makes the case for isolated worker nodes with dedicated resources during batch disbursement windows. Isolated payment worker containers also simplify PCI-DSS scope reduction — a named container boundary maps directly to a network security zone that auditors can verify independently of the general API infrastructure.
 
 ---
 
@@ -186,7 +186,7 @@ graph TD
 
 **Key Takeaway**: When query patterns differ significantly from write patterns, model a separate read-store container. Eventual consistency introduced by CDC must be acknowledged at Container level, not discovered by users.
 
-**Why It Matters**: P2P dashboards (order status lists, spend analytics) have very different query patterns from command handlers. Without a read-store, complex reporting queries compete with transactional writes on the same database, causing performance degradation during month-end reporting runs.
+**Why It Matters**: P2P dashboards (order status lists, spend analytics) have very different query patterns from command handlers. Without a read-store, complex reporting queries compete with transactional writes on the same database, causing performance degradation during month-end reporting runs. Surfacing the read-store as a named Container forces the team to define eventual consistency guarantees for dashboards before the UI is built, preventing surprise data-freshness complaints after launch.
 
 ---
 
@@ -225,7 +225,7 @@ graph TD
 
 **Key Takeaway**: Show secret-manager as a container that every credential-consuming container depends on. Secret management is an architectural dependency, not a deployment detail.
 
-**Why It Matters**: Hardcoded or environment-variable credentials cannot be rotated without redeployment. Secret manager integration enables zero-downtime credential rotation — a requirement in financial services where credential compromise triggers immediate rotation mandates.
+**Why It Matters**: Hardcoded or environment-variable credentials cannot be rotated without redeployment. Secret manager integration enables zero-downtime credential rotation — a requirement in financial services where credential compromise triggers immediate rotation mandates. In a P2P platform with bank API keys and supplier portal credentials, secret rotation without downtime is a production-continuity requirement that must be designed as a named Container early, not retrofitted after a credential exposure incident.
 
 ---
 
@@ -295,7 +295,7 @@ graph TD
 
 **Key Takeaway**: Maintain one authoritative full Container diagram per system. It serves as the reference point for all technical discussions about deployment, scaling, and integration.
 
-**Why It Matters**: Engineering teams without a shared Container diagram make siloed decisions that create integration problems at deployment time. One authoritative diagram prevents duplicate containers, conflicting technology choices, and missed integration points.
+**Why It Matters**: Engineering teams without a shared Container diagram make siloed decisions that create integration problems at deployment time. One authoritative diagram prevents duplicate containers, conflicting technology choices, and missed integration points. When every team sees the same complete picture before parallel development begins, interface contracts between containers can be agreed upon in advance, eliminating the integration surprises that otherwise surface only during deployment or load testing.
 
 ---
 
@@ -333,7 +333,7 @@ graph TD
 
 **Key Takeaway**: Include technology name and version in container labels when those choices are consequential. Labels double as lightweight ADRs visible at a glance.
 
-**Why It Matters**: Teams that omit versions from Container diagrams routinely discover incompatible dependency updates during deployments. Version visibility at Container level enables proactive upgrade planning before security advisories force emergency patches.
+**Why It Matters**: Teams that omit versions from Container diagrams routinely discover incompatible dependency updates during deployments. Version visibility at Container level enables proactive upgrade planning before security advisories force emergency patches. When runtime versions are visible in the diagram, upgrade planning discussions happen in architecture reviews rather than being triggered by a security advisory two weeks before a production deployment under deadline pressure.
 
 ---
 
@@ -374,7 +374,7 @@ graph TD
 
 **Key Takeaway**: Label every arrow with its synchronicity pattern (SYNC or ASYNC). This surfaces dead-letter queue requirements, retry policy needs, and user-facing latency commitments.
 
-**Why It Matters**: P2P teams frequently debug timeouts that trace to synchronous ERP calls blocking the user-facing requisition API. If the blocking call was labeled SYNC in the Container diagram, the latency risk would have been addressed at design time.
+**Why It Matters**: P2P teams frequently debug timeouts that trace to synchronous ERP calls blocking the user-facing requisition API. If the blocking call was labeled SYNC in the Container diagram, the latency risk would have been addressed at design time. Surfacing the synchronous call path in a Container diagram also triggers the circuit-breaker and timeout design discussions needed to protect purchasing-api availability when ERP becomes degraded or temporarily unavailable.
 
 ---
 
@@ -413,7 +413,7 @@ graph TD
 
 **Key Takeaway**: Annotate scaling strategy on container labels. Single-instance constraints and scale-out expectations are architectural decisions that must survive into infrastructure configuration.
 
-**Why It Matters**: Accidental horizontal scaling of a payment worker that lacks idempotency protection causes double-payments — a financial error that is expensive to reverse and damages supplier relationships permanently.
+**Why It Matters**: Accidental horizontal scaling of a payment worker that lacks idempotency protection causes double-payments — a financial error that is expensive to reverse and damages supplier relationships permanently. When scaling behavior is documented in the Container diagram, platform engineers and SREs share a common reference that prevents well-intentioned but dangerous auto-scaling rules from being applied uniformly across all containers regardless of their idempotency properties.
 
 ---
 
@@ -451,7 +451,7 @@ graph TD
 
 **Key Takeaway**: Annotate failure behavior in container labels. If you cannot describe what happens when a container fails, you have not designed its resilience.
 
-**Why It Matters**: P2P platforms that lose events when Kafka is down require manual reconciliation of POs and GRNs — a time-consuming audit task. Outbox patterns prevent this, but only if they are designed in from the start.
+**Why It Matters**: P2P platforms that lose events when Kafka is down require manual reconciliation of POs and GRNs — a time-consuming audit task. Outbox patterns prevent this, but only if they are designed in from the start. Container diagrams that model failure modes surface durability requirements before Kafka cluster sizing and replication configuration decisions are made, enabling SRE teams to write runbooks before incidents occur rather than during them.
 
 ---
 
@@ -519,7 +519,7 @@ graph TD
 
 **Key Takeaway**: Show network zones in Container diagrams for security-sensitive systems. Zone assignment is an architectural decision — moving a container between zones after deployment is expensive.
 
-**Why It Matters**: Procurement platforms that accidentally expose postgres or secret-manager to public subnets have a misconfiguration that persists until a security audit or breach discovers it. Architectural diagrams with explicit zone labels prevent misconfigurations at provisioning time.
+**Why It Matters**: Procurement platforms that accidentally expose postgres or secret-manager to public subnets have a misconfiguration that persists until a security audit or breach discovers it. Architectural diagrams with explicit zone labels prevent misconfigurations at provisioning time. Security reviewers who can annotate network boundaries directly on the Container diagram produce actionable findings that infrastructure engineers translate directly into security group rules before any environment is provisioned.
 
 ---
 
@@ -557,7 +557,7 @@ graph TD
 
 **Key Takeaway**: Annotate data ownership in container labels. Teams that leave data ownership implicit routinely introduce cross-service SQL JOINs that create tight coupling and make service extraction impossible.
 
-**Why It Matters**: P2P services that share tables develop hidden dependencies that prevent independent deployment. Schema-per-service boundaries enforced at the Container diagram level prevent these dependencies from forming in the first place.
+**Why It Matters**: P2P services that share tables develop hidden dependencies that prevent independent deployment. Schema-per-service boundaries enforced at the Container diagram level prevent these dependencies from forming in the first place. When two containers own separate tables, each team can evolve its schema independently — a critical prerequisite for the continuous delivery pipelines that modern P2P platforms require for frequent, low-risk releases.
 
 ---
 
@@ -596,7 +596,7 @@ graph LR
 
 **Key Takeaway**: Use numbered arrows in Container diagrams to show multi-container process flows. The temporal dependency between events reveals the correlation logic that invoicing-api must implement.
 
-**Why It Matters**: Three-way match failures are the primary cause of incorrect payments in P2P. Architectural clarity about which container holds the match logic and which events trigger it makes the matching algorithm testable and auditable.
+**Why It Matters**: Three-way match failures are the primary cause of incorrect payments in P2P. Architectural clarity about which container holds the match logic and which events trigger it makes the matching algorithm testable and auditable. When the three-way match flow is visible across containers, test coverage responsibilities are clearly assignable to each container's team, preventing gaps in integration test coverage that could allow matching edge cases to reach production.
 
 ---
 
@@ -654,7 +654,7 @@ graph TD
 
 **Key Takeaway**: Align container boundaries to team boundaries. Containers shared across teams create deployment bottlenecks. Kafka as the inter-team communication layer enables independent deployment schedules.
 
-**Why It Matters**: Deployment coordination between teams is a leading cause of slow release cycles. Container diagrams that make team boundaries visible enable autonomous deployment — a prerequisite for continuous delivery in P2P platforms.
+**Why It Matters**: Deployment coordination between teams is a leading cause of slow release cycles. Container diagrams that make team boundaries visible enable autonomous deployment — a prerequisite for continuous delivery in P2P platforms. When deployment boundaries match team boundaries, each team can maintain its own release cadence without requiring synchronized deployment windows, reducing the organizational overhead of coordinated releases.
 
 ---
 
@@ -689,7 +689,7 @@ graph TD
 
 **Key Takeaway**: Define liveness and readiness health check behavior in container labels. The distinction between "still running" (liveness) and "ready to serve traffic" (readiness) is critical for zero-downtime deployment.
 
-**Why It Matters**: payments-worker restarts during an active payment run can leave payments in an ambiguous state — initiated at the bank but not confirmed in postgres. Correct readiness checks prevent the load balancer from routing new work to a restarting worker.
+**Why It Matters**: payments-worker restarts during an active payment run can leave payments in an ambiguous state — initiated at the bank but not confirmed in postgres. Correct readiness checks prevent the load balancer from routing new work to a restarting worker. Making readiness probe behavior explicit at the architecture stage also prevents the common misconfiguration where Kubernetes routes traffic to a container that has not yet established its database or Kafka connection after a restart.
 
 ---
 
@@ -729,7 +729,7 @@ graph TD
 
 **Key Takeaway**: Component diagrams for API containers should show the dependency direction explicitly. Domain → Infrastructure arrows that point inward (infrastructure depends on domain) signal correct hexagonal structure; outward arrows signal an architecture violation.
 
-**Why It Matters**: Applications where domain logic depends on infrastructure (e.g., importing a database ORM directly into aggregate methods) cannot be unit-tested without a running database. Correct layer dependency enables fast, deterministic unit tests for the P2P business rules.
+**Why It Matters**: Applications where domain logic depends on infrastructure (e.g., importing a database ORM directly into aggregate methods) cannot be unit-tested without a running database. Correct layer dependency enables fast, deterministic unit tests for the P2P business rules. Agreeing on layer boundaries in a Component diagram before coding begins establishes a shared vocabulary that code reviewers use to reject boundary violations during pull requests, enforcing the architecture consistently across the team.
 
 ---
 
@@ -777,7 +777,7 @@ graph TD
 
 **Key Takeaway**: HTTP layer components should be thin: route, validate, translate to command, delegate. Business logic that appears in controllers is an architecture violation that should be flagged in code review.
 
-**Why It Matters**: Controllers that contain business logic cannot be reused when adding a new interface (e.g., a CLI or a Kafka consumer). Thin controllers with DTO validation enforce the boundary that makes business logic independently testable and reusable.
+**Why It Matters**: Controllers that contain business logic cannot be reused when adding a new interface (e.g., a CLI or a Kafka consumer). Thin controllers with DTO validation enforce the boundary that makes business logic independently testable and reusable. Thin controllers that delegate immediately to application services also enable contract testing at the HTTP boundary without requiring the full application context, reducing the scope and execution time of API-level tests.
 
 ---
 
@@ -826,7 +826,7 @@ graph TD
 
 **Key Takeaway**: Name each Application Service handler after its use case (SubmitRequisitionHandler, not GenericHandler). The handler name is the first piece of documentation a new developer reads.
 
-**Why It Matters**: Use case handlers that contain business logic (validating approval thresholds in the handler instead of in the aggregate) distribute business rules across layers, making them impossible to test in isolation and easy to miss when rules change.
+**Why It Matters**: Use case handlers that contain business logic (validating approval thresholds in the handler instead of in the aggregate) distribute business rules across layers, making them impossible to test in isolation and easy to miss when rules change. When use case handlers are limited to orchestration, adding a new delivery channel — such as a batch processing job — requires only wiring the handler to the new entry point, not reimplementing or duplicating business rules.
 
 ---
 
@@ -873,7 +873,7 @@ graph TD
 
 **Key Takeaway**: Domain layer components should contain no import from infrastructure. If a domain aggregate imports a database ORM or a Kafka client, the dependency direction is inverted and the layer is corrupted.
 
-**Why It Matters**: Domain layers contaminated with infrastructure imports require a running database to unit test approval threshold logic. Pure domain layers with interface-only repository ports run their full business rule test suite in milliseconds without any external dependencies.
+**Why It Matters**: Domain layers contaminated with infrastructure imports require a running database to unit test approval threshold logic. Pure domain layers with interface-only repository ports run their full business rule test suite in milliseconds without any external dependencies. A clean domain layer is also the prerequisite for hexagonal architecture, which allows swapping persistence technologies or adding new output adapters without rewriting any business logic.
 
 ---
 
@@ -923,7 +923,7 @@ graph TD
 
 **Key Takeaway**: Show the outbox pattern as two distinct infrastructure components: OutboxEventPublisher (writes to DB) and KafkaRelayJob (reads from DB, publishes to Kafka). The two-step pattern makes atomicity explicit.
 
-**Why It Matters**: Lost domain events cause P2P state machine desynchronization between bounded contexts. A receiving-api that never gets `PurchaseOrderIssued` cannot open a GRN expectation, blocking the entire receiving flow.
+**Why It Matters**: Lost domain events cause P2P state machine desynchronization between bounded contexts. A receiving-api that never gets `PurchaseOrderIssued` cannot open a GRN expectation, blocking the entire receiving flow. Without the outbox pattern, a process crash between the database commit and the Kafka publish leaves downstream consumers in a state that no amount of retry logic can automatically recover without manual reconciliation intervention.
 
 ---
 
@@ -969,7 +969,7 @@ graph TD
 
 **Key Takeaway**: Draw use-case-specific Component flows in addition to structural Component diagrams. Structural diagrams show what exists; flow diagrams show whether the structure actually enables the use case.
 
-**Why It Matters**: Use case flows that cross unexpected layer boundaries reveal architecture violations before they are coded. A handler that calls a repository directly without going through the domain aggregate bypasses business rule enforcement — a gap that only a flow diagram makes visible.
+**Why It Matters**: Use case flows that cross unexpected layer boundaries reveal architecture violations before they are coded. A handler that calls a repository directly without going through the domain aggregate bypasses business rule enforcement — a gap that only a flow diagram makes visible. When architects review handler-level flow diagrams during sprint planning, they can redirect implementation before incorrect layer dependencies are established and before tests are written that cement the wrong architecture.
 
 ---
 
@@ -1014,7 +1014,7 @@ graph TD
 
 **Key Takeaway**: Annotate FSM state guards in Domain layer component labels. Guards that live outside the aggregate are guards that can be bypassed by callers.
 
-**Why It Matters**: A PO that can be approved when it is not in `AwaitingApproval` state creates phantom approvals that corrupt the P2P audit trail. FSM guards enforced in the aggregate are the last line of defense against state machine violations.
+**Why It Matters**: A PO that can be approved when it is not in `AwaitingApproval` state creates phantom approvals that corrupt the P2P audit trail. FSM guards enforced in the aggregate are the last line of defense against state machine violations. Component diagrams that name the approval guard as an architectural element also signal to test engineers that state-transition boundary conditions require explicit test coverage, not just happy-path approval scenarios.
 
 ---
 
@@ -1062,7 +1062,7 @@ graph TD
 
 **Key Takeaway**: Show test adapters alongside production adapters in Component diagrams. The presence of in-memory adapters is an architectural feature — it enables a fast unit test suite for the business rules.
 
-**Why It Matters**: A P2P business rule test suite that requires PostgreSQL takes minutes to run. The same tests with in-memory adapters run in seconds. Over the lifetime of a project, this difference determines whether developers run tests before every commit or only in CI.
+**Why It Matters**: A P2P business rule test suite that requires PostgreSQL takes minutes to run. The same tests with in-memory adapters run in seconds. Over the lifetime of a project, this difference determines whether developers run tests before every commit or only in CI. Fast tests that run on every commit surface regressions within minutes of introduction; slow tests surface them hours later after multiple commits have accumulated, making root cause identification significantly harder.
 
 ---
 
@@ -1112,7 +1112,7 @@ graph TD
 
 **Key Takeaway**: Model Kafka consumer components alongside HTTP controllers in receiving containers. Event-driven entry points deserve the same architectural clarity as HTTP entry points.
 
-**Why It Matters**: receiving-api implementations that do not model the Kafka consumer as a first-class component routinely skip GRN expectation tracking — the feature that prevents warehouse staff from receiving against non-existent POs, a source of ghost receipts and financial loss.
+**Why It Matters**: receiving-api implementations that do not model the Kafka consumer as a first-class component routinely skip GRN expectation tracking — the feature that prevents warehouse staff from receiving against non-existent POs, a source of ghost receipts and financial loss. Naming the consumer component also makes it the natural owner of dead-letter queue handling, preventing GRN event loss from becoming a silent production failure that only surfaces during supplier payment disputes.
 
 ---
 
@@ -1165,7 +1165,7 @@ graph TD
 
 **Key Takeaway**: Extract complex business algorithms into named Application Service components. ThreeWayMatchService as a named component signals that the matching logic has defined inputs, outputs, and test cases.
 
-**Why It Matters**: Incorrect three-way matching results in overpayments or blocked invoices. A named, independently testable match service enables comprehensive edge-case testing (exact match, within tolerance, over tolerance, missing GRN) that protects against payment errors.
+**Why It Matters**: Incorrect three-way matching results in overpayments or blocked invoices. A named, independently testable match service enables comprehensive edge-case testing (exact match, within tolerance, over tolerance, missing GRN) that protects against payment errors. Centralizing the matching engine in a single component also allows tolerance thresholds — acceptable quantity variances between PO and GRN — to be configured in one place rather than hardcoded independently across multiple services.
 
 ---
 
@@ -1221,7 +1221,7 @@ graph TD
 
 **Key Takeaway**: Name idempotency and circuit breaker components explicitly. Making them anonymous "utilities" inside another component hides a critical safety mechanism from reviewers.
 
-**Why It Matters**: Double-payments are irreversible in real-time banking systems. An explicit IdempotencyChecker component ensures that idempotency requirements are tested, monitored, and maintained separately from general payment logic.
+**Why It Matters**: Double-payments are irreversible in real-time banking systems. An explicit IdempotencyChecker component ensures that idempotency requirements are tested, monitored, and maintained separately from general payment logic. In ISO 20022 payment flows, the idempotency key must survive worker restarts, Kafka consumer rebalances, and database failovers — requirements that only surface when the component is designed explicitly rather than treated as an implementation detail.
 
 ---
 
@@ -1266,7 +1266,7 @@ graph TD
 
 **Key Takeaway**: Model approval routing as an infrastructure adapter that implements a domain port. Routing strategy changes are then configuration decisions, not refactoring tasks.
 
-**Why It Matters**: Approval workflow engines change as organizations grow (email → Slack → ServiceNow). Port/adapter routing isolation means these transitions are adapter swaps — one class replaced — not invasive refactors across multiple layers.
+**Why It Matters**: Approval workflow engines change as organizations grow (email → Slack → ServiceNow). Port/adapter routing isolation means these transitions are adapter swaps — one class replaced — not invasive refactors across multiple layers. When the routing adapter is a named, replaceable component in the architecture diagram, migrating to a new approval tool is scoped to a single adapter implementation rather than a system-wide refactor that touches business logic.
 
 ---
 
@@ -1312,7 +1312,7 @@ graph TD
 
 **Key Takeaway**: Model a KafkaConsumerRegistry component when a container has multiple Kafka consumers. Shared offset management prevents duplicate processing and simplifies rebalance handling.
 
-**Why It Matters**: Kafka consumer groups that mismanage offsets reprocess events on restart, causing duplicate state transitions in PO aggregates. Explicit registry components with correct at-least-once semantics and idempotent aggregate methods prevent reprocessing errors.
+**Why It Matters**: Kafka consumer groups that mismanage offsets reprocess events on restart, causing duplicate state transitions in PO aggregates. Explicit registry components with correct at-least-once semantics and idempotent aggregate methods prevent reprocessing errors. Explicit ownership of offset management also makes it possible to alert on consumer lag as a leading indicator of processing bottlenecks before they cause visible P2P delays that affect purchase order approval SLAs.
 
 ---
 
@@ -1354,4 +1354,4 @@ graph TD
 
 **Key Takeaway**: Model Anti-Corruption Layers as distinct components at context boundaries. ACLs are the architectural mechanism that allows bounded contexts to evolve independently.
 
-**Why It Matters**: Bounded contexts without ACLs develop implicit coupling through shared domain terminology. When the receiving team renames `GRN` to `ReceivingRecord`, every consumer that imports receiving types without an ACL breaks — a change that should have had zero blast radius.
+**Why It Matters**: Bounded contexts without ACLs develop implicit coupling through shared domain terminology. When the receiving team renames `GRN` to `ReceivingRecord`, every consumer that imports receiving types without an ACL breaks — a change that should have had zero blast radius. When the ACL is a named component in the Component diagram, schema changes in the external supplier API are contained to a single translation layer rather than propagating through the domain model and all its consumers.

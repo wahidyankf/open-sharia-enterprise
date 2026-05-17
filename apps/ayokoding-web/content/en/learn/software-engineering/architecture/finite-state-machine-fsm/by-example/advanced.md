@@ -26,7 +26,7 @@ stateDiagram-v2
     Suspended --> Blacklisted: blacklist
     Blacklisted --> [*]
 
-    classDef pending fill:#DE8F05,stroke:#000,color:#fff
+    classDef pending fill:#DE8F05,stroke:#000,color:#000
     classDef approved fill:#029E73,stroke:#000,color:#fff
     classDef suspended fill:#CC78BC,stroke:#000,color:#fff
     classDef blacklisted fill:#CA9161,stroke:#000,color:#fff
@@ -38,28 +38,28 @@ stateDiagram-v2
 ```
 
 ```typescript
-// Supplier state sealed type: four states, one terminal
+// => Supplier state sealed type: four states, one terminal
 type SupplierState =
   | "Pending" // => Application received; vetting in progress
   | "Approved" // => Cleared for new POs; appears in supplier selection
   | "Suspended" // => Temporarily blocked: no new POs, existing POs continue
   | "Blacklisted"; // => Permanently excluded: existing POs forced to Disputed — terminal
 
-// Supplier event alphabet
+// => Supplier event alphabet
 type SupplierEvent =
   | "approve" // => Vetting passed; supplier cleared
   | "suspend" // => Compliance issue; temporary hold
   | "reinstate" // => Issue resolved; supplier restored
   | "blacklist"; // => Severe breach; permanent exclusion
 
-// Supplier record — immutable
+// => Supplier record — immutable
 interface Supplier {
   readonly id: string; // => Format: sup_<uuid>
   readonly name: string; // => Supplier legal name
   readonly state: SupplierState;
 }
 
-// Transition table
+// => Transition table
 const SUPPLIER_TRANSITIONS: Partial<Record<SupplierState, Partial<Record<SupplierEvent, SupplierState>>>> = {
   Pending: { approve: "Approved", blacklist: "Blacklisted" },
   // => Pending suppliers can only be approved or immediately blacklisted
@@ -67,10 +67,10 @@ const SUPPLIER_TRANSITIONS: Partial<Record<SupplierState, Partial<Record<Supplie
   // => Approved suppliers can be suspended (reversible) or blacklisted (permanent)
   Suspended: { reinstate: "Approved", blacklist: "Blacklisted" },
   // => Suspended can recover (reinstate) or escalate (blacklist)
-  // Blacklisted: terminal — no outgoing transitions
+  // => Blacklisted: terminal — no outgoing transitions
 };
 
-// Pure transition function (same Result pattern as other machines)
+// => Pure transition function (same Result pattern as other machines)
 type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
 function transitionSupplier(sup: Supplier, event: SupplierEvent): Result<Supplier> {
@@ -100,22 +100,45 @@ if (!r3.ok) console.log(r3.error); // => Output: Approved --approve--> (forbidde
 
 The Supplier FSM state gates which suppliers are selectable for new POs — a guard function on the purchasing context reads Supplier state.
 
+```mermaid
+stateDiagram-v2
+    state "Supplier Eligibility" as Check {
+        Pending --> Blocked: supplierEligibleForPO = false
+        Approved --> Allowed: supplierEligibleForPO = true
+        Suspended --> Blocked: supplierEligibleForPO = false
+        Blacklisted --> Blocked: supplierEligibleForPO = false
+    }
+
+    Allowed --> NewPO: PO can be created
+    Blocked --> Rejected: PO creation rejected
+
+    classDef allowed fill:#029E73,stroke:#000,color:#fff
+    classDef blocked fill:#CA9161,stroke:#000,color:#fff
+    classDef pending fill:#DE8F05,stroke:#000,color:#000
+    classDef suspended fill:#CC78BC,stroke:#000,color:#fff
+
+    class Approved,Allowed,NewPO allowed
+    class Pending pending
+    class Suspended suspended
+    class Blacklisted,Blocked,Rejected blocked
+```
+
 ```typescript
-// Guard: can a supplier receive a new PO?
-// Reads supplier state; returns true only for Approved
+// => Guard: can a supplier receive a new PO?
+// => Reads supplier state; returns true only for Approved
 function supplierEligibleForPO(supplierState: SupplierState): boolean {
   return supplierState === "Approved";
   // => Only Approved: Pending suppliers are unvetted, Suspended cannot receive new POs
 }
 
-// Guard: does the Supplier blacklisting force existing POs to Disputed?
-// Domain rule: blacklisting triggers dispute on all open POs
+// => Guard: does the Supplier blacklisting force existing POs to Disputed?
+// => Domain rule: blacklisting triggers dispute on all open POs
 function blacklistingForcesDispute(newState: SupplierState, oldState: SupplierState): boolean {
   return newState === "Blacklisted" && oldState !== "Blacklisted";
   // => Transition into Blacklisted: all existing POs for this supplier must be disputed
 }
 
-// Supplier blacklist with PO side-effect model
+// => Supplier blacklist with PO side-effect model
 interface BlacklistResult {
   supplier: Supplier;
   affectedPOIds: string[]; // => PO ids that must be force-disputed
@@ -160,20 +183,20 @@ if (bl.ok) {
 Supplier approval might require a minimum risk score. A numeric guard on the `approve` transition enforces the risk threshold.
 
 ```typescript
-// Supplier application: carries vetting data
+// => Supplier application: carries vetting data
 interface SupplierApplication {
   supplierId: string;
   riskScore: number; // => 0.0 (high risk) to 1.0 (low risk); computed by risk engine
   hasDocuments: boolean; // => Required compliance documents submitted?
 }
 
-// Minimum approval thresholds
+// => Minimum approval thresholds
 const APPROVAL_THRESHOLDS = {
   minRiskScore: 0.6, // => Below 0.6: too risky to approve
   requireDocuments: true, // => Documents must be submitted
 };
 
-// Guard: is the supplier application sufficient for approval?
+// => Guard: is the supplier application sufficient for approval?
 function canApproveSupplier(app: SupplierApplication): string[] {
   const errors: string[] = [];
   if (app.riskScore < APPROVAL_THRESHOLDS.minRiskScore) {
@@ -187,7 +210,7 @@ function canApproveSupplier(app: SupplierApplication): string[] {
   return errors; // => Empty array: guard passes; non-empty: guard fails with reasons
 }
 
-// Guarded approve transition
+// => Guarded approve transition
 function approveSupplier(sup: Supplier, app: SupplierApplication): Result<Supplier> {
   if (sup.state !== "Pending") {
     return { ok: false, error: `Supplier ${sup.id} is not in Pending state` };
@@ -203,13 +226,13 @@ function approveSupplier(sup: Supplier, app: SupplierApplication): Result<Suppli
 
 const sup: Supplier = { id: "sup_003", name: "Gamma Ltd", state: "Pending" };
 
-// Low risk score and missing documents
+// => Low risk score and missing documents
 const badApp: SupplierApplication = { supplierId: "sup_003", riskScore: 0.45, hasDocuments: false };
 const r1 = approveSupplier(sup, badApp);
 if (!r1.ok) console.log(r1.error);
 // => Output: Approval blocked: Risk score 0.45 below minimum 0.6; Required compliance documents not submitted
 
-// Good application
+// => Good application
 const goodApp: SupplierApplication = { supplierId: "sup_003", riskScore: 0.75, hasDocuments: true };
 const r2 = approveSupplier(sup, goodApp);
 if (r2.ok) console.log(r2.value.state); // => Output: Approved
@@ -225,8 +248,34 @@ if (r2.ok) console.log(r2.value.state); // => Output: Approved
 
 The `Approved` state can have sub-states representing tier levels (PreferredVendor, StandardVendor). Hierarchical states model this without duplicating the Approved → Suspended and Approved → Blacklisted transitions for each tier.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Approved
+    state Approved {
+        [*] --> Standard
+        Standard --> Preferred: upgrade
+        Preferred --> Standard: downgrade
+    }
+    Approved --> Suspended: suspend
+    Approved --> Blacklisted: blacklist
+    Suspended --> Approved: reinstate
+    Suspended --> Blacklisted: blacklist
+    Blacklisted --> [*]
+
+    classDef pending fill:#DE8F05,stroke:#000,color:#000
+    classDef approved fill:#029E73,stroke:#000,color:#fff
+    classDef suspended fill:#CC78BC,stroke:#000,color:#fff
+    classDef blacklisted fill:#CA9161,stroke:#000,color:#fff
+
+    class Pending pending
+    class Approved,Standard,Preferred approved
+    class Suspended suspended
+    class Blacklisted blacklisted
+```
+
 ```typescript
-// Hierarchical supplier state using dot notation
+// => Hierarchical supplier state using dot notation
 type HierarchicalSupplierState =
   | "Pending"
   | "Approved.Standard" // => Regular approved supplier
@@ -234,20 +283,20 @@ type HierarchicalSupplierState =
   | "Suspended"
   | "Blacklisted";
 
-// Helper: check if state is within the Approved parent state
+// => Helper: check if state is within the Approved parent state
 function isApproved(state: HierarchicalSupplierState): boolean {
   return state.startsWith("Approved.");
   // => Both Approved.Standard and Approved.Preferred are "Approved"
 }
 
-// Parent-level transitions: apply regardless of Approved sub-state
+// => Parent-level transitions: apply regardless of Approved sub-state
 const PARENT_TRANSITIONS: Partial<Record<string, Partial<Record<SupplierEvent, HierarchicalSupplierState>>>> = {
   Pending: { approve: "Approved.Standard", blacklist: "Blacklisted" },
   Suspended: { reinstate: "Approved.Standard", blacklist: "Blacklisted" },
   Blacklisted: {},
 };
 
-// Sub-state transitions within Approved
+// => Sub-state transitions within Approved
 const APPROVED_SUBSTATE_TRANSITIONS: Partial<
   Record<HierarchicalSupplierState, Partial<Record<string, HierarchicalSupplierState>>>
 > = {
@@ -257,17 +306,17 @@ const APPROVED_SUBSTATE_TRANSITIONS: Partial<
   // => Preferred → Standard: tier reduced (e.g., missed SLA)
 };
 
-// Combined transition: parent takes priority, then sub-state
+// => Combined transition: parent takes priority, then sub-state
 function hierarchicalTransition(
   state: HierarchicalSupplierState,
   event: SupplierEvent | "promote" | "demote",
 ): HierarchicalSupplierState | undefined {
-  // Check parent-level transitions first (suspension, blacklist apply to all Approved substates)
+  // => Check parent-level transitions first (suspension, blacklist apply to all Approved substates)
   if (isApproved(state) && (event === "suspend" || event === "blacklist")) {
     return event === "suspend" ? "Suspended" : "Blacklisted";
     // => Parent transition fires regardless of substate (Standard or Preferred)
   }
-  // Check sub-state transitions
+  // => Check sub-state transitions
   return (
     (APPROVED_SUBSTATE_TRANSITIONS[state] as Record<string, HierarchicalSupplierState> | undefined)?.[event] ??
     (PARENT_TRANSITIONS[state] as Record<string, HierarchicalSupplierState> | undefined)?.[event]
@@ -295,8 +344,29 @@ console.log(hierarchicalTransition("Approved.Preferred", "blacklist"));
 
 When a supplier is reinstated after suspension, they should return to their previous Approved sub-state (Standard or Preferred), not always to Standard. History states enable this.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Approved
+    state Approved {
+        [H] --> Standard: first approval
+        Standard --> Preferred: upgrade
+        Preferred --> Standard: downgrade
+    }
+    Approved --> Suspended: suspend
+    Suspended --> Approved: reinstate (restores to [H])
+
+    classDef pending fill:#DE8F05,stroke:#000,color:#000
+    classDef approved fill:#029E73,stroke:#000,color:#fff
+    classDef suspended fill:#CC78BC,stroke:#000,color:#fff
+
+    class Pending pending
+    class Approved,Standard,Preferred approved
+    class Suspended suspended
+```
+
 ```typescript
-// Supplier with history state: remembers the last Approved sub-state
+// => Supplier with history state: remembers the last Approved sub-state
 interface SupplierWithHistory {
   readonly id: string;
   readonly name: string;
@@ -305,7 +375,7 @@ interface SupplierWithHistory {
   // => Last Approved sub-state, or null if never approved
 }
 
-// Suspend: save current sub-state to history before transitioning
+// => Suspend: save current sub-state to history before transitioning
 function suspendSupplier(sup: SupplierWithHistory): Result<SupplierWithHistory> {
   if (!isApproved(sup.state)) {
     return { ok: false, error: `Cannot suspend: supplier is ${sup.state}, not Approved` };
@@ -321,7 +391,7 @@ function suspendSupplier(sup: SupplierWithHistory): Result<SupplierWithHistory> 
   };
 }
 
-// Reinstate: restore from history state, or default to Standard if no history
+// => Reinstate: restore from history state, or default to Standard if no history
 function reinstateSupplier(sup: SupplierWithHistory): Result<SupplierWithHistory> {
   if (sup.state !== "Suspended") {
     return { ok: false, error: `Cannot reinstate: supplier is ${sup.state}` };
@@ -434,25 +504,25 @@ print(err3)  # => Output: Invalid: BLACKLISTED --REINSTATE-->
 When a supplier is blacklisted, the domain rule requires all their open POs to be forced into the `Disputed` state. This example implements the cascade as a pure function.
 
 ```typescript
-// Open PO record: minimal shape needed for the cascade
+// => Open PO record: minimal shape needed for the cascade
 interface OpenPO {
   id: string;
   supplierId: string;
   state: string; // => Using string to avoid importing full POState here
 }
 
-// Cascade result: which POs must be disputed, and the blacklisted supplier
+// => Cascade result: which POs must be disputed, and the blacklisted supplier
 interface BlacklistCascade {
   blacklistedSupplier: Supplier;
   posToDispute: OpenPO[]; // => These POs must be transitioned to Disputed
   posAlreadyClosed: OpenPO[]; // => Already terminal; no action needed
 }
 
-// Non-disputable states: POs in these states are unaffected by blacklisting
+// => Non-disputable states: POs in these states are unaffected by blacklisting
 const TERMINAL_PO_STATES = new Set(["Closed", "Cancelled", "Paid"]);
 
 function computeBlacklistCascade(sup: Supplier, openPOs: readonly OpenPO[]): Result<BlacklistCascade> {
-  // FSM transition
+  // => FSM transition
   const r = transitionSupplier(sup, "blacklist");
   if (!r.ok) return r as Result<BlacklistCascade>;
 
@@ -516,7 +586,7 @@ stateDiagram-v2
     Disbursed --> Reversed: reverse
 
     classDef scheduled fill:#0173B2,stroke:#000,color:#fff
-    classDef disbursed fill:#DE8F05,stroke:#000,color:#fff
+    classDef disbursed fill:#DE8F05,stroke:#000,color:#000
     classDef remitted fill:#029E73,stroke:#000,color:#fff
     classDef failed fill:#CC78BC,stroke:#000,color:#fff
     classDef reversed fill:#CA9161,stroke:#000,color:#fff
@@ -529,7 +599,7 @@ stateDiagram-v2
 ```
 
 ```typescript
-// Payment state: financial disbursement lifecycle
+// => Payment state: financial disbursement lifecycle
 type PaymentState =
   | "Scheduled" // => Payment run queued; amount and bank details confirmed
   | "Disbursed" // => Bank API call made; funds in transit
@@ -537,7 +607,7 @@ type PaymentState =
   | "Failed" // => Bank rejected or timed out; retry eligible
   | "Reversed"; // => Payment recalled — terminal
 
-// Payment event alphabet
+// => Payment event alphabet
 type PaymentEvent =
   | "disburse" // => Bank API initiates transfer
   | "remit" // => Supplier confirms receipt
@@ -545,7 +615,7 @@ type PaymentEvent =
   | "retry" // => Requeue for next payment run
   | "reverse"; // => Recall the payment
 
-// Payment record
+// => Payment record
 interface Payment {
   readonly id: string; // => Format: pay_<uuid>
   readonly invoiceId: string; // => Links to Invoice (which must be in ScheduledForPayment)
@@ -554,7 +624,7 @@ interface Payment {
   readonly state: PaymentState;
 }
 
-// Transition table
+// => Transition table
 const PAYMENT_TRANSITIONS: Partial<Record<PaymentState, Partial<Record<PaymentEvent, PaymentState>>>> = {
   Scheduled: { disburse: "Disbursed", reverse: "Reversed" },
   // => Scheduled can be disbursed or reversed before disbursement
@@ -562,7 +632,7 @@ const PAYMENT_TRANSITIONS: Partial<Record<PaymentState, Partial<Record<PaymentEv
   // => Disbursed: three outcomes — confirmed, failed, or recalled
   Failed: { retry: "Scheduled" },
   // => Failed: only option is to retry (re-enter Scheduled for next payment run)
-  // Remitted, Reversed: terminal — no outgoing transitions
+  // => Remitted, Reversed: terminal — no outgoing transitions
 };
 
 type Result<T> = { ok: true; value: T } | { ok: false; error: string };
@@ -601,19 +671,19 @@ if (r3.ok) console.log(r3.value.state); // => Output: Scheduled (back to queue)
 Without a retry limit, a payment could cycle through `Failed → Scheduled → Disbursed → Failed` indefinitely. A retry counter guards the `retry` transition.
 
 ```typescript
-// Extended payment: tracks retry attempts
+// => Extended payment: tracks retry attempts
 interface PaymentWithRetries extends Payment {
   readonly retryCount: number; // => How many times this payment has been retried
   readonly maxRetries: number; // => Policy maximum (typically 3)
 }
 
-// Guard: can this payment be retried?
+// => Guard: can this payment be retried?
 function canRetryPayment(pmt: PaymentWithRetries): boolean {
   return pmt.retryCount < pmt.maxRetries;
   // => Below limit: retry allowed; at limit: must reverse or escalate
 }
 
-// Guarded retry transition
+// => Guarded retry transition
 function retryPayment(pmt: PaymentWithRetries): Result<PaymentWithRetries> {
   if (pmt.state !== "Failed") {
     return { ok: false, error: `Cannot retry payment in state ${pmt.state}` };
@@ -655,7 +725,7 @@ const r2 = retryPayment(r1.ok ? r1.value : failedPmt);
 if (!r2.ok) console.log(r2.error);
 // => Output: Cannot retry payment in state Scheduled
 
-// Simulate another failure to hit the retry limit
+// => Simulate another failure to hit the retry limit
 const atLimit: PaymentWithRetries = { ...failedPmt, retryCount: 3 };
 const r3 = retryPayment(atLimit);
 if (!r3.ok) console.log(r3.error);
@@ -672,14 +742,44 @@ if (!r3.ok) console.log(r3.error);
 
 A payment disbursement has two parallel concerns: the financial transfer and the supplier notification. Parallel regions model these as concurrent sub-machines that must both complete before the parent advances.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Disbursing
+    state Disbursing {
+        [*] --> Transferring
+        [*] --> Notifying
+        state Transferring {
+            [*] --> Pending
+            Pending --> Sent: initiate
+            Sent --> Confirmed: bank_ack
+            Sent --> Failed: bank_error
+        }
+        state Notifying {
+            [*] --> Queued
+            Queued --> Delivered: delivered
+            Queued --> Failed: notify_error
+        }
+    }
+    Disbursing --> Completed: both confirmed
+    Disbursing --> PartiallyFailed: one failed
+
+    classDef disbursing fill:#0173B2,stroke:#000,color:#fff
+    classDef completed fill:#029E73,stroke:#000,color:#fff
+    classDef failed fill:#CA9161,stroke:#000,color:#fff
+
+    class Disbursing,Transferring,Notifying disbursing
+    class Completed completed
+    class PartiallyFailed,Failed failed
+```
+
 ```typescript
-// Parallel region state: both sub-regions tracked independently
+// => Parallel region state: both sub-regions tracked independently
 interface ParallelPaymentState {
   transfer: "Pending" | "Sent" | "Confirmed" | "Failed"; // => Financial leg
   notification: "Queued" | "Sent" | "Delivered" | "Failed"; // => Supplier notification leg
 }
 
-// Parallel payment: main state + two parallel sub-states
+// => Parallel payment: main state + two parallel sub-states
 interface ParallelPayment {
   readonly id: string;
   readonly amount: number;
@@ -687,7 +787,7 @@ interface ParallelPayment {
   readonly regions: ParallelPaymentState;
 }
 
-// Update a sub-region: returns new parallel state
+// => Update a sub-region: returns new parallel state
 function updateTransfer(regions: ParallelPaymentState, outcome: "Sent" | "Confirmed" | "Failed"): ParallelPaymentState {
   return { ...regions, transfer: outcome };
   // => Only transfer region updated; notification region unchanged
@@ -701,7 +801,7 @@ function updateNotification(
   // => Only notification region updated; transfer region unchanged
 }
 
-// Evaluate overall state from both regions
+// => Evaluate overall state from both regions
 function evaluateParallelState(regions: ParallelPaymentState): ParallelPayment["state"] {
   const transferDone = regions.transfer === "Confirmed";
   const notificationDone = regions.notification === "Delivered";
@@ -718,7 +818,7 @@ function evaluateParallelState(regions: ParallelPaymentState): ParallelPayment["
   // => Still in progress: neither region is in a terminal state
 }
 
-// Simulate parallel execution
+// => Simulate parallel execution
 let regions: ParallelPaymentState = { transfer: "Pending", notification: "Queued" };
 regions = updateTransfer(regions, "Sent");
 regions = updateNotification(regions, "Sent");
@@ -741,8 +841,30 @@ console.log(evaluateParallelState(regions)); // => Output: Completed (both regio
 
 FSM state must survive process restarts. Serialising to JSON and deserialising back into the typed state record makes persistence straightforward.
 
+```mermaid
+stateDiagram-v2
+    state "In-Memory FSM State" as Memory {
+        [*] --> TypedState
+        TypedState --> TypedState: transition()
+    }
+
+    state "Persistent Storage" as Store {
+        [*] --> JSONSnapshot
+        JSONSnapshot --> JSONSnapshot: upsert on transition
+    }
+
+    Memory --> Store: serialise() on each transition
+    Store --> Memory: deserialise() on process restart
+
+    classDef memory fill:#0173B2,stroke:#000,color:#fff
+    classDef store fill:#029E73,stroke:#000,color:#fff
+
+    class TypedState memory
+    class JSONSnapshot store
+```
+
 ```typescript
-// Serialisable payment snapshot: plain JSON-compatible object
+// => Serialisable payment snapshot: plain JSON-compatible object
 interface PaymentSnapshot {
   id: string;
   invoiceId: string;
@@ -754,7 +876,7 @@ interface PaymentSnapshot {
   savedAt: string; // => ISO 8601 timestamp
 }
 
-// Serialise: Payment → JSON snapshot
+// => Serialise: Payment → JSON snapshot
 function serialisePayment(pmt: PaymentWithRetries): PaymentSnapshot {
   return {
     id: pmt.id,
@@ -768,7 +890,7 @@ function serialisePayment(pmt: PaymentWithRetries): PaymentSnapshot {
   };
 }
 
-// Deserialise: JSON snapshot → Payment record (with validation)
+// => Deserialise: JSON snapshot → Payment record (with validation)
 function deserialisePayment(snap: PaymentSnapshot): Result<PaymentWithRetries> {
   const validStates: PaymentState[] = ["Scheduled", "Disbursed", "Remitted", "Failed", "Reversed"];
   if (!validStates.includes(snap.state as PaymentState)) {
@@ -789,7 +911,7 @@ function deserialisePayment(snap: PaymentSnapshot): Result<PaymentWithRetries> {
   };
 }
 
-// Roundtrip: serialise → JSON string → deserialise
+// => Roundtrip: serialise → JSON string → deserialise
 const pmt: PaymentWithRetries = {
   id: "pay_003",
   invoiceId: "inv_009",
@@ -822,19 +944,19 @@ if (r.ok) {
 Storing events instead of state means the Payment record is always rebuildable from its event log.
 
 ```typescript
-// Stored event: captured at every successful transition
+// => Stored event: captured at every successful transition
 interface PaymentEvent {
   readonly eventId: string; // => Unique event ID for deduplication
   readonly paymentId: string; // => Which payment
   readonly event: PaymentEvent_; // => Type alias to avoid name collision
   readonly timestamp: string; // => When the event occurred
 }
-type PaymentEvent_ = PaymentEvent; // Circular ref workaround — in real code use separate types
+type PaymentEvent_ = PaymentEvent; // => Circular ref workaround — in real code use separate types
 
-// Event log: the source of truth for payment history
+// => Event log: the source of truth for payment history
 type StoredEvent = { paymentId: string; event: PaymentEvent; timestamp: string };
 
-// Rebuild payment state by replaying events
+// => Rebuild payment state by replaying events
 function rebuildPayment(initialPayment: Payment, events: readonly StoredEvent[]): Result<Payment> {
   let current = initialPayment;
 
@@ -850,7 +972,7 @@ function rebuildPayment(initialPayment: Payment, events: readonly StoredEvent[])
   return { ok: true, value: current };
 }
 
-// Example: rebuild from stored events
+// => Example: rebuild from stored events
 const initial: Payment = {
   id: "pay_004",
   invoiceId: "inv_010",
@@ -883,15 +1005,43 @@ if (rebuilt.ok) {
 
 The `Payment` statechart uses all three statechart concepts: a hierarchical `Active` state containing the financial and notification parallel regions, a history state for reinstatement after temporary failure, and a top-level terminal pair.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Active
+    state Active {
+        [H] --> Disbursing
+        state Disbursing {
+            [*] --> TransferPending
+            [*] --> NotifyQueued
+            TransferPending --> TransferConfirmed: bank_ack
+            NotifyQueued --> NotifyDelivered: notify_ok
+        }
+        Disbursing --> TemporarilyFailed: any_failure
+        TemporarilyFailed --> Disbursing: retry (restores [H])
+    }
+    Active --> Completed: both_regions_done
+    Active --> Reversed: recall
+
+    classDef active fill:#0173B2,stroke:#000,color:#fff
+    classDef completed fill:#029E73,stroke:#000,color:#fff
+    classDef failed fill:#CC78BC,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+
+    class Active,Disbursing active
+    class Completed completed
+    class TemporarilyFailed failed
+    class Reversed terminal
+```
+
 ```typescript
-// Statechart state: hierarchical with parallel regions
+// => Statechart state: hierarchical with parallel regions
 type StatechartPaymentState =
   | { kind: "Active"; regions: ParallelPaymentState; history: ParallelPaymentState | null }
   // => Active: the payment is in progress; two parallel regions; history for recovery
   | { kind: "Completed" } // => Terminal: both regions succeeded
   | { kind: "Reversed" }; // => Terminal: payment recalled
 
-// Events for the statechart
+// => Events for the statechart
 type StatechartEvent =
   | { type: "transfer_sent" }
   | { type: "transfer_confirmed" }
@@ -901,7 +1051,7 @@ type StatechartEvent =
   | { type: "notification_failed" }
   | { type: "reverse" }; // => Top-level: available from Active state
 
-// Apply event to the statechart
+// => Apply event to the statechart
 function applyStatechartEvent(state: StatechartPaymentState, event: StatechartEvent): StatechartPaymentState {
   if (state.kind !== "Active") return state; // => Terminal states: no further transitions
 
@@ -926,7 +1076,7 @@ function applyStatechartEvent(state: StatechartPaymentState, event: StatechartEv
   }
 }
 
-// Evaluate if Active state should advance to Completed
+// => Evaluate if Active state should advance to Completed
 function checkCompletion(state: StatechartPaymentState): StatechartPaymentState {
   if (state.kind !== "Active") return state;
   const overall = evaluateParallelState(state.regions);
@@ -957,7 +1107,7 @@ console.log(sc.kind); // => Output: Completed (both regions done)
 A runtime check that verifies all four machines cover their expected states — the machine specification as executable test.
 
 ```typescript
-// Expected coverage per machine from the domain spec
+// => Expected coverage per machine from the domain spec
 const EXPECTED_COVERAGE = {
   PurchaseOrder: {
     states: [
@@ -990,7 +1140,7 @@ const EXPECTED_COVERAGE = {
   },
 };
 
-// Coverage report: compare expected vs implemented
+// => Coverage report: compare expected vs implemented
 function coverageCheck(
   machineName: string,
   implementedTable: Partial<Record<string, Partial<Record<string, string>>>>,
@@ -1003,7 +1153,7 @@ function coverageCheck(
   return { covered, missing, extra };
 }
 
-// Check all four machines (using transition tables defined in this and previous files)
+// => Check all four machines (using transition tables defined in this and previous files)
 const paymentCheck = coverageCheck(
   "Payment",
   PAYMENT_TRANSITIONS as Record<string, Record<string, string>>,
@@ -1043,7 +1193,7 @@ stateDiagram-v2
     Defaulted --> [*]
 
     classDef quoted fill:#0173B2,stroke:#000,color:#fff
-    classDef acquired fill:#DE8F05,stroke:#000,color:#fff
+    classDef acquired fill:#DE8F05,stroke:#000,color:#000
     classDef signed fill:#029E73,stroke:#000,color:#fff
     classDef installment fill:#CC78BC,stroke:#000,color:#fff
     classDef terminal fill:#CA9161,stroke:#000,color:#fff
@@ -1056,7 +1206,7 @@ stateDiagram-v2
 ```
 
 ```typescript
-// MurabahaContract: Sharia-compliant financing — bank buys asset, resells at markup
+// => MurabahaContract: Sharia-compliant financing — bank buys asset, resells at markup
 type MurabahaState =
   | "Quoted" // => Financing terms proposed by the murabaha bank
   | "AssetAcquired" // => Bank has purchased the underlying asset
@@ -1075,7 +1225,7 @@ type MurabahaEvent =
   | "final_installment" // => Last installment: contract settles
   | "default"; // => Buyer misses payment; contract defaults
 
-// MurabahaMarkup value object: basis points (1 bp = 0.01%)
+// => MurabahaMarkup value object: basis points (1 bp = 0.01%)
 interface MurabahaMarkup {
   basisPoints: number; // => 0 < bp ≤ 5000 (max 50% markup, per domain spec)
 }
@@ -1093,10 +1243,10 @@ const MURABAHA_TRANSITIONS: Partial<Record<MurabahaState, Partial<Record<Murabah
   Signed: { first_installment_due: "InstallmentPending" },
   InstallmentPending: { pay_installment: "InstallmentPaid", default: "Defaulted" },
   InstallmentPaid: { next_installment_due: "InstallmentPending", final_installment: "Settled" },
-  // Settled, Defaulted: terminal
+  // => Settled, Defaulted: terminal
 };
 
-// Markup guard: markup must be > 0 and ≤ 5000 basis points
+// => Markup guard: markup must be > 0 and ≤ 5000 basis points
 function validateMarkup(markup: MurabahaMarkup): string | undefined {
   if (markup.basisPoints <= 0) return "Markup must be > 0 basis points";
   if (markup.basisPoints > 5000) return "Markup exceeds 5000 basis points (50% maximum)";
@@ -1123,14 +1273,14 @@ console.log(validateMarkup(contract.markup)); // => Output: undefined (valid)
 The `InstallmentPaid → InstallmentPending` cycle repeats for each installment. The number of installments completed is tracked in the contract context.
 
 ```typescript
-// Contract with installment tracking
+// => Contract with installment tracking
 interface MurabahaContractWithPayments extends MurabahaContract {
   readonly totalInstallments: number; // => Total number of installments agreed
   readonly installmentsPaid: number; // => How many have been paid
   readonly installmentAmount: number; // => USD amount per installment
 }
 
-// Pay one installment: increment counter, check if this is the final one
+// => Pay one installment: increment counter, check if this is the final one
 function payInstallment(contract: MurabahaContractWithPayments): Result<MurabahaContractWithPayments> {
   if (contract.state !== "InstallmentPending") {
     return { ok: false, error: `Cannot pay installment in state ${contract.state}` };
@@ -1176,9 +1326,9 @@ for (let i = 0; i < 3; i++) {
   }
 }
 // => Output:
-// Paid 1/3: InstallmentPaid
-// (would need another InstallmentPending trigger before paying installment 2/3)
-// Paid 3/3: Settled
+// => Paid 1/3: InstallmentPaid
+// => (would need another InstallmentPending trigger before paying installment 2/3)
+// => Paid 3/3: Settled
 ```
 
 **Key Takeaway**: Installment counters in the FSM context determine which event fires after each payment — the counter bridges the discrete state machine and the continuous payment schedule.
@@ -1192,23 +1342,23 @@ for (let i = 0; i < 3; i++) {
 When a PurchaseOrder is financed via murabaha, the PO's payment leg is handled by the MurabahaContract, not the Payment aggregate. The link is a foreign key — the PO carries the contract reference.
 
 ```typescript
-// Extended PO: optionally links to a MurabahaContract for Sharia-financed procurement
+// => Extended PO: optionally links to a MurabahaContract for Sharia-financed procurement
 interface FinancedPurchaseOrder extends PurchaseOrder {
   readonly murabahaContractId?: string; // => Present only for murabaha-financed POs
   // => Optional: most POs are paid conventionally; murabaha is a minority path
 }
 
-// Guard: determine the payment path for a PO
+// => Guard: determine the payment path for a PO
 function paymentPath(po: FinancedPurchaseOrder): "conventional" | "murabaha" {
   return po.murabahaContractId ? "murabaha" : "conventional";
   // => Murabaha-financed: payment is via installments on the contract
   // => Conventional: payment is via the Payment aggregate (Scheduled → Disbursed → Remitted)
 }
 
-// Advance PO to Paid: different logic depending on payment path
+// => Advance PO to Paid: different logic depending on payment path
 function advancePOToPaid(po: FinancedPurchaseOrder, murabahaState?: MurabahaState): Result<FinancedPurchaseOrder> {
   if (paymentPath(po) === "murabaha") {
-    // Guard: murabaha contract must be Settled before PO can be Paid
+    // => Guard: murabaha contract must be Settled before PO can be Paid
     if (murabahaState !== "Settled") {
       return {
         ok: false,
@@ -1217,7 +1367,7 @@ function advancePOToPaid(po: FinancedPurchaseOrder, murabahaState?: MurabahaStat
       };
     }
   }
-  // For conventional path: Payment aggregate handles the guard (Disbursed → Remitted)
+  // => For conventional path: Payment aggregate handles the guard (Disbursed → Remitted)
   return { ok: true, value: { ...po, state: "Paid" as unknown as POState } };
 }
 
@@ -1249,7 +1399,7 @@ if (r2.ok) console.log(r2.value.state); // => Output: Paid
 In the Akka or Erlang actor model, each aggregate instance is an actor. The actor receives events, updates its FSM state, and persists the result. This patterns pairs naturally with FSM because actors are inherently single-threaded — no locking required.
 
 ```typescript
-// Minimal actor simulation: message queue + FSM state
+// => Minimal actor simulation: message queue + FSM state
 class PaymentActor {
   private state: PaymentWithRetries; // => Actor's internal FSM state
   private mailbox: Array<{ event: PaymentEvent; replyTo: (r: Result<Payment>) => void }> = [];
@@ -1261,9 +1411,9 @@ class PaymentActor {
     // => No shared state: no race conditions
   }
 
-  // Receive: process the next message in the mailbox
+  // => Receive: process the next message in the mailbox
   receive(event: PaymentEvent, replyTo: (r: Result<Payment>) => void): void {
-    // Single-threaded: no locking needed (actor processes one message at a time)
+    // => Single-threaded: no locking needed (actor processes one message at a time)
     const r = applyPaymentEvent(this.state, event);
     if (r.ok) {
       this.state = { ...r.value, retryCount: this.state.retryCount, maxRetries: this.state.maxRetries };
@@ -1311,19 +1461,19 @@ actor.receive("fail", (r) => {
 When two processes try to update the same PO simultaneously, optimistic concurrency prevents the second update from overwriting the first.
 
 ```typescript
-// Versioned record: carries a version number for optimistic locking
+// => Versioned record: carries a version number for optimistic locking
 interface Versioned<T> {
   data: T;
   version: number; // => Incremented on each successful update
 }
 
-// Versioned PO update: fails if the version has changed since the caller loaded it
+// => Versioned PO update: fails if the version has changed since the caller loaded it
 function updateVersioned<T>(
   stored: Versioned<T>,
   expected: Versioned<T>,
   updater: (data: T) => Result<T>,
 ): Result<Versioned<T>> {
-  // Concurrency check: version must match what the caller loaded
+  // => Concurrency check: version must match what the caller loaded
   if (stored.version !== expected.version) {
     return {
       ok: false,
@@ -1337,25 +1487,25 @@ function updateVersioned<T>(
   // => Increment version on success: next caller must use the new version
 }
 
-// Simulate two concurrent approve attempts on the same PO
+// => Simulate two concurrent approve attempts on the same PO
 const storedPO: Versioned<PurchaseOrder> = {
   data: { id: "po_conc_01", totalAmount: 500, state: "AwaitingApproval" as unknown as POState },
   version: 1,
 };
 
-// First approver loads at version 1
+// => First approver loads at version 1
 const approver1 = { ...storedPO }; // => Caller 1 loaded at version 1
-// Second approver also loads at version 1 before the first saves
+// => Second approver also loads at version 1 before the first saves
 const approver2 = { ...storedPO }; // => Caller 2 loaded at version 1 (race condition)
 
-// First approve succeeds: increments to version 2
+// => First approve succeeds: increments to version 2
 const simulated_stored_after_first: Versioned<PurchaseOrder> = {
   ...storedPO,
   version: 2,
   data: { ...storedPO.data, state: "Approved" as unknown as POState },
 };
 
-// Second approve fails: version is now 2 but caller 2 expected 1
+// => Second approve fails: version is now 2 but caller 2 expected 1
 const r2 = updateVersioned(
   simulated_stored_after_first, // => What is in the store (version 2)
   approver2, // => What caller 2 expects (version 1)
@@ -1375,15 +1525,39 @@ if (!r2.ok) console.log(r2.error);
 
 A saga coordinates the three FSMs across a long-running process. If any step fails, the saga executes compensating transactions to undo previous steps.
 
+```mermaid
+stateDiagram-v2
+    [*] --> SagaStarted
+    SagaStarted --> POIssued: issue PO
+    POIssued --> InvoiceMatched: match invoice
+    InvoiceMatched --> PaymentDisbursed: disburse payment
+    PaymentDisbursed --> SagaCompleted: all done
+    POIssued --> Compensating: PO issue fails
+    InvoiceMatched --> Compensating: match fails
+    PaymentDisbursed --> Compensating: payment fails
+    Compensating --> SagaFailed: compensations done
+
+    classDef started fill:#0173B2,stroke:#000,color:#fff
+    classDef active fill:#029E73,stroke:#000,color:#fff
+    classDef compensating fill:#CC78BC,stroke:#000,color:#fff
+    classDef terminal fill:#CA9161,stroke:#000,color:#fff
+
+    class SagaStarted started
+    class POIssued,InvoiceMatched,PaymentDisbursed active
+    class Compensating compensating
+    class SagaCompleted active
+    class SagaFailed terminal
+```
+
 ```typescript
-// Saga step: a named operation with a compensating action
+// => Saga step: a named operation with a compensating action
 interface SagaStep<T> {
   name: string;
   execute: () => Result<T>; // => Forward action
   compensate: () => void; // => Compensating action (rollback)
 }
 
-// Saga runner: execute steps in order; compensate in reverse on failure
+// => Saga runner: execute steps in order; compensate in reverse on failure
 function runSaga<T>(steps: SagaStep<T>[]): Result<T[]> {
   const results: T[] = [];
   const executed: SagaStep<T>[] = [];
@@ -1391,7 +1565,7 @@ function runSaga<T>(steps: SagaStep<T>[]): Result<T[]> {
   for (const step of steps) {
     const r = step.execute(); // => Attempt forward action
     if (!r.ok) {
-      // Compensation: reverse all executed steps in reverse order
+      // => Compensation: reverse all executed steps in reverse order
       [...executed].reverse().forEach((s) => {
         console.log(`Compensating: ${s.name}`);
         s.compensate();
@@ -1407,7 +1581,7 @@ function runSaga<T>(steps: SagaStep<T>[]): Result<T[]> {
   return { ok: true, value: results };
 }
 
-// P2P saga: PO issue → Invoice match → Payment disburse
+// => P2P saga: PO issue → Invoice match → Payment disburse
 const po: PurchaseOrder = { id: "po_saga_01", totalAmount: 5000, state: "Approved" as unknown as POState };
 const inv: Invoice = { id: "inv_saga_01", poId: "po_saga_01", supplierAmount: 5000, state: "Matched" };
 const pmt: Payment = {
@@ -1437,9 +1611,9 @@ if (sagaResult.ok) {
   console.log(`Saga failed: ${sagaResult.error}`);
 }
 // => Output:
-// Step 'IssuePO' succeeded
-// Step 'SchedulePayment' succeeded
-// Saga complete: 2 steps succeeded
+// => Step 'IssuePO' succeeded
+// => Step 'SchedulePayment' succeeded
+// => Saga complete: 2 steps succeeded
 ```
 
 **Key Takeaway**: Sagas replace distributed transactions — each step can succeed or fail independently, and compensation rolls back exactly the steps that succeeded.
@@ -1453,7 +1627,7 @@ if (sagaResult.ok) {
 In long-running workflows, the machine might be interrupted (process crash, pod restart). A snapshot captures all FSM state at a checkpoint, enabling resume without replaying the full event history.
 
 ```typescript
-// Snapshot: a point-in-time capture of the full P2P workflow state
+// => Snapshot: a point-in-time capture of the full P2P workflow state
 interface P2PSnapshot {
   snapshotId: string; // => Unique ID for this snapshot
   takenAt: string; // => ISO 8601 timestamp
@@ -1464,7 +1638,7 @@ interface P2PSnapshot {
   // => Used to know which events to replay: only those after this snapshot
 }
 
-// Take a snapshot of current P2P state
+// => Take a snapshot of current P2P state
 function takeSnapshot(
   po: PurchaseOrder,
   invoice: Invoice | undefined,
@@ -1482,7 +1656,7 @@ function takeSnapshot(
   };
 }
 
-// Resume from snapshot: return the FSM states captured at the snapshot
+// => Resume from snapshot: return the FSM states captured at the snapshot
 function resumeFromSnapshot(snap: P2PSnapshot): {
   po: PurchaseOrder;
   invoice?: Invoice;
@@ -1517,7 +1691,7 @@ console.log(resumed.payment); // => Output: undefined (not yet created)
 Generate a Mermaid state diagram directly from the transition table so the diagram always matches the implementation.
 
 ````typescript
-// Generate Mermaid stateDiagram-v2 from a transition table
+// => Generate Mermaid stateDiagram-v2 from a transition table
 function generateMermaid(
   title: string,
   table: Partial<Record<string, Partial<Record<string, string>>>>,
@@ -1525,20 +1699,20 @@ function generateMermaid(
 ): string {
   const lines: string[] = ["```mermaid", "stateDiagram-v2", `    %% ${title}`];
 
-  // Initial state: first key in the table
+  // => Initial state: first key in the table
   const initialState = Object.keys(table)[0];
   if (initialState) {
     lines.push(`    [*] --> ${initialState}`);
   }
 
-  // Transitions
+  // => Transitions
   for (const [from, events] of Object.entries(table)) {
     for (const [event, to] of Object.entries(events ?? {})) {
       lines.push(`    ${from} --> ${to}: ${event}`);
     }
   }
 
-  // Terminal states → [*]
+  // => Terminal states → [*]
   for (const terminal of terminalStates) {
     lines.push(`    ${terminal} --> [*]`);
   }
@@ -1552,20 +1726,20 @@ const diagram = generateMermaid("Payment FSM", PAYMENT_TRANSITIONS as Record<str
   "Reversed",
 ]);
 
-// Print first 8 lines of the generated diagram
+// => Print first 8 lines of the generated diagram
 diagram
   .split("\n")
   .slice(0, 8)
   .forEach((l) => console.log(l));
 // => Output:
-// ```mermaid
-// stateDiagram-v2
-//     %% Payment FSM
-//     [*] --> Scheduled
-//     Scheduled --> Disbursed: disburse
-//     Scheduled --> Reversed: reverse
-//     Disbursed --> Remitted: remit
-//     Disbursed --> Failed: fail
+// => ```mermaid
+// => stateDiagram-v2
+// =>     %% Payment FSM
+// =>     [*] --> Scheduled
+// =>     Scheduled --> Disbursed: disburse
+// =>     Scheduled --> Reversed: reverse
+// =>     Disbursed --> Remitted: remit
+// =>     Disbursed --> Failed: fail
 ````
 
 **Key Takeaway**: Diagram generation from the transition table ensures documentation is never out of sync with the implementation — the code is the single source of truth.
@@ -1579,20 +1753,20 @@ diagram
 The FSM state determines which HTTP status codes the API returns — a structural mapping that prevents ad-hoc HTTP status decisions in controller code.
 
 ```typescript
-// HTTP response shape for FSM-driven APIs
+// => HTTP response shape for FSM-driven APIs
 interface FSMApiResponse {
   status: number; // => HTTP status code
   body: unknown; // => Response body
 }
 
-// Map FSM results to HTTP responses for the PO API
+// => Map FSM results to HTTP responses for the PO API
 function toHttpResponse(result: Result<PurchaseOrder>, event: string): FSMApiResponse {
   if (result.ok) {
     return { status: 200, body: { state: result.value.state, id: result.value.id } };
     // => Success: 200 OK with new state
   }
 
-  // Classify the error: FSM guard failure → 409 Conflict, not 400 Bad Request
+  // => Classify the error: FSM guard failure → 409 Conflict, not 400 Bad Request
   const isConflict = result.error.includes("(forbidden)") || result.error.includes("Cannot");
   // => Forbidden transition: the request is valid but conflicts with current state
 
@@ -1615,7 +1789,7 @@ function toHttpResponse(result: Result<PurchaseOrder>, event: string): FSMApiRes
   };
 }
 
-// Simulate controller calls
+// => Simulate controller calls
 const po = createPO("po_http_01", 500);
 const r1 = applyEvent(po, "submit");
 console.log(toHttpResponse(r1, "submit").status); // => Output: 200
@@ -1637,15 +1811,15 @@ console.log((toHttpResponse(r2, "close").body as { error: string }).error);
 An integration-style test that walks a complete P2P workflow: PO from Draft to Closed, Invoice from Registered to Paid, Supplier approval, Payment from Scheduled to Remitted.
 
 ```typescript
-// Full P2P happy-path integration test
+// => Full P2P happy-path integration test
 function testFullP2PHappyPath(): void {
-  // --- Supplier ---
+  // => --- Supplier ---
   const sup: Supplier = { id: "sup_it_01", name: "Integration Supplies", state: "Pending" };
   const supR = transitionSupplier(sup, "approve");
   if (!supR.ok) throw new Error(`Supplier approve failed: ${supR.error}`);
   console.log(`Supplier: ${supR.value.state}`); // => Approved
 
-  // --- PO lifecycle ---
+  // => --- PO lifecycle ---
   let po: PurchaseOrder = createPO("po_it_01", 3000);
   const poSteps: Array<{ event: POEvent; expected: string }> = [
     { event: "submit", expected: "AwaitingApproval" },
@@ -1661,11 +1835,11 @@ function testFullP2PHappyPath(): void {
     console.log(`PO: ${po.state}`); // => AwaitingApproval, Approved, Issued, Acknowledged
   }
 
-  // --- Invoice ---
+  // => --- Invoice ---
   let inv: Invoice = { id: "inv_it_01", poId: "po_it_01", supplierAmount: 3045, state: "Registered" };
   const invSteps: Array<{ event: InvoiceEvent; expected: string }> = [
     { event: "start_match", expected: "Matching" },
-    // match_ok determined by guard (3045 vs 3000 = 1.5% < 2% tolerance)
+    // => match_ok determined by guard (3045 vs 3000 = 1.5% < 2% tolerance)
     { event: "schedule", expected: "ScheduledForPayment" },
     { event: "pay", expected: "Paid" },
   ];
@@ -1674,14 +1848,14 @@ function testFullP2PHappyPath(): void {
   inv = { ...inv, state: "Matched" }; // => Match passes (1.5% delta)
 
   for (const { event, expected } of invSteps.slice(1)) {
-    // Skip start_match (done above)
+    // => Skip start_match (done above)
     const next = INVOICE_TRANSITIONS[inv.state]?.[event];
     if (!next) throw new Error(`Invoice ${event} invalid from ${inv.state}`);
     inv = { ...inv, state: next };
     console.log(`Invoice: ${inv.state}`); // => ScheduledForPayment, Paid
   }
 
-  // --- Payment ---
+  // => --- Payment ---
   let pmt: Payment = {
     id: "pay_it_01",
     invoiceId: "inv_it_01",
@@ -1715,7 +1889,7 @@ testFullP2PHappyPath();
 A final synthesis example showing all four P2P state machines as a unified statechart specification.
 
 ```typescript
-// P2P statechart specification: all four machines, their relationships, and protocol
+// => P2P statechart specification: all four machines, their relationships, and protocol
 const P2P_STATECHART = {
   machines: {
     Supplier: {
@@ -1760,7 +1934,7 @@ const P2P_STATECHART = {
   ],
 };
 
-// Print summary
+// => Print summary
 console.log("P2P FSM System Summary");
 console.log("======================");
 let totalStates = 0;
@@ -1770,15 +1944,15 @@ for (const [name, def] of Object.entries(P2P_STATECHART.machines)) {
 }
 console.log(`Total states across all machines: ${totalStates}`);
 // => Output:
-// Supplier: 4 states, 4 events — Vendor lifecycle — gates PO eligibility
-// PurchaseOrder: 12 states, 10 events — Core procurement lifecycle — the workflow spine
-// Invoice: 6 states, 6 events — Financial validation — three-way match enforcement
-// Payment: 5 states, 5 events — Disbursement tracking — bank transfer lifecycle
-// Total states across all machines: 27
+// => Supplier: 4 states, 4 events — Vendor lifecycle — gates PO eligibility
+// => PurchaseOrder: 12 states, 10 events — Core procurement lifecycle — the workflow spine
+// => Invoice: 6 states, 6 events — Financial validation — three-way match enforcement
+// => Payment: 5 states, 5 events — Disbursement tracking — bank transfer lifecycle
+// => Total states across all machines: 27
 console.log(`\nPatterns covered: ${P2P_STATECHART.patterns.length}`);
 // => Output: Patterns covered: 7
 ```
 
 **Key Takeaway**: The four P2P state machines together define the complete procurement protocol — 27 states, coordinated by domain events, enforcing business rules structurally rather than through ad-hoc conditional logic.
 
-**Why It Matters**: This is the value proposition of FSM-driven domain modelling: the entire P2P protocol — supplier vetting, purchase approval, three-way match, payment disbursement — is expressed as explicit states, explicit transitions, and explicit guards. There are no hidden states, no undocumented transitions, and no business rules buried in controller code. When a regulator asks "how does your system prevent a payment to a blacklisted supplier?", the answer is: "structurally — the Supplier FSM makes it impossible to select a Blacklisted supplier for a new PO, and the Payment FSM cannot be created without a matched invoice linked to an issued PO." The FSMs are the compliance artefact.
+**Why It Matters**: This is the value proposition of FSM-driven domain modelling: the entire P2P protocol — supplier vetting, purchase approval, three-way match, payment disbursement — is expressed as explicit states, explicit transitions, and explicit guards. There are no hidden states, no undocumented transitions, and no business rules buried in controller code. A regulator asking how the system prevents payment to a blacklisted supplier gets a structural answer: the Supplier FSM makes it impossible, and the Payment FSM cannot be created without a matched invoice linked to an issued PO. The FSMs are the compliance artefact.

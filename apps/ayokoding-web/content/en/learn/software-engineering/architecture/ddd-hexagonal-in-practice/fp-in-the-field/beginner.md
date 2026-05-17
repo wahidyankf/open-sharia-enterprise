@@ -117,6 +117,7 @@ module ProcurementPlatform.Domain.Types
 // => Single module for all shared domain types
 // => No context scoping — every module in the project can open this
 type AppEnv =
+    // => Discriminated union: compiler enforces exhaustive handling at every match site
     | Dev
     | Staging
     | Prod
@@ -213,7 +214,7 @@ module ProcurementPlatform.Contexts.Purchasing.Infrastructure.NpgsqlPurchaseOrde
 open Npgsql
 // => Npgsql import is confined to the infrastructure module only
 // => Domain/ValueObjects.fs never needs to open this
-open TalksPlatform.Contexts.Purchasing.Domain
+open ProcurementPlatform.Contexts.Purchasing.Domain
 // => Import domain types for mapping — infrastructure depends on domain, not the reverse
 
 // Row-level record matching the purchasing.purchase_orders table columns
@@ -494,6 +495,7 @@ The health handler shows the minimal Giraffe adapter. A domain-backed handler fo
 // Giraffe handler — primary (driving) adapter for purchase order submission
 // src/ProcurementPlatform/Contexts/Purchasing/Presentation/PurchasingHandlers.fs
 module ProcurementPlatform.Contexts.Purchasing.Presentation.PurchasingHandlers
+// => Presentation layer: imports domain, ports, and HTTP framework — allowed at this layer
 
 open Giraffe
 // => Giraffe types: HttpHandler, BindJsonAsync, RequestErrors, Successful, ServerErrors
@@ -507,9 +509,11 @@ open ProcurementPlatform.Contexts.Purchasing.Application.SubmitPurchaseOrder
 
 // Request DTO — deserialized from JSON by Giraffe's BindJsonAsync
 [<CLIMutable>]
+// => CLIMutable: generates public property setters — required for reflection-based deserialization
 type SubmitPurchaseOrderRequest =
     { SupplierId: System.Guid
       // => CLIMutable: reflection-based setters required by Giraffe's BindJsonAsync
+      // => Guid: no strongly-typed DU at the boundary — smart constructor wraps it
       TotalAmount: decimal
       // => Raw decimal: smart constructor validates >= 0 and currency
       Currency: string
@@ -519,6 +523,7 @@ type SubmitPurchaseOrderRequest =
 
 // Line item DTO
 [<CLIMutable>]
+// => CLIMutable: same pattern as SubmitPurchaseOrderRequest — reflection-based JSON binding
 type LineItemDto =
     { SkuCode: string
       // => Raw SKU code: domain validates ^[A-Z]{3}-\d{4,8}$ format
@@ -529,19 +534,26 @@ type LineItemDto =
 
 // UnitOfMeasure string → DU mapping
 let private parseUnit = function
+    // => Pattern match on the raw string from the DTO — exhaustive with "other" catch-all
     | "Each"  -> Ok Each
     // => Exact string match: the client must send "Each", not "each"
     | "Box"   -> Ok Box
+    // => Box: quantity counted in cartons
     | "Kg"    -> Ok Kg
+    // => Kg: weight-based line item
     | "Litre" -> Ok Litre
+    // => Litre: volume-based line item
     | "Hour"  -> Ok Hour
+    // => Hour: service or time-based line item
     | other   -> Error (sprintf "Unknown unit of measure: %s" other)
     // => Error carries the invalid string — the handler returns 400 with this message
 
 // Handler factory: returns an HttpHandler with the ports partially applied
 let handleSubmit
     (repo: PurchaseOrderRepository)
+    // => repo: injected at composition root — Npgsql adapter in production
     (pub: EventPublisher)
+    // => pub: outbox adapter in production — stub in tests
     (clock: Clock)
     // => Three ports injected by the composition root via partial application
     : HttpHandler =
@@ -566,8 +578,11 @@ let handleSubmit
                       // => New UUID — composition root can inject an IdGenerator port for real UUID v4
                       SupplierId = SupplierId dto.SupplierId
                       TotalAmount = money
+                      // => Validated Money value — safe to use in domain logic
                       Status = Draft
+                      // => Draft: all new POs start in Draft status
                       CreatedAt = clock () }
+                      // => clock (): port call — frozen to a fixed time in tests
                 // => Build the domain aggregate from validated value objects
 
                 // Step 2: aggregate → application service → domain result

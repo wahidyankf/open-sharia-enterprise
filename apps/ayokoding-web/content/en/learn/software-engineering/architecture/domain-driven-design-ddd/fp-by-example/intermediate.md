@@ -214,20 +214,38 @@ printfn "$50000: L2=%b, L3=%b" (requiresL2Approval total3) (requiresL3Approval t
 
 A complete procurement workflow is a composition of pure steps. The `submitAndRoute` workflow composes validation, total computation, approval level derivation, and event production into a single pipeline using `>>` and `|>`.
 
+```mermaid
+graph LR
+    A["validateLines\nResult<RawLine list, string>"] -->|"Result.map"| B["computeTotal\ndecimal"]
+    B -->|"Result.map"| C["deriveLevel\nApprovalLevel"]
+    C -->|"Result.map"| D["buildEvent\nRequisitionSubmittedPayload"]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+```
+
 ```fsharp
 // A procurement workflow assembled from pure, composable steps.
 
 type ApprovalLevel = L1 | L2 | L3
+// => L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
 type RequisitionId = RequisitionId of string
+// => Single-case DU wraps string for type safety
 
 type RawLine = { Sku: string; Qty: int; Price: decimal }
 // => Unvalidated line arriving from the HTTP layer
 
 type RequisitionSubmittedPayload = {
     Id:            RequisitionId
+    // => Wrapped id — type prevents mixing with PurchaseOrderId
     ApprovalLevel: ApprovalLevel
+    // => L1/L2/L3 derived from total at submission time
     RequestedBy:   string
+    // => Employee id of the requester
     TotalAmount:   decimal
+    // => Sum of all line totals at submission time
 }
 // => Event payload — everything a downstream consumer needs
 
@@ -250,9 +268,13 @@ let deriveLevel (total: decimal) : ApprovalLevel =
 
 let buildEvent (requestedBy: string) (level: ApprovalLevel) (total: decimal) : RequisitionSubmittedPayload =
     { Id            = RequisitionId ("req_" + System.Guid.NewGuid().ToString("N").[..7])
+      // => Generates a short req id like "req_a1b2c3d4"
       ApprovalLevel = level
+      // => Captured at submission — immutable after this point
       RequestedBy   = requestedBy
+      // => Identifies who triggered the workflow
       TotalAmount   = total }
+      // => Locked in from validated lines; not recomputed downstream
     // => Assembles the event payload from validated, derived values
 
 // Composed workflow
@@ -272,7 +294,9 @@ let submitRequisition (requestedBy: string) (lines: RawLine list) : Result<Requi
 
 // Test
 let lines = [{ Sku = "OFF-0042"; Qty = 10; Price = 8.50m }
+             // => Line 1: 10 × $8.50 = $85.00
              { Sku = "ELE-0099"; Qty = 3;  Price = 899.99m }]
+             // => Line 2: 3 × $899.99 = $2,699.97
 // => Two valid lines — total = 85.00 + 2699.97 = 2784.97
 
 let result = submitRequisition "emp_00456" lines
@@ -282,6 +306,7 @@ match result with
 | Ok payload -> printfn "Submitted: level=%A total=%M" payload.ApprovalLevel payload.TotalAmount
 // => Output: Submitted: level=L2 total=2784.9700M
 | Error e    -> printfn "Error: %s" e
+// => Short-circuit: prints error message if any step fails
 ```
 
 **Key Takeaway**: A procurement workflow assembled from pure composable steps is easier to test, extend, and reason about than a single monolithic function — each step is independently testable and the composition is explicit.
@@ -753,6 +778,26 @@ printfn "Result: %A" runResult
 
 A comprehensive `ProcurementError` discriminated union names every failure mode the purchasing context can produce. Named errors enable precise API error mapping, monitoring alerts, and domain-specific retry policies.
 
+```mermaid
+graph TD
+    E["PurchasingError DU"]
+    R["Requisition errors\nNotFound / AlreadySubmitted\nHasNoLines"]
+    P["PO errors\nPONotFound / NotInApprovedState\nBudgetExceeded"]
+    S["Supplier errors\nNotFound / NotEligible"]
+    I["Infrastructure errors\nDatabaseTimeout / EventPublishFailed"]
+
+    E --> R
+    E --> P
+    E --> S
+    E --> I
+
+    style E fill:#0173B2,stroke:#000,color:#fff
+    style R fill:#DE8F05,stroke:#000,color:#000
+    style P fill:#CC78BC,stroke:#000,color:#000
+    style S fill:#029E73,stroke:#000,color:#fff
+    style I fill:#CA9161,stroke:#000,color:#000
+```
+
 ```fsharp
 // Every failure mode in the purchasing context is a named DU case.
 // This drives precise HTTP status codes, alerting, and retry logic.
@@ -1008,6 +1053,17 @@ printfn "Events: %d" events.Length
 
 The `Supplier` aggregate lives in the `supplier` bounded context. Its lifecycle (`Pending → Approved → Suspended → Blacklisted`) determines whether the purchasing context can issue new POs to it.
 
+```mermaid
+stateDiagram-v2
+    [*] --> Pending : onboard supplier
+    Pending --> Approved : vetting passes
+    Pending --> Blacklisted : vetting fails (fraud)
+    Approved --> Suspended : compliance issue
+    Suspended --> Approved : issue resolved
+    Suspended --> Blacklisted : escalated
+    Blacklisted --> [*] : permanent exclusion
+```
+
 ```fsharp
 // Supplier: aggregate root of the supplier bounded context.
 // Lifecycle state determines eligibility for new POs.
@@ -1098,6 +1154,26 @@ match approvalResult with
 ### Example 40: Aggregate Boundary — What Goes Inside
 
 The aggregate boundary defines what is consistent together and what is communicated via events. A `PurchaseOrder` owns its lines and status. It does not own the `Supplier` record or the `Invoice` — those are in different aggregates with their own boundaries.
+
+```mermaid
+graph TD
+    subgraph PO["PurchaseOrder aggregate boundary"]
+        Root["PurchaseOrder\n(aggregate root)"]
+        Lines["PoLine list\n(owned, consistent)"]
+        Root --> Lines
+    end
+    subgraph Refs["Cross-aggregate references (ID only)"]
+        SupRef["SupplierId\n(not Supplier record)"]
+        ReqRef["RequisitionId\n(not Requisition record)"]
+    end
+    Root -.->|"reference by ID"| SupRef
+    Root -.->|"reference by ID"| ReqRef
+
+    style Root fill:#0173B2,stroke:#000,color:#fff
+    style Lines fill:#029E73,stroke:#000,color:#fff
+    style SupRef fill:#CC78BC,stroke:#000,color:#000
+    style ReqRef fill:#CC78BC,stroke:#000,color:#000
+```
 
 ```fsharp
 // Aggregate boundaries: what is consistent together, what communicates via events.
@@ -1330,27 +1406,27 @@ type SupplierId      = SupplierId      of string
 
 // Input: the approved PO ready to be issued
 type ApprovedPurchaseOrder = {
-    Id:         PurchaseOrderId
-    SupplierId: SupplierId
-    Total:      decimal
-    ApprovedAt: System.DateTimeOffset
+    Id:         PurchaseOrderId  // => Typed wrapper — same ID as the original DraftPO
+    SupplierId: SupplierId       // => Supplier that will receive the issued order
+    Total:      decimal          // => Total locked at approval — cannot change post-approval
+    ApprovedAt: System.DateTimeOffset  // => When approval was granted — audit trail
 }
 // => ApprovedPurchaseOrder : can only exist after the approve transition
 
 // Output: the issued PO state
 type IssuedPurchaseOrder = {
-    Id:         PurchaseOrderId
-    SupplierId: SupplierId
-    IssuedAt:   System.DateTimeOffset
+    Id:         PurchaseOrderId  // => Same ID throughout the lifecycle
+    SupplierId: SupplierId       // => Supplier receiving the order
+    IssuedAt:   System.DateTimeOffset  // => When PO was transmitted to the supplier
 }
 // => IssuedPurchaseOrder : issued state — lines are now immutable
 
 // Domain event produced by the issuance
 type PurchaseOrderIssuedEvent = {
-    PurchaseOrderId: PurchaseOrderId
-    SupplierId:      SupplierId
-    IssuedAt:        System.DateTimeOffset
-    TotalAmount:     decimal
+    PurchaseOrderId: PurchaseOrderId  // => Identifies which PO was issued
+    SupplierId:      SupplierId       // => Routes the event to the right supplier context
+    IssuedAt:        System.DateTimeOffset  // => Issuance timestamp for SLA tracking
+    TotalAmount:     decimal           // => Total for accounting and receiving contexts
 }
 // => PurchaseOrderIssuedEvent : consumed by receiving, supplier-notifier, accounting
 
@@ -1392,6 +1468,23 @@ printfn "Event total: %M" event.TotalAmount
 ### Example 44: ApprovePO Workflow Signature with Dependencies
 
 The `ApprovePO` workflow needs access to the supplier repository (to check eligibility) and the approval router (to record the approval decision). These dependencies are expressed as function parameters, not class fields — the functional equivalent of constructor injection.
+
+```mermaid
+graph TD
+    Deps["Injected Dependencies\nLoadPO · CheckSupplier · RecordApproval"]
+    Cmd["ApprovePOCommand\n(runtime input)"]
+    WF["approvePOWorkflow\n(pure function)"]
+    Out["Async<Result<ApprovedPO, ApprovalError>>"]
+
+    Deps -->|"partial application"| WF
+    Cmd -->|"final argument"| WF
+    WF --> Out
+
+    style Deps fill:#DE8F05,stroke:#000,color:#000
+    style Cmd fill:#CA9161,stroke:#000,color:#000
+    style WF fill:#0173B2,stroke:#000,color:#fff
+    style Out fill:#029E73,stroke:#000,color:#fff
+```
 
 ```fsharp
 // ApprovePO workflow: dependencies expressed as function parameters.
@@ -1479,16 +1572,16 @@ type PurchaseOrderId = PurchaseOrderId of string
 type SupplierId      = SupplierId      of string
 
 type IssuedPO = { Id: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset }
-// => The issued state produced by the transition
+// => The issued state produced by the transition — carries only post-issuance fields
 
 type PoIssuedEvent = { PurchaseOrderId: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset; Total: decimal }
-// => Event payload for downstream contexts
+// => Event payload for downstream contexts — consuming contexts do not query back for total
 
 type IssueError =
-    | PONotFound    of PurchaseOrderId
-    | NotApproved   of PurchaseOrderId  // => Can only issue from Approved state
-    | SaveFailed    of string
-    | PublishFailed of string
+    | PONotFound    of PurchaseOrderId  // => PO does not exist — 404
+    | NotApproved   of PurchaseOrderId  // => Can only issue from Approved state — 422
+    | SaveFailed    of string           // => DB write failed — 503, retry eligible
+    | PublishFailed of string           // => Event bus write failed — 503, retry eligible
 // => Named error union — each case drives a different alert/retry policy
 
 // Port type aliases
@@ -1571,8 +1664,11 @@ type SupplierId      = SupplierId      of string
 // The state after supplier acknowledgement
 type AcknowledgedPO = {
     Id:              PurchaseOrderId
+    // => Typed wrapper — prevents mixing with RequisitionId
     SupplierId:      SupplierId
+    // => Which supplier acknowledged
     AcknowledgedAt:  System.DateTimeOffset
+    // => Timestamp of acknowledgement
     ExpectedDelivery: System.DateTimeOffset option
     // => Supplier may provide an expected delivery date — optional at acknowledgement time
 }
@@ -1581,9 +1677,13 @@ type AcknowledgedPO = {
 // Event consumed by the receiving context
 type PurchaseOrderAcknowledgedEvent = {
     PurchaseOrderId:  PurchaseOrderId
+    // => Identifies which PO was acknowledged
     SupplierId:       SupplierId
+    // => Mirrors AcknowledgedPO — receiving needs both
     AcknowledgedAt:   System.DateTimeOffset
+    // => When the supplier confirmed
     ExpectedDelivery: System.DateTimeOffset option
+    // => Receiving context uses this to set GRN due date
 }
 // => Receiving context reacts: creates a GoodsReceiptNote expectation
 
@@ -1595,7 +1695,7 @@ type AcknowledgePOCommand = {
 // => AcknowledgePOCommand : DTO from the supplier portal or EDI system
 
 type AckError = PONotFound of string | NotIssued of string | SaveFailed
-// => Three possible failure modes
+// => PONotFound: PO doesn't exist; NotIssued: PO not in Issued state; SaveFailed: DB write failed
 
 // Port types
 type LoadIssuedPO    = PurchaseOrderId -> Async<Result<SupplierId, AckError>>
@@ -1640,8 +1740,11 @@ let acknowledgePO
 
 // Demonstrate with stubs
 let stubLoad _    = async { return Ok (SupplierId "sup_acme") }
+// => Simulates a DB that returns sup_acme for any PO ID
 let stubSave _    = async { return Ok () }
+// => No-op save — always succeeds
 let stubPublish _ = async { return Ok () }
+// => No-op publish — event is discarded in test
 
 let cmd = { PurchaseOrderId = "po_e3d1"; ExpectedDelivery = Some (System.DateTimeOffset.UtcNow.AddDays(7.0)) }
 // => cmd : AcknowledgePOCommand — with a 7-day expected delivery
@@ -1653,6 +1756,7 @@ match result with
 | Ok acked -> printfn "Acknowledged: delivery=%A" acked.ExpectedDelivery
 // => Output: Acknowledged: delivery=Some 2026-...
 | Error e  -> printfn "Error: %A" e
+// => Error branch: prints AckError DU case (e.g. PONotFound "po_e3d1")
 ```
 
 **Key Takeaway**: The `AcknowledgePO` workflow is structurally identical to `IssuePO` — load, build, save, publish — demonstrating that the same composition pattern scales to every step in the PO lifecycle.
@@ -1666,6 +1770,16 @@ match result with
 ### Example 47: Pipeline Composition — Wiring Three Workflow Steps
 
 The complete PO lifecycle from Draft to Issued involves three workflow steps: `CreateDraftPO → ApprovePO → IssuePO`. Composing them in a pipeline demonstrates how functional workflow orchestration works without a workflow engine.
+
+```mermaid
+graph LR
+    A["createDraft\nDraftPO"] -->|"|> approveDraft"| B["Result<ApprovedPO, string>"]
+    B -->|"Result.map issueApproved"| C["Result<IssuedPO * string, string>"]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+```
 
 ```fsharp
 // Three PO lifecycle steps composed into a single pipeline.
@@ -1838,17 +1952,25 @@ type SupplierId      = SupplierId      of string
 
 type PurchasingContextError =
     | RequisitionNotFound of id: string
+    // => 404: resource-not-found class
     | BudgetExceeded      of required: decimal * available: decimal
+    // => 422: business rule violation — amounts tell the requester what to trim
     | SupplierNotEligible of SupplierId
+    // => 422: supplier is Pending, Suspended, or Blacklisted
     | DatabaseTimeout     of operation: string
+    // => 503: transient infrastructure error — retry is safe
 // => Subset of the full error DU for this example
 
 // API error response — the DTO returned to the HTTP client
 type ApiError = {
     Status:  int
+    // => HTTP status code (200/404/422/503)
     Code:    string
+    // => Machine-readable error code for client handling
     Message: string
+    // => Human-readable description for display
     Retry:   bool
+    // => Tells the client whether to retry automatically
 }
 // => ApiError : the JSON body shape returned on error responses
 
@@ -1891,7 +2013,9 @@ let handleRequest (domainResult: Result<string, PurchasingContextError>) : int *
 
 // Test the translation
 let domainOk    = Ok "PO po_e3d1 approved"
+// => Simulates a successful workflow result
 let domainError = Error (BudgetExceeded (15000m, 10000m))
+// => Simulates a budget-exceeded domain failure
 // => Two test results: success and a budget-exceeded error
 
 let (status1, body1) = handleRequest domainOk
@@ -1914,6 +2038,17 @@ printfn "Error:   %d %s" status2 body2
 ### Example 50: Pushing Effects to the Edges
 
 The functional core of the procurement domain is pure — no I/O, no side effects. Effects (database access, event publishing, email sending) are pushed to the edges of the system and injected as function parameters. The domain core is always testable without infrastructure.
+
+```mermaid
+graph TD
+    Shell["Imperative Shell\nload / save / notify (I/O)"]
+    Core["Functional Core\ncanApprove / applyApproval (pure)"]
+    Shell -->|"passes DraftPO"| Core
+    Core -->|"returns Result<unit, string> + ApprovedPO"| Shell
+
+    style Shell fill:#CA9161,stroke:#000,color:#000
+    style Core fill:#0173B2,stroke:#000,color:#fff
+```
 
 ```fsharp
 // Functional core / imperative shell: domain logic is pure; I/O is at the edges.
@@ -2008,6 +2143,18 @@ printfn "Approved at: %O" approved.ApprovedAt
 ### Example 51: Pure Core Wrapping at the Edge
 
 The edge of the system is where pure domain functions meet impure I/O. This example shows the precise composition point: the shell reads from I/O, passes the data to the pure core, collects the output, and writes the output back to I/O.
+
+```mermaid
+graph LR
+    Load["load poId\n(I/O read)"] -->|"PoData"| Core["transition data\n(pure core)"]
+    Core -->|"Ok (PoIssued, PoEvent)"| Save["save issued\n(I/O write)"]
+    Save --> Pub["pub event\n(I/O write)"]
+
+    style Load fill:#CA9161,stroke:#000,color:#000
+    style Core fill:#0173B2,stroke:#000,color:#fff
+    style Save fill:#CA9161,stroke:#000,color:#000
+    style Pub fill:#CA9161,stroke:#000,color:#000
+```
 
 ```fsharp
 // The composition point: pure core sandwiched between I/O reads and I/O writes.

@@ -3,7 +3,7 @@ title: "Advanced"
 date: 2026-05-09T00:00:00+07:00
 weight: 10000005
 draft: false
-description: "Examples 56-73: Cross-context DDD patterns — ACL, factory, repository interface, dependency inversion, and bounded-context integration using the receiving, invoicing, payments, and murabaha-finance contexts of a Procure-to-Pay platform (Java 21+ primary)"
+description: "Examples 56-79: Cross-context DDD patterns — ACL, factory, repository interface, dependency inversion, sagas, event sourcing, temporal modelling, and common anti-patterns using the receiving, invoicing, payments, and murabaha-finance contexts of a Procure-to-Pay platform (Java 21+)"
 tags: ["ddd", "domain-driven-design", "tutorial", "by-example", "oop", "java", "kotlin", "csharp", "advanced"]
 ---
 
@@ -1656,5 +1656,636 @@ class AggregateBoundaryDemo {
 ```
 
 **Key Takeaway**: Aggregates in different bounded contexts never hold object references to each other — only typed ID strings cross boundaries, preventing accidental coupling between context lifecycles.
+
+**Why It Matters**: When `Invoice` and `GoodsReceiptNote` share an object reference, every Invoice load requires loading the full GRN — including all its lines, measurements, and QC notes — even when the invoice operation only needs the GRN status. In a procurement system processing thousands of invoices daily, that extra load amplifies database reads by 5–10x. Separate aggregates with ID references allow each to be loaded, cached, and scaled independently.
+
+---
+
+## Temporal Modelling and Anti-Patterns (Examples 74–79)
+
+### Example 74: Temporal value object — `ValidityPeriod` for contract terms
+
+Procurement contracts and Murabaha financing arrangements have explicit start and end dates. A `ValidityPeriod` value object encapsulates date-range logic — overlap detection, containment checks — and rejects invalid ranges at construction.
+
+```java
+import java.time.LocalDate;
+
+// ── ValidityPeriod value object ───────────────────────────────────────────────
+record ValidityPeriod(LocalDate start, LocalDate end) {
+    ValidityPeriod {
+        if (start == null)
+            throw new IllegalArgumentException("ValidityPeriod.start must not be null");
+        // => start date is required; open-ended periods use MAX_DATE sentinel
+        if (end == null)
+            throw new IllegalArgumentException("ValidityPeriod.end must not be null");
+        // => end date is required; use LocalDate.MAX for indefinite periods
+        if (!end.isAfter(start))
+            throw new IllegalArgumentException("ValidityPeriod.end must be after start; got start=" + start + " end=" + end);
+        // => zero-duration and negative-duration periods are domain invariant violations
+    }
+
+    boolean contains(LocalDate date) {
+        return !date.isBefore(start) && !date.isAfter(end);
+        // => inclusive on both ends: [start, end]
+    }
+
+    boolean overlaps(ValidityPeriod other) {
+        return start.isBefore(other.end) && end.isAfter(other.start);
+        // => overlap when neither period ends before the other starts
+    }
+
+    boolean isActiveOn(LocalDate referenceDate) {
+        return contains(referenceDate);
+        // => alias for contains; more expressive in business context
+    }
+}
+
+// ── MurabahaContract using ValidityPeriod ─────────────────────────────────────
+record MurabahaContractId(String value) {}
+record Money(java.math.BigDecimal amount, String currency) {}
+
+class MurabahaContract {              // => aggregate for Sharia-compliant financing
+    final MurabahaContractId id;
+    final Money principalAmount;
+    final Money markupAmount;
+    final ValidityPeriod term;        // => financing window; payments must fall within
+
+    MurabahaContract(MurabahaContractId id, Money principalAmount,
+                     Money markupAmount, ValidityPeriod term) {
+        this.id              = id;
+        this.principalAmount = principalAmount;
+        this.markupAmount    = markupAmount;
+        this.term            = term;
+        // => all fields are final; Murabaha contracts are immutable once agreed
+    }
+
+    boolean acceptsPaymentOn(LocalDate paymentDate) {
+        return term.isActiveOn(paymentDate);
+        // => payments outside the contract term are rejected by domain rule
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var period = new ValidityPeriod(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31));
+System.out.println(period.contains(LocalDate.of(2026, 6, 15)));    // => Output: true
+System.out.println(period.contains(LocalDate.of(2027, 1, 1)));     // => Output: false
+System.out.println(period.isActiveOn(LocalDate.of(2026, 1, 1)));   // => Output: true (inclusive start)
+System.out.println(period.isActiveOn(LocalDate.of(2026, 12, 31))); // => Output: true (inclusive end)
+
+var overlap = new ValidityPeriod(LocalDate.of(2026, 10, 1), LocalDate.of(2027, 3, 31));
+System.out.println(period.overlaps(overlap));  // => Output: true (Oct-Dec 2026 overlap)
+
+var contract = new MurabahaContract(
+    new MurabahaContractId("mur_001"),
+    new Money(new java.math.BigDecimal("100000"), "USD"),
+    new Money(new java.math.BigDecimal("8000"),   "USD"),
+    period
+);
+System.out.println(contract.acceptsPaymentOn(LocalDate.of(2026, 9, 30))); // => Output: true
+System.out.println(contract.acceptsPaymentOn(LocalDate.of(2025, 12, 31))); // => Output: false
+
+try {
+    new ValidityPeriod(LocalDate.of(2026, 6, 1), LocalDate.of(2026, 1, 1));
+    // => end before start — domain invariant violation
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage()); // => Output: ValidityPeriod.end must be after start; got start=2026-06-01 end=2026-01-01
+}
+```
+
+**Key Takeaway**: Temporal value objects encapsulate date-range logic — overlap, containment, and validity — as named, tested predicates rather than scattered `if (date.before(end) && date.after(start))` expressions across the codebase.
+
+**Why It Matters**: Procurement contracts, payment schedules, and Murabaha financing terms all have validity windows. Without a `ValidityPeriod` type, date-range checks are duplicated across invoice validators, payment schedulers, and contract services — diverging silently over time. Centralising the logic in one value object means a single fix corrects the boundary condition everywhere, and the object's tests document the intended semantics (inclusive vs exclusive bounds) unambiguously.
+
+---
+
+### Example 75: Saga — coordinating `PurchaseOrder` issuance across `purchasing` and `supplier` contexts
+
+A saga orchestrates a multi-step business process that spans bounded contexts. Each step publishes an event; if a later step fails, compensating actions roll back prior steps. Here, `PurchaseOrderIssuanceSaga` coordinates supplier credit-check with PO issuance.
+
+```mermaid
+graph LR
+    A["PO DRAFT"]:::blue
+    B["SupplierCreditCheckRequested"]:::orange
+    C["SupplierCreditApproved"]:::teal
+    D["PO ISSUED"]:::teal
+    E["SupplierCreditDenied"]:::brown
+    F["PO CANCELLED (compensate)"]:::brown
+
+    A -->|saga step 1| B
+    B -->|approved| C
+    C -->|saga step 2| D
+    B -->|denied| E
+    E -->|compensate| F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// ── Integration events (cross-context contracts) ──────────────────────────────
+record PurchaseOrderIssuanceRequested(String poId, String supplierId, double totalUsd) {}
+// => purchasing emits this to kick off the saga
+
+record SupplierCreditCheckRequested(String sagaId, String supplierId, double amountUsd) {}
+// => saga emits this to the supplier context
+
+record SupplierCreditApproved(String sagaId) {}
+// => supplier context replies with this when credit is confirmed
+
+record SupplierCreditDenied(String sagaId, String reason) {}
+// => supplier context replies with this when credit is refused
+
+record PurchaseOrderIssued(String poId) {}
+// => saga emits this to purchasing when all steps complete
+
+record PurchaseOrderCancelled(String poId, String reason) {}
+// => compensating event: saga rolls back by cancelling the PO
+
+// ── Saga state ────────────────────────────────────────────────────────────────
+enum SagaStatus { STARTED, CREDIT_REQUESTED, COMPLETED, COMPENSATED }
+
+class PurchaseOrderIssuanceSaga {
+    final String sagaId;
+    final String poId;
+    final String supplierId;
+    final double totalUsd;
+    SagaStatus status;
+    final List<Object> outbox = new ArrayList<>(); // => events to publish
+
+    PurchaseOrderIssuanceSaga(String sagaId, PurchaseOrderIssuanceRequested trigger) {
+        this.sagaId     = sagaId;
+        this.poId       = trigger.poId();
+        this.supplierId = trigger.supplierId();
+        this.totalUsd   = trigger.totalUsd();
+        this.status     = SagaStatus.STARTED;     // => initial state
+    }
+
+    void start() {
+        // => Step 1: request credit check from supplier context
+        outbox.add(new SupplierCreditCheckRequested(sagaId, supplierId, totalUsd));
+        // => saga publishes event; supplier context will reply asynchronously
+        status = SagaStatus.CREDIT_REQUESTED;
+    }
+
+    void onCreditApproved(SupplierCreditApproved event) {
+        if (status != SagaStatus.CREDIT_REQUESTED)
+            throw new IllegalStateException("Unexpected credit approval in state: " + status);
+        // => guard: only accept approval when we're waiting for it
+        outbox.add(new PurchaseOrderIssued(poId));  // => Step 2: issue the PO
+        status = SagaStatus.COMPLETED;
+    }
+
+    void onCreditDenied(SupplierCreditDenied event) {
+        if (status != SagaStatus.CREDIT_REQUESTED)
+            throw new IllegalStateException("Unexpected credit denial in state: " + status);
+        // => compensate: cancel the PO that was in DRAFT awaiting issuance
+        outbox.add(new PurchaseOrderCancelled(poId, "Supplier credit denied: " + event.reason()));
+        status = SagaStatus.COMPENSATED;
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var trigger = new PurchaseOrderIssuanceRequested("po_001", "sup_abc", 15000.0);
+var saga    = new PurchaseOrderIssuanceSaga("saga_001", trigger);
+saga.start();                                         // => Step 1 executed
+System.out.println(saga.status);                      // => Output: CREDIT_REQUESTED
+System.out.println(saga.outbox.get(0).getClass().getSimpleName()); // => Output: SupplierCreditCheckRequested
+
+// Simulate approval arriving
+saga.onCreditApproved(new SupplierCreditApproved("saga_001"));
+System.out.println(saga.status);                      // => Output: COMPLETED
+System.out.println(saga.outbox.get(1).getClass().getSimpleName()); // => Output: PurchaseOrderIssued
+
+// Simulate denial scenario (new saga)
+var saga2 = new PurchaseOrderIssuanceSaga("saga_002", trigger);
+saga2.start();
+saga2.onCreditDenied(new SupplierCreditDenied("saga_002", "credit limit exceeded"));
+System.out.println(saga2.status);                     // => Output: COMPENSATED
+System.out.println(saga2.outbox.get(1).getClass().getSimpleName()); // => Output: PurchaseOrderCancelled
+```
+
+**Key Takeaway**: A saga models a long-running multi-context process as explicit state with compensating actions. Each step emits integration events; the saga reacts to replies and compensates on failure.
+
+**Why It Matters**: PO issuance in real procurement involves credit checks, ERP reservation of budget codes, and supplier notification — all in different systems. Without a saga, this coordination happens via synchronous calls that leave systems in inconsistent states when any step fails. With a saga, every failure triggers a documented compensating sequence. Amazon's order fulfilment and Shopify's checkout both use saga patterns to coordinate across services without distributed transactions.
+
+---
+
+### Example 76: Event sourcing — replaying `PurchaseRequisition` history
+
+In event sourcing, aggregate state is derived entirely from an ordered sequence of past events. There is no mutable database row; `apply` methods fold each event into state. The aggregate can be reconstituted at any point in time by replaying a subset of events.
+
+```java
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+// ── Domain events (immutable records) ─────────────────────────────────────────
+sealed interface PurchaseRequisitionEvent permits
+    PrCreated, PrSubmitted, PrApproved, PrRejected, PrConvertedToPo {}
+
+record PrCreated(String prId, String requestorId, Instant occurredAt) implements PurchaseRequisitionEvent {}
+// => first event; carries identity and requestor
+
+record PrSubmitted(String prId, Instant occurredAt) implements PurchaseRequisitionEvent {}
+// => requestor submitted for approval; manager review begins
+
+record PrApproved(String prId, String approverId, Instant occurredAt) implements PurchaseRequisitionEvent {}
+// => manager approved; can now be converted to PO
+
+record PrRejected(String prId, String approverId, String reason, Instant occurredAt)
+    implements PurchaseRequisitionEvent {}
+// => manager rejected with stated reason; terminal state
+
+record PrConvertedToPo(String prId, String poId, Instant occurredAt) implements PurchaseRequisitionEvent {}
+// => converted to PurchaseOrder; another terminal state
+
+// ── Aggregate state ────────────────────────────────────────────────────────────
+enum PrStatus { DRAFT, SUBMITTED, MANAGER_REVIEW, APPROVED, REJECTED, CONVERTED_TO_PO }
+
+class PurchaseRequisition {           // => event-sourced aggregate
+    String id;
+    String requestorId;
+    PrStatus status;
+    String rejectionReason;
+    String resultingPoId;
+    int version;                      // => number of events applied; optimistic locking key
+
+    // => Private constructor; use reconstitute() to rebuild from events
+    private PurchaseRequisition() { this.version = 0; }
+
+    // ── apply: pure fold — no guards, no side effects ─────────────────────────
+    private void apply(PurchaseRequisitionEvent event) {
+        switch (event) {
+            case PrCreated e -> {
+                id          = e.prId();
+                requestorId = e.requestorId();
+                status      = PrStatus.DRAFT;        // => initial state after creation
+            }
+            case PrSubmitted e -> {
+                status = PrStatus.SUBMITTED;         // => awaiting manager pickup
+            }
+            case PrApproved e -> {
+                status = PrStatus.APPROVED;          // => ready for PO conversion
+            }
+            case PrRejected e -> {
+                status          = PrStatus.REJECTED;
+                rejectionReason = e.reason();        // => capture reason for audit trail
+            }
+            case PrConvertedToPo e -> {
+                status        = PrStatus.CONVERTED_TO_PO;
+                resultingPoId = e.poId();            // => link to the resulting PO
+            }
+        }
+        version++;                                   // => increment version on each applied event
+    }
+
+    // ── Reconstitute from event stream ────────────────────────────────────────
+    static PurchaseRequisition reconstitute(List<PurchaseRequisitionEvent> history) {
+        var pr = new PurchaseRequisition();
+        history.forEach(pr::apply);                  // => fold each event in order
+        return pr;
+        // => state is entirely derived from events; no raw DB row needed
+    }
+
+    // ── Point-in-time replay: state after first N events ─────────────────────
+    static PurchaseRequisition reconstituteAt(List<PurchaseRequisitionEvent> history, int upToVersion) {
+        var pr = new PurchaseRequisition();
+        history.stream().limit(upToVersion).forEach(pr::apply);
+        // => replay only the first upToVersion events; useful for audit/debugging
+        return pr;
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var history = List.of(
+    new PrCreated("pr_001", "emp_alice", Instant.parse("2026-01-10T09:00:00Z")),
+    new PrSubmitted("pr_001",            Instant.parse("2026-01-10T10:00:00Z")),
+    new PrApproved("pr_001", "mgr_bob",  Instant.parse("2026-01-11T08:30:00Z")),
+    new PrConvertedToPo("pr_001", "po_999", Instant.parse("2026-01-11T09:00:00Z"))
+);
+
+var current = PurchaseRequisition.reconstitute(history);
+System.out.println(current.status);        // => Output: CONVERTED_TO_PO
+System.out.println(current.resultingPoId); // => Output: po_999
+System.out.println(current.version);       // => Output: 4 (four events applied)
+
+// Point-in-time: state after submission (event 2)
+var afterSubmit = PurchaseRequisition.reconstituteAt(history, 2);
+System.out.println(afterSubmit.status);    // => Output: SUBMITTED
+System.out.println(afterSubmit.version);   // => Output: 2
+// => useful for: "what was the PR status when the manager logged in at 10:30?"
+```
+
+**Key Takeaway**: Event-sourced aggregates have no mutable state column — `apply` methods are pure folds that derive current state from ordered event history. Point-in-time replay is free.
+
+**Why It Matters**: Procurement auditors routinely ask: "Who approved this requisition, when, and what was the total at that moment?" With a mutable aggregate, the answer requires audit log tables maintained separately — and they drift. With event sourcing, the question is answered by replaying to the approval event. Regulated industries (finance, healthcare procurement, government contracting) increasingly require immutable audit trails; event sourcing provides this structurally, not as an add-on.
+
+---
+
+### Example 77: Common anti-pattern — Anemic Domain Model in procurement
+
+The Anemic Domain Model places all business logic in services, leaving aggregates as plain data bags. This is one of the most prevalent DDD anti-patterns and the primary failure mode of Java EE / Spring layered architectures.
+
+```java
+import java.math.BigDecimal;
+
+// ── Anti-pattern: Anemic Domain Model ─────────────────────────────────────────
+// => PurchaseOrder is a pure data bag — no behaviour, no invariants
+class AnemicPurchaseOrder {            // => DATA BAG: all fields public, no logic
+    public String id;
+    public String supplierId;
+    public String status;              // => String instead of enum — no type safety
+    public BigDecimal totalAmount;
+    public boolean approved;
+    public boolean issued;
+    public boolean cancelled;          // => multiple boolean flags instead of state machine
+    // => Any code can set any combination: approved=true AND cancelled=true (invalid!)
+}
+
+// ── Anti-pattern: Fat Service does all the work ───────────────────────────────
+// => All procurement logic lives here; aggregate is just a struct
+class AnemicPurchaseOrderService {
+    public void approve(AnemicPurchaseOrder po, String approverId) {
+        // => Manually checking state that the aggregate should enforce
+        if (po.cancelled) throw new RuntimeException("Cannot approve cancelled PO");
+        if (po.approved)  throw new RuntimeException("Already approved");
+        // => These guards are scattered: also appear in issue(), cancel(), and every
+        //    other service that touches PurchaseOrder. When the rule changes, every
+        //    service must be updated — and one will be missed.
+        po.approved = true;
+        po.status   = "APPROVED";      // => String status AND boolean — inconsistency risk
+        // => What prevents po.approved=true but po.status="CANCELLED"?  Nothing.
+    }
+
+    public void issue(AnemicPurchaseOrder po) {
+        if (!po.approved)  throw new RuntimeException("Must be approved first");
+        if (po.cancelled)  throw new RuntimeException("Cannot issue cancelled PO");
+        if (po.issued)     throw new RuntimeException("Already issued");
+        po.issued = true;
+        po.status = "ISSUED";
+        // => Three flags; one enum would make invalid states unrepresentable
+    }
+}
+
+// ── Correct: Rich Domain Model ─────────────────────────────────────────────────
+// => Behaviour lives ON the aggregate; invalid states are unrepresentable
+enum PoStatus { DRAFT, APPROVED, ISSUED, CANCELLED }    // => type-safe state
+
+class RichPurchaseOrder {
+    private final String id;
+    private PoStatus status = PoStatus.DRAFT;             // => single source of truth
+    private final BigDecimal totalAmount;
+
+    RichPurchaseOrder(String id, BigDecimal totalAmount) {
+        this.id = id; this.totalAmount = totalAmount;
+        // => starts in DRAFT; only valid initial state
+    }
+
+    void approve() {
+        if (status != PoStatus.DRAFT)
+            throw new IllegalStateException("Only DRAFT POs can be approved; current: " + status);
+        // => guard encoded once, in the aggregate; services call this method
+        status = PoStatus.APPROVED;
+    }
+
+    void issue() {
+        if (status != PoStatus.APPROVED)
+            throw new IllegalStateException("Only APPROVED POs can be issued; current: " + status);
+        status = PoStatus.ISSUED;
+    }
+
+    void cancel() {
+        if (status == PoStatus.ISSUED)
+            throw new IllegalStateException("Cannot cancel an already-issued PO");
+        // => DRAFT and APPROVED can be cancelled; ISSUED cannot
+        status = PoStatus.CANCELLED;
+    }
+
+    PoStatus getStatus() { return status; } // => read-only; mutation only via behaviour methods
+}
+
+// ── Comparison ────────────────────────────────────────────────────────────────
+// Anemic: invalid state is possible
+var anemic = new AnemicPurchaseOrder();
+anemic.approved  = true;
+anemic.cancelled = true;          // => domain says this is impossible; model allows it
+System.out.println(anemic.approved + " " + anemic.cancelled); // => true true (INVALID)
+
+// Rich: invalid state is impossible
+var rich = new RichPurchaseOrder("po_001", new BigDecimal("5000"));
+rich.approve();
+System.out.println(rich.getStatus()); // => APPROVED
+try {
+    rich.cancel();  // => APPROVED can be cancelled
+    rich.issue();   // => cannot issue a cancelled PO
+} catch (IllegalStateException e) {
+    System.out.println(e.getMessage()); // => Only APPROVED POs can be issued; current: CANCELLED
+}
+// => Rich model: transition logic in one place; services just call aggregate methods
+```
+
+**Key Takeaway**: The Anemic Domain Model externalises all business logic into services, leaving aggregates as data bags. The Rich Domain Model encodes logic and invariants on the aggregate — invalid states become unrepresentable.
+
+**Why It Matters**: Anemic models produce "services that know everything and aggregates that know nothing". As the codebase grows, invariant enforcement scatters across dozens of service methods that each partially re-implement the rules. When a rule changes — say, approved POs can no longer be cancelled after 48 hours — every service that calls `cancel()` must be updated. With a rich model, the change is made once in the aggregate's `cancel()` method and is enforced everywhere automatically.
+
+---
+
+### Example 78: Common anti-pattern — Leaky Abstraction and primitive obsession
+
+Primitive obsession uses raw `String` and `int` where domain types should be used. It causes leaky abstractions — callers must know the format of the string, enabling subtle bugs that types would prevent at compile time.
+
+```java
+// ── Anti-pattern: Primitive obsession ─────────────────────────────────────────
+// => All IDs are plain String; all amounts are double; no domain types
+class PrimitivePurchaseOrderService {
+    // => What is "supplierId"? "sup_xxx"? "SUP-xxx"? A UUID? Any string?
+    public void createOrder(String purchaseOrderId, String supplierId,
+                            double amount, String currency) {
+        // => Nothing prevents caller from swapping purchaseOrderId and supplierId
+        // => swap bug: createOrder(supplierId, purchaseOrderId, ...) — compiles, runs, fails silently
+        if (amount < 0) throw new IllegalArgumentException("Amount must be >= 0");
+        // => double for money: floating-point arithmetic causes rounding errors
+        // => 0.1 + 0.2 = 0.30000000000000004 in IEEE 754; catastrophic in finance
+        System.out.println("Creating PO: " + purchaseOrderId + " for supplier: " + supplierId);
+    }
+
+    public void approveOrder(String poId) {
+        // => Is poId "po_abc"? "PO-abc"? A numeric string? Service cannot know.
+        System.out.println("Approving: " + poId);
+    }
+}
+
+// ── Demonstrating the swap bug ─────────────────────────────────────────────────
+var primService = new PrimitivePurchaseOrderService();
+primService.createOrder(
+    "sup_xyz",          // => THIS IS WRONG: supplier id passed as purchase order id
+    "po_abc",           // => THIS IS WRONG: po id passed as supplier id
+    1500.50,
+    "USD"
+);
+// => Compiler: no error. Runtime: logic corruption. Auditor: ???
+
+// ── Correct: strong domain types ──────────────────────────────────────────────
+import java.math.BigDecimal;
+
+record PurchaseOrderId(String value) {
+    PurchaseOrderId {
+        if (value == null || !value.startsWith("po_"))
+            throw new IllegalArgumentException("PurchaseOrderId must start with po_; got: " + value);
+        // => invalid format rejected at construction — no silent corruption
+    }
+}
+record SupplierId(String value) {
+    SupplierId {
+        if (value == null || !value.startsWith("sup_"))
+            throw new IllegalArgumentException("SupplierId must start with sup_; got: " + value);
+        // => supplier id format enforced at type boundary
+    }
+}
+record Money(BigDecimal amount, String currency) {
+    Money {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("Money.amount must be >= 0");
+        // => BigDecimal for money: exact decimal arithmetic; no IEEE 754 rounding
+    }
+}
+
+class TypedPurchaseOrderService {
+    public void createOrder(PurchaseOrderId id, SupplierId supplierId, Money total) {
+        // => PurchaseOrderId and SupplierId are distinct types — swap is a compile error
+        System.out.println("Creating PO " + id.value() + " for supplier " + supplierId.value());
+    }
+}
+
+// ── Usage: swap bug is now a compile error ────────────────────────────────────
+var typedService = new TypedPurchaseOrderService();
+// typedService.createOrder(new SupplierId("sup_xyz"), new PurchaseOrderId("po_abc"), ...);
+// => COMPILE ERROR: argument type SupplierId cannot be applied to PurchaseOrderId
+// => Swap bug caught by type checker; no runtime test needed
+
+typedService.createOrder(
+    new PurchaseOrderId("po_abc"),    // => format enforced: must start with po_
+    new SupplierId("sup_xyz"),        // => format enforced: must start with sup_
+    new Money(new BigDecimal("1500.50"), "USD")  // => exact decimal; no float rounding
+);
+// => Output: Creating PO po_abc for supplier sup_xyz
+
+try {
+    new PurchaseOrderId("sup_xyz");   // => wrong prefix caught immediately
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage()); // => Output: PurchaseOrderId must start with po_; got: sup_xyz
+}
+```
+
+**Key Takeaway**: Primitive obsession uses `String` and `double` where domain types should be used. Strong types — `PurchaseOrderId`, `SupplierId`, `Money` — make argument-swap bugs compile errors and enforce format invariants at construction.
+
+**Why It Matters**: In a procurement system processing thousands of POs daily, a silent argument-swap bug routes approvals to wrong suppliers. These bugs are notoriously hard to reproduce in testing because any string is valid. Domain types eliminate the entire class of bug structurally. `BigDecimal` for money prevents the rounding errors that surface as $0.01 discrepancies in three-way match — discrepancies that trigger expensive manual reconciliation cycles in accounts payable.
+
+---
+
+### Example 79: Open Host Service — publishing a `supplier` API for external consumers
+
+An Open Host Service (OHS) exposes a context's capabilities via a well-defined, versioned API. External consumers interact with the OHS contract, not the internal domain model, protecting the domain from external coupling.
+
+```mermaid
+graph LR
+    A["supplier context<br/>domain model"]:::blue
+    B["SupplierOpenHostService<br/>(OHS)"]:::teal
+    C["published API contract<br/>(SupplierSummaryDto)"]:::orange
+    D["External consumers<br/>(purchasing, receiving)"]:::purple
+
+    A -->|maps to| B
+    B -->|publishes| C
+    C -->|consumed by| D
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+```java
+// ── supplier context internal domain model ────────────────────────────────────
+record SupplierId(String value) {}
+record Email(String address) {}
+enum SupplierStatus { PENDING, APPROVED, SUSPENDED, BLACKLISTED }
+record BankAccount(String iban, String bic) {}
+
+class Supplier {                              // => internal aggregate; NOT exposed directly
+    final SupplierId id;
+    final String legalName;
+    final Email contactEmail;
+    SupplierStatus status;
+    BankAccount paymentAccount;               // => sensitive; not in OHS contract
+
+    Supplier(SupplierId id, String legalName, Email contactEmail, SupplierStatus status) {
+        this.id           = id;
+        this.legalName    = legalName;
+        this.contactEmail = contactEmail;
+        this.status       = status;
+    }
+}
+
+// ── OHS published contract — stable, versioned, consumer-shaped ───────────────
+// => This DTO is the API; consumers depend on it, NOT on Supplier internals
+record SupplierSummaryDto(     // => v1 of the OHS contract; never remove fields here
+    String supplierId,         // => String, not SupplierId — no domain type in contract
+    String legalName,
+    String status,             // => String enum name: "APPROVED", "SUSPENDED"
+    boolean isApproved,        // => convenience flag; avoids string comparison in consumers
+    String contactEmail        // => included; bank details excluded from public contract
+) {}
+
+// ── Open Host Service — maps domain to contract ───────────────────────────────
+class SupplierOpenHostService {
+    // => Maps Supplier aggregate to SupplierSummaryDto; never exposes internal types
+    public SupplierSummaryDto findSupplier(SupplierId id, java.util.List<Supplier> store) {
+        var supplier = store.stream()
+            .filter(s -> s.id.value().equals(id.value()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Supplier not found: " + id.value()));
+        // => domain lookup; OHS does not expose repository interface directly
+        return toDto(supplier);
+    }
+
+    private SupplierSummaryDto toDto(Supplier s) {
+        return new SupplierSummaryDto(
+            s.id.value(),                     // => String from typed ID — no domain type leaks
+            s.legalName,
+            s.status.name(),                  // => enum name as String for API stability
+            s.status == SupplierStatus.APPROVED, // => convenience flag for consumers
+            s.contactEmail.address()          // => email included; BankAccount excluded
+            // => paymentAccount intentionally excluded: financial data requires separate auth
+        );
+    }
+}
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+var suppliers = java.util.List.of(
+    new Supplier(new SupplierId("sup_abc"), "Acme Corp",    new Email("acme@example.com"),   SupplierStatus.APPROVED),
+    new Supplier(new SupplierId("sup_xyz"), "Beta Supplies", new Email("beta@example.com"),  SupplierStatus.SUSPENDED)
+);
+
+var ohs = new SupplierOpenHostService();
+
+var dto = ohs.findSupplier(new SupplierId("sup_abc"), suppliers);
+System.out.println(dto.legalName());    // => Output: Acme Corp
+System.out.println(dto.status());       // => Output: APPROVED
+System.out.println(dto.isApproved());   // => Output: true
+System.out.println(dto.supplierId());   // => Output: sup_abc
+
+var suspended = ohs.findSupplier(new SupplierId("sup_xyz"), suppliers);
+System.out.println(suspended.isApproved()); // => Output: false
+// => BankAccount not in DTO — payment details are protected from OHS consumers
+```
+
+**Key Takeaway**: An Open Host Service maps the domain aggregate to a stable, versioned, consumer-shaped DTO. Internal domain types never cross the OHS boundary; sensitive fields are explicitly excluded.
+
+**Why It Matters**: Without an OHS, external consumers import domain types directly — coupling their code to every refactoring inside the supplier context. When the `SupplierStatus` enum gains a new value (`PROBATIONARY`), every consumer breaks. The OHS contract evolves independently: a new `isProbationary` field can be added without removing `isApproved`, giving consumers time to migrate. Stripe's API versioning model and Shopify's Admin API follow exactly this pattern — stable public contracts insulated from internal model churn.
 
 **Why It Matters**: Embedding GRN inside Invoice creates a distributed transaction hidden as an ORM join — loading Invoice automatically loads all related GRNs, defeating lazy loading and causing performance issues at scale. Separate aggregates allow each to evolve its schema, its transaction boundary, and its lifecycle independently. In high-volume procurement systems processing thousands of invoices per day, this separation is the difference between millisecond invoice registration and seconds-long lock contention on a shared aggregate tree.

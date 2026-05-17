@@ -3,12 +3,11 @@ title: "Intermediate"
 weight: 10000004
 date: 2026-05-15T00:00:00+07:00
 draft: false
-description: "Examples 21-40: SupplierRepository, EventPublisher, ApprovalRouterPort, adapter swapping, anti-corruption layer, integration test seam, and composition root via Spring @Configuration — purchasing and supplier contexts in Java 21+ with Kotlin sprinkles"
-tags:
-  ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java", "kotlin", "intermediate"]
+description: "Examples 21-55: SupplierRepository, EventPublisher, ApprovalRouterPort, adapter swapping, anti-corruption layer, integration test seam, composition root via Spring @Configuration, CQRS ports, and port versioning — purchasing and supplier contexts in Java 21+"
+tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java", "intermediate"]
 ---
 
-Examples 21–40 extend the beginner hexagon with the `supplier` context, three new output ports (`SupplierRepository`, `EventPublisher`, `ApprovalRouterPort`), adapter swapping for tests, integration test seams, and an anti-corruption layer between bounded contexts. Every code block is self-contained and annotation density targets 1.0–2.25 comment lines per code line per example.
+Examples 21–55 extend the beginner hexagon with the `supplier` context, three new output ports (`SupplierRepository`, `EventPublisher`, `ApprovalRouterPort`), adapter swapping, integration test seams, an anti-corruption layer between bounded contexts, CQRS command/query port separation, port versioning, and repository query specialisation. Every code block is self-contained and annotation density targets 1.0–2.25 comment lines per code line per example.
 
 ## Supplier Context Ports (Examples 21–25)
 
@@ -108,37 +107,44 @@ public record Supplier(
     // => called before the implicit record constructor; guards null values
     public Supplier {
         Objects.requireNonNull(id, "SupplierId required");
+        // => id null guard: SupplierId cannot be null; typed identity is mandatory
         Objects.requireNonNull(name, "Supplier name required");
+        // => name null guard: legal business name required for display and audit
         Objects.requireNonNull(status, "SupplierStatus required");
+        // => status null guard: without status the lifecycle is undefined
         // => every field validated; impossible to build a Supplier with null state
     }
 
     // approve: PENDING → APPROVED transition
-    // => returns a new Supplier; this instance unchanged (immutable)
+    // => returns a new Supplier; this instance unchanged (immutable record)
     public Supplier approve() {
         if (status != SupplierStatus.PENDING) {
             throw new IllegalStateException("Only PENDING suppliers can be approved; current=" + status);
-            // => guard: caller receives clear domain-language error message
+            // => guard: APPROVED, SUSPENDED, BLACKLISTED suppliers cannot be re-approved
+            // => caller receives clear domain-language error with the current status value
         }
         return new Supplier(id, name, SupplierStatus.APPROVED);
-        // => new record: same id and name, new status APPROVED
+        // => new record: same id and name; status becomes APPROVED; PENDING record discarded
     }
 
     // suspend: APPROVED → SUSPENDED transition
-    // => suspended suppliers cannot receive new POs but existing POs continue
+    // => suspended suppliers cannot receive new POs but existing POs continue processing
     public Supplier suspend() {
         if (status != SupplierStatus.APPROVED) {
             throw new IllegalStateException("Only APPROVED suppliers can be suspended; current=" + status);
+            // => guard: only APPROVED → SUSPENDED is valid; PENDING and BLACKLISTED cannot be suspended
         }
         return new Supplier(id, name, SupplierStatus.SUSPENDED);
-        // => state change captured in new immutable record; original discarded
+        // => new record: same id and name; status becomes SUSPENDED; APPROVED record discarded
+        // => state change captured immutably; caller discards old record, keeps new one
     }
 
-    // isEligibleForPO: query method — pure function with no side effects
-    // => purchasing context calls this before issuing a PO to this supplier
+    // isEligibleForPO: query method — pure boolean function; no side effects
+    // => purchasing context calls this before issuing a PO to validate the supplier
     public boolean isEligibleForPO() {
         return status == SupplierStatus.APPROVED;
-        // => only APPROVED status permits new PurchaseOrders; all others return false
+        // => true only for APPROVED; PENDING, SUSPENDED, BLACKLISTED all return false
+        // => purchasing context rejects non-APPROVED suppliers before building the PO
     }
 }
 ```
@@ -168,42 +174,53 @@ import java.util.Map;
 import java.util.Optional;
 
 // InMemorySupplierRepository: test adapter; no JPA, no Postgres, no Docker required
-// => implements SupplierRepository (output port); swappable with PgSupplierRepository at wiring
+// => implements SupplierRepository (output port); satisfies the same contract as PgSupplierRepository
+// => swappable with PgSupplierRepository at the composition root without changing any caller
 public class InMemorySupplierRepository implements SupplierRepository {
 
-    // store: HashMap backing the in-memory persistence
-    // => key = typed SupplierId; value = immutable Supplier record
+    // store: HashMap<SupplierId, Supplier> — typed key prevents accidental SupplierId/PurchaseOrderId mix-up
+    // => HashMap: O(1) average for put/get/containsKey; no synchronisation needed in single-threaded tests
     private final Map<SupplierId, Supplier> store = new HashMap<>();
 
     @Override
     public Supplier save(Supplier supplier) {
-        store.put(supplier.id(), supplier); // => HashMap.put: O(1); replaces existing entry
-        return supplier;                    // => return same instance; consistent with port contract
+        store.put(supplier.id(), supplier);
+        // => put: inserts or replaces; O(1); key = supplier.id() (typed SupplierId, not raw String)
+        return supplier;
+        // => return same instance: consistent with PurchaseOrderRepository contract established in Example 7
+        // => caller (RegisterSupplierService) uses the returned instance as the canonical saved state
     }
 
     @Override
     public Optional<Supplier> findById(SupplierId id) {
-        return Optional.ofNullable(store.get(id)); // => null becomes Optional.empty(); never null return
-        // => caller handles absence with orElseThrow() or isEmpty() check
+        return Optional.ofNullable(store.get(id));
+        // => store.get(id): O(1) lookup; returns null when absent
+        // => Optional.ofNullable: wraps null → Optional.empty(); wraps Supplier → Optional.of(supplier)
+        // => caller handles absence with orElseThrow() or isPresent() check — no null propagation
     }
 
     @Override
     public List<Supplier> findAllApproved() {
         return store.values().stream()
-            .filter(s -> s.status() == SupplierStatus.APPROVED) // => domain-level filter; no SQL
+            .filter(s -> s.status() == SupplierStatus.APPROVED)
+            // => status filter: domain enum equality; keeps only APPROVED suppliers
+            // => PENDING, SUSPENDED, BLACKLISTED are excluded from the result
             .toList();
-        // => stream().filter().toList(): returns unmodifiable List; snapshot at call time
+        // => toList(): returns unmodifiable List<Supplier>; snapshot of store state at call time
+        // => purchasing context calls this to get the eligible-supplier list before issuing a PO
     }
 
     @Override
     public boolean existsById(SupplierId id) {
-        return store.containsKey(id); // => O(1) HashMap lookup; true/false
+        return store.containsKey(id);
+        // => containsKey: O(1) HashMap presence check; does not load the full Supplier record
+        // => true when supplier is in the store regardless of status; false when absent
     }
 }
-// Usage in test:
+// => Usage in test:
 // var supplierRepo = new InMemorySupplierRepository();
-// var supplierService = new RegisterSupplierService(supplierRepo, eventPublisher);
-// => wired in 1 line; no Spring context; starts in < 1ms
+// var service = new RegisterSupplierService(supplierRepo, new InMemoryEventPublisher());
+// => wired in 1 line; no Spring context; starts in < 1ms; all four port methods available
 ```
 
 **Key Takeaway**: `InMemorySupplierRepository` repeats the same HashMap-backed pattern as the PO adapter — a single pattern for all in-memory adapters keeps onboarding fast.
@@ -634,7 +651,7 @@ public class IssuePurchaseOrderService implements IssuePurchaseOrderUseCase {
 Testing the `isEligibleForPO` guard requires only two in-memory adapters and the application service. No Docker, no Spring, no integration setup.
 
 ```java
-// Unit test: verifies the service rejects a SUSPENDED supplier
+// Unit test: verifies the service rejects a SUSPENDED supplier before building any PO
 // => package com.example.procurement.purchasing.application
 package com.example.procurement.purchasing.application;
 
@@ -646,54 +663,67 @@ import com.example.procurement.supplier.domain.*;
 import org.junit.jupiter.api.*;
 import static org.assertj.core.api.Assertions.*;
 
+// IssuePurchaseOrderServiceTest: unit test class; five in-memory adapters; zero infrastructure
+// => no @SpringBootTest, no @ExtendWith(MockitoExtension.class); plain JUnit 5 class
 class IssuePurchaseOrderServiceTest {
 
-    // Fixed clock: deterministic; eliminates wall-clock non-determinism
-    // => lambda implements the single-method Clock @FunctionalInterface
+    // FIXED_CLOCK: lambda implementing the single-method Clock @FunctionalInterface
+    // => returns the same Instant every call: 2026-01-01T00:00:00Z — deterministic
     private static final Clock FIXED_CLOCK = () -> java.time.Instant.parse("2026-01-01T00:00:00Z");
+    // => all tests in this class see the same wall-clock value; no flakiness from system time
 
-    private IssuePurchaseOrderService service;
-    private InMemorySupplierRepository supplierRepo;
-    private InMemoryEventPublisher eventPublisher;
-    private InMemoryApprovalRouter approvalRouter;
+    private IssuePurchaseOrderService service;      // => the object under test
+    private InMemorySupplierRepository supplierRepo; // => inject test data for supplier lookups
+    private InMemoryEventPublisher eventPublisher;   // => inspect published events after each test
+    private InMemoryApprovalRouter approvalRouter;   // => inspect routing calls after each test
 
+    // @BeforeEach: fresh adapters for every test method — no shared state between tests
     @BeforeEach void setUp() {
         var poRepo = new InMemoryPurchaseOrderRepository();
-        supplierRepo = new InMemorySupplierRepository();  // => fresh per test; no state bleed
-        eventPublisher = new InMemoryEventPublisher();    // => captures events for assertion
-        approvalRouter = new InMemoryApprovalRouter();    // => captures routing calls
+        // => poRepo: fresh empty store; command writes to this; query reads from this
+        supplierRepo = new InMemorySupplierRepository();
+        // => supplierRepo: fresh empty store; each test seeds its own supplier data
+        eventPublisher = new InMemoryEventPublisher();
+        // => eventPublisher: captures events in-memory list; getCapturedEvents() for assertion
+        approvalRouter = new InMemoryApprovalRouter();
+        // => approvalRouter: captures routing calls; getRoutedCalls() for assertion
         service = new IssuePurchaseOrderService(
             poRepo, supplierRepo, eventPublisher, approvalRouter, FIXED_CLOCK
         );
-        // => wired in 6 lines; no Spring context, no Docker; boots in < 1ms
+        // => wired with five in-memory adapters; no Spring context; boots in < 1ms
     }
 
     @Test void rejects_suspended_supplier() {
-        // Arrange: save a SUSPENDED supplier in the in-memory store
+        // ARRANGE: seed a SUSPENDED supplier; service must reject any PO for this supplier
         var supplierId = new SupplierId("sup_550e8400-e29b-41d4-a716-446655440000");
+        // => SupplierId: typed id; format "sup_<uuid>"; validated at construction
         var suspended = new Supplier(supplierId, "Acme Corp", SupplierStatus.SUSPENDED);
+        // => SUSPENDED: existing POs continue; no new POs permitted for this supplier
         supplierRepo.save(suspended);
-        // => in-memory store has the supplier; status = SUSPENDED
+        // => supplierRepo: in-memory store now contains the SUSPENDED supplier
 
         var command = new IssuePurchaseOrderUseCase.IssuePOCommand(
-            "550e8400-e29b-41d4-a716-446655440000", // => matching supplierId raw value
-            "1000.00", "USD"                         // => L1 amount; level doesn't matter here
+            "550e8400-e29b-41d4-a716-446655440000", // => raw supplierId matching the saved supplier
+            "1000.00", "USD"                         // => L1 amount; approval level irrelevant here
         );
+        // => command: valid shape; would succeed for an APPROVED supplier
 
-        // Act + Assert: service must throw on ineligible supplier
+        // ACT + ASSERT: service throws DomainException before building any PO
         assertThatThrownBy(() -> service.execute(command))
             .isInstanceOf(DomainException.class)
+            // => DomainException: not RuntimeException or Error — typed domain violation
             .hasMessageContaining("not eligible");
-        // => DomainException thrown; HTTP adapter would return 422; no PO created
+            // => message: "Supplier sup_... is not eligible for POs; status=SUSPENDED"
 
-        // Assert: no events published, no approval routed
+        // ASSERT: no observable side effects on the rejection path
         assertThat(eventPublisher.getCapturedEvents()).isEmpty();
-        // => side effects suppressed: ineligible path produces no observable output
+        // => empty: no PurchaseOrderIssued event when supplier is ineligible
         assertThat(approvalRouter.getRoutedCalls()).isEmpty();
-        // => approval router not called: rejected before reaching routing step
+        // => empty: approval router not called; rejection happens before PO is built
+        // => both assertions confirm that the guard short-circuits all subsequent steps
     }
 }
-// => Test runs in < 5ms; verifies the full dependency-rejection path without any infrastructure
+// => Test runs in < 5ms; verifies the full rejection path with zero infrastructure
 ```
 
 **Key Takeaway**: The rejection test uses only in-memory adapters — no infrastructure, no network, no Docker. The entire failure path is verified in milliseconds.
@@ -1317,53 +1347,1262 @@ class HexagonalArchitectureTest {
 
 A complete hexagonal test suite uses unit tests for domain logic and application service behavior, integration tests for adapter translation round-trips, and ArchUnit tests for dependency direction. No single test type covers all concerns.
 
+**Layer 1 — Domain unit tests (no framework, no adapters)**:
+
 ```java
-// Test suite coverage map for the purchasing + supplier hexagon
-// => package com.example.procurement (concept illustration; not a runnable class)
-package com.example.procurement;
+// Domain unit test: pure PurchaseOrder state-machine — zero infrastructure
+// => package com.example.procurement.purchasing.domain
+package com.example.procurement.purchasing.domain;
 
-// LAYER 1 — Domain unit tests: pure domain logic; zero adapters; zero framework
-// => Test file: PurchaseOrderTest.java
-// => Covers: state-machine transitions (submit, approve, issue, cancel)
-//            value-object invariants (PurchaseOrderId format, Money non-negative)
-//            domain exceptions (InvalidStateTransitionException messages)
-// => Tools: JUnit 5, AssertJ; no Mockito, no Spring
-// => Speed: < 1ms per test; 50 domain tests run in < 50ms
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import java.math.BigDecimal;
 
-// LAYER 2 — Application service unit tests: service + in-memory adapters; zero framework
-// => Test file: IssuePurchaseOrderServiceTest.java (shown in Example 30)
-// => Covers: supplier eligibility rejection, happy-path PO issuance
-//            event publication assertions (InMemoryEventPublisher.getCapturedEvents())
-//            approval routing assertions (InMemoryApprovalRouter.getRoutedCalls())
-//            dependency injection: all five ports injected via constructor; no @Autowired
-// => Tools: JUnit 5, AssertJ; InMemory adapters for all four output ports
-// => Speed: < 5ms per test; 100 service tests run in < 500ms
+class PurchaseOrderTest {
 
-// LAYER 3 — Adapter integration tests: real Postgres via Testcontainers
-// => Test file: IssuePurchaseOrderIntegrationTest.java (shown in Example 28)
-// => Covers: PgPurchaseOrderRepository round-trip (save, findById, existsById)
-//            PgSupplierRepository round-trip (save, findAllApproved)
-//            Data type translation: BigDecimal scale, UUID format, enum name
-// => Tools: @SpringBootTest, @ActiveProfiles("integration"), Testcontainers PostgreSQL
-// => Speed: 2-10s per test (container startup amortized); 20 adapter tests run in < 30s
+    private final PurchaseOrderId id = new PurchaseOrderId("po_550e8400-e29b-41d4-a716-446655440000");
+    // => id: valid PurchaseOrderId; format "po_" + 36-char UUID
+    private final SupplierId sup = new SupplierId("sup_550e8400-e29b-41d4-a716-446655440001");
+    // => sup: valid SupplierId for wiring the PO
+    private final Money total = new Money(new BigDecimal("1500.00"), "USD");
+    // => total: 1500 USD; above L1 threshold; used to verify L2 routing downstream
 
-// LAYER 4 — Architecture tests: ArchUnit dependency direction rules
-// => Test file: HexagonalArchitectureTest.java (shown in Example 39)
-// => Covers: domain → application (forbidden), domain → adapter (forbidden)
-//            application → adapter (forbidden), adapter → application (allowed)
-// => Tools: ArchUnit 1.x; ClassFileImporter on compiled classes
-// => Speed: < 500ms for full codebase scan
+    @Test void submit_transitions_draft_to_awaiting_approval() {
+        var po = new PurchaseOrder(id, sup, total, POStatus.DRAFT);
+        // => po: initial state = DRAFT; immutable record
+        var submitted = po.submit();
+        // => submitted: new PurchaseOrder in AWAITING_APPROVAL
+        assertThat(submitted.status()).isEqualTo(POStatus.AWAITING_APPROVAL);
+        // => state machine: DRAFT → AWAITING_APPROVAL confirmed; original po unchanged
+        assertThat(po.status()).isEqualTo(POStatus.DRAFT);
+        // => immutability confirmed: po.status() still DRAFT after submit() call
+    }
 
-// SUMMARY: test pyramid for the procurement hexagon
-// => 50 domain unit tests  — < 50ms total  — zero adapters, zero framework
-// => 100 service unit tests — < 500ms total — four in-memory adapters, zero framework
-// => 20 adapter integration tests — < 30s total — real Postgres, Testcontainers
-// => 4 ArchUnit architecture tests — < 500ms total — classpath scan only
-// => Total CI time for test:unit target: < 2s (domain + service + arch)
-// => Total CI time for test:integration target: < 35s (adapter tests)
-// => No single test type can replace the others — each validates a different concern
+    @Test void submit_on_non_draft_throws_domain_exception() {
+        var po = new PurchaseOrder(id, sup, total, POStatus.AWAITING_APPROVAL);
+        // => po: already past DRAFT; submit() must reject
+        assertThatThrownBy(po::submit)
+            .isInstanceOf(InvalidStateTransitionException.class);
+        // => typed domain exception; HTTP adapter maps to 409 Conflict
+    }
+}
+// => 2 tests; < 1ms each; zero framework, zero Docker, zero network
+```
+
+**Layer 2 — Application service unit tests (in-memory adapters)**:
+
+```java
+// Application service unit test: wires five in-memory adapters; no Spring
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.adapter.out.persistence.InMemoryPurchaseOrderRepository;
+import com.example.procurement.supplier.adapter.out.persistence.InMemorySupplierRepository;
+import com.example.procurement.supplier.domain.*;
+import org.junit.jupiter.api.*;
+import static org.assertj.core.api.Assertions.*;
+
+class IssuePOServiceLayerTwoTest {
+
+    private static final Clock FIXED_CLOCK = () -> java.time.Instant.parse("2026-01-01T00:00:00Z");
+    // => fixed clock: deterministic; all tests see the same wall-clock instant
+
+    private IssuePurchaseOrderService service;
+    private InMemorySupplierRepository supplierRepo;
+    private InMemoryEventPublisher eventPublisher;
+    private InMemoryApprovalRouter approvalRouter;
+
+    @BeforeEach void setUp() {
+        var poRepo = new InMemoryPurchaseOrderRepository();
+        supplierRepo = new InMemorySupplierRepository();
+        eventPublisher = new InMemoryEventPublisher();
+        approvalRouter = new InMemoryApprovalRouter();
+        service = new IssuePurchaseOrderService(
+            poRepo, supplierRepo, eventPublisher, approvalRouter, FIXED_CLOCK
+        );
+        // => wired in 6 lines; no Spring context; boots in < 1ms
+    }
+
+    @Test void happy_path_publishes_event_and_routes_approval() {
+        var supplierId = new SupplierId("sup_550e8400-e29b-41d4-a716-446655440000");
+        supplierRepo.save(new Supplier(supplierId, "Acme Corp", SupplierStatus.APPROVED));
+        // => pre-condition: APPROVED supplier in store; PO issuance will proceed
+
+        var cmd = new IssuePurchaseOrderUseCase.IssuePOCommand(
+            "550e8400-e29b-41d4-a716-446655440000", "8000.00", "USD"
+        );
+        service.execute(cmd);
+        // => execute: issues PO, routes to L2 approval, publishes PurchaseOrderIssued event
+
+        assertThat(eventPublisher.getCapturedEvents()).hasSize(1);
+        // => one event published: PurchaseOrderIssued — downstream contexts notified
+        assertThat(approvalRouter.getRoutedCalls()).hasSize(1);
+        // => one routing call: 8000 → L2; captured by in-memory adapter
+        assertThat(approvalRouter.getRoutedCalls().get(0)).endsWith("@L2");
+        // => "@L2" suffix: $1,000 < $8,000 <= $10,000 satisfies L2 threshold
+    }
+}
+// => test:unit target; < 5ms per test; 100 service tests run in < 500ms total
+```
+
+**Layer 3 — Adapter integration tests (Testcontainers)**:
+
+```java
+// Integration test: PgPurchaseOrderRepository round-trip against real Postgres
+// => @SpringBootTest + @ActiveProfiles("integration") selects Pg adapter
+// => Testcontainers starts Postgres; connection string injected via Spring
+@org.springframework.boot.test.context.SpringBootTest
+@org.springframework.test.context.ActiveProfiles("integration")
+class PgRepositoryIntegrationTest {
+
+    @org.springframework.beans.factory.annotation.Autowired
+    PurchaseOrderRepository repository;
+    // => Spring injects PgPurchaseOrderRepository; Testcontainers Postgres is the store
+
+    @org.junit.jupiter.api.Test void round_trip_preserves_money_scale() {
+        var id = new com.example.procurement.purchasing.domain.PurchaseOrderId(
+            "po_550e8400-e29b-41d4-a716-446655440099");
+        // => id: valid PurchaseOrderId; will be used as DB primary key
+
+        var po = new com.example.procurement.purchasing.domain.PurchaseOrder(
+            id,
+            new com.example.procurement.purchasing.domain.SupplierId("sup_550e8400-e29b-41d4-a716-446655440001"),
+            new com.example.procurement.purchasing.domain.Money(
+                new java.math.BigDecimal("5000.00"), "USD"),
+            com.example.procurement.purchasing.domain.POStatus.AWAITING_APPROVAL
+        );
+        repository.save(po);
+        // => save: domain record → JPA entity → INSERT into Postgres
+
+        var loaded = repository.findById(id).orElseThrow();
+        // => findById: SELECT from Postgres → JPA entity → domain record
+        assertThat(loaded.total().amount()).isEqualByComparingTo("5000.00");
+        // => BigDecimal scale-agnostic comparison; Postgres DECIMAL round-trip verified
+    }
+}
+// => test:integration target; 2-10s per test (Testcontainers startup amortized across suite)
 ```
 
 **Key Takeaway**: The hexagonal test suite is a four-layer pyramid — domain unit, service unit, adapter integration, and architecture tests — each validating a distinct concern at a distinct speed.
 
 **Why It Matters**: Teams that run only integration tests against a real database pay 30 seconds per run and get no signal about which layer failed. The four-layer pyramid gives sub-second feedback for domain and service logic (the 95% case) while reserving the slower integration tests for the one concern they uniquely address: adapter translation correctness.
+
+---
+
+## CQRS Ports (Examples 41–45)
+
+### Example 41: CQRS — separating command and query input ports
+
+CQRS (Command Query Responsibility Segregation) splits the input port into two separate interfaces: one for commands (state-changing operations) and one for queries (read-only operations). Commands return `void` or a minimal acknowledgement; queries return data without side effects.
+
+```java
+// CQRS input ports: command port and query port for PurchaseOrder
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+import java.util.List;
+
+// PurchaseOrderCommandPort: handles state-changing operations
+// => command methods return void or a result record — never a full aggregate for writes
+public interface PurchaseOrderCommandPort {
+
+    // IssuePOCommand: inbound DTO carrying all fields needed to issue a PO
+    // => record: immutable; equals/hashCode generated; no Lombok required
+    record IssuePOCommand(String supplierId, String totalAmount, String totalCurrency) {}
+
+    // issue: creates a new PO in DRAFT state, then transitions DRAFT → AWAITING_APPROVAL
+    // => returns the newly issued PurchaseOrder; callers use only the id and status
+    PurchaseOrder issue(IssuePOCommand command);
+    // => side effects: saves to repository, publishes PurchaseOrderIssued, routes approval
+
+    // ApprovePOCommand: issued PO moves to APPROVED state
+    // => record: typed command; prevents mixing up id with other string parameters
+    record ApprovePOCommand(PurchaseOrderId id, String approverComment) {}
+
+    // approve: transitions AWAITING_APPROVAL → APPROVED
+    // => void return: command acknowledgement only; callers query state separately
+    void approve(ApprovePOCommand command);
+    // => side effect: publishes PurchaseOrderApproved event; no return value
+}
+
+// PurchaseOrderQueryPort: handles read-only operations; no side effects
+// => all methods are pure reads; adapters may use read replicas or caches
+public interface PurchaseOrderQueryPort {
+
+    // findById: retrieve a single PO by typed identity
+    // => Optional: absence made explicit; callers must handle Optional.empty()
+    java.util.Optional<PurchaseOrder> findById(PurchaseOrderId id);
+    // => no state change; safe to call repeatedly; cache-friendly
+
+    // findBySupplier: retrieve all POs for a given supplier
+    // => List: ordered snapshot; empty list when no POs found; never null
+    List<PurchaseOrder> findBySupplier(String supplierId);
+    // => adapter translates to: SELECT * FROM purchase_orders WHERE supplier_id = ?
+}
+// => Command port and query port can be implemented by the same or different services
+// => Splitting enables different scalability strategies per side without coupling them
+```
+
+**Key Takeaway**: CQRS splits input ports into command (state-changing) and query (read-only) interfaces, enabling different scaling and caching strategies for each side.
+
+**Why It Matters**: A command port that handles writes and a query port that handles reads can be backed by different adapters — the command adapter writes to the primary database while the query adapter reads from a read replica or an Elasticsearch index. CQRS at the port level makes this split possible without changing any application service or domain class. Teams that start with a single port can split it later with minimal refactoring — the interface boundary isolates the change.
+
+---
+
+### Example 42: CQRS command service implementation
+
+The command service implements `PurchaseOrderCommandPort`. It orchestrates domain objects and output ports for state-changing operations only. Queries are delegated to a separate query service, keeping each service focused on one concern.
+
+```java
+// Command service: implements PurchaseOrderCommandPort; write-side only
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.*;
+import java.math.BigDecimal;
+import java.util.UUID;
+
+// PurchaseOrderCommandService: handles all state-changing PO operations
+// => No @Service annotation — framework-free; instantiable with "new" in tests
+public class PurchaseOrderCommandService implements PurchaseOrderCommandPort {
+
+    private final PurchaseOrderRepository repository; // => write-side persistence output port
+    // => repository: stores POs; read-side may use a different adapter (replica, cache)
+    private final EventPublisher eventPublisher;       // => publishes domain events after writes
+    // => eventPublisher: outbox adapter in production; in-memory list in tests
+    private final ApprovalRouterPort approvalRouter;   // => routes approval after issue
+    // => approvalRouter: workflow engine in production; in-memory capture in tests
+
+    public PurchaseOrderCommandService(
+        PurchaseOrderRepository repository,
+        EventPublisher eventPublisher,
+        ApprovalRouterPort approvalRouter
+    ) {
+        this.repository = repository;       // => stored; used in issue() and approve()
+        this.eventPublisher = eventPublisher; // => stored; publish events after each command
+        this.approvalRouter = approvalRouter; // => stored; route approval after issue()
+    }
+
+    @Override
+    public PurchaseOrder issue(IssuePOCommand command) {
+        var id = new PurchaseOrderId("po_" + UUID.randomUUID());
+        // => id: new typed PurchaseOrderId; format "po_" + UUID satisfies invariant
+        var supplierId = new SupplierId(command.supplierId());
+        // => SupplierId: typed wrapper; validates "sup_" prefix at construction
+        var total = new Money(new BigDecimal(command.totalAmount()), command.totalCurrency());
+        // => Money: validates amount >= 0 and currency is 3-letter ISO 4217 code
+        var po = new PurchaseOrder(id, supplierId, total, POStatus.DRAFT).submit();
+        // => submit(): domain guard checks DRAFT; returns new PurchaseOrder(AWAITING_APPROVAL)
+        var saved = repository.save(po);
+        // => save: output port call; adapter persists to HashMap or Postgres table
+        eventPublisher.publish(new PurchaseOrderIssued(saved.id().value(), supplierId.value()));
+        // => event: notifies downstream contexts (receiving, invoicing)
+        approvalRouter.routeApproval(saved.id(), ApprovalRouterPort.deriveLevel(total.amount()));
+        // => route: L1/L2/L3 derived from PO total; adapter sends to workflow engine
+        return saved;
+        // => returns persisted PO; caller (controller) maps to response DTO
+    }
+
+    @Override
+    public void approve(ApprovePOCommand command) {
+        var po = repository.findById(command.id())
+            .orElseThrow(() -> new DomainException("PO not found: " + command.id().value()));
+        // => findById: output port call; throws domain exception if PO is absent
+        var approved = po.approve();
+        // => approve(): domain guard checks AWAITING_APPROVAL → APPROVED transition
+        repository.save(approved);
+        // => save: persists state change; read-side adapters will reflect new status
+        eventPublisher.publish(new PurchaseOrderApproved(approved.id().value()));
+        // => PurchaseOrderApproved: downstream contexts (invoicing) consume this event
+    }
+}
+// => Command service depends on 3 output ports; no query port dependency
+// => Query service is a separate class; command service never calls it
+```
+
+**Key Takeaway**: The command service handles only writes — it never calls query methods. Keeping the write side focused prevents accidental query-in-command coupling.
+
+**Why It Matters**: When the command side scales independently (e.g., sharded writes across regions), the query side remains unaffected. The command service's small dependency set (three ports, not five) keeps tests fast and the object graph shallow. Teams adding a new command simply add a method to the command port and implement it in the command service — the query side requires no changes.
+
+---
+
+### Example 43: CQRS query service with read-only output port
+
+The query service implements `PurchaseOrderQueryPort` and depends only on read-oriented output ports. It may query a different adapter than the command service — for example, a read-model table or a full-text search index.
+
+```java
+// Query service: implements PurchaseOrderQueryPort; read-side only; no side effects
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+import com.example.procurement.purchasing.domain.SupplierId;
+import java.util.List;
+import java.util.Optional;
+
+// PurchaseOrderReadPort: read-side output port; may point to a replica or read-model
+// => package com.example.procurement.purchasing.application
+// => separate from PurchaseOrderRepository (write port) to allow different backing stores
+public interface PurchaseOrderReadPort {
+    // findById: retrieve a single PO; Optional.empty() when absent
+    // => read adapter may read from replica or cache — never triggers a write
+    Optional<PurchaseOrder> findById(PurchaseOrderId id);
+    // => O(1) lookup; adapter may be InMemory, Pg read-replica, or Redis cache
+
+    // findBySupplier: list all POs for a given supplier id (raw value)
+    // => returns empty List when no POs found; never null
+    List<PurchaseOrder> findBySupplier(String supplierId);
+    // => adapter translates to: SELECT * FROM purchase_orders WHERE supplier_id = ?
+    // => or: ElasticSearch query by supplier field; caller never knows the backing store
+}
+
+// PurchaseOrderQueryService: implements the query input port; read-side only
+// => No @Service; no framework annotations; instantiable with "new" in tests
+public class PurchaseOrderQueryService implements PurchaseOrderQueryPort {
+
+    private final PurchaseOrderReadPort readPort; // => read output port; may differ from write port
+    // => readPort: InMemoryPurchaseOrderReadAdapter in tests; PgReadAdapter in production
+
+    public PurchaseOrderQueryService(PurchaseOrderReadPort readPort) {
+        this.readPort = readPort; // => injected at wiring time; no field initialisation
+    }
+
+    @Override
+    public Optional<PurchaseOrder> findById(PurchaseOrderId id) {
+        return readPort.findById(id);
+        // => delegates directly to read port; no state change; cache-safe
+        // => Optional.empty() propagated if PO not found
+    }
+
+    @Override
+    public List<PurchaseOrder> findBySupplier(String supplierId) {
+        return readPort.findBySupplier(supplierId);
+        // => read port fetches all POs for the supplier; returns unmodifiable List
+        // => empty list when supplier has no POs; caller handles empty without null checks
+    }
+}
+// => Query service has one dependency (readPort); simplest possible constructor injection
+// => Backed by replica: reads never hit the write DB; scales independently under read load
+```
+
+**Key Takeaway**: The query service depends only on a read output port — it never touches the write-side repository and has zero side effects.
+
+**Why It Matters**: A query service with a single read port can be horizontally scaled without affecting the write side. When query load spikes (e.g., a dashboard generating thousands of read requests), the read adapter can be swapped to an Elasticsearch or Redis adapter — the query service code is unchanged, and the command service is completely unaffected.
+
+---
+
+### Example 44: CQRS — wiring command and query services at the composition root
+
+At the composition root, the command service and query service are wired to different output port adapters. This is where the CQRS split becomes concrete: one bean reads from a replica, another writes to the primary.
+
+```java
+// Composition root: wires CQRS command and query services to different adapters
+// => package com.example.procurement
+package com.example.procurement;
+
+import com.example.procurement.purchasing.adapter.out.persistence.*;
+import com.example.procurement.purchasing.application.*;
+import org.springframework.context.annotation.*;
+
+// CqrsConfiguration: wires command side to write DB; query side to read DB (or same for simplicity)
+// => @Configuration: Spring bean factory; only class that knows both port and adapter
+@Configuration
+public class CqrsConfiguration {
+
+    // purchaseOrderRepository: write-side persistence port
+    // => PgPurchaseOrderRepository: writes to primary Postgres; not used by query service
+    @Bean
+    public PurchaseOrderRepository purchaseOrderRepository(JpaPoRepository jpa) {
+        return new PgPurchaseOrderRepository(jpa);
+        // => write adapter: primary DB; all command operations go here
+    }
+
+    // purchaseOrderReadPort: read-side output port — may be same or different adapter
+    // => InMemory for unit tests; PgReadPurchaseOrderAdapter for integration/production
+    @Bean
+    public PurchaseOrderReadPort purchaseOrderReadPort(JpaPoRepository jpa) {
+        return new PgReadPurchaseOrderAdapter(jpa);
+        // => read adapter: could point to read replica; swap here to change read store
+        // => test profile: return new InMemoryPurchaseOrderReadAdapter();
+    }
+
+    // purchaseOrderCommandService: write-side service; depends on write port only
+    // => wired with 3 output ports: repository, eventPublisher, approvalRouter
+    @Bean
+    public PurchaseOrderCommandPort purchaseOrderCommandService(
+        PurchaseOrderRepository repository,
+        EventPublisher eventPublisher,
+        ApprovalRouterPort approvalRouter
+    ) {
+        return new PurchaseOrderCommandService(repository, eventPublisher, approvalRouter);
+        // => command service knows nothing about the read-side adapter
+    }
+
+    // purchaseOrderQueryService: read-side service; depends on read port only
+    // => no dependency on write-side repository; scales independently
+    @Bean
+    public PurchaseOrderQueryPort purchaseOrderQueryService(
+        PurchaseOrderReadPort readPort
+    ) {
+        return new PurchaseOrderQueryService(readPort);
+        // => query service knows nothing about the write-side repository or event publisher
+    }
+}
+// => HTTP command controller injects PurchaseOrderCommandPort (write side)
+// => HTTP query controller injects PurchaseOrderQueryPort (read side)
+// => Both controllers are unaware of each other and of which adapter is backing each port
+```
+
+**Key Takeaway**: The composition root wires command and query services to separate output port adapters — the write side and read side are independently configurable without changing any application or domain code.
+
+**Why It Matters**: In a high-traffic P2P platform, PO queries (dashboard, search) outnumber PO commands (issue, approve) by orders of magnitude. Wiring the query service to a read replica or ElasticSearch adapter routes read traffic away from the write primary — a purely operational change with zero code changes outside the composition root. The business logic remains unchanged.
+
+---
+
+### Example 45: CQRS — in-memory read adapter for fast query tests
+
+The in-memory read adapter implements `PurchaseOrderReadPort` using a `HashMap`. It enables the query service to be tested without any database. The same pattern follows every in-memory adapter established in Examples 7 and 23.
+
+```java
+// In-memory read adapter: implements PurchaseOrderReadPort with a HashMap
+// => package com.example.procurement.purchasing.adapter.out.persistence
+package com.example.procurement.purchasing.adapter.out.persistence;
+
+import com.example.procurement.purchasing.application.PurchaseOrderReadPort;
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+import java.util.*;
+
+// InMemoryPurchaseOrderReadAdapter: read-side adapter; backed by a HashMap
+// => implements PurchaseOrderReadPort (read output port); not PurchaseOrderRepository (write port)
+// => same backing store pattern as InMemoryPurchaseOrderRepository — predictable and fast
+public class InMemoryPurchaseOrderReadAdapter implements PurchaseOrderReadPort {
+
+    private final Map<PurchaseOrderId, PurchaseOrder> store; // => injected or internal map
+    // => store: shared HashMap allows command adapter writes to be visible to read adapter
+    // => in tests: create a single HashMap and inject into both command and query adapters
+
+    public InMemoryPurchaseOrderReadAdapter(Map<PurchaseOrderId, PurchaseOrder> store) {
+        this.store = store; // => shared reference: reads see command-side writes instantly
+        // => no eventual consistency lag in tests; simplest correct behaviour
+    }
+
+    @Override
+    public Optional<PurchaseOrder> findById(PurchaseOrderId id) {
+        return Optional.ofNullable(store.get(id));
+        // => absent PO: Optional.empty(); no NullPointerException risk for caller
+        // => O(1) HashMap lookup; test runs in nanoseconds
+    }
+
+    @Override
+    public List<PurchaseOrder> findBySupplier(String supplierId) {
+        return store.values().stream()
+            .filter(po -> po.supplierId().value().equals(supplierId))
+            // => filter: compare raw supplierId string; no SupplierId boxing here
+            .toList();
+        // => toList(): unmodifiable List<PurchaseOrder>; snapshot at call time
+        // => empty list when no POs match; caller handles without null checks
+    }
+}
+
+// Test wiring: shared map makes command writes visible to query reads
+// => Map<PurchaseOrderId, PurchaseOrder> shared = new HashMap<>();
+// => var cmdAdapter = new InMemoryPurchaseOrderRepository(shared); // write side
+// => var qryAdapter = new InMemoryPurchaseOrderReadAdapter(shared); // read side
+// => var cmdSvc = new PurchaseOrderCommandService(cmdAdapter, events, router);
+// => var qrySvc = new PurchaseOrderQueryService(qryAdapter);
+// => after cmdSvc.issue(cmd): qrySvc.findById(id) returns the issued PO immediately
+```
+
+**Key Takeaway**: The in-memory read adapter shares a `HashMap` with the write adapter — command writes are immediately visible to the query service in tests without any sync delay.
+
+**Why It Matters**: A shared-map in-memory adapter faithfully models eventual consistency without introducing test complexity. When the production read adapter switches to a read replica (with real replication lag), only the adapter changes — the query service, command service, and all in-memory tests remain unchanged. The test isolation boundary is the `PurchaseOrderReadPort` interface, not the data store implementation.
+
+---
+
+## Query Specialisation (Examples 46–50)
+
+### Example 46: Specialised query — findPendingApprovalByLevel
+
+Repository output ports can expose domain-meaningful query methods beyond simple `findById`. A `findPendingApprovalByLevel` method lets the approval dashboard load POs efficiently without loading all records and filtering in the application service.
+
+```java
+// Specialised query output port: domain-meaningful filter pushed to the adapter
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.*;
+import java.util.List;
+
+// PurchaseOrderApprovalQueryPort: specialised read port for the approval dashboard
+// => Separate port from PurchaseOrderReadPort: approval UI has different data access patterns
+public interface PurchaseOrderApprovalQueryPort {
+
+    // findPendingApprovalByLevel: load AWAITING_APPROVAL POs for a given approval level
+    // => ApprovalLevel: L1, L2, or L3; drives which approver queue to show
+    // => returns only POs in AWAITING_APPROVAL state; adapter translates to SQL WHERE
+    List<PurchaseOrder> findPendingApprovalByLevel(ApprovalLevel level);
+    // => adapter: SELECT * FROM purchase_orders WHERE status='AWAITING_APPROVAL' AND level=?
+    // => in-memory: stream().filter(po -> level matches and status = AWAITING_APPROVAL)
+
+    // countPendingByLevel: lightweight count for dashboard badges
+    // => avoids loading full PO records just to show a count
+    long countPendingByLevel(ApprovalLevel level);
+    // => adapter: SELECT COUNT(*) FROM purchase_orders WHERE status='AWAITING_APPROVAL' AND level=?
+    // => O(1) count query; dashboard polling uses this; findPendingApprovalByLevel loads on click
+}
+
+// InMemoryApprovalQueryAdapter: in-memory implementation for tests
+// => package com.example.procurement.purchasing.adapter.out.persistence
+class InMemoryApprovalQueryAdapter implements PurchaseOrderApprovalQueryPort {
+
+    private final Map<PurchaseOrderId, PurchaseOrder> store;
+    // => shared store: same HashMap as write and read adapters
+
+    InMemoryApprovalQueryAdapter(Map<PurchaseOrderId, PurchaseOrder> store) {
+        this.store = store; // => injected shared map
+    }
+
+    @Override
+    public List<PurchaseOrder> findPendingApprovalByLevel(ApprovalLevel level) {
+        return store.values().stream()
+            .filter(po -> po.status() == POStatus.AWAITING_APPROVAL)
+            // => status filter: only AWAITING_APPROVAL POs eligible for approval
+            .filter(po -> ApprovalRouterPort.deriveLevel(po.total().amount()) == level)
+            // => level filter: derive approval level from PO total; keep matching ones
+            .toList();
+        // => unmodifiable List; empty when no POs at that level await approval
+    }
+
+    @Override
+    public long countPendingByLevel(ApprovalLevel level) {
+        return store.values().stream()
+            .filter(po -> po.status() == POStatus.AWAITING_APPROVAL)
+            .filter(po -> ApprovalRouterPort.deriveLevel(po.total().amount()) == level)
+            .count();
+        // => count(): terminal operation; returns number of matching POs as long
+    }
+}
+import java.util.Map;
+```
+
+**Key Takeaway**: Specialised query ports push domain-meaningful filters to the adapter — the application layer receives pre-filtered results rather than loading all records and discarding most.
+
+**Why It Matters**: An approval dashboard showing L2 POs pending approval must not load all 10,000 POs to filter in Java. Pushing the filter to the database via a specialised port reduces query response time from seconds to milliseconds. The port interface keeps the filter semantics in domain language — `findPendingApprovalByLevel(L2)` — without exposing SQL to the application layer.
+
+---
+
+### Example 47: PO summary read model — projecting domain state for the UI
+
+A read model projects domain aggregates into a flat, UI-optimised structure. The projection lives in the adapter layer; the read model record lives in the application layer as the return type of a query port method.
+
+```java
+// Read model: projection of PurchaseOrder for UI display
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.*;
+import java.util.List;
+
+// PurchaseOrderSummary: flat read model; UI-optimised fields only
+// => record: immutable; generated equals/hashCode; no Lombok
+// => Lives in application package: it is the return type of a port method
+public record PurchaseOrderSummary(
+    String id,           // => po.id().value(); String for JSON serialisation in controller
+    String supplierName, // => joined from supplier context via ACL; not in PO aggregate
+    String totalFormatted, // => "1,500.00 USD"; pre-formatted for display; no formatting in UI
+    String status,       // => po.status().name(); human-readable in controller DTO mapping
+    String approvalLevel // => L1/L2/L3 derived from total; shown in approval queue column
+) {}
+
+// PurchaseOrderSummaryQueryPort: read port returning summary projections
+// => query port; never causes writes; adapter may materialise from a summary table
+public interface PurchaseOrderSummaryQueryPort {
+
+    // findSummariesBySupplier: return all PO summaries for a given supplier
+    // => pre-joined: supplierName included; no second call to supplier context needed
+    List<PurchaseOrderSummary> findSummariesBySupplier(String supplierId);
+    // => adapter: SELECT po.*, s.name FROM purchase_orders po JOIN suppliers s ON po.supplier_id = s.id
+
+    // findSummaryById: return single PO summary by id
+    // => Optional: absent when PO not found; callers handle Optional.empty()
+    java.util.Optional<PurchaseOrderSummary> findSummaryById(String id);
+    // => adapter: single-row query with supplier join; no domain mapping overhead
+}
+
+// In-memory summary adapter: builds summaries from in-memory store + supplier data
+// => package com.example.procurement.purchasing.adapter.out.persistence
+class InMemorySummaryAdapter implements PurchaseOrderSummaryQueryPort {
+
+    private final java.util.Map<PurchaseOrderId, PurchaseOrder> store;
+    // => store: shared map; command writes visible immediately
+    private final java.util.Map<String, String> supplierNames;
+    // => supplierNames: Map<supplierId, name>; simplified test fixture for cross-context join
+
+    InMemorySummaryAdapter(java.util.Map<PurchaseOrderId, PurchaseOrder> store,
+                            java.util.Map<String, String> supplierNames) {
+        this.store = store;           // => PO data source
+        this.supplierNames = supplierNames; // => supplier name lookup
+    }
+
+    @Override
+    public List<PurchaseOrderSummary> findSummariesBySupplier(String supplierId) {
+        return store.values().stream()
+            .filter(po -> po.supplierId().value().equals(supplierId))
+            // => filter by supplier; only POs belonging to the requested supplier
+            .map(this::toSummary)
+            // => project PurchaseOrder domain record → PurchaseOrderSummary read model
+            .toList();
+    }
+
+    @Override
+    public java.util.Optional<PurchaseOrderSummary> findSummaryById(String id) {
+        var poId = new PurchaseOrderId(id);
+        // => wrap raw string in typed id; PurchaseOrderId validates format
+        return java.util.Optional.ofNullable(store.get(poId)).map(this::toSummary);
+        // => map: domain record → summary projection; empty Optional propagated
+    }
+
+    private PurchaseOrderSummary toSummary(PurchaseOrder po) {
+        var name = supplierNames.getOrDefault(po.supplierId().value(), "Unknown Supplier");
+        // => join: look up supplier name; "Unknown Supplier" default prevents NPE
+        var level = ApprovalRouterPort.deriveLevel(po.total().amount()).name();
+        // => level: derived from total; L1/L2/L3 string for display column
+        return new PurchaseOrderSummary(
+            po.id().value(),                                     // => raw String id
+            name,                                                // => supplier name from join
+            po.total().amount().toPlainString() + " " + po.total().currency(), // => formatted
+            po.status().name(),                                  // => domain enum as String
+            level                                                // => approval level string
+        );
+    }
+}
+```
+
+**Key Takeaway**: Read models are flat, UI-optimised projections produced by adapters — the domain aggregate stays rich; the summary record stays simple and UI-friendly.
+
+**Why It Matters**: When the approval dashboard renders 200 POs, it needs supplier names and pre-derived approval levels — not raw aggregate records requiring two additional lookups per row. The summary read model satisfies the UI contract in one query, reducing database round-trips by 200x. The adapter owns the SQL join; the application layer owns the summary record's shape.
+
+---
+
+### Example 48: Paginated query port — findByStatus with pagination
+
+Real procurement dashboards page through hundreds of POs. A paginated query port models pagination as explicit domain parameters rather than leaking `Pageable` (Spring) or `LIMIT/OFFSET` (SQL) into the application layer.
+
+```java
+// Paginated query port: domain-neutral pagination parameters
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.POStatus;
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import java.util.List;
+
+// Page: domain-neutral pagination result — no Spring Pageable, no JDBC specifics
+// => record: immutable; holds items + pagination metadata
+// => generic: works for any entity type (PurchaseOrder, Supplier, etc.)
+public record Page<T>(
+    List<T> items,   // => current page items; empty list on last page beyond data
+    int pageNumber,  // => zero-based page index; 0 = first page
+    int pageSize,    // => items per page; mirrors request parameter
+    long totalItems  // => total matching items across all pages; drives page count display
+) {
+    // totalPages: derived from totalItems and pageSize
+    // => convenience accessor; no persistence call needed
+    public int totalPages() {
+        return (int) Math.ceil((double) totalItems / pageSize);
+        // => ceiling division: 7 items / 3 per page = 3 pages (not 2.33)
+    }
+}
+
+// PurchaseOrderPaginatedQueryPort: paginated read port for PO status filtering
+// => port method takes domain-neutral page parameters; no Spring or SQL imports
+public interface PurchaseOrderPaginatedQueryPort {
+
+    // findByStatus: return a page of POs matching the given status
+    // => status: domain enum; adapter translates to SQL WHERE status = ?
+    // => pageNumber, pageSize: domain-neutral pagination; adapter translates to LIMIT/OFFSET
+    Page<PurchaseOrder> findByStatus(POStatus status, int pageNumber, int pageSize);
+    // => adapter: SELECT * FROM purchase_orders WHERE status=? LIMIT pageSize OFFSET pageNumber*pageSize
+}
+
+// InMemoryPaginatedAdapter: in-memory implementation; sorts by id for deterministic paging
+// => package com.example.procurement.purchasing.adapter.out.persistence
+class InMemoryPaginatedAdapter implements PurchaseOrderPaginatedQueryPort {
+
+    private final java.util.Map<PurchaseOrderId, PurchaseOrder> store;
+    // => store: shared HashMap; same backing source as write adapter
+
+    InMemoryPaginatedAdapter(java.util.Map<PurchaseOrderId, PurchaseOrder> store) {
+        this.store = store; // => injected shared map
+    }
+
+    @Override
+    public Page<PurchaseOrder> findByStatus(POStatus status, int pageNumber, int pageSize) {
+        var matching = store.values().stream()
+            .filter(po -> po.status() == status)
+            // => filter: keep only POs with the requested status
+            .sorted(java.util.Comparator.comparing(po -> po.id().value()))
+            // => sorted: deterministic order by id string; consistent across calls
+            .toList();
+        // => matching: all POs with given status; used for both totalItems and page slice
+
+        long total = matching.size();
+        // => total: count before slicing; drives totalPages() calculation
+
+        int fromIndex = pageNumber * pageSize;
+        // => fromIndex: zero-based start; page 0 → 0, page 1 → pageSize, etc.
+        int toIndex = Math.min(fromIndex + pageSize, matching.size());
+        // => toIndex: end of slice; Math.min prevents IndexOutOfBoundsException on last page
+
+        var items = (fromIndex >= matching.size())
+            ? List.of()
+            : matching.subList(fromIndex, toIndex);
+        // => items: sub-list slice; empty List.of() when pageNumber exceeds available pages
+
+        return new Page<>(items, pageNumber, pageSize, total);
+        // => Page: immutable record with items, pageNumber, pageSize, totalItems
+    }
+}
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+```
+
+**Key Takeaway**: A `Page<T>` record wraps items and pagination metadata in domain-neutral terms — no Spring `Pageable`, no `LIMIT`/`OFFSET` leaking into the application layer.
+
+**Why It Matters**: When the dashboard controller receives a `Page<PurchaseOrder>`, it can render "Page 2 of 14" from `page.totalPages()` without knowing whether the adapter used SQL `LIMIT/OFFSET`, Elasticsearch `from/size`, or a DynamoDB `ExclusiveStartKey`. Changing the database technology keeps the page rendering controller unchanged. Domain-neutral pagination parameters also make the port testable with deterministic in-memory data.
+
+---
+
+### Example 49: Sorting output port parameter — domain-neutral sort specification
+
+Queries that return lists often need sorting. Rather than accepting `Sort` from Spring Data or raw SQL `ORDER BY` strings, the port accepts a domain-neutral `SortSpec` record that describes the sort intent in domain language.
+
+```java
+// Domain-neutral sort specification: no Spring Sort, no SQL ORDER BY strings
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import com.example.procurement.purchasing.domain.POStatus;
+import java.util.List;
+
+// SortField: domain enum expressing available sort dimensions in PO language
+// => no "column_name" strings; adapter translates enum to SQL column internally
+public enum SortField {
+    TOTAL_AMOUNT,    // => sort by Money.amount(); adapter: ORDER BY total_amount
+    STATUS,          // => sort by POStatus ordinal; adapter: ORDER BY status
+    CREATED_AT       // => sort by issuance timestamp; adapter: ORDER BY created_at
+}
+
+// SortSpec: immutable sort specification — field + direction
+// => record: compact; generated equals/hashCode; usable as cache key
+public record SortSpec(SortField field, boolean ascending) {
+    // TOTAL_AMOUNT_ASC: convenience constant — lowest first (budget reports)
+    public static final SortSpec TOTAL_AMOUNT_ASC = new SortSpec(SortField.TOTAL_AMOUNT, true);
+    // => static constant: avoids constructing the same spec repeatedly in tests and controllers
+
+    // CREATED_AT_DESC: most recent first (default dashboard view)
+    public static final SortSpec CREATED_AT_DESC = new SortSpec(SortField.CREATED_AT, false);
+    // => descending=false means descending; ascending=false → DESC in SQL adapter
+}
+
+// PurchaseOrderSortedQueryPort: query port accepting domain-neutral sort specification
+// => adapter translates SortSpec to SQL ORDER BY; caller uses domain language only
+public interface PurchaseOrderSortedQueryPort {
+
+    // findByStatus: return POs matching status, sorted per spec
+    // => status + sortSpec: two domain-language parameters; no SQL in calling code
+    List<PurchaseOrder> findByStatus(POStatus status, SortSpec sortSpec);
+    // => adapter: SELECT * FROM purchase_orders WHERE status=? ORDER BY <derived-column> <ASC|DESC>
+}
+
+// InMemorySortedAdapter: translates SortSpec to Comparator for in-memory sorting
+// => package com.example.procurement.purchasing.adapter.out.persistence
+class InMemorySortedAdapter implements PurchaseOrderSortedQueryPort {
+
+    private final java.util.Map<PurchaseOrderId, PurchaseOrder> store;
+    InMemorySortedAdapter(java.util.Map<PurchaseOrderId, PurchaseOrder> store) {
+        this.store = store; // => shared map; command writes visible to query reads
+    }
+
+    @Override
+    public List<PurchaseOrder> findByStatus(POStatus status, SortSpec spec) {
+        var comparator = switch (spec.field()) {
+            case TOTAL_AMOUNT -> java.util.Comparator.comparing(
+                (PurchaseOrder po) -> po.total().amount()); // => sort by BigDecimal amount
+            case STATUS       -> java.util.Comparator.comparing(po -> po.status().ordinal());
+            // => STATUS: sort by enum ordinal (DRAFT=0, AWAITING_APPROVAL=1, APPROVED=2, ...)
+            case CREATED_AT   -> java.util.Comparator.comparing(po -> po.id().value());
+            // => CREATED_AT: use id as proxy (UUIDs are not time-ordered; real adapter uses timestamp)
+        };
+        // => comparator: selected based on SortField enum; no if-else chain
+        if (!spec.ascending()) comparator = comparator.reversed();
+        // => reversed(): flip direction for DESC; spec.ascending()=false → reversed comparator
+
+        return store.values().stream()
+            .filter(po -> po.status() == status) // => status filter applied before sort
+            .sorted(comparator)                  // => sort applied after filter
+            .toList();                           // => unmodifiable List; snapshot at call time
+    }
+}
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+```
+
+**Key Takeaway**: `SortSpec` expresses sort intent in domain language — `SortField.TOTAL_AMOUNT` rather than `"total_amount"` or Spring's `Sort.by("totalAmount")`. Adapters translate the enum to SQL or Comparator internally.
+
+**Why It Matters**: When `SortField` is a domain enum, the compiler catches typos that `Sort.by("totalAmoutn")` would silently accept. Adding a new sort dimension means adding an enum constant — the compiler then flags every `switch` on `SortField` that needs updating. This makes the sort surface area explicit and exhaustive at compile time rather than discovered at runtime.
+
+---
+
+### Example 50: Composite query — combining sort and pagination
+
+Combining `SortSpec` and `Page` in a single port method gives the caller full control over sorted, paginated result sets without exposing SQL or Spring Data types.
+
+```java
+// Composite query port: sorted pagination in domain-neutral terms
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import com.example.procurement.purchasing.domain.POStatus;
+
+// PurchaseOrderQueryFacade: combines sorted + paginated queries in one port
+// => single interface; controller injects this one port for all read operations
+public interface PurchaseOrderQueryFacade {
+
+    // findByStatus: sorted + paginated list of POs for a given status
+    // => status: domain filter; sortSpec: domain sort; pageNumber, pageSize: pagination
+    Page<PurchaseOrder> findByStatus(
+        POStatus status,
+        SortSpec sortSpec,
+        int pageNumber,
+        int pageSize
+    );
+    // => adapter: SELECT … WHERE status=? ORDER BY <sortSpec> LIMIT pageSize OFFSET pageNumber*pageSize
+}
+
+// InMemoryQueryFacade: in-memory implementation combining filter + sort + page
+// => package com.example.procurement.purchasing.adapter.out.persistence
+class InMemoryQueryFacade implements PurchaseOrderQueryFacade {
+
+    private final java.util.Map<PurchaseOrderId, PurchaseOrder> store;
+    InMemoryQueryFacade(java.util.Map<PurchaseOrderId, PurchaseOrder> store) {
+        this.store = store; // => shared map with command adapter
+    }
+
+    @Override
+    public Page<PurchaseOrder> findByStatus(
+        POStatus status, SortSpec sortSpec, int pageNumber, int pageSize
+    ) {
+        // Step 1: Filter by status
+        var filtered = store.values().stream()
+            .filter(po -> po.status() == status)
+            // => keep only POs in requested status; AWAITING_APPROVAL, APPROVED, etc.
+            .toList();
+        long total = filtered.size();
+        // => total: count before sort + slice; used in Page.totalPages()
+
+        // Step 2: Sort by SortSpec
+        var comparator = switch (sortSpec.field()) {
+            case TOTAL_AMOUNT -> java.util.Comparator.comparing(
+                (PurchaseOrder po) -> po.total().amount());
+            // => TOTAL_AMOUNT: sort numerically by BigDecimal
+            case STATUS       -> java.util.Comparator.comparing(po -> po.status().ordinal());
+            // => STATUS: sort by domain enum ordinal (alphabetical by definition order)
+            case CREATED_AT   -> java.util.Comparator.comparing(po -> po.id().value());
+            // => CREATED_AT proxy: id string order (real adapter uses DB timestamp column)
+        };
+        if (!sortSpec.ascending()) comparator = comparator.reversed();
+        // => DESC: reversed comparator applied when ascending=false
+
+        var sorted = filtered.stream().sorted(comparator).toList();
+        // => sorted: all matching POs in requested order; ready for page slicing
+
+        // Step 3: Page slice
+        int from = pageNumber * pageSize;
+        int to   = Math.min(from + pageSize, sorted.size());
+        // => bounds: prevents IndexOutOfBoundsException on last partial page
+        var items = (from >= sorted.size()) ? java.util.List.<PurchaseOrder>of()
+                                            : sorted.subList(from, to);
+        // => items: slice for current page; empty list when pageNumber exceeds pages
+
+        return new Page<>(items, pageNumber, pageSize, total);
+        // => Page: immutable result record; controller uses totalPages() for "Page N of M"
+    }
+}
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+```
+
+**Key Takeaway**: A single composite query port method takes status, sort, and pagination as domain parameters — the adapter handles SQL translation internally, keeping the controller clean.
+
+**Why It Matters**: A controller that calls `queryFacade.findByStatus(AWAITING_APPROVAL, CREATED_AT_DESC, 0, 20)` reads like a business requirement, not a database query. When the underlying store changes (e.g., from Postgres to DynamoDB with cursor-based pagination), only the adapter changes — the port method signature, controller code, and tests remain identical. This is the practical meaning of technology-agnostic application logic.
+
+---
+
+## Port Versioning (Examples 51–55)
+
+### Example 51: Adding a method to a port — backward-compatible evolution
+
+Ports evolve as business requirements grow. Adding a new method to an existing port is safe when all existing adapter implementations receive a `default` method providing a backwards-compatible fallback.
+
+```java
+// Port evolution: adding a new method with a default fallback implementation
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+import java.util.Optional;
+
+// PurchaseOrderRepository v1: original port — three methods
+// => all existing adapters implement this interface; cannot add methods without breaking them
+public interface PurchaseOrderRepository {
+    PurchaseOrder save(PurchaseOrder po);             // => write: persist aggregate
+    Optional<PurchaseOrder> findById(PurchaseOrderId id); // => read: load by typed id
+    boolean existsById(PurchaseOrderId id);           // => existence check: avoids full load
+}
+
+// PurchaseOrderRepository v2: adds findAllByStatus with a safe default implementation
+// => extends v1 so all existing adapters are still valid without change
+// => default method: adapters that don't override inherit this fallback
+public interface PurchaseOrderRepositoryV2 extends PurchaseOrderRepository {
+
+    // findAllByStatus: new business requirement — approval dashboard needs filtered list
+    // => default implementation: loads all POs and filters in Java (correct but not optimal)
+    default java.util.List<PurchaseOrder> findAllByStatus(
+        com.example.procurement.purchasing.domain.POStatus status
+    ) {
+        // This default implementation is a safe fallback for adapters not yet updated
+        // => adapters that override this method provide a SQL-filtered implementation
+        // => adapters that don't override use this Java-level filter automatically
+        throw new UnsupportedOperationException(
+            "Adapter must override findAllByStatus for efficient filtering"
+        );
+        // => UnsupportedOperationException: adapter maintainers see this at test time
+        // => forces adapter teams to provide an efficient implementation before shipping
+    }
+}
+
+// Postgres adapter overriding the new method efficiently
+// => PgPurchaseOrderRepository already implements v1; now extends v2 to add SQL filter
+class PgPurchaseOrderRepositoryV2 extends PgPurchaseOrderRepository
+    implements PurchaseOrderRepositoryV2 {
+
+    PgPurchaseOrderRepositoryV2(JpaPoRepository jpa) {
+        super(jpa); // => delegate to v1 constructor; inherits save, findById, existsById
+    }
+
+    @Override
+    public java.util.List<PurchaseOrder> findAllByStatus(
+        com.example.procurement.purchasing.domain.POStatus status
+    ) {
+        return jpa.findByStatus(status.name()).stream()
+            // => JPA query: SELECT * FROM purchase_orders WHERE status = ?
+            .map(this::toDomain)
+            // => map: JPA entity → domain record via inherited mapping method
+            .toList();
+        // => returns unmodifiable List<PurchaseOrder>; SQL does the filtering, not Java
+    }
+}
+```
+
+**Key Takeaway**: Adding a method to a port is safe when existing adapters inherit a default fallback — the compiler flags adapters that must be updated, and they can be migrated incrementally.
+
+**Why It Matters**: In a team where multiple adapters implement the same port (in-memory, Postgres, Elasticsearch), adding a method without a default forces every team to update simultaneously — a coordination overhead. Using a `default` method that throws `UnsupportedOperationException` lets the team update adapters one sprint at a time: the adapters that need the new method get efficient implementations; others get a clear runtime signal to update.
+
+---
+
+### Example 52: Deprecating a port method without breaking adapters
+
+When a port method becomes obsolete, it should be deprecated before removal. `@Deprecated` marks the method; `@Deprecated(forRemoval = true)` signals the timeline. Adapters continue to compile; callers receive IDE warnings.
+
+```java
+// Port deprecation: marking a method for future removal without breaking existing adapters
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.PurchaseOrder;
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+import java.util.Optional;
+import java.util.List;
+
+// PurchaseOrderRepository: port with deprecated method
+// => findBySupplierIdRaw: original string-based finder replaced by typed findBySupplierId
+public interface PurchaseOrderRepository {
+
+    PurchaseOrder save(PurchaseOrder po);
+    Optional<PurchaseOrder> findById(PurchaseOrderId id);
+    boolean existsById(PurchaseOrderId id);
+
+    // findBySupplierIdRaw: deprecated; replaced by findBySupplierId(SupplierId)
+    // => @Deprecated(forRemoval=true): signals removal in next major version
+    // => since="2.0": callers know when the deprecation was introduced
+    @Deprecated(since = "2.0", forRemoval = true)
+    default List<PurchaseOrder> findBySupplierIdRaw(String rawId) {
+        // => default implementation delegates to the new typed method
+        // => callers that haven't migrated still compile and get correct results
+        return findBySupplierId(new com.example.procurement.purchasing.domain.SupplierId(rawId));
+        // => migration path: replace findBySupplierIdRaw("sup_abc") with findBySupplierId(id)
+    }
+
+    // findBySupplierId: replacement — typed SupplierId prevents raw-string accidents
+    // => new method; adapters must implement this; no default fallback (intentional)
+    List<PurchaseOrder> findBySupplierId(com.example.procurement.purchasing.domain.SupplierId id);
+    // => typed parameter: compiler catches swapped id arguments at compile time
+}
+
+// Adapter implementing the new typed method; inherits deprecated default for old callers
+// => InMemoryPurchaseOrderRepository only needs to implement findBySupplierId
+class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository {
+
+    private final java.util.Map<PurchaseOrderId, PurchaseOrder> store = new java.util.HashMap<>();
+    // => store: HashMap backing; key = typed PurchaseOrderId
+
+    @Override public PurchaseOrder save(PurchaseOrder po) {
+        store.put(po.id(), po); return po; // => O(1) put; returns same instance
+    }
+    @Override public Optional<PurchaseOrder> findById(PurchaseOrderId id) {
+        return Optional.ofNullable(store.get(id)); // => absent → Optional.empty()
+    }
+    @Override public boolean existsById(PurchaseOrderId id) {
+        return store.containsKey(id); // => O(1) boolean check
+    }
+    @Override public List<PurchaseOrder> findBySupplierId(
+        com.example.procurement.purchasing.domain.SupplierId id
+    ) {
+        return store.values().stream()
+            .filter(po -> po.supplierId().equals(id))
+            // => typed equality: SupplierId.equals() compares value fields
+            .toList();
+        // => unmodifiable List; snapshot at call time
+    }
+    // => findBySupplierIdRaw: inherited default delegates to findBySupplierId above
+}
+```
+
+**Key Takeaway**: `@Deprecated(forRemoval = true)` with a `default` delegate method lets callers migrate at their own pace while adapters only implement the new typed method.
+
+**Why It Matters**: Port deprecation with a delegation default is a zero-disruption migration strategy. A team with 40 call sites for `findBySupplierIdRaw` can migrate them over two sprints while all existing tests continue to pass. The `@Deprecated` annotation surfaces IDE warnings in the IDE, making the migration visible without requiring a coordinated freeze of all work. Only when all callers are migrated is the method deleted in the next major version.
+
+---
+
+### Example 53: Port interface segregation — splitting a fat port
+
+When a port interface grows too many methods, it violates the Interface Segregation Principle. Splitting the fat port into focused interfaces lets adapters implement only the methods they support.
+
+```java
+// Fat port before split: too many responsibilities in one interface
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.*;
+import java.util.*;
+
+// PurchaseOrderRepository BEFORE split: write + read + admin + audit in one interface
+// => every adapter must implement all 7 methods; test adapters implement audit methods as no-ops
+interface FatPurchaseOrderRepository {
+    PurchaseOrder save(PurchaseOrder po);              // => write
+    Optional<PurchaseOrder> findById(PurchaseOrderId id); // => read
+    boolean existsById(PurchaseOrderId id);           // => read
+    List<PurchaseOrder> findByStatus(POStatus status);// => read + filter
+    void archive(PurchaseOrderId id);                 // => admin operation: soft-delete
+    void purge(PurchaseOrderId id);                   // => admin: hard-delete (GDPR)
+    List<PurchaseOrder> findArchivedBefore(java.time.Instant cutoff); // => audit/reporting
+}
+
+// Split into three focused ports: write, read, admin
+// => each adapter implements only the ports relevant to its role
+
+// PurchaseOrderWritePort: persistence write operations only
+// => InMemoryPurchaseOrderRepository and PgPurchaseOrderRepository implement this
+public interface PurchaseOrderWritePort {
+    PurchaseOrder save(PurchaseOrder po);             // => write: persist aggregate
+    // => minimal: only what command services need to persist state changes
+}
+
+// PurchaseOrderReadPort: query operations; may be backed by read replica or cache
+// => PgReadAdapter and InMemoryReadAdapter implement this; command service does not need it
+public interface PurchaseOrderReadPort {
+    Optional<PurchaseOrder> findById(PurchaseOrderId id); // => point query by id
+    boolean existsById(PurchaseOrderId id);            // => existence check: fast O(1)
+    List<PurchaseOrder> findByStatus(POStatus status); // => filtered list for dashboard
+    // => read-only: no save, no archive, no purge; safe to back with replica or cache
+}
+
+// PurchaseOrderAdminPort: privileged operations; only admin service depends on this
+// => separate port: regular application services cannot call archive() or purge()
+// => AdminService implements this port's use cases; HttpController never injects it
+public interface PurchaseOrderAdminPort {
+    void archive(PurchaseOrderId id);   // => soft-delete: marks record as archived
+    void purge(PurchaseOrderId id);     // => hard-delete: GDPR erasure; irreversible
+    List<PurchaseOrder> findArchivedBefore(java.time.Instant cutoff);
+    // => audit query: returns archived POs created before cutoff timestamp
+}
+// => Adapters implement only the ports they logically support
+// => InMemoryPurchaseOrderRepository implements PurchaseOrderWritePort + PurchaseOrderReadPort
+// => PgAdminAdapter implements PurchaseOrderAdminPort only; never mixed with read/write adapter
+```
+
+**Key Takeaway**: Splitting a fat port into write, read, and admin interfaces lets each adapter implement only what it supports — in-memory adapters omit admin operations; admin adapters omit read queries.
+
+**Why It Matters**: When `PurchaseOrderAdminPort` is a separate interface, the regular command service constructor cannot accidentally receive an admin adapter — the type system prevents it. Audit operations (purge, archive) are confined to a dedicated admin service that requires explicit injection of the admin port. Security review of GDPR purge logic is scoped to one class, not scattered across adapters and services.
+
+---
+
+### Example 54: Notification port — SupplierNotifierPort with multiple adapter strategies
+
+`SupplierNotifierPort` is an output port that sends notifications to suppliers (email, EDI, SMS). The port hides delivery strategy; adapters implement the preferred channel. The application service calls the port without caring whether the message goes via SMTP or an EDI gateway.
+
+```java
+// SupplierNotifierPort: output port for supplier notification delivery
+// => package com.example.procurement.purchasing.application
+package com.example.procurement.purchasing.application;
+
+import com.example.procurement.purchasing.domain.PurchaseOrderId;
+import com.example.procurement.supplier.domain.SupplierId;
+
+// NotificationPayload: immutable record carrying the notification content
+// => adapter-neutral: content is domain language; adapter decides format (HTML, EDI 850, SMS)
+public record NotificationPayload(
+    String subject,   // => email subject / EDI reference line / SMS prefix
+    String body,      // => full message text; adapter may convert to HTML or EDI segment
+    String supplierId // => recipient; adapter resolves to email address, EDI endpoint, or phone
+) {}
+
+// SupplierNotifierPort: describes what the application needs from notification delivery
+// => @FunctionalInterface: single method; implementable as a lambda in tests
+@FunctionalInterface
+public interface SupplierNotifierPort {
+    // notify: send a notification to a supplier
+    // => purchaseOrderId: context for the notification (which PO triggered it)
+    // => payload: domain-neutral message content; adapter decides wire format
+    void notify(PurchaseOrderId purchaseOrderId, NotificationPayload payload);
+    // => SMTP adapter: builds HTML email, connects to SMTP relay
+    // => EDI adapter: builds EDI 850 transaction set, sends to supplier EDI mailbox
+    // => InMemory adapter: appends payload to a list for test assertions
+}
+
+// SmtpSupplierNotifier: production adapter using SMTP
+// => package com.example.procurement.purchasing.adapter.out.notification
+class SmtpSupplierNotifier implements SupplierNotifierPort {
+
+    private final jakarta.mail.Session mailSession; // => JavaMail session; adapter-internal
+    private final String fromAddress;               // => SMTP from address; configured at wiring
+
+    SmtpSupplierNotifier(jakarta.mail.Session mailSession, String fromAddress) {
+        this.mailSession = mailSession; // => injected; no Spring @Autowired in adapter
+        this.fromAddress = fromAddress; // => e.g., "procurement@company.com"
+    }
+
+    @Override
+    public void notify(PurchaseOrderId purchaseOrderId, NotificationPayload payload) {
+        try {
+            var message = new jakarta.mail.internet.MimeMessage(mailSession);
+            message.setFrom(new jakarta.mail.internet.InternetAddress(fromAddress));
+            // => from: procurement system sender address
+            message.setSubject(payload.subject() + " [PO: " + purchaseOrderId.value() + "]");
+            // => subject: domain text + PO id for supplier reference
+            message.setText(payload.body(), "UTF-8", "html");
+            // => body: HTML text; adapter adds formatting; application service provides plain text
+            jakarta.mail.Transport.send(message);
+            // => send: SMTP delivery; throws MessagingException on failure
+        } catch (jakarta.mail.MessagingException e) {
+            throw new RuntimeException("SMTP notification failed for PO " + purchaseOrderId.value(), e);
+            // => wrapped RuntimeException: application service catches at port boundary if needed
+        }
+    }
+}
+
+// InMemorySupplierNotifier: test adapter; captures calls for assertion
+// => package com.example.procurement.purchasing.adapter.out.notification
+class InMemorySupplierNotifier implements SupplierNotifierPort {
+    private final java.util.List<NotificationPayload> sent = new java.util.ArrayList<>();
+    // => sent: captures all notifications published during a test
+
+    @Override
+    public void notify(PurchaseOrderId purchaseOrderId, NotificationPayload payload) {
+        sent.add(payload); // => append to list; no SMTP call; no network I/O
+        // => test reads sent.get(0) to verify subject, body, and supplierId
+    }
+
+    public java.util.List<NotificationPayload> getSent() {
+        return java.util.List.copyOf(sent); // => immutable snapshot for assertion
+    }
+}
+```
+
+**Key Takeaway**: `SupplierNotifierPort` hides notification delivery strategy — SMTP, EDI, or SMS are adapter concerns. The application service calls one port method regardless of channel.
+
+**Why It Matters**: A P2P platform may serve enterprise suppliers via EDI and small suppliers via email. The application service calls `notifier.notify(poId, payload)` and the composition root selects the right adapter per supplier category. Adding an SMS channel for mobile suppliers means one new adapter class — zero changes to the application service or domain. The port interface is the stable contract; adapters are the variation points.
+
+---
+
+### Example 55: Full intermediate flow — CQRS + query facade + notifier in one request lifecycle
+
+This example traces a full `issuePurchaseOrder` command through the CQRS split and a subsequent dashboard query, showing how command and query sides operate independently.
+
+```java
+// Full intermediate CQRS flow: issue command → query dashboard → notify supplier
+// => traces command side, query side, and notification side in one lifecycle
+
+// === COMMAND SIDE — Issue a PurchaseOrder ===
+
+// STEP 1 — HTTP POST /api/v1/purchase-orders arrives at command controller
+// => zone: adapter.in.web (PurchaseOrderCommandController)
+var cmd = new PurchaseOrderCommandPort.IssuePOCommand("sup_abc", "8000.00", "USD");
+// => inbound DTO translated to command; raw string supplierId; adapter responsibility
+
+// STEP 2 — Command service issues the PO (write side)
+// => zone: application (PurchaseOrderCommandService)
+PurchaseOrder issued = commandService.issue(cmd);
+// => commandService: PurchaseOrderCommandService; writes to primary DB via write port
+// => issued: PurchaseOrder in AWAITING_APPROVAL state; id = "po_<uuid>"
+
+// STEP 3 — Command service publishes event and routes approval
+// => eventPublisher.publish(new PurchaseOrderIssued(issued.id().value(), "sup_abc"))
+// => approvalRouter.routeApproval(issued.id(), L2)  — 8000 → L2 threshold
+// => both side-effect port calls happen inside commandService.issue(); no extra controller code
+
+// STEP 4 — Command side notifies supplier
+// => zone: application (separate notification step after save + event)
+var payload = new NotificationPayload(
+    "Purchase Order " + issued.id().value() + " issued",
+    // => subject: "Purchase Order po_<uuid> issued"
+    "Dear supplier, a new PO for 8,000.00 USD has been issued and is pending your acknowledgement.",
+    // => body: domain-language message; SMTP adapter converts to HTML; EDI adapter to 850
+    "sup_abc"
+    // => supplierId: recipient; SMTP adapter resolves to email; EDI adapter to mailbox
+);
+notifier.notify(issued.id(), payload);
+// => notifier: SupplierNotifierPort; SMTP or EDI adapter delivers; InMemory captures in tests
+
+// === QUERY SIDE — Dashboard reads newly issued PO ===
+
+// STEP 5 — HTTP GET /api/v1/purchase-orders?status=AWAITING_APPROVAL&sort=CREATED_AT_DESC
+// => zone: adapter.in.web (PurchaseOrderQueryController)
+Page<PurchaseOrder> page = queryFacade.findByStatus(
+    POStatus.AWAITING_APPROVAL,
+    SortSpec.CREATED_AT_DESC,  // => most recent first
+    0,                          // => first page
+    20                          // => 20 POs per page
+);
+// => queryFacade: PurchaseOrderQueryFacade; reads from read port (may be replica or cache)
+// => page.items(): includes the newly issued PO from STEP 2 (visible after write commit)
+
+// STEP 6 — Controller maps Page<PurchaseOrder> to HTTP 200 JSON response
+// => totalPages() = page.totalItems() / 20 (ceiling); rendered as "Page 1 of N"
+// => page.items() mapped to outbound DTO list; command and query controllers never coupled
+System.out.println("Issued PO: " + issued.id().value());
+// => Output: Issued PO: po_<uuid>
+System.out.println("Dashboard page 1 shows " + page.items().size() + " items");
+// => Output: Dashboard page 1 shows 1 items (or more if other POs exist)
+System.out.println("Supplier notified: " + payload.subject());
+// => Output: Supplier notified: Purchase Order po_<uuid> issued
+```
+
+**Key Takeaway**: The CQRS split keeps the command controller and query controller fully independent — the command service never calls a query method, and the query service never triggers a write.
+
+**Why It Matters**: In a production P2P platform processing thousands of POs per hour, the command side (writes + events) and query side (dashboard reads) have very different throughput profiles. Keeping them separated at the port level makes it possible to scale each side independently, add caching to the read path without touching write logic, and deploy each side's adapter changes without risk to the other. This is the operational payoff of CQRS at the hexagonal port boundary.

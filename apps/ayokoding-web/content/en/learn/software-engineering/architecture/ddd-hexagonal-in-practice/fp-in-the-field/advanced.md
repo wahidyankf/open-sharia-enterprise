@@ -61,6 +61,7 @@ printfn "Connected: %A" result
 
 ```yaml
 # docker-compose.integration.yml for procurement-platform-be
+# => This file defines the docker-compose harness for integration tests — not used in production
 services:
   postgres:
     # => postgres: the database service — named so other services reference it as a hostname
@@ -68,37 +69,54 @@ services:
     # => postgres:17-alpine: Alpine-based image — smallest footprint for test use
     # => 17-alpine: pinned to PostgreSQL major version 17 — matches the production target
     environment:
+      # => environment: sets PostgreSQL init env vars — only used on first container start
       POSTGRES_DB: procurement_platform_test
       # => procurement_platform_test: isolated test database — never touches the dev or production database
       POSTGRES_USER: procurement_platform
+      # => POSTGRES_USER: the role Npgsql connects as — matches DATABASE_URL credentials
       POSTGRES_PASSWORD: procurement_platform
+      # => POSTGRES_PASSWORD: test-only credential — never used outside the integration harness
     healthcheck:
+      # => healthcheck: docker-compose checks postgres health before starting test-runner
       test: ["CMD-SHELL", "pg_isready -U procurement_platform -d procurement_platform_test"]
       # => pg_isready: PostgreSQL built-in probe — returns 0 when the server accepts connections
       interval: 2s
+      # => interval: poll every 2 seconds — fast enough for CI without busy-looping
       timeout: 5s
+      # => timeout: each pg_isready call has 5 seconds to succeed
       retries: 10
       # => interval + retries = 20 seconds maximum wait — sufficient for Alpine startup
     ports:
       - "5432"
+      # => Expose port 5432: allows connecting directly from the developer host for debugging
     tmpfs:
       - /var/lib/postgresql/data
       # => tmpfs: RAM-backed filesystem — each docker-compose up run starts with an empty database
+      # => No leftover data between test runs — guarantees clean state without an explicit volume delete
 
   test-runner:
+    # => test-runner: the .NET test binary that runs integration tests against the postgres service
     build:
       context: ../..
+      # => context: repo root — Docker build context includes the full monorepo
       dockerfile: apps/procurement-platform-be/Dockerfile.integration
+      # => Dockerfile.integration: multi-stage build that runs dotnet test inside the container
+      # => Multi-stage: first stage builds .fsproj, second stage runs tests against postgres
     depends_on:
       postgres:
+        # => postgres: references the service name from the services block above
         condition: service_healthy
         # => condition: service_healthy: test-runner starts only after the healthcheck succeeds
     environment:
       DATABASE_URL: "Host=postgres;Port=5432;Database=procurement_platform_test;Username=procurement_platform;Password=procurement_platform"
       # => Host=postgres: container service name — docker-compose DNS resolves it on the internal network
+      # => DATABASE_URL format: Npgsql connection string — matches the environment variable read in tests
     volumes:
       - ../../specs:/specs:ro
       # => Mount the OpenAPI specs directory read-only — integration tests can validate contract shapes
+      # => ro: read-only mount — test container cannot accidentally modify the spec files
+      # => Path ../../specs: relative to docker-compose.integration.yml — maps to the monorepo specs/ folder
+      # => Integration tests use these to verify that the F# types match the OpenAPI contract at runtime
 ```
 
 ```mermaid
@@ -126,46 +144,69 @@ flowchart LR
 // Integration test consuming the docker-compose harness
 // Tests/Purchasing/NpgsqlPurchaseOrderRepositoryTests.fs
 module ProcurementPlatform.IntegrationTests.Purchasing.NpgsqlPurchaseOrderRepositoryTests
+// => IntegrationTests: separate assembly from unit tests — run only on test:integration Nx target
 
 open Xunit
+// => Xunit: test runner — discovers [<Fact>] and reports pass/fail to the CI output
 open ProcurementPlatform.Contexts.Purchasing.Infrastructure.NpgsqlPurchaseOrderRepository
+// => Real adapter under test — not the in-memory stub
 open ProcurementPlatform.Contexts.Purchasing.Domain
+// => Domain types: PurchaseOrder, PurchaseOrderId, Money, Status, ApprovalLevel
 
 [<Fact>]
+// => [<Fact>]: parameterless test — runs once with a single PostgreSQL connection
 let ``npgsqlPurchaseOrderRepository.SavePurchaseOrder stores a PO in PostgreSQL`` () =
     async {
+        // => async { }: the test body is an async computation — RunSynchronously executes it synchronously
         let connStr = System.Environment.GetEnvironmentVariable("DATABASE_URL")
         // => Read connection string from the environment variable docker-compose injects
+        // => DATABASE_URL: set by docker-compose.test.yml to point at the test PostgreSQL container
         let repo = npgsqlPurchaseOrderRepository connStr
         // => Factory call: returns PurchaseOrderRepository record closed over the connection string
 
         let money = createMoney 5000m "USD" |> Result.defaultWith failwith
         // => Smart constructor: validates amount and currency
+        // => 5000 USD: above L1 threshold — ApprovalLevel will be L2 in production logic
         let po =
+            // => Construct the PurchaseOrder aggregate — same smart constructors used in production
             { Id = PurchaseOrderId (System.Guid.NewGuid())
+              // => Fresh Guid: guarantees no collision with other test rows in the database
               SupplierId = SupplierId (System.Guid.NewGuid())
+              // => Arbitrary supplier: not validated by this test — only the repo round-trip matters
               TotalAmount = money
+              // => 5000 USD: stored as (amount=5000, currency="USD") in separate columns
               Status = Draft
+              // => Draft: initial state — the adapter stores whatever status the aggregate carries
               ApprovalLevel = L2
+              // => L2: persisted as the string "L2" in the status varchar column
               CreatedAt = System.DateTimeOffset.UtcNow }
+              // => UTC timestamp: stored in the timestamptz column — PostgreSQL preserves the offset
 
         let! saveResult = repo.SavePurchaseOrder po
         // => repo.SavePurchaseOrder: performs a real INSERT via Npgsql to PostgreSQL
+        // => let!: awaits the async computation — actually executes the INSERT
         match saveResult with
         | Error e ->
             Assert.Fail(sprintf "Expected Ok, got Error: %A" e)
+            // => Fail with a descriptive message: distinguishes UniqueConstraintViolation from ConnectionFailure
         | Ok () ->
+            // => INSERT committed: now verify the row is readable
             let! found = repo.FindPurchaseOrder po.Id
             // => Round-trip read: confirms the committed row is readable
+            // => Uses the same connection string — any PostgreSQL replication lag is irrelevant here
             match found with
             | Ok (Some saved) ->
                 Assert.Equal(po.Id, saved.Id)
                 // => Round-trip verified: the row was committed and is readable
+                // => Assert.Equal: fails test if IDs differ — indicates a mapping bug in the adapter
             | Ok None ->
                 Assert.Fail("PurchaseOrder not found after save")
+                // => Missing row: the INSERT did not commit or the SELECT returned no rows
             | Error e ->
                 Assert.Fail(sprintf "Find failed: %A" e)
+                // => Database error on read after successful write: indicates a schema or permission issue
     } |> Async.RunSynchronously
+// => RunSynchronously: xUnit expects a synchronous return — awaits the async computation
 ```
 
 **Trade-offs**: docker-compose integration tests are slower than in-memory tests (typically 5–30 seconds to start PostgreSQL) and require Docker on the CI runner and developer machine. They are not cacheable by Nx. Run them only on the `test:integration` Nx target, not `test:quick`. The payoff is that they catch schema drift, PostgreSQL-specific constraint behavior, and migration ordering bugs that no in-memory test can surface.
@@ -185,17 +226,24 @@ F# `System.IO.File` and raw ADO.NET can execute SQL files in order — but you m
 ```fsharp
 // Standard library: manual SQL file execution without a migration library
 open System.IO
+// => System.IO: File.ReadAllText — reads the .sql file from disk
 open Npgsql
+// => Npgsql: raw connection + command — no migration tracking abstraction
 
 let runMigration (connStr: string) (sqlFilePath: string) =
+    // => connStr: PostgreSQL connection string; sqlFilePath: path to the .sql migration file
     let sql = File.ReadAllText(sqlFilePath)
     // => Reads the entire .sql file as a string — no templating, no parameter binding
     use conn = new NpgsqlConnection(connStr)
+    // => use: IDisposable — closes connection when binding exits
     conn.Open()
+    // => Open: establish the TCP connection to PostgreSQL — synchronous in this approach
     use cmd = conn.CreateCommand()
+    // => CreateCommand: factory method on the open connection — binds cmd to conn
     cmd.CommandText <- sql
     // => Execute the entire file as one statement — DDL errors mid-file leave partial schema
     cmd.ExecuteNonQuery() |> ignore
+    // => ExecuteNonQuery: runs the SQL — returns row count which we discard
     // => No tracking table: if the migration was already applied, it runs again — idempotency is manual
 ```
 
@@ -238,19 +286,28 @@ let upgrade (connectionString: string) =
 ```fsharp
 // Integration test: verify migrations apply cleanly against the docker-compose database
 module ProcurementPlatform.IntegrationTests.Migrations.MigrationSmokeTest
+// => Smoke test: minimal assertion — does the migration run without error and is it idempotent?
 
 open Xunit
+// => Xunit: test runner for the [<Fact>] attribute
 open ProcurementPlatform.Infrastructure.Migrations
+// => upgrade: the DbUp migration runner from Infrastructure/Migrations.fs
 
 [<Fact>]
+// => [<Fact>]: no parameters — runs against the docker-compose test database
 let ``migrations apply successfully to the test database`` () =
+    // => Test body is synchronous — DbUp.PerformUpgrade is a blocking call
     let connStr = System.Environment.GetEnvironmentVariable("DATABASE_URL")
+    // => DATABASE_URL: injected by docker-compose.test.yml — points at the test PostgreSQL container
     let result = upgrade connStr
+    // => upgrade: applies all unapplied migration scripts; returns a DatabaseUpgradeResult
     Assert.True(result.Successful, sprintf "Migration failed: %A" result.Error)
     // => Fails with the first script error — the message includes the script name and exception
     let result2 = upgrade connStr
+    // => Run a second time: all scripts are already in the journal — should apply zero scripts
     Assert.True(result2.Successful, "Second run of migrations should be idempotent")
     // => DbUp skips scripts already in the journal — second run applies zero scripts
+    // => Idempotency assertion: production restarts always run migrations — must be safe to repeat
 ```
 
 **Trade-offs**: DbUp applies scripts in alphabetical order — naming discipline (`0001_`, `0002_`) is mandatory. A mislabeled script that should run after `0010_` but is named `002_` runs second and breaks. For teams that prefer a declarative diff-based migration tool, FluentMigrator provides an equivalent with C#-style migration classes.
@@ -270,30 +327,45 @@ The `payments` context must disburse funds to suppliers via a bank API. Like the
 ```fsharp
 // Standard library: HttpClient calling a bank disbursement endpoint
 open System.Net.Http
+// => System.Net.Http.HttpClient — BCL HTTP client; IHttpClientFactory not available without DI
 open System.Text
+// => Encoding.UTF8: required by StringContent
 open System.Text.Json
 // => Three BCL imports — no bank SDK, no NuGet beyond the SDK
 
 let private httpClient = new HttpClient()
 // => Static HttpClient: reused across calls — avoids socket exhaustion from new() per call
+// => But: no named client, no retry, no circuit-breaker — resilience is entirely manual
 
 let callBankDisbursement (apiKey: string) (baseUrl: string) (paymentId: string) (amount: decimal) (iban: string) =
     // => Raw parameters — no typed settings record, no port alias
+    // => Five primitive parameters: easy to pass in the wrong order with no compiler check
     async {
         let body =
+            // => Anonymous record serialized inline — no shared type with the consumer
             JsonSerializer.Serialize
                 {| paymentReference = paymentId
+                   // => paymentId is a raw string — no PaymentId DU, no type safety
                    amount = amount
+                   // => Raw decimal — no Money value object, no currency field
                    beneficiaryIban = iban |}
+                   // => Missing BIC field — bank API may require it; silent omission
         // => Hand-crafted JSON body — anonymous records, no type safety on field names
         use request = new HttpRequestMessage(HttpMethod.Post, baseUrl + "/disbursements")
+        // => URL string concatenation — baseUrl trailing slash errors are silent
         request.Headers.Authorization <- Headers.AuthenticationHeaderValue("Bearer", apiKey)
+        // => Bearer token: inline mutation of request headers — no encapsulation
         request.Content <- new StringContent(body, Encoding.UTF8, "application/json")
+        // => Content-Type set via StringContent constructor — correct but fragile
         let! response = httpClient.SendAsync(request) |> Async.AwaitTask
+        // => SendAsync: actual HTTP call — no retry, no timeout beyond HttpClient.Timeout
         response.EnsureSuccessStatusCode() |> ignore
         // => Throws HttpRequestException on 4xx/5xx — no typed error discrimination
+        // => Caller cannot tell InvalidIban from AuthenticationFailure from network error
         let! json = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+        // => Read body as string — deserialization happens next
         return JsonSerializer.Deserialize<{| transactionRef: string; status: string |}>(json)
+        // => Anonymous record: fragile if bank changes the field name — no compile error, just null
     }
 ```
 
@@ -335,7 +407,8 @@ type BankingError =
 
 // Supplier notifier port — send notifications to supplier
 type SupplierNotifierPort =
-    { NotifyPaymentDispatched: SupplierId -> Payment -> Async<Result<unit, string>>
+    { NotifyPaymentDisbursed: SupplierId -> Payment -> Async<Result<unit, string>>
+      // => NotifyPaymentDisbursed: aligns with the canonical PaymentDisbursed domain event (spec-authoritative name)
       // => Send email or EDI remittance advice to the supplier
       // => Adapter: SMTP in production; stub in tests
       NotifyPurchaseOrderIssued: SupplierId -> PurchaseOrderId -> Async<Result<unit, string>> }
@@ -346,12 +419,18 @@ type SupplierNotifierPort =
 // payments context: bank HTTP adapter
 // src/ProcurementPlatform/Contexts/Payments/Infrastructure/BankApiAdapter.fs
 module ProcurementPlatform.Contexts.Payments.Infrastructure.BankApiAdapter
+// => Infrastructure layer: holds all HTTP client and serialization dependencies
 
 open System.Net.Http
+// => IHttpClientFactory: managed HTTP client pool — avoids socket exhaustion
 open System.Text
+// => Encoding.UTF8: required by StringContent constructor for the JSON request body
 open System.Text.Json
+// => JsonSerializer: BCL JSON serializer — no Newtonsoft.Json dependency
 open ProcurementPlatform.Contexts.Payments.Application.Ports
+// => Port type: BankingPort — the record this adapter satisfies
 open ProcurementPlatform.Contexts.Payments.Domain
+// => Domain types: Payment, BankAccount, TransactionRef, DisbursementStatus
 
 // Typed config record for the bank API adapter
 type BankApiSettings =
@@ -365,56 +444,91 @@ type BankApiSettings =
 // Bank adapter factory
 let make (settings: BankApiSettings) (factory: IHttpClientFactory) : BankingPort =
     // => factory: IHttpClientFactory — named client with resilience pipeline from Guide 18
+    // => BankApiSettings: typed config — no magic strings inside the function body
     { InitiateDisbursement =
+        // => Record literal field: satisfies the InitiateDisbursement function slot in BankingPort
         fun (payment: Payment) (account: BankAccount) ->
+            // => payment: the domain payment aggregate; account: the beneficiary bank account
             async {
+                // => async { }: all HTTP I/O must be non-blocking — async prevents thread pool starvation
                 let client = factory.CreateClient("bank-api")
                 // => Named client: resilience pipeline applied (Guide 18)
+                // => factory.CreateClient: retrieves or creates a pooled HttpClient; never new HttpClient()
                 let body =
                     JsonSerializer.Serialize
                         {| paymentReference = let (PaymentId id) = payment.Id in id.ToString()
+                           // => Unwrap PaymentId DU to string — bank API expects a UUID string
                            amount = payment.Amount.Amount
+                           // => Decimal amount from Money value object
                            currency = payment.Amount.Currency
+                           // => ISO 4217 currency code
                            beneficiaryIban = account.Iban
+                           // => IBAN from the bank account value object
                            beneficiaryBic = account.Bic |}
+                           // => BIC (SWIFT code) required by the bank API for routing
                 // => Serialize bank request — bank API schema determines field names
                 use req = new HttpRequestMessage(HttpMethod.Post, settings.BaseUrl + "/disbursements")
+                // => use: IDisposable — releases the HttpRequestMessage after the call
                 req.Headers.Authorization <- Headers.AuthenticationHeaderValue("Bearer", settings.ApiKey)
+                // => Bearer token: API key injected from Kubernetes Secret — never in source
                 req.Content <- new StringContent(body, Encoding.UTF8, "application/json")
+                // => StringContent: sets Content-Type: application/json and encodes the body as UTF-8
                 try
+                    // => try/with: catches network errors, serialization errors, and timeout exceptions
                     let! resp = client.SendAsync(req) |> Async.AwaitTask
+                    // => SendAsync: actual network I/O — hits the bank API over HTTPS
+                    // => Async.AwaitTask: bridges .NET Task to F# Async
                     match int resp.StatusCode with
+                    // => Pattern-match on the HTTP status code: typed discrimination of bank API responses
                     | 201 ->
+                        // => 201 Created: disbursement accepted — bank returns a transaction reference
                         let! json = resp.Content.ReadAsStringAsync() |> Async.AwaitTask
+                        // => Read the response body as a string — parse the transaction reference
                         let parsed = JsonSerializer.Deserialize<{| transactionRef: string |}>(json)
+                        // => Anonymous record deserialization: matches the bank API response schema
                         return Ok (TransactionRef parsed.transactionRef)
                         // => Return the bank's transaction reference for subsequent status polling
                     | 422 ->
                         return Error (InvalidIban account.Iban)
                         // => HTTP 422: bank rejected the IBAN — surfaced as typed error
                     | 401 | 403 ->
+                        // => 401 Unauthorized or 403 Forbidden: API key invalid or expired
                         return Error AuthenticationFailure
-                        // => Auth failure: API key invalid — alert ops team
+                        // => Auth failure: API key invalid or expired — alert ops team
                     | _ ->
+                        // => Any other status: treat as service unavailable — includes 500, 503
                         return Error (BankApiUnavailable (System.Exception(sprintf "HTTP %d" (int resp.StatusCode))))
+                        // => Unexpected status: treat as unavailable — circuit-breaker in Guide 18 catches repeated failures
                 with ex ->
+                    // => Catch-all: connection timeout, SSL error, or deserialization failure
                     return Error (BankApiUnavailable ex)
                     // => Network error: carry the exception — circuit-breaker in Guide 18 catches repeated failures
             }
       QueryDisbursementStatus =
+        // => Second port field: polls the bank API for the status of a prior disbursement
         fun (TransactionRef ref) ->
+            // => Destructure TransactionRef DU — ref is the raw string returned by InitiateDisbursement
             async {
+                // => async { }: I/O required for the GET call — must be non-blocking
                 let client = factory.CreateClient("bank-api")
+                // => Same named client — reuses the resilience pipeline
                 use req = new HttpRequestMessage(HttpMethod.Get, sprintf "%s/disbursements/%s" settings.BaseUrl ref)
+                // => GET request: bank API endpoint for status polling
                 req.Headers.Authorization <- Headers.AuthenticationHeaderValue("Bearer", settings.ApiKey)
+                // => Same API key — all bank API calls use Bearer authentication
                 try
+                    // => try/with: catches network and deserialization errors
                     let! resp = client.SendAsync(req) |> Async.AwaitTask
+                    // => SendAsync: HTTP GET to the bank API — network I/O
                     let! json = resp.Content.ReadAsStringAsync() |> Async.AwaitTask
+                    // => Read response body: contains the disbursement status string
                     let parsed = JsonSerializer.Deserialize<{| status: string |}>(json)
+                    // => Deserialize status: "pending", "completed", "failed" — bank-specific strings
                     return Ok (DisbursementStatus.fromString parsed.status)
                     // => Map the bank's status string to the domain DisbursementStatus DU
                 with ex ->
                     return Error (BankApiUnavailable ex)
+                    // => Network or deserialization error: caller retries or escalates
             }
     }
 ```
@@ -425,19 +539,25 @@ The stub adapter for tests needs no API key:
 // Stub bank adapter for tests — no HTTP call, no API key
 // Tests/Payments/StubBankingPort.fs
 module ProcurementPlatform.Tests.Payments.StubBankingPort
+// => Test module: no BankApiSettings required — simplifies test setup dramatically
 
 open ProcurementPlatform.Contexts.Payments.Application.Ports
+// => BankingPort: the record the stub must satisfy — same shape as the real adapter
 open ProcurementPlatform.Contexts.Payments.Domain
+// => Domain types: TransactionRef, DisbursementStatus.Remitted
 
 let deterministicStub : BankingPort =
     // => Stub: always returns fixed results — exercises the application service's happy path
+    // => Deterministic result enables reproducible assertions without network access
     { InitiateDisbursement =
         fun _ _ ->
             // => fun _ _: discards Payment and BankAccount — fixed result drives assertions
             async { return Ok (TransactionRef "test-txn-ref-001") }
             // => Deterministic: tests do not need an API key or network access
+            // => TransactionRef "test-txn-ref-001": a known value tests can assert against
       QueryDisbursementStatus =
         fun _ ->
+            // => fun _: discards the TransactionRef — always returns the same status
             async { return Ok Remitted }
             // => Always returns Remitted — tests verify the downstream state transition
     }
@@ -460,20 +580,28 @@ F# recursion can implement a simple retry loop without any library:
 ```fsharp
 // Standard library: recursive retry with exponential backoff
 open System.Threading
+// => System.Threading: CancellationToken — not used here, but needed for production cancellation
 
 let rec retryAsync (attempt: int) (maxAttempts: int) (f: unit -> Async<Result<'a, string>>) =
     // => let rec: enables recursive calls from within the function body
     // => Generic 'a: the success type — retry logic is type-agnostic
+    // => f: unit -> Async<Result<'a, string>>: the operation to retry — lazy via function
     async {
+        // => async { }: F# computation expression — the body is a state machine, not a blocking loop
         let! result = f ()
+        // => f (): execute the async operation — each call is an independent attempt
         match result with
         | Ok v -> return Ok v
+        // => Success on any attempt: return immediately, no further retries
         | Error _ when attempt >= maxAttempts ->
+            // => Exceeded retry budget: return the last error without retrying
             return result
         | Error _ ->
+            // => Transient error within budget: wait and retry
             do! Async.Sleep(1000 * attempt)
             // => Exponential backoff: sleep 1s, 2s, 3s... — Async.Sleep does not block the thread
             return! retryAsync (attempt + 1) maxAttempts f
+            // => Tail-recursive call: F# optimizes this to avoid stack overflow
     }
 ```
 
@@ -486,9 +614,12 @@ let rec retryAsync (attempt: int) (maxAttempts: int) (f: unit -> Async<Result<'a
 ```fsharp
 // Program.fs: register HttpClient with resilience policies at startup
 open Microsoft.Extensions.DependencyInjection
+// => IServiceCollection extension methods: AddHttpClient, AddStandardResilienceHandler
 open Microsoft.Extensions.Http.Resilience
+// => Microsoft.Extensions.Http.Resilience NuGet: AddStandardResilienceHandler extension method
 
 let configureBankApiHttpClient (services: IServiceCollection) =
+    // => Called once from Program.fs at startup — wires the named HttpClient into the DI container
     services
         .AddHttpClient("bank-api")
         // => Named client "bank-api": resolved by name in the BankingPort adapter factory
@@ -498,44 +629,63 @@ let configureBankApiHttpClient (services: IServiceCollection) =
         // => Default policy: 3 retries with exponential backoff + jitter, 30s total timeout,
         //    circuit-breaker that opens after 10 failures in 30 seconds
         |> ignore
+        // => |> ignore: AddStandardResilienceHandler returns IHttpClientBuilder — discard the builder
     services
+    // => Return services: enables method chaining in Program.fs — services.AddGiraffe().AddBankApi() etc.
 ```
 
 ```fsharp
 // Resilient bank adapter: BrokenCircuitException caught at the adapter boundary
 // src/ProcurementPlatform/Contexts/Payments/Infrastructure/BankApiAdapter.fs (extended)
+// => Extended version of Guide 17's adapter — adds explicit BrokenCircuitException handling
 
 let makeResilient (factory: IHttpClientFactory) (settings: BankApiSettings) : BankingPort =
+    // => factory: IHttpClientFactory with "bank-api" named client registered
+    // => settings: BankApiSettings — API key and base URL from config
     { InitiateDisbursement =
+        // => Same port record shape as the non-resilient adapter — composition root selects which to use
         fun payment account ->
+            // => payment: Payment domain aggregate; account: BankAccount value object
             async {
+                // => async { }: all HTTP I/O must be async — no blocking calls allowed
                 let client = factory.CreateClient("bank-api")
                 // => CreateClient("bank-api"): HttpClient with the resilience pipeline applied
-                // => If the circuit is open, SendAsync throws BrokenCircuitException
+                // => If the circuit is open, SendAsync throws BrokenCircuitException before any HTTP call
                 try
                     // ... same HTTP call as the non-resilient adapter ...
+                    // => Polly wraps SendAsync: retries on 5xx, opens circuit after repeated failures
                     return Ok (TransactionRef "txn-ref")
                     // => Real implementation parses the response — same logic as Guide 17
                 with
                 | :? Polly.CircuitBreaker.BrokenCircuitException ->
                     // => Circuit open: the Polly pipeline has tripped after repeated failures
+                    // => No HTTP call was attempted — Polly rejected the request before sending
                     return Error (BankApiUnavailable (System.Exception "Bank API circuit open"))
                     // => BankApiUnavailable: the application service logs and defers the payment
                 | ex ->
+                    // => Retries exhausted: Polly rethrows the last exception from the retry pipeline
                     return Error (BankApiUnavailable ex)
                     // => Catch-all: any other exception after the retry budget is exhausted
             }
       QueryDisbursementStatus =
+        // => Same resilience pattern as InitiateDisbursement — circuit-breaker state is shared
         fun ref ->
+            // => fun ref: destructures the TransactionRef DU to get the raw string
             async {
+                // => async { }: I/O required for the status GET call
                 let client = factory.CreateClient("bank-api")
+                // => Same named client — shares the circuit-breaker state with InitiateDisbursement
                 try
+                    // => try/with: catches BrokenCircuitException and unexpected errors
                     return Ok Remitted
+                    // => Real implementation calls the bank status endpoint — abbreviated for clarity
                 with
                 | :? Polly.CircuitBreaker.BrokenCircuitException ->
+                    // => Circuit open: both InitiateDisbursement and QueryDisbursementStatus fail fast
                     return Error (BankApiUnavailable (System.Exception "Bank API circuit open — status query unavailable"))
                 | ex ->
                     return Error (BankApiUnavailable ex)
+                    // => Unexpected error after retry budget exhausted
             }
     }
 ```
@@ -567,8 +717,10 @@ let enqueue (eventJson: string) = queue.Enqueue(eventJson)
 // => eventJson: serialized event — loses type safety across the enqueue/dequeue boundary
 
 let dequeue () =
+    // => Returns Some item or None — caller loops calling dequeue until None
     match queue.TryDequeue() with
     | true, item -> Some item
+    // => true, item: an event was waiting — return it for processing
     | false, _ -> None
 // => Poll pattern: the relay must call dequeue in a loop — no push notification
 ```
@@ -582,12 +734,14 @@ The full end-to-end event flow crosses four port boundaries:
 ```fsharp
 // End-to-end domain event flow — four boundary crossings
 // src/ProcurementPlatform/Contexts/Purchasing/Infrastructure/OutboxRelayWorker.fs
+// => Infrastructure layer: polls the outbox table and dispatches events to downstream contexts
 
 // Boundary 1: Application service emits PurchaseOrderIssued after successful save (Guide 9).
 // The outbox adapter writes an outbox_events row in the same transaction.
 
 // Boundary 2: Outbox relay worker polls and forwards
 module ProcurementPlatform.Contexts.Purchasing.Infrastructure.OutboxRelayWorker
+// => Module corresponds to the OutboxRelayWorker background service type
 
 open Microsoft.Extensions.Hosting
 // => IHostedService: ASP.NET Core background service — runs on a loop alongside the HTTP server
@@ -597,38 +751,53 @@ open ProcurementPlatform.Contexts.Purchasing.Application.Ports
 // => DomainEvent discriminated union — deserialize the JSON payload into the typed event
 
 type OutboxRelayWorker(connStr: string) =
+    // => Primary constructor: connStr injected by the DI container at startup
     interface IHostedService with
+        // => IHostedService: StartAsync called by the host on startup, StopAsync on shutdown
         member _.StartAsync(cancellationToken) =
+            // => cancellationToken: ASP.NET Core signals graceful shutdown via this token
             task {
+                // => task { }: C#-compatible async computation — IHostedService requires Task, not Async<unit>
                 while not cancellationToken.IsCancellationRequested do
+                    // => Loop until the host requests shutdown — runs continuously
                     use conn = new Npgsql.NpgsqlConnection(connStr)
+                    // => use: IDisposable — connection returned to pool after each poll cycle
                     let! rows =
                         conn.QueryAsync<OutboxRow>(
                             "SELECT * FROM purchasing.outbox_events WHERE processed_at IS NULL ORDER BY created_at LIMIT 10")
                         |> Async.AwaitTask
                     // => Query unprocessed rows — LIMIT 10: prevents long transactions under high event volume
+                    // => ORDER BY created_at: ensures FIFO delivery — older events dispatched first
                     for row in rows do
+                        // => Process each unprocessed row: deserialize, dispatch, mark processed
                         let event = JsonSerializer.Deserialize<DomainEvent>(row.payload)
                         // => Deserialize the typed event from the JSON payload
+                        // => DomainEvent DU: same schema used by the outbox adapter (Guide 10)
                         match event with
                         | PurchaseOrderIssued payload ->
                             // => Dispatch: PurchaseOrderIssued routes to receiving (GRN expectation) and supplier-notifier
                             printfn "Relaying PurchaseOrderIssued: poId=%A supplierId=%A" payload.PurchaseOrderId payload.SupplierId
                             // => In production: call the receiving context's port and the supplier-notifier port
+                            // => Both contexts receive the same event — relay delivers to each independently
                         | PurchaseOrderCancelled payload ->
                             printfn "Relaying PurchaseOrderCancelled: poId=%A" payload.PurchaseOrderId
+                            // => Cancelled events route to accounting (credit note) and supplier-notifier (cancellation EDI)
                         | _ -> ()
+                        // => Unknown event type: skip — new event types require matching relay cases
                         let! _ =
                             conn.ExecuteAsync(
                                 "UPDATE purchasing.outbox_events SET processed_at = @now WHERE id = @id",
                                 {| now = System.DateTimeOffset.UtcNow; id = row.id |})
                             |> Async.AwaitTask
                         // => Mark as processed after successful dispatch — idempotency key
+                        // => processed_at: non-null means the relay has delivered this event
                         ()
                     do! System.Threading.Tasks.Task.Delay(5000) |> Async.AwaitTask
                     // => Sleep 5 seconds between polls — reduces DB load; tune based on event volume
+                    // => Task.Delay vs Thread.Sleep: Task.Delay is non-blocking — thread pool is free
             }
         member _.StopAsync(_) = System.Threading.Tasks.Task.CompletedTask
+        // => StopAsync: no cleanup needed — the cancellationToken terminates the while loop
 ```
 
 **Trade-offs**: the polling relay is simple and self-contained but adds 0–5 seconds of latency between aggregate commit and event delivery. For latency-sensitive use cases, replace the polling loop with PostgreSQL `LISTEN/NOTIFY`. For high-throughput scenarios (> 1000 events/second), a CDC-based relay reading the PostgreSQL WAL (Debezium) eliminates the polling overhead entirely.
@@ -648,24 +817,38 @@ In production, you need to know which port call is slow, which adapter is produc
 ```fsharp
 // Standard library: ActivitySource span wrapping a port call
 open System.Diagnostics
+// => System.Diagnostics.ActivitySource: .NET's native distributed tracing — no OpenTelemetry import required
 
 let private activitySource = new ActivitySource("ProcurementPlatform.Adapters")
 // => Named trace source — listeners (OpenTelemetry SDK) attach to it by name
 // => One static instance per module: safe to share across threads
+// => Name convention: "ServiceName.ComponentName" — visible in trace backends as the instrumentation scope
 
 let withSpan (name: string) (f: unit -> Async<'a>) : Async<'a> =
+    // => Generic helper: wraps any Async<'a> operation in a span — reusable across all port calls
+    // => name: the span name — should follow "context.operation" convention
+    // => f: the port call to wrap — unit -> Async<'a> defers execution until the span is started
     async {
         use activity = activitySource.StartActivity(name)
         // => StartActivity: creates a span if a listener is attached; returns null if not
+        // => use: IDisposable — ends the span when the binding exits the async block
         try
             let! result = f ()
+            // => Execute the wrapped port call inside the span
             activity |> Option.ofObj |> Option.iter (fun a -> a.SetStatus(ActivityStatusCode.Ok) |> ignore)
+            // => Option.ofObj: null safety — ActivitySource returns null when no listener is registered
+            // => SetStatus(Ok): marks the span as successful before it ends
             return result
+            // => Return the port result unchanged — withSpan is transparent to the caller
         with ex ->
+            // => Exception path: port call threw — record error details in the span
             activity |> Option.ofObj |> Option.iter (fun a ->
                 a.SetStatus(ActivityStatusCode.Error, ex.Message) |> ignore
+                // => Error status: span appears red in trace backends (Jaeger, Honeycomb)
                 a.RecordException(ex) |> ignore)
+                // => RecordException: captures stack trace as a span event — searchable in trace backends
             return raise ex
+            // => Re-raise: preserve the original exception — withSpan does not swallow errors
     }
 ```
 
@@ -679,9 +862,12 @@ The observability adapter wraps the `PurchaseOrderRepository` in a span without 
 // Observability adapter: OpenTelemetry span decorator for PurchaseOrderRepository port calls
 // src/ProcurementPlatform/Contexts/Purchasing/Infrastructure/ObservabilityAdapter.fs
 module ProcurementPlatform.Contexts.Purchasing.Infrastructure.ObservabilityAdapter
+// => Infrastructure layer: wraps another adapter — the decorator pattern at the port boundary
 
 open System.Diagnostics
+// => System.Diagnostics.Activity: .NET's native distributed tracing primitives
 open ProcurementPlatform.Contexts.Purchasing.Application.Ports
+// => Port types: PurchaseOrderRepository — the record the decorator wraps
 
 let private source = new ActivitySource("ProcurementPlatform.Purchasing")
 // => Named source: OpenTelemetry SDK subscribes by name in Program.fs
@@ -692,65 +878,117 @@ let withRepositorySpans (inner: PurchaseOrderRepository) : PurchaseOrderReposito
     // => inner: the real Npgsql adapter's PurchaseOrderRepository
     // => Returns PurchaseOrderRepository: same record shape — application service cannot distinguish decorated from raw
     { SavePurchaseOrder =
+        // => Wraps inner.SavePurchaseOrder — intercepts the call to add tracing
         fun po ->
+            // => fun po: same signature as inner.SavePurchaseOrder — transparent substitution
             async {
+                // => async { }: DB I/O is async — span lifetime is bounded by the async block
                 use activity = source.StartActivity("purchasing.save-purchase-order")
                 // => Span name: "context.operation" — visible in Jaeger / Honeycomb
+                // => use: IDisposable — ends the span automatically when the binding exits
                 activity
+                // => activity may be null if no listener is registered — Option.ofObj handles that
                 |> Option.ofObj
+                // => Option.ofObj: converts null to None, non-null Activity to Some Activity
                 |> Option.iter (fun a ->
+                    // => Option.iter: executes the lambda only if Some — null-safe tagging
                     a.SetTag("po.id", po.Id.ToString()) |> ignore
                     // => Tag the PO ID: enables filtering all spans for a specific PO
                     a.SetTag("po.approval_level", sprintf "%A" po.ApprovalLevel) |> ignore
                     // => ApprovalLevel tag: useful for latency analysis by approval tier
                     a.SetTag("context", "purchasing") |> ignore)
+                    // => context tag: enables filtering all purchasing spans across all operation types
                 try
+                    // => try/with: captures exception from inner adapter — marks span as Error
                     let! result = inner.SavePurchaseOrder po
+                    // => Delegate to the real adapter — all DB I/O happens inside inner.SavePurchaseOrder
                     match result with
                     | Ok () ->
+                        // => Success path: mark the span as OK before returning
                         activity |> Option.ofObj |> Option.iter (fun a -> a.SetStatus(ActivityStatusCode.Ok) |> ignore)
+                        // => ActivityStatusCode.Ok: span will appear green in trace backends
                     | Error e ->
+                        // => Error path: mark the span as Error with details
                         activity
+                        // => activity: may be None if no OpenTelemetry listener is registered
                         |> Option.ofObj
+                        // => Option.ofObj: null-safe — no NullReferenceException if no listener
                         |> Option.iter (fun a ->
+                            // => Lambda runs only if Some Activity — null safety maintained
                             a.SetStatus(ActivityStatusCode.Error, sprintf "%A" e) |> ignore
+                            // => Error description: human-readable RepositoryError variant name
                             a.SetTag("error.type", e.GetType().Name) |> ignore)
+                            // => error.type tag: distinguishes UniqueConstraintViolation from ConnectionFailure
                     return result
+                    // => Pass the result through — the decorator does not change the return value
                 with ex ->
+                    // => Exception path: unhandled exception from the inner adapter
                     activity
+                    // => activity: tag and record exception before re-raising
                     |> Option.ofObj
+                    // => Option.ofObj: null-safe — same pattern as the success and error paths
                     |> Option.iter (fun a ->
+                        // => Lambda: only executes if Some Activity — always safe to call
                         a.SetStatus(ActivityStatusCode.Error, ex.Message) |> ignore
+                        // => ActivityStatusCode.Error: span appears red in trace backends
                         a.RecordException(ex) |> ignore)
+                        // => RecordException: captures the stack trace in the span as a span event
                     return raise ex
+                    // => Re-raise: preserve the original exception — caller handles it
             }
       FindPurchaseOrder =
+        // => Wraps inner.FindPurchaseOrder — same decorator pattern as SavePurchaseOrder
         fun poId ->
+            // => fun poId: same signature as inner.FindPurchaseOrder — transparent substitution
             async {
+                // => async { }: DB query is async — span wraps the full I/O lifetime
                 use activity = source.StartActivity("purchasing.find-purchase-order")
+                // => Span name: "context.find-purchase-order" — distinct from save span
+                // => use: IDisposable — automatically ends the span at the close of the async block
                 activity
                 |> Option.ofObj
+                // => Option.ofObj: null-safe conversion — ActivitySource returns null when unobserved
                 |> Option.iter (fun a ->
+                    // => Option.iter: executes tagging lambda only if Some Activity
                     a.SetTag("po.id", poId.ToString()) |> ignore
+                    // => Tag the queried PO ID: trace identifies which PO triggered this query
                     a.SetTag("context", "purchasing") |> ignore)
+                    // => context tag: consistent with SavePurchaseOrder — enables cross-operation analysis
                 try
+                    // => try/with: exception from inner.FindPurchaseOrder marks span as Error
                     let! result = inner.FindPurchaseOrder poId
+                    // => Delegate to the real adapter — Dapper query runs inside inner.FindPurchaseOrder
                     match result with
                     | Ok _ ->
+                        // => Both Ok None and Ok (Some po) are successful outcomes
                         activity |> Option.ofObj |> Option.iter (fun a -> a.SetStatus(ActivityStatusCode.Ok) |> ignore)
+                        // => ActivityStatusCode.Ok: span appears green regardless of whether PO was found
                     | Error e ->
+                        // => ConnectionFailure: infrastructure error — mark span as Error
                         activity
+                        // => activity: pipeline to add Error status to the span if Some
                         |> Option.ofObj
+                        // => Option.ofObj: null-safety — same pattern as SavePurchaseOrder
                         |> Option.iter (fun a ->
+                            // => Lambda: executes only if Some Activity — null-safe
                             a.SetStatus(ActivityStatusCode.Error, sprintf "%A" e) |> ignore)
+                            // => Error status: span appears red — alerts on call from monitoring dashboard
                     return result
+                    // => Pass the result through — decorator is transparent to the caller
                 with ex ->
+                    // => Unexpected exception: connection error, Dapper deserialization failure, etc.
                     activity
+                    // => activity: mark as Error and record exception before re-raising
                     |> Option.ofObj
+                    // => Option.ofObj: null-safe — consistent pattern across all span error paths
                     |> Option.iter (fun a ->
+                        // => Lambda: executes only if Some Activity — safe when no listener registered
                         a.SetStatus(ActivityStatusCode.Error, ex.Message) |> ignore
+                        // => Error status with message: distinguishes exception from typed RepositoryError
                         a.RecordException(ex) |> ignore)
+                        // => RecordException: attaches stack trace as a span event — searchable in trace backends
                     return raise ex
+                    // => Re-raise: preserve the original exception with full stack trace
             }
     }
 ```
@@ -829,35 +1067,50 @@ type MurabahaContractRepository =
 // purchasing application service: optional murabaha financing port
 // src/ProcurementPlatform/Contexts/Purchasing/Application/IssuePurchaseOrder.fs
 module ProcurementPlatform.Contexts.Purchasing.Application.IssuePurchaseOrder
+// => Application layer: imports domain and port types; never imports infrastructure
 
 open ProcurementPlatform.Contexts.Purchasing.Domain
+// => PurchaseOrder, PurchaseOrderId, Status.Issued — domain aggregate and types
 open ProcurementPlatform.Contexts.Purchasing.Application.Ports
+// => PurchaseOrderRepository, EventPublisher — primary ports for this context
 open ProcurementPlatform.Contexts.MurabahaFinance.Application.Ports
 // => Import the murabaha port type — the application service accepts it as an option
 
 let issuePurchaseOrder
     (repo: PurchaseOrderRepository)
+    // => repo: database adapter injected at composition root
     (pub: EventPublisher)
+    // => pub: outbox adapter injected at composition root
     (murabahaPort: MurabahaFinancingPort option)
     // => option: None when murabaha is disabled; Some port when enabled for this organization
     (poId: PurchaseOrderId)
+    // => poId: the PO to issue — fetched from the repository inside the service
     : Async<Result<PurchaseOrder, IssuePOError>> =
+    // => Return type: Result on Async — all errors are typed, no exceptions cross the service boundary
     async {
+        // => async { }: I/O is required for repo.FindPurchaseOrder and repo.SavePurchaseOrder
         let! poResult = repo.FindPurchaseOrder poId
+        // => FindPurchaseOrder: reads the PO from the database — must exist and be in Draft/Approved state
         match poResult with
         | Error e -> return Error (RepositoryFailure (sprintf "%A" e))
+        // => Infrastructure failure: propagate as typed error — caller returns HTTP 500
         | Ok None -> return Error (PONotFound poId)
+        // => PO not found: typed error — caller returns HTTP 404
         | Ok (Some po) ->
+            // => PO found: proceed with issuance
             // Check if murabaha financing applies
             match murabahaPort with
             | Some mPort when po.TotalAmount.Amount > 100_000m ->
                 // => Murabaha enabled and PO exceeds threshold — request financing quote
+                // => 100_000m: threshold configurable via feature flag in a production implementation
                 let! quoteResult = mPort.QuoteContract poId po.TotalAmount
                 // => QuoteContract: the murabaha bank adapts; stub in tests
                 match quoteResult with
+                // => Exhaustive match: both Error and Ok are handled explicitly
                 | Error e ->
                     // => Financing quote failed — issue PO without murabaha financing
                     eprintfn "Murabaha quote failed for PO %A: %s — issuing without financing" poId e
+                    // => Log and continue: murabaha is optional — PO issuance is not blocked
                 | Ok _quote ->
                     // => Quote received — in a full implementation, the buyer accepts in a separate step
                     // => MurabahaContractSigned event is published when AcceptContract is called
@@ -865,12 +1118,19 @@ let issuePurchaseOrder
             | _ ->
                 // => Murabaha disabled or PO below threshold — standard issuance path
                 ()
+                // => No murabaha financing: proceed directly to status update
             let issuedPO = { po with Status = Issued }
+            // => Domain state transition: Draft/Approved → Issued (immutable record update)
             match! repo.SavePurchaseOrder issuedPO with
+            // => match!: awaits the async result and pattern-matches in one step
             | Error e -> return Error (RepositoryFailure (sprintf "%A" e))
+            // => Save failure: typed error — caller logs and returns HTTP 500
             | Ok () ->
+                // => Save committed: publish the domain event
                 do! pub.Publish (PurchaseOrderIssued { PurchaseOrderId = po.Id; SupplierId = po.SupplierId })
+                // => PurchaseOrderIssued: outbox adapter writes the event row in a separate transaction
                 return Ok issuedPO
+                // => Return the issued PO aggregate — handler serializes to response DTO
     }
 ```
 
@@ -909,16 +1169,22 @@ type PurchaseOrder =
 // Anti-pattern 2: God adapter — one adapter doing repository + event publish + bank call
 // Illustrative anti-pattern — NOT the intended procurement-platform-be layout
 module ProcurementPlatform.Contexts.Purchasing.Infrastructure.GodAdapter
+// => ANTI-PATTERN: infrastructure module with three unrelated responsibilities
 
 open Npgsql
+// => Npgsql: DB dependency
 open System.Net.Http
+// => HttpClient: HTTP dependency — two infrastructure dependencies in one module
 open ProcurementPlatform.Contexts.Purchasing.Application.Ports
+// => Port type: PurchaseOrderRepository — imported but the adapter exceeds its contract
 
 // God adapter: saves PO, publishes event, AND calls the bank API
 let godSaveAndDisburse (connStr: string) (bankClient: HttpClient) (po: PurchaseOrder) =
     // => Three parameters: connStr + bankClient signals this function crosses multiple port boundaries
+    // => SYMPTOM: two infrastructure resources in the signature — this adapter has two responsibilities
     async {
         use conn = new NpgsqlConnection(connStr)
+        // => DB connection: one responsibility
         let! _ =
             conn.ExecuteAsync("INSERT INTO purchasing.purchase_orders ...", po)
             |> Async.AwaitTask
@@ -930,6 +1196,7 @@ let godSaveAndDisburse (connStr: string) (bankClient: HttpClient) (po: PurchaseO
         // => If the bank call fails, should the DB save roll back? This adapter cannot answer that.
         printfn "Event: PurchaseOrderIssued %A" po.Id
         // => Publish event via stdout — not behind a port at all
+        // => Stdout is not a port: no test can assert on it or replace it with a different implementation
     }
 // => Fix: split into three focused adapters — NpgsqlPurchaseOrderRepository, BankApiAdapter, OutboxEventPublisher
 // => Each adapter satisfies exactly one port type alias
@@ -955,6 +1222,7 @@ type PurchaseOrder =
 
 // Application service forced to carry business logic (symptom of anemic domain)
 let submitPurchaseOrder (save: PurchaseOrderRepository) (dto: {| supplierId: string; totalAmount: decimal |}) =
+    // => dto: anonymous record — no domain types at the boundary; validation is the service's problem
     async {
         if dto.totalAmount <= 0m then
             // => Validation in the application service: this belongs in a smart constructor
@@ -962,8 +1230,10 @@ let submitPurchaseOrder (save: PurchaseOrderRepository) (dto: {| supplierId: str
         elif System.String.IsNullOrWhiteSpace(dto.supplierId) then
             return Error "Supplier ID must not be blank"
             // => These checks duplicated wherever submitPurchaseOrder is called
+            // => Each call site must re-implement or remember to call submitPurchaseOrder — no compile enforcement
         else
             let po = { Id = System.Guid.NewGuid(); TotalAmount = dto.totalAmount; Status = "Draft" }
+            // => Anonymous inline construction: no smart constructor — invalid amounts compile fine
             return! save.SavePurchaseOrder po
     }
 // => Fix: add smart constructors to Money and PurchaseOrder that validate and return Result<T, string>

@@ -43,7 +43,7 @@ Both demand that the centre is pure. Both push effects to the boundary. Both ena
 
 ## Running Domain
 
-All 80 examples use the same **procurement-platform-be** — the backend of a Procure-to-Pay (P2P) platform where employees request goods and services, managers approve, suppliers fulfil, and finance pays. The core workflow is:
+All 75 examples use the same **procurement-platform-be** — the backend of a Procure-to-Pay (P2P) platform where employees request goods and services, managers approve, suppliers fulfil, and finance pays. The core workflow is:
 
 ```
 Employee submits PurchaseOrder draft
@@ -76,5 +76,5 @@ Every example follows a consistent five-part format:
 ## Learning Path
 
 - [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/beginner) — The three zones, ports as function types, adapters as function modules, the dependency rule, partial application as DI, in-memory adapters, and the full flow from HTTP to domain to repository — all within the `purchasing` bounded context.
-- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/intermediate) — Composition root, adapter swapping, integration test seams with stub adapters, dependency rejection, event publishing, the `supplier` context, `ApprovalRouterPort`, and multi-context wiring.
-- [Advanced (Examples 56–80)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/advanced) — Multi-context wiring across `receiving`, `invoicing`, and `payments`, anti-corruption layer at port boundaries, retry adapter wrapping, `BankingPort`, `SupplierNotifierPort`, `Observability`, and a full production reference.
+- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/intermediate) — Composition root, adapter swapping, integration test seams with stub adapters, dependency rejection, event publishing, the `supplier` context, `ApprovalRouterPort`, multi-context wiring, cross-context event flow, conditional adapter selection, and Railway-Oriented Programming across port boundaries.
+- [Advanced (Examples 56–75)](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/advanced) — Multi-context wiring across `receiving`, `invoicing`, and `payments`, anti-corruption layer at port boundaries, retry adapter wrapping, `BankingPort`, `SupplierNotifierPort`, `Observability`, and a full production reference.
