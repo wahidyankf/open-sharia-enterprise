@@ -89,11 +89,11 @@ The key discipline: **the domain and application layers define ports but never i
 
 ## Tutorials in This Section
 
-Both tutorials use the same **order-taking domain** — a system that accepts customer orders, validates them, prices them, and raises domain events when an order is placed. This running domain is consistent with the [DDD tutorials](/en/learn/software-engineering/architecture/domain-driven-design-ddd) so the two architectural styles can be studied together.
+Both tutorials use the same shared **procurement-platform-be Procure-to-Pay domain** — a backend service where employees request goods/services, managers approve, suppliers fulfill, and finance pays. This running domain is consistent with the [DDD tutorials](/en/learn/software-engineering/architecture/domain-driven-design-ddd) so the two architectural styles can be studied together.
 
-- **[Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/overview)**: 80 examples showing how functional programming maps naturally to hexagonal architecture. Ports become function type aliases. Adapters become function implementations. Dependency injection happens through partial application. The functional core/imperative shell pattern and hexagonal architecture are the same idea in different vocabularies.
+- **[Hexagonal Architecture By Example in FP](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/overview)**: 75 examples showing how functional programming maps naturally to hexagonal architecture. Ports become function type aliases. Adapters become function implementations. Dependency injection happens through partial application. The functional core/imperative shell pattern and hexagonal architecture are the same idea in different vocabularies.
 
-- **[Hexagonal Architecture Using OOP — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/overview)**: 80 examples in Java 21+, Kotlin, and C# 12+ side-by-side. Ports become interfaces. Adapters become classes implementing those interfaces. Application services orchestrate domain objects through ports. Dependency injection wires adapters into application services at startup.
+- **[Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example/overview)**: 75 examples primarily in Java 21+. Ports become interfaces. Adapters become classes implementing those interfaces. Application services orchestrate domain objects through ports. Dependency injection wires adapters into application services at startup.
 
 ## Production Wiring
 

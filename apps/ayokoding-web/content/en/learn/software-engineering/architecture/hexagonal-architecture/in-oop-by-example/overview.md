@@ -3,7 +3,7 @@ title: "Overview"
 weight: 10000002
 date: 2026-05-15T00:00:00+07:00
 draft: false
-description: "Hexagonal Architecture Using OOP by example: 75 annotated examples in Java 21+ using the procurement-platform-be domain — covering port interfaces, adapter implementations, application services, and strategic design"
+description: "Hexagonal Architecture By Example in OOP: 75 annotated examples in Java 21+ using the procurement-platform-be domain — covering port interfaces, adapter implementations, application services, and strategic design"
 tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java"]
 ---
 
@@ -66,7 +66,7 @@ The running domain across all examples is **procurement-platform-be** — a Proc
 
 ## Sibling Tutorial: Functional Programming Approach
 
-If you prefer a functional programming treatment of Hexagonal Architecture, see [Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/overview). That tutorial covers the same patterns through F# function type aliases, partial application, and Railway-Oriented Programming pipelines, using the same procurement-platform-be domain.
+If you prefer a functional programming treatment of Hexagonal Architecture, see [Hexagonal Architecture By Example in FP](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example/overview). That tutorial covers the same patterns through F# function type aliases, partial application, and Railway-Oriented Programming pipelines, using the same procurement-platform-be domain.
 
 ## Structure of Each Example
 

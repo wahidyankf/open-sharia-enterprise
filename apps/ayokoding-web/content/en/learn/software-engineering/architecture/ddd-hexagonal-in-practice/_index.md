@@ -6,6 +6,7 @@ draft: false
 description: "Production wiring guides that combine Domain-Driven Design and Hexagonal Architecture — two tracks: fp-in-the-field (F# / Giraffe / Npgsql) and oop-in-the-field (Java / Spring Boot 4)"
 ---
 
+- [Overview](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/overview)
 - [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)
   - [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview)
   - [Beginner](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/beginner)

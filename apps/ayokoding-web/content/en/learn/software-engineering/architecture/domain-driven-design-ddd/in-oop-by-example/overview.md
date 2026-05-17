@@ -3,7 +3,7 @@ title: "Overview"
 weight: 10000002
 date: 2026-05-09T00:00:00+07:00
 draft: false
-description: "DDD Using OOP by example: 75 annotated examples in Java 21+ using the procurement-platform-be P2P domain"
+description: "DDD By Example in OOP: 75 annotated examples in Java 21+ using the procurement-platform-be P2P domain"
 tags: ["ddd", "domain-driven-design", "tutorial", "by-example", "oop", "java", "kotlin", "csharp"]
 ---
 
@@ -56,7 +56,7 @@ The running domain across all examples is the **`procurement-platform-be`** — 
 
 ## Sibling Tutorial: Functional Programming Approach
 
-If you prefer a functional programming treatment of DDD, see [DDD Using FP (F#) — By Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/overview). That tutorial covers the same strategic and tactical patterns through F# discriminated unions, Railway-Oriented Programming, and workflow pipelines, following Scott Wlaschin's _Domain Modeling Made Functional_.
+If you prefer a functional programming treatment of DDD, see [DDD By Example in FP](/en/learn/software-engineering/architecture/domain-driven-design-ddd/in-fp-by-example/overview). That tutorial covers the same strategic and tactical patterns through F# discriminated unions, Railway-Oriented Programming, and workflow pipelines, using the same shared procurement-platform-be P2P domain.
 
 ## Structure of Each Example
 
@@ -64,7 +64,7 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation**: What DDD concept the example demonstrates (2–3 sentences).
 2. **Optional Diagram**: A Mermaid diagram when concept relationships are complex enough to warrant visual representation. Skipped for straightforward code definitions.
-3. **Three Code Blocks**: Java, Kotlin, and C# implementations with `// =>` annotations explaining values, states, and effects. Brief text between blocks notes meaningful language idiom differences.
+3. **Code Block(s)**: Primarily Java 21+ implementations with `// =>` annotations explaining values, states, and effects. A small number of examples sprinkle Kotlin variants to highlight idiom differences.
 4. **Key Takeaway**: The core DDD principle to retain (1–2 sentences).
 5. **Why It Matters**: Real-world business impact and production system context (50–100 words).
 

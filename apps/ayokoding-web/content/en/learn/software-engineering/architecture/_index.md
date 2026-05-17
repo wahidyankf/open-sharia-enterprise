@@ -23,6 +23,7 @@ draft: false
   - [Hexagonal Architecture By Example in FP](/en/learn/software-engineering/architecture/hexagonal-architecture/in-fp-by-example)
   - [Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/architecture/hexagonal-architecture/in-oop-by-example)
 - [DDD + Hexagonal in Practice](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice)
+  - [Overview](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/overview)
   - [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)
   - [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field)
 - [Finite State Machine (FSM)](/en/learn/software-engineering/architecture/finite-state-machine-fsm)
