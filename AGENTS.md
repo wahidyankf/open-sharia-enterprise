@@ -338,7 +338,9 @@ Three-path decision tree governing every dependency bump: Path A (LTS latest pat
 
 Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated agents for focused subtasks, verify before done, autonomous bug fixing, self-improvement loop after corrections.
 
-**See**: [repo-governance/development/agents/agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md)
+**Subagent concurrency**: When spawning background subagents via the Agent tool, cap at **3 concurrent** at any time (user may override for a specific batch). Poll output file mtime every **3 minutes**; if mtime unchanged for 30 minutes, call `TaskStop` and relaunch.
+
+**See**: [repo-governance/development/agents/agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md), [Subagent Orchestration Convention](./repo-governance/development/agents/subagent-orchestration.md)
 
 ### Manual Verification & CI Blockers
 

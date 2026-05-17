@@ -287,10 +287,12 @@ Agents built following these practices are maintainable, secure, and effective a
 
 ## Principles Implemented/Respected
 
-- **Automation Over Manual**: Agents automate repetitive tasks
-- **Explicit Over Implicit**: Clear permissions and behavior
-- **Security First**: Minimum necessary permissions
-- **Simplicity Over Complexity**: Single responsibility, focused agents
+This companion document respects:
+
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Agents automate repetitive tasks, reducing manual effort.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear permissions and behavior — minimum necessary tool access.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Single responsibility, focused agents.
+- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Test edge cases and verify behavior before declaring agents production-ready.
 
 ## Conventions Implemented/Respected
 

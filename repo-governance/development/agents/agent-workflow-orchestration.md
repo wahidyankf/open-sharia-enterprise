@@ -333,6 +333,7 @@ After any correction, update `local-temp/lessons.md`. This is the direct applica
 - [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) - Multi-agent orchestration for content quality workflows
 - [AI Agents Convention](./ai-agents.md) - Agent structure, frontmatter, and tool access standards
 - [Skill Context Architecture](./skill-context-architecture.md) - Inline vs fork skills for delegated agent invocation
+- [Subagent Orchestration Convention](./subagent-orchestration.md) - Concurrency cap (max 3 simultaneous Agent-tool spawns) and 3-minute stuck-detection polling for background subagents; specializes the delegated agent model for background execution
 - [CI Post-Push Verification Convention](../workflow/ci-post-push-verification.md) - Trigger and monitor CI after every push; required final step in plan execution
 - [CI Monitoring Convention](../workflow/ci-monitoring.md) - Check every 3-5 min via ScheduleWakeup; `gh run watch` only for <5 min jobs; rate-limit recovery uses `ScheduleWakeup(delaySeconds=2100)`
 

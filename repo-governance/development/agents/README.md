@@ -36,6 +36,7 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 - [AI Agents Convention](./ai-agents.md) - Complete standards for creating and managing AI agents including naming, file structure, frontmatter requirements, tool access patterns, and model selection
 - [Skill Context Architecture](./skill-context-architecture.md) - Architectural constraint requiring all repository skills to use inline context for universal delegated agent compatibility
 - [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) - Standards for how AI agents plan, execute, verify, and self-improve during multi-step tasks. Covers plan mode, delegated agent strategy, verification before done, autonomous bug fixing, and the self-improvement loop
+- [Subagent Orchestration Convention](./subagent-orchestration.md) - Concurrency cap (default 3 simultaneous Agent-tool spawns) and 3-minute stuck-detection polling for background subagents. Prevents Claude API rate-limit hits and ensures stalled agents are detected and relaunched via TaskStop + relaunch
 - [Model Selection Convention](./model-selection.md) - Standards for selecting the appropriate model tier (planning-grade, execution-grade, fast) for AI agents based on task complexity, with justification requirements and tier comparison
 
 ## Companion Documents

@@ -843,7 +843,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 
 1. **Pattern Validation**:
    - All software engineering docs use plain kebab-case filenames (e.g., `idioms.md`, `best-practices.md`, `spring-boot-rest-controller.md`)
-   - Directory hierarchy encodes the category (e.g., `programming-languages/java/`, `platform-web/tools/jvm-spring-boot/`, `architecture/c4-architecture-model/`)
+   - Directory hierarchy encodes the category (e.g., `programming-languages/java/`, `platform-web/tools/jvm-spring-boot/`, `architecture/c4-model/`)
    - **Exception**: `README.md` for index files
    - **Exception**: `templates/` subdirectory holds reusable templates under each language/tool
 
@@ -1009,7 +1009,7 @@ Found in `programming-languages/typescript/`:
 ### Finding: Diagram Accessibility
 
 **Category**: Diagrams
-**File**: docs/explanation/software-engineering/architecture/c4-architecture-model/system-context.md
+**File**: docs/explanation/software-engineering/architecture/c4-model/system-context.md
 **Criticality**: HIGH
 
 **Issue**: Mermaid diagram missing explicit color definitions

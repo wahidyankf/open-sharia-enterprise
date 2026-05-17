@@ -72,6 +72,9 @@ graph TD
 
 **Caption**: Multiple datasources require separate DataSource, EntityManagerFactory, and TransactionManager beans with @Primary designating the default configuration.
 
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
+
 ```java
 // pom.xml
 <dependency>
@@ -224,7 +227,8 @@ public class TransferController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -408,6 +412,9 @@ class TransferController(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `@Transactional` ensures all-or-nothing execution—either all database changes commit or all rollback on exception.
 
 **Why It Matters**: Spring's declarative transaction management prevents data corruption from partial failures—without @Transactional, a bank transfer could debit one account but crash before crediting another, creating phantom money. Production financial systems rely on transaction boundaries to ensure ACID guarantees, automatically rolling back all database changes when exceptions occur, eliminating error-prone manual rollback code that causes financial discrepancies in non-transactional systems.
@@ -468,6 +475,9 @@ graph TD
 
 Transaction isolation controls visibility of concurrent changes.
 
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
+
 ```java
 @Service
 // => Annotation applied
@@ -525,7 +535,8 @@ public class InventoryService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Service
@@ -587,6 +598,9 @@ class InventoryService(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Higher isolation levels prevent concurrency issues but reduce throughput—choose based on consistency requirements.
 
 **Why It Matters**: Isolation levels balance consistency against concurrency—SERIALIZABLE prevents all concurrency anomalies but reduces throughput to single-threaded performance, while READ_COMMITTED allows higher concurrency but risks non-repeatable reads. Production databases use READ_COMMITTED by default (PostgreSQL, Oracle) to achieve 80% of SERIALIZABLE safety at 300% higher throughput, reserving REPEATABLE_READ for financial transactions where accuracy outweighs performance.
@@ -620,6 +634,9 @@ graph TD
 ### Example 23: Optimistic Locking
 
 Prevent lost updates with version-based concurrency control.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Entity
@@ -705,7 +722,8 @@ public class StockService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Entity
@@ -854,6 +872,9 @@ class StockService(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `@Version` prevents lost updates by failing conflicting transactions—use retry logic for conflict resolution.
 
 **Why It Matters**: Optimistic locking enables high-concurrency updates without pessimistic database locks that block other transactions—version numbers detect conflicting updates at commit time instead of blocking readers during writes. E-commerce platforms use optimistic locking for shopping carts where 99% of updates succeed without conflicts, achieving 10x higher throughput than pessimistic locking while preventing lost updates when two users simultaneously buy the last item, with retry logic handling the rare 1% of conflicts gracefully.
@@ -863,6 +884,9 @@ class StockService(
 ### Example 24: Batch Operations
 
 Optimize bulk database operations with batching.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // application.properties
@@ -956,7 +980,8 @@ public class BulkImportService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```properties
 # application.properties - same for Kotlin
@@ -1113,6 +1138,9 @@ class StreamingImportService(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Batch operations reduce database round-trips—use `saveAll()` for small batches, manual flushing for large datasets.
 
 **Why It Matters**: Batch operations reduce database roundtrips significantly (for example, from 1000 individual INSERTs to 20 batched operations with 50 items per batch)—critical for ETL jobs processing large datasets. Production data pipelines use batch updates with manual flush/clear to import large volumes of data without exhausting memory, while JPQL bulk updates execute single SQL statements that modify many rows without loading entities into memory.
@@ -1124,6 +1152,9 @@ class StreamingImportService(
 ### Example 25: Security Auto-Configuration
 
 Spring Boot auto-configures basic security by default.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml
@@ -1181,7 +1212,8 @@ public class SecuredController {
 // => Authentication succeeds → data returned
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -1253,6 +1285,9 @@ class AuthenticatedController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Spring Security auto-configuration secures everything by default—customize with `SecurityFilterChain` beans.
 
 **Why It Matters**: Spring Security's auto-configuration prevents 80% of OWASP Top 10 vulnerabilities (CSRF, session fixation, clickjacking) through secure defaults, eliminating manual security code that developers implement incorrectly. However, default form login exposes application structure through /login pages—production systems replace it with JWT or OAuth2 for stateless authentication that scales horizontally without session affinity, enabling load balancers to distribute traffic across instances without sticky sessions.
@@ -1262,6 +1297,9 @@ class AuthenticatedController {
 ### Example 26: Custom Authentication
 
 Configure users, passwords, and access rules.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Configuration
@@ -1391,7 +1429,8 @@ public class ApiController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Configuration
@@ -1525,6 +1564,9 @@ class ApiController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `SecurityFilterChain` defines authorization rules—combine with `UserDetailsService` for custom user storage.
 
 **Why It Matters**: Custom authentication and authorization with SecurityFilterChain provides fine-grained access control beyond default form login—URL patterns, HTTP methods, and user roles combine to enforce security policies that prevent unauthorized access. Production applications use method-level security (@PreAuthorize, @Secured) for business logic protection where URL security alone is insufficient, implementing complex authorization rules (resource ownership, tenant isolation) that URL patterns cannot express.
@@ -1562,6 +1604,9 @@ flowchart TD
 ### Example 27: Method-Level Authorization
 
 Secure individual methods with annotations.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Configuration
@@ -1657,7 +1702,8 @@ public class OrderController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Configuration
@@ -1780,6 +1826,9 @@ class OrderController(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `@PreAuthorize` and `@PostAuthorize` enable fine-grained authorization at the method level using SpEL expressions.
 
 **Why It Matters**: Method-level authorization enforces business rules at the code level where they can't be bypassed—URL-level security (`/admin/**`) fails when developers add new endpoints that forget URL patterns, while `@PreAuthorize` prevents access attempts at method invocation. Production SaaS applications use SpEL expressions for tenant isolation (`#order.tenantId == principal.tenantId`) that ensure users can't access other tenants' data even if URL tampering bypasses endpoint security, preventing data leaks that cause compliance violations and customer churn.
@@ -1791,6 +1840,9 @@ class OrderController(
 Implement stateless authentication with JSON Web Tokens using the JJWT library for token generation and validation in Spring Security filter chains.
 
 > **Why Not Core Features**: Spring Security 6 includes built-in JWT support via `oauth2ResourceServer().jwt()` (available since Spring Security 5.1) that validates JWTs without any external library — sufficient for consuming JWTs issued by external identity providers (Auth0, Keycloak, Okta). The JJWT library (`io.jsonwebtoken:jjwt-api`) is needed when your application must **generate and sign** JWTs itself (acting as the auth server), not just validate them. If you're building a resource server that only validates tokens from an external identity provider, prefer Spring Security's built-in OAuth2 resource server support over JJWT.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml
@@ -2020,7 +2072,8 @@ public class AuthController {
 // GET /api/data with Header: Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -2264,6 +2317,9 @@ class AuthController(
 // GET /api/data with Header: Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: JWT enables stateless authentication—clients include tokens in headers, eliminating server-side session storage.
 
 **Why It Matters**: JWT enables stateless authentication essential for horizontal scaling—servers don't share session state, so load balancers distribute requests to any instance without session replication overhead. However, JWT tokens can't be revoked before expiration (unlike sessions), requiring short expiration times (15 minutes) with refresh tokens for security, balancing convenience (fewer re-logins) against blast radius (stolen tokens valid until expiration), a trade-off production systems at Auth0 and Okta tune based on threat models.
@@ -2297,6 +2353,9 @@ sequenceDiagram
 ### Example 29: OAuth2 Integration
 
 Enable social login with OAuth2 providers.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml
@@ -2409,7 +2468,8 @@ public class ProfileController {
 // 7. User logged in, redirected to /dashboard
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // application.properties
@@ -2489,6 +2549,9 @@ class OAuth2Controller {
 // val name = principal.getAttribute<String>("name")?.also { println("User $it logged in") } ?: "User"
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Spring OAuth2 client simplifies social login—configure provider credentials and Spring handles the OAuth2 flow.
 
 **Why It Matters**: OAuth2 delegates authentication to specialized providers (Google, GitHub, AWS Cognito) that invest heavily in security infrastructure, enabling applications to avoid storing passwords that require expensive PCI/SOC2 compliance. Social login reduces signup friction — no password memorization, no "forgot password" flows for new signups — but introduces dependency on external providers. Production systems implement fallback authentication for when OAuth providers have outages, preventing login failures that lock out all users during downtime.
@@ -2500,6 +2563,9 @@ class OAuth2Controller {
 ### Example 30: @SpringBootTest
 
 Full integration testing with complete application context.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Test class
@@ -2605,7 +2671,8 @@ public class OrderServiceTest {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Test class
@@ -2720,6 +2787,9 @@ class OrderServiceTest {
 // verify(exactly = 1) { paymentGateway.charge("user1", 100.00) }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `@SpringBootTest` loads full application context—use `@MockBean` to replace real dependencies with mocks.
 
 **Why It Matters**: Integration tests verify controller-to-database flows including JSON serialization, exception handling, and transaction management—catching bugs that unit tests miss because mocks don't behave like real implementations. However, @SpringBootTest loads the full context (2-5 seconds per test), making large test suites slow (20 minutes for 500 tests), requiring careful test design where unit tests cover 80% of logic with @WebMvcTest, reserving integration tests for critical paths that justify the performance cost.
@@ -2729,6 +2799,9 @@ class OrderServiceTest {
 ### Example 31: @WebMvcTest
 
 Test controllers in isolation without full context.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @WebMvcTest(ProductController.class) // Only load ProductController
@@ -2805,7 +2878,8 @@ public class ProductControllerUnitTest {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @WebMvcTest(ProductController::class)  // Only load ProductController
@@ -2882,6 +2956,9 @@ class ProductControllerUnitTest {
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `@WebMvcTest` loads only web layer—faster than `@SpringBootTest`, ideal for controller logic testing.
 
 **Why It Matters**: MockMvc tests verify REST API contracts (request mapping, response codes, JSON structure) 10x faster than integration tests because they don't start HTTP servers or load full contexts, enabling rapid TDD feedback loops. Production teams use MockMvc for controller logic and @JsonTest for serialization verification, achieving 95% branch coverage with 2-minute test suite execution that enables continuous deployment where every commit triggers automated tests before merging to main.
@@ -2891,6 +2968,9 @@ class ProductControllerUnitTest {
 ### Example 32: TestContainers
 
 Test with real databases using Docker containers.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml
@@ -2981,7 +3061,8 @@ public class ProductRepositoryTestContainersTest {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -3079,6 +3160,9 @@ class ProductRepositoryTestContainersTest {
 // TestContainers automatically manages container lifecycle (starts before tests, stops after)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Testcontainers Lifecycle with @DynamicPropertySource**:
 
 ```mermaid
@@ -3120,6 +3204,9 @@ sequenceDiagram
 ### Example 33: Mocking with Mockito
 
 Isolate units under test with mocks.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @ExtendWith(MockitoExtension.class) // Enable Mockito
@@ -3216,7 +3303,8 @@ public class OrderServiceUnitTest {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @ExtendWith(MockitoExtension::class)  // Enable Mockito
@@ -3319,6 +3407,9 @@ class OrderServiceUnitTest {
 // assertEquals("PROCESSED", slot.captured.status)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Mockito enables fast, isolated unit tests—use `when().thenReturn()` for stubbing, `verify()` for interaction verification.
 
 **Why It Matters**: Mockito enables fast unit tests (milliseconds vs seconds for integration tests) by replacing slow dependencies (databases, external APIs, message queues) with in-memory mocks that return predetermined responses. However, over-mocking creates brittle tests that pass with green checkmarks but fail in production because mocks don't behave like real implementations—production teams limit mocking to external boundaries (APIs, databases) while testing internal logic with real objects to balance speed against accuracy.
@@ -3330,6 +3421,9 @@ class OrderServiceUnitTest {
 ### Example 34: Cache Abstraction
 
 Transparent caching with Spring's cache abstraction.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml
@@ -3450,7 +3544,8 @@ Product p3 = productService.findById(1L); // => Database query again
 // => Output: "Fetching from database: 1"
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -3576,6 +3671,9 @@ val p3 = productService.findById(1L)  // => Database query again
 // kotlin { allOpen { annotation("org.springframework.cache.annotation.Cacheable") } }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Spring's cache abstraction decouples caching from business logic—annotate methods to cache, update, or evict automatically.
 
 **Why It Matters**: Spring's cache abstraction decouples caching from business logic—adding @Cacheable doesn't modify method behavior, enabling gradual cache adoption where teams can cache slow queries without refactoring service layers. Production systems use caching to reduce database load by 90% for read-heavy workloads (product catalogs, user profiles), with cache hit rates of 95%+ that keep API latency under 50ms even when databases struggle under write pressure during peak traffic.
@@ -3612,6 +3710,9 @@ flowchart TD
 Use Redis as distributed cache backend for distributed caching, session storage, and pub/sub messaging across multiple application instances.
 
 > **Why Not Core Features**: Spring's `@Cacheable` with the default `ConcurrentHashMap` cache or `spring-boot-starter-cache` with Caffeine provides excellent in-memory caching for single-instance applications — no Redis required. Use Redis when you need **distributed caching** across multiple application instances (horizontal scaling), **cache persistence** across application restarts, or **shared session storage** in a clustered deployment. For single-instance applications or development environments, Caffeine (`com.github.ben-manes.caffeine:caffeine`) offers higher performance than Redis without the infrastructure overhead.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml
@@ -3730,7 +3831,8 @@ public class SessionService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -3847,6 +3949,9 @@ class SessionService(
 //   opsForValue().get(key) as? T
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Redis provides distributed caching across multiple application instances—configure TTL for automatic expiration.
 
 **Why It Matters**: Redis distributed caching enables horizontal scaling where all application instances share cache entries, unlike in-memory caches where each instance maintains separate caches causing inconsistent reads. Production systems use Redis to cache session data across many application instances, achieving sub-millisecond cache response times at high request volumes, with Redis persistence options (RDB snapshots, AOF logs) preventing cache warm-up delays after crashes that would overwhelm databases with cold cache load.
@@ -3856,6 +3961,9 @@ class SessionService(
 ### Example 36: Cache Strategies
 
 Common caching patterns and pitfalls.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Service
@@ -3990,7 +4098,8 @@ public class CachePitfallsService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Service
@@ -4116,6 +4225,9 @@ open class CachePitfallsService(
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Choose caching strategies based on consistency needs—cache-aside for reads, write-through for updates, sync for stampede prevention.
 
 **Why It Matters**: Cache-aside pattern with sync=true prevents cache stampedes where 1000 concurrent requests for an expired cache entry trigger 1000 identical database queries, causing database CPU spikes that cascade into timeouts. Production caching strategies use short TTLs (minutes) for frequently changing data versus long TTLs (hours/days) for static data, with cache warming during deployment preventing cold cache performance degradation where the first user request experiences 5-second latency while loading cache.
@@ -4153,6 +4265,9 @@ graph TD
 ### Example 37: @Async Methods
 
 Execute methods asynchronously with thread pools.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Enable async support
@@ -4287,7 +4402,8 @@ public class AsyncController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Enable async support
@@ -4409,6 +4525,9 @@ class AsyncController(
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `@Async` offloads work to background threads—use `CompletableFuture` return types for composable async operations.
 
 **Why It Matters**: Async methods prevent slow operations (email sending, PDF generation) from blocking HTTP request threads, enabling APIs to respond in 50ms while offloading 5-second background work to thread pools. However, @Async without custom thread pools shares the default pool with all async operations, causing thread starvation where one slow operation delays all others—production systems configure separate thread pools (email-pool, report-pool) sized to each operation's concurrency needs.
@@ -4418,6 +4537,9 @@ class AsyncController(
 ### Example 38: Task Executors
 
 Configure thread pools for async execution.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Configuration
@@ -4524,7 +4646,8 @@ public class NotificationService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Configuration
@@ -4651,6 +4774,9 @@ open class NotificationService {
 // val emailDispatcher = Dispatchers.IO.limitedParallelism(5)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Configure `ThreadPoolTaskExecutor` for fine-grained control—separate executors isolate thread pools for different task types.
 
 **Why It Matters**: Custom thread pools isolate failure domains—if report generation consumes all threads, email sending continues using its dedicated pool instead of queueing behind slow operations. Production configurations tune core pool size (CPU-bound: core count, I/O-bound: core count \* 2-4) and queue capacity (buffer for traffic spikes without rejection) based on monitoring data, preventing OutOfMemoryErrors from unbounded queues that accumulate tasks faster than threads can process them.
@@ -4660,6 +4786,9 @@ open class NotificationService {
 ### Example 39: Application Events
 
 Decouple components with Spring's event publishing mechanism.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Custom event
@@ -4810,7 +4939,8 @@ public class TransactionalListener {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Custom event (data class instead of extending ApplicationEvent)
@@ -4921,6 +5051,9 @@ class TransactionalListener {
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Events decouple publishers from listeners—use `@Async` for parallel processing, `@TransactionalEventListener` for transaction safety.
 
 **Why It Matters**: Application events decouple components through publish-subscribe messaging—order placement triggers inventory reduction, email sending, and analytics recording without OrderService knowing about these dependencies, enabling feature toggles where new event listeners activate without modifying existing code. Production event-driven architectures support eventual consistency where events propagate asynchronously, accepting temporary inconsistency (order placed, inventory not yet reduced) for higher throughput than synchronous request/response chains that wait for all operations to complete.
@@ -4930,6 +5063,9 @@ class TransactionalListener {
 ### Example 40: Scheduling
 
 Execute tasks on fixed schedules with `@Scheduled`.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Enable scheduling
@@ -5055,7 +5191,8 @@ public class ScheduledTasks {
 // => Runs at 12:00:00 on 1st of every month (monthly billing, reports)
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Enable scheduling
@@ -5163,6 +5300,9 @@ class ScheduledTasks {
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `fixedRate` for periodic tasks, `fixedDelay` to prevent overlap, `cron` for specific times—Spring handles scheduling automatically.
 
 **Why It Matters**: Scheduled tasks automate maintenance operations (cleanup, backups, report generation) that would require manual intervention, reducing operational overhead and human error. However, @Scheduled without distributed locking causes duplicate execution in multi-instance deployments where all instances run the same scheduled method—production systems use ShedLock to ensure only one instance executes each task, preventing duplicate payments or duplicate email sends that frustrate customers and waste resources.
@@ -5174,6 +5314,9 @@ class ScheduledTasks {
 ### Example 41: WebSocket - Real-Time Communication
 
 WebSocket enables bidirectional, real-time communication between server and clients for chat, notifications, and live updates.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-boot-starter-websocket
@@ -5258,7 +5401,8 @@ record ChatMessage(String sender, String content, String recipient, LocalDateTim
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("org.springframework.boot:spring-boot-starter-websocket")
@@ -5347,6 +5491,9 @@ data class ChatMessage(
 // data class PrivateMessage(val sender: String, val recipient: String, val content: String) : ChatMessage()
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
@@ -5376,6 +5523,9 @@ sequenceDiagram
 ### Example 42: Server-Sent Events (SSE) - Unidirectional Streaming
 
 SSE streams server updates to clients over HTTP, simpler than WebSocket for one-way communication.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @RestController
@@ -5428,7 +5578,8 @@ record StockPrice(String symbol, double price) {}
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @RestController
@@ -5487,6 +5638,9 @@ data class StockPrice(val symbol: String, val price: Double)
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart LR
@@ -5513,6 +5667,9 @@ flowchart LR
 ### Example 43: API Versioning Strategies
 
 Manage API evolution while maintaining backward compatibility through URL, header, or parameter versioning.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Strategy 1: URL Path Versioning
@@ -5634,7 +5791,8 @@ public class UserParamVersionController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Strategy 1: URL Path Versioning
@@ -5755,6 +5913,9 @@ class UserParamVersionController {
 //                           val email: String, val phone: String) : UserResponse()
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
@@ -5783,6 +5944,9 @@ graph TD
 ### Example 44: Custom Argument Resolvers
 
 Create custom argument resolvers to extract and inject domain objects from requests.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Custom annotation
@@ -5903,7 +6067,8 @@ record ProfileUpdate(String email, String phone) {}
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Custom annotation
@@ -6032,6 +6197,9 @@ data class ProfileUpdate(val email: String, val phone: String)
 //   getHeader("Authorization")?.takeIf { it.startsWith("Bearer ") }?.substring(7)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Custom argument resolvers eliminate repetitive parameter extraction—implement `HandlerMethodArgumentResolver` to automatically inject domain objects from headers, cookies, or custom authentication mechanisms.
 
 **Why It Matters**: Batch operations reduce database roundtrips significantly (for example, from 1000 individual INSERTs to 20 batched operations with 50 items per batch)—critical for ETL jobs processing large datasets. Production data pipelines use batch updates with manual flush/clear to import large volumes of data without exhausting memory, while JPQL bulk updates execute single SQL statements that modify many rows without loading entities into memory.
@@ -6041,6 +6209,9 @@ data class ProfileUpdate(val email: String, val phone: String)
 ### Example 45: Filter vs Interceptor vs AOP
 
 Understand the differences and use cases for filters, interceptors, and AOP for cross-cutting concerns.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // 1. Servlet Filter - Operates at servlet container level
@@ -6158,7 +6329,8 @@ public class LoggingAspect {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // 1. Servlet Filter - Operates at servlet container level
@@ -6305,6 +6477,9 @@ class LoggingAspect {
 // val duration = System.currentTimeMillis() - (request.getTypedAttribute<Long>("startTime") ?: 0L)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
@@ -6338,6 +6513,9 @@ flowchart TD
 ### Example 46: Custom Annotations with AOP
 
 Combine custom annotations with AOP for declarative cross-cutting concerns.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Custom annotation
@@ -6458,7 +6636,8 @@ public class UserService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Custom annotation
@@ -6574,6 +6753,9 @@ open class UserService(
 // @Audit(action = AuditAction("USER_CREATED"))
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Combine custom annotations with AOP for declarative cross-cutting concerns—create domain-specific annotations (`@LogExecutionTime`, `@Audit`, `@RateLimit`) and implement behavior in aspects for clean, reusable functionality.
 
 **Why It Matters**: Method-level authorization enforces business rules at the code level where they can't be bypassed—URL-level security (`/admin/**`) fails when developers add new endpoints that forget URL patterns, while `@PreAuthorize` prevents access attempts at method invocation. Production SaaS applications use SpEL expressions for tenant isolation (`#order.tenantId == principal.tenantId`) that ensure users can't access other tenants' data even if URL tampering bypasses endpoint security, preventing data leaks that cause compliance violations and customer churn.
@@ -6583,6 +6765,9 @@ open class UserService(
 ### Example 47: Bean Post Processors
 
 Modify or enhance beans during initialization with BeanPostProcessor.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Custom annotation for initialization
@@ -6703,7 +6888,8 @@ public class DataPreloadService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Custom annotation for initialization
@@ -6828,6 +7014,9 @@ class DataPreloadService {
 // if (bean.isInPackage("com.example.demo.service")) { createProxy(bean) } else { bean }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: BeanPostProcessors enable bean customization during initialization—use `postProcessBeforeInitialization` for pre-init configuration and `postProcessAfterInitialization` for auto-proxying, validation, or post-init setup.
 
 **Why It Matters**: JWT enables stateless authentication essential for horizontal scaling—servers don't share session state, so load balancers distribute requests to any instance without session replication overhead. However, JWT tokens can't be revoked before expiration (unlike sessions), requiring short expiration times (15 minutes) with refresh tokens for security, balancing convenience (fewer re-logins) against blast radius (stolen tokens valid until expiration), a trade-off production systems at Auth0 and Okta tune based on threat models.
@@ -6837,6 +7026,9 @@ class DataPreloadService {
 ### Example 48: Custom Spring Boot Starter (Simplified)
 
 Create a lightweight auto-configuration module for reusable functionality.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // 1. Create auto-configuration class
@@ -6929,7 +7121,8 @@ public class NotificationService {
 // => Block delimiter
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // 1. Create auto-configuration class
@@ -7014,6 +7207,9 @@ class NotificationService(
 // data class EmailProperties(var provider: EmailProvider)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Create Spring Boot starters for reusable auto-configuration—define `@Configuration` with `@ConditionalOnClass` and `@EnableConfigurationProperties`, register in `AutoConfiguration.imports`, and users get automatic bean registration with type-safe properties.
 
 **Why It Matters**: OAuth2 delegates authentication to specialized providers (Google, GitHub, AWS Cognito) that invest heavily in security infrastructure, enabling applications to avoid storing passwords that require expensive PCI/SOC2 compliance. Social login reduces signup friction — no password memorization, no "forgot password" flows for new signups — but introduces dependency on external providers. Production systems implement fallback authentication for when OAuth providers have outages, preventing login failures that lock out all users during downtime.
@@ -7023,6 +7219,9 @@ class NotificationService(
 ### Example 49: Reactive Repositories with R2DBC
 
 Use R2DBC for reactive, non-blocking database access.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-boot-starter-data-r2dbc, r2dbc-h2
@@ -7139,7 +7338,8 @@ public class ProductController {
 //     password:
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
@@ -7256,6 +7456,9 @@ class ProductController(
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: R2DBC enables reactive database access—use `ReactiveCrudRepository` for non-blocking queries returning `Mono<T>` (0..1) or `Flux<T>` (0..N), enabling end-to-end reactive pipelines from database to HTTP response.
 
 **Why It Matters**: Integration tests verify controller-to-database flows including JSON serialization, exception handling, and transaction management—catching bugs that unit tests miss because mocks don't behave like real implementations. However, @SpringBootTest loads the full context (2-5 seconds per test), making large test suites slow (20 minutes for 500 tests), requiring careful test design where unit tests cover 80% of logic with @WebMvcTest, reserving integration tests for critical paths that justify the performance cost.
@@ -7265,6 +7468,9 @@ class ProductController(
 ### Example 50: Composite Keys and Embedded IDs
 
 Handle composite primary keys with `@IdClass` or `@EmbeddedId`.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Strategy 1: @IdClass
@@ -7407,7 +7613,8 @@ orderItemEmbeddedRepository.save(item);
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Strategy 1: @IdClass
@@ -7512,6 +7719,9 @@ orderItemEmbeddedRepository.save(item)
 // @Embeddable
 // data class OrderItemKey(val orderId: OrderId, val productId: ProductId) : Serializable
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway**: Use `@EmbeddedId` over `@IdClass` for composite keys—it encapsulates key fields in a single object, provides better type safety, and makes queries clearer by explicitly referencing the embedded ID.
 

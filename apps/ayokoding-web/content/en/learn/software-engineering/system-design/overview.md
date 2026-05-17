@@ -11,7 +11,7 @@ This directory contains hands-on system design study cases and tutorials. Each c
 
 This section is about **system design** — how **multiple services, databases, caches, and queues interact across machines and regions**. Patterns here address distributed-system concerns: load balancing, sharding, CAP theorem, replication, sagas, microservices decomposition, multi-region deployments, scale-level architectural decisions.
 
-The sibling [**Architecture**](/en/learn/software-engineering/architecture) section covers a different layer: **the structure inside a single application** — SOLID, layered architecture, hexagonal/clean architecture, DDD building blocks, GoF design patterns, FSMs.
+The sibling [**Architecture**](/en/learn/software-engineering/software-architecture) section covers a different layer: **the structure inside a single application** — SOLID, layered architecture, hexagonal/clean architecture, DDD building blocks, GoF design patterns, FSMs.
 
 Both disciplines complement each other. An e-commerce monolith primarily needs software architecture; a multi-region payment platform needs both. Use this section when the problem spans multiple services or scales; cross to Architecture for in-app structure.
 
@@ -72,7 +72,7 @@ This section focuses on case studies and practical system design:
 
 - [**Case Studies**](/en/learn/software-engineering/system-design/cases) - Work through real-world system design scenarios with progressive scaling from startup to planet-scale
 
-For architectural patterns and methodologies, see [**Architecture**](/en/learn/software-engineering/architecture) section.
+For architectural patterns and methodologies, see [**Architecture**](/en/learn/software-engineering/software-architecture) section.
 
 ### Available Case Studies
 

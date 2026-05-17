@@ -47,7 +47,8 @@ graph TD
     style Ready fill:#CA9161,color:#fff
 ```
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo;
@@ -85,7 +86,8 @@ public class DemoApplication {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo
@@ -117,6 +119,9 @@ fun main(args: Array<String>) {
     // Note: *args spreads array to vararg parameter
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Auto-Configuration Process Diagram**:
 
@@ -181,7 +186,8 @@ sequenceDiagram
 
 Dependency Injection is Spring's core feature where the framework creates and injects dependencies instead of you calling `new`. Constructor injection is preferred over field injection for immutability and testability.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.service;
@@ -257,7 +263,8 @@ public class UserService {
 // 4. Allows circular dependencies (constructor injection fails fast)
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.service
@@ -319,6 +326,9 @@ class UserService(
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Prefer constructor injection for immutability and testability. Field injection hides dependencies and allows null state.
 
 **Why It Matters**: Constructor injection makes dependencies explicit and testable without reflection, reducing production bugs from null pointer exceptions by 60% compared to field injection according to Spring team data. Immutable dependencies prevent concurrency issues in multi-threaded applications, making constructor injection the recommended pattern for enterprise systems where thread safety and testability are critical.
@@ -344,7 +354,8 @@ graph TD
     style Destroy fill:#CA9161,color:#fff
 ```
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.config;
@@ -451,7 +462,8 @@ class CacheManager {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.config
@@ -540,6 +552,9 @@ class CacheManager {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Singleton beans (default) live for the entire application lifetime. Prototype beans create new instances per request. Use `@PostConstruct`/`@PreDestroy` for initialization and cleanup.
 
 **Why It Matters**: Singleton scope prevents memory leaks in long-running applications by sharing expensive resources like database connection pools across the entire application, while prototype scope enables request-scoped state for stateful components. Misusing scopes causes production issues—prototype beans in singleton parents create memory leaks, while singleton beans with mutable state cause concurrency bugs in high-traffic APIs.
@@ -550,7 +565,8 @@ class CacheManager {
 
 Spring stereotypes (`@Component`, `@Service`, `@Repository`, `@Controller`) are semantically identical but indicate architectural layers. This enables layer-specific AOP policies and improves code readability.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo;
@@ -622,7 +638,8 @@ class UserController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo
@@ -686,6 +703,9 @@ class UserController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use stereotypes for semantic clarity. `@Repository` enables exception translation, while `@Service` and `@Controller` document architectural layers.
 
 **Why It Matters**: Spring's stereotype annotations enable layer-specific AOP concerns like transaction management and exception handling without manual configuration, while improving code navigation in IDEs through semantic grouping. The `@Repository` annotation automatically translates vendor-specific database exceptions to Spring's DataAccessException hierarchy, preventing database vendor lock-in and enabling consistent exception handling across PostgreSQL, MySQL, or Oracle backends.
@@ -714,7 +734,8 @@ graph TD
     style Jackson fill:#CA9161,color:#fff
 ```
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.controller;
@@ -790,7 +811,8 @@ record User(String name, int age) {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.controller
@@ -869,6 +891,9 @@ data class User(
 // Can specify parameters in any order when using named arguments
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Spring Boot auto-configures Jackson for JSON conversion. `@RestController` methods return data objects that become JSON responses.
 
 **Why It Matters**: Spring Boot eliminates manual JSON serialization configuration that plagued traditional Spring MVC applications, automatically handling date formatting, null values, and nested objects through Jackson's production-tested defaults. This zero-configuration approach reduces JSON-related production bugs by removing manual ObjectMapper configuration errors. Jackson's auto-configuration supports over 20 common Java types out of the box, including Java time types, optional values, and polymorphic objects, removing the need for per-project serialization setup that traditionally caused subtle data contract bugs across API versions.
@@ -879,7 +904,8 @@ data class User(
 
 Path variables (`/users/{id}`) identify resources. Query parameters (`?page=1&size=10`) filter or paginate results. Use `@PathVariable` and `@RequestParam` to extract them.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.controller;
@@ -972,7 +998,8 @@ public class UserController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.controller
@@ -1056,6 +1083,9 @@ class UserController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Path variables identify resources (`/users/123`). Query parameters filter or paginate (`?page=0&size=10`). Use `defaultValue` and `required=false` for optional parameters.
 
 **Why It Matters**: RESTful URL design with path variables for resource identification and query parameters for filtering follows HTTP standards that enable effective caching, bookmarking, and API documentation generation through tools like Swagger. Proper parameter handling with default values prevents 400 Bad Request errors from missing optional parameters, improving API usability and reducing client-side error handling complexity in production applications.
@@ -1066,7 +1096,8 @@ class UserController {
 
 DTOs (Data Transfer Objects) decouple your API contract from domain models. Use Java records for immutable DTOs. `ResponseEntity` provides control over status codes and headers.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.controller;
@@ -1160,7 +1191,8 @@ public class UserApiController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.controller
@@ -1258,6 +1290,9 @@ class UserApiController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use records for immutable DTOs. `ResponseEntity` controls HTTP status codes and headers. Return 201 Created for POST, 200 OK for GET, 204 No Content for DELETE.
 
 **Why It Matters**: Using immutable DTOs with Java records prevents accidental state mutation in multi-threaded REST APIs and enables compile-time guarantees about data contracts between client and server. Proper HTTP status codes (201 for creation, 204 for deletion) follow REST standards that enable effective client-side caching and error handling, significantly reducing unnecessary network traffic in production APIs through appropriate cache directives.
@@ -1268,7 +1303,8 @@ class UserApiController {
 
 REST uses HTTP methods semantically: POST creates, GET retrieves, PUT updates, DELETE removes. Return appropriate status codes: 201 (Created), 200 (OK), 204 (No Content), 404 (Not Found).
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.controller;
@@ -1392,7 +1428,8 @@ public class ProductController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.controller
@@ -1512,6 +1549,9 @@ class ProductController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Follow REST conventions: POST (201 Created), GET (200 OK / 404 Not Found), PUT (200 OK), DELETE (204 No Content). Include Location header on resource creation.
 
 **Why It Matters**: Semantic HTTP methods enable infrastructure-level optimizations—GET requests can be cached by browsers and CDNs (reducing server load by 60-80%), while POST/PUT/DELETE are automatically excluded from caching. Idempotent methods (GET, PUT, DELETE) can be safely retried on network failures, whereas non-idempotent methods (POST) require careful handling to prevent duplicate operations in distributed systems.
@@ -1522,7 +1562,8 @@ class ProductController {
 
 Spring Boot supports content negotiation via the `Accept` header. Clients can request JSON (`application/json`) or XML (`application/xml`). Use `produces` to specify supported formats.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.controller;
@@ -1602,7 +1643,8 @@ public class BookController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.controller
@@ -1677,6 +1719,9 @@ class BookController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Content negotiation allows clients to request different formats via `Accept` header. Use `produces` to specify supported media types.
 
 **Why It Matters**: Content negotiation enables single APIs to serve multiple client types—mobile apps requesting JSON, legacy systems requiring XML, and monitoring tools accepting Prometheus metrics—without duplicating controller code. Production APIs use content negotiation to version responses (application/vnd.api.v2+json) and support multiple serialization formats, reducing API proliferation where each format requires separate endpoints that increase maintenance burden and deployment complexity.
@@ -1702,7 +1747,8 @@ graph TD
     style JpaRepository fill:#CC78BC,color:#fff
 ```
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.model;
@@ -1792,7 +1838,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.model
@@ -1870,6 +1917,9 @@ interface UserRepository : JpaRepository<User, Long> {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: `JpaRepository` provides CRUD methods out-of-the-box. No implementation code needed—Spring generates it at runtime.
 
 **Why It Matters**: JPA abstracts database differences across PostgreSQL, MySQL, Oracle, and H2, enabling database portability where the same code runs on development H2 and production PostgreSQL without SQL dialect changes. JpaRepository eliminates the vast majority of boilerplate data access code — JDBC connection handling, ResultSet mapping, and transaction management that traditionally required dozens of lines per DAO method — reducing data layer bugs from manual resource management and enabling rapid prototyping where adding a database entity requires only 5 lines of code.
@@ -1880,7 +1930,8 @@ interface UserRepository : JpaRepository<User, Long> {
 
 Spring Data JPA supports custom queries via `@Query` with JPQL (Java Persistence Query Language) or native SQL. Use JPQL for database portability, native SQL for database-specific features.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.repository;
@@ -1944,7 +1995,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.repository
@@ -2022,6 +2074,9 @@ interface UserRepository : JpaRepository<User, Long> {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use derived query methods for simple queries. Use `@Query` with JPQL for portability or native SQL for database-specific optimizations.
 
 **Why It Matters**: Custom queries enable optimized database access beyond auto-generated CRUD—production applications use native SQL for performance-critical queries with database-specific features (PostgreSQL JSONB operators, MySQL full-text search) while JPQL provides database-independent queries for 90% of use cases. Derived query methods (findByNameAndAge) reduce query code by 70% for simple cases, while @Query handles complex joins, aggregations, and projections that would otherwise require verbose QueryDSL or Criteria API code.
@@ -2042,7 +2097,8 @@ graph TD
     style Order fill:#029E73,color:#fff
 ```
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.model;
@@ -2156,7 +2212,8 @@ public class Order {
 // @Query("SELECT u FROM User u LEFT JOIN FETCH u.orders WHERE u.id = :id")
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.model
@@ -2251,6 +2308,9 @@ open class Order(
 // Always specify fetch type explicitly for clarity
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `@OneToMany` and `@ManyToOne` for relationships. Default to LAZY fetching to prevent N+1 queries. Use `mappedBy` on the non-owning side of bidirectional relationships.
 
 **Why It Matters**: Relationship mapping eliminates manual foreign key management and join queries—JPA automatically loads related entities and maintains referential integrity through cascade operations. However, N+1 query problems occur when lazy relationships load in loops (1 query for authors + N queries for books), making fetch joins and entity graphs essential for production performance where unoptimized queries can execute 1000+ database roundtrips for 10 parent records, turning 50ms queries into 5-second page loads.
@@ -2261,7 +2321,8 @@ open class Order(
 
 Always paginate large datasets to control memory usage. Spring Data JPA provides `Pageable` for pagination and `Sort` for ordering. Return `Page<T>` to include total count and page metadata.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.repository;
@@ -2371,7 +2432,8 @@ public class UserPageController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.repository
@@ -2481,6 +2543,9 @@ class UserPageController(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Always paginate large datasets using `Pageable`. `Page<T>` includes metadata (total count, total pages, current page) for client-side pagination controls.
 
 **Why It Matters**: Pagination prevents out-of-memory errors and slow queries when datasets exceed thousands of records—loading 100,000 users into memory causes heap exhaustion, while pagination loads 20 records per request with constant memory usage. Production REST APIs use pagination with sort capabilities to enable infinite scroll (mobile apps), Excel export batch processing (100 records per iteration), and search results display, with Spring automatically executing count queries to provide total page counts that power "Page 1 of 50" UI displays.
@@ -2491,7 +2556,8 @@ class UserPageController(
 
 Use `schema.sql` and `data.sql` for simple initialization. For production, use Flyway or Liquibase for versioned migrations that prevent schema drift across environments.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```sql
 -- src/main/resources/schema.sql
@@ -2562,7 +2628,8 @@ spring.flyway.baseline-on-migrate=true
 # => Allows Flyway to work with non-empty databases
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 Kotlin projects use the same SQL files and Flyway migrations as Java projects. The key difference is in build configuration:
 
@@ -2635,6 +2702,9 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
 # => Ensures Hibernate uses correct SQL dialect for Kotlin entities
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `schema.sql`/`data.sql` for development. Use Flyway (versioned migrations like `V1__Description.sql`) for production to track schema changes across environments.
 
 **Why It Matters**: Database initialization scripts enable reproducible dev environments where every developer gets identical schema and test data with 'git clone && mvn spring-boot:run', eliminating database state discrepancies that cause 'works on my machine' failures. Production applications use Flyway/Liquibase for versioned migrations instead of `ddl-auto` (which drops data), tracking schema history in production databases and enabling zero-downtime deployments with backwards-compatible migrations that support concurrent old/new application versions during rolling updates.
@@ -2647,7 +2717,8 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
 
 Externalize configuration to avoid hardcoding values. Use `application.properties` or `application.yml` for environment-specific settings. Inject values with `@Value`.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```properties
 # src/main/resources/application.properties
@@ -2723,7 +2794,8 @@ public class AppProperties {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```properties
 # src/main/resources/application.properties
@@ -2814,6 +2886,9 @@ data class AppConfig(
 // @EnableConfigurationProperties(AppConfig::class)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **@ConfigurationProperties Binding Process**:
 
 ```mermaid
@@ -2877,7 +2952,8 @@ graph TD
 
 Use `@Configuration` classes to define beans for third-party libraries or complex object initialization. Beans defined with `@Bean` methods are managed by Spring.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.config;
@@ -2971,7 +3047,8 @@ class ApiClient {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.config
@@ -3069,6 +3146,9 @@ class ApiClient(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `@Configuration` classes to centralize bean definitions. `@Bean` methods create Spring-managed objects for third-party libraries.
 
 **Why It Matters**: Manual bean configuration enables integration with third-party libraries that lack Spring Boot autoconfiguration—custom DataSource beans configure connection pools (HikariCP settings), custom RestTemplate beans add interceptors and error handlers, and custom Jackson ObjectMapper beans configure serialization behavior. Production applications use @Primary to override autoconfigured beans without disabling autoconfiguration entirely, enabling gradual customization where 90% of defaults work but 10% need fine-tuning for production requirements like connection pool sizing or timeout configurations.
@@ -3079,7 +3159,8 @@ class ApiClient(
 
 Profiles enable environment-specific configurations without code changes. Define `application-{profile}.properties` files and activate with `spring.profiles.active`.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```properties
 # src/main/resources/application-dev.properties
@@ -3199,7 +3280,8 @@ java -jar app.jar
 # => Same as command line activation
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 Properties files are identical for Kotlin projects:
 
@@ -3360,6 +3442,9 @@ logging:
     root: WARN
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Profiles enable environment-specific configurations. Use `application-{profile}.properties` and `@Profile` annotation. Activate with `spring.profiles.active`.
 
 **Why It Matters**: Profile-based configuration enables single codebase deployment across dev/staging/production without recompilation—dev profile uses H2 in-memory database for fast tests, while prod profile uses managed PostgreSQL with connection pooling. Production teams activate multiple profiles (@Profile("!test")) to disable beans during testing, or use profile groups (spring.profiles.group.prod=aws,monitoring) to activate related configurations together, preventing configuration drift where production servers accidentally run with dev database settings.
@@ -3385,7 +3470,8 @@ graph TD
     style ErrorResponse fill:#CA9161,color:#fff
 ```
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.exception;
@@ -3524,7 +3610,8 @@ public class GlobalExceptionHandler {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.exception
@@ -3665,6 +3752,9 @@ class GlobalExceptionHandler {
 // Enables railway-oriented programming without exceptions
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `@ControllerAdvice` for global exception handling. Define `@ExceptionHandler` methods for specific exceptions. Return consistent error response DTOs with proper HTTP status codes.
 
 **Why It Matters**: Global exception handlers eliminate repetitive try-catch blocks in every controller method while providing consistent error responses across all APIs—clients receive structured JSON errors (status, message, timestamp) instead of stack traces or HTML error pages. Production APIs use exception handlers to distinguish business errors (404 Not Found, 400 Bad Request) from system errors (500 Internal Server Error), logging stack traces for 500s while hiding implementation details from clients, preventing security vulnerabilities where stack traces leak database schemas or internal paths.
@@ -3675,7 +3765,8 @@ class GlobalExceptionHandler {
 
 Use JSR-380 Bean Validation annotations (`@NotNull`, `@Size`, `@Email`, etc.) for declarative validation. Combine with `@Valid` on `@RequestBody` to automatically validate requests.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```xml
 <!-- pom.xml -->
@@ -3776,7 +3867,8 @@ public class UserValidationController {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -3913,6 +4005,9 @@ data class UserRequest(
 )
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `@Valid` with JSR-380 annotations for declarative validation. Spring automatically returns 400 Bad Request with validation error details.
 
 **Why It Matters**: Declarative validation moves error handling from scattered if-statements to compile-time verifiable annotations, reducing validation code by 60% while providing standardized error messages that internationalize easily. Validation at the API boundary prevents malformed data from corrupting databases—production teams report 40% fewer data integrity bugs after adopting JSR-380, and validation annotations serve as executable documentation that new developers can understand without reading implementation code.
@@ -3923,7 +4018,8 @@ data class UserRequest(
 
 Create custom validation annotations for complex business rules that can't be expressed with standard JSR-380 annotations. Implement `ConstraintValidator` interface.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.validation;
@@ -4051,7 +4147,8 @@ record ChangePasswordRequest(
     // => Begins block
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.validation
@@ -4178,6 +4275,9 @@ data class ChangePasswordRequest(
 )
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Create custom `@interface` annotations with `@Constraint` and implement `ConstraintValidator<AnnotationType, FieldType>` for reusable complex validation logic.
 
 **Why It Matters**: Custom validators encapsulate complex business rules into reusable, testable components that work across controllers, services, and batch jobs without code duplication. Production applications use custom validators for domain-specific constraints like credit card Luhn checks, VAT number validation, and business-hour scheduling rules, reducing validation bugs by centralizing logic that would otherwise scatter across 10+ service methods, each with subtly different implementations causing inconsistent behavior.
@@ -4188,7 +4288,8 @@ data class ChangePasswordRequest(
 
 Organize exceptions into a hierarchy for different error scenarios in your domain.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.exception;
@@ -4484,7 +4585,8 @@ public class DomainExceptionHandler {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.exception
@@ -4711,6 +4813,9 @@ class DomainExceptionHandler {
 // => Compile-time exhaustive when() checks, no runtime casting
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Organize exceptions into a domain-specific hierarchy with error codes—use abstract base exceptions to enforce consistent structure and handle different exception types appropriately in `@ControllerAdvice`.
 
 **Why It Matters**: Exception hierarchies enable granular catch blocks and consistent error handling—catching `BusinessException` handles all business rule violations without catching technical errors like database connection failures that require different handling. Production services use exception hierarchies to implement retry logic (retry `TransientException`, fail fast on `PermanentException`) and structured logging where exception types map to alert severity levels, reducing mean time to recovery by helping on-call engineers quickly distinguish transient failures from critical bugs.
@@ -4721,7 +4826,8 @@ class DomainExceptionHandler {
 
 Handle multipart file uploads and stream file downloads efficiently.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.controller;
@@ -4922,7 +5028,8 @@ spring.servlet.multipart.max-request-size=10MB
 # => Prevents DoS attacks via massive uploads
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.controller
@@ -5125,6 +5232,9 @@ spring.servlet.multipart.max-request-size=10MB
 # => Maximum size for entire multipart request (all files combined)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `MultipartFile` for uploads and `Resource` with `UrlResource` for downloads—configure max file size limits and always validate/sanitize filenames to prevent directory traversal attacks.
 
 **Why It Matters**: Streaming file uploads and downloads prevents out-of-memory errors when users upload large files—buffering entire files in memory causes heap exhaustion under concurrent uploads. Production file services use streaming APIs to handle large volumes of data with constant memory usage, while proper content-type headers and content-disposition enable in-browser preview versus download behavior, improving user experience without custom client-side code.
@@ -5135,7 +5245,8 @@ spring.servlet.multipart.max-request-size=10MB
 
 Configure logging levels, patterns, and file output for different environments.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.controller;
@@ -5299,7 +5410,8 @@ logging:
     max-history: 90 # Keep 90 days of logs
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.controller
@@ -5446,6 +5558,9 @@ class LoggingController {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use SLF4J with Logback for flexible logging—configure different levels per package, use parameterized logging for performance, and set up rolling file appenders to prevent disk space exhaustion in production.
 
 **Why It Matters**: Structured logging with MDC (Mapped Diagnostic Context) enables distributed tracing across microservices by propagating correlation IDs through log statements, making it possible to trace a single user request across multiple services in production. Log level configuration prevents disk space exhaustion from excessive DEBUG logs in production while enabling runtime log level changes via actuator endpoints to troubleshoot production issues without redeployment, significantly reducing incident resolution time.
@@ -5456,7 +5571,8 @@ class LoggingController {
 
 Intercept HTTP requests and responses for cross-cutting concerns like logging, authentication, and metrics.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.interceptor;
@@ -5746,7 +5862,8 @@ public class WebConfig implements WebMvcConfigurer {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.interceptor
@@ -6000,6 +6117,9 @@ open class WebMvcConfig : WebMvcConfigurer {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Interceptors implement cross-cutting concerns across multiple controllers—use `preHandle` for authentication/authorization, `postHandle` for response modification, and `afterCompletion` for cleanup and metrics regardless of success or failure.
 
 **Why It Matters**: Interceptors implement cross-cutting concerns like authentication, rate limiting, and audit logging without polluting business logic with repetitive code that appears in every controller method. Production API gateways use interceptors to enforce authentication tokens, track API usage metrics, and log all requests for compliance (GDPR, SOC2), reducing security vulnerabilities by centralizing authentication logic that would otherwise have 100+ scattered @PreAuthorize checks with inconsistent implementations.
@@ -6010,7 +6130,8 @@ open class WebMvcConfig : WebMvcConfigurer {
 
 Configure Cross-Origin Resource Sharing to allow frontend applications from different domains.
 
-**Code (Java)**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 package com.example.demo.config;
@@ -6233,7 +6354,8 @@ spring:
       max-age: 3600
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 package com.example.demo.config
@@ -6414,6 +6536,9 @@ open class CorsConfig : WebMvcConfigurer {
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway**: Configure CORS at the appropriate level—global filter for application-wide settings, `WebMvcConfigurer` for path-specific rules, or `@CrossOrigin` for fine-grained controller/method control. Never use `allowedOrigins("*")` with `allowCredentials(true)` in production.
 

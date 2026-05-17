@@ -38,7 +38,8 @@ graph TD
     style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -128,7 +129,8 @@ public class Example26 {  // => Defines Example26 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -202,6 +204,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -250,7 +255,8 @@ graph LR
     style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -318,7 +324,8 @@ public class Example27 {  // => Defines Example27 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Autowired
@@ -380,6 +387,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -408,7 +418,8 @@ Optional dependencies via `@Autowired(required=false)` or `Optional<T>` enable g
 
 Demonstrates injecting ApplicationContext itself for dynamic bean lookup.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -490,7 +501,8 @@ public class Example28 {  // => Defines Example28 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Autowired
@@ -552,6 +564,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -580,7 +595,8 @@ Injecting `ApplicationContext` directly is necessary when you need dynamic bean 
 
 Demonstrates how Spring resolves circular dependencies using setter injection.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -662,7 +678,8 @@ public class Example29 {  // => Defines Example29 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Autowired
@@ -739,6 +756,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -771,7 +791,8 @@ Understanding and resolving circular dependencies is a critical production skill
 
 Demonstrates injecting beans based on generic type parameters.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -853,7 +874,8 @@ public class Example30 {  // => Defines Example30 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -926,6 +948,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -955,7 +980,8 @@ Generic type injection lets Spring distinguish beans by their type parameters, e
 
 Demonstrates creating aspect with before advice to execute logic before method calls.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.aspectj.lang.JoinPoint;
@@ -1018,7 +1044,8 @@ public class Example31 {  // => Defines Example31 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.aspectj.lang.JoinPoint
@@ -1073,6 +1100,9 @@ fun main() {
     context.close()  # => Shuts down Spring container, releases resources
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Expected Output**:
 
@@ -1134,7 +1164,8 @@ AOP before advice provides a clean interception point for cross-cutting concerns
 
 Demonstrates after advice types for post-method execution logic.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.aspectj.lang.JoinPoint;
@@ -1212,7 +1243,8 @@ public class Example32 {  // => Defines Example32 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.aspectj.lang.JoinPoint
@@ -1286,6 +1318,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -1320,7 +1355,8 @@ Let me continue writing the complete intermediate.md file with all examples:
 
 Demonstrates wrapping method execution with @Around advice.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -1349,7 +1385,8 @@ class PerformanceAspect {  // => Defines PerformanceAspect class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.aspectj.lang.ProceedingJoinPoint
@@ -1380,6 +1417,9 @@ class PerformanceAspect {  # => Defines PerformanceAspect class
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **@Around Advice Execution Flow**:
 
@@ -1450,7 +1490,8 @@ graph TD
     style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.aspectj.lang.annotation.Aspect;
@@ -1481,7 +1522,8 @@ class SecurityAspect {  // => Defines SecurityAspect class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.aspectj.lang.annotation.Aspect
@@ -1514,6 +1556,9 @@ class SecurityAspect {  # => Defines SecurityAspect class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @Pointcut defines reusable expressions
@@ -1535,7 +1580,8 @@ Pointcut expressions are the query language of Spring AOP. Mastering pointcut sy
 
 Demonstrates exception handling in aspects.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -1563,7 +1609,8 @@ class ErrorAspect {  // => Defines ErrorAspect class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.aspectj.lang.annotation.AfterThrowing
@@ -1592,6 +1639,9 @@ class ErrorAspect {  # => Defines ErrorAspect class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @AfterThrowing captures exceptions
@@ -1615,7 +1665,8 @@ Exception-capturing after advice is essential for error reporting and compensati
 
 Demonstrates declarative transaction management.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.transaction.annotation.Transactional;
@@ -1644,7 +1695,8 @@ class AccountService {  // => Defines AccountService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.transaction.annotation.Transactional
@@ -1672,6 +1724,9 @@ class AccountService {  # => Defines AccountService class
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Transaction Lifecycle with @Transactional**:
 
@@ -1717,7 +1772,8 @@ graph TD
 
 Demonstrates transaction propagation behaviors.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.transaction.annotation.Propagation;
@@ -1751,7 +1807,8 @@ class OrderService {  // => Defines OrderService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.transaction.annotation.Propagation
@@ -1787,6 +1844,9 @@ class OrderService {  # => Defines OrderService class
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Transaction Propagation Comparison**:
 
@@ -1838,7 +1898,8 @@ Transaction propagation controls what happens when a transactional method calls 
 
 Demonstrates isolation levels for concurrent access.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.transaction.annotation.Isolation;
@@ -1871,7 +1932,8 @@ class InventoryService {  // => Defines InventoryService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.transaction.annotation.Isolation
@@ -1902,6 +1964,9 @@ class InventoryService {  # => Defines InventoryService class
     private fun checkStockInternal(): Int = 100  # => Method: checkStockInternal(...)
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Transaction Isolation Levels**:
 
@@ -1963,7 +2028,8 @@ graph TD
     style D fill:#029E73,stroke:#000,color:#fff
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.transaction.annotation.Transactional;
@@ -1995,7 +2061,8 @@ class PaymentService {  // => Defines PaymentService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.transaction.annotation.Transactional
@@ -2030,6 +2097,9 @@ class PaymentService {  # => Defines PaymentService class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - Default: rollback on unchecked exceptions only
@@ -2051,7 +2121,8 @@ Rollback rules determine which exceptions trigger rollback. Spring's default of 
 
 Demonstrates programmatic transaction control.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.transaction.support.TransactionTemplate;
@@ -2086,7 +2157,8 @@ class BatchService {  // => Defines BatchService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.transaction.support.TransactionTemplate
@@ -2116,6 +2188,9 @@ class BatchService(  # => Defines BatchService class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - TransactionTemplate for programmatic control
@@ -2139,7 +2214,8 @@ Programmatic transaction management provides explicit control when declarative `
 
 Demonstrates simple database queries.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -2176,7 +2252,8 @@ class DonationRepository {  // => Defines DonationRepository class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.jdbc.core.JdbcTemplate
@@ -2208,6 +2285,9 @@ class DonationRepository(  # => Defines DonationRepository class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - JdbcTemplate simplifies JDBC operations
@@ -2229,7 +2309,8 @@ JdbcTemplate eliminates the boilerplate of raw JDBC (connection management, stat
 
 Demonstrates mapping rows to objects.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -2278,7 +2359,8 @@ class DonationRepository {  // => Defines DonationRepository class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.jdbc.core.JdbcTemplate
@@ -2306,6 +2388,9 @@ class DonationRepository(private val jdbc: JdbcTemplate) {  # => Defines Donatio
     }  # => End of findAll
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **JdbcTemplate Query Execution Flow**:
 
@@ -2361,7 +2446,8 @@ RowMapper provides a clean, reusable mapping from SQL result sets to domain obje
 
 Demonstrates named parameters instead of positional.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -2394,7 +2480,8 @@ class ZakatRepository {  // => Defines ZakatRepository class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -2422,6 +2509,9 @@ class ZakatRepository(  # => Defines ZakatRepository class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - Named parameters more readable than ?
@@ -2443,7 +2533,8 @@ class ZakatRepository(  # => Defines ZakatRepository class
 
 Demonstrates efficient batch inserts/updates.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -2474,7 +2565,8 @@ class BulkRepository {  // => Defines BulkRepository class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.jdbc.core.JdbcTemplate
@@ -2498,6 +2590,9 @@ class BulkRepository(private val jdbc: JdbcTemplate) {  # => Defines BulkReposit
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - batchUpdate() for multiple rows
@@ -2519,7 +2614,8 @@ Batch operations dramatically improve throughput when inserting or updating larg
 
 Demonstrates custom result extraction logic.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -2559,7 +2655,8 @@ class StatisticsRepository {  // => Defines StatisticsRepository class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.jdbc.core.JdbcTemplate
@@ -2591,6 +2688,9 @@ class StatisticsRepository(private val jdbc: JdbcTemplate) {  # => Defines Stati
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - ResultSetExtractor for complex result structures
@@ -2614,7 +2714,8 @@ class StatisticsRepository(private val jdbc: JdbcTemplate) {  # => Defines Stati
 
 Demonstrates basic Spring MVC controller.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.stereotype.Controller;
@@ -2634,7 +2735,8 @@ public class DonationController {  // => Defines DonationController class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.stereotype.Controller
@@ -2654,6 +2756,9 @@ class DonationController {  # => Defines DonationController class
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaways**:
 
@@ -2676,7 +2781,8 @@ class DonationController {  # => Defines DonationController class
 
 Demonstrates capturing request parameters.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.stereotype.Controller;
@@ -2711,7 +2817,8 @@ public class ZakatController {  // => Defines ZakatController class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.stereotype.Controller
@@ -2746,6 +2853,9 @@ class ZakatController {  # => Defines ZakatController class
     }  # => End of getById
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Spring MVC Request Lifecycle**:
 
@@ -2799,7 +2909,8 @@ sequenceDiagram
 
 Demonstrates JSON request/response handling.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.web.bind.annotation.*;
@@ -2835,7 +2946,8 @@ public class DonationApiController {  // => Defines DonationApiController class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.web.bind.annotation.*
@@ -2863,6 +2975,9 @@ class DonationApiController {  # => Defines DonationApiController class
     }  # => End of create
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **@RequestBody JSON Deserialization Flow**:
 
@@ -2914,7 +3029,8 @@ sequenceDiagram
 
 Demonstrates controller-level exception handling.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.http.HttpStatus;
@@ -2953,7 +3069,8 @@ public class TransferController {  // => Defines TransferController class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.http.HttpStatus
@@ -2987,6 +3104,9 @@ class TransferController {  # => Defines TransferController class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @ExceptionHandler catches specific exceptions
@@ -3008,7 +3128,8 @@ class TransferController {  # => Defines TransferController class
 
 Demonstrates input validation with Bean Validation.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.validation.annotation.Validated;
@@ -3051,7 +3172,8 @@ public class FormController {  // => Defines FormController class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.validation.annotation.Validated
@@ -3086,6 +3208,9 @@ class FormController {  # => Defines FormController class
     }  # => End of submit
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Bean Validation Integration Flow**:
 

@@ -37,7 +37,8 @@ graph LR
     style F fill:#CC78BC,stroke:#000,color:#000
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.http.HttpStatus;
@@ -77,7 +78,8 @@ public class DonationRestController {  // => Defines DonationRestController clas
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.http.HttpStatus
@@ -117,6 +119,9 @@ class DonationRestController {  # => Defines DonationRestController class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - ResponseEntity provides full HTTP response control
@@ -138,7 +143,8 @@ class DonationRestController {  # => Defines DonationRestController class
 
 Demonstrates producing different content types.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.web.bind.annotation.*;
@@ -180,7 +186,8 @@ public class ContentNegotiationController {  // => Defines ContentNegotiationCon
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.web.bind.annotation.*
@@ -212,6 +219,9 @@ class ContentNegotiationController {  # => Defines ContentNegotiationController 
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - produces attribute specifies content types
@@ -233,7 +243,8 @@ Content negotiation allows a single API endpoint to serve multiple response form
 
 Demonstrates Cross-Origin Resource Sharing setup.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.web.bind.annotation.*;
@@ -258,7 +269,8 @@ public class CorsController {  // => Defines CorsController class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.web.bind.annotation.*
@@ -284,6 +296,9 @@ class CorsController {  # => Defines CorsController class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @CrossOrigin enables CORS
@@ -305,7 +320,8 @@ CORS configuration is essential for browser-based applications that call APIs on
 
 Demonstrates REST API versioning strategies.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.web.bind.annotation.*;
@@ -344,7 +360,8 @@ class DonationResponse {  // => Defines DonationResponse class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.web.bind.annotation.*
@@ -381,6 +398,9 @@ data class DonationResponse(val message: String)
 # => Defines DonationResponse
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - URI versioning most common (/v1/, /v2/)
@@ -402,7 +422,8 @@ API versioning prevents breaking changes from disrupting existing clients when t
 
 Demonstrates centralized exception handling.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.http.HttpStatus;
@@ -448,7 +469,8 @@ public class GlobalExceptionHandler {  // => Defines GlobalExceptionHandler clas
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.http.HttpStatus
@@ -481,6 +503,9 @@ class GlobalExceptionHandler {  # => Defines GlobalExceptionHandler class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @RestControllerAdvice for global handlers
@@ -506,7 +531,8 @@ Demonstrates securing endpoints with Spring Security.
 
 **Why This Dependency**: Spring Security (`spring-security-web`, `spring-security-config`) provides authentication and authorization infrastructure that would take thousands of lines to build correctly from scratch. Spring Framework core has no built-in security mechanism — security is intentionally a separate concern. Spring Security is the standard choice for all Spring-based applications requiring authentication, authorization, CSRF protection, and security headers.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.Bean;
@@ -538,7 +564,8 @@ public class SecurityConfig {  // => Defines SecurityConfig class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.Bean
@@ -571,6 +598,9 @@ class SecurityConfig {  # => Defines SecurityConfig class
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Spring Security Filter Chain**:
 
@@ -626,7 +656,8 @@ Spring Security provides the authentication and authorization foundation for pro
 
 Demonstrates securing methods with annotations.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -659,7 +690,8 @@ public class SecureService {  // => Defines SecureService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.security.access.prepost.PreAuthorize
@@ -695,6 +727,9 @@ class SecureService {  # => Defines SecureService class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @PreAuthorize before method execution
@@ -716,7 +751,8 @@ Method-level security annotations (`@PreAuthorize`, `@PostAuthorize`) enforce ac
 
 Demonstrates custom user authentication.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.security.core.userdetails.*;
@@ -751,7 +787,8 @@ public class CustomUserDetailsService implements UserDetailsService {  // => Def
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.security.core.userdetails.*
@@ -781,6 +818,9 @@ class CustomUserDetailsService : UserDetailsService {  # => Defines CustomUserDe
     }  # => End of loadUserByUsername
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Custom UserDetailsService Authentication Flow**:
 
@@ -835,7 +875,8 @@ A custom `UserDetailsService` connects Spring Security to the application's spec
 
 Demonstrates JWT-based authentication (simplified).
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import io.jsonwebtoken.Jwts;
@@ -872,7 +913,8 @@ public class JwtService {  // => Defines JwtService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import io.jsonwebtoken.Jwts
@@ -912,6 +954,9 @@ class JwtService {  # => Defines JwtService class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - JWT for stateless authentication
@@ -933,7 +978,8 @@ JWT authentication enables stateless APIs where each request carries its own cre
 
 Demonstrates secure password storage.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.Bean;
@@ -981,7 +1027,8 @@ class PasswordService {  // => Defines PasswordService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.Bean
@@ -1023,6 +1070,9 @@ class PasswordService(private val encoder: PasswordEncoder) {  # => Defines Pass
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - Never store plain passwords
@@ -1046,7 +1096,8 @@ Password encoding is non-negotiable for any system storing user credentials. BCr
 
 Demonstrates method-level caching.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.cache.annotation.*;
@@ -1090,7 +1141,8 @@ class DonationCacheService {  // => Defines DonationCacheService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.cache.annotation.*
@@ -1134,6 +1186,9 @@ class DonationCacheService {  # => Defines DonationCacheService class
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Cache Abstraction Lifecycle**:
 
@@ -1189,7 +1244,8 @@ Spring's cache abstraction (`@Cacheable`, `@CacheEvict`) adds caching with a sin
 
 Demonstrates asynchronous processing with @Async.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.scheduling.annotation.*;
@@ -1233,7 +1289,8 @@ class NotificationService {  // => Defines NotificationService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.scheduling.annotation.*
@@ -1271,6 +1328,9 @@ class NotificationService {  # => Defines NotificationService class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @Async executes method in separate thread
@@ -1292,7 +1352,8 @@ class NotificationService {  # => Defines NotificationService class
 
 Demonstrates event-driven architecture.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.ApplicationEvent;
@@ -1348,7 +1409,8 @@ class DonationEventListener {  // => Defines DonationEventListener class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.ApplicationEvent
@@ -1389,6 +1451,9 @@ class DonationEventListener {  # => Defines DonationEventListener class
     }  # => End of handleDonation
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **ApplicationEvent Publishing Flow**:
 
@@ -1441,7 +1506,8 @@ Spring's application event system decouples components that need to react to eve
 
 Demonstrates scheduled background tasks.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.scheduling.annotation.*;
@@ -1482,7 +1548,8 @@ class ScheduledTasks {  // => Defines ScheduledTasks class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.scheduling.annotation.*
@@ -1524,6 +1591,9 @@ class ScheduledTasks {  # => Defines ScheduledTasks class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @Scheduled for periodic tasks
@@ -1545,7 +1615,8 @@ class ScheduledTasks {  # => Defines ScheduledTasks class
 
 Demonstrates advanced conditional bean creation.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.boot.autoconfigure.condition.*;
@@ -1611,7 +1682,8 @@ class DatabaseService {  // => Defines DatabaseService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.boot.autoconfigure.condition.*
@@ -1674,6 +1746,9 @@ class DatabaseService(type: String) {  # => Defines DatabaseService class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Conditional Bean Registration Flow**:
 
 ```mermaid
@@ -1733,7 +1808,8 @@ graph TD
 
 Demonstrates integration testing with Spring context.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.junit.jupiter.api.Test;
@@ -1767,7 +1843,8 @@ class CalculatorServiceTest {  // => Defines CalculatorServiceTest class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.junit.jupiter.api.Test
@@ -1802,6 +1879,9 @@ class CalculatorServiceTest {  # => Defines CalculatorServiceTest class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @SpringBootTest loads application context
@@ -1823,7 +1903,8 @@ Spring TestContext Framework provides integration test infrastructure that loads
 
 Demonstrates testing Spring MVC controllers.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.junit.jupiter.api.Test;
@@ -1864,7 +1945,8 @@ class GreetingControllerTest {  // => Defines GreetingControllerTest class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.junit.jupiter.api.Test
@@ -1908,6 +1990,9 @@ class GreetingControllerTest {  # => Defines GreetingControllerTest class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @WebMvcTest for controller tests
@@ -1929,7 +2014,8 @@ MockMvc enables comprehensive web layer testing without starting a real server. 
 
 Demonstrates transactional test rollback.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.junit.jupiter.api.Test;
@@ -1969,7 +2055,8 @@ class DatabaseTest {  // => Defines DatabaseTest class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.junit.jupiter.api.Test
@@ -2011,6 +2098,9 @@ class DatabaseTest {  # => Defines DatabaseTest class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @Transactional on test class
@@ -2032,7 +2122,8 @@ class DatabaseTest {  # => Defines DatabaseTest class
 
 Demonstrates test-specific configuration.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.junit.jupiter.api.Test;
@@ -2061,7 +2152,8 @@ class ProfileTest {  // => Defines ProfileTest class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.junit.jupiter.api.Test
@@ -2090,6 +2182,9 @@ class ProfileTest {  # => Defines ProfileTest class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @ActiveProfiles for test configuration
@@ -2111,7 +2206,8 @@ Test profiles allow tests to use different Spring configurations from production
 
 Demonstrates mocking dependencies in tests.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.junit.jupiter.api.Test;
@@ -2167,7 +2263,8 @@ class MockBeanTest {  // => Defines MockBeanTest class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.junit.jupiter.api.Test
@@ -2216,6 +2313,9 @@ class MockBeanTest {  # => Defines MockBeanTest class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - @MockBean replaces bean with mock
@@ -2239,7 +2339,8 @@ class MockBeanTest {  # => Defines MockBeanTest class
 
 Demonstrates application health monitoring.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.boot.actuate.health.*;
@@ -2279,7 +2380,8 @@ class CustomHealthIndicator implements HealthIndicator {  // => Defines CustomHe
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.boot.actuate.health.*
@@ -2312,6 +2414,9 @@ class CustomHealthIndicator : HealthIndicator {  # => Defines CustomHealthIndica
 }  # => End of health
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - HealthIndicator for custom health checks
@@ -2333,7 +2438,8 @@ Custom health indicators expose application-specific health metrics to Spring Bo
 
 Demonstrates application metrics tracking.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import io.micrometer.core.instrument.Counter;
@@ -2368,7 +2474,8 @@ class DonationMetricsService {  // => Defines DonationMetricsService class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import io.micrometer.core.instrument.Counter
@@ -2399,6 +2506,9 @@ class DonationMetricsService(registry: MeterRegistry) {  # => Defines DonationMe
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - Micrometer for metrics
@@ -2420,7 +2530,8 @@ Custom metrics bridge application-specific events (Murabaha contract approvals, 
 
 Demonstrates HTTP request interception.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.stereotype.Component;
@@ -2476,7 +2587,8 @@ class WebConfig implements WebMvcConfigurer {  // => Defines WebConfig class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.stereotype.Component
@@ -2519,6 +2631,9 @@ class WebConfig(  # => Defines WebConfig class
     }  # => End of addInterceptors
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - HandlerInterceptor for request/response interception
@@ -2542,7 +2657,8 @@ Request/response logging interceptors provide visibility into the full HTTP life
 
 Demonstrates database connection pooling configuration.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import com.zaxxer.hikari.HikariConfig;
@@ -2585,7 +2701,8 @@ class DataSourceConfig {  // => Defines DataSourceConfig class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import com.zaxxer.hikari.HikariConfig
@@ -2630,6 +2747,9 @@ class DataSourceConfig {  # => Defines DataSourceConfig class
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaways**:
 
 - HikariCP default connection pool in Spring Boot
@@ -2651,7 +2771,8 @@ HikariCP is the production-standard JDBC connection pool for Spring applications
 
 Demonstrates creating custom validation constraint.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import javax.validation.*;
@@ -2693,7 +2814,8 @@ class DonationForm {  // => Defines DonationForm class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import javax.validation.*
@@ -2728,6 +2850,9 @@ data class DonationForm(  # => Code executes here
     val amount: Double?
 )
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaways**:
 

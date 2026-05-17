@@ -18,7 +18,8 @@ This tutorial provides 25 heavily annotated Spring Framework examples for experi
 
 Demonstrates the most basic Spring setup - creating an ApplicationContext to manage beans.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -57,7 +58,8 @@ public class Example01 {  // => Main application entry point
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -92,6 +94,9 @@ fun main() {  // => Application entry point for Kotlin
                      // => Triggers @PreDestroy methods if any beans defined
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Expected Output**:
 
@@ -155,7 +160,8 @@ graph TD
     style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -210,7 +216,8 @@ public class Example02 {  // => Main application entry point
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -262,6 +269,9 @@ fun main() {  // => Application entry point for Kotlin
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -289,7 +299,8 @@ Explicit bean definitions give teams complete control over object creation. In I
 
 Demonstrates constructor-based dependency injection - Spring's recommended DI approach.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -355,7 +366,8 @@ public class Example03 {  // => Defines Example03 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -409,6 +421,9 @@ fun main() {
     context.close()  # => Shuts down Spring container, releases resources
 }  # => End of main
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Expected Output**:
 
@@ -481,7 +496,8 @@ QardHassanCalculator"]
     style D fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -525,7 +541,8 @@ public class Example04 {  // => Defines Example04 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -562,6 +579,9 @@ fun main() {
     context.close()  # => Shuts down Spring container, releases resources
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Expected Output**:
 
@@ -606,7 +626,8 @@ graph TD
     style D fill:#CC78BC,stroke:#000,color:#000
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -669,7 +690,8 @@ public class Example05 {  // => Defines Example05 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Autowired
@@ -717,6 +739,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -763,7 +788,8 @@ bean: 'myCalc'"]
     style D fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -821,7 +847,8 @@ public class Example06 {  // => Defines Example06 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -873,6 +900,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -901,7 +931,8 @@ Custom bean names are essential when you have multiple implementations of a serv
 
 Demonstrates defining multiple names (aliases) for the same bean.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -953,7 +984,8 @@ public class Example07 {  // => Defines Example07 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -997,6 +1029,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -1024,7 +1059,8 @@ Bean aliases enable backward compatibility when refactoring. If a Murabaha payme
 
 Demonstrates setter-based dependency injection as alternative to constructor injection.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1085,7 +1121,8 @@ public class Example08 {  // => Defines Example08 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Autowired
@@ -1141,6 +1178,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -1188,7 +1228,8 @@ Setter injection is appropriate when a dependency is optional or when it must be
 
 Demonstrates field-based injection - simplest but least recommended approach.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1244,7 +1285,8 @@ public class Example09 {  // => Defines Example09 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Autowired
@@ -1294,6 +1336,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -1321,7 +1366,8 @@ Field injection via `@Autowired` reduces boilerplate but comes with trade-offs. 
 
 Demonstrates using `@Qualifier` when multiple beans of same type exist.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1411,7 +1457,8 @@ public class Example10 {  // => Defines Example10 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Qualifier
@@ -1487,6 +1534,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -1542,7 +1592,8 @@ The `@Qualifier` annotation is essential when multiple beans implement the same 
 
 Demonstrates singleton scope - Spring's default bean scope.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -1596,7 +1647,8 @@ public class Example11 {  // => Defines Example11 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -1645,6 +1697,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -1674,7 +1729,8 @@ Singleton scope is the default and most common bean scope in Spring because most
 
 Demonstrates prototype scope - new instance per request.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -1730,7 +1786,8 @@ public class Example12 {  // => Defines Example12 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -1772,6 +1829,9 @@ fun main() {
     context.close()  # => Shuts down Spring container, releases resources
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Expected Output** (IDs will vary):
 
@@ -1832,7 +1892,8 @@ Prototype scope is critical when beans hold state that must not be shared betwee
 
 Demonstrates `@PostConstruct` for post-initialization logic.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -1893,7 +1954,8 @@ public class Example13 {  // => Defines Example13 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -1944,6 +2006,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -1974,7 +2039,8 @@ The `@PostConstruct` callback is the correct place to perform initialization tha
 
 Demonstrates `@PreDestroy` for pre-destruction cleanup.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -2030,7 +2096,8 @@ public class Example14 {  // => Defines Example14 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -2079,6 +2146,9 @@ fun main() {
     // => Output: @PreDestroy: Closing file handles
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Expected Output**:
 
@@ -2139,7 +2209,8 @@ The `@PreDestroy` callback ensures resources are released gracefully before the 
 
 Demonstrates `@Primary` to mark default bean when multiple exist.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2224,7 +2295,8 @@ public class Example15 {  // => Defines Example15 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -2297,6 +2369,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -2326,7 +2401,8 @@ The `@Primary` annotation is essential in complex configurations where multiple 
 
 Demonstrates injecting literal values using `@Value` annotation.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Value;
@@ -2380,7 +2456,8 @@ public class Example16 {  // => Defines Example16 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Value
@@ -2424,6 +2501,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -2452,7 +2532,8 @@ Literal `@Value` injection keeps configuration visible in source code while avoi
 
 Demonstrates injecting values from property files using placeholders.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Value;
@@ -2514,7 +2595,8 @@ public class Example17 {  // => Defines Example17 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Value
@@ -2569,6 +2651,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -2597,7 +2682,8 @@ Property placeholder injection (`${...}`) bridges Spring configuration with exte
 
 Demonstrates providing default values when properties missing.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Value;
@@ -2658,7 +2744,8 @@ public class Example18 {  // => Defines Example18 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Value
@@ -2715,6 +2802,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -2770,7 +2860,8 @@ Default values in `@Value` prevent application startup failures when optional pr
 
 Demonstrates environment-specific bean registration using `@Profile`.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -2839,7 +2930,8 @@ public class Example19 {  // => Defines Example19 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -2906,6 +2998,9 @@ fun main() {
 }  # => End of main
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -2933,7 +3028,8 @@ Profile-based configuration enables the same codebase to run in development, tes
 
 Demonstrates programmatic property access using Spring's Environment abstraction.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2996,7 +3092,8 @@ public class Example20 {  // => Defines Example20 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Autowired
@@ -3053,6 +3150,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output** (assuming application.properties exists):
 
 ```
@@ -3087,7 +3187,8 @@ Demonstrates loading files and resources using Spring's Resource abstraction.
 
 **Setup Note**: Create `src/main/resources/zakat-rates.txt` with sample content (e.g., `nisab=85;goldGrams=2.5`) before running. You can use any classpath text file to observe the resource loading behavior.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Value;
@@ -3147,7 +3248,8 @@ public class Example21 {  // => Defines Example21 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.beans.factory.annotation.Value
@@ -3199,6 +3301,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -3229,7 +3334,8 @@ Spring's `Resource` abstraction unifies access to files, classpath resources, HT
 
 Demonstrates injecting collections of beans (List, Set, Map).
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -3320,7 +3426,8 @@ public class Example22 {  // => Defines Example22 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -3390,6 +3497,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -3420,7 +3530,8 @@ Collection injection is essential when multiple beans of the same type need to b
 
 Demonstrates conditional bean registration using `@Conditional` annotation.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -3504,7 +3615,8 @@ public class Example23 {  // => Defines Example23 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -3576,6 +3688,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output** (varies by OS):
 
 ```
@@ -3603,7 +3718,8 @@ Conditional bean registration enables Spring to adapt its configuration to the d
 
 Demonstrates lazy initialization to defer bean creation until first use.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -3661,7 +3777,8 @@ public class Example24 {  // => Defines Example24 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -3714,6 +3831,9 @@ fun main() {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Expected Output**:
 
 ```
@@ -3745,7 +3865,8 @@ Lazy initialization prevents beans from being created at startup unless they are
 
 Demonstrates controlling bean initialization order using `@DependsOn`.
 
-**Java Implementation**:
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -3821,7 +3942,8 @@ public class Example25 {  // => Defines Example25 class
 }
 ```
 
-**Kotlin Implementation**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -3888,6 +4010,9 @@ fun main() {
     context.close()  # => Shuts down Spring container, releases resources
 }  # => End of main
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Expected Output**:
 

@@ -16,6 +16,9 @@ Master advanced Spring Boot patterns through 30 examples covering microservices,
 
 RestTemplate provides synchronous REST client capabilities with automatic JSON/XML conversion and error handling. Use RestTemplate when calling external REST APIs from within a Spring Boot application and you need blocking request-response behavior. Note: RestTemplate is in maintenance mode — for new projects, prefer WebClient (Example 42) which supports both sync and async patterns.
 
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
+
 ```java
 @Configuration
 // => Executes
@@ -112,7 +115,8 @@ record User(Long id, String name, String email, String phone) {}
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Configuration
@@ -223,6 +227,9 @@ data class User(
 // val user = restTemplate.getTyped<User>("$BASE_URL/users/{id}", id)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `RestTemplate` for synchronous HTTP calls when blocking is acceptable, but prefer WebClient for reactive non-blocking communication in high-throughput microservices.
 
 **Why It Matters**: RestTemplate's blocking model simplifies HTTP communication for traditional request/response patterns, but each concurrent external API call consumes one thread until the response returns—under 100 concurrent calls, thread pools exhaust causing request queuing. Production systems prefer WebClient for external API calls to achieve higher concurrency, reserving RestTemplate for legacy integrations or simple scripts where blocking simplicity outweighs performance needs.
@@ -230,6 +237,9 @@ data class User(
 ### Example 42: WebClient - Reactive Non-Blocking Client
 
 WebClient provides reactive, non-blocking HTTP communication with backpressure support and functional API.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Configuration
@@ -316,7 +326,8 @@ public class ReactiveUserClient {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Configuration
@@ -409,6 +420,9 @@ class ReactiveUserClient(
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart LR
@@ -433,6 +447,9 @@ flowchart LR
 ### Example 43: Feign Clients - Declarative REST Clients
 
 Feign provides declarative REST client interfaces with automatic request/response mapping and load balancing integration.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-cloud-starter-openfeign
@@ -497,7 +514,8 @@ public class UserService {
 //         readTimeout: 10000
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
@@ -570,6 +588,9 @@ class UserService(
 // Note: Requires spring-cloud-openfeign-kotlin extension
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Feign eliminates HTTP client boilerplate through declarative interfaces—define methods with Spring MVC annotations and Feign generates implementations automatically.
 
 **Why It Matters**: Feign eliminates HTTP client boilerplate—define interface methods with Spring MVC annotations and Feign generates implementations automatically, reducing microservice integration code by 70% compared to manual RestTemplate calls. However, Feign's default blocking client (uses RestTemplate internally) limits concurrency—production systems configure Feign with reactive HTTP clients (WebClient) for non-blocking calls that scale to thousands of concurrent requests without thread exhaustion.
@@ -577,6 +598,9 @@ class UserService(
 ### Example 44: Service Discovery - Eureka Client
 
 Service discovery allows microservices to find and communicate with each other without hard-coded URLs.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-cloud-starter-netflix-eureka-client
@@ -643,7 +667,8 @@ public class OrderController {
 //     preferIpAddress: true
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
@@ -706,6 +731,9 @@ data class Order(val id: Long, val user: User?)
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
@@ -732,6 +760,9 @@ flowchart TD
 ### Example 45: Spring Boot Actuator - Health & Metrics
 
 Actuator provides production-ready endpoints for monitoring, health checks, and application metrics.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-boot-starter-actuator
@@ -801,7 +832,8 @@ public class MetricsController {
 // GET /actuator/info => Application info
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -873,6 +905,9 @@ class MetricsController {
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Actuator Health Endpoint Aggregation**:
 
 ```mermaid
@@ -916,6 +951,9 @@ graph TD
 ### Example 46: Custom Metrics - Micrometer
 
 Micrometer provides vendor-neutral metrics instrumentation for monitoring application performance.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Service
@@ -988,7 +1026,8 @@ public class OrderMetricsService {
 // GET /actuator/prometheus => Prometheus exposition format
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Service
@@ -1050,6 +1089,9 @@ class OrderMetricsService(registry: MeterRegistry) {  // => Inject Micrometer re
 // val orderCounter = registry.counter("orders.created", mapOf("type" to "online"))
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Micrometer Metrics Flow to Prometheus**:
 
 ```mermaid
@@ -1087,6 +1129,9 @@ sequenceDiagram
 ### Example 47: Distributed Tracing - Micrometer Tracing
 
 Distributed tracing tracks requests across microservices using trace and span IDs for debugging and performance analysis.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: micrometer-tracing-bridge-brave, zipkin-reporter-brave
@@ -1161,7 +1206,8 @@ public class OrderTracingController {
 // Trace ID in logs: [appName,traceId,spanId]
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("io.micrometer:micrometer-tracing-bridge-brave")
@@ -1238,6 +1284,9 @@ class OrderTracingController(
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
@@ -1263,6 +1312,9 @@ sequenceDiagram
 ### Example 48: Structured Logging - JSON with MDC
 
 Structured logging outputs JSON format with Mapped Diagnostic Context (MDC) for trace correlation.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: logstash-logback-encoder
@@ -1349,7 +1401,8 @@ public class OrderLoggingController {
 //  "requestId":"uuid","path":"/orders","orderId":"1","userId":"123"}
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("net.logstash.logback:logstash-logback-encoder")
@@ -1425,6 +1478,9 @@ class OrderLoggingController {
 // withMdc("requestId" to uuid, "path" to path) { /* request handling */ }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Structured logging with MDC enables correlation—use Logstash encoder for JSON output and MDC for request-scoped context like trace IDs, making logs searchable in centralized logging systems.
 
 **Why It Matters**: Structured logging with JSON format and MDC (Mapped Diagnostic Context) enables centralized log aggregation (ELK stack, Datadog) where engineers query logs by trace ID to reconstruct request flows across microservices. Production systems use MDC to propagate correlation IDs, user IDs, and tenant IDs through all log statements, enabling queries like "show all logs for user 12345 in the last hour" that would be impossible with unstructured text logs, significantly reducing incident investigation time.
@@ -1434,6 +1490,9 @@ class OrderLoggingController {
 ### Example 49: Circuit Breaker - Resilience4j
 
 Circuit breaker prevents cascading failures by stopping calls to failing services and providing fallback responses. When a downstream service fails repeatedly (meeting the failure threshold), the circuit opens and requests fail immediately without waiting for timeouts — protecting your service's thread pool from exhaustion. Use the circuit breaker pattern for all synchronous calls to external services or microservices in production deployments.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-cloud-starter-circuitbreaker-resilience4j
@@ -1487,7 +1546,8 @@ public class UserServiceClient {
 // Circuit Breaker States: CLOSED (normal) -> OPEN (failing) -> HALF_OPEN (testing) -> CLOSED
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
@@ -1536,6 +1596,9 @@ class UserServiceClient(
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 stateDiagram-v2
@@ -1557,6 +1620,9 @@ stateDiagram-v2
 ### Example 50: Retry Pattern - Exponential Backoff
 
 Retry pattern automatically retries failed operations with exponential backoff to handle transient failures.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Service
@@ -1607,7 +1673,8 @@ record Payment(Long id, String status, String message) {}
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Service
@@ -1657,6 +1724,9 @@ data class Payment(val id: Long?, val status: String, val message: String)
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Retry with exponential backoff handles transient failures—configure max attempts and backoff multiplier to automatically retry failed operations with increasing delays between attempts.
 
 **Why It Matters**: Retry with exponential backoff handles transient failures (network blips, database connection pool exhaustion) without overwhelming failing services with retry storms that prevent recovery. Production retry configurations use jittered exponential backoff (1s, 2s, 4s + random jitter) to prevent thundering herd where 1000 clients retry simultaneously every 5 seconds, with max attempts tuned based on error type—retry network errors 3 times but fail fast on business validation errors.
@@ -1664,6 +1734,9 @@ data class Payment(val id: Long?, val status: String, val message: String)
 ### Example 51: Rate Limiting - API Throttling
 
 Rate limiting controls the number of requests a client can make within a time window to prevent abuse.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Service
@@ -1716,7 +1789,8 @@ record ApiResponse(String status, String message) {}
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Service
@@ -1772,6 +1846,9 @@ data class ApiResponse(val status: String, val message: String)
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Rate limiting protects APIs from abuse—use `@RateLimiter` to enforce request quotas per time window, preventing service degradation from excessive traffic.
 
 **Why It Matters**: Rate limiting protects APIs from abuse and prevents resource exhaustion when clients retry aggressively during failures—without rate limiting, a single misconfigured client retry loop can generate 10,000 requests/second causing database connection pool exhaustion that affects all users. Production APIs use tiered rate limits (1000 req/hour for free tier, 100,000 req/hour for premium tier) to monetize API access while preventing service degradation, returning 429 Too Many Requests with Retry-After headers that guide clients.
@@ -1779,6 +1856,9 @@ data class ApiResponse(val status: String, val message: String)
 ### Example 52: Bulkhead Pattern - Thread Pool Isolation
 
 Bulkhead pattern isolates resources using separate thread pools to prevent one failing service from consuming all threads.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Service
@@ -1822,7 +1902,8 @@ record Report(Long userId, String title, LocalDateTime generatedAt) {}
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Service
@@ -1866,6 +1947,9 @@ data class Report(val userId: Long, val title: String, val generatedAt: LocalDat
 // }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Bulkhead pattern isolates thread pools—use `@Bulkhead` with thread pool type to prevent resource exhaustion from one failing service, ensuring failures don't cascade across the application.
 
 **Why It Matters**: Bulkhead pattern isolates thread pools—report generation (slow, CPU-intensive) uses a dedicated 5-thread pool, while real-time API requests use a separate 50-thread pool, preventing slow operations from starving fast operations. Production systems configure bulkheads around external dependencies (payment gateways, shipping APIs) so that when one dependency becomes slow, it only affects requests using that dependency instead of exhausting the global thread pool that handles all operations.
@@ -1875,6 +1959,9 @@ data class Report(val userId: Long, val title: String, val generatedAt: LocalDat
 ### Example 53: Custom Starter - Creating Reusable Auto-Configuration
 
 Custom starters provide reusable auto-configuration modules that can be shared across multiple projects.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Module: my-custom-starter
@@ -1956,7 +2043,8 @@ public class CustomAutoConfiguration {
 //     apiKey: secret-key
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Module: my-custom-starter
@@ -2007,6 +2095,9 @@ open class CustomAutoConfiguration {
 // Kotlin-specific: Use data class with var for @ConfigurationProperties binding, expression body for single-line methods
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Custom Auto-Configuration Evaluation Order**:
 
 ```mermaid
@@ -2047,6 +2138,9 @@ graph TD
 ### Example 54: Conditional Beans - Context-Aware Configuration
 
 Conditional beans allow selective bean creation based on classpath, properties, or existing beans.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Configuration
@@ -2126,7 +2220,8 @@ interface CacheService {
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Configuration
@@ -2187,6 +2282,9 @@ interface CacheService {
 // Kotlin-specific: Use expression bodies for simple bean definitions, Any? for nullable returns
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Conditional beans enable context-aware configuration—use `@ConditionalOnClass`, `@ConditionalOnProperty`, and `@ConditionalOnMissingBean` to create or skip beans based on classpath, properties, or existing bean presence.
 
 **Why It Matters**: Conditional beans enable "smart defaults with easy overrides" where Spring Boot auto-configures 90% of beans based on classpath detection, while developers override the 10% needing customization without disabling all auto-configuration. Production applications use @ConditionalOnProperty to toggle features between environments (enable caching in prod, disable in dev) and @ConditionalOnMissingBean to provide default implementations that get replaced when custom implementations are defined, maintaining flexibility without configuration explosion.
@@ -2194,6 +2292,9 @@ interface CacheService {
 ### Example 55: Configuration Properties - Type-Safe Configuration
 
 Configuration properties provide type-safe, validated, and IDE-friendly application configuration.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @ConfigurationProperties(prefix = "app.mail") // => Bind properties starting with "app.mail"
@@ -2281,7 +2382,8 @@ public class MailConfig {
 //       reset: password-reset.html
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @ConfigurationProperties(prefix = "app.mail")
@@ -2373,6 +2475,9 @@ open class MailConfig {
 // Kotlin-specific: Use nested data classes for hierarchical properties, apply scope function for configuration
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use `@ConfigurationProperties` for type-safe configuration—bind hierarchical properties to POJOs with validation, enabling compile-time safety and IDE autocomplete for application settings.
 
 **Why It Matters**: Type-safe configuration properties prevent runtime failures from typos (datasource.urll vs datasource.url) and type mismatches (port: "abc" instead of port: 8080) through compile-time validation, catching configuration errors during build instead of production deployment. Production systems use nested configuration properties (@ConfigurationProperties with inner classes) to organize related settings (database: {url, username, password, pool: {min, max}}) that validate as a unit, failing fast on startup rather than discovering missing configuration when code first executes.
@@ -2380,6 +2485,9 @@ open class MailConfig {
 ### Example 56: Custom Actuator Endpoints - Operational Insights
 
 Custom actuator endpoints expose application-specific operational data through the management interface.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Endpoint(id = "application-info") // => Custom actuator endpoint (id maps to /actuator/application-info)
@@ -2447,7 +2555,8 @@ record ApplicationInfo(String name, String[] profiles, int beanCount, String jav
 // DELETE /actuator/application-info/{cacheName}
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Endpoint(id = "application-info")
@@ -2503,6 +2612,9 @@ data class ApplicationInfo(val name: String, val profiles: Array<String>, val be
 // Kotlin-specific: Use expression body for info(), string templates in operations
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Custom actuator endpoints expose application-specific metrics—use `@Endpoint`, `@ReadOperation`, `@WriteOperation`, and `@DeleteOperation` to create management endpoints beyond Spring Boot's default actuators.
 
 **Why It Matters**: Custom actuator endpoints expose application-specific operational data (current promotion, feature flag states, cache statistics) through standardized HTTP endpoints that integrate with existing monitoring infrastructure. Production operations teams use custom endpoints to expose business metrics (active websocket connections, queue depths, circuit breaker states) without maintaining separate admin APIs, enabling operators to query application state during incidents through the same actuator framework that exposes standard health/metrics endpoints.
@@ -2512,6 +2624,9 @@ data class ApplicationInfo(val name: String, val profiles: Array<String>, val be
 ### Example 57: Docker Containerization - Layered JARs
 
 Docker multi-stage builds with layered JARs optimize image size and build caching for faster deployments.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```dockerfile
 # Stage 1: Extract JAR layers
@@ -2605,7 +2720,8 @@ graph TD
 
 **Note**: Dockerfile syntax is identical for Kotlin Spring Boot applications. The layered JAR extraction and multi-stage build process works the same way for both Java and Kotlin compiled JARs.
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts: Enable layered JARs in Gradle Kotlin DSL
@@ -2637,6 +2753,9 @@ java -Djarmode=layertools -jar build/libs/myapp.jar list
 # => application
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Layered JARs with Docker multi-stage builds optimize image caching—dependencies layer rarely changes, enabling faster rebuilds and smaller image transfers when only application code updates.
 
 **Why It Matters**: Layered JARs with Docker multi-stage builds separate dependencies (rarely change, 50MB) from application code (frequently change, 5MB), enabling Docker layer caching where rebuilding after code changes transfers only 5MB instead of 55MB to production servers. Production CI/CD pipelines achieve 10x faster deployment times (30 seconds vs 5 minutes) by caching dependency layers, with image sizes reduced from 200MB (fat JAR + JDK) to 80MB (layered JAR + JRE) through removal of unnecessary JDK tools.
@@ -2644,6 +2763,9 @@ java -Djarmode=layertools -jar build/libs/myapp.jar list
 ### Example 58: Health Checks - Liveness vs Readiness
 
 Kubernetes health probes distinguish between liveness (restart if unhealthy) and readiness (stop traffic if not ready).
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Component  // => Spring-managed component for auto-registration
@@ -2741,7 +2863,8 @@ public class ExternalApiHealthIndicator implements HealthIndicator {  // => Cust
 //     port: 8080
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Component
@@ -2786,6 +2909,9 @@ class ReadinessIndicator : HealthIndicator {
 // Kotlin-specific: Use 'use' extension for auto-closeable resources, expression body for health()
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Separate liveness and readiness probes in Kubernetes—liveness checks if application should restart (basic health), readiness checks if application can serve traffic (database connections, external dependencies).
 
 **Why It Matters**: Liveness probes detect deadlocks and infinite loops that leave applications running but unable to serve requests—Kubernetes restarts unhealthy pods automatically instead of requiring manual intervention. Readiness probes prevent traffic routing to instances with degraded dependencies (database connection pool exhausted), removing them from load balancer rotation until recovered, enabling zero-downtime deployments where new pods don't receive traffic until health checks pass while old pods continue serving requests during rollout.
@@ -2793,6 +2919,9 @@ class ReadinessIndicator : HealthIndicator {
 ### Example 59: Graceful Shutdown - In-Flight Request Handling
 
 Graceful shutdown ensures in-flight requests complete before application termination, preventing data loss.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 @Configuration  // => Spring configuration class
@@ -2866,7 +2995,8 @@ public class LongRunningController {
 // 4. Shuts down  # => Application terminates
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // application.yml - Same as Java
@@ -2904,6 +3034,9 @@ open class GracefulShutdownConfig {
 // Kotlin-specific: Use expression body for listener, lambda for customizer
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Enable graceful shutdown with `server.shutdown=graceful`—Spring Boot waits for in-flight requests to complete (up to configured timeout) before shutting down, preventing abrupt connection closures during deployments.
 
 **Why It Matters**: Graceful shutdown ensures in-flight requests complete before application termination, preventing client errors (connection reset by peer) during deployments that abruptly kill processes mid-request. Production Kubernetes deployments configure 30-second grace periods where pods stop accepting new requests immediately but wait for active requests to finish, coordinated with load balancer deregistration delays (10-second delay before sending SIGTERM) to ensure traffic stops flowing before shutdown begins, achieving zero dropped requests during rolling updates.
@@ -2911,6 +3044,9 @@ open class GracefulShutdownConfig {
 ### Example 60: Externalized Configuration - Spring Cloud Config
 
 Spring Cloud Config Server provides centralized configuration management for distributed systems with environment-specific profiles.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Config Server Application
@@ -2989,7 +3125,8 @@ public class ConfigClientController {
 //                                          # => Returns list of changed property keys
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Config Server Application
@@ -3038,6 +3175,9 @@ class ConfigController(@Value("\${app.message}") private var message: String) {
 // Kotlin-specific: Use @RefreshScope with var for dynamic property refresh, mapOf for response
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Spring Cloud Config Server centralizes configuration—applications fetch environment-specific properties from a Git repository, enabling configuration changes without redeployment using `@RefreshScope` and actuator refresh endpoint.
 
 **Why It Matters**: Centralized configuration with Spring Cloud Config enables configuration changes (feature flags, timeouts, database URLs) without redeployment—update Git repository and call /actuator/refresh to reload properties in running instances. Production systems use Config Server for environment-specific properties (dev/staging/prod) stored in Git with audit history showing who changed what when, while @RefreshScope enables runtime property changes that take effect within seconds instead of requiring full application redeployment that causes minutes of downtime.
@@ -3047,6 +3187,9 @@ class ConfigController(@Value("\${app.message}") private var message: String) {
 ### Example 61: Kubernetes ConfigMaps and Secrets
 
 Integrate Spring Boot with Kubernetes ConfigMaps for configuration and Secrets for sensitive data.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-cloud-starter-kubernetes-fabric8-config  # => Add dependency for Kubernetes integration
@@ -3202,7 +3345,8 @@ graph TD
     style App1 fill:#CA9161,color:#fff
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Kubernetes YAML - Same for all languages
@@ -3256,6 +3400,9 @@ class ConfigMapController(
 // Kotlin-specific: Use data class for configuration, expression body, mapOf for response
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Use Kubernetes ConfigMaps for non-sensitive configuration and Secrets for credentials—Spring Cloud Kubernetes automatically reloads configuration when ConfigMaps/Secrets change without pod restarts.
 
 **Why It Matters**: Kubernetes ConfigMaps enable configuration changes without rebuilding Docker images—update ConfigMap and restart pods to pick up new values, separating application code (immutable Docker image) from configuration (mutable ConfigMap). Production deployments use ConfigMaps for non-sensitive configuration (feature flags, API endpoints) and Secrets for credentials (database passwords, API keys), with Spring Cloud Kubernetes automatically reloading configurations when ConfigMaps change, enabling A/B testing where configuration changes affect only canary pods before rolling out to all instances.
@@ -3265,6 +3412,9 @@ class ConfigMapController(
 ### Example 62: API Gateway Pattern with Spring Cloud Gateway
 
 Create an API gateway for routing, load balancing, and cross-cutting concerns.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-cloud-starter-gateway  # => Add dependency for Spring Cloud Gateway
@@ -3474,7 +3624,8 @@ flowchart TD
     style Filters fill:#0173B2,color:#fff
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Configuration
@@ -3519,6 +3670,9 @@ class AuthGatewayFilter : GlobalFilter {
 // Kotlin-specific: Use expression body for routes, if-expression for auth check
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Spring Cloud Gateway centralizes routing, authentication, rate limiting, and circuit breaking—use predicates for routing logic and filters for cross-cutting concerns across all microservices.
 
 **Why It Matters**: API Gateway consolidates cross-cutting concerns (authentication, rate limiting, circuit breakers) into a single entry point instead of duplicating logic across 50 microservices, reducing security vulnerabilities from inconsistent authentication implementations. Production gateways route 1,000,000+ requests/minute across hundreds of backend services with <10ms latency overhead, implementing dynamic routing (A/B testing, canary releases), request transformation (legacy SOAP to REST conversion), and protocol translation (HTTP to gRPC) without modifying backend services.
@@ -3530,6 +3684,9 @@ class AuthGatewayFilter : GlobalFilter {
 ### Example 63: Event Sourcing Pattern
 
 Implement event sourcing to persist all state changes as immutable events rather than current state, enabling full audit trails and temporal queries. The event store becomes the single source of truth, and current state is derived by replaying events. Use event sourcing when auditability is critical (financial systems, compliance requirements) or when you need to rebuild state at any point in time.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Event store
@@ -3738,7 +3895,8 @@ enum OrderStatus { PLACED, SHIPPED, CANCELLED }
     // => Begins block
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 sealed class OrderEvent {
@@ -3848,6 +4006,9 @@ enum class OrderStatus { PLACED, SHIPPED, CANCELLED }
 // Kotlin-specific: Use sealed class for event hierarchy, expression body for getEvents
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Event sourcing persists state changes as immutable events—rebuild aggregate state by replaying events, enabling complete audit trails, time travel debugging, and event-driven architectures.
 
 **Why It Matters**: Event sourcing creates complete audit trails where every state change persists as an event, enabling time-travel debugging ("what was order 12345's state at 2pm?") and regulatory compliance (financial audit trails). Production event-sourced systems at banks and healthcare providers use event replay to recover from bugs that corrupted current state by rebuilding from historical events, and support complex business intelligence queries ("how many users cancelled after payment failure?") that current-state-only systems cannot answer.
@@ -3857,6 +4018,9 @@ enum class OrderStatus { PLACED, SHIPPED, CANCELLED }
 ### Example 64: CQRS Pattern - Command Query Responsibility Segregation
 
 Separate read and write models (Command Query Responsibility Segregation) to optimize each side independently — write models enforce invariants and consistency, read models are denormalized for query performance. CQRS enables independent scaling of read and write sides and supports multiple read model projections for different use cases. Use CQRS in high-scale systems where read and write workloads have significantly different performance requirements.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Command model (write side)
@@ -4109,7 +4273,8 @@ record OrderCreatedEvent(String orderId, String customerId, BigDecimal totalAmou
     // => Executes method
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Command side
@@ -4192,6 +4357,9 @@ class OrderEventHandler(private val orderSummaryRepo: OrderSummaryRepository) {
 // Kotlin-specific: Use data classes for commands/queries, expression body, nullable return
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
@@ -4224,6 +4392,9 @@ flowchart TD
 ### Example 65: Multi-Tenancy Strategies
 
 Implement multi-tenancy to serve multiple customers from a single application instance.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Strategy 1: Shared Database, Separate Schemas (schema-per-tenant isolation)
@@ -4418,7 +4589,8 @@ public class ProductController { // => Product CRUD operations with automatic te
 }
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 @Component  // => Spring-managed bean for tenant context
@@ -4490,6 +4662,9 @@ abstract class MultiTenantHikariDataSource : HikariDataSource() {
 // => Smart cast: automatic type conversion after type check (as HttpServletRequest)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Choose multi-tenancy strategy based on isolation needs—separate databases for strong isolation, separate schemas for moderate isolation, or discriminator columns for maximum resource sharing with application-level filtering.
 
 **Why It Matters**: Multi-tenancy enables SaaS applications to serve thousands of customers from a single application instance, reducing infrastructure costs by 80% compared to per-customer deployments. Production multi-tenant SaaS platforms choose tenant isolation strategy based on requirements—shared schema with discriminator column for maximum efficiency (10,000+ tenants per instance), separate schemas for data isolation without separate databases (100-1000 tenants), or separate databases for strict compliance requirements (healthcare, finance), balancing cost against security and regulatory requirements.
@@ -4499,6 +4674,9 @@ abstract class MultiTenantHikariDataSource : HikariDataSource() {
 ### Example 66: Spring Native - GraalVM Native Images
 
 Compile Spring Boot applications to native executables for faster startup and lower memory footprint.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Standard Spring Boot application
@@ -4637,7 +4815,8 @@ spring:
     # => Trade-off: first request slower, but instant application start
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // build.gradle.kts
@@ -4679,6 +4858,9 @@ class HelloController {  // => Simple endpoint demonstrating native image functi
 // => Kotlin's 'open' keyword required for Spring proxies (Java doesn't need this)
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: GraalVM native images provide instant startup (~50ms vs ~2s) and minimal memory footprint (~20MB vs ~200MB)—ideal for serverless, containers, and microservices, but with longer build times and reflection/proxy limitations.
 
 **Why It Matters**: GraalVM native images compile Spring Boot applications to native executables with instant startup and minimal memory footprint, enabling serverless deployments where cold start time directly impacts user experience. Production serverless functions use native images to achieve very fast cold starts that feel instant to users, while Kubernetes deployments benefit from significantly faster pod startup during autoscaling events, reducing time to handle traffic spikes dramatically compared to traditional JVM warmup.
@@ -4688,6 +4870,9 @@ class HelloController {  // => Simple endpoint demonstrating native image functi
 ### Example 67: GraphQL API with Spring for GraphQL
 
 Expose flexible GraphQL APIs for efficient data fetching.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml: spring-boot-starter-graphql
@@ -4901,7 +5086,8 @@ graph TD
     style DB fill:#0173B2,color:#fff
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // GraphQL Schema (same for Java/Kotlin): src/main/resources/graphql/schema.graphqls
@@ -5119,6 +5305,9 @@ class CoroutineBookController(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: GraphQL enables clients to request exactly the fields they need—use `@QueryMapping` and `@MutationMapping` for resolvers, and `DataLoader` to prevent N+1 queries when fetching nested relationships.
 
 **Why It Matters**: GraphQL enables clients to request exactly the fields they need, reducing over-fetching (REST returns 20 fields when client needs 3) and under-fetching (REST requires 3 API calls to get related data) that plague REST APIs. Production mobile apps use GraphQL to minimize bandwidth usage (request only name+email instead of full user profile) critical for slow networks, while BFF (Backend for Frontend) pattern enables web and mobile clients to query the same GraphQL API with different field selections optimized for each platform's needs.
@@ -5128,6 +5317,9 @@ class CoroutineBookController(
 ### Example 68: Saga Pattern - Distributed Transactions
 
 Implement the Saga pattern for managing distributed transactions across microservices without two-phase commit, using a sequence of local transactions coordinated via events or orchestration. When any step fails, compensating transactions are triggered to undo previous steps and maintain data consistency across services. Use the Saga pattern whenever a business operation spans multiple microservices that each manage their own data stores.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // Order Saga Orchestrator (Orchestration-based Saga pattern)
@@ -5329,7 +5521,8 @@ record PaymentResponse(String transactionId, boolean success) {}
 record RefundRequest(String orderId) {}
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // Orchestration-based Saga - central coordinator manages transaction flow
@@ -5708,6 +5901,9 @@ class CoroutineOrderSaga(
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Saga pattern manages distributed transactions through orchestration (central coordinator) or choreography (event-driven)—implement compensating transactions for rollback, as distributed ACID transactions aren't feasible across microservices.
 
 **Why It Matters**: Saga pattern manages distributed transactions across microservices without distributed ACID locks that cause deadlocks and reduce throughput—compensating transactions rollback completed steps when later steps fail, maintaining eventual consistency. Production e-commerce systems use Sagas for order processing (reserve inventory → charge payment → ship order) where payment failure triggers inventory compensation (cancel reservation), preventing inventory locks that would require immediate payment for products sitting in carts, balancing user experience against consistency.
@@ -5717,6 +5913,9 @@ class CoroutineOrderSaga(
 ### Example 69: Performance Tuning - JVM and Spring Boot
 
 Optimize Spring Boot applications for production performance.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // JVM tuning (command-line arguments for java command)
@@ -5934,7 +6133,8 @@ management: # Spring Boot Actuator configuration
         # => Metrics: JVM memory, GC, HTTP requests, database connections, etc.
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // JVM tuning (same for Java/Kotlin)
@@ -6144,6 +6344,9 @@ management:
         enabled: true # Export metrics to Prometheus
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 **Key Takeaway**: Tune JVM (heap size, GC), connection pools (HikariCP), thread pools (async executor), and enable caching to optimize Spring Boot performance—monitor with Actuator metrics and adjust based on production load patterns.
 
 **Why It Matters**: JVM tuning and connection pool sizing optimize resource utilization—undersized connection pools cause request queueing during traffic spikes, while oversized pools exhaust database connections affecting all applications. Production systems tune heap size (-Xms/-Xmx) based on monitoring data showing actual memory usage, configure G1GC to maintain <200ms pause times even during full garbage collections, and size connection pools to (core count \* 2) for I/O-bound applications, achieving 95th percentile latency under 100ms even at peak traffic.
@@ -6153,6 +6356,9 @@ management:
 ### Example 70: Observability Stack Integration
 
 Integrate comprehensive observability with metrics, logs, and traces.
+
+{{< tabs items="Java,Kotlin" >}}
+{{< tab >}}
 
 ```java
 // pom.xml dependencies for observability stack:
@@ -6427,7 +6633,8 @@ graph TD
     style User fill:#0173B2,color:#fff
 ```
 
-**Code (Kotlin)**:
+{{< /tab >}}
+{{< tab >}}
 
 ```kotlin
 // pom.xml dependencies (same for Java/Kotlin):
@@ -6748,6 +6955,9 @@ services:
     ports:
       - "3100:3100"
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway**: Comprehensive observability requires metrics (Prometheus), traces (Zipkin), and logs (Loki)—use Micrometer for metrics, automatic span propagation for distributed tracing, and structured logging with MDC for trace correlation.
 

@@ -495,7 +495,7 @@ flowchart TD
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software-engineering/architecture/c4-architecture-model/system-context.md
+**File**: docs/explanation/software-engineering/architecture/c4-model/system-context.md
 **Confidence**: HIGH
 **Applied**: Added WCAG AA color palette definitions to Mermaid diagram
 ````

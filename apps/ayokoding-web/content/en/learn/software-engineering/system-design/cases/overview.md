@@ -71,7 +71,7 @@ After completing these cases, you'll be able to:
 
 ## 🔗 Related Content
 
-- [**Architecture Patterns**](/en/learn/software-engineering/architecture) - Learn C4 Model, DDD, and FSM patterns used in these cases
+- [**Architecture Patterns**](/en/learn/software-engineering/software-architecture) - Learn C4 Model, DDD, and FSM patterns used in these cases
 
 ## 💡 How to Use These Cases
 
@@ -100,4 +100,4 @@ After completing these cases, you'll be able to:
 
 Start with the AI Personal Finance Advisor case - it covers a broad range of system design concepts including document processing, machine learning, distributed systems, and multi-region deployment.
 
-Each case is self-contained, but they build on common patterns and principles from the [Architecture](/en/learn/software-engineering/architecture) section.
+Each case is self-contained, but they build on common patterns and principles from the [Architecture](/en/learn/software-engineering/software-architecture) section.

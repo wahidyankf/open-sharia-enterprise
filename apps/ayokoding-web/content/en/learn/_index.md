@@ -19,7 +19,7 @@ weight: 10
   - [Compilers and Interpreters](/en/learn/software-engineering/compilers-and-interpreters)
   - [Platform Linux](/en/learn/software-engineering/platform-linux)
   - [Platform Web](/en/learn/software-engineering/platform-web)
-  - [Architecture](/en/learn/software-engineering/architecture)
+  - [Architecture](/en/learn/software-engineering/software-architecture)
   - [Platform Mobile](/en/learn/software-engineering/platform-mobile)
   - [Development](/en/learn/software-engineering/development)
 - [Information Security](/en/learn/information-security)
