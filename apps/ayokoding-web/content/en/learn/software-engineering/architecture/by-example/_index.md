@@ -13,3 +13,8 @@ description: "Learn software architecture through 85 heavily annotated examples 
   - [Beginner](/en/learn/software-engineering/architecture/by-example/in-oop-by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/architecture/by-example/in-oop-by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/architecture/by-example/in-oop-by-example/advanced)
+- [By Example in FP](/en/learn/software-engineering/architecture/by-example/in-fp-by-example)
+  - [Overview](/en/learn/software-engineering/architecture/by-example/in-fp-by-example/overview)
+  - [Beginner](/en/learn/software-engineering/architecture/by-example/in-fp-by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/architecture/by-example/in-fp-by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/architecture/by-example/in-fp-by-example/advanced)

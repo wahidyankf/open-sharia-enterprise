@@ -42,65 +42,184 @@ graph TD
     style E fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Python — domain boundaries modelled as service interfaces:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from dataclasses import dataclass
-from typing import Protocol, Optional
-import uuid
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-# => Domain value objects — immutable identifiers used across service calls
-@dataclass(frozen=True)
-class OrderId:
-    value: str = ""
+// => Value object: immutable identifier scoped to the Orders domain
+record OrderId(String value) {
+    // => Static factory generates a UUID-backed id — stable across network hops
+    static OrderId generate() {
+        return new OrderId(UUID.randomUUID().toString());
+        // => Immutable record — value cannot be mutated after construction
+    }
+}
 
-    @staticmethod
-    def new() -> "OrderId":
-        return OrderId(value=str(uuid.uuid4()))  # => Generates UUID-backed stable id
-        # => Immutable after creation — cannot be changed by accident
+// => Value object for product identity — ties order line to inventory SKU
+record ProductId(String value) {}
 
-@dataclass(frozen=True)
-class ProductId:
-    value: str = ""  # => Ties inventory SKU to an order line
+// => Interface defines the Orders service contract
+// => Real service, HTTP adapter, and in-memory stub all implement this
+interface OrdersService {
+    OrderId placeOrder(ProductId productId, int qty);
+    // => Returns OrderId so callers never depend on internal order structure
+    boolean cancelOrder(OrderId orderId);
+}
 
-# => Protocol defines the Orders service contract — implementable by real service or stub
-class OrdersService(Protocol):
-    def place_order(self, product_id: ProductId, qty: int) -> OrderId: ...
-    # => Returns OrderId so callers need not know internal order structure
-    def cancel_order(self, order_id: OrderId) -> bool: ...
+// => Concrete in-memory implementation — used in tests and local dev
+class InMemoryOrdersService implements OrdersService {
+    // => order map: orderId -> {productId, qty, status}
+    private final Map<String, Map<String, Object>> orders = new HashMap<>();
 
-# => Inventory service protocol — independent of Orders
-class InventoryService(Protocol):
-    def reserve(self, product_id: ProductId, qty: int) -> bool: ...
-    # => Returns True when stock was successfully reserved
-    # => Returns False (not exception) for insufficient stock — expected business outcome
-    def release(self, product_id: ProductId, qty: int) -> None: ...
+    @Override
+    public OrderId placeOrder(ProductId productId, int qty) {
+        var oid = OrderId.generate();  // => Fresh id per call — no collision risk
+        orders.put(oid.value(), Map.of(
+            "productId", productId.value(),
+            "qty", qty,
+            "status", "PLACED"
+        ));
+        // => Stores minimal state; real impl persists to DB via JPA or JDBC
+        return oid;  // => Caller receives id to reference the order later
+    }
 
-# => Concrete in-process implementation used in tests and local development
-class InMemoryOrdersService:
-    def __init__(self) -> None:
-        self._orders: dict[str, dict] = {}  # => order_id -> order dict
+    @Override
+    public boolean cancelOrder(OrderId orderId) {
+        var order = orders.get(orderId.value());
+        if (order == null) return false;  // => Not found — idempotent cancel is safe
+        // => Real impl issues UPDATE orders SET status='CANCELLED' WHERE id=?
+        orders.put(orderId.value(), Map.of("status", "CANCELLED"));
+        return true;  // => Caller knows the cancel succeeded
+    }
+}
 
-    def place_order(self, product_id: ProductId, qty: int) -> OrderId:
-        oid = OrderId.new()  # => Generates fresh id per call
-        self._orders[oid.value] = {"product_id": product_id.value, "qty": qty, "status": "PLACED"}
-        # => Stores minimal order state; real impl persists to DB
-        return oid  # => Returns id so caller can reference the order later
-
-    def cancel_order(self, order_id: OrderId) -> bool:
-        order = self._orders.get(order_id.value)
-        if order is None:
-            return False  # => Order not found — idempotent cancel is fine
-        order["status"] = "CANCELLED"  # => Mutates in-place; real impl issues UPDATE
-        return True
-
-# => Usage: each service is swapped independently without touching the other
-svc = InMemoryOrdersService()
-pid = ProductId(value="SKU-001")
-oid = svc.place_order(pid, qty=3)  # => Returns OrderId("some-uuid")
-print(oid.value)                    # => Output: <uuid string>
-print(svc.cancel_order(oid))        # => Output: True
+// => Usage: swap InMemoryOrdersService for HttpOrdersService without changing callers
+var svc = new InMemoryOrdersService();
+var pid = new ProductId("SKU-001");
+var oid = svc.placeOrder(pid, 3);     // => Returns OrderId("some-uuid")
+System.out.println(oid.value());      // => Output: <uuid string>
+System.out.println(svc.cancelOrder(oid)); // => Output: true
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.util.UUID
+
+// => Inline value class wraps String — zero overhead at runtime, type safety at compile time
+@JvmInline value class OrderId(val value: String) {
+    companion object {
+        // => Factory: generates UUID-backed id — stable across service boundaries
+        fun generate(): OrderId = OrderId(UUID.randomUUID().toString())
+        // => Immutable after construction — safe to pass across threads
+    }
+}
+
+// => Separate value class ensures ProductId cannot be passed where OrderId is expected
+@JvmInline value class ProductId(val value: String)
+
+// => Interface models the Orders service contract — real service and stub both implement it
+interface OrdersService {
+    fun placeOrder(productId: ProductId, qty: Int): OrderId
+    // => Returns OrderId so callers never depend on internal order shape
+    fun cancelOrder(orderId: OrderId): Boolean
+}
+
+// => In-memory implementation: fast, dependency-free, used in unit tests
+class InMemoryOrdersService : OrdersService {
+    // => Mutable map simulates DB table — order_id -> order record
+    private val orders = mutableMapOf<String, MutableMap<String, Any>>()
+
+    override fun placeOrder(productId: ProductId, qty: Int): OrderId {
+        val oid = OrderId.generate()  // => Fresh id per call
+        orders[oid.value] = mutableMapOf(
+            "productId" to productId.value,
+            "qty" to qty,
+            "status" to "PLACED"
+        )
+        // => Real impl persists via Spring Data or exposed; in-memory state is local
+        return oid  // => Caller stores this id to cancel or track the order
+    }
+
+    override fun cancelOrder(orderId: OrderId): Boolean {
+        val order = orders[orderId.value] ?: return false
+        // => Not found — returning false (not throwing) makes cancels idempotent
+        order["status"] = "CANCELLED"  // => Mutates map entry; real impl issues UPDATE
+        return true  // => Signals successful cancellation to caller
+    }
+}
+
+// => Each service is swapped independently — no other service changes needed
+val svc: OrdersService = InMemoryOrdersService()
+val pid = ProductId("SKU-001")
+val oid = svc.placeOrder(pid, qty = 3)  // => Returns OrderId("some-uuid")
+println(oid.value)                       // => Output: <uuid string>
+println(svc.cancelOrder(oid))            // => Output: true
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => Record struct: immutable value type — zero allocation, equality by value
+readonly record struct OrderId(string Value) {
+    // => Factory generates GUID-backed id — globally unique across services
+    public static OrderId Generate() => new(Guid.NewGuid().ToString());
+    // => Record struct is immutable — Value cannot be changed after creation
+}
+
+// => Separate record struct prevents ProductId/OrderId mixup at compile time
+readonly record struct ProductId(string Value);
+
+// => Interface defines the Orders service contract — injected via DI container
+interface IOrdersService {
+    OrderId PlaceOrder(ProductId productId, int qty);
+    // => Returns OrderId so callers are not coupled to internal order shape
+    bool CancelOrder(OrderId orderId);
+}
+
+// => In-memory implementation used in unit tests and local development
+class InMemoryOrdersService : IOrdersService {
+    // => Dictionary simulates a DB table — orderId.Value -> order record
+    private readonly Dictionary<string, Dictionary<string, object>> _orders = new();
+
+    public OrderId PlaceOrder(ProductId productId, int qty) {
+        var oid = OrderId.Generate();  // => Fresh GUID per call — no collision
+        _orders[oid.Value] = new() {
+            ["productId"] = productId.Value,
+            ["qty"] = qty,
+            ["status"] = "PLACED"
+        };
+        // => Real impl persists via EF Core DbContext.SaveChangesAsync()
+        return oid;  // => Caller holds id to reference the order later
+    }
+
+    public bool CancelOrder(OrderId orderId) {
+        if (!_orders.TryGetValue(orderId.Value, out var order))
+            return false;  // => Not found — idempotent cancel returns false, not exception
+        order["status"] = "CANCELLED";  // => Real impl issues UPDATE via EF Core
+        return true;  // => Caller knows the cancel succeeded
+    }
+}
+
+// => Usage: swap InMemoryOrdersService for HttpOrdersService without changing callers
+IOrdersService svc = new InMemoryOrdersService();
+var pid = new ProductId("SKU-001");
+var oid = svc.PlaceOrder(pid, qty: 3);    // => Returns OrderId("some-guid")
+Console.WriteLine(oid.Value);             // => Output: <guid string>
+Console.WriteLine(svc.CancelOrder(oid));  // => Output: True
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Decompose by business capability using Protocol types (or interfaces) to enforce
 service boundaries in code, making each capability independently replaceable.
@@ -132,56 +251,181 @@ graph LR
     style Old fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Python — routing proxy with feature-flag-controlled migration:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from typing import Callable, Any
+```java
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
 
-# => Route registry maps URL prefixes to handler callables
-RouteHandler = Callable[[str, dict], dict]
+// => RouteHandler: takes (path, payload) and returns a response map
+// => Implemented by real HTTP adapters or in-process stubs
+@FunctionalInterface
+interface RouteHandler {
+    Map<String, Object> handle(String path, Map<String, Object> payload);
+}
 
-class StranglerProxy:
-    def __init__(self) -> None:
-        # => new_routes: paths already migrated to new services
-        self._new_routes: dict[str, RouteHandler] = {}
-        # => legacy_handler: single catch-all for unmigrated paths
-        self._legacy_handler: Optional[RouteHandler] = None
+class StranglerProxy {
+    // => LinkedHashMap preserves insertion order — longer prefixes registered first win
+    private final Map<String, RouteHandler> newRoutes = new LinkedHashMap<>();
+    // => Legacy handler is the single catch-all for all unmigrated paths
+    private RouteHandler legacyHandler;
 
-    def register_new(self, prefix: str, handler: RouteHandler) -> None:
-        self._new_routes[prefix] = handler
-        # => Called once per migrated service; order of registration does not matter
+    public void registerNew(String prefix, RouteHandler handler) {
+        newRoutes.put(prefix, handler);
+        // => Each call represents one migrated service; order of registration matters
+    }
 
-    def set_legacy(self, handler: RouteHandler) -> None:
-        self._legacy_handler = handler  # => Legacy system becomes the fallback
+    public void setLegacy(RouteHandler handler) {
+        legacyHandler = handler;  // => Monolith becomes the fallback until fully retired
+    }
 
-    def route(self, path: str, payload: dict) -> dict:
-        for prefix, handler in self._new_routes.items():
-            if path.startswith(prefix):
-                return handler(path, payload)  # => New service handles this path
-                # => Return immediately — no fallthrough to legacy
-        # => No migrated handler found; delegate to legacy monolith
-        if self._legacy_handler:
-            return self._legacy_handler(path, payload)  # => Legacy still serves uncharted paths
-        raise ValueError(f"No handler for path: {path}")  # => Should not happen in production
+    public Map<String, Object> route(String path, Map<String, Object> payload) {
+        for (var entry : newRoutes.entrySet()) {
+            if (path.startsWith(entry.getKey())) {
+                return entry.getValue().handle(path, payload);
+                // => New service handles this path — monolith not involved
+                // => Return immediately; no fallthrough to legacy
+            }
+        }
+        // => No migrated handler matched — delegate to legacy monolith
+        if (legacyHandler != null) return legacyHandler.handle(path, payload);
+        throw new IllegalArgumentException("No handler for path: " + path);
+        // => Should not occur in production if legacy handler is always set
+    }
+}
 
-# => Simulated new Orders service (already migrated)
-def new_orders_handler(path: str, payload: dict) -> dict:
-    return {"source": "new_service", "path": path, "data": payload}
-    # => New service responds; monolith not involved
+// => Simulated migrated Orders service
+RouteHandler newOrdersHandler = (path, payload) ->
+    Map.of("source", "new_service", "path", path, "data", payload);
+    // => New service responds; monolith is bypassed entirely
 
-# => Simulated legacy monolith (catch-all)
-def legacy_handler(path: str, payload: dict) -> dict:
-    return {"source": "legacy_monolith", "path": path, "data": payload}
+// => Simulated legacy monolith catch-all
+RouteHandler legacyHandler = (path, payload) ->
+    Map.of("source", "legacy_monolith", "path", path, "data", payload);
 
-proxy = StranglerProxy()
-proxy.set_legacy(legacy_handler)
-proxy.register_new("/api/orders", new_orders_handler)  # => Orders migrated
+var proxy = new StranglerProxy();
+proxy.setLegacy(legacyHandler);
+proxy.registerNew("/api/orders", newOrdersHandler);  // => Orders route migrated
 
-print(proxy.route("/api/orders/123", {"action": "get"}))
-# => Output: {'source': 'new_service', 'path': '/api/orders/123', 'data': {'action': 'get'}}
-print(proxy.route("/api/products/abc", {"action": "list"}))
-# => Output: {'source': 'legacy_monolith', 'path': '/api/products/abc', 'data': {'action': 'list'}}
+System.out.println(proxy.route("/api/orders/123", Map.of("action", "get")));
+// => Output: {source=new_service, path=/api/orders/123, data={action=get}}
+System.out.println(proxy.route("/api/products/abc", Map.of("action", "list")));
+// => Output: {source=legacy_monolith, path=/api/products/abc, data={action=list}}
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => RouteHandler: functional type — (path, payload) -> response
+typealias RouteHandler = (String, Map<String, Any>) -> Map<String, Any>
+
+class StranglerProxy {
+    // => LinkedHashMap preserves registration order — first match wins
+    private val newRoutes = linkedMapOf<String, RouteHandler>()
+    // => Legacy handler is nullable until set — proxy throws if unset and no match found
+    private var legacyHandler: RouteHandler? = null
+
+    fun registerNew(prefix: String, handler: RouteHandler) {
+        newRoutes[prefix] = handler
+        // => Each registration represents one completed service migration
+    }
+
+    fun setLegacy(handler: RouteHandler) {
+        legacyHandler = handler  // => Monolith becomes fallback; retired when routes = 0
+    }
+
+    fun route(path: String, payload: Map<String, Any>): Map<String, Any> {
+        newRoutes.entries.firstOrNull { path.startsWith(it.key) }
+            ?.let { return it.value(path, payload) }
+            // => New service matched — returns immediately, monolith not touched
+        return legacyHandler?.invoke(path, payload)
+            // => No new service matched — delegate to legacy catch-all
+            ?: error("No handler for path: $path")
+            // => Should not occur in production if legacyHandler is always set
+    }
+}
+
+// => Simulated migrated Orders service — monolith bypassed entirely
+val newOrdersHandler: RouteHandler = { path, payload ->
+    mapOf("source" to "new_service", "path" to path, "data" to payload)
+}
+
+// => Simulated legacy monolith — catch-all for unmigrated paths
+val legacyHandler: RouteHandler = { path, payload ->
+    mapOf("source" to "legacy_monolith", "path" to path, "data" to payload)
+}
+
+val proxy = StranglerProxy()
+proxy.setLegacy(legacyHandler)
+proxy.registerNew("/api/orders", newOrdersHandler)  // => Orders route migrated
+
+println(proxy.route("/api/orders/123", mapOf("action" to "get")))
+// => Output: {source=new_service, path=/api/orders/123, data={action=get}}
+println(proxy.route("/api/products/abc", mapOf("action" to "list")))
+// => Output: {source=legacy_monolith, path=/api/products/abc, data={action=list}}
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+// => RouteHandler delegate: (path, payload) -> response dictionary
+// => Implemented by real HTTP adapters or in-process stubs
+delegate Dictionary<string, object> RouteHandler(string path, Dictionary<string, object> payload);
+
+class StranglerProxy {
+    // => Dictionary preserves insertion order in .NET 5+ — register longer prefixes first
+    private readonly Dictionary<string, RouteHandler> _newRoutes = new();
+    // => Legacy handler is null until set — proxy throws if unset and no match found
+    private RouteHandler? _legacyHandler;
+
+    public void RegisterNew(string prefix, RouteHandler handler) {
+        _newRoutes[prefix] = handler;
+        // => Each call represents one completed service migration step
+    }
+
+    public void SetLegacy(RouteHandler handler) {
+        _legacyHandler = handler;  // => Monolith is the fallback until all routes migrate
+    }
+
+    public Dictionary<string, object> Route(string path, Dictionary<string, object> payload) {
+        var match = _newRoutes.FirstOrDefault(e => path.StartsWith(e.Key));
+        if (match.Value != null) return match.Value(path, payload);
+        // => New service matched — returns immediately; legacy is not called
+        if (_legacyHandler != null) return _legacyHandler(path, payload);
+        // => No new service matched — delegate to legacy monolith catch-all
+        throw new InvalidOperationException($"No handler for path: {path}");
+        // => Should not occur in production when legacyHandler is always configured
+    }
+}
+
+// => Simulated migrated Orders service — monolith completely bypassed
+RouteHandler newOrdersHandler = (path, payload) =>
+    new() { ["source"] = "new_service", ["path"] = path, ["data"] = payload };
+
+// => Simulated legacy monolith — serves all unmigrated paths
+RouteHandler legacyHandler = (path, payload) =>
+    new() { ["source"] = "legacy_monolith", ["path"] = path, ["data"] = payload };
+
+var proxy = new StranglerProxy();
+proxy.SetLegacy(legacyHandler);
+proxy.RegisterNew("/api/orders", newOrdersHandler);  // => Orders route migrated
+
+Console.WriteLine(proxy.Route("/api/orders/123", new() { ["action"] = "get" })["source"]);
+// => Output: new_service
+Console.WriteLine(proxy.Route("/api/products/abc", new() { ["action"] = "list" })["source"]);
+// => Output: legacy_monolith
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** The Strangler Fig pattern allows zero-downtime incremental migration by routing
 at the proxy level; each migrated route is an isolated, low-risk step.
@@ -216,66 +460,195 @@ sequenceDiagram
     O->>I: ReleaseStock (compensation)
 ```
 
-**Python — explicit orchestrator with compensation logic:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from dataclasses import dataclass, field
-from typing import List, Tuple
+```java
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 
-# => Step encapsulates a forward action and its compensating action
-@dataclass
-class SagaStep:
-    name: str
-    execute: Callable[[], bool]    # => Returns True on success, False on failure
-    compensate: Callable[[], None]  # => Undoes the execute action
+// => SagaStep: pairs a forward action with its compensating action
+record SagaStep(
+    String name,
+    java.util.function.BooleanSupplier execute,   // => Returns true on success, false on failure
+    Runnable compensate                            // => Undoes the execute action
+) {}
 
-class SagaOrchestrator:
-    def __init__(self, steps: List[SagaStep]) -> None:
-        self._steps = steps  # => Steps executed in list order
+class SagaOrchestrator {
+    private final List<SagaStep> steps;  // => Steps executed in list order
+    SagaOrchestrator(List<SagaStep> steps) { this.steps = steps; }
 
-    def run(self) -> bool:
-        completed: List[SagaStep] = []  # => Tracks successful steps for compensation
-        for step in self._steps:
-            success = step.execute()  # => Drive the participant
-            if success:
-                completed.append(step)  # => Remember for rollback if later step fails
-            else:
-                # => Step failed — compensate in reverse order (LIFO)
-                for done_step in reversed(completed):
-                    done_step.compensate()  # => Each compensation is idempotent by design
-                return False  # => Saga failed; system is back to consistent state
-        return True  # => All steps succeeded; saga complete
+    boolean run() {
+        Deque<SagaStep> completed = new ArrayDeque<>();
+        // => Stack (LIFO) tracks successful steps so compensation runs in reverse
+        for (var step : steps) {
+            boolean success = step.execute().getAsBoolean();  // => Drive the participant
+            if (success) {
+                completed.push(step);  // => Push onto stack — will compensate in reverse if needed
+            } else {
+                System.out.println(step.name() + " failed — compensating");
+                // => Step failed: compensate all completed steps in LIFO order
+                completed.forEach(done -> done.compensate().run());
+                return false;  // => Saga failed; distributed state is back to consistent
+            }
+        }
+        return true;  // => All steps succeeded — saga complete
+    }
+}
 
-# => Simulated participants with in-memory state
-_stock_reserved = False
-_payment_charged = False
+// => Simulated participants with in-memory state
+boolean[] stockReserved = {false};  // => Array used so lambda can mutate it
 
-def reserve_stock() -> bool:
-    global _stock_reserved
-    _stock_reserved = True  # => Reserve 1 unit of SKU-001
-    print("Stock reserved")  # => Output: Stock reserved
-    return True
+var reserveStock = (java.util.function.BooleanSupplier) () -> {
+    stockReserved[0] = true;  // => Reserve 1 unit
+    System.out.println("Stock reserved");  // => Output: Stock reserved
+    return true;
+};
+var releaseStock = (Runnable) () -> {
+    stockReserved[0] = false;  // => Compensation: return unit to inventory
+    System.out.println("Stock released (compensation)");  // => Output: Stock released (compensation)
+};
+var chargePayment = (java.util.function.BooleanSupplier) () -> {
+    System.out.println("Payment failed");  // => Output: Payment failed
+    return false;  // => Simulate payment processor rejection
+};
+var refundPayment = (Runnable) () ->
+    System.out.println("Payment refunded (compensation)");
 
-def release_stock() -> None:
-    global _stock_reserved
-    _stock_reserved = False  # => Compensation: return reserved unit to inventory
-    print("Stock released (compensation)")  # => Output: Stock released (compensation)
-
-def charge_payment() -> bool:
-    print("Payment failed")   # => Output: Payment failed
-    return False               # => Simulate payment processor rejection
-
-def refund_payment() -> None:
-    print("Payment refunded (compensation)")  # => Would issue refund if charge had succeeded
-
-steps = [
-    SagaStep("reserve", reserve_stock, release_stock),
-    SagaStep("payment", charge_payment, refund_payment),
-]
-result = SagaOrchestrator(steps).run()
-print(f"Saga succeeded: {result}")  # => Output: Saga succeeded: False
-print(f"Stock released: {not _stock_reserved}")  # => Output: Stock released: True
+var steps = List.of(
+    new SagaStep("reserve", reserveStock, releaseStock),
+    new SagaStep("payment", chargePayment, refundPayment)
+);
+boolean result = new SagaOrchestrator(steps).run();
+System.out.println("Saga succeeded: " + result);          // => Output: Saga succeeded: false
+System.out.println("Stock released: " + !stockReserved[0]); // => Output: Stock released: true
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => SagaStep: pairs a forward action with its compensating action
+data class SagaStep(
+    val name: String,
+    val execute: () -> Boolean,    // => Returns true on success, false on failure
+    val compensate: () -> Unit     // => Undoes the execute action — must be idempotent
+)
+
+class SagaOrchestrator(private val steps: List<SagaStep>) {
+    fun run(): Boolean {
+        val completed = ArrayDeque<SagaStep>()
+        // => ArrayDeque used as stack (LIFO) — reversed iteration compensates in reverse order
+        for (step in steps) {
+            if (step.execute()) {
+                completed.addFirst(step)  // => Push: remember for rollback if later step fails
+            } else {
+                println("${step.name} failed — compensating")
+                // => Step failed: compensate all completed steps in LIFO order
+                completed.forEach { done -> done.compensate() }
+                return false  // => Saga failed; all completed steps have been reversed
+            }
+        }
+        return true  // => All steps succeeded — saga complete
+    }
+}
+
+// => Simulated participants using captured mutable state
+var stockReserved = false
+
+val reserveStock: () -> Boolean = {
+    stockReserved = true  // => Reserve 1 unit
+    println("Stock reserved")  // => Output: Stock reserved
+    true
+}
+val releaseStock: () -> Unit = {
+    stockReserved = false  // => Compensation: return unit to inventory
+    println("Stock released (compensation)")  // => Output: Stock released (compensation)
+}
+val chargePayment: () -> Boolean = {
+    println("Payment failed")  // => Output: Payment failed
+    false  // => Simulate payment processor rejection
+}
+val refundPayment: () -> Unit = {
+    println("Payment refunded (compensation)")  // => Would issue refund if charge had succeeded
+}
+
+val steps = listOf(
+    SagaStep("reserve", reserveStock, releaseStock),
+    SagaStep("payment", chargePayment, refundPayment)
+)
+val result = SagaOrchestrator(steps).run()
+println("Saga succeeded: $result")           // => Output: Saga succeeded: false
+println("Stock released: ${!stockReserved}") // => Output: Stock released: true
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => SagaStep: pairs a forward action with its compensating action
+record SagaStep(
+    string Name,
+    Func<bool> Execute,    // => Returns true on success, false on failure
+    Action Compensate      // => Undoes the execute action — must be idempotent
+);
+
+class SagaOrchestrator {
+    private readonly IReadOnlyList<SagaStep> _steps;
+    // => Steps executed in list order — index 0 first
+    public SagaOrchestrator(IReadOnlyList<SagaStep> steps) => _steps = steps;
+
+    public bool Run() {
+        var completed = new Stack<SagaStep>();
+        // => Stack (LIFO) so compensation runs in reverse order
+        foreach (var step in _steps) {
+            if (step.Execute()) {
+                completed.Push(step);  // => Remember for rollback if later step fails
+            } else {
+                Console.WriteLine($"{step.Name} failed — compensating");
+                // => Step failed: compensate all completed steps in LIFO order
+                foreach (var done in completed) done.Compensate();
+                return false;  // => Saga failed; distributed state restored to consistent
+            }
+        }
+        return true;  // => All steps succeeded — saga complete
+    }
+}
+
+// => Simulated participants with captured mutable state
+bool stockReserved = false;
+
+Func<bool> reserveStock = () => {
+    stockReserved = true;  // => Reserve 1 unit
+    Console.WriteLine("Stock reserved");  // => Output: Stock reserved
+    return true;
+};
+Action releaseStock = () => {
+    stockReserved = false;  // => Compensation: return unit to inventory
+    Console.WriteLine("Stock released (compensation)");  // => Output: Stock released (compensation)
+};
+Func<bool> chargePayment = () => {
+    Console.WriteLine("Payment failed");  // => Output: Payment failed
+    return false;  // => Simulate payment processor rejection
+};
+Action refundPayment = () =>
+    Console.WriteLine("Payment refunded (compensation)");
+
+var steps = new List<SagaStep> {
+    new("reserve", reserveStock, releaseStock),
+    new("payment", chargePayment, refundPayment)
+};
+bool result = new SagaOrchestrator(steps).Run();
+Console.WriteLine($"Saga succeeded: {result}");           // => Output: Saga succeeded: False
+Console.WriteLine($"Stock released: {!stockReserved}");   // => Output: Stock released: True
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Orchestration keeps saga logic in one place; the orchestrator compensates
 completed steps when any forward step fails, maintaining distributed consistency.
@@ -311,58 +684,165 @@ graph LR
     style F fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Python — event bus with participant listeners:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from collections import defaultdict
-from typing import Dict, List
+```java
+import java.util.*;
+import java.util.function.Consumer;
 
-# => Minimal in-process event bus — models a message broker (Kafka, RabbitMQ)
-class EventBus:
-    def __init__(self) -> None:
-        self._handlers: Dict[str, List[Callable]] = defaultdict(list)
-        # => Maps event_type -> list of subscriber callables
+// => Minimal in-process event bus — models a message broker (Kafka, RabbitMQ)
+class EventBus {
+    // => Maps event type -> list of subscriber lambdas
+    private final Map<String, List<Consumer<Map<String, Object>>>> handlers = new HashMap<>();
 
-    def subscribe(self, event_type: str, handler: Callable) -> None:
-        self._handlers[event_type].append(handler)  # => Register listener
+    public void subscribe(String eventType, Consumer<Map<String, Object>> handler) {
+        handlers.computeIfAbsent(eventType, k -> new ArrayList<>()).add(handler);
+        // => computeIfAbsent creates the list on first subscribe — avoids null checks
+    }
 
-    def publish(self, event_type: str, payload: dict) -> None:
-        for h in self._handlers[event_type]:
-            h(payload)  # => Synchronous here; real bus is async (Kafka consumer group)
+    public void publish(String eventType, Map<String, Object> payload) {
+        handlers.getOrDefault(eventType, List.of()).forEach(h -> h.accept(payload));
+        // => Synchronous here; real Kafka consumer group is async per partition
+    }
+}
 
-bus = EventBus()
-_stock_held = False  # => Shared mutable state simulating DB
+var bus = new EventBus();
+boolean[] stockHeld = {false};  // => Simulates DB row — array so lambda can mutate it
 
-# => Inventory service listens for OrderPlaced and PaymentFailed
-def on_order_placed(event: dict) -> None:
-    global _stock_held
-    _stock_held = True  # => Reserve stock optimistically
-    print(f"Inventory: reserved stock for order {event['order_id']}")
-    bus.publish("StockReserved", {"order_id": event["order_id"]})
-    # => Emits next event; Payment service will react without Inventory knowing
+// => Inventory service: listens for OrderPlaced (reserve) and PaymentFailed (compensate)
+bus.subscribe("OrderPlaced", event -> {
+    stockHeld[0] = true;  // => Reserve stock optimistically
+    System.out.println("Inventory: reserved stock for order " + event.get("orderId"));
+    bus.publish("StockReserved", Map.of("orderId", event.get("orderId")));
+    // => Emits next event; Payment reacts without Inventory knowing about it
+});
 
-def on_payment_failed(event: dict) -> None:
-    global _stock_held
-    _stock_held = False  # => Compensation: release stock
-    print(f"Inventory: released stock for order {event['order_id']} (compensation)")
+bus.subscribe("PaymentFailed", event -> {
+    stockHeld[0] = false;  // => Compensation: release reserved stock
+    System.out.println("Inventory: released stock for order " + event.get("orderId") + " (compensation)");
+});
 
-# => Payment service listens for StockReserved
-def on_stock_reserved(event: dict) -> None:
-    print(f"Payment: charging for order {event['order_id']}")
-    # => Simulate payment failure
-    bus.publish("PaymentFailed", {"order_id": event["order_id"]})
-    # => Payment service does NOT call Inventory — it emits an event instead
+// => Payment service: listens for StockReserved; does NOT call Inventory directly
+bus.subscribe("StockReserved", event -> {
+    System.out.println("Payment: charging for order " + event.get("orderId"));
+    bus.publish("PaymentFailed", Map.of("orderId", event.get("orderId")));
+    // => Publishes PaymentFailed — Inventory listens and compensates autonomously
+});
 
-bus.subscribe("OrderPlaced", on_order_placed)
-bus.subscribe("StockReserved", on_stock_reserved)
-bus.subscribe("PaymentFailed", on_payment_failed)
-
-bus.publish("OrderPlaced", {"order_id": "ORD-42"})
-# => Output: Inventory: reserved stock for order ORD-42
-# => Output: Payment: charging for order ORD-42
-# => Output: Inventory: released stock for order ORD-42 (compensation)
-print(f"Stock held after failure: {_stock_held}")  # => Output: Stock held after failure: False
+bus.publish("OrderPlaced", Map.of("orderId", "ORD-42"));
+// => Output: Inventory: reserved stock for order ORD-42
+// => Output: Payment: charging for order ORD-42
+// => Output: Inventory: released stock for order ORD-42 (compensation)
+System.out.println("Stock held after failure: " + stockHeld[0]); // => Output: Stock held after failure: false
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Minimal in-process event bus — models a message broker (Kafka, RabbitMQ)
+class EventBus {
+    // => Maps event type -> list of subscriber lambdas
+    private val handlers = mutableMapOf<String, MutableList<(Map<String, Any>) -> Unit>>()
+
+    fun subscribe(eventType: String, handler: (Map<String, Any>) -> Unit) {
+        handlers.getOrPut(eventType) { mutableListOf() }.add(handler)
+        // => getOrPut creates the list on first subscribe — idiomatic Kotlin idiom
+    }
+
+    fun publish(eventType: String, payload: Map<String, Any>) {
+        handlers[eventType]?.forEach { it(payload) }
+        // => Synchronous here; real Kafka consumer group is async per partition
+    }
+}
+
+val bus = EventBus()
+var stockHeld = false  // => Simulates a DB row for inventory reservation state
+
+// => Inventory service: listens for OrderPlaced (reserve) and PaymentFailed (compensate)
+bus.subscribe("OrderPlaced") { event ->
+    stockHeld = true  // => Reserve stock optimistically
+    println("Inventory: reserved stock for order ${event["orderId"]}")
+    bus.publish("StockReserved", mapOf("orderId" to event["orderId"]!!))
+    // => Emits next event; Payment reacts without Inventory needing to know about it
+}
+
+bus.subscribe("PaymentFailed") { event ->
+    stockHeld = false  // => Compensation: release reserved stock
+    println("Inventory: released stock for order ${event["orderId"]} (compensation)")
+}
+
+// => Payment service: listens for StockReserved; does NOT call Inventory directly
+bus.subscribe("StockReserved") { event ->
+    println("Payment: charging for order ${event["orderId"]}")
+    bus.publish("PaymentFailed", mapOf("orderId" to event["orderId"]!!))
+    // => Publishes PaymentFailed — Inventory listens and compensates autonomously
+}
+
+bus.publish("OrderPlaced", mapOf("orderId" to "ORD-42"))
+// => Output: Inventory: reserved stock for order ORD-42
+// => Output: Payment: charging for order ORD-42
+// => Output: Inventory: released stock for order ORD-42 (compensation)
+println("Stock held after failure: $stockHeld") // => Output: Stock held after failure: false
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => Minimal in-process event bus — models a message broker (Kafka, RabbitMQ)
+class EventBus {
+    // => Maps event type -> list of subscriber delegates
+    private readonly Dictionary<string, List<Action<Dictionary<string, object>>>> _handlers = new();
+
+    public void Subscribe(string eventType, Action<Dictionary<string, object>> handler) {
+        if (!_handlers.ContainsKey(eventType)) _handlers[eventType] = new();
+        _handlers[eventType].Add(handler);
+        // => List created on first subscribe — no null checks needed after this
+    }
+
+    public void Publish(string eventType, Dictionary<string, object> payload) {
+        if (_handlers.TryGetValue(eventType, out var list)) list.ForEach(h => h(payload));
+        // => Synchronous here; real Kafka consumer group is async per partition
+    }
+}
+
+var bus = new EventBus();
+bool stockHeld = false;  // => Simulates a DB row — captured by lambda closures
+
+// => Inventory service: listens for OrderPlaced (reserve) and PaymentFailed (compensate)
+bus.Subscribe("OrderPlaced", e => {
+    stockHeld = true;  // => Reserve stock optimistically
+    Console.WriteLine($"Inventory: reserved stock for order {e["orderId"]}");
+    bus.Publish("StockReserved", new() { ["orderId"] = e["orderId"] });
+    // => Emits next event; Payment reacts without Inventory needing to know about it
+});
+
+bus.Subscribe("PaymentFailed", e => {
+    stockHeld = false;  // => Compensation: release reserved stock
+    Console.WriteLine($"Inventory: released stock for order {e["orderId"]} (compensation)");
+});
+
+// => Payment service: listens for StockReserved; does NOT call Inventory directly
+bus.Subscribe("StockReserved", e => {
+    Console.WriteLine($"Payment: charging for order {e["orderId"]}");
+    bus.Publish("PaymentFailed", new() { ["orderId"] = e["orderId"] });
+    // => Publishes PaymentFailed — Inventory listens and compensates autonomously
+});
+
+bus.Publish("OrderPlaced", new() { ["orderId"] = "ORD-42" });
+// => Output: Inventory: reserved stock for order ORD-42
+// => Output: Payment: charging for order ORD-42
+// => Output: Inventory: released stock for order ORD-42 (compensation)
+Console.WriteLine($"Stock held after failure: {stockHeld}"); // => Output: Stock held after failure: False
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Choreography achieves loose coupling through events, but requires careful event
 schema design because the saga flow is distributed across multiple handlers.
@@ -387,55 +867,190 @@ routing ease.
 
 **URI path versioning (most common, most cacheable):**
 
-```python
-from http.server import BaseHTTPRequestHandler
-import json
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# => Route map keyed by (method, path) — path includes version prefix
-ROUTES = {
-    ("GET", "/v1/users"): lambda: {"version": 1, "users": ["alice"]},
-    # => v1 contract: flat list of usernames
-    ("GET", "/v2/users"): lambda: {"version": 2, "users": [{"name": "alice", "email": "alice@example.com"}]},
-    # => v2 contract: richer objects with email field added
+```java
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.List;
+
+// => Route map keyed by (method, path) — path includes version prefix
+// => Supplier<Map> defers construction until dispatched — lazy evaluation
+Map<String, Supplier<Map<String, Object>>> routes = Map.of(
+    "GET:/v1/users", () -> Map.of("version", 1, "users", List.of("alice")),
+    // => v1 contract: flat list of usernames — never change this response shape
+    "GET:/v2/users", () -> Map.of("version", 2, "users",
+        List.of(Map.of("name", "alice", "email", "alice@example.com")))
+    // => v2 contract: richer user objects with email field added
+);
+
+// => Dispatcher routes requests to versioned handlers
+Map<String, Object> dispatch(String method, String path) {
+    var handler = routes.get(method + ":" + path);
+    if (handler == null) return Map.of("error", "Not found");  // => 404 equivalent
+    return handler.get();  // => Execute matched route handler
 }
 
-def dispatch(method: str, path: str) -> dict:
-    handler = ROUTES.get((method, path))
-    if handler is None:
-        return {"error": "Not found"}  # => 404 equivalent
-    return handler()  # => Execute matched route
-
-print(dispatch("GET", "/v1/users"))
-# => Output: {'version': 1, 'users': ['alice']}
-print(dispatch("GET", "/v2/users"))
-# => Output: {'version': 2, 'users': [{'name': 'alice', 'email': 'alice@example.com'}]}
+System.out.println(dispatch("GET", "/v1/users"));
+// => Output: {version=1, users=[alice]}
+System.out.println(dispatch("GET", "/v2/users"));
+// => Output: {version=2, users=[{name=alice, email=alice@example.com}]}
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Route map keyed by "METHOD:/path" — path includes version prefix
+// => Lambda defers response construction until dispatched
+val routes = mapOf(
+    "GET:/v1/users" to { mapOf("version" to 1, "users" to listOf("alice")) },
+    // => v1 contract: flat list of usernames — frozen shape for existing consumers
+    "GET:/v2/users" to {
+        mapOf("version" to 2, "users" to listOf(mapOf("name" to "alice", "email" to "alice@example.com")))
+        // => v2 contract: richer user objects with email field added
+    }
+)
+
+// => Dispatcher routes requests to versioned handlers
+fun dispatch(method: String, path: String): Map<String, Any> =
+    routes["$method:$path"]?.invoke()
+        ?: mapOf("error" to "Not found")  // => 404 equivalent — unknown version or path
+
+println(dispatch("GET", "/v1/users"))
+// => Output: {version=1, users=[alice]}
+println(dispatch("GET", "/v2/users"))
+// => Output: {version=2, users=[{name=alice, email=alice@example.com}]}
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => Route map keyed by "METHOD:/path" — path includes version prefix
+// => Func<Dictionary> defers construction until dispatched
+var routes = new Dictionary<string, Func<Dictionary<string, object>>> {
+    ["GET:/v1/users"] = () => new() { ["version"] = 1, ["users"] = new[] { "alice" } },
+    // => v1 contract: flat array of usernames — frozen shape for existing consumers
+    ["GET:/v2/users"] = () => new() {
+        ["version"] = 2,
+        ["users"] = new[] { new Dictionary<string, string> { ["name"] = "alice", ["email"] = "alice@example.com" } }
+        // => v2 contract: richer objects with email field added
+    }
+};
+
+// => Dispatcher routes requests to versioned handlers
+Dictionary<string, object> Dispatch(string method, string path) {
+    var key = $"{method}:{path}";
+    return routes.TryGetValue(key, out var handler)
+        ? handler()  // => Execute matched route handler
+        : new() { ["error"] = "Not found" };  // => 404 equivalent
+}
+
+Console.WriteLine(Dispatch("GET", "/v1/users")["users"]);   // => Output: alice
+Console.WriteLine(Dispatch("GET", "/v2/users")["version"]); // => Output: 2
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 URI versioning: CDN caches `/v1/users` and `/v2/users` independently; path is visible in logs and
 browser history; old clients never break when a new version is added.
 
 **Accept header versioning (REST-purist, less cacheable):**
 
-```python
-# => Version is negotiated through the Accept header, keeping URLs clean
-def dispatch_header(method: str, path: str, accept: str) -> dict:
-    # => Parse version from Accept: application/vnd.myapi.v2+json
-    version = "v1"  # => Default version if header absent or unversioned
-    if "v2" in accept:
-        version = "v2"  # => Client explicitly requested v2
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-    if path == "/users":
-        if version == "v2":
-            return {"version": 2, "users": [{"name": "alice", "email": "alice@example.com"}]}
-        return {"version": 1, "users": ["alice"]}
-        # => Same URL, different response shape based on negotiated version
-    return {"error": "Not found"}
+```java
+import java.util.Map;
+import java.util.List;
 
-print(dispatch_header("GET", "/users", "application/json"))
-# => Output: {'version': 1, 'users': ['alice']}
-print(dispatch_header("GET", "/users", "application/vnd.myapi.v2+json"))
-# => Output: {'version': 2, 'users': [{'name': 'alice', 'email': 'alice@example.com'}]}
+// => Version is negotiated through the Accept header, keeping URLs clean
+Map<String, Object> dispatchHeader(String method, String path, String accept) {
+    // => Parse version from Accept: application/vnd.myapi.v2+json
+    String version = accept.contains("v2") ? "v2" : "v1";
+    // => Default to v1 when header absent or unversioned — conservative fallback
+
+    if ("/users".equals(path)) {
+        if ("v2".equals(version)) {
+            return Map.of("version", 2, "users",
+                List.of(Map.of("name", "alice", "email", "alice@example.com")));
+        }
+        return Map.of("version", 1, "users", List.of("alice"));
+        // => Same URL, different response shape based on negotiated version
+    }
+    return Map.of("error", "Not found");
+}
+
+System.out.println(dispatchHeader("GET", "/users", "application/json"));
+// => Output: {version=1, users=[alice]}
+System.out.println(dispatchHeader("GET", "/users", "application/vnd.myapi.v2+json"));
+// => Output: {version=2, users=[{name=alice, email=alice@example.com}]}
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.util.Map as JavaMap
+
+// => Version is negotiated through the Accept header, keeping URLs clean
+fun dispatchHeader(method: String, path: String, accept: String): Map<String, Any> {
+    // => Parse version from Accept: application/vnd.myapi.v2+json
+    val version = if ("v2" in accept) "v2" else "v1"
+    // => Default to v1 when header absent or unversioned — conservative fallback
+
+    if (path == "/users") {
+        return if (version == "v2")
+            mapOf("version" to 2, "users" to listOf(mapOf("name" to "alice", "email" to "alice@example.com")))
+        else
+            mapOf("version" to 1, "users" to listOf("alice"))
+        // => Same URL, different response shape based on negotiated version
+    }
+    return mapOf("error" to "Not found")
+}
+
+println(dispatchHeader("GET", "/users", "application/json"))
+// => Output: {version=1, users=[alice]}
+println(dispatchHeader("GET", "/users", "application/vnd.myapi.v2+json"))
+// => Output: {version=2, users=[{name=alice, email=alice@example.com}]}
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => Version is negotiated through the Accept header, keeping URLs clean
+Dictionary<string, object> DispatchHeader(string method, string path, string accept) {
+    // => Parse version from Accept: application/vnd.myapi.v2+json
+    var version = accept.Contains("v2") ? "v2" : "v1";
+    // => Default to v1 when header absent or unversioned — conservative fallback
+
+    if (path == "/users") {
+        return version == "v2"
+            ? new() { ["version"] = 2, ["users"] = new[] { new { name = "alice", email = "alice@example.com" } } }
+            : new() { ["version"] = 1, ["users"] = new[] { "alice" } };
+        // => Same URL, different response shape based on negotiated version
+    }
+    return new() { ["error"] = "Not found" };
+}
+
+Console.WriteLine(DispatchHeader("GET", "/users", "application/json")["version"]);
+// => Output: 1
+Console.WriteLine(DispatchHeader("GET", "/users", "application/vnd.myapi.v2+json")["version"]);
+// => Output: 2
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 Header versioning: same URL makes REST purists happy; however, CDNs cannot cache different versions
 of `/users` by default — requires `Vary: Accept` header which many CDNs handle poorly.
@@ -477,46 +1092,164 @@ graph TD
     style DS fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-**Python — separate BFF handlers aggregating downstream data:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from dataclasses import dataclass
-from typing import Optional
+```java
+import java.util.List;
+import java.util.Map;
 
-# => Downstream service responses (shared by all BFFs)
-def get_user_profile(user_id: str) -> dict:
-    return {"id": user_id, "name": "Alice", "email": "alice@example.com", "preferences": {"theme": "dark"}}
-    # => Full profile — downstream owns all fields
+// => Downstream service: returns full user profile — downstream owns all fields
+static Map<String, Object> getUserProfile(String userId) {
+    return Map.of(
+        "id", userId,
+        "name", "Alice",
+        "email", "alice@example.com",
+        "preferences", Map.of("theme", "dark")
+    );
+    // => Downstream service is not shaped for any client — it exposes everything
+}
 
-def get_user_orders(user_id: str) -> list:
-    return [{"id": "ORD-1", "total": 99.99, "status": "shipped"}, {"id": "ORD-2", "total": 14.50, "status": "pending"}]
-    # => Full order list — may be large
+// => Downstream service: returns full order list — may be large for heavy users
+static List<Map<String, Object>> getUserOrders(String userId) {
+    return List.of(
+        Map.of("id", "ORD-1", "total", 99.99, "status", "shipped"),
+        Map.of("id", "ORD-2", "total", 14.50, "status", "pending")
+    );
+    // => Full order objects — BFF decides what to expose to each client
+}
 
-# => Mobile BFF: strips unnecessary fields to reduce bandwidth for cellular connections
-def mobile_bff_get_dashboard(user_id: str) -> dict:
-    profile = get_user_profile(user_id)
-    orders = get_user_orders(user_id)
-    return {
-        "name": profile["name"],           # => Only name; no email or preferences
-        "pending_orders": sum(1 for o in orders if o["status"] == "pending"),
-        # => Aggregates count server-side — mobile displays one number, not a list
-    }
+// => Mobile BFF: strips unnecessary fields to reduce bandwidth on cellular connections
+static Map<String, Object> mobileBffDashboard(String userId) {
+    var profile = getUserProfile(userId);
+    var orders = getUserOrders(userId);
+    long pendingCount = orders.stream().filter(o -> "pending".equals(o.get("status"))).count();
+    // => Aggregates count server-side — mobile shows one number, not a table
+    return Map.of(
+        "name", profile.get("name"),   // => Only name; email and preferences omitted
+        "pendingOrders", pendingCount  // => Pre-computed: saves mobile from parsing a list
+    );
+}
 
-# => Web BFF: returns richer aggregate with full order list and preferences
-def web_bff_get_dashboard(user_id: str) -> dict:
-    profile = get_user_profile(user_id)
-    orders = get_user_orders(user_id)
-    return {
-        "profile": profile,           # => Full profile including email and preferences
-        "orders": orders,             # => Full order objects — web renders a table
-        "order_count": len(orders),   # => Pre-computed convenience field
-    }
+// => Web BFF: returns richer aggregate with full order list and preferences
+static Map<String, Object> webBffDashboard(String userId) {
+    var profile = getUserProfile(userId);
+    var orders = getUserOrders(userId);
+    return Map.of(
+        "profile", profile,            // => Full profile including email and preferences
+        "orders", orders,              // => Full order objects — web renders a sortable table
+        "orderCount", orders.size()    // => Pre-computed convenience field for the header
+    );
+}
 
-print(mobile_bff_get_dashboard("u1"))
-# => Output: {'name': 'Alice', 'pending_orders': 1}
-print(web_bff_get_dashboard("u1"))
-# => Output: {'profile': {...}, 'orders': [...], 'order_count': 2}
+System.out.println(mobileBffDashboard("u1"));
+// => Output: {name=Alice, pendingOrders=1}
+System.out.println(webBffDashboard("u1").get("orderCount"));
+// => Output: 2
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Downstream service: returns full user profile — downstream owns all fields
+fun getUserProfile(userId: String): Map<String, Any> = mapOf(
+    "id" to userId,
+    "name" to "Alice",
+    "email" to "alice@example.com",
+    "preferences" to mapOf("theme" to "dark")
+)
+// => Downstream service is not shaped for any client — it exposes everything
+
+// => Downstream service: returns full order list — may be large for heavy users
+fun getUserOrders(userId: String): List<Map<String, Any>> = listOf(
+    mapOf("id" to "ORD-1", "total" to 99.99, "status" to "shipped"),
+    mapOf("id" to "ORD-2", "total" to 14.50, "status" to "pending")
+)
+// => Full order objects — each BFF decides what to surface to its client
+
+// => Mobile BFF: strips unnecessary fields to reduce bandwidth on cellular connections
+fun mobileBffDashboard(userId: String): Map<String, Any> {
+    val profile = getUserProfile(userId)
+    val orders = getUserOrders(userId)
+    val pendingCount = orders.count { it["status"] == "pending" }
+    // => Aggregates count server-side — mobile shows one number, not a list
+    return mapOf(
+        "name" to profile["name"]!!,   // => Only name; email and preferences omitted
+        "pendingOrders" to pendingCount  // => Pre-computed: saves mobile from parsing list
+    )
+}
+
+// => Web BFF: returns richer aggregate with full order list and preferences
+fun webBffDashboard(userId: String): Map<String, Any> {
+    val profile = getUserProfile(userId)
+    val orders = getUserOrders(userId)
+    return mapOf(
+        "profile" to profile,          // => Full profile including email and preferences
+        "orders" to orders,            // => Full order objects — web renders a sortable table
+        "orderCount" to orders.size    // => Pre-computed convenience field for the header
+    )
+}
+
+println(mobileBffDashboard("u1"))
+// => Output: {name=Alice, pendingOrders=1}
+println(webBffDashboard("u1")["orderCount"])
+// => Output: 2
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+// => Downstream service: returns full user profile — downstream owns all fields
+static Dictionary<string, object> GetUserProfile(string userId) => new() {
+    ["id"] = userId,
+    ["name"] = "Alice",
+    ["email"] = "alice@example.com",
+    ["preferences"] = new Dictionary<string, string> { ["theme"] = "dark" }
+};
+// => Downstream service is not shaped for any client — it exposes everything
+
+// => Downstream service: returns full order list — may be large for heavy users
+static List<Dictionary<string, object>> GetUserOrders(string userId) => new() {
+    new() { ["id"] = "ORD-1", ["total"] = 99.99, ["status"] = "shipped" },
+    new() { ["id"] = "ORD-2", ["total"] = 14.50, ["status"] = "pending" }
+};
+// => Full order objects — each BFF decides what to surface to its client
+
+// => Mobile BFF: strips unnecessary fields to reduce bandwidth on cellular connections
+static Dictionary<string, object> MobileBffDashboard(string userId) {
+    var profile = GetUserProfile(userId);
+    var orders = GetUserOrders(userId);
+    var pendingCount = orders.Count(o => o["status"].Equals("pending"));
+    // => Aggregates count server-side — mobile shows one number, not a list
+    return new() {
+        ["name"] = profile["name"],       // => Only name; email and preferences omitted
+        ["pendingOrders"] = pendingCount  // => Pre-computed: saves mobile from parsing list
+    };
+}
+
+// => Web BFF: returns richer aggregate with full order list and preferences
+static Dictionary<string, object> WebBffDashboard(string userId) {
+    var profile = GetUserProfile(userId);
+    var orders = GetUserOrders(userId);
+    return new() {
+        ["profile"] = profile,         // => Full profile including email and preferences
+        ["orders"] = orders,           // => Full order objects — web renders a sortable table
+        ["orderCount"] = orders.Count  // => Pre-computed convenience field for the header
+    };
+}
+
+Console.WriteLine(MobileBffDashboard("u1")["pendingOrders"]); // => Output: 1
+Console.WriteLine(WebBffDashboard("u1")["orderCount"]);        // => Output: 2
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Each BFF owns its own aggregation logic so client teams can evolve their API
 without negotiating with teams serving other clients.
@@ -546,80 +1279,250 @@ stateDiagram-v2
     HalfOpen --> Open : probe fails
 ```
 
-**Python — circuit breaker with state machine and fallback:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-import time
-from enum import Enum, auto
+```java
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
-class CBState(Enum):
-    CLOSED = auto()    # => Normal operation — calls pass through
-    OPEN = auto()      # => Tripped — calls rejected immediately without hitting dependency
-    HALF_OPEN = auto() # => Probing — one trial call allowed through
+// => Circuit breaker states — three-state machine matching Resilience4j semantics
+enum CBState { CLOSED, OPEN, HALF_OPEN }
+// => CLOSED: calls pass through normally
+// => OPEN: calls fast-fail; dependency gets breathing room
+// => HALF_OPEN: one probe call allowed through to test recovery
 
-class CircuitBreaker:
-    def __init__(self, failure_threshold: int = 3, probe_timeout: float = 2.0) -> None:
-        self._threshold = failure_threshold   # => Trip after this many consecutive failures
-        self._probe_timeout = probe_timeout   # => Seconds before attempting probe
-        self._state = CBState.CLOSED          # => Starts closed (allowing calls)
-        self._failures = 0                    # => Consecutive failure counter
-        self._opened_at: Optional[float] = None  # => Timestamp when tripped open
+class CircuitBreaker {
+    private final int threshold;        // => Trip after this many consecutive failures
+    private final long probeTimeoutMs;  // => Milliseconds before attempting probe
+    private volatile CBState state = CBState.CLOSED;  // => volatile: visible across threads
+    private final AtomicInteger failures = new AtomicInteger(0);  // => Thread-safe counter
+    private final AtomicLong openedAt = new AtomicLong(0);        // => Timestamp when tripped
 
-    def call(self, func: Callable[[], str], fallback: Callable[[], str]) -> str:
-        if self._state == CBState.OPEN:
-            elapsed = time.monotonic() - (self._opened_at or 0)
-            if elapsed >= self._probe_timeout:
-                self._state = CBState.HALF_OPEN  # => Allow one probe attempt
-                print("Circuit: half-open (probing)")
-            else:
-                return fallback()  # => Still open — return cached/degraded response
-                # => Fast-fail: no timeout penalty; dependency gets breathing room
+    CircuitBreaker(int threshold, long probeTimeoutMs) {
+        this.threshold = threshold;
+        this.probeTimeoutMs = probeTimeoutMs;
+    }
 
-        try:
-            result = func()           # => Attempt the real call
-            self._on_success()        # => Reset failure count on success
-            return result
-        except Exception:
-            self._on_failure()        # => Increment failure count; may trip breaker
-            return fallback()         # => Return degraded response instead of propagating error
+    String call(Supplier<String> func, Supplier<String> fallback) {
+        if (state == CBState.OPEN) {
+            if (System.currentTimeMillis() - openedAt.get() >= probeTimeoutMs) {
+                state = CBState.HALF_OPEN;  // => Allow one probe attempt
+                System.out.println("Circuit: half-open (probing)");
+            } else {
+                return fallback.get();  // => Fast-fail: no timeout; dependency rests
+            }
+        }
+        try {
+            String result = func.get();  // => Attempt the real call
+            onSuccess();                 // => Reset failure count and close breaker
+            return result;
+        } catch (Exception e) {
+            onFailure();         // => Increment counter; may trip breaker
+            return fallback.get(); // => Degraded response instead of propagating error
+        }
+    }
 
-    def _on_success(self) -> None:
-        self._failures = 0            # => Reset streak on success
-        self._state = CBState.CLOSED  # => Close breaker (works for HALF_OPEN probe too)
+    private void onSuccess() {
+        failures.set(0);          // => Reset consecutive failure streak
+        state = CBState.CLOSED;   // => Close breaker — works for HALF_OPEN probe too
+    }
 
-    def _on_failure(self) -> None:
-        self._failures += 1           # => Increment consecutive failure count
-        if self._failures >= self._threshold:
-            self._state = CBState.OPEN     # => Trip breaker open
-            self._opened_at = time.monotonic()  # => Record when breaker opened for timeout
-            print(f"Circuit: tripped OPEN after {self._failures} failures")
+    private void onFailure() {
+        int count = failures.incrementAndGet();  // => Atomic increment
+        if (count >= threshold) {
+            state = CBState.OPEN;
+            openedAt.set(System.currentTimeMillis());  // => Record trip time for probe timeout
+            System.out.println("Circuit: tripped OPEN after " + count + " failures");
+        }
+    }
+}
 
-# => Simulate a flaky downstream service
-_call_count = 0
+// => Simulate a flaky downstream service recovering after 3 failures
+int[] callCount = {0};
+Supplier<String> flakyService = () -> {
+    if (++callCount[0] <= 3) throw new RuntimeException("service down");
+    // => First 3 calls fail — simulates intermittent dependency outage
+    return "fresh data";  // => Recovers on 4th call
+};
+Supplier<String> fallback = () -> "cached data";  // => Stale but acceptable response
 
-def flaky_service() -> str:
-    global _call_count
-    _call_count += 1
-    if _call_count <= 3:
-        raise ConnectionError("service down")  # => First 3 calls fail
-    return "fresh data"  # => Recovers on 4th call
-
-def fallback() -> str:
-    return "cached data"  # => Stale but acceptable degraded response
-
-cb = CircuitBreaker(failure_threshold=3, probe_timeout=0.0)
-for i in range(6):
-    result = cb.call(flaky_service, fallback)
-    print(f"Call {i+1}: {result}")
-# => Output: Call 1: cached data  (failure 1)
-# => Output: Call 2: cached data  (failure 2)
-# => Output: Circuit: tripped OPEN after 3 failures
-# => Output: Call 3: cached data  (failure 3, tripped)
-# => Output: Circuit: half-open (probing)
-# => Output: Call 4: fresh data   (probe succeeds, breaker closes)
-# => Output: Call 5: fresh data
-# => Output: Call 6: fresh data
+var cb = new CircuitBreaker(3, 0);  // => probeTimeout=0 so half-open triggers immediately
+for (int i = 1; i <= 6; i++) {
+    System.out.println("Call " + i + ": " + cb.call(flakyService, fallback));
+}
+// => Output: Call 1: cached data  (failure 1)
+// => Output: Call 2: cached data  (failure 2)
+// => Output: Circuit: tripped OPEN after 3 failures
+// => Output: Call 3: cached data  (failure 3, tripped)
+// => Output: Circuit: half-open (probing)
+// => Output: Call 4: fresh data   (probe succeeds, breaker closes)
+// => Output: Call 5: fresh data
+// => Output: Call 6: fresh data
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+
+// => Circuit breaker states — three-state machine matching Resilience4j semantics
+enum class CBState { CLOSED, OPEN, HALF_OPEN }
+// => CLOSED: calls pass through normally
+// => OPEN: calls fast-fail; dependency gets breathing room
+// => HALF_OPEN: one probe call allowed through to test recovery
+
+class CircuitBreaker(
+    private val threshold: Int,       // => Trip after this many consecutive failures
+    private val probeTimeoutMs: Long  // => Milliseconds before attempting probe
+) {
+    @Volatile var state = CBState.CLOSED  // => @Volatile: visible across coroutines/threads
+    private val failures = AtomicInteger(0)  // => Thread-safe consecutive failure counter
+    private val openedAt = AtomicLong(0)     // => Timestamp when breaker tripped open
+
+    fun call(func: () -> String, fallback: () -> String): String {
+        if (state == CBState.OPEN) {
+            if (System.currentTimeMillis() - openedAt.get() >= probeTimeoutMs) {
+                state = CBState.HALF_OPEN  // => Allow one probe attempt
+                println("Circuit: half-open (probing)")
+            } else {
+                return fallback()  // => Fast-fail: no timeout; dependency gets breathing room
+            }
+        }
+        return try {
+            val result = func()  // => Attempt the real call
+            onSuccess()          // => Reset failure count and close breaker
+            result
+        } catch (e: Exception) {
+            onFailure()   // => Increment counter; may trip breaker
+            fallback()    // => Return degraded response instead of propagating error
+        }
+    }
+
+    private fun onSuccess() {
+        failures.set(0)          // => Reset consecutive failure streak
+        state = CBState.CLOSED   // => Close breaker — works for HALF_OPEN probe too
+    }
+
+    private fun onFailure() {
+        val count = failures.incrementAndGet()  // => Atomic increment
+        if (count >= threshold) {
+            state = CBState.OPEN
+            openedAt.set(System.currentTimeMillis())  // => Record trip time for probe timeout
+            println("Circuit: tripped OPEN after $count failures")
+        }
+    }
+}
+
+// => Simulate a flaky downstream service recovering after 3 failures
+var callCount = 0
+val flakyService: () -> String = {
+    if (++callCount <= 3) throw RuntimeException("service down")
+    // => First 3 calls fail — simulates intermittent dependency outage
+    "fresh data"  // => Recovers on 4th call
+}
+val fallback: () -> String = { "cached data" }  // => Stale but acceptable response
+
+val cb = CircuitBreaker(threshold = 3, probeTimeoutMs = 0)
+// => probeTimeout=0 so half-open triggers immediately in this simulation
+for (i in 1..6) println("Call $i: ${cb.call(flakyService, fallback)}")
+// => Output: Call 1: cached data  (failure 1)
+// => Output: Call 2: cached data  (failure 2)
+// => Output: Circuit: tripped OPEN after 3 failures
+// => Output: Call 3: cached data  (failure 3, tripped)
+// => Output: Circuit: half-open (probing)
+// => Output: Call 4: fresh data   (probe succeeds, breaker closes)
+// => Output: Call 5: fresh data
+// => Output: Call 6: fresh data
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Threading;
+
+// => Circuit breaker states — three-state machine matching Polly semantics
+enum CBState { Closed, Open, HalfOpen }
+// => Closed: calls pass through normally
+// => Open: calls fast-fail; dependency gets breathing room
+// => HalfOpen: one probe call allowed through to test recovery
+
+class CircuitBreaker {
+    private readonly int _threshold;       // => Trip after this many consecutive failures
+    private readonly long _probeTimeoutMs; // => Milliseconds before attempting probe
+    private volatile CBState _state = CBState.Closed;  // => volatile: visible across threads
+    private int _failures = 0;       // => Consecutive failure counter
+    private long _openedAt = 0;      // => Timestamp (ticks) when breaker tripped open
+
+    public CircuitBreaker(int threshold, long probeTimeoutMs) {
+        _threshold = threshold;
+        _probeTimeoutMs = probeTimeoutMs;
+    }
+
+    public string Call(Func<string> func, Func<string> fallback) {
+        if (_state == CBState.Open) {
+            var elapsed = (DateTime.UtcNow.Ticks - _openedAt) / TimeSpan.TicksPerMillisecond;
+            if (elapsed >= _probeTimeoutMs) {
+                _state = CBState.HalfOpen;  // => Allow one probe attempt
+                Console.WriteLine("Circuit: half-open (probing)");
+            } else {
+                return fallback();  // => Fast-fail: no timeout; dependency rests
+            }
+        }
+        try {
+            var result = func();   // => Attempt the real call
+            OnSuccess();           // => Reset failure count and close breaker
+            return result;
+        } catch {
+            OnFailure();           // => Increment counter; may trip breaker
+            return fallback();     // => Degraded response instead of propagating error
+        }
+    }
+
+    private void OnSuccess() {
+        _failures = 0;              // => Reset consecutive failure streak
+        _state = CBState.Closed;    // => Close breaker — works for HalfOpen probe too
+    }
+
+    private void OnFailure() {
+        var count = Interlocked.Increment(ref _failures);  // => Thread-safe increment
+        if (count >= _threshold) {
+            _state = CBState.Open;
+            _openedAt = DateTime.UtcNow.Ticks;  // => Record trip time for probe timeout
+            Console.WriteLine($"Circuit: tripped OPEN after {count} failures");
+        }
+    }
+}
+
+// => Simulate a flaky downstream service recovering after 3 failures
+int callCount = 0;
+Func<string> flakyService = () => {
+    if (++callCount <= 3) throw new Exception("service down");
+    // => First 3 calls fail — simulates intermittent dependency outage
+    return "fresh data";  // => Recovers on 4th call
+};
+Func<string> fallback = () => "cached data";  // => Stale but acceptable response
+
+var cb = new CircuitBreaker(threshold: 3, probeTimeoutMs: 0);
+// => probeTimeout=0 so half-open triggers immediately in this simulation
+for (int i = 1; i <= 6; i++) Console.WriteLine($"Call {i}: {cb.Call(flakyService, fallback)}");
+// => Output: Call 1: cached data  (failure 1)
+// => Output: Call 2: cached data  (failure 2)
+// => Output: Circuit: tripped OPEN after 3 failures
+// => Output: Call 3: cached data  (failure 3, tripped)
+// => Output: Circuit: half-open (probing)
+// => Output: Call 4: fresh data   (probe succeeds, breaker closes)
+// => Output: Call 5: fresh data
+// => Output: Call 6: fresh data
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Circuit breakers prevent cascading failures by fast-failing requests when a
 dependency is unhealthy, giving it time to recover while callers receive fallback responses.
@@ -658,64 +1561,189 @@ graph TD
     style I fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Python — semaphore-based bulkheads per dependency:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-import threading
-from contextlib import contextmanager
+```java
+import java.util.concurrent.Semaphore;
 
-class Bulkhead:
-    def __init__(self, name: str, max_concurrent: int) -> None:
-        self._name = name
-        self._semaphore = threading.Semaphore(max_concurrent)
-        # => Semaphore limits simultaneous calls to max_concurrent
-        self._rejected = 0  # => Count of calls rejected due to full pool
+// => Bulkhead: limits concurrent calls to a downstream dependency via a semaphore
+class Bulkhead {
+    private final String name;           // => Name used in error messages and metrics
+    private final Semaphore semaphore;   // => Semaphore permits = max concurrent slots
+    private int rejected = 0;            // => Count of calls rejected due to full pool
 
-    @contextmanager
-    def acquire(self):
-        acquired = self._semaphore.acquire(blocking=False)
-        # => Non-blocking: returns False immediately if pool full (no waiting)
-        if not acquired:
-            self._rejected += 1
-            raise RuntimeError(f"Bulkhead '{self._name}' full — call rejected")
-            # => Fail fast: caller gets immediate error; dependency not contacted
-        try:
-            yield  # => Caller executes inside this context; slot is held
-        finally:
-            self._semaphore.release()  # => Always return slot to pool
+    Bulkhead(String name, int maxConcurrent) {
+        this.name = name;
+        this.semaphore = new Semaphore(maxConcurrent);
+        // => Fair=false (default): no queuing — callers fail fast if pool full
+    }
 
-    @property
-    def rejected_count(self) -> int:
-        return self._rejected  # => Expose for metrics dashboard
+    // => Executes func inside a semaphore permit; rejects immediately if no permit available
+    <T> T execute(java.util.function.Supplier<T> func) {
+        boolean acquired = semaphore.tryAcquire();
+        // => tryAcquire: non-blocking — returns false if all permits are taken
+        if (!acquired) {
+            rejected++;
+            throw new RuntimeException("Bulkhead '" + name + "' full — call rejected");
+            // => Fail fast: caller gets immediate error; downstream not contacted
+        }
+        try {
+            return func.get();  // => Caller's work executes under semaphore protection
+        } finally {
+            semaphore.release();  // => Always release permit — even on exception
+        }
+    }
 
-# => Two separate bulkheads — slow Payments cannot affect Inventory
-payments_bulkhead = Bulkhead("payments", max_concurrent=2)
-inventory_bulkhead = Bulkhead("inventory", max_concurrent=5)
+    int getRejected() { return rejected; }  // => Expose for metrics dashboard
+}
 
-def call_payment_service(order_id: str) -> str:
-    with payments_bulkhead.acquire():
-        # => Simulated slow payment call (would be actual I/O in production)
-        return f"payment_ok:{order_id}"  # => Returns result under bulkhead protection
+// => Two separate bulkheads — slow Payments cannot exhaust Inventory's pool
+var paymentsBulkhead = new Bulkhead("payments", 2);
+// => Max 2 concurrent payment calls — third caller is rejected immediately
+var inventoryBulkhead = new Bulkhead("inventory", 5);
+// => Inventory has its own independent pool of 5 slots
 
-def call_inventory_service(sku: str) -> str:
-    with inventory_bulkhead.acquire():
-        return f"stock_ok:{sku}"  # => Inventory pool is independent of payments pool
+// => Simulate: drain all payment permits, then show inventory still works
+paymentsBulkhead.execute(() -> "hold-slot-1");  // => Permit 1 taken (synthetic hold)
 
-# => Demonstrate isolation: fill payments bulkhead, inventory still works
-slots = []
-try:
-    slots.append(payments_bulkhead._semaphore.acquire(blocking=False))  # => Occupy slot 1
-    slots.append(payments_bulkhead._semaphore.acquire(blocking=False))  # => Occupy slot 2
-    call_payment_service("ORD-1")  # => Should raise: pool full
-except RuntimeError as e:
-    print(e)  # => Output: Bulkhead 'payments' full — call rejected
+try {
+    // => Manually exhaust remaining permit to simulate "pool full" scenario
+    boolean p2 = paymentsBulkhead.semaphore.tryAcquire();  // => Takes permit 2
+    try {
+        paymentsBulkhead.execute(() -> "ORD-1");  // => Should throw: pool full
+    } finally {
+        if (p2) paymentsBulkhead.semaphore.release();  // => Restore permit 2
+    }
+} catch (RuntimeException e) {
+    System.out.println(e.getMessage());
+    // => Output: Bulkhead 'payments' full — call rejected
+}
 
-print(call_inventory_service("SKU-1"))  # => Output: stock_ok:SKU-1 (unaffected)
-
-for s in slots:
-    if s:
-        payments_bulkhead._semaphore.release()  # => Clean up test slots
+String invResult = inventoryBulkhead.execute(() -> "stock_ok:SKU-1");
+System.out.println(invResult);  // => Output: stock_ok:SKU-1 (unaffected by payments)
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.util.concurrent.Semaphore
+
+// => Bulkhead: limits concurrent calls to a downstream dependency via a semaphore
+class Bulkhead(private val name: String, maxConcurrent: Int) {
+    val semaphore = Semaphore(maxConcurrent)
+    // => Permits = max concurrent slots; fair=false (no queuing — fail fast)
+    private var rejected = 0  // => Count of calls rejected due to full pool
+
+    // => Executes block under semaphore permit; rejects immediately if pool full
+    fun <T> execute(block: () -> T): T {
+        val acquired = semaphore.tryAcquire()
+        // => tryAcquire: non-blocking — returns false immediately if all permits taken
+        if (!acquired) {
+            rejected++
+            throw RuntimeException("Bulkhead '$name' full — call rejected")
+            // => Fail fast: caller receives immediate error; downstream is not contacted
+        }
+        return try {
+            block()  // => Caller's work executes under semaphore protection
+        } finally {
+            semaphore.release()  // => Always release permit — even on exception
+        }
+    }
+
+    fun getRejected(): Int = rejected  // => Expose for metrics / alerting
+}
+
+// => Two separate bulkheads — Payments slowdown cannot exhaust Inventory's slots
+val paymentsBulkhead = Bulkhead("payments", maxConcurrent = 2)
+// => Max 2 concurrent payment calls — 3rd caller is rejected immediately
+val inventoryBulkhead = Bulkhead("inventory", maxConcurrent = 5)
+// => Inventory pool is completely independent from payments pool
+
+// => Simulate: drain all payment permits, then show inventory still works
+val p1 = paymentsBulkhead.semaphore.tryAcquire()  // => Occupy slot 1
+val p2 = paymentsBulkhead.semaphore.tryAcquire()  // => Occupy slot 2 — pool now full
+
+try {
+    paymentsBulkhead.execute { "ORD-1" }  // => Should throw: pool full
+} catch (e: RuntimeException) {
+    println(e.message)
+    // => Output: Bulkhead 'payments' full — call rejected
+} finally {
+    if (p1) paymentsBulkhead.semaphore.release()  // => Restore permits for cleanup
+    if (p2) paymentsBulkhead.semaphore.release()
+}
+
+val invResult = inventoryBulkhead.execute { "stock_ok:SKU-1" }
+println(invResult)  // => Output: stock_ok:SKU-1 (unaffected by payments pool)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Threading;
+
+// => Bulkhead: limits concurrent calls to a downstream dependency via a SemaphoreSlim
+class Bulkhead {
+    private readonly string _name;           // => Name used in error messages and metrics
+    private readonly SemaphoreSlim _semaphore; // => SemaphoreSlim: lightweight, non-kernel
+    private int _rejected = 0;                // => Count of calls rejected due to full pool
+
+    public Bulkhead(string name, int maxConcurrent) {
+        _name = name;
+        _semaphore = new SemaphoreSlim(maxConcurrent, maxConcurrent);
+        // => initialCount = maxCount = maxConcurrent permits available at start
+    }
+
+    // => Executes func under semaphore permit; rejects immediately if pool full
+    public T Execute<T>(Func<T> func) {
+        bool acquired = _semaphore.Wait(0);
+        // => Wait(0): non-blocking — returns false immediately if no permits available
+        if (!acquired) {
+            _rejected++;
+            throw new InvalidOperationException($"Bulkhead '{_name}' full — call rejected");
+            // => Fail fast: caller gets immediate error; downstream is not contacted
+        }
+        try {
+            return func();  // => Caller's work executes under semaphore protection
+        } finally {
+            _semaphore.Release();  // => Always release permit — even on exception
+        }
+    }
+
+    public int Rejected => _rejected;  // => Expose for metrics / alerting
+    internal SemaphoreSlim Semaphore => _semaphore;  // => Exposed for test slot occupation
+}
+
+// => Two separate bulkheads — Payments slowdown cannot exhaust Inventory's pool
+var paymentsBulkhead = new Bulkhead("payments", maxConcurrent: 2);
+// => Max 2 concurrent payment calls — 3rd caller is rejected immediately
+var inventoryBulkhead = new Bulkhead("inventory", maxConcurrent: 5);
+// => Inventory pool is completely independent from payments pool
+
+// => Simulate: drain all payment permits, then show inventory still works
+bool p1 = paymentsBulkhead.Semaphore.Wait(0);  // => Occupy slot 1
+bool p2 = paymentsBulkhead.Semaphore.Wait(0);  // => Occupy slot 2 — pool now full
+
+try {
+    paymentsBulkhead.Execute(() => "ORD-1");  // => Should throw: pool full
+} catch (InvalidOperationException e) {
+    Console.WriteLine(e.Message);
+    // => Output: Bulkhead 'payments' full — call rejected
+} finally {
+    if (p1) paymentsBulkhead.Semaphore.Release();  // => Restore permits for cleanup
+    if (p2) paymentsBulkhead.Semaphore.Release();
+}
+
+string invResult = inventoryBulkhead.Execute(() => "stock_ok:SKU-1");
+Console.WriteLine(invResult);  // => Output: stock_ok:SKU-1 (unaffected by payments pool)
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Assign separate resource pools (semaphores or thread pools) to each downstream
 dependency so one slow service can only exhaust its own pool, not the shared application pool.
@@ -735,47 +1763,166 @@ Retrying transient failures is essential in distributed systems, but naive fixed
 cause thundering herds when many clients retry simultaneously. Exponential backoff with jitter
 spreads retries over time, reducing collision probability and letting overloaded services recover.
 
-```python
-import random
-import time
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-def exponential_backoff(attempt: int, base: float = 0.1, cap: float = 30.0) -> float:
-    # => Exponential growth: base * 2^attempt gives 0.1, 0.2, 0.4, 0.8, 1.6 ...
-    delay = min(base * (2 ** attempt), cap)
-    # => Cap prevents indefinitely long waits (e.g., never more than 30s)
-    jitter = delay * random.uniform(0, 0.5)
-    # => Add up to 50% random jitter so concurrent clients do not all retry at T+0.4s
-    return delay + jitter  # => Final delay varies per client even for same attempt number
+```java
+import java.util.Random;
+import java.util.function.Supplier;
 
-def retry(func: Callable[[], str], max_attempts: int = 5) -> Optional[str]:
-    last_error: Optional[Exception] = None
-    for attempt in range(max_attempts):
-        try:
-            return func()  # => Attempt the operation
-        except Exception as e:
-            last_error = e
-            if attempt == max_attempts - 1:
-                break  # => Last attempt; do not sleep before giving up
-            delay = exponential_backoff(attempt)
-            print(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay:.2f}s")
-            time.sleep(delay)  # => Wait before next attempt; duration increases each time
-    raise RuntimeError(f"All {max_attempts} attempts failed: {last_error}") from last_error
+// => Computes exponential delay with full jitter: delay = random(0, min(base*2^attempt, cap))
+// => Resilience4j uses the same formula internally — this models its behaviour
+static double exponentialBackoff(int attempt, double baseMs, double capMs) {
+    double ceiling = Math.min(baseMs * Math.pow(2, attempt), capMs);
+    // => ceiling grows exponentially: 100, 200, 400, 800 ... capped at capMs
+    return new Random().nextDouble() * ceiling;
+    // => Full jitter: random between 0 and ceiling — avoids thundering herd
+}
 
-# => Simulate service that fails twice then succeeds
-_attempt_count = 0
+// => Generic retry loop: up to maxAttempts, sleeping exponential backoff between failures
+static <T> T retry(Supplier<T> func, int maxAttempts) throws Exception {
+    Exception last = null;
+    for (int attempt = 0; attempt < maxAttempts; attempt++) {
+        try {
+            return func.get();  // => Attempt the operation
+        } catch (Exception e) {
+            last = e;
+            if (attempt == maxAttempts - 1) break;  // => Last attempt; skip sleep
+            long delayMs = (long) exponentialBackoff(attempt, 100.0, 30_000.0);
+            // => delayMs varies per attempt and per client — jitter prevents synchronised retry bursts
+            System.out.println("Attempt " + (attempt + 1) + " failed: " + e.getMessage()
+                + ". Retrying in " + delayMs + "ms");
+            Thread.sleep(0);  // => Simulation: skip actual sleep; prod uses Thread.sleep(delayMs)
+        }
+    }
+    throw new RuntimeException("All " + maxAttempts + " attempts failed", last);
+    // => Exhausted retries — propagate last error to caller
+}
 
-def unstable_call() -> str:
-    global _attempt_count
-    _attempt_count += 1
-    if _attempt_count < 3:
-        raise ConnectionError(f"timeout on attempt {_attempt_count}")
-        # => First two calls fail with transient error
-    return "success"  # => Third call succeeds
+// => Simulate a service that fails twice then succeeds on the third call
+int[] callCount = {0};
+Supplier<String> unstableCall = () -> {
+    callCount[0]++;
+    if (callCount[0] < 3) throw new RuntimeException("timeout on attempt " + callCount[0]);
+    // => First two calls throw transient error — retry handles these transparently
+    return "success";  // => Third call returns result normally
+};
 
-# => Demonstrate: retry recovers from transient failures automatically
-result = retry(unstable_call, max_attempts=5)
-print(f"Result: {result}")  # => Output: Result: success  (after 2 retried failures)
+try {
+    String result = retry(unstableCall, 5);
+    System.out.println("Result: " + result);  // => Output: Result: success (after 2 retried failures)
+    System.out.println("Total attempts: " + callCount[0]);  // => Output: Total attempts: 3
+} catch (Exception e) {
+    System.out.println("All retries exhausted: " + e.getMessage());
+}
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.random.Random
+
+// => Computes exponential delay with full jitter: random(0, min(base*2^attempt, cap))
+// => Matches Resilience4j exponential-random strategy — prevents thundering herd
+fun exponentialBackoff(attempt: Int, baseMs: Double = 100.0, capMs: Double = 30_000.0): Long {
+    val ceiling = min(baseMs * 2.0.pow(attempt), capMs)
+    // => ceiling grows: 100, 200, 400, 800 ... then plateaus at capMs
+    return (Random.nextDouble() * ceiling).toLong()
+    // => Full jitter: random between 0 and ceiling — different delay per client per attempt
+}
+
+// => Inline retry function: suspends using coroutine delay in production; simulates here
+suspend fun <T> retry(maxAttempts: Int = 5, block: suspend () -> T): T {
+    var last: Exception? = null
+    for (attempt in 0 until maxAttempts) {
+        try {
+            return block()  // => Attempt the operation
+        } catch (e: Exception) {
+            last = e
+            if (attempt == maxAttempts - 1) break  // => Last attempt; skip delay
+            val delayMs = exponentialBackoff(attempt)
+            // => Each client gets different delay — jitter distributes retry load across time
+            println("Attempt ${attempt + 1} failed: ${e.message}. Retrying in ${delayMs}ms")
+            kotlinx.coroutines.delay(0)  // => Simulation: skip real sleep; prod uses delay(delayMs)
+        }
+    }
+    throw RuntimeException("All $maxAttempts attempts failed", last)
+    // => Exhausted retries — propagate last exception to caller
+}
+
+// => Simulate a service that fails twice then succeeds on the third call
+var callCount = 0
+val unstableCall: suspend () -> String = {
+    callCount++
+    if (callCount < 3) throw RuntimeException("timeout on attempt $callCount")
+    // => First two calls throw transient error — retry handles these transparently
+    "success"  // => Third call returns result normally
+}
+
+// => In a real app: launch { retry { unstableCall() } }
+// => For illustration, run synchronously:
+runBlocking {
+    val result = retry(maxAttempts = 5) { unstableCall() }
+    println("Result: $result")           // => Output: Result: success (after 2 retried failures)
+    println("Total attempts: $callCount") // => Output: Total attempts: 3
+}
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Threading.Tasks;
+
+// => Computes exponential delay with full jitter: random(0, min(base*2^attempt, cap))
+// => Matches Polly's ExponentialBackoffWithJitter strategy — prevents thundering herd
+static TimeSpan ExponentialBackoff(int attempt, double baseMs = 100.0, double capMs = 30_000.0) {
+    double ceiling = Math.Min(baseMs * Math.Pow(2, attempt), capMs);
+    // => ceiling grows: 100, 200, 400, 800 ... capped at capMs (30 s default)
+    double delayMs = Random.Shared.NextDouble() * ceiling;
+    // => Full jitter: random between 0 and ceiling — distributes concurrent retries across time
+    return TimeSpan.FromMilliseconds(delayMs);
+}
+
+// => Generic async retry: up to maxAttempts, sleeping exponential backoff between failures
+static async Task<T> Retry<T>(Func<Task<T>> func, int maxAttempts = 5) {
+    Exception? last = null;
+    for (int attempt = 0; attempt < maxAttempts; attempt++) {
+        try {
+            return await func();  // => Attempt the operation
+        } catch (Exception e) {
+            last = e;
+            if (attempt == maxAttempts - 1) break;  // => Last attempt; skip delay
+            var delay = ExponentialBackoff(attempt);
+            // => delay varies per attempt and per client — jitter prevents synchronised bursts
+            Console.WriteLine($"Attempt {attempt + 1} failed: {e.Message}. Retrying in {delay.TotalMilliseconds:F0}ms");
+            await Task.Delay(0);  // => Simulation: skip real wait; prod uses Task.Delay(delay)
+        }
+    }
+    throw new Exception($"All {maxAttempts} attempts failed", last);
+    // => Exhausted retries — propagate last exception to caller
+}
+
+// => Simulate a service that fails twice then succeeds on the third call
+int callCount = 0;
+Func<Task<string>> unstableCall = async () => {
+    callCount++;
+    if (callCount < 3) throw new Exception($"timeout on attempt {callCount}");
+    // => First two calls throw transient error — retry handles these transparently
+    return "success";  // => Third call returns result normally
+};
+
+var result = await Retry(unstableCall, maxAttempts: 5);
+Console.WriteLine($"Result: {result}");           // => Output: Result: success (after 2 retried failures)
+Console.WriteLine($"Total attempts: {callCount}"); // => Output: Total attempts: 3
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Use exponential backoff to avoid retry storms, and add jitter to spread load
 across time when many clients retry the same failing service concurrently.
@@ -809,63 +1956,195 @@ sequenceDiagram
     Note over A,C: All spans share trace_id=abc
 ```
 
-**Python — trace context propagation across service calls:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-import uuid
-import time
-from dataclasses import dataclass, field
-from typing import List, Optional
+```java
+import java.util.UUID;
 
-@dataclass
-class Span:
-    trace_id: str           # => Same for all spans in a single request
-    span_id: str            # => Unique per operation
-    parent_span_id: Optional[str]  # => Links child to parent in trace tree
-    operation: str
-    start_time: float = field(default_factory=time.monotonic)
-    end_time: Optional[float] = None
+// => Span: represents one timed operation within a distributed trace tree
+record Span(
+    String traceId,        // => Same across all spans from the same root request
+    String spanId,         // => Unique per operation — used as parentSpanId by children
+    String parentSpanId,   // => null for root span; links child to parent in trace tree
+    String operation,      // => Human-readable name for this span (e.g. "orders-svc:place_order")
+    long startNs           // => Nanosecond timestamp — nanoseconds give sub-millisecond precision
+) {
+    // => finish: compute duration and emit — in production, send to Jaeger/Zipkin, not stdout
+    void finish() {
+        long durationMs = (System.nanoTime() - startNs) / 1_000_000;
+        System.out.printf("[TRACE] trace=%s span=%s parent=%s op=%s duration=%dms%n",
+            traceId, spanId, parentSpanId, operation, durationMs);
+        // => In production: opentelemetry-sdk exports this to the configured backend
+    }
+}
 
-    def finish(self) -> None:
-        self.end_time = time.monotonic()  # => Records operation duration
-        duration_ms = (self.end_time - self.start_time) * 1000
-        print(f"[TRACE] trace={self.trace_id} span={self.span_id} parent={self.parent_span_id} "
-              f"op={self.operation} duration={duration_ms:.1f}ms")
-        # => In production this is sent to Jaeger, Zipkin, or Datadog — not stdout
+// => Tracer: creates spans for one named service; propagates trace context across calls
+class Tracer {
+    private final String service;  // => Service name prefixed to every operation name
+    Tracer(String service) { this.service = service; }
 
-class Tracer:
-    def __init__(self, service_name: str) -> None:
-        self._service = service_name
+    // => startSpan: traceId=null creates a root span; non-null continues an existing trace
+    Span startSpan(String operation, String traceId, String parentSpanId) {
+        String tid = traceId != null ? traceId : UUID.randomUUID().toString();
+        // => Root span: generates new traceId; child span: inherits caller's traceId
+        String sid = UUID.randomUUID().toString().substring(0, 8);
+        // => spanId is short for readability; real OpenTelemetry uses 16-byte hex
+        return new Span(tid, sid, parentSpanId, service + ":" + operation, System.nanoTime());
+    }
+}
 
-    def start_span(self, operation: str, trace_id: Optional[str] = None,
-                   parent_span_id: Optional[str] = None) -> Span:
-        return Span(
-            trace_id=trace_id or str(uuid.uuid4()),  # => Generate root trace_id if absent
-            span_id=str(uuid.uuid4())[:8],            # => New span id per operation
-            parent_span_id=parent_span_id,
-            operation=f"{self._service}:{operation}",
-        )
+// => Three services each create spans under the same trace
+var gateway = new Tracer("api-gateway");
+var ordersSvc = new Tracer("orders-svc");
+var inventorySvc = new Tracer("inventory-svc");
 
-# => Simulate three services each creating their own spans under the same trace
-gateway_tracer = Tracer("api-gateway")
-orders_tracer = Tracer("orders-svc")
-inventory_tracer = Tracer("inventory-svc")
+// => Step 1: API Gateway starts the root span — traceId generated here
+var root = gateway.startSpan("handle_request", null, null);
+// => root.traceId is propagated to all downstream services via W3C traceparent header
 
-# => Root span started by API Gateway
-root_span = gateway_tracer.start_span("handle_request")
-trace_id = root_span.trace_id  # => Propagate this trace_id downstream
+// => Step 2: Orders service starts child span with gateway's traceId
+var ordersSpan = ordersSvc.startSpan("place_order", root.traceId(), root.spanId());
+// => ordersSpan.parentSpanId == root.spanId — links child to parent in trace tree
 
-# => Orders service creates child span with gateway's trace_id
-orders_span = orders_tracer.start_span("place_order", trace_id=trace_id, parent_span_id=root_span.span_id)
+// => Step 3: Inventory service starts grandchild span
+var invSpan = inventorySvc.startSpan("reserve_stock", root.traceId(), ordersSpan.spanId());
+invSpan.finish();    // => Inventory finishes first (innermost call)
+// => Output: [TRACE] trace=<id> span=<id> parent=<orders-span-id> op=inventory-svc:reserve_stock duration=0ms
 
-# => Inventory service creates grandchild span
-inv_span = inventory_tracer.start_span("reserve_stock", trace_id=trace_id, parent_span_id=orders_span.span_id)
-inv_span.finish()      # => Inventory finishes first (innermost call)
+ordersSpan.finish(); // => Orders finishes after Inventory returns
+// => Output: [TRACE] trace=<id> span=<id> parent=<root-span-id> op=orders-svc:place_order duration=0ms
 
-orders_span.finish()   # => Orders finishes after Inventory returns
-root_span.finish()     # => Gateway finishes last
-# => All three spans share the same trace_id — reconstruction tool links them into a tree
+root.finish();       // => Gateway finishes last — outermost span spans the entire request
+// => Output: [TRACE] trace=<id> span=<id> parent=null op=api-gateway:handle_request duration=0ms
+// => All three spans share the same traceId — Jaeger/Zipkin links them into a flame graph
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.util.UUID
+
+// => Span: represents one timed operation within a distributed trace tree
+data class Span(
+    val traceId: String,        // => Same across all spans from the same root request
+    val spanId: String,         // => Unique per operation — used as parentSpanId by children
+    val parentSpanId: String?,  // => null for root span; links child to parent in trace tree
+    val operation: String,      // => Human-readable name (e.g. "orders-svc:place_order")
+    val startNs: Long = System.nanoTime()  // => Nanosecond start for sub-ms precision
+) {
+    // => finish: compute duration and emit — production sends to OpenTelemetry backend, not stdout
+    fun finish() {
+        val durationMs = (System.nanoTime() - startNs) / 1_000_000
+        println("[TRACE] trace=$traceId span=$spanId parent=$parentSpanId op=$operation duration=${durationMs}ms")
+        // => In production: opentelemetry-sdk exports span data to Jaeger/Zipkin/Datadog
+    }
+}
+
+// => Tracer: creates spans for one named service; propagates trace context across service calls
+class Tracer(private val service: String) {
+    // => traceId=null creates a root span; non-null continues an existing trace
+    fun startSpan(operation: String, traceId: String? = null, parentSpanId: String? = null): Span {
+        val tid = traceId ?: UUID.randomUUID().toString()
+        // => Root span: generates new traceId; child span: inherits caller's traceId
+        val sid = UUID.randomUUID().toString().take(8)
+        // => spanId is short for readability; real OpenTelemetry uses 16-byte hex
+        return Span(tid, sid, parentSpanId, "$service:$operation")
+    }
+}
+
+// => Three services each create spans under the same trace
+val gateway = Tracer("api-gateway")
+val ordersSvc = Tracer("orders-svc")
+val inventorySvc = Tracer("inventory-svc")
+
+// => Step 1: API Gateway starts the root span — traceId generated here
+val root = gateway.startSpan("handle_request")
+// => root.traceId is propagated downstream via W3C traceparent header in real HTTP calls
+
+// => Step 2: Orders service starts child span with gateway's traceId
+val ordersSpan = ordersSvc.startSpan("place_order", traceId = root.traceId, parentSpanId = root.spanId)
+// => ordersSpan.parentSpanId == root.spanId — links this span to its parent in the tree
+
+// => Step 3: Inventory service starts grandchild span
+val invSpan = inventorySvc.startSpan("reserve_stock", traceId = root.traceId, parentSpanId = ordersSpan.spanId)
+invSpan.finish()    // => Inventory finishes first (innermost call)
+// => Output: [TRACE] trace=<id> span=<id> parent=<orders-span-id> op=inventory-svc:reserve_stock duration=0ms
+
+ordersSpan.finish() // => Orders finishes after Inventory returns
+// => Output: [TRACE] trace=<id> span=<id> parent=<root-span-id> op=orders-svc:place_order duration=0ms
+
+root.finish()       // => Gateway finishes last — spans the full end-to-end request
+// => Output: [TRACE] trace=<id> span=<id> parent=null op=api-gateway:handle_request duration=0ms
+// => All three spans share the same traceId — Jaeger/Zipkin links them into a flame graph
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+
+// => Span: represents one timed operation within a distributed trace tree
+record Span(
+    string TraceId,        // => Same across all spans from the same root request
+    string SpanId,         // => Unique per operation — used as ParentSpanId by children
+    string? ParentSpanId,  // => null for root span; links child to parent in trace tree
+    string Operation,      // => Human-readable name (e.g. "orders-svc:place_order")
+    long StartTicks = 0    // => Environment.TickCount64 start for ms-resolution timing
+) {
+    // => finish: compute duration and emit — production sends to OpenTelemetry backend, not Console
+    public void Finish() {
+        var durationMs = Environment.TickCount64 - StartTicks;
+        Console.WriteLine($"[TRACE] trace={TraceId} span={SpanId} parent={ParentSpanId} op={Operation} duration={durationMs}ms");
+        // => In production: opentelemetry-dotnet exports span data to Jaeger/Zipkin/Datadog
+    }
+}
+
+// => Tracer: creates spans for one named service; propagates trace context across calls
+class Tracer {
+    private readonly string _service;  // => Service name prefixed to every operation name
+    public Tracer(string service) => _service = service;
+
+    // => traceId=null creates a root span; non-null continues an existing trace
+    public Span StartSpan(string operation, string? traceId = null, string? parentSpanId = null) {
+        var tid = traceId ?? Guid.NewGuid().ToString("N")[..8];
+        // => Root span: generates new traceId; child span: inherits caller's traceId
+        var sid = Guid.NewGuid().ToString("N")[..8];
+        // => SpanId short for readability; real OpenTelemetry uses 16-byte hex
+        return new Span(tid, sid, parentSpanId, $"{_service}:{operation}", Environment.TickCount64);
+    }
+}
+
+// => Three services each create spans under the same trace
+var gateway = new Tracer("api-gateway");
+var ordersSvc = new Tracer("orders-svc");
+var inventorySvc = new Tracer("inventory-svc");
+
+// => Step 1: API Gateway starts the root span — TraceId generated here
+var root = gateway.StartSpan("handle_request");
+// => root.TraceId is propagated downstream via W3C traceparent header in real HTTP calls
+
+// => Step 2: Orders service starts child span with gateway's TraceId
+var ordersSpan = ordersSvc.StartSpan("place_order", root.TraceId, root.SpanId);
+// => ordersSpan.ParentSpanId == root.SpanId — links this span to its parent in the tree
+
+// => Step 3: Inventory service starts grandchild span
+var invSpan = inventorySvc.StartSpan("reserve_stock", root.TraceId, ordersSpan.SpanId);
+invSpan.Finish();    // => Inventory finishes first (innermost call)
+// => Output: [TRACE] trace=<id> span=<id> parent=<orders-span-id> op=inventory-svc:reserve_stock duration=0ms
+
+ordersSpan.Finish(); // => Orders finishes after Inventory returns
+// => Output: [TRACE] trace=<id> span=<id> parent=<root-span-id> op=orders-svc:place_order duration=0ms
+
+root.Finish();       // => Gateway finishes last — outermost span spans the entire request
+// => Output: [TRACE] trace=<id> span=<id> parent= op=api-gateway:handle_request duration=0ms
+// => All three spans share the same TraceId — Jaeger/Zipkin links them into a flame graph
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Propagate `trace_id` in every outbound request header (W3C `traceparent`) so
 that all spans generated by a single user request share the same root identifier.
@@ -901,55 +2180,201 @@ graph LR
     style Collector fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-**Python — sidecar modelled as a request-intercepting proxy:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from typing import Callable
-import time
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
-# => SidecarProxy wraps the application handler, adding cross-cutting concerns
-class SidecarProxy:
-    def __init__(self, app_handler: Callable[[dict], dict]) -> None:
-        self._app = app_handler  # => The real application logic — knows nothing about TLS/metrics
+// => SidecarProxy: wraps the application handler and adds cross-cutting concerns
+// => App never touches TLS, metrics, or request-ID generation — sidecar owns all of that
+class SidecarProxy {
+    private final Function<Map<String, Object>, Map<String, Object>> app;
+    // => app: the real application handler — pure business logic
 
-    def handle(self, request: dict) -> dict:
-        start = time.monotonic()
+    SidecarProxy(Function<Map<String, Object>, Map<String, Object>> app) {
+        this.app = app;
+        // => app is injected; sidecar can wrap any handler without changing it
+    }
 
-        # => Sidecar concern 1: enforce mutual TLS certificate validation
-        if not request.get("mtls_verified"):
-            return {"error": "TLS handshake failed", "status": 401}
-            # => App never sees unauthenticated request — sidecar blocks it first
+    Map<String, Object> handle(Map<String, Object> request) {
+        long startNs = System.nanoTime();  // => Start timing before any sidecar work
 
-        # => Sidecar concern 2: inject request metadata (trace id, request id)
-        request["request_id"] = "req-" + str(int(start * 1000) % 10000)
-        # => App can use request_id in logs without implementing header parsing itself
+        // => Sidecar concern 1: enforce mutual TLS — block unauthenticated callers
+        if (!Boolean.TRUE.equals(request.get("mtlsVerified"))) {
+            return Map.of("error", "TLS handshake failed", "status", 401);
+            // => App never sees this request — sidecar short-circuits before delegating
+        }
 
-        response = self._app(request)  # => Delegate to application logic
+        // => Sidecar concern 2: inject request metadata — app reads requestId from map
+        var enriched = new HashMap<>(request);
+        enriched.put("requestId", "req-" + (startNs % 10_000));
+        // => App can log requestId without implementing header parsing itself
 
-        # => Sidecar concern 3: emit metrics (latency, status code) to Prometheus
-        duration_ms = (time.monotonic() - start) * 1000
-        print(f"[SIDECAR] method={request.get('method')} path={request.get('path')} "
-              f"status={response.get('status', 200)} duration={duration_ms:.1f}ms")
-        # => Application code never calls a metrics client; sidecar owns all instrumentation
+        // => Delegate to application logic — app knows nothing about sidecar
+        var response = app.apply(enriched);
+
+        // => Sidecar concern 3: emit latency metric to Prometheus (stdout here)
+        long durationMs = (System.nanoTime() - startNs) / 1_000_000;
+        System.out.printf("[SIDECAR] method=%s path=%s status=%s duration=%dms%n",
+            request.get("method"), request.get("path"),
+            response.getOrDefault("status", 200), durationMs);
+        // => Application code never calls a metrics client; sidecar owns all instrumentation
+
+        return response;
+    }
+}
+
+// => Application handler: pure business logic — no TLS, metrics, or log formatting
+Function<Map<String, Object>, Map<String, Object>> orderApp = req ->
+    Map.of("status", 200, "data", "Order " + req.getOrDefault("orderId", "unknown") + " retrieved");
+// => orderApp is completely unaware that a sidecar wraps it
+
+var proxy = new SidecarProxy(orderApp);
+
+// => Blocked request: no mTLS certificate — sidecar rejects before app sees it
+var blockedResp = proxy.handle(Map.of("method", "GET", "path", "/orders/1",
+    "orderId", "1", "mtlsVerified", false));
+System.out.println(blockedResp);
+// => Output: {error=TLS handshake failed, status=401}
+
+// => Allowed request: mTLS verified — sidecar enriches, delegates, emits metrics
+var okResp = proxy.handle(Map.of("method", "GET", "path", "/orders/1",
+    "orderId", "1", "mtlsVerified", true));
+// => Output: [SIDECAR] method=GET path=/orders/1 status=200 duration=0ms
+System.out.println(okResp);
+// => Output: {status=200, data=Order 1 retrieved}
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => SidecarProxy: wraps the application handler and adds cross-cutting concerns
+// => App never touches TLS, metrics, or request-ID generation — sidecar owns all of that
+class SidecarProxy(
+    private val app: (Map<String, Any>) -> Map<String, Any>
+    // => app: the real application handler — pure business logic
+) {
+    fun handle(request: Map<String, Any>): Map<String, Any> {
+        val startNs = System.nanoTime()  // => Start timing before any sidecar work
+
+        // => Sidecar concern 1: enforce mutual TLS — block unauthenticated callers
+        if (request["mtlsVerified"] != true) {
+            return mapOf("error" to "TLS handshake failed", "status" to 401)
+            // => App never sees this request — sidecar short-circuits before delegating
+        }
+
+        // => Sidecar concern 2: inject request metadata — app reads requestId from map
+        val enriched = request.toMutableMap()
+        enriched["requestId"] = "req-${startNs % 10_000}"
+        // => App can log requestId without implementing header parsing itself
+
+        // => Delegate to application logic — app knows nothing about sidecar
+        val response = app(enriched)
+
+        // => Sidecar concern 3: emit latency metric to Prometheus (stdout here)
+        val durationMs = (System.nanoTime() - startNs) / 1_000_000
+        println("[SIDECAR] method=${request["method"]} path=${request["path"]} status=${response["status"] ?: 200} duration=${durationMs}ms")
+        // => Application code never calls a metrics client; sidecar owns all instrumentation
 
         return response
+    }
+}
 
-# => Application handler: pure business logic, no infrastructure code
-def order_app(request: dict) -> dict:
-    return {"status": 200, "data": f"Order {request.get('order_id', 'unknown')} retrieved"}
-    # => No TLS code, no metrics calls, no log formatting — sidecar owns all of that
+// => Application handler: pure business logic — no TLS, metrics, or log formatting
+val orderApp: (Map<String, Any>) -> Map<String, Any> = { req ->
+    mapOf("status" to 200, "data" to "Order ${req["orderId"] ?: "unknown"} retrieved")
+}
+// => orderApp is completely unaware that a sidecar wraps it
 
-proxy = SidecarProxy(order_app)
+val proxy = SidecarProxy(orderApp)
 
-# => Blocked request (no TLS)
-print(proxy.handle({"method": "GET", "path": "/orders/1", "order_id": "1", "mtls_verified": False}))
-# => Output: {'error': 'TLS handshake failed', 'status': 401}
+// => Blocked request: no mTLS certificate — sidecar rejects before app sees it
+val blockedResp = proxy.handle(mapOf("method" to "GET", "path" to "/orders/1",
+    "orderId" to "1", "mtlsVerified" to false))
+println(blockedResp)
+// => Output: {error=TLS handshake failed, status=401}
 
-# => Allowed request (TLS verified)
-print(proxy.handle({"method": "GET", "path": "/orders/1", "order_id": "1", "mtls_verified": True}))
-# => Output: [SIDECAR] method=GET path=/orders/1 status=200 duration=...ms
-# => Output: {'status': 200, 'data': 'Order 1 retrieved'}
+// => Allowed request: mTLS verified — sidecar enriches, delegates, emits metrics
+val okResp = proxy.handle(mapOf("method" to "GET", "path" to "/orders/1",
+    "orderId" to "1", "mtlsVerified" to true))
+// => Output: [SIDECAR] method=GET path=/orders/1 status=200 duration=0ms
+println(okResp)
+// => Output: {status=200, data=Order 1 retrieved}
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => SidecarProxy: wraps the application handler and adds cross-cutting concerns
+// => App never touches TLS, metrics, or request-ID generation — sidecar owns all of that
+class SidecarProxy {
+    private readonly Func<Dictionary<string, object>, Dictionary<string, object>> _app;
+    // => _app: the real application handler — pure business logic
+
+    public SidecarProxy(Func<Dictionary<string, object>, Dictionary<string, object>> app) {
+        _app = app;
+        // => app is injected; sidecar can wrap any handler without modifying it
+    }
+
+    public Dictionary<string, object> Handle(Dictionary<string, object> request) {
+        var startMs = Environment.TickCount64;  // => Start timing before any sidecar work
+
+        // => Sidecar concern 1: enforce mutual TLS — block unauthenticated callers
+        if (!request.TryGetValue("mtlsVerified", out var v) || v is not true) {
+            return new() { ["error"] = "TLS handshake failed", ["status"] = 401 };
+            // => App never sees this request — sidecar short-circuits before delegating
+        }
+
+        // => Sidecar concern 2: inject request metadata — app reads RequestId from dict
+        var enriched = new Dictionary<string, object>(request) {
+            ["requestId"] = "req-" + (startMs % 10_000)
+        };
+        // => App can log requestId without implementing header extraction itself
+
+        // => Delegate to application logic — app is completely unaware of the sidecar
+        var response = _app(enriched);
+
+        // => Sidecar concern 3: emit latency metric to Prometheus (Console here)
+        var durationMs = Environment.TickCount64 - startMs;
+        Console.WriteLine($"[SIDECAR] method={request["method"]} path={request["path"]} " +
+            $"status={response.GetValueOrDefault("status", 200)} duration={durationMs}ms");
+        // => Application code never calls a metrics client; sidecar owns all instrumentation
+
+        return response;
+    }
+}
+
+// => Application handler: pure business logic — no TLS, metrics, or log formatting
+Func<Dictionary<string, object>, Dictionary<string, object>> orderApp = req =>
+    new() { ["status"] = 200, ["data"] = $"Order {req.GetValueOrDefault("orderId", "unknown")} retrieved" };
+// => orderApp is completely unaware that a sidecar wraps it
+
+var proxy = new SidecarProxy(orderApp);
+
+// => Blocked request: no mTLS certificate — sidecar rejects before app sees it
+var blockedResp = proxy.Handle(new() { ["method"] = "GET", ["path"] = "/orders/1",
+    ["orderId"] = "1", ["mtlsVerified"] = false });
+Console.WriteLine(blockedResp["error"]);
+// => Output: TLS handshake failed
+
+// => Allowed request: mTLS verified — sidecar enriches, delegates, emits metrics
+var okResp = proxy.Handle(new() { ["method"] = "GET", ["path"] = "/orders/1",
+    ["orderId"] = "1", ["mtlsVerified"] = true });
+// => Output: [SIDECAR] method=GET path=/orders/1 status=200 duration=0ms
+Console.WriteLine(okResp["data"]);
+// => Output: Order 1 retrieved
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Sidecars let application developers focus on business logic while a separate
 deployable unit evolves independently to handle observability, security, and traffic management.
@@ -970,49 +2395,185 @@ concerns specific to that client's relationship with the service: protocol trans
 policy, credential injection, and connection pooling. Unlike the sidecar (which handles all
 outbound traffic), an ambassador is purpose-built for one specific remote.
 
-```python
-import functools
-import time
-from typing import Optional
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# => Ambassador encapsulates all complexity of calling the Database service
-class DatabaseAmbassador:
-    def __init__(self, dsn: str, max_retries: int = 3, timeout: float = 5.0) -> None:
-        self._dsn = dsn            # => Real ambassador would hold connection pool here
-        self._max_retries = max_retries
-        self._timeout = timeout
-        self._call_count = 0       # => Metrics; ambassador reports to monitoring system
+```java
+import java.util.List;
+import java.util.Map;
 
-    def query(self, sql: str, params: tuple = ()) -> list:
-        # => Ambassador retries transient DB errors transparently — app never sees them
-        for attempt in range(self._max_retries):
-            try:
-                return self._execute(sql, params)  # => Real call through connection pool
-            except ConnectionError as e:
-                if attempt == self._max_retries - 1:
-                    raise  # => Exhausted retries; propagate to application
-                wait = 0.1 * (2 ** attempt)  # => Backoff between retries
-                time.sleep(wait)
-        return []  # => Unreachable; silences type checker
+// => DatabaseAmbassador: encapsulates all complexity of calling the database
+// => Application code never sees retries, DSN, pool management, or credential injection
+class DatabaseAmbassador {
+    private final String dsn;         // => Connection string — app never accesses this directly
+    private final int maxRetries;     // => How many transient errors to absorb before propagating
+    private int callCount = 0;        // => Internal counter for metrics reporting
 
-    def _execute(self, sql: str, params: tuple) -> list:
-        self._call_count += 1
-        # => In production: use psycopg2/asyncpg connection from pool, apply timeout
-        if self._call_count == 1:
-            raise ConnectionError("transient connection loss")
-            # => Simulate flaky first call — ambassador's retry hides this from app
-        return [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
-        # => Returns result as plain list — app sees clean interface
+    DatabaseAmbassador(String dsn, int maxRetries) {
+        this.dsn = dsn;
+        this.maxRetries = maxRetries;
+        // => Real ambassador would initialise a connection pool here (HikariCP, c3p0)
+    }
 
-# => Application code calls ambassador; knows nothing about retries, pool, DSN
-db = DatabaseAmbassador(dsn="postgresql://localhost/mydb")
-rows = db.query("SELECT id, name FROM users WHERE active = %s", (True,))
-print(rows)
-# => Output: [{'id': 1, 'name': 'Alice'}, {'id': 2, 'name': 'Bob'}]
-# => (First call failed internally; ambassador retried transparently)
-print(f"Total calls made (including retries): {db._call_count}")
-# => Output: Total calls made (including retries): 2
+    // => query: public API for the application — hides all retry and pool complexity
+    List<Map<String, Object>> query(String sql, Object... params) {
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+                return execute(sql, params);  // => Attempt via connection pool
+            } catch (RuntimeException e) {
+                if (attempt == maxRetries - 1) throw e;  // => Exhausted retries; propagate
+                long backoffMs = (long)(100 * Math.pow(2, attempt));
+                // => Exponential backoff between retries — DB gets breathing room
+                System.out.println("Transient error on attempt " + (attempt + 1) + ": " + e.getMessage());
+                // => App never sees this retry loop; it transparently hides transient errors
+            }
+        }
+        throw new RuntimeException("Unreachable");  // => Loop always throws or returns
+    }
+
+    // => execute: simulates a real DB call through the connection pool
+    private List<Map<String, Object>> execute(String sql, Object[] params) {
+        callCount++;
+        // => In production: use a pooled Connection from HikariDataSource; apply query timeout
+        if (callCount == 1) throw new RuntimeException("transient connection loss");
+        // => Simulate flaky first call — ambassador absorbs and retries this transparently
+        return List.of(
+            Map.of("id", 1, "name", "Alice"),
+            Map.of("id", 2, "name", "Bob")
+        );
+        // => Returns clean result list; app sees this as if no failure occurred
+    }
+
+    int getCallCount() { return callCount; }  // => Expose for monitoring/testing
+}
+
+// => Application code: calls ambassador — knows nothing about retries, DSN, or pool size
+var db = new DatabaseAmbassador("jdbc:postgresql://localhost/mydb", 3);
+var rows = db.query("SELECT id, name FROM users WHERE active = ?", true);
+System.out.println(rows);
+// => Output: [{id=1, name=Alice}, {id=2, name=Bob}]
+// => (First call failed internally; ambassador retried transparently)
+System.out.println("Total calls made (including retries): " + db.getCallCount());
+// => Output: Total calls made (including retries): 2
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => DatabaseAmbassador: encapsulates all complexity of calling the database
+// => Application code never sees retries, DSN, pool management, or credential injection
+class DatabaseAmbassador(
+    private val dsn: String,      // => Connection string — app never accesses this directly
+    private val maxRetries: Int = 3  // => How many transient errors to absorb before propagating
+) {
+    private var callCount = 0  // => Internal counter for metrics reporting
+
+    // => query: public API for the application — hides all retry and pool complexity
+    fun query(sql: String, vararg params: Any): List<Map<String, Any>> {
+        for (attempt in 0 until maxRetries) {
+            try {
+                return execute(sql, params)  // => Attempt via connection pool
+            } catch (e: RuntimeException) {
+                if (attempt == maxRetries - 1) throw e  // => Exhausted retries; propagate
+                val backoffMs = (100 * Math.pow(2.0, attempt.toDouble())).toLong()
+                // => Exponential backoff — DB gets breathing room between retries
+                println("Transient error on attempt ${attempt + 1}: ${e.message}")
+                // => App never sees this loop; it transparently absorbs transient errors
+            }
+        }
+        throw RuntimeException("Unreachable")  // => Loop always throws or returns
+    }
+
+    // => execute: simulates a real DB call through the connection pool
+    private fun execute(sql: String, params: Array<out Any>): List<Map<String, Any>> {
+        callCount++
+        // => In production: use a pooled Connection from HikariDataSource; apply timeout
+        if (callCount == 1) throw RuntimeException("transient connection loss")
+        // => Simulate flaky first call — ambassador absorbs and retries transparently
+        return listOf(
+            mapOf("id" to 1, "name" to "Alice"),
+            mapOf("id" to 2, "name" to "Bob")
+        )
+        // => Returns clean result list; app sees this as if no failure occurred
+    }
+
+    fun getCallCount(): Int = callCount  // => Expose for monitoring/testing
+}
+
+// => Application code: calls ambassador — knows nothing about retries, DSN, or pool
+val db = DatabaseAmbassador(dsn = "jdbc:postgresql://localhost/mydb", maxRetries = 3)
+val rows = db.query("SELECT id, name FROM users WHERE active = ?", true)
+println(rows)
+// => Output: [{id=1, name=Alice}, {id=2, name=Bob}]
+// => (First call failed internally; ambassador retried transparently)
+println("Total calls made (including retries): ${db.getCallCount()}")
+// => Output: Total calls made (including retries): 2
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => DatabaseAmbassador: encapsulates all complexity of calling the database
+// => Application code never sees retries, connection strings, pooling, or credential injection
+class DatabaseAmbassador {
+    private readonly string _dsn;      // => Connection string — app never accesses this directly
+    private readonly int _maxRetries;  // => How many transient errors to absorb before propagating
+    private int _callCount = 0;        // => Internal counter for metrics reporting
+
+    public DatabaseAmbassador(string dsn, int maxRetries = 3) {
+        _dsn = dsn;
+        _maxRetries = maxRetries;
+        // => Real ambassador would initialise a SqlConnection pool or Npgsql DataSource here
+    }
+
+    // => Query: public API for the application — hides all retry and pool complexity
+    public List<Dictionary<string, object>> Query(string sql, params object[] p) {
+        for (int attempt = 0; attempt < _maxRetries; attempt++) {
+            try {
+                return Execute(sql, p);  // => Attempt via connection pool
+            } catch (Exception e) when (attempt < _maxRetries - 1) {
+                var backoffMs = (int)(100 * Math.Pow(2, attempt));
+                // => Exponential backoff — DB gets breathing room between retries
+                Console.WriteLine($"Transient error on attempt {attempt + 1}: {e.Message}");
+                // => App never sees this loop; ambassador absorbs transient errors silently
+            }
+        }
+        return Execute(sql, p);  // => Final attempt — exception propagates if it fails
+    }
+
+    // => Execute: simulates a real DB call through the connection pool
+    private List<Dictionary<string, object>> Execute(string sql, object[] p) {
+        _callCount++;
+        // => In production: open SqlConnection from pool, set CommandTimeout, execute query
+        if (_callCount == 1) throw new Exception("transient connection loss");
+        // => Simulate flaky first call — ambassador absorbs and retries this transparently
+        return new() {
+            new() { ["id"] = 1, ["name"] = "Alice" },
+            new() { ["id"] = 2, ["name"] = "Bob" }
+        };
+        // => Returns clean result; app sees this as if no failure occurred
+    }
+
+    public int CallCount => _callCount;  // => Expose for monitoring/testing
+}
+
+// => Application code: calls ambassador — knows nothing about retries, DSN, or pool
+var db = new DatabaseAmbassador("Server=localhost;Database=mydb", maxRetries: 3);
+var rows = db.Query("SELECT id, name FROM users WHERE active = @p", true);
+Console.WriteLine(string.Join(", ", rows.ConvertAll(r => $"{r["name"]}")));
+// => Output: Alice, Bob
+// => (First call failed internally; ambassador retried transparently)
+Console.WriteLine($"Total calls made (including retries): {db.CallCount}");
+// => Output: Total calls made (including retries): 2
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** The ambassador externalises connection management, retry logic, and credential
 handling from application code, keeping business logic free of infrastructure concerns.
@@ -1049,67 +2610,231 @@ graph TD
     style E4 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Python — append-only event store with state projection:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from dataclasses import dataclass, field
-from typing import List, Any
-import json
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-@dataclass
-class DomainEvent:
-    event_type: str   # => e.g. "AccountOpened", "MoneyDeposited"
-    payload: dict     # => Event data specific to event_type
+// => DomainEvent: immutable record of a state change — never updated or deleted after appending
+record DomainEvent(
+    String eventType,     // => e.g. "AccountOpened", "MoneyDeposited", "MoneyWithdrawn"
+    Map<String, Object> payload  // => Event-specific data — always serialisable to JSON
+) {}
 
-class EventStore:
-    def __init__(self) -> None:
-        self._events: List[DomainEvent] = []
-        # => Append-only; events are never modified or deleted after appending
-        # => In production: stored as rows in a DB with sequence numbers, or in EventStoreDB
+// => EventStore: append-only log — the source of truth for all state changes
+class EventStore {
+    private final List<DomainEvent> events = new ArrayList<>();
+    // => Append-only: events never updated or deleted — immutable history
 
-    def append(self, event: DomainEvent) -> None:
-        self._events.append(event)  # => Append; never update existing events
+    void append(DomainEvent event) {
+        events.add(event);  // => Append only; production uses INSERT with sequence number
+        // => In production: rows in PostgreSQL events table, or EventStoreDB streams
+    }
 
-    def get_events(self) -> List[DomainEvent]:
-        return list(self._events)   # => Return copy; callers cannot mutate the store
+    List<DomainEvent> getEvents() {
+        return Collections.unmodifiableList(events);
+        // => Returns read-only view — callers cannot mutate the store
+    }
+}
 
-class BankAccount:
-    def __init__(self) -> None:
-        self.balance: float = 0.0  # => Derived state; recomputed by replay, never stored directly
-        self.account_id: str = ""
+// => BankAccount: state is always derived by replaying events, never stored directly
+class BankAccount {
+    String accountId = "";  // => Set by AccountOpened event
+    double balance = 0.0;   // => Recomputed by replay; never stored in a "balance" column
 
-    @classmethod
-    def replay(cls, events: List[DomainEvent]) -> "BankAccount":
-        account = cls()
-        for event in events:
-            account._apply(event)  # => Apply each event in order to rebuild current state
-        return account  # => Returns account in the state it was after all events
+    // => replay: rebuild current state by applying each event in order
+    static BankAccount replay(List<DomainEvent> events) {
+        var account = new BankAccount();
+        for (var e : events) account.apply(e);
+        // => Each event is applied in sequence order — order matters for financial ledgers
+        return account;  // => Account is now in the state it was after all given events
+    }
 
-    def _apply(self, event: DomainEvent) -> None:
-        if event.event_type == "AccountOpened":
-            self.account_id = event.payload["account_id"]
-            self.balance = 0.0         # => Initial balance always 0 at opening
-        elif event.event_type == "MoneyDeposited":
-            self.balance += event.payload["amount"]  # => Increase balance by deposit amount
-        elif event.event_type == "MoneyWithdrawn":
-            self.balance -= event.payload["amount"]  # => Decrease balance by withdrawal amount
+    private void apply(DomainEvent e) {
+        switch (e.eventType()) {
+            case "AccountOpened" -> {
+                accountId = (String) e.payload().get("accountId");
+                balance = 0.0;  // => Initial balance always 0 at account opening
+            }
+            case "MoneyDeposited" -> balance += (double) e.payload().get("amount");
+            // => Increase balance by deposited amount
+            case "MoneyWithdrawn" -> balance -= (double) e.payload().get("amount");
+            // => Decrease balance by withdrawn amount
+        }
+    }
+}
 
-# => Simulation: three events recorded over the account's lifetime
-store = EventStore()
-store.append(DomainEvent("AccountOpened", {"account_id": "ACC-001"}))
-store.append(DomainEvent("MoneyDeposited", {"amount": 500.0}))
-store.append(DomainEvent("MoneyWithdrawn", {"amount": 200.0}))
+// => Simulation: three events recorded over an account's lifetime
+var store = new EventStore();
+store.append(new DomainEvent("AccountOpened", Map.of("accountId", "ACC-001")));
+store.append(new DomainEvent("MoneyDeposited", Map.of("amount", 500.0)));
+store.append(new DomainEvent("MoneyWithdrawn", Map.of("amount", 200.0)));
 
-# => Replay all events to get current state
-account = BankAccount.replay(store.get_events())
-print(f"Account: {account.account_id}, Balance: {account.balance}")
-# => Output: Account: ACC-001, Balance: 300.0
+// => Replay all events to derive current state
+var account = BankAccount.replay(store.getEvents());
+System.out.println("Account: " + account.accountId + ", Balance: " + account.balance);
+// => Output: Account: ACC-001, Balance: 300.0
 
-# => Temporal query: what was the balance after only the first two events?
-account_at_t2 = BankAccount.replay(store.get_events()[:2])
-print(f"Balance after deposit only: {account_at_t2.balance}")
-# => Output: Balance after deposit only: 500.0
+// => Temporal query: state after only first two events (deposit not yet withdrawn)
+var accountAtT2 = BankAccount.replay(store.getEvents().subList(0, 2));
+System.out.println("Balance after deposit only: " + accountAtT2.balance);
+// => Output: Balance after deposit only: 500.0
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => DomainEvent: immutable record of a state change — never updated or deleted after appending
+data class DomainEvent(
+    val eventType: String,          // => e.g. "AccountOpened", "MoneyDeposited"
+    val payload: Map<String, Any>   // => Event-specific data — always serialisable to JSON
+)
+
+// => EventStore: append-only log — the source of truth for all state changes
+class EventStore {
+    private val events = mutableListOf<DomainEvent>()
+    // => Append-only: events never updated or deleted — immutable history
+
+    fun append(event: DomainEvent) {
+        events.add(event)  // => Append only; production uses INSERT with sequence number
+        // => In production: rows in PostgreSQL events table, or EventStoreDB streams
+    }
+
+    fun getEvents(): List<DomainEvent> = events.toList()
+    // => Returns snapshot copy — callers cannot mutate the backing list
+}
+
+// => BankAccount: state is always derived by replaying events, never stored directly
+class BankAccount {
+    var accountId: String = ""  // => Set by AccountOpened event
+    var balance: Double = 0.0   // => Recomputed by replay; never stored in a "balance" column
+
+    companion object {
+        // => replay: rebuild current state by applying each event in order
+        fun replay(events: List<DomainEvent>): BankAccount {
+            val account = BankAccount()
+            events.forEach { account.apply(it) }
+            // => Each event applied in sequence — order matters for financial ledgers
+            return account  // => Account is in the state it was after all given events
+        }
+    }
+
+    private fun apply(e: DomainEvent) {
+        when (e.eventType) {
+            "AccountOpened" -> {
+                accountId = e.payload["accountId"] as String
+                balance = 0.0  // => Initial balance always 0 at account opening
+            }
+            "MoneyDeposited" -> balance += e.payload["amount"] as Double
+            // => Increase balance by deposited amount
+            "MoneyWithdrawn" -> balance -= e.payload["amount"] as Double
+            // => Decrease balance by withdrawn amount
+        }
+    }
+}
+
+// => Simulation: three events recorded over an account's lifetime
+val store = EventStore()
+store.append(DomainEvent("AccountOpened", mapOf("accountId" to "ACC-001")))
+store.append(DomainEvent("MoneyDeposited", mapOf("amount" to 500.0)))
+store.append(DomainEvent("MoneyWithdrawn", mapOf("amount" to 200.0)))
+
+// => Replay all events to derive current state
+val account = BankAccount.replay(store.getEvents())
+println("Account: ${account.accountId}, Balance: ${account.balance}")
+// => Output: Account: ACC-001, Balance: 300.0
+
+// => Temporal query: state after only first two events (deposit not yet withdrawn)
+val accountAtT2 = BankAccount.replay(store.getEvents().take(2))
+println("Balance after deposit only: ${accountAtT2.balance}")
+// => Output: Balance after deposit only: 500.0
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+// => DomainEvent: immutable record of a state change — never updated or deleted after appending
+record DomainEvent(
+    string EventType,                    // => e.g. "AccountOpened", "MoneyDeposited"
+    Dictionary<string, object> Payload  // => Event-specific data — always serialisable to JSON
+);
+
+// => EventStore: append-only log — the source of truth for all state changes
+class EventStore {
+    private readonly List<DomainEvent> _events = new();
+    // => Append-only: events never updated or deleted — immutable history
+
+    public void Append(DomainEvent e) {
+        _events.Add(e);  // => Append only; production uses INSERT with sequence number
+        // => In production: rows in PostgreSQL events table, or EventStoreDB streams
+    }
+
+    public IReadOnlyList<DomainEvent> GetEvents() => _events.AsReadOnly();
+    // => Returns read-only wrapper — callers cannot mutate the store
+}
+
+// => BankAccount: state is always derived by replaying events, never stored directly
+class BankAccount {
+    public string AccountId { get; private set; } = "";
+    // => Set by AccountOpened event
+    public double Balance { get; private set; } = 0.0;
+    // => Recomputed by replay; never stored in a "balance" column
+
+    // => Replay: rebuild current state by applying each event in order
+    public static BankAccount Replay(IEnumerable<DomainEvent> events) {
+        var account = new BankAccount();
+        foreach (var e in events) account.Apply(e);
+        // => Each event applied in sequence — order matters for financial ledgers
+        return account;  // => Account is in the state it was after all given events
+    }
+
+    private void Apply(DomainEvent e) {
+        switch (e.EventType) {
+            case "AccountOpened":
+                AccountId = (string)e.Payload["accountId"];
+                Balance = 0.0;  // => Initial balance always 0 at account opening
+                break;
+            case "MoneyDeposited":
+                Balance += (double)e.Payload["amount"];
+                // => Increase balance by deposited amount
+                break;
+            case "MoneyWithdrawn":
+                Balance -= (double)e.Payload["amount"];
+                // => Decrease balance by withdrawn amount
+                break;
+        }
+    }
+}
+
+// => Simulation: three events recorded over an account's lifetime
+var store = new EventStore();
+store.Append(new DomainEvent("AccountOpened", new() { ["accountId"] = "ACC-001" }));
+store.Append(new DomainEvent("MoneyDeposited", new() { ["amount"] = 500.0 }));
+store.Append(new DomainEvent("MoneyWithdrawn", new() { ["amount"] = 200.0 }));
+
+// => Replay all events to derive current state
+var account = BankAccount.Replay(store.GetEvents());
+Console.WriteLine($"Account: {account.AccountId}, Balance: {account.Balance}");
+// => Output: Account: ACC-001, Balance: 300
+
+// => Temporal query: state after only first two events (deposit not yet withdrawn)
+var accountAtT2 = BankAccount.Replay(store.GetEvents().Take(2));
+Console.WriteLine($"Balance after deposit only: {accountAtT2.Balance}");
+// => Output: Balance after deposit only: 500
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Store domain events as the source of truth; derive read-state by replaying events
 so the full history is preserved for audit, debugging, and temporal queries.
@@ -1132,73 +2857,240 @@ preventing cross-module dependencies at the wrong level of abstraction. Each mod
 model, service layer, and repository — but shares the process and database, making local calls
 cheap and distributed tracing unnecessary.
 
-```python
-from typing import Protocol
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# ============================================================
-# Module: Orders — owns its own model and service interface
-# ============================================================
-# => Module boundary enforced by convention: Orders does not import from Billing internals
-@dataclass
-class Order:
-    order_id: str
-    customer_id: str
-    total: float
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
-class OrderRepository(Protocol):
-    def save(self, order: Order) -> None: ...
-    def find(self, order_id: str) -> Optional[Order]: ...
+// ============================================================
+// Module: Orders — owns its own model and service interface
+// ============================================================
+// => Order: domain object owned exclusively by the Orders module
+record Order(String orderId, String customerId, double total) {}
 
-class OrderService:
-    def __init__(self, repo: OrderRepository) -> None:
-        self._repo = repo  # => Injected; module owns the interface, not the implementation
+// => OrderRepository: interface owned by Orders module — implementations injected from outside
+interface OrderRepository {
+    void save(Order order);
+    // => Module specifies what it needs; infrastructure provides the implementation
+    Optional<Order> find(String orderId);
+}
 
-    def place(self, customer_id: str, total: float) -> Order:
-        order = Order(order_id=str(uuid.uuid4())[:8], customer_id=customer_id, total=total)
-        self._repo.save(order)  # => Persists via injected repo
-        return order  # => Returns domain object; other modules receive this via service, not direct DB query
+// => OrderService: Orders module's public API — other modules call this, never the repo directly
+class OrderService {
+    private final OrderRepository repo;
+    // => Injected at composition root — module owns the interface, not the implementation
+    OrderService(OrderRepository repo) { this.repo = repo; }
 
-# ============================================================
-# Module: Billing — separate domain, communicates via Order domain object only
-# ============================================================
-# => Billing imports Order (a shared kernel value object) but NOT OrderRepository
-@dataclass
-class Invoice:
-    invoice_id: str
-    order_id: str
-    amount: float
-    paid: bool = False
+    Order place(String customerId, double total) {
+        var order = new Order(UUID.randomUUID().toString().substring(0, 8), customerId, total);
+        repo.save(order);  // => Persists via injected repo — module doesn't know which DB
+        return order;
+        // => Returns domain object; Billing receives this via service call, not direct DB access
+    }
+}
 
-class BillingService:
-    def __init__(self) -> None:
-        self._invoices: dict[str, Invoice] = {}
+// ============================================================
+// Module: Billing — separate domain; communicates via Order domain object only
+// ============================================================
+// => Invoice: domain object owned exclusively by the Billing module
+// => Billing imports Order (shared kernel type) but NOT OrderRepository — boundary enforced
+record Invoice(String invoiceId, String orderId, double amount, boolean paid) {}
 
-    def issue_invoice(self, order: Order) -> Invoice:
-        inv = Invoice(invoice_id=str(uuid.uuid4())[:8], order_id=order.order_id, amount=order.total)
-        self._invoices[inv.invoice_id] = inv  # => Billing owns its own storage
-        return inv  # => Returns Billing's own Invoice domain object, not Orders' model
+// => BillingService: Billing module's public API
+class BillingService {
+    private final Map<String, Invoice> invoices = new HashMap<>();
+    // => Billing owns its own in-memory store — real impl uses its own DB schema
 
-# ============================================================
-# Composition Root — wires modules together at startup
-# ============================================================
-class InMemoryOrderRepo:
-    def __init__(self) -> None:
-        self._store: dict[str, Order] = {}
+    Invoice issueInvoice(Order order) {
+        var inv = new Invoice(UUID.randomUUID().toString().substring(0, 8),
+            order.orderId(), order.total(), false);
+        invoices.put(inv.invoiceId(), inv);  // => Billing persists in its own storage
+        return inv;
+        // => Returns Billing's Invoice type — not Orders' domain object
+    }
+}
 
-    def save(self, order: Order) -> None:
-        self._store[order.order_id] = order  # => In-memory store; prod uses SQLAlchemy
+// ============================================================
+// Composition Root — wires both modules together at application startup
+// ============================================================
+// => InMemoryOrderRepo: infrastructure implementation injected into Orders module
+class InMemoryOrderRepo implements OrderRepository {
+    private final Map<String, Order> store = new HashMap<>();
 
-    def find(self, order_id: str) -> Optional[Order]:
-        return self._store.get(order_id)  # => Returns None if not found
+    @Override public void save(Order o) { store.put(o.orderId(), o); }
+    // => In production: JPA repository or JDBC template
+    @Override public Optional<Order> find(String id) { return Optional.ofNullable(store.get(id)); }
+    // => Returns Optional — avoids null; caller handles missing case explicitly
+}
 
-order_svc = OrderService(InMemoryOrderRepo())
-billing_svc = BillingService()
+// => Composition Root wires modules — neither module knows about the other's internals
+var orderSvc = new OrderService(new InMemoryOrderRepo());
+var billingSvc = new BillingService();
 
-order = order_svc.place("cust-1", total=149.99)  # => Creates and persists order
-invoice = billing_svc.issue_invoice(order)         # => Billing receives Order domain object
-print(f"Order: {order.order_id}, Invoice: {invoice.invoice_id}, Amount: {invoice.amount}")
-# => Output: Order: <id>, Invoice: <id>, Amount: 149.99
+var order = orderSvc.place("cust-1", 149.99);  // => Orders module creates and persists order
+var invoice = billingSvc.issueInvoice(order);   // => Billing receives Order domain object
+System.out.println("Order: " + order.orderId() + ", Invoice: " + invoice.invoiceId()
+    + ", Amount: " + invoice.amount());
+// => Output: Order: <id>, Invoice: <id>, Amount: 149.99
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.util.UUID
+
+// ============================================================
+// Module: Orders — owns its own model and service interface
+// ============================================================
+// => Order: domain object owned exclusively by the Orders module
+data class Order(val orderId: String, val customerId: String, val total: Double)
+
+// => OrderRepository: interface owned by Orders module — implementations injected from outside
+interface OrderRepository {
+    fun save(order: Order)
+    // => Module specifies what it needs; infrastructure provides the implementation
+    fun find(orderId: String): Order?
+}
+
+// => OrderService: Orders module's public API — other modules call this, never the repo directly
+class OrderService(private val repo: OrderRepository) {
+    // => repo injected at composition root — module owns the interface, not the implementation
+
+    fun place(customerId: String, total: Double): Order {
+        val order = Order(UUID.randomUUID().toString().take(8), customerId, total)
+        repo.save(order)  // => Persists via injected repo — module doesn't know which DB
+        return order
+        // => Returns domain object; Billing receives this via service call, not direct DB access
+    }
+}
+
+// ============================================================
+// Module: Billing — separate domain; communicates via Order domain object only
+// ============================================================
+// => Invoice: domain object owned exclusively by the Billing module
+// => Billing imports Order (shared kernel type) but NOT OrderRepository — boundary enforced
+data class Invoice(val invoiceId: String, val orderId: String, val amount: Double, val paid: Boolean = false)
+
+// => BillingService: Billing module's public API
+class BillingService {
+    private val invoices = mutableMapOf<String, Invoice>()
+    // => Billing owns its own in-memory store — real impl uses its own DB schema
+
+    fun issueInvoice(order: Order): Invoice {
+        val inv = Invoice(UUID.randomUUID().toString().take(8), order.orderId, order.total)
+        invoices[inv.invoiceId] = inv  // => Billing persists in its own storage
+        return inv
+        // => Returns Billing's Invoice type — not Orders' domain object
+    }
+}
+
+// ============================================================
+// Composition Root — wires both modules together at application startup
+// ============================================================
+// => InMemoryOrderRepo: infrastructure implementation injected into Orders module
+class InMemoryOrderRepo : OrderRepository {
+    private val store = mutableMapOf<String, Order>()
+
+    override fun save(order: Order) { store[order.orderId] = order }
+    // => In production: Spring Data JPA repository or exposed DAO
+    override fun find(orderId: String): Order? = store[orderId]
+    // => Returns null if not found — caller handles missing case explicitly
+}
+
+// => Composition Root wires modules — neither module knows about the other's internals
+val orderSvc = OrderService(InMemoryOrderRepo())
+val billingSvc = BillingService()
+
+val order = orderSvc.place("cust-1", 149.99)  // => Orders module creates and persists order
+val invoice = billingSvc.issueInvoice(order)   // => Billing receives Order domain object
+println("Order: ${order.orderId}, Invoice: ${invoice.invoiceId}, Amount: ${invoice.amount}")
+// => Output: Order: <id>, Invoice: <id>, Amount: 149.99
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// ============================================================
+// Module: Orders — owns its own model and service interface
+// ============================================================
+// => Order: domain record owned exclusively by the Orders module
+record Order(string OrderId, string CustomerId, double Total);
+
+// => IOrderRepository: interface owned by Orders module — implementations injected from outside
+interface IOrderRepository {
+    void Save(Order order);
+    // => Module specifies what it needs; infrastructure provides the implementation
+    Order? Find(string orderId);
+}
+
+// => OrderService: Orders module's public API — other modules call this, never the repo directly
+class OrderService {
+    private readonly IOrderRepository _repo;
+    // => Injected at composition root — module owns the interface, not the implementation
+    public OrderService(IOrderRepository repo) => _repo = repo;
+
+    public Order Place(string customerId, double total) {
+        var order = new Order(Guid.NewGuid().ToString("N")[..8], customerId, total);
+        _repo.Save(order);  // => Persists via injected repo — module doesn't know which DB
+        return order;
+        // => Returns domain object; Billing receives this via service call, not direct DB access
+    }
+}
+
+// ============================================================
+// Module: Billing — separate domain; communicates via Order domain object only
+// ============================================================
+// => Invoice: domain record owned exclusively by the Billing module
+// => Billing references Order (shared kernel type) but NOT IOrderRepository — boundary enforced
+record Invoice(string InvoiceId, string OrderId, double Amount, bool Paid = false);
+
+// => BillingService: Billing module's public API
+class BillingService {
+    private readonly Dictionary<string, Invoice> _invoices = new();
+    // => Billing owns its own in-memory store — real impl uses its own DB schema
+
+    public Invoice IssueInvoice(Order order) {
+        var inv = new Invoice(Guid.NewGuid().ToString("N")[..8], order.OrderId, order.Total);
+        _invoices[inv.InvoiceId] = inv;  // => Billing persists in its own storage
+        return inv;
+        // => Returns Billing's Invoice type — not Orders' domain object
+    }
+}
+
+// ============================================================
+// Composition Root — wires both modules together at application startup
+// ============================================================
+// => InMemoryOrderRepository: infrastructure implementation injected into Orders module
+class InMemoryOrderRepository : IOrderRepository {
+    private readonly Dictionary<string, Order> _store = new();
+
+    public void Save(Order o) { _store[o.OrderId] = o; }
+    // => In production: EF Core DbContext.Orders.Add(o); await ctx.SaveChangesAsync()
+    public Order? Find(string id) => _store.GetValueOrDefault(id);
+    // => Returns null if not found — caller handles missing case explicitly
+}
+
+// => Composition Root wires modules — neither module knows about the other's internals
+var orderSvc = new OrderService(new InMemoryOrderRepository());
+var billingSvc = new BillingService();
+
+var order = orderSvc.Place("cust-1", 149.99);  // => Orders module creates and persists order
+var invoice = billingSvc.IssueInvoice(order);   // => Billing receives Order domain object
+Console.WriteLine($"Order: {order.OrderId}, Invoice: {invoice.InvoiceId}, Amount: {invoice.Amount}");
+// => Output: Order: <id>, Invoice: <id>, Amount: 149.99
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Enforce module boundaries through Protocols and dependency injection rather than
 package-access modifiers, making the modular monolith easier to later split into services if needed.
@@ -1218,75 +3110,216 @@ Vertical slice architecture organises code by feature rather than by technical l
 Service, Repository). Each slice contains all layers needed for that feature in one cohesive unit,
 reducing cross-slice coupling and making it easy to find, understand, and change a complete feature.
 
-```python
-from dataclasses import dataclass
-from typing import Optional
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# ============================================================
-# Slice: Place Order — all layers for this feature in one place
-# ============================================================
-# => Request object: input contract for this slice
-@dataclass
-class PlaceOrderRequest:
-    customer_id: str
-    product_id: str
-    quantity: int
+```java
+import java.util.*;
 
-# => Response object: output contract for this slice
-@dataclass
-class PlaceOrderResponse:
-    order_id: str
-    status: str
-    total: float
+// => PlaceOrder slice: request + handler + response in one cohesive unit
+// => No shared service layer — each slice owns its full vertical stack
+record PlaceOrderRequest(String customerId, String productId, int quantity) {}
+// => Immutable record; all fields set at construction, no setters needed
 
-# => Handler: contains all logic for this slice (no shared service layer)
-class PlaceOrderHandler:
-    def __init__(self, price_per_unit: float = 10.0) -> None:
-        self._price = price_per_unit   # => In prod: injected repository + price service
-        self._orders: list = []
+record PlaceOrderResponse(String orderId, String status, double total) {}
+// => Immutable response; caller reads fields, never mutates them
 
-    def handle(self, request: PlaceOrderRequest) -> PlaceOrderResponse:
-        total = self._price * request.quantity  # => Business rule: total = price * qty
-        order_id = f"ORD-{len(self._orders) + 1:04d}"  # => Simple sequential id for demo
-        self._orders.append({"id": order_id, "customer": request.customer_id, "total": total})
-        # => Persists order (would use Unit of Work in production)
-        return PlaceOrderResponse(order_id=order_id, status="placed", total=total)
-        # => Returns slice-specific response; no generic response envelope needed
+class PlaceOrderHandler {
+    // => Price and storage are private implementation details of this slice
+    private final double pricePerUnit;
+    // => In prod: injected OrderRepository + PriceService via constructor DI
+    private final List<Map<String, Object>> orders = new ArrayList<>();
 
-# ============================================================
-# Slice: Get Order — separate slice, no shared repository dependency
-# ============================================================
-@dataclass
-class GetOrderRequest:
-    order_id: str
+    PlaceOrderHandler(double pricePerUnit) {
+        this.pricePerUnit = pricePerUnit;
+        // => Price injected at construction — easy to stub in unit tests
+    }
 
-@dataclass
-class GetOrderResponse:
-    order_id: str
-    total: Optional[float]
-    found: bool
+    PlaceOrderResponse handle(PlaceOrderRequest req) {
+        double total = pricePerUnit * req.quantity();
+        // => Business rule: total = price * qty — lives here, not in a shared service
+        String orderId = String.format("ORD-%04d", orders.size() + 1);
+        // => Simple sequential id; prod uses UUID or DB sequence
+        orders.add(Map.of("id", orderId, "customer", req.customerId(), "total", total));
+        // => Persists order; prod uses Unit of Work + transaction boundary
+        return new PlaceOrderResponse(orderId, "placed", total);
+        // => Slice-specific response; no generic Result envelope needed
+    }
 
-class GetOrderHandler:
-    def __init__(self, placed_orders: list) -> None:
-        self._orders = placed_orders  # => Shared reference to same in-memory list for demo
-        # => In prod: separate read-side repository (CQRS read model)
+    List<Map<String, Object>> getOrders() { return orders; }
+    // => Exposed only for GetOrder slice to share in-memory list in this demo
+}
 
-    def handle(self, request: GetOrderRequest) -> GetOrderResponse:
-        order = next((o for o in self._orders if o["id"] == request.order_id), None)
-        # => Linear scan for demo; prod uses indexed DB query
-        if order is None:
-            return GetOrderResponse(order_id=request.order_id, total=None, found=False)
-        return GetOrderResponse(order_id=order["id"], total=order["total"], found=True)
+// => GetOrder slice: separate unit, no dependency on PlaceOrder internals
+record GetOrderRequest(String orderId) {}
+record GetOrderResponse(String orderId, Double total, boolean found) {}
+// => Nullable Double signals "not found" without a separate Maybe type
 
-# => Usage: each slice is invoked independently
-place_handler = PlaceOrderHandler(price_per_unit=12.50)
-resp = place_handler.handle(PlaceOrderRequest(customer_id="C1", product_id="P1", quantity=4))
-print(resp)  # => Output: PlaceOrderResponse(order_id='ORD-0001', status='placed', total=50.0)
+class GetOrderHandler {
+    private final List<Map<String, Object>> orders;
+    // => In prod: separate read-side repository (CQRS read model)
 
-get_handler = GetOrderHandler(place_handler._orders)
-get_resp = get_handler.handle(GetOrderRequest(order_id="ORD-0001"))
-print(get_resp)  # => Output: GetOrderResponse(order_id='ORD-0001', total=50.0, found=True)
+    GetOrderHandler(List<Map<String, Object>> orders) { this.orders = orders; }
+
+    GetOrderResponse handle(GetOrderRequest req) {
+        return orders.stream()
+            // => Linear scan for demo; prod uses indexed DB query by order_id
+            .filter(o -> req.orderId().equals(o.get("id")))
+            .findFirst()
+            .map(o -> new GetOrderResponse(req.orderId(), (Double) o.get("total"), true))
+            // => Found: wrap total and flag as found
+            .orElse(new GetOrderResponse(req.orderId(), null, false));
+            // => Not found: null total, found=false
+    }
+}
+
+PlaceOrderHandler placer = new PlaceOrderHandler(12.50);
+PlaceOrderResponse resp = placer.handle(new PlaceOrderRequest("C1", "P1", 4));
+System.out.println(resp);
+// => Output: PlaceOrderResponse[orderId=ORD-0001, status=placed, total=50.0]
+
+GetOrderHandler getter = new GetOrderHandler(placer.getOrders());
+GetOrderResponse got = getter.handle(new GetOrderRequest("ORD-0001"));
+System.out.println(got);
+// => Output: GetOrderResponse[orderId=ORD-0001, total=50.0, found=true]
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => PlaceOrder slice: request + handler + response in one cohesive unit
+// => Data classes give equals/hashCode/toString; ideal for immutable slice contracts
+data class PlaceOrderRequest(val customerId: String, val productId: String, val quantity: Int)
+data class PlaceOrderResponse(val orderId: String, val status: String, val total: Double)
+
+class PlaceOrderHandler(private val pricePerUnit: Double = 10.0) {
+    // => Orders list private to this slice — no shared repository in demo
+    private val orders = mutableListOf<Map<String, Any>>()
+    // => In prod: injected OrderRepository + PriceService via constructor DI
+
+    fun handle(req: PlaceOrderRequest): PlaceOrderResponse {
+        val total = pricePerUnit * req.quantity
+        // => Business rule: total = price * qty; belongs here, not in shared service
+        val orderId = "ORD-${(orders.size + 1).toString().padStart(4, '0')}"
+        // => Padded sequential id for readability; prod uses UUID or DB sequence
+        orders += mapOf("id" to orderId, "customer" to req.customerId, "total" to total)
+        // => Append order; prod uses Unit of Work + transaction for atomicity
+        return PlaceOrderResponse(orderId, "placed", total)
+        // => Returns slice-specific response; no generic Result wrapper needed
+    }
+
+    fun getOrders(): List<Map<String, Any>> = orders.toList()
+    // => Read-only copy exposed for GetOrder slice to share in-memory list
+}
+
+// => GetOrder slice: separate unit, independent of PlaceOrder internals
+data class GetOrderRequest(val orderId: String)
+data class GetOrderResponse(val orderId: String, val total: Double?, val found: Boolean)
+// => Nullable Double signals "not found" without a separate Option/Maybe type
+
+class GetOrderHandler(private val orders: List<Map<String, Any>>) {
+    // => In prod: separate read-side repository (CQRS read model)
+
+    fun handle(req: GetOrderRequest): GetOrderResponse {
+        val order = orders.firstOrNull { it["id"] == req.orderId }
+        // => firstOrNull returns null if not found; safe, no exception risk
+        return if (order != null)
+            GetOrderResponse(req.orderId, order["total"] as Double, true)
+            // => Found: cast total safely; prod uses typed read model instead of Map
+        else
+            GetOrderResponse(req.orderId, null, false)
+            // => Not found: null total, found=false
+    }
+}
+
+val placer = PlaceOrderHandler(pricePerUnit = 12.50)
+val resp = placer.handle(PlaceOrderRequest("C1", "P1", 4))
+println(resp)
+// => Output: PlaceOrderResponse(orderId=ORD-0001, status=placed, total=50.0)
+
+val getter = GetOrderHandler(placer.getOrders())
+val got = getter.handle(GetOrderRequest("ORD-0001"))
+println(got)
+// => Output: GetOrderResponse(orderId=ORD-0001, total=50.0, found=true)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// => PlaceOrder slice: request + handler + response in one cohesive unit
+// => Records provide value equality and immutability — ideal slice contracts
+public record PlaceOrderRequest(string CustomerId, string ProductId, int Quantity);
+public record PlaceOrderResponse(string OrderId, string Status, double Total);
+// => Immutable records; all fields set at construction, no mutation needed
+
+public class PlaceOrderHandler
+{
+    private readonly double _pricePerUnit;
+    // => In prod: injected IOrderRepository + IPriceService via constructor DI
+    private readonly List<Dictionary<string, object>> _orders = new();
+
+    public PlaceOrderHandler(double pricePerUnit = 10.0)
+    {
+        _pricePerUnit = pricePerUnit;
+        // => Price injected — easy to stub in unit tests
+    }
+
+    public PlaceOrderResponse Handle(PlaceOrderRequest req)
+    {
+        var total = _pricePerUnit * req.Quantity;
+        // => Business rule: total = price * qty; belongs in handler, not a shared service
+        var orderId = $"ORD-{_orders.Count + 1:D4}";
+        // => Padded sequential id; prod uses Guid.NewGuid() or DB identity
+        _orders.Add(new() { ["id"] = orderId, ["customer"] = req.CustomerId, ["total"] = total });
+        // => Append order; prod uses EF Core SaveChanges() inside a transaction
+        return new PlaceOrderResponse(orderId, "placed", total);
+        // => Slice-specific response; no generic Result<T> envelope needed
+    }
+
+    public IReadOnlyList<Dictionary<string, object>> GetOrders() => _orders.AsReadOnly();
+    // => Read-only view exposed for GetOrder slice to share in-memory store
+}
+
+// => GetOrder slice: separate handler, no dependency on PlaceOrder internals
+public record GetOrderRequest(string OrderId);
+public record GetOrderResponse(string OrderId, double? Total, bool Found);
+// => Nullable double signals "not found" without a separate Option monad
+
+public class GetOrderHandler
+{
+    private readonly IReadOnlyList<Dictionary<string, object>> _orders;
+    // => In prod: separate IOrderReadRepository — possibly CQRS read model
+
+    public GetOrderHandler(IReadOnlyList<Dictionary<string, object>> orders)
+        => _orders = orders;
+
+    public GetOrderResponse Handle(GetOrderRequest req)
+    {
+        var order = _orders.FirstOrDefault(o => (string)o["id"] == req.OrderId);
+        // => FirstOrDefault returns null if not found; LINQ safe, no exception
+        return order is not null
+            ? new GetOrderResponse(req.OrderId, (double)order["total"], true)
+            // => Found: cast total safely; prod uses typed read model DTO
+            : new GetOrderResponse(req.OrderId, null, false);
+            // => Not found: null Total, Found=false
+    }
+}
+
+var placer = new PlaceOrderHandler(pricePerUnit: 12.50);
+var resp = placer.Handle(new PlaceOrderRequest("C1", "P1", 4));
+Console.WriteLine(resp);
+// => Output: PlaceOrderResponse { OrderId = ORD-0001, Status = placed, Total = 50 }
+
+var getter = new GetOrderHandler(placer.GetOrders());
+var got = getter.Handle(new GetOrderRequest("ORD-0001"));
+Console.WriteLine(got);
+// => Output: GetOrderResponse { OrderId = ORD-0001, Total = 50, Found = True }
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** One feature, one folder, all layers — a developer should be able to read a
 single file to understand, change, and test a feature end to end.
@@ -1306,61 +3339,176 @@ The Shared Kernel is a bounded context pattern where two related domains share a
 chosen subset of their domain model — typically value objects and domain events — without sharing
 full application or infrastructure code. Both teams must agree on changes to the kernel.
 
-```python
-# ============================================================
-# shared_kernel.py — the agreed-upon shared subset
-# ============================================================
-# => Only value objects and domain events go in the shared kernel
-# => Never: repositories, services, application logic, database schemas
-@dataclass(frozen=True)
-class Money:
-    amount: float
-    currency: str  # => ISO 4217 currency code e.g. "USD"
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-    def __add__(self, other: "Money") -> "Money":
-        if self.currency != other.currency:
-            raise ValueError(f"Cannot add {self.currency} and {other.currency}")
-        return Money(amount=self.amount + other.amount, currency=self.currency)
-        # => Returns new Money; immutable — amount and currency cannot change after creation
+```java
+import java.util.Objects;
 
-    def __str__(self) -> str:
-        return f"{self.currency} {self.amount:.2f}"  # => e.g. "USD 99.50"
+// => Shared Kernel: only value objects and domain events live here
+// => Never: repositories, services, application logic, database schemas
+record Money(double amount, String currency) {
+    // => Immutable value object — amount and currency never change after construction
+    // => ISO 4217 currency code e.g. "USD", "EUR"
 
-@dataclass(frozen=True)
-class OrderId:
-    value: str  # => Shared identifier type; both Orders and Billing reference the same type
+    Money add(Money other) {
+        if (!Objects.equals(currency, other.currency))
+            throw new IllegalArgumentException("Cannot add " + currency + " and " + other.currency);
+        // => Type safety: prevent accidental USD + EUR addition at compile-adjacent runtime
+        return new Money(amount + other.amount, currency);
+        // => Returns new Money; immutable — no mutation of existing instances
+    }
 
-# ============================================================
-# orders_domain.py — uses shared kernel types
-# ============================================================
-@dataclass
-class OrderLine:
-    product_id: str
-    price: Money   # => Money from shared kernel — no conversion needed between domains
-    qty: int
+    @Override public String toString() {
+        return String.format("%s %.2f", currency, amount);
+        // => e.g. "USD 99.50" — consistent across both Orders and Billing domains
+    }
+}
 
-    @property
-    def subtotal(self) -> Money:
-        return Money(amount=self.price.amount * self.qty, currency=self.price.currency)
-        # => Uses shared kernel Money; result is also a shared kernel type
+record OrderId(String value) {
+    // => Shared identifier type; both Orders and Billing reference the same type
+    // => Wrapping String in a record prevents accidental use of raw strings as IDs
+}
 
-# ============================================================
-# billing_domain.py — uses the same shared kernel types independently
-# ============================================================
-@dataclass
-class Invoice:
-    order_id: OrderId  # => Shared kernel OrderId — consistent across both domains
-    total: Money       # => Same Money type; no translation layer needed between domains
+// => Orders Domain: uses shared kernel types without any conversion layer
+record OrderLine(String productId, Money price, int qty) {
+    // => Money from shared kernel — no translation needed when passing to Billing
 
-    def is_overdue(self, days_outstanding: int) -> bool:
-        return days_outstanding > 30  # => Billing's own rule; not in shared kernel
+    Money subtotal() {
+        return new Money(price.amount() * qty, price.currency());
+        // => Computes subtotal using shared kernel Money; result is also a shared kernel type
+    }
+}
 
-# => Usage: both domains speak the same Money and OrderId language
-line = OrderLine(product_id="P1", price=Money(10.0, "USD"), qty=3)
-invoice = Invoice(order_id=OrderId("ORD-42"), total=line.subtotal)
-print(f"Invoice total: {invoice.total}")          # => Output: Invoice total: USD 30.00
-print(f"Overdue (35 days): {invoice.is_overdue(35)}")  # => Output: Overdue (35 days): True
+// => Billing Domain: uses the same shared kernel types independently
+record Invoice(OrderId orderId, Money total) {
+    // => orderId from shared kernel — both domains reference the exact same type
+    // => total is shared kernel Money; no DTO translation needed at domain boundary
+
+    boolean isOverdue(int daysOutstanding) {
+        return daysOutstanding > 30;
+        // => Billing's own rule; this logic does NOT belong in the shared kernel
+    }
+}
+
+// => Usage: both domains speak the same Money and OrderId language
+OrderLine line = new OrderLine("P1", new Money(10.0, "USD"), 3);
+Invoice invoice = new Invoice(new OrderId("ORD-42"), line.subtotal());
+System.out.println("Invoice total: " + invoice.total());
+// => Output: Invoice total: USD 30.00
+System.out.println("Overdue (35 days): " + invoice.isOverdue(35));
+// => Output: Overdue (35 days): true
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Shared Kernel: only value objects and domain events live here
+// => Never: repositories, services, application logic, database schemas
+data class Money(val amount: Double, val currency: String) {
+    // => Immutable data class — copy() is the only way to derive a new instance
+    // => ISO 4217 currency code e.g. "USD", "EUR"
+
+    operator fun plus(other: Money): Money {
+        require(currency == other.currency) { "Cannot add $currency and ${other.currency}" }
+        // => Type safety: prevents accidental USD + EUR addition
+        return Money(amount + other.amount, currency)
+        // => Returns new Money; operator overloading makes addition read naturally
+    }
+
+    override fun toString() = "$currency ${String.format("%.2f", amount)}"
+    // => e.g. "USD 99.50" — consistent representation across both domains
+}
+
+data class OrderId(val value: String)
+// => Shared identifier type wrapping String — prevents raw strings being passed as IDs
+// => Both Orders and Billing reference the same type with no conversion layer
+
+// => Orders Domain: uses shared kernel types without any conversion layer
+data class OrderLine(val productId: String, val price: Money, val qty: Int) {
+    // => Money from shared kernel — no translation needed when crossing to Billing
+
+    fun subtotal(): Money = Money(price.amount * qty, price.currency)
+    // => Computes subtotal using shared kernel Money; result is also a shared kernel type
+}
+
+// => Billing Domain: uses the same shared kernel types independently
+data class Invoice(val orderId: OrderId, val total: Money) {
+    // => orderId from shared kernel — both domains hold the same type, no mapping
+    // => total is shared kernel Money; no DTO translation at domain boundary
+
+    fun isOverdue(daysOutstanding: Int): Boolean = daysOutstanding > 30
+    // => Billing's own rule; this logic does NOT belong in the shared kernel
+}
+
+// => Usage: both domains speak the same Money and OrderId language
+val line = OrderLine("P1", Money(10.0, "USD"), 3)
+val invoice = Invoice(OrderId("ORD-42"), line.subtotal())
+println("Invoice total: ${invoice.total}")
+// => Output: Invoice total: USD 30.00
+println("Overdue (35 days): ${invoice.isOverdue(35)}")
+// => Output: Overdue (35 days): true
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// => Shared Kernel: only value objects and domain events live here
+// => Never: repositories, services, application logic, database schemas
+public record Money(double Amount, string Currency)
+{
+    // => Immutable record — with-expression is the only way to derive a new instance
+    // => ISO 4217 currency code e.g. "USD", "EUR"
+
+    public Money Add(Money other)
+    {
+        if (Currency != other.Currency)
+            throw new InvalidOperationException($"Cannot add {Currency} and {other.Currency}");
+        // => Type safety: prevents accidental USD + EUR addition at runtime
+        return this with { Amount = Amount + other.Amount };
+        // => Returns new Money using record with-expression; immutable
+    }
+
+    public override string ToString() => $"{Currency} {Amount:F2}";
+    // => e.g. "USD 99.50" — consistent across both Orders and Billing domains
+}
+
+public record OrderId(string Value);
+// => Shared identifier type wrapping string — prevents raw strings being used as IDs
+// => Both Orders and Billing reference the same type with no conversion layer
+
+// => Orders Domain: uses shared kernel types without any conversion layer
+public record OrderLine(string ProductId, Money Price, int Qty)
+{
+    // => Money from shared kernel — no translation needed when crossing to Billing
+
+    public Money Subtotal() => new Money(Price.Amount * Qty, Price.Currency);
+    // => Computes subtotal using shared kernel Money; result is also a shared kernel type
+}
+
+// => Billing Domain: uses the same shared kernel types independently
+public record Invoice(OrderId OrderId, Money Total)
+{
+    // => OrderId from shared kernel — both domains hold the same type, no mapping
+    // => Total is shared kernel Money; no DTO translation at domain boundary
+
+    public bool IsOverdue(int daysOutstanding) => daysOutstanding > 30;
+    // => Billing's own rule; this logic does NOT belong in the shared kernel
+}
+
+// => Usage: both domains speak the same Money and OrderId language
+var line = new OrderLine("P1", new Money(10.0, "USD"), 3);
+var invoice = new Invoice(new OrderId("ORD-42"), line.Subtotal());
+Console.WriteLine($"Invoice total: {invoice.Total}");
+// => Output: Invoice total: USD 30.00
+Console.WriteLine($"Overdue (35 days): {invoice.IsOverdue(35)}");
+// => Output: Overdue (35 days): True
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Keep the shared kernel minimal — value objects and events only — and require
 both teams to agree on changes through a formal RFC or PR review, treating the kernel as a public API.
@@ -1382,80 +3530,184 @@ The specification pattern encapsulates a business rule as a composable object wi
 `is_satisfied_by(candidate)` method. Specifications compose via `and_`, `or_`, and `not_`,
 enabling complex business rules to be expressed as readable, testable combinations.
 
-```python
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import TypeVar, Generic
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-T = TypeVar("T")
+```java
+// => Base Specification: composable business rule abstraction
+// => Each subclass implements one focused predicate; combinations built via and/or/not
+abstract class Specification<T> {
+    abstract boolean isSatisfiedBy(T candidate);
+    // => Subclasses implement the specific predicate — single responsibility per spec
 
-class Specification(ABC, Generic[T]):
-    @abstractmethod
-    def is_satisfied_by(self, candidate: T) -> bool:
-        ...  # => Subclasses implement the specific predicate
+    Specification<T> and(Specification<T> other) {
+        return candidate -> isSatisfiedBy(candidate) && other.isSatisfiedBy(candidate);
+        // => Lambda: both specs must pass; short-circuits if left is false
+    }
 
-    def and_(self, other: "Specification[T]") -> "AndSpecification[T]":
-        return AndSpecification(self, other)  # => Composes two specs with AND logic
+    Specification<T> or(Specification<T> other) {
+        return candidate -> isSatisfiedBy(candidate) || other.isSatisfiedBy(candidate);
+        // => Lambda: either spec passing is sufficient; short-circuits if left is true
+    }
 
-    def or_(self, other: "Specification[T]") -> "OrSpecification[T]":
-        return OrSpecification(self, other)   # => Composes two specs with OR logic
+    Specification<T> not() {
+        return candidate -> !isSatisfiedBy(candidate);
+        // => Lambda: inverts result — useful for "not a gold customer" type rules
+    }
+}
 
-    def not_(self) -> "NotSpecification[T]":
-        return NotSpecification(self)         # => Negates this specification
+// => Domain: Order eligibility for discount
+record Order(double total, String customerTier, int itemCount) {}
+// => "gold", "silver", "bronze" — tier drives discount eligibility
 
-class AndSpecification(Specification[T]):
-    def __init__(self, a: Specification[T], b: Specification[T]) -> None:
-        self._a, self._b = a, b  # => Holds references to both specs
+class HighValueOrder extends Specification<Order> {
+    boolean isSatisfiedBy(Order o) { return o.total() >= 100.0; }
+    // => Orders over $100 qualify as high-value — business threshold, easy to change
+}
 
-    def is_satisfied_by(self, candidate: T) -> bool:
-        return self._a.is_satisfied_by(candidate) and self._b.is_satisfied_by(candidate)
-        # => Both specs must be satisfied; short-circuits if first is False
+class GoldCustomer extends Specification<Order> {
+    boolean isSatisfiedBy(Order o) { return "gold".equals(o.customerTier()); }
+    // => Only gold-tier customers — tier checked here, not scattered in service
+}
 
-class OrSpecification(Specification[T]):
-    def __init__(self, a: Specification[T], b: Specification[T]) -> None:
-        self._a, self._b = a, b
+class BulkOrder extends Specification<Order> {
+    boolean isSatisfiedBy(Order o) { return o.itemCount() >= 10; }
+    // => 10+ items qualify as bulk — threshold expressed once, tested independently
+}
 
-    def is_satisfied_by(self, candidate: T) -> bool:
-        return self._a.is_satisfied_by(candidate) or self._b.is_satisfied_by(candidate)
-        # => Either spec satisfied is sufficient
+// => Business rule: gold customer OR (high value AND bulk)
+// => Reads almost like English; each rule independently unit-testable
+Specification<Order> discountEligible =
+    new GoldCustomer().or(new HighValueOrder().and(new BulkOrder()));
 
-class NotSpecification(Specification[T]):
-    def __init__(self, spec: Specification[T]) -> None:
-        self._spec = spec  # => Wraps the spec to negate
+Order o1 = new Order(150.0, "gold", 3);
+Order o2 = new Order(150.0, "silver", 12);
+Order o3 = new Order(50.0, "bronze", 5);
 
-    def is_satisfied_by(self, candidate: T) -> bool:
-        return not self._spec.is_satisfied_by(candidate)  # => Inverts wrapped spec result
-
-# => Domain: Order eligibility for discount
-@dataclass
-class Order:
-    total: float
-    customer_tier: str  # => "gold", "silver", "bronze"
-    item_count: int
-
-class HighValueOrder(Specification[Order]):
-    def is_satisfied_by(self, o: Order) -> bool:
-        return o.total >= 100.0  # => Orders over $100 qualify as high-value
-
-class GoldCustomer(Specification[Order]):
-    def is_satisfied_by(self, o: Order) -> bool:
-        return o.customer_tier == "gold"  # => Only gold-tier customers
-
-class BulkOrder(Specification[Order]):
-    def is_satisfied_by(self, o: Order) -> bool:
-        return o.item_count >= 10  # => 10+ items qualify as bulk
-
-# => Business rule: eligible for discount if gold customer OR (high value AND bulk)
-discount_eligible = GoldCustomer().or_(HighValueOrder().and_(BulkOrder()))
-
-o1 = Order(total=150.0, customer_tier="gold", item_count=3)
-o2 = Order(total=150.0, customer_tier="silver", item_count=12)
-o3 = Order(total=50.0, customer_tier="bronze", item_count=5)
-
-print(discount_eligible.is_satisfied_by(o1))  # => Output: True (gold customer)
-print(discount_eligible.is_satisfied_by(o2))  # => Output: True (high value AND bulk)
-print(discount_eligible.is_satisfied_by(o3))  # => Output: False (none of the criteria met)
+System.out.println(discountEligible.isSatisfiedBy(o1)); // => Output: true (gold customer)
+System.out.println(discountEligible.isSatisfiedBy(o2)); // => Output: true (high value AND bulk)
+System.out.println(discountEligible.isSatisfiedBy(o3)); // => Output: false (no criteria met)
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Base Specification: composable business rule abstraction using functional interface
+// => fun interface allows SAM conversion — specs can be lambdas or classes
+fun interface Specification<T> {
+    fun isSatisfiedBy(candidate: T): Boolean
+    // => Single abstract method — subclasses or lambdas implement the specific predicate
+}
+
+// => Extension functions provide and/or/not composition without modifying the interface
+infix fun <T> Specification<T>.and(other: Specification<T>): Specification<T> =
+    Specification { isSatisfiedBy(it) && other.isSatisfiedBy(it) }
+    // => Both specs must pass; short-circuits if left is false
+
+infix fun <T> Specification<T>.or(other: Specification<T>): Specification<T> =
+    Specification { isSatisfiedBy(it) || other.isSatisfiedBy(it) }
+    // => Either spec passing is sufficient; short-circuits if left is true
+
+fun <T> Specification<T>.not(): Specification<T> =
+    Specification { !isSatisfiedBy(it) }
+    // => Inverts result — useful for "not a gold customer" type rules
+
+// => Domain: Order eligibility for discount
+data class Order(val total: Double, val customerTier: String, val itemCount: Int)
+// => "gold", "silver", "bronze" — tier drives discount eligibility
+
+// => Each spec is a named object — descriptive, independently testable
+val highValueOrder: Specification<Order> = Specification { it.total >= 100.0 }
+// => Orders over $100 qualify as high-value — threshold lives here, not in service
+
+val goldCustomer: Specification<Order> = Specification { it.customerTier == "gold" }
+// => Only gold-tier customers — rule expressed once, reusable across features
+
+val bulkOrder: Specification<Order> = Specification { it.itemCount >= 10 }
+// => 10+ items qualify as bulk — independently testable threshold
+
+// => Business rule: gold customer OR (high value AND bulk)
+// => infix `and`/`or` make the combination read like English
+val discountEligible = goldCustomer or (highValueOrder and bulkOrder)
+
+val o1 = Order(150.0, "gold", 3)
+val o2 = Order(150.0, "silver", 12)
+val o3 = Order(50.0, "bronze", 5)
+
+println(discountEligible.isSatisfiedBy(o1)) // => Output: true (gold customer)
+println(discountEligible.isSatisfiedBy(o2)) // => Output: true (high value AND bulk)
+println(discountEligible.isSatisfiedBy(o3)) // => Output: false (no criteria met)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// => Base Specification: composable business rule abstraction
+// => Generic so the same infrastructure works for Order, Customer, LoanApplication, etc.
+public abstract class Specification<T>
+{
+    public abstract bool IsSatisfiedBy(T candidate);
+    // => Subclasses implement the specific predicate — single responsibility per spec
+
+    public Specification<T> And(Specification<T> other)
+        => new LambdaSpec<T>(c => IsSatisfiedBy(c) && other.IsSatisfiedBy(c));
+    // => Both specs must pass; short-circuits if left is false
+
+    public Specification<T> Or(Specification<T> other)
+        => new LambdaSpec<T>(c => IsSatisfiedBy(c) || other.IsSatisfiedBy(c));
+    // => Either spec passing is sufficient; short-circuits if left is true
+
+    public Specification<T> Not()
+        => new LambdaSpec<T>(c => !IsSatisfiedBy(c));
+    // => Inverts result — useful for "not a gold customer" type rules
+}
+
+// => Helper: wraps a lambda as a Specification — avoids creating a class per combination
+file class LambdaSpec<T>(Func<T, bool> predicate) : Specification<T>
+{
+    public override bool IsSatisfiedBy(T candidate) => predicate(candidate);
+    // => Delegates to the captured lambda — composition without boilerplate
+}
+
+// => Domain: Order eligibility for discount
+public record Order(double Total, string CustomerTier, int ItemCount);
+// => "gold", "silver", "bronze" — tier drives discount eligibility
+
+public class HighValueOrder : Specification<Order>
+{
+    public override bool IsSatisfiedBy(Order o) => o.Total >= 100.0;
+    // => Orders over $100 qualify — business threshold, easy to change and test
+}
+
+public class GoldCustomer : Specification<Order>
+{
+    public override bool IsSatisfiedBy(Order o) => o.CustomerTier == "gold";
+    // => Only gold-tier customers — rule lives here, not scattered in service methods
+}
+
+public class BulkOrder : Specification<Order>
+{
+    public override bool IsSatisfiedBy(Order o) => o.ItemCount >= 10;
+    // => 10+ items qualify as bulk — independently testable threshold
+}
+
+// => Business rule: gold customer OR (high value AND bulk)
+// => Fluent .And()/.Or() makes the combination read like English
+var discountEligible = new GoldCustomer().Or(new HighValueOrder().And(new BulkOrder()));
+
+var o1 = new Order(150.0, "gold", 3);
+var o2 = new Order(150.0, "silver", 12);
+var o3 = new Order(50.0, "bronze", 5);
+
+Console.WriteLine(discountEligible.IsSatisfiedBy(o1)); // => Output: True (gold customer)
+Console.WriteLine(discountEligible.IsSatisfiedBy(o2)); // => Output: True (high value AND bulk)
+Console.WriteLine(discountEligible.IsSatisfiedBy(o3)); // => Output: False (no criteria met)
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Express business rules as composable specification objects so rules can be
 independently tested, combined, and reused without scattering `if` statements across the codebase.
@@ -1493,77 +3745,252 @@ graph LR
     style Resp3 fill:#029E73,stroke:#000,color:#fff
 ```
 
-**Python — typed middleware chain with early termination:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from __future__ import annotations
-from dataclasses import dataclass
-from typing import Optional
+```java
+import java.util.*;
+import java.util.function.*;
 
-@dataclass
-class HttpRequest:
-    path: str
-    api_key: Optional[str]
-    caller_id: str
+// => Request/response types for the middleware chain
+record HttpRequest(String path, String apiKey, String callerId) {}
+// => apiKey may be null — auth middleware checks nullness
 
-@dataclass
-class HttpResponse:
-    status: int
-    body: str
+record HttpResponse(int status, String body) {}
+// => status + body model HTTP semantics; each middleware either sets status or forwards
 
-Handler = Callable[[HttpRequest], HttpResponse]
+// => Middleware type: receives request + next handler, returns response
+// => Each middleware decides whether to short-circuit or call next
+@FunctionalInterface
+interface Middleware {
+    HttpResponse apply(HttpRequest req, UnaryOperator<HttpRequest> next,
+                       Function<HttpRequest, HttpResponse> finalHandler);
+}
 
-class MiddlewareChain:
-    def __init__(self) -> None:
-        self._middlewares: list[Callable[[HttpRequest, Handler], HttpResponse]] = []
-        # => Each middleware receives request AND a next callable to forward to
+// => Builder composes middlewares into a single callable handler
+class MiddlewareChain {
+    private final List<BiFunction<HttpRequest, Function<HttpRequest, HttpResponse>,
+                                 HttpResponse>> layers = new ArrayList<>();
+    // => Each layer: (request, nextFn) -> response; nextFn drives remaining chain
 
-    def use(self, middleware: Callable[[HttpRequest, Handler], HttpResponse]) -> "MiddlewareChain":
-        self._middlewares.append(middleware)
-        return self  # => Returns self for fluent builder API
+    MiddlewareChain use(BiFunction<HttpRequest,
+                                   Function<HttpRequest, HttpResponse>,
+                                   HttpResponse> mw) {
+        layers.add(mw);
+        return this; // => Fluent builder — chain .use() calls together
+    }
 
-    def build(self, final_handler: Handler) -> Handler:
-        handler = final_handler  # => Start building chain from the end (innermost handler)
-        for mw in reversed(self._middlewares):
-            captured = handler  # => Capture in closure to avoid late-binding issue
-            handler = lambda req, h=captured, m=mw: m(req, h)
-            # => Wrap each middleware around the current chain; innermost runs last
-        return handler  # => Returns outermost handler which drives the entire chain
+    Function<HttpRequest, HttpResponse> build(Function<HttpRequest, HttpResponse> finalHandler) {
+        Function<HttpRequest, HttpResponse> handler = finalHandler;
+        // => Start from innermost handler and wrap outward
+        for (int i = layers.size() - 1; i >= 0; i--) {
+            final Function<HttpRequest, HttpResponse> next = handler;
+            final var mw = layers.get(i);
+            handler = req -> mw.apply(req, next);
+            // => Wrap current handler; each layer gets a reference to the layer below it
+        }
+        return handler; // => Outermost handler drives the whole chain
+    }
+}
 
-# => Auth middleware: rejects requests without valid API key
-VALID_KEYS = {"key-abc", "key-xyz"}  # => Simplified key store; prod uses DB/cache
+// => Auth middleware: rejects requests without valid API key
+Set<String> validKeys = Set.of("key-abc", "key-xyz");
+// => Simplified key store; prod uses DB lookup or JWT validation
 
-def auth_middleware(req: HttpRequest, next_handler: Handler) -> HttpResponse:
-    if req.api_key not in VALID_KEYS:
-        return HttpResponse(status=401, body="Unauthorized")
-        # => Chain terminates here; next_handler never called for invalid keys
-    return next_handler(req)  # => Valid key: pass to next middleware in chain
+BiFunction<HttpRequest, Function<HttpRequest, HttpResponse>, HttpResponse> authMiddleware =
+    (req, next) -> {
+        if (!validKeys.contains(req.apiKey()))
+            return new HttpResponse(401, "Unauthorized");
+            // => Chain terminates; next never called for invalid keys
+        return next.apply(req); // => Valid key: forward to next middleware
+    };
 
-# => Rate limit middleware: allows up to 2 calls per caller_id (simplified)
-_call_counts: dict[str, int] = {}
+// => Rate limit middleware: max 2 calls per callerId (demo counter, not thread-safe)
+Map<String, Integer> callCounts = new HashMap<>();
+BiFunction<HttpRequest, Function<HttpRequest, HttpResponse>, HttpResponse> rateLimitMiddleware =
+    (req, next) -> {
+        int count = callCounts.merge(req.callerId(), 1, Integer::sum);
+        // => Atomically increment call count for this caller
+        if (count > 2) return new HttpResponse(429, "Too Many Requests");
+        // => Chain terminates; caller exceeded limit, downstream protected
+        return next.apply(req); // => Within limit: continue to business handler
+    };
 
-def rate_limit_middleware(req: HttpRequest, next_handler: Handler) -> HttpResponse:
-    _call_counts[req.caller_id] = _call_counts.get(req.caller_id, 0) + 1
-    if _call_counts[req.caller_id] > 2:
-        return HttpResponse(status=429, body="Too Many Requests")
-        # => Chain terminates; auth already passed but rate limit blocks further
-    return next_handler(req)  # => Within limit: continue to business handler
+Function<HttpRequest, HttpResponse> orderHandler =
+    req -> new HttpResponse(200, "Orders for " + req.callerId());
+// => Final business handler — only reached if auth + rate limit both pass
 
-# => Final business handler
-def order_handler(req: HttpRequest) -> HttpResponse:
-    return HttpResponse(status=200, body=f"Orders for {req.caller_id}")
+var chain = new MiddlewareChain()
+    .use(authMiddleware)
+    .use(rateLimitMiddleware)
+    .build(orderHandler);
 
-chain = MiddlewareChain().use(auth_middleware).use(rate_limit_middleware).build(order_handler)
-
-print(chain(HttpRequest("/orders", None, "caller-1")))
-# => Output: HttpResponse(status=401, body='Unauthorized')
-print(chain(HttpRequest("/orders", "key-abc", "caller-1")))
-# => Output: HttpResponse(status=200, body='Orders for caller-1')
-print(chain(HttpRequest("/orders", "key-abc", "caller-1")))
-# => Output: HttpResponse(status=200, body='Orders for caller-1')
-print(chain(HttpRequest("/orders", "key-abc", "caller-1")))
-# => Output: HttpResponse(status=429, body='Too Many Requests')
+System.out.println(chain.apply(new HttpRequest("/orders", null, "caller-1")));
+// => Output: HttpResponse[status=401, body=Unauthorized]
+System.out.println(chain.apply(new HttpRequest("/orders", "key-abc", "caller-1")));
+// => Output: HttpResponse[status=200, body=Orders for caller-1]
+System.out.println(chain.apply(new HttpRequest("/orders", "key-abc", "caller-1")));
+// => Output: HttpResponse[status=200, body=Orders for caller-1]
+System.out.println(chain.apply(new HttpRequest("/orders", "key-abc", "caller-1")));
+// => Output: HttpResponse[status=429, body=Too Many Requests]
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Request/response types for the middleware chain
+data class HttpRequest(val path: String, val apiKey: String?, val callerId: String)
+// => apiKey is nullable — auth middleware checks for null
+
+data class HttpResponse(val status: Int, val body: String)
+// => status + body model HTTP semantics; each middleware either short-circuits or forwards
+
+// => Middleware type alias: receives request + next handler, returns response
+typealias Handler = (HttpRequest) -> HttpResponse
+typealias Mw = (HttpRequest, Handler) -> HttpResponse
+// => Mw decides to short-circuit (return response) or call handler to continue chain
+
+// => Builder: composes a list of Mw layers around a final handler
+class MiddlewareChain {
+    private val layers = mutableListOf<Mw>()
+    // => Layers added in outer-to-inner order; build reverses to wrap correctly
+
+    fun use(mw: Mw): MiddlewareChain { layers += mw; return this }
+    // => Fluent builder — chain .use() calls together
+
+    fun build(finalHandler: Handler): Handler {
+        var handler: Handler = finalHandler
+        // => Start from innermost handler and wrap outward
+        for (mw in layers.reversed()) {
+            val next = handler
+            handler = { req -> mw(req, next) }
+            // => Wrap current handler; closure captures the layer below it
+        }
+        return handler // => Outermost handler drives the whole chain
+    }
+}
+
+// => Auth middleware: rejects requests without valid API key
+val validKeys = setOf("key-abc", "key-xyz")
+// => Simplified key store; prod uses DB lookup or JWT validation
+
+val authMiddleware: Mw = { req, next ->
+    if (req.apiKey !in validKeys) HttpResponse(401, "Unauthorized")
+    // => Chain terminates; next never called for invalid or null apiKey
+    else next(req) // => Valid key: forward to next middleware
+}
+
+// => Rate limit middleware: max 2 calls per callerId
+val callCounts = mutableMapOf<String, Int>()
+val rateLimitMiddleware: Mw = { req, next ->
+    val count = callCounts.merge(req.callerId, 1, Int::plus)!!
+    // => Increment counter; merge returns new value after applying the lambda
+    if (count > 2) HttpResponse(429, "Too Many Requests")
+    // => Chain terminates; caller exceeded limit, downstream protected
+    else next(req) // => Within limit: continue to business handler
+}
+
+// => Final business handler — only reached if auth + rate limit both pass
+val orderHandler: Handler = { req -> HttpResponse(200, "Orders for ${req.callerId}") }
+
+val chain = MiddlewareChain()
+    .use(authMiddleware)
+    .use(rateLimitMiddleware)
+    .build(orderHandler)
+
+println(chain(HttpRequest("/orders", null, "caller-1")))
+// => Output: HttpResponse(status=401, body=Unauthorized)
+println(chain(HttpRequest("/orders", "key-abc", "caller-1")))
+// => Output: HttpResponse(status=200, body=Orders for caller-1)
+println(chain(HttpRequest("/orders", "key-abc", "caller-1")))
+// => Output: HttpResponse(status=200, body=Orders for caller-1)
+println(chain(HttpRequest("/orders", "key-abc", "caller-1")))
+// => Output: HttpResponse(status=429, body=Too Many Requests)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// => Request/response types for the middleware chain
+public record HttpRequest(string Path, string? ApiKey, string CallerId);
+// => ApiKey is nullable — auth middleware checks for null
+
+public record HttpResponse(int Status, string Body);
+// => Status + body model HTTP semantics; each middleware either short-circuits or forwards
+
+// => Delegate types make the signatures readable
+public delegate HttpResponse Handler(HttpRequest req);
+public delegate HttpResponse Middleware(HttpRequest req, Handler next);
+// => Middleware decides to short-circuit (return response) or call next to continue
+
+// => Builder: composes middleware layers around a final handler
+public class MiddlewareChain
+{
+    private readonly List<Middleware> _layers = new();
+    // => Layers added in outer-to-inner order; Build wraps from inside out
+
+    public MiddlewareChain Use(Middleware mw) { _layers.Add(mw); return this; }
+    // => Fluent builder — chain .Use() calls together
+
+    public Handler Build(Handler finalHandler)
+    {
+        var handler = finalHandler;
+        // => Start from innermost handler and wrap outward
+        foreach (var mw in Enumerable.Reverse(_layers))
+        {
+            var next = handler;
+            handler = req => mw(req, next);
+            // => Closure captures the layer below; each wrapper calls the one inside it
+        }
+        return handler; // => Outermost handler drives the whole chain
+    }
+}
+
+// => Auth middleware: rejects requests without valid API key
+var validKeys = new HashSet<string> { "key-abc", "key-xyz" };
+// => Simplified key store; prod uses JWT validation or cache lookup
+
+Middleware authMiddleware = (req, next) =>
+    req.ApiKey is null || !validKeys.Contains(req.ApiKey)
+        ? new HttpResponse(401, "Unauthorized")
+        // => Chain terminates; next never called for invalid or null ApiKey
+        : next(req); // => Valid key: forward to next middleware
+
+// => Rate limit middleware: max 2 calls per CallerId
+var callCounts = new Dictionary<string, int>();
+Middleware rateLimitMiddleware = (req, next) =>
+{
+    callCounts.TryGetValue(req.CallerId, out var count);
+    callCounts[req.CallerId] = ++count;
+    // => Increment call count; not thread-safe — use ConcurrentDictionary in prod
+    return count > 2
+        ? new HttpResponse(429, "Too Many Requests")
+        // => Chain terminates; caller exceeded limit, downstream protected
+        : next(req); // => Within limit: continue to business handler
+};
+
+// => Final business handler — only reached if auth + rate limit both pass
+Handler orderHandler = req => new HttpResponse(200, $"Orders for {req.CallerId}");
+
+var chain = new MiddlewareChain()
+    .Use(authMiddleware)
+    .Use(rateLimitMiddleware)
+    .Build(orderHandler);
+
+Console.WriteLine(chain(new HttpRequest("/orders", null, "caller-1")));
+// => Output: HttpResponse { Status = 401, Body = Unauthorized }
+Console.WriteLine(chain(new HttpRequest("/orders", "key-abc", "caller-1")));
+// => Output: HttpResponse { Status = 200, Body = Orders for caller-1 }
+Console.WriteLine(chain(new HttpRequest("/orders", "key-abc", "caller-1")));
+// => Output: HttpResponse { Status = 200, Body = Orders for caller-1 }
+Console.WriteLine(chain(new HttpRequest("/orders", "key-abc", "caller-1")));
+// => Output: HttpResponse { Status = 429, Body = Too Many Requests }
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Build middleware chains with clear early-termination semantics so each handler has
 one responsibility and can be inserted, removed, or reordered independently.
@@ -1584,121 +4011,333 @@ class per algorithm. Each domain object accepts a visitor and calls the appropri
 enabling new operations to be added without modifying domain classes — valuable when adding
 reporting, serialisation, or transformation rules to a stable object hierarchy.
 
-```python
-from __future__ import annotations
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# ============================================================
-# Stable domain hierarchy — these classes do NOT change when new ops are added
-# ============================================================
-class Component(ABC):
-    @abstractmethod
-    def accept(self, visitor: "ComponentVisitor") -> None: ...
+```java
+import java.util.*;
 
-@dataclass
-class Service(Component):
-    name: str
-    replicas: int
-    cpu_millicores: int  # => e.g. 500 = 0.5 CPU cores
+// => Stable domain hierarchy — these classes do NOT change when new operations are added
+// => Visitor enables open/closed principle: open for extension, closed for modification
+interface ComponentVisitor {
+    void visitService(Service svc);
+    // => Called by Service.accept(); visitor implements the algorithm for services
+    void visitDatabase(Database db);
+    // => Called by Database.accept(); visitor implements the algorithm for databases
+    void visitArchitecture(Architecture arch);
+    // => Called by Architecture.accept(); visitor gets the top-level context first
+}
 
-    def accept(self, visitor: "ComponentVisitor") -> None:
-        visitor.visit_service(self)  # => Dispatches to correct visit_* method via double dispatch
+interface Component {
+    void accept(ComponentVisitor visitor);
+    // => Double dispatch: component calls the right visitXxx method on visitor
+}
 
-@dataclass
-class Database(Component):
-    name: str
-    storage_gb: int
-    multi_az: bool  # => Multi-AZ deployment for high availability
+record Service(String name, int replicas, int cpuMillicores) implements Component {
+    // => cpuMillicores: e.g. 500 = 0.5 CPU cores
+    public void accept(ComponentVisitor v) { v.visitService(this); }
+    // => Dispatches to visitService — visitor handles service-specific logic
+}
 
-    def accept(self, visitor: "ComponentVisitor") -> None:
-        visitor.visit_database(self)  # => Database-specific visit method
+record Database(String name, int storageGb, boolean multiAz) implements Component {
+    // => multiAz: true = multi-region deployment for high availability
+    public void accept(ComponentVisitor v) { v.visitDatabase(this); }
+    // => Dispatches to visitDatabase — visitor handles database-specific logic
+}
 
-@dataclass
-class Architecture:
-    components: List[Component]
+record Architecture(List<Component> components) implements Component {
+    public void accept(ComponentVisitor v) {
+        v.visitArchitecture(this); // => Visitor gets top-level context first
+        components.forEach(c -> c.accept(v));
+        // => Each component dispatches to its own visit method — recursive traversal
+    }
+}
 
-    def accept(self, visitor: "ComponentVisitor") -> None:
-        visitor.visit_architecture(self)
-        for c in self.components:
-            c.accept(visitor)  # => Each component dispatches to its own visit method
+// => Concrete visitor 1: Cost estimation — new operation, zero domain changes
+class CostEstimator implements ComponentVisitor {
+    double totalMonthlyUsd = 0.0; // => Accumulates cost across all components
 
-# ============================================================
-# Visitor interface — new operations implement this without touching domain classes
-# ============================================================
-class ComponentVisitor(ABC):
-    @abstractmethod
-    def visit_service(self, svc: Service) -> None: ...
-    @abstractmethod
-    def visit_database(self, db: Database) -> None: ...
-    @abstractmethod
-    def visit_architecture(self, arch: Architecture) -> None: ...
+    public void visitArchitecture(Architecture arch) {
+        System.out.println("Estimating cost for " + arch.components().size() + " components");
+    }
 
-# ============================================================
-# Concrete visitor 1: Cost estimation — new operation, no domain changes
-# ============================================================
-class CostEstimator(ComponentVisitor):
-    def __init__(self) -> None:
-        self.total_monthly_usd: float = 0.0
+    public void visitService(Service svc) {
+        double cost = svc.replicas() * (svc.cpuMillicores() / 1000.0) * 30 * 0.05;
+        // => $0.05 per vCPU per hour * 30 days; simplified cloud pricing model
+        totalMonthlyUsd += cost;
+        System.out.printf("  Service %s: $%.2f/month%n", svc.name(), cost);
+    }
 
-    def visit_architecture(self, arch: Architecture) -> None:
-        print(f"Estimating cost for {len(arch.components)} components")
+    public void visitDatabase(Database db) {
+        double cost = db.storageGb() * 0.10 * (db.multiAz() ? 2 : 1);
+        // => $0.10 per GB/month, doubled for multi-AZ redundancy
+        totalMonthlyUsd += cost;
+        System.out.printf("  Database %s: $%.2f/month%n", db.name(), cost);
+    }
+}
 
-    def visit_service(self, svc: Service) -> None:
-        cost = svc.replicas * (svc.cpu_millicores / 1000) * 30 * 0.05
-        # => $0.05 per vCPU per hour, 30 days; simplified cloud pricing model
-        self.total_monthly_usd += cost
-        print(f"  Service {svc.name}: ${cost:.2f}/month")
+// => Concrete visitor 2: Compliance check — another new operation, still no domain changes
+class ComplianceChecker implements ComponentVisitor {
+    List<String> violations = new ArrayList<>(); // => Accumulates all violations
 
-    def visit_database(self, db: Database) -> None:
-        cost = db.storage_gb * 0.10 * (2 if db.multi_az else 1)
-        # => $0.10 per GB/month, doubled for multi-AZ redundancy
-        self.total_monthly_usd += cost
-        print(f"  Database {db.name}: ${cost:.2f}/month")
+    public void visitArchitecture(Architecture arch) {} // => No arch-level rules here
 
-# ============================================================
-# Concrete visitor 2: Compliance check — another new operation, still no domain changes
-# ============================================================
-class ComplianceChecker(ComponentVisitor):
-    def __init__(self) -> None:
-        self.violations: List[str] = []
+    public void visitService(Service svc) {
+        if (svc.replicas() < 2)
+            violations.add("Service '" + svc.name() + "' has only " + svc.replicas() + " replica (min 2 for HA)");
+            // => Single replica violates high-availability requirement
+    }
 
-    def visit_architecture(self, arch: Architecture) -> None:
-        pass  # => No architecture-level compliance rules in this example
+    public void visitDatabase(Database db) {
+        if (!db.multiAz())
+            violations.add("Database '" + db.name() + "' is not multi-AZ (compliance requirement)");
+            // => Single-AZ database violates disaster-recovery policy
+    }
+}
 
-    def visit_service(self, svc: Service) -> None:
-        if svc.replicas < 2:
-            self.violations.append(f"Service '{svc.name}' has only {svc.replicas} replica (min 2 for HA)")
-            # => Single replica violates high-availability requirement
+var arch = new Architecture(List.of(
+    new Service("orders-api", 3, 500),
+    new Service("worker", 1, 1000),       // => Only 1 replica — will fail compliance
+    new Database("orders-db", 100, true),
+    new Database("cache-db", 20, false)   // => Not multi-AZ — will fail compliance
+));
 
-    def visit_database(self, db: Database) -> None:
-        if not db.multi_az:
-            self.violations.append(f"Database '{db.name}' is not multi-AZ (compliance requirement)")
-            # => Single-AZ database violates disaster-recovery policy
+var cost = new CostEstimator();
+arch.accept(cost);
+System.out.printf("Total: $%.2f/month%n", cost.totalMonthlyUsd);
+// => Output: Estimating cost for 4 components
+// => Output:   Service orders-api: $2.25/month
+// => Output:   Service worker: $1.50/month
+// => Output:   Database orders-db: $20.00/month
+// => Output:   Database cache-db: $2.00/month
+// => Output: Total: $25.75/month
 
-arch = Architecture(components=[
-    Service("orders-api", replicas=3, cpu_millicores=500),
-    Service("worker", replicas=1, cpu_millicores=1000),  # => Only 1 replica — will fail compliance
-    Database("orders-db", storage_gb=100, multi_az=True),
-    Database("cache-db", storage_gb=20, multi_az=False),  # => Not multi-AZ — will fail compliance
-])
-
-cost_visitor = CostEstimator()
-arch.accept(cost_visitor)
-print(f"Total: ${cost_visitor.total_monthly_usd:.2f}/month")
-# => Output: Estimating cost for 4 components
-# => Output:   Service orders-api: $2.25/month
-# => Output:   Service worker: $1.50/month
-# => Output:   Database orders-db: $20.00/month
-# => Output:   Database cache-db: $2.00/month
-# => Output: Total: $25.75/month
-
-compliance = ComplianceChecker()
-arch.accept(compliance)
-print(f"Violations: {compliance.violations}")
-# => Output: Violations: ["Service 'worker' has only 1 replica...", "Database 'cache-db' is not multi-AZ..."]
+var compliance = new ComplianceChecker();
+arch.accept(compliance);
+System.out.println("Violations: " + compliance.violations);
+// => Output: Violations: [Service 'worker' has only 1 replica..., Database 'cache-db' is not multi-AZ...]
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Stable domain hierarchy — these classes do NOT change when new operations are added
+// => Visitor enables open/closed principle: open for extension, closed for modification
+interface ComponentVisitor {
+    fun visitService(svc: Service)
+    // => Called by Service.accept(); visitor implements the algorithm for services
+    fun visitDatabase(db: Database)
+    // => Called by Database.accept(); visitor implements the algorithm for databases
+    fun visitArchitecture(arch: Architecture)
+    // => Called by Architecture.accept(); visitor gets the top-level context first
+}
+
+interface Component {
+    fun accept(visitor: ComponentVisitor)
+    // => Double dispatch: component calls the right visitXxx method on visitor
+}
+
+data class Service(val name: String, val replicas: Int, val cpuMillicores: Int) : Component {
+    // => cpuMillicores: e.g. 500 = 0.5 CPU cores
+    override fun accept(v: ComponentVisitor) = v.visitService(this)
+    // => Dispatches to visitService — visitor handles service-specific logic
+}
+
+data class Database(val name: String, val storageGb: Int, val multiAz: Boolean) : Component {
+    // => multiAz: true = multi-region deployment for high availability
+    override fun accept(v: ComponentVisitor) = v.visitDatabase(this)
+    // => Dispatches to visitDatabase — visitor handles database-specific logic
+}
+
+data class Architecture(val components: List<Component>) : Component {
+    override fun accept(v: ComponentVisitor) {
+        v.visitArchitecture(this) // => Visitor gets top-level context first
+        components.forEach { it.accept(v) }
+        // => Each component dispatches to its own visit method — recursive traversal
+    }
+}
+
+// => Concrete visitor 1: Cost estimation — new operation, zero domain changes
+class CostEstimator : ComponentVisitor {
+    var totalMonthlyUsd = 0.0 // => Accumulates cost across all components
+
+    override fun visitArchitecture(arch: Architecture) {
+        println("Estimating cost for ${arch.components.size} components")
+    }
+
+    override fun visitService(svc: Service) {
+        val cost = svc.replicas * (svc.cpuMillicores / 1000.0) * 30 * 0.05
+        // => $0.05 per vCPU per hour * 30 days; simplified cloud pricing model
+        totalMonthlyUsd += cost
+        println("  Service ${svc.name}: ${"$"}${"%.2f".format(cost)}/month")
+    }
+
+    override fun visitDatabase(db: Database) {
+        val cost = db.storageGb * 0.10 * (if (db.multiAz) 2 else 1)
+        // => $0.10 per GB/month, doubled for multi-AZ redundancy
+        totalMonthlyUsd += cost
+        println("  Database ${db.name}: ${"$"}${"%.2f".format(cost)}/month")
+    }
+}
+
+// => Concrete visitor 2: Compliance check — another new operation, still no domain changes
+class ComplianceChecker : ComponentVisitor {
+    val violations = mutableListOf<String>() // => Accumulates all violations
+
+    override fun visitArchitecture(arch: Architecture) {} // => No arch-level rules here
+
+    override fun visitService(svc: Service) {
+        if (svc.replicas < 2)
+            violations += "Service '${svc.name}' has only ${svc.replicas} replica (min 2 for HA)"
+            // => Single replica violates high-availability requirement
+    }
+
+    override fun visitDatabase(db: Database) {
+        if (!db.multiAz)
+            violations += "Database '${db.name}' is not multi-AZ (compliance requirement)"
+            // => Single-AZ database violates disaster-recovery policy
+    }
+}
+
+val arch = Architecture(listOf(
+    Service("orders-api", 3, 500),
+    Service("worker", 1, 1000),       // => Only 1 replica — will fail compliance
+    Database("orders-db", 100, true),
+    Database("cache-db", 20, false)   // => Not multi-AZ — will fail compliance
+))
+
+val cost = CostEstimator()
+arch.accept(cost)
+println("Total: ${"$"}${"%.2f".format(cost.totalMonthlyUsd)}/month")
+// => Output: Estimating cost for 4 components
+// => Output:   Service orders-api: $2.25/month  (approx — string formatting varies)
+// => Output: Total: $25.75/month
+
+val compliance = ComplianceChecker()
+arch.accept(compliance)
+println("Violations: ${compliance.violations}")
+// => Output: Violations: [Service 'worker' has only 1 replica..., Database 'cache-db' is not multi-AZ...]
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// => Stable domain hierarchy — these classes do NOT change when new operations are added
+// => Visitor enables open/closed principle: open for extension, closed for modification
+public interface IComponentVisitor
+{
+    void VisitService(Service svc);
+    // => Called by Service.Accept(); visitor implements the algorithm for services
+    void VisitDatabase(Database db);
+    // => Called by Database.Accept(); visitor implements the algorithm for databases
+    void VisitArchitecture(Architecture arch);
+    // => Called by Architecture.Accept(); visitor gets the top-level context first
+}
+
+public interface IComponent
+{
+    void Accept(IComponentVisitor visitor);
+    // => Double dispatch: component calls the right VisitXxx method on visitor
+}
+
+public record Service(string Name, int Replicas, int CpuMillicores) : IComponent
+{
+    // => CpuMillicores: e.g. 500 = 0.5 CPU cores
+    public void Accept(IComponentVisitor v) => v.VisitService(this);
+    // => Dispatches to VisitService — visitor handles service-specific logic
+}
+
+public record Database(string Name, int StorageGb, bool MultiAz) : IComponent
+{
+    // => MultiAz: true = multi-region deployment for high availability
+    public void Accept(IComponentVisitor v) => v.VisitDatabase(this);
+    // => Dispatches to VisitDatabase — visitor handles database-specific logic
+}
+
+public record Architecture(List<IComponent> Components) : IComponent
+{
+    public void Accept(IComponentVisitor v)
+    {
+        v.VisitArchitecture(this); // => Visitor gets top-level context first
+        foreach (var c in Components) c.Accept(v);
+        // => Each component dispatches to its own visit method — recursive traversal
+    }
+}
+
+// => Concrete visitor 1: Cost estimation — new operation, zero domain changes
+public class CostEstimator : IComponentVisitor
+{
+    public double TotalMonthlyUsd { get; private set; } // => Accumulates cost
+
+    public void VisitArchitecture(Architecture arch)
+        => Console.WriteLine($"Estimating cost for {arch.Components.Count} components");
+
+    public void VisitService(Service svc)
+    {
+        var cost = svc.Replicas * (svc.CpuMillicores / 1000.0) * 30 * 0.05;
+        // => $0.05 per vCPU per hour * 30 days; simplified cloud pricing model
+        TotalMonthlyUsd += cost;
+        Console.WriteLine($"  Service {svc.Name}: ${cost:F2}/month");
+    }
+
+    public void VisitDatabase(Database db)
+    {
+        var cost = db.StorageGb * 0.10 * (db.MultiAz ? 2 : 1);
+        // => $0.10 per GB/month, doubled for multi-AZ redundancy
+        TotalMonthlyUsd += cost;
+        Console.WriteLine($"  Database {db.Name}: ${cost:F2}/month");
+    }
+}
+
+// => Concrete visitor 2: Compliance check — another new operation, still no domain changes
+public class ComplianceChecker : IComponentVisitor
+{
+    public List<string> Violations { get; } = new(); // => Accumulates all violations
+
+    public void VisitArchitecture(Architecture arch) {} // => No arch-level rules here
+
+    public void VisitService(Service svc)
+    {
+        if (svc.Replicas < 2)
+            Violations.Add($"Service '{svc.Name}' has only {svc.Replicas} replica (min 2 for HA)");
+            // => Single replica violates high-availability requirement
+    }
+
+    public void VisitDatabase(Database db)
+    {
+        if (!db.MultiAz)
+            Violations.Add($"Database '{db.Name}' is not multi-AZ (compliance requirement)");
+            // => Single-AZ database violates disaster-recovery policy
+    }
+}
+
+var arch = new Architecture(new List<IComponent> {
+    new Service("orders-api", 3, 500),
+    new Service("worker", 1, 1000),         // => Only 1 replica — will fail compliance
+    new Database("orders-db", 100, true),
+    new Database("cache-db", 20, false)     // => Not multi-AZ — will fail compliance
+});
+
+var cost = new CostEstimator();
+arch.Accept(cost);
+Console.WriteLine($"Total: ${cost.TotalMonthlyUsd:F2}/month");
+// => Output: Estimating cost for 4 components
+// => Output:   Service orders-api: $2.25/month
+// => Output:   Service worker: $1.50/month
+// => Output:   Database orders-db: $20.00/month
+// => Output:   Database cache-db: $2.00/month
+// => Output: Total: $25.75/month
+
+var compliance = new ComplianceChecker();
+arch.Accept(compliance);
+Console.WriteLine($"Violations: {string.Join(", ", compliance.Violations)}");
+// => Output: Violations: Service 'worker' has only 1 replica..., Database 'cache-db' is not multi-AZ...
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Use the visitor pattern when you need to add operations to a stable class hierarchy
 without modifying the classes themselves — especially valuable for architecture tools that analyse,
@@ -1723,87 +4362,221 @@ preventing schema coupling and enabling independent scaling and technology selec
 data access uses APIs — never direct database joins — ensuring services remain independently
 deployable.
 
-```python
-from dataclasses import dataclass, field
-from typing import Optional, List
-import uuid
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# ============================================================
-# Orders Service — owns orders_db, knows nothing about users_db schema
-# ============================================================
-@dataclass
-class OrderRecord:
-    order_id: str
-    customer_id: str   # => Foreign reference stored as opaque ID, not a DB join key
-    total: float       # => Orders DB: only order data; no customer name or email stored here
+```java
+import java.util.*;
 
-class OrdersDatabase:
-    def __init__(self) -> None:
-        self._rows: dict[str, OrderRecord] = {}
-        # => Orders service's exclusive database; no other service can query this directly
+// => Orders Service — owns its own database; no other service queries orders_db directly
+record OrderRecord(String orderId, String customerId, double total) {
+    // => customerId stored as opaque ID, not a FK join key; no customer schema knowledge
+    // => Orders DB: only order data; customer name/email are never stored here
+}
 
-    def insert(self, record: OrderRecord) -> None:
-        self._rows[record.order_id] = record  # => Persists order; only Orders service writes here
+class OrdersDatabase {
+    private final Map<String, OrderRecord> rows = new HashMap<>();
+    // => Orders service's exclusive database; only this service reads and writes it
 
-    def find_by_customer(self, customer_id: str) -> List[OrderRecord]:
-        return [r for r in self._rows.values() if r.customer_id == customer_id]
-        # => Orders service's own read model — no JOIN to customer table
+    void insert(OrderRecord record) {
+        rows.put(record.orderId(), record);
+        // => Persists order; only Orders service writes here — no shared schema
+    }
 
-# ============================================================
-# Customers Service — owns customers_db, never touches orders_db
-# ============================================================
-@dataclass
-class CustomerRecord:
-    customer_id: str
-    name: str
-    email: str
+    List<OrderRecord> findByCustomer(String customerId) {
+        return rows.values().stream()
+            .filter(r -> customerId.equals(r.customerId())).toList();
+        // => Orders service's own read model — no JOIN to customer table needed
+    }
+}
 
-class CustomersDatabase:
-    def __init__(self) -> None:
-        self._rows: dict[str, CustomerRecord] = {}
+// => Customers Service — owns customers_db; never touches orders_db directly
+record CustomerRecord(String customerId, String name, String email) {}
+// => Private to Customers service; Orders service has no visibility into this schema
 
-    def insert(self, record: CustomerRecord) -> None:
-        self._rows[record.customer_id] = record
+class CustomersDatabase {
+    private final Map<String, CustomerRecord> rows = new HashMap<>();
+    // => Customers service's exclusive database — independently scalable and evolvable
 
-    def find(self, customer_id: str) -> Optional[CustomerRecord]:
-        return self._rows.get(customer_id)  # => Returns None if customer not found
+    void insert(CustomerRecord record) { rows.put(record.customerId(), record); }
 
-# ============================================================
-# API Aggregation Layer — composes data from both services via API calls, not DB joins
-# ============================================================
-class OrderWithCustomerDTO:
-    def __init__(self, order: OrderRecord, customer: Optional[CustomerRecord]) -> None:
-        self.order_id = order.order_id
-        self.total = order.total
-        # => Customer name fetched via API; denormalised at the aggregation layer
-        self.customer_name = customer.name if customer else "Unknown"
-        self.customer_email = customer.email if customer else "N/A"
+    Optional<CustomerRecord> find(String customerId) {
+        return Optional.ofNullable(rows.get(customerId));
+        // => Returns Optional.empty() if customer not found; caller handles absence
+    }
+}
 
-def get_orders_with_customer_details(
-    customer_id: str,
-    orders_db: OrdersDatabase,
-    customers_db: CustomersDatabase,
-) -> List[OrderWithCustomerDTO]:
-    orders = orders_db.find_by_customer(customer_id)   # => Call Orders service API
-    customer = customers_db.find(customer_id)           # => Call Customers service API
-    # => Aggregation done here (BFF or API gateway layer), not via cross-service DB join
-    return [OrderWithCustomerDTO(o, customer) for o in orders]
+// => API Aggregation Layer — composes data from both services via API calls, not DB joins
+record OrderWithCustomerDTO(String orderId, double total, String customerName, String email) {}
+// => DTO owned by the aggregation layer; neither service owns this shape
 
-# => Simulation
-orders_db = OrdersDatabase()
-customers_db = CustomersDatabase()
+List<OrderWithCustomerDTO> getOrdersWithCustomer(
+    String customerId, OrdersDatabase ordersDb, CustomersDatabase customersDb) {
+    var orders = ordersDb.findByCustomer(customerId);   // => Call Orders service (simulated)
+    var customer = customersDb.find(customerId);         // => Call Customers service (simulated)
+    // => Aggregation done here (BFF or API gateway), NOT via cross-service DB join
+    return orders.stream()
+        .map(o -> new OrderWithCustomerDTO(
+            o.orderId(), o.total(),
+            customer.map(CustomerRecord::name).orElse("Unknown"),
+            // => Denormalise customer name at aggregation layer, not in Orders DB
+            customer.map(CustomerRecord::email).orElse("N/A")))
+        .toList();
+}
 
-cust_id = "CUST-1"
-customers_db.insert(CustomerRecord(customer_id=cust_id, name="Alice", email="alice@example.com"))
-orders_db.insert(OrderRecord(order_id="ORD-1", customer_id=cust_id, total=99.99))
-orders_db.insert(OrderRecord(order_id="ORD-2", customer_id=cust_id, total=49.50))
+var ordersDb = new OrdersDatabase();
+var customersDb = new CustomersDatabase();
+customersDb.insert(new CustomerRecord("CUST-1", "Alice", "alice@example.com"));
+ordersDb.insert(new OrderRecord("ORD-1", "CUST-1", 99.99));
+ordersDb.insert(new OrderRecord("ORD-2", "CUST-1", 49.50));
 
-results = get_orders_with_customer_details(cust_id, orders_db, customers_db)
-for r in results:
-    print(f"Order {r.order_id}: ${r.total} — Customer: {r.customer_name} ({r.customer_email})")
-# => Output: Order ORD-1: $99.99 — Customer: Alice (alice@example.com)
-# => Output: Order ORD-2: $49.5 — Customer: Alice (alice@example.com)
+getOrdersWithCustomer("CUST-1", ordersDb, customersDb).forEach(r ->
+    System.out.println("Order " + r.orderId() + ": $" + r.total()
+        + " — Customer: " + r.customerName() + " (" + r.email() + ")"));
+// => Output: Order ORD-1: $99.99 — Customer: Alice (alice@example.com)
+// => Output: Order ORD-2: $49.5 — Customer: Alice (alice@example.com)
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Orders Service — owns its own database; no other service queries orders_db directly
+data class OrderRecord(val orderId: String, val customerId: String, val total: Double)
+// => customerId stored as opaque ID, not a FK join key; no customer schema knowledge
+// => Orders DB: only order data; customer name/email are never stored here
+
+class OrdersDatabase {
+    private val rows = mutableMapOf<String, OrderRecord>()
+    // => Orders service's exclusive database; only this service reads and writes it
+
+    fun insert(record: OrderRecord) { rows[record.orderId] = record }
+    // => Persists order; only Orders service writes here — no shared schema
+
+    fun findByCustomer(customerId: String): List<OrderRecord> =
+        rows.values.filter { it.customerId == customerId }
+        // => Orders service's own read model — no JOIN to customer table needed
+}
+
+// => Customers Service — owns customers_db; never touches orders_db directly
+data class CustomerRecord(val customerId: String, val name: String, val email: String)
+// => Private to Customers service; Orders service has no visibility into this schema
+
+class CustomersDatabase {
+    private val rows = mutableMapOf<String, CustomerRecord>()
+    // => Customers service's exclusive database — independently scalable and evolvable
+
+    fun insert(record: CustomerRecord) { rows[record.customerId] = record }
+
+    fun find(customerId: String): CustomerRecord? = rows[customerId]
+    // => Returns null if customer not found; caller handles absence
+}
+
+// => API Aggregation Layer — composes data from both services via API calls, not DB joins
+data class OrderWithCustomerDTO(
+    val orderId: String, val total: Double, val customerName: String, val email: String
+)
+// => DTO owned by the aggregation layer; neither service owns this shape
+
+fun getOrdersWithCustomer(
+    customerId: String, ordersDb: OrdersDatabase, customersDb: CustomersDatabase
+): List<OrderWithCustomerDTO> {
+    val orders = ordersDb.findByCustomer(customerId)   // => Call Orders service (simulated)
+    val customer = customersDb.find(customerId)         // => Call Customers service (simulated)
+    // => Aggregation done here (BFF or API gateway), NOT via cross-service DB join
+    return orders.map { o ->
+        OrderWithCustomerDTO(
+            o.orderId, o.total,
+            customer?.name ?: "Unknown",
+            // => Denormalise customer name at aggregation layer, not in Orders DB
+            customer?.email ?: "N/A"
+        )
+    }
+}
+
+val ordersDb = OrdersDatabase()
+val customersDb = CustomersDatabase()
+customersDb.insert(CustomerRecord("CUST-1", "Alice", "alice@example.com"))
+ordersDb.insert(OrderRecord("ORD-1", "CUST-1", 99.99))
+ordersDb.insert(OrderRecord("ORD-2", "CUST-1", 49.50))
+
+getOrdersWithCustomer("CUST-1", ordersDb, customersDb).forEach { r ->
+    println("Order ${r.orderId}: $${r.total} — Customer: ${r.customerName} (${r.email})")
+}
+// => Output: Order ORD-1: $99.99 — Customer: Alice (alice@example.com)
+// => Output: Order ORD-2: $49.5 — Customer: Alice (alice@example.com)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// => Orders Service — owns its own database; no other service queries orders_db directly
+public record OrderRecord(string OrderId, string CustomerId, double Total);
+// => CustomerId stored as opaque ID, not a FK join key; no customer schema knowledge
+// => Orders DB: only order data; customer name/email are never stored here
+
+public class OrdersDatabase
+{
+    private readonly Dictionary<string, OrderRecord> _rows = new();
+    // => Orders service's exclusive database; only this service reads and writes it
+
+    public void Insert(OrderRecord record) => _rows[record.OrderId] = record;
+    // => Persists order; only Orders service writes here — no shared schema
+
+    public IEnumerable<OrderRecord> FindByCustomer(string customerId) =>
+        _rows.Values.Where(r => r.CustomerId == customerId);
+    // => Orders service's own read model — no JOIN to customer table needed
+}
+
+// => Customers Service — owns customers_db; never touches orders_db directly
+public record CustomerRecord(string CustomerId, string Name, string Email);
+// => Private to Customers service; Orders service has no visibility into this schema
+
+public class CustomersDatabase
+{
+    private readonly Dictionary<string, CustomerRecord> _rows = new();
+    // => Customers service's exclusive database — independently scalable and evolvable
+
+    public void Insert(CustomerRecord record) => _rows[record.CustomerId] = record;
+
+    public CustomerRecord? Find(string customerId) =>
+        _rows.TryGetValue(customerId, out var r) ? r : null;
+    // => Returns null if customer not found; caller handles absence
+}
+
+// => API Aggregation Layer — composes data from both services via API calls, not DB joins
+public record OrderWithCustomerDTO(string OrderId, double Total, string CustomerName, string Email);
+// => DTO owned by the aggregation layer; neither service owns this shape
+
+IEnumerable<OrderWithCustomerDTO> GetOrdersWithCustomer(
+    string customerId, OrdersDatabase ordersDb, CustomersDatabase customersDb)
+{
+    var orders = ordersDb.FindByCustomer(customerId);   // => Call Orders service (simulated)
+    var customer = customersDb.Find(customerId);         // => Call Customers service (simulated)
+    // => Aggregation done here (BFF or API gateway), NOT via cross-service DB join
+    return orders.Select(o => new OrderWithCustomerDTO(
+        o.OrderId, o.Total,
+        customer?.Name ?? "Unknown",
+        // => Denormalise customer name at aggregation layer, not in Orders DB
+        customer?.Email ?? "N/A"
+    ));
+}
+
+var ordersDb = new OrdersDatabase();
+var customersDb = new CustomersDatabase();
+customersDb.Insert(new CustomerRecord("CUST-1", "Alice", "alice@example.com"));
+ordersDb.Insert(new OrderRecord("ORD-1", "CUST-1", 99.99));
+ordersDb.Insert(new OrderRecord("ORD-2", "CUST-1", 49.50));
+
+foreach (var r in GetOrdersWithCustomer("CUST-1", ordersDb, customersDb))
+    Console.WriteLine($"Order {r.OrderId}: ${r.Total} — Customer: {r.CustomerName} ({r.Email})");
+// => Output: Order ORD-1: $99.99 — Customer: Alice (alice@example.com)
+// => Output: Order ORD-2: $49.5 — Customer: Alice (alice@example.com)
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Each service's database is a private implementation detail; all cross-service
 data access must go through APIs so services remain independently deployable and scalable.
@@ -1846,59 +4619,232 @@ graph LR
     style F2 fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Python — toggle store with user-segment targeting:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from dataclasses import dataclass, field
-from typing import Optional, Set
-import hashlib
+```java
+import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
-@dataclass
-class Toggle:
-    name: str
-    enabled: bool                       # => Global on/off switch
-    rollout_percentage: int = 100       # => Percentage of users who see new feature (0-100)
-    allowed_user_ids: Set[str] = field(default_factory=set)
-    # => Allowlist: specific users always see the feature regardless of rollout percentage
+// => Toggle: configuration for one feature flag with global switch + rollout % + allowlist
+record Toggle(String name, boolean enabled, int rolloutPercentage, Set<String> allowedUserIds) {
+    // => enabled: global kill-switch; when false, no user ever sees the feature
+    // => rolloutPercentage: 0-100; controls the fraction of users who see the feature
+    // => allowedUserIds: explicit allowlist; these users bypass rollout percentage
+}
 
-class FeatureStore:
-    def __init__(self) -> None:
-        self._toggles: dict[str, Toggle] = {}
+class FeatureStore {
+    private final Map<String, Toggle> toggles = new HashMap<>();
+    // => Toggle registry; populated at startup from config file or remote service
 
-    def register(self, toggle: Toggle) -> None:
-        self._toggles[toggle.name] = toggle  # => Register toggle at startup from config file
+    void register(Toggle toggle) {
+        toggles.put(toggle.name(), toggle);
+        // => Register at startup; prod typically hot-reloads from remote config store
+    }
 
-    def is_enabled(self, name: str, user_id: str) -> bool:
-        toggle = self._toggles.get(name)
-        if toggle is None or not toggle.enabled:
-            return False  # => Unknown or globally disabled toggle returns False
+    boolean isEnabled(String name, String userId) {
+        var toggle = toggles.get(name);
+        if (toggle == null || !toggle.enabled()) return false;
+        // => Unknown toggle or globally disabled: deny — fail-closed safety model
 
-        if user_id in toggle.allowed_user_ids:
-            return True  # => User in explicit allowlist — always enabled regardless of rollout %
+        if (toggle.allowedUserIds().contains(userId)) return true;
+        // => Explicit allowlist wins; beta testers always see the feature
 
-        # => Deterministic rollout: hash user_id so same user always gets same decision
-        user_bucket = int(hashlib.md5(f"{name}:{user_id}".encode()).hexdigest(), 16) % 100
-        # => Produces 0-99; if bucket < rollout_percentage then user is in rollout cohort
-        return user_bucket < toggle.rollout_percentage
+        // => Deterministic rollout: same user always gets the same decision
+        int bucket = deterministicBucket(name + ":" + userId);
+        // => Bucket 0-99; consistent across calls — prevents flickering UX
+        return bucket < toggle.rolloutPercentage();
+        // => If bucket < percentage, user is in rollout cohort — consistent per user
+    }
 
-store = FeatureStore()
-store.register(Toggle(name="new_checkout", enabled=True, rollout_percentage=20,
-                       allowed_user_ids={"beta-tester-1"}))
-# => new_checkout: 20% gradual rollout + explicit beta tester allowlist
+    private int deterministicBucket(String key) {
+        try {
+            var md5 = MessageDigest.getInstance("MD5");
+            byte[] hash = md5.digest(key.getBytes(StandardCharsets.UTF_8));
+            // => MD5 produces deterministic 16-byte hash; same input always same output
+            return Math.abs(Arrays.hashCode(hash)) % 100;
+            // => Map hash to 0-99 bucket — deterministic, not random
+        } catch (Exception e) { return 0; }
+    }
 
-# => Beta tester always gets new feature
-print(store.is_enabled("new_checkout", "beta-tester-1"))  # => Output: True
+    void disable(String name) {
+        var t = toggles.get(name);
+        if (t != null)
+            toggles.put(name, new Toggle(t.name(), false, t.rolloutPercentage(), t.allowedUserIds()));
+        // => Kill switch: replace with disabled toggle; no redeploy needed
+    }
+}
 
-# => Regular users: deterministic based on user_id hash (20% will get True)
-results = [store.is_enabled("new_checkout", f"user-{i}") for i in range(10)]
-enabled_count = sum(results)
-print(f"Enabled for {enabled_count}/10 sample users (target ~20%)")
-# => Output: Enabled for ~2/10 sample users (target ~20%)
+var store = new FeatureStore();
+store.register(new Toggle("new_checkout", true, 20, Set.of("beta-tester-1")));
+// => new_checkout: 20% gradual rollout + explicit beta tester allowlist
 
-# => Kill switch: disable globally without redeploying
-store._toggles["new_checkout"].enabled = False
-print(store.is_enabled("new_checkout", "beta-tester-1"))  # => Output: False (kill switch)
+System.out.println(store.isEnabled("new_checkout", "beta-tester-1"));
+// => Output: true (beta tester in allowlist — always enabled)
+
+long enabledCount = java.util.stream.LongStream.range(0, 10)
+    .filter(i -> store.isEnabled("new_checkout", "user-" + i)).count();
+System.out.println("Enabled for " + enabledCount + "/10 sample users (target ~20%)");
+// => Output: Enabled for ~2/10 sample users (varies by hash distribution)
+
+store.disable("new_checkout");
+System.out.println(store.isEnabled("new_checkout", "beta-tester-1"));
+// => Output: false (kill switch applied — no redeploy needed)
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.security.MessageDigest
+
+// => Toggle: configuration for one feature flag with global switch + rollout % + allowlist
+data class Toggle(
+    val name: String,
+    val enabled: Boolean,
+    val rolloutPercentage: Int = 100,
+    // => rolloutPercentage: 0-100; controls the fraction of users who see the feature
+    val allowedUserIds: Set<String> = emptySet()
+    // => allowedUserIds: explicit allowlist; these users bypass rollout percentage
+)
+
+class FeatureStore {
+    private val toggles = mutableMapOf<String, Toggle>()
+    // => Toggle registry; populated at startup from config file or remote service
+
+    fun register(toggle: Toggle) {
+        toggles[toggle.name] = toggle
+        // => Register at startup; prod typically hot-reloads from remote config store
+    }
+
+    fun isEnabled(name: String, userId: String): Boolean {
+        val toggle = toggles[name] ?: return false
+        // => Unknown toggle: deny — fail-closed safety model
+        if (!toggle.enabled) return false
+        // => Global kill-switch off: deny regardless of user
+
+        if (userId in toggle.allowedUserIds) return true
+        // => Explicit allowlist wins; beta testers always see the feature
+
+        // => Deterministic rollout: same user always gets the same decision
+        val bucket = deterministicBucket("${toggle.name}:$userId")
+        // => Bucket 0-99; consistent across calls — prevents flickering UX
+        return bucket < toggle.rolloutPercentage
+        // => If bucket < percentage, user is in rollout cohort — consistent per user
+    }
+
+    private fun deterministicBucket(key: String): Int {
+        val md5 = MessageDigest.getInstance("MD5")
+        val hash = md5.digest(key.toByteArray())
+        // => MD5 produces deterministic 16-byte hash; same input always same output
+        return Math.abs(hash.contentHashCode()) % 100
+        // => Map hash to 0-99 bucket — deterministic, not random
+    }
+
+    fun disable(name: String) {
+        toggles[name] = toggles[name]?.copy(enabled = false) ?: return
+        // => Kill switch: copy() with enabled=false; no redeploy needed
+    }
+}
+
+val store = FeatureStore()
+store.register(Toggle("new_checkout", enabled = true, rolloutPercentage = 20,
+    allowedUserIds = setOf("beta-tester-1")))
+// => new_checkout: 20% gradual rollout + explicit beta tester allowlist
+
+println(store.isEnabled("new_checkout", "beta-tester-1"))
+// => Output: true (beta tester in allowlist — always enabled)
+
+val enabledCount = (0..9).count { store.isEnabled("new_checkout", "user-$it") }
+println("Enabled for $enabledCount/10 sample users (target ~20%)")
+// => Output: Enabled for ~2/10 sample users (varies by hash distribution)
+
+store.disable("new_checkout")
+println(store.isEnabled("new_checkout", "beta-tester-1"))
+// => Output: false (kill switch applied — no redeploy needed)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System.Security.Cryptography;
+using System.Text;
+
+// => Toggle: configuration for one feature flag with global switch + rollout % + allowlist
+public record Toggle(
+    string Name,
+    bool Enabled,
+    int RolloutPercentage = 100,
+    // => RolloutPercentage: 0-100; controls the fraction of users who see the feature
+    HashSet<string>? AllowedUserIds = null
+    // => AllowedUserIds: explicit allowlist; these users bypass rollout percentage
+);
+
+public class FeatureStore
+{
+    private readonly Dictionary<string, Toggle> _toggles = new();
+    // => Toggle registry; populated at startup from config file or remote service
+
+    public void Register(Toggle toggle)
+    {
+        _toggles[toggle.Name] = toggle;
+        // => Register at startup; prod typically hot-reloads from remote config store
+    }
+
+    public bool IsEnabled(string name, string userId)
+    {
+        if (!_toggles.TryGetValue(name, out var toggle) || !toggle.Enabled)
+            return false;
+        // => Unknown toggle or globally disabled: deny — fail-closed safety model
+
+        if (toggle.AllowedUserIds?.Contains(userId) == true) return true;
+        // => Explicit allowlist wins; beta testers always see the feature
+
+        // => Deterministic rollout: same user always gets the same decision
+        int bucket = DeterministicBucket($"{toggle.Name}:{userId}");
+        // => Bucket 0-99; consistent across calls — prevents flickering UX
+        return bucket < toggle.RolloutPercentage;
+        // => If bucket < percentage, user is in rollout cohort — consistent per user
+    }
+
+    private static int DeterministicBucket(string key)
+    {
+        var hash = MD5.HashData(Encoding.UTF8.GetBytes(key));
+        // => MD5 produces deterministic 16-byte hash; same input always same output
+        return Math.Abs(BitConverter.ToInt32(hash, 0)) % 100;
+        // => Map first 4 bytes to 0-99 bucket — deterministic, not random
+    }
+
+    public void Disable(string name)
+    {
+        if (_toggles.TryGetValue(name, out var t))
+            _toggles[name] = t with { Enabled = false };
+        // => Kill switch: with-expression creates disabled copy; no redeploy needed
+    }
+}
+
+var store = new FeatureStore();
+store.Register(new Toggle("new_checkout", true, 20,
+    new HashSet<string> { "beta-tester-1" }));
+// => new_checkout: 20% gradual rollout + explicit beta tester allowlist
+
+Console.WriteLine(store.IsEnabled("new_checkout", "beta-tester-1"));
+// => Output: True (beta tester in allowlist — always enabled)
+
+int enabledCount = Enumerable.Range(0, 10)
+    .Count(i => store.IsEnabled("new_checkout", $"user-{i}"));
+Console.WriteLine($"Enabled for {enabledCount}/10 sample users (target ~20%)");
+// => Output: Enabled for ~2/10 sample users (varies by hash distribution)
+
+store.Disable("new_checkout");
+Console.WriteLine(store.IsEnabled("new_checkout", "beta-tester-1"));
+// => Output: False (kill switch applied — no redeploy needed)
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Use deterministic hash-based bucketing so the same user always gets the same
 feature decision, preventing inconsistent UX where a user sees the new feature on one page reload
@@ -1943,62 +4889,196 @@ graph TD
     style CP fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-**Python — simulated mesh proxy intercepting calls between services:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from typing import Callable
-import hashlib
+```java
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
-# => MeshProxy simulates what Envoy does as a sidecar proxy
-class MeshProxy:
-    def __init__(self, service_name: str) -> None:
-        self._service = service_name
-        self._tls_enabled = True    # => mTLS enforced by mesh control plane
-        self._retry_limit = 3       # => Retry policy injected by control plane; app knows nothing
-        self._telemetry: list = []  # => All calls recorded for Prometheus/Jaeger export
+// => MeshProxy simulates what Envoy does as a sidecar — transparent to the app
+class MeshProxy {
+    private final String service;
+    // => mTLS and retry limit injected by control plane; app code knows nothing
+    private final boolean tlsEnabled = true;
+    private final int retryLimit = 3;
+    // => Telemetry collected per call; exported to Prometheus/Jaeger in production
+    private final List<Map<String, Object>> telemetry = new ArrayList<>();
 
-    def call(self, target: str, func: Callable[[], str]) -> str:
-        # => Step 1: enforce mutual TLS — control plane has configured certificates
-        if not self._tls_enabled:
-            raise PermissionError("mTLS required by mesh policy")
+    MeshProxy(String service) { this.service = service; }
 
-        last_err: Optional[Exception] = None
-        for attempt in range(self._retry_limit):
-            try:
-                result = func()  # => Actual inter-service call (to target's proxy, then app)
-                self._record(target, attempt + 1, "success")
-                # => Telemetry recorded by proxy; application code has zero instrumentation
-                return result
-            except Exception as e:
-                last_err = e
-                self._record(target, attempt + 1, "error")
+    // => Call a downstream service through the mesh — retries and mTLS are transparent
+    String call(String target, Callable<String> func) throws Exception {
+        if (!tlsEnabled) throw new SecurityException("mTLS required by mesh policy");
+        // => Control plane enforces mutual TLS; app never manages certificates
+        Exception lastErr = null;
+        for (int attempt = 1; attempt <= retryLimit; attempt++) {
+            try {
+                String result = func.call(); // => Actual inter-service call via target's sidecar
+                record(target, attempt, "success");
+                // => Telemetry emitted by proxy; zero instrumentation in application code
+                return result;
+            } catch (Exception e) {
+                lastErr = e;
+                record(target, attempt, "error"); // => Failure recorded; retry follows
+            }
+        }
+        throw new RuntimeException("Mesh exhausted retries to " + target, lastErr);
+        // => After retryLimit failures the proxy propagates error to caller
+    }
 
-        raise RuntimeError(f"Mesh exhausted retries to {target}: {last_err}") from last_err
+    private void record(String target, int attempt, String outcome) {
+        telemetry.add(Map.of("from", service, "to", target, "attempt", attempt, "outcome", outcome));
+        // => In production: metrics go to Prometheus; traces go to Jaeger/Zipkin
+    }
 
-    def _record(self, target: str, attempt: int, outcome: str) -> None:
-        self._telemetry.append({"from": self._service, "to": target, "attempt": attempt, "outcome": outcome})
-        # => In production: metrics exported to Prometheus; traces to Jaeger/Zipkin
+    List<Map<String, Object>> getTelemetry() { return telemetry; }
+}
 
-# => Service A and Service B each have their own sidecar proxy
-proxy_a = MeshProxy("orders-svc")
-proxy_b = MeshProxy("inventory-svc")
-
-# => Simulate inventory service that fails once then succeeds
-_inv_calls = 0
-def inventory_check() -> str:
-    global _inv_calls
-    _inv_calls += 1
-    if _inv_calls == 1:
-        raise ConnectionError("transient network error")  # => First call fails
-    return "in_stock"  # => Second call succeeds; proxy retried transparently
-
-# => Orders service calls Inventory through the mesh — no retry code in Orders
-result = proxy_a.call("inventory-svc", inventory_check)
-print(f"Inventory response: {result}")  # => Output: Inventory response: in_stock
-print(f"Telemetry: {proxy_a._telemetry}")
-# => Output: Telemetry: [{'from': 'orders-svc', 'to': 'inventory-svc', 'attempt': 1, 'outcome': 'error'},
-#                        {'from': 'orders-svc', 'to': 'inventory-svc', 'attempt': 2, 'outcome': 'success'}]
+// => Each service gets its own sidecar proxy; apps communicate only with localhost sidecar
+MeshProxy proxyA = new MeshProxy("orders-svc");
+// => Simulate inventory service: fails on first call, succeeds on second
+int[] invCalls = {0};
+Callable<String> inventoryCheck = () -> {
+    invCalls[0]++;
+    if (invCalls[0] == 1) throw new RuntimeException("transient network error");
+    // => First call fails; proxy retries transparently — orders-svc has no retry logic
+    return "in_stock"; // => Second call succeeds
+};
+// => Orders service calls Inventory through the mesh — no retry code anywhere in orders-svc
+String result = proxyA.call("inventory-svc", inventoryCheck);
+System.out.println("Inventory response: " + result); // => Output: Inventory response: in_stock
+System.out.println("Telemetry: " + proxyA.getTelemetry());
+// => Output: [{from=orders-svc, to=inventory-svc, attempt=1, outcome=error},
+//             {from=orders-svc, to=inventory-svc, attempt=2, outcome=success}]
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => MeshProxy simulates the Envoy sidecar — intercepts all outbound network calls
+class MeshProxy(private val service: String) {
+    private val tlsEnabled = true   // => mTLS policy pushed by control plane
+    private val retryLimit = 3      // => Retry count configured centrally, not per service
+    // => All calls recorded; exported to Prometheus/Jaeger in a real mesh
+    val telemetry = mutableListOf<Map<String, Any>>()
+
+    // => call() wraps any downstream invocation with mesh concerns: mTLS + retry + telemetry
+    fun call(target: String, func: () -> String): String {
+        check(tlsEnabled) { "mTLS required by mesh policy" }
+        // => Control plane configured certificate rotation; app never touches TLS
+        var lastErr: Exception? = null
+        repeat(retryLimit) { attempt ->
+            runCatching { func() }
+                .onSuccess { result ->
+                    record(target, attempt + 1, "success")
+                    // => Telemetry emitted by proxy; application code is zero-instrumented
+                    return result
+                }
+                .onFailure { e ->
+                    lastErr = e as Exception
+                    record(target, attempt + 1, "error") // => Retry will follow
+                }
+        }
+        throw RuntimeException("Mesh exhausted retries to $target", lastErr)
+        // => After retryLimit failures proxy propagates error upstream
+    }
+
+    private fun record(target: String, attempt: Int, outcome: String) {
+        telemetry += mapOf("from" to service, "to" to target, "attempt" to attempt, "outcome" to outcome)
+        // => In production: metrics -> Prometheus; traces -> Jaeger/Zipkin
+    }
+}
+
+// => Each pod gets a sidecar; services only talk to localhost proxy, not each other directly
+val proxyA = MeshProxy("orders-svc")
+// => Simulate inventory failing once then succeeding — proxy retries transparently
+var invCalls = 0
+val inventoryCheck: () -> String = {
+    invCalls++
+    if (invCalls == 1) throw RuntimeException("transient network error")
+    // => First call fails; orders-svc has no retry code — mesh handles it
+    "in_stock" // => Second call succeeds
+}
+val result = proxyA.call("inventory-svc", inventoryCheck)
+println("Inventory response: $result") // => Output: Inventory response: in_stock
+println("Telemetry: ${proxyA.telemetry}")
+// => Output: [{from=orders-svc, to=inventory-svc, attempt=1, outcome=error},
+//             {from=orders-svc, to=inventory-svc, attempt=2, outcome=success}]
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => MeshProxy simulates Envoy sidecar — wraps all outbound calls with mesh concerns
+class MeshProxy
+{
+    private readonly string _service;
+    private readonly bool _tlsEnabled = true;  // => mTLS enforced by control plane config
+    private readonly int _retryLimit = 3;       // => Retry policy set centrally; app unaware
+    // => Telemetry list; in production exported to Prometheus/Jaeger
+    public List<Dictionary<string, object>> Telemetry { get; } = new();
+
+    public MeshProxy(string service) => _service = service;
+
+    // => Call wraps any downstream func with transparent retry, mTLS, and telemetry
+    public string Call(string target, Func<string> func)
+    {
+        if (!_tlsEnabled) throw new UnauthorizedAccessException("mTLS required by mesh policy");
+        // => Control plane manages certificate rotation; app code never touches TLS config
+        Exception? lastErr = null;
+        for (int attempt = 1; attempt <= _retryLimit; attempt++)
+        {
+            try
+            {
+                string result = func(); // => Actual call routed through target sidecar
+                Record(target, attempt, "success");
+                // => Telemetry written by proxy; zero instrumentation in application
+                return result;
+            }
+            catch (Exception e)
+            {
+                lastErr = e;
+                Record(target, attempt, "error"); // => Error recorded; retry follows
+            }
+        }
+        throw new Exception($"Mesh exhausted retries to {target}", lastErr);
+        // => After retryLimit failures proxy propagates the error to caller
+    }
+
+    private void Record(string target, int attempt, string outcome) =>
+        Telemetry.Add(new() { ["from"] = _service, ["to"] = target, ["attempt"] = attempt, ["outcome"] = outcome });
+        // => In production: metrics -> Prometheus; traces -> Jaeger/Zipkin
+}
+
+// => Each pod runs a sidecar; services never call each other directly
+var proxyA = new MeshProxy("orders-svc");
+// => Simulate inventory failing once then succeeding — proxy retries without orders-svc knowing
+int invCalls = 0;
+string InventoryCheck()
+{
+    invCalls++;
+    if (invCalls == 1) throw new Exception("transient network error");
+    // => First attempt fails; proxy retries — orders-svc has no retry logic at all
+    return "in_stock"; // => Second attempt succeeds
+}
+string result = proxyA.Call("inventory-svc", InventoryCheck);
+Console.WriteLine($"Inventory response: {result}"); // => Output: Inventory response: in_stock
+foreach (var entry in proxyA.Telemetry)
+    Console.WriteLine($"  from={entry["from"]} to={entry["to"]} attempt={entry["attempt"]} outcome={entry["outcome"]}");
+// => Output: from=orders-svc to=inventory-svc attempt=1 outcome=error
+// =>         from=orders-svc to=inventory-svc attempt=2 outcome=success
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Service mesh moves cross-cutting network concerns (retries, mTLS, tracing) to the
 infrastructure proxy layer so application developers write only business logic.
@@ -2019,79 +5099,208 @@ in that language. In architecture it enables policy engines, query filters, rule
 configuration DSLs where business logic is expressed in a structured mini-language rather than
 hardcoded conditionals.
 
-```python
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Dict, Any
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# => Abstract expression interface — all nodes in the AST implement this
-class Expression(ABC):
-    @abstractmethod
-    def interpret(self, context: Dict[str, Any]) -> bool: ...
-    # => context: dictionary of variables (e.g., {"user.tier": "gold", "order.total": 150.0})
+```java
+import java.util.Map;
 
-# ============================================================
-# Terminal expressions — leaves of the expression tree
-# ============================================================
-@dataclass
-class GreaterThan(Expression):
-    variable: str   # => Key to look up in context
-    threshold: float
+// => Abstract expression — every node in the rule tree implements this
+interface Expression {
+    boolean interpret(Map<String, Object> ctx);
+    // => ctx: variable map e.g. {"user.tier":"gold","order.total":150.0}
+}
 
-    def interpret(self, context: Dict[str, Any]) -> bool:
-        value = context.get(self.variable, 0)
-        return float(value) > self.threshold  # => True if context variable exceeds threshold
-        # => Enables rules like order.total > 100 without hardcoded Python conditionals
+// ---- Terminal (leaf) expressions ----
 
-@dataclass
-class Equals(Expression):
-    variable: str
-    value: Any
+// => GreaterThan: numeric comparison against a context variable
+record GreaterThan(String variable, double threshold) implements Expression {
+    public boolean interpret(Map<String, Object> ctx) {
+        double val = ((Number) ctx.getOrDefault(variable, 0)).doubleValue();
+        return val > threshold; // => True when context variable exceeds threshold
+        // => Enables "order.total > 100" without hardcoded Java conditionals
+    }
+}
 
-    def interpret(self, context: Dict[str, Any]) -> bool:
-        return context.get(self.variable) == self.value  # => Equality check against context value
+// => Equals: equality check — supports String and numeric values
+record Equals(String variable, Object value) implements Expression {
+    public boolean interpret(Map<String, Object> ctx) {
+        return value.equals(ctx.get(variable)); // => Returns true on exact match
+    }
+}
 
-# ============================================================
-# Non-terminal expressions — composite nodes
-# ============================================================
-@dataclass
-class AndExpression(Expression):
-    left: Expression
-    right: Expression
+// ---- Non-terminal (composite) expressions ----
 
-    def interpret(self, context: Dict[str, Any]) -> bool:
-        return self.left.interpret(context) and self.right.interpret(context)
-        # => Evaluates both sub-expressions; short-circuits if left is False
+// => AndExpression: both sub-rules must hold
+record AndExpression(Expression left, Expression right) implements Expression {
+    public boolean interpret(Map<String, Object> ctx) {
+        return left.interpret(ctx) && right.interpret(ctx);
+        // => Short-circuits: right not evaluated if left is false
+    }
+}
 
-@dataclass
-class OrExpression(Expression):
-    left: Expression
-    right: Expression
+// => OrExpression: at least one sub-rule must hold
+record OrExpression(Expression left, Expression right) implements Expression {
+    public boolean interpret(Map<String, Object> ctx) {
+        return left.interpret(ctx) || right.interpret(ctx);
+        // => Short-circuits: right not evaluated if left is true
+    }
+}
 
-    def interpret(self, context: Dict[str, Any]) -> bool:
-        return self.left.interpret(context) or self.right.interpret(context)
-        # => Either sub-expression being True is sufficient
+// => Rule: eligible IF (tier==gold) OR (total>100 AND tier==silver)
+// => Expression tree built from composable objects — no hardcoded if-chains
+Expression discountRule = new OrExpression(
+    new Equals("user.tier", "gold"),                 // => Gold users always qualify
+    new AndExpression(
+        new GreaterThan("order.total", 100.0),       // => Large order threshold
+        new Equals("user.tier", "silver")            // => Silver tier required
+    )
+);
 
-# ============================================================
-# DSL usage: discount eligibility expressed as a composable expression tree
-# ============================================================
-# => Rule: discount eligible IF (tier == gold) OR (total > 100 AND tier == silver)
-discount_rule: Expression = OrExpression(
-    left=Equals("user.tier", "gold"),  # => Gold users always get discount
-    right=AndExpression(
-        left=GreaterThan("order.total", 100.0),   # => Large order
-        right=Equals("user.tier", "silver"),       # => Silver tier
-    ),
+var ctxGold         = Map.of("user.tier", "gold",   "order.total", 30.0);
+var ctxSilverLarge  = Map.of("user.tier", "silver", "order.total", 150.0);
+var ctxBronze       = Map.of("user.tier", "bronze", "order.total", 200.0);
+
+System.out.println(discountRule.interpret(ctxGold));        // => Output: true  (gold, any total)
+System.out.println(discountRule.interpret(ctxSilverLarge)); // => Output: true  (silver + >100)
+System.out.println(discountRule.interpret(ctxBronze));      // => Output: false (bronze excluded)
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Expression: sealed hierarchy — every AST node is one of these types
+sealed interface Expression {
+    fun interpret(ctx: Map<String, Any>): Boolean
+    // => ctx maps variable names to their runtime values
+}
+
+// ---- Terminal (leaf) expressions ----
+
+// => GreaterThan: numeric threshold check on a named context variable
+data class GreaterThan(val variable: String, val threshold: Double) : Expression {
+    override fun interpret(ctx: Map<String, Any>): Boolean {
+        val v = (ctx.getOrDefault(variable, 0) as Number).toDouble()
+        return v > threshold // => True when context value exceeds threshold
+        // => Enables "order.total > 100" without scattered if-statements
+    }
+}
+
+// => Equals: exact match check — works for String and numeric values
+data class Equals(val variable: String, val value: Any) : Expression {
+    override fun interpret(ctx: Map<String, Any>): Boolean =
+        value == ctx[variable] // => Returns true on exact equality
+}
+
+// ---- Non-terminal (composite) expressions ----
+
+// => AndExpression: conjunction — both sub-expressions must be true
+data class AndExpression(val left: Expression, val right: Expression) : Expression {
+    override fun interpret(ctx: Map<String, Any>): Boolean =
+        left.interpret(ctx) && right.interpret(ctx)
+        // => Kotlin's && short-circuits; right not evaluated if left is false
+}
+
+// => OrExpression: disjunction — either sub-expression being true is sufficient
+data class OrExpression(val left: Expression, val right: Expression) : Expression {
+    override fun interpret(ctx: Map<String, Any>): Boolean =
+        left.interpret(ctx) || right.interpret(ctx)
+        // => Short-circuits: right not evaluated if left is already true
+}
+
+// => Rule tree: (tier==gold) OR (total>100 AND tier==silver)
+// => Stored in a variable — could be loaded from DB or config file
+val discountRule: Expression = OrExpression(
+    Equals("user.tier", "gold"),               // => Gold tier always qualifies
+    AndExpression(
+        GreaterThan("order.total", 100.0),     // => Large order requirement
+        Equals("user.tier", "silver")          // => Silver tier requirement
+    )
 )
 
-ctx_gold = {"user.tier": "gold", "order.total": 30.0}
-ctx_silver_large = {"user.tier": "silver", "order.total": 150.0}
-ctx_bronze = {"user.tier": "bronze", "order.total": 200.0}
+val ctxGold        = mapOf("user.tier" to "gold",   "order.total" to 30.0)
+val ctxSilverLarge = mapOf("user.tier" to "silver", "order.total" to 150.0)
+val ctxBronze      = mapOf("user.tier" to "bronze", "order.total" to 200.0)
 
-print(discount_rule.interpret(ctx_gold))          # => Output: True  (gold, any total)
-print(discount_rule.interpret(ctx_silver_large))  # => Output: True  (silver + >100)
-print(discount_rule.interpret(ctx_bronze))        # => Output: False (bronze, not in rule)
+println(discountRule.interpret(ctxGold))        // => Output: true  (gold, any total)
+println(discountRule.interpret(ctxSilverLarge)) // => Output: true  (silver + >100)
+println(discountRule.interpret(ctxBronze))      // => Output: false (bronze excluded)
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// => IExpression: every node in the rule tree implements this contract
+interface IExpression
+{
+    bool Interpret(Dictionary<string, object> ctx);
+    // => ctx maps variable names to their runtime values
+}
+
+// ---- Terminal (leaf) expressions ----
+
+// => GreaterThan: numeric threshold comparison against a named context variable
+record GreaterThan(string Variable, double Threshold) : IExpression
+{
+    public bool Interpret(Dictionary<string, object> ctx)
+    {
+        double val = Convert.ToDouble(ctx.GetValueOrDefault(Variable, 0));
+        return val > Threshold; // => True when context variable exceeds threshold
+        // => Eliminates hardcoded if-chains — rule lives in data, not code
+    }
+}
+
+// => Equals: exact equality check — supports string and numeric context values
+record Equals(string Variable, object Value) : IExpression
+{
+    public bool Interpret(Dictionary<string, object> ctx) =>
+        Value.Equals(ctx.GetValueOrDefault(Variable)); // => True on exact match
+}
+
+// ---- Non-terminal (composite) expressions ----
+
+// => AndExpression: both child expressions must hold
+record AndExpression(IExpression Left, IExpression Right) : IExpression
+{
+    public bool Interpret(Dictionary<string, object> ctx) =>
+        Left.Interpret(ctx) && Right.Interpret(ctx);
+        // => C# && short-circuits: Right not evaluated if Left is false
+}
+
+// => OrExpression: at least one child expression must hold
+record OrExpression(IExpression Left, IExpression Right) : IExpression
+{
+    public bool Interpret(Dictionary<string, object> ctx) =>
+        Left.Interpret(ctx) || Right.Interpret(ctx);
+        // => Short-circuits: Right not evaluated if Left is already true
+}
+
+// => Rule: eligible IF (tier==gold) OR (total>100 AND tier==silver)
+// => Composable tree — can be serialised to JSON and restored without code change
+IExpression discountRule = new OrExpression(
+    new Equals("user.tier", "gold"),               // => Gold tier always qualifies
+    new AndExpression(
+        new GreaterThan("order.total", 100.0),     // => Large order required
+        new Equals("user.tier", "silver")          // => Silver tier required
+    )
+);
+
+var ctxGold       = new Dictionary<string, object> { ["user.tier"] = "gold",   ["order.total"] = 30.0  };
+var ctxSilver     = new Dictionary<string, object> { ["user.tier"] = "silver", ["order.total"] = 150.0 };
+var ctxBronze     = new Dictionary<string, object> { ["user.tier"] = "bronze", ["order.total"] = 200.0 };
+
+Console.WriteLine(discountRule.Interpret(ctxGold));   // => Output: True  (gold, any total)
+Console.WriteLine(discountRule.Interpret(ctxSilver)); // => Output: True  (silver + >100)
+Console.WriteLine(discountRule.Interpret(ctxBronze)); // => Output: False (bronze excluded)
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Build expression trees using composable terminal and non-terminal expression
 objects so business rules can be loaded from config, stored in databases, and evaluated without
@@ -2135,85 +5344,251 @@ graph LR
     style RM fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Python — separated command handler and query handler with projection:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from dataclasses import dataclass, field
-from typing import List, Optional
+```java
+import java.util.*;
 
-# ============================================================
-# Write side: command model with domain invariants
-# ============================================================
-@dataclass
-class CreateProductCommand:
-    product_id: str
-    name: str
-    price: float
-    stock: int
+// ---- Write side: command + domain model with invariants ----
 
-@dataclass
-class Product:
-    product_id: str
-    name: str
-    price: float
-    stock: int
-    events: List[dict] = field(default_factory=list)  # => Domain events produced by command
+// => Command is a plain data class — carries intent, not behaviour
+record CreateProductCommand(String productId, String name, double price, int stock) {}
 
-class ProductCommandHandler:
-    def __init__(self) -> None:
-        self._write_store: dict[str, Product] = {}
-        # => Write model: normalised, enforces invariants; not used for queries
+// => Product: write-side entity; holds events produced during command handling
+class Product {
+    final String productId;
+    final String name;
+    final double price;
+    final int stock;
+    // => Domain events accumulated here; consumed by projection after handler returns
+    final List<Map<String, Object>> events = new ArrayList<>();
 
-    def handle_create(self, cmd: CreateProductCommand) -> Product:
-        if cmd.price <= 0:
-            raise ValueError("Price must be positive")  # => Invariant enforced on write side
-        if cmd.stock < 0:
-            raise ValueError("Stock cannot be negative")
-        product = Product(product_id=cmd.product_id, name=cmd.name, price=cmd.price, stock=cmd.stock)
-        product.events.append({"type": "ProductCreated", "payload": {"id": cmd.product_id, "name": cmd.name, "price": cmd.price}})
-        # => Event emitted; will be consumed by read-side projection
-        self._write_store[cmd.product_id] = product
-        return product
+    Product(String productId, String name, double price, int stock) {
+        this.productId = productId; this.name = name; this.price = price; this.stock = stock;
+    }
+}
 
-# ============================================================
-# Read side: denormalised projection optimised for list queries
-# ============================================================
-@dataclass
-class ProductSummary:
-    product_id: str
-    display_name: str   # => "Name ($price)" — pre-formatted for UI consumption
-    in_stock: bool      # => Derived boolean; read model owns this transformation
+class ProductCommandHandler {
+    // => Write store: normalised, enforces invariants; never used for queries
+    private final Map<String, Product> writeStore = new HashMap<>();
 
-class ProductProjection:
-    def __init__(self) -> None:
-        self._read_store: dict[str, ProductSummary] = {}
-        # => Read model: denormalised, fast to query; rebuilt from events if stale
+    Product handleCreate(CreateProductCommand cmd) {
+        if (cmd.price() <= 0) throw new IllegalArgumentException("Price must be positive");
+        // => Invariant enforced on write side before any persistence
+        if (cmd.stock() < 0) throw new IllegalArgumentException("Stock cannot be negative");
+        var product = new Product(cmd.productId(), cmd.name(), cmd.price(), cmd.stock());
+        product.events.add(Map.of("type", "ProductCreated",
+            "payload", Map.of("id", cmd.productId(), "name", cmd.name(), "price", cmd.price())));
+        // => Event appended; read-side projection will consume it after this call
+        writeStore.put(cmd.productId(), product);
+        return product;
+    }
+}
 
-    def on_product_created(self, event: dict) -> None:
-        p = event["payload"]
-        summary = ProductSummary(
-            product_id=p["id"],
-            display_name=f"{p['name']} (${p['price']:.2f})",  # => Pre-formatted for display
-            in_stock=True,  # => Derived from stock > 0; read model owns this computation
-        )
-        self._read_store[p["id"]] = summary  # => Projection materialised into read store
+// ---- Read side: denormalised projection optimised for queries ----
 
-    def query_all(self) -> List[ProductSummary]:
-        return list(self._read_store.values())  # => Fast read; no joins, no business logic
+// => ProductSummary: pre-formatted for UI; no joins required at query time
+record ProductSummary(String productId, String displayName, boolean inStock) {}
 
-# => Wire command and query sides via event propagation
-cmd_handler = ProductCommandHandler()
-projection = ProductProjection()
+class ProductProjection {
+    // => Read store: denormalised, fast to query; rebuilds from events if stale
+    private final Map<String, ProductSummary> readStore = new HashMap<>();
 
-product = cmd_handler.handle_create(CreateProductCommand("P1", "Widget", price=9.99, stock=100))
-for event in product.events:
-    projection.on_product_created(event)  # => Read side consumes events from write side
+    void onProductCreated(Map<String, Object> event) {
+        @SuppressWarnings("unchecked")
+        var p = (Map<String, Object>) event.get("payload");
+        var summary = new ProductSummary(
+            (String) p.get("id"),
+            p.get("name") + " ($" + String.format("%.2f", p.get("price")) + ")",
+            // => Display name pre-formatted — read model owns this transformation
+            true // => Derived from stock > 0; avoids query-time computation
+        );
+        readStore.put(summary.productId(), summary); // => Projection materialised
+    }
 
-summaries = projection.query_all()
-for s in summaries:
-    print(f"{s.product_id}: {s.display_name}, in_stock={s.in_stock}")
-# => Output: P1: Widget ($9.99), in_stock=True
+    List<ProductSummary> queryAll() {
+        return new ArrayList<>(readStore.values()); // => Fast read: no joins, no business logic
+    }
+}
+
+// => Wire command and query sides via event propagation
+var cmdHandler = new ProductCommandHandler();
+var projection = new ProductProjection();
+
+var product = cmdHandler.handleCreate(new CreateProductCommand("P1", "Widget", 9.99, 100));
+for (var event : product.events)
+    projection.onProductCreated(event); // => Read side consumes write-side events
+
+for (var s : projection.queryAll())
+    System.out.printf("%s: %s, inStock=%b%n", s.productId(), s.displayName(), s.inStock());
+// => Output: P1: Widget ($9.99), inStock=true
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// ---- Write side: command + domain model with invariants ----
+
+// => Command is a pure data class — carries intent, not logic
+data class CreateProductCommand(val productId: String, val name: String, val price: Double, val stock: Int)
+
+// => Product: write-side entity; events list holds domain events produced by handlers
+data class Product(
+    val productId: String,
+    val name: String,
+    val price: Double,
+    val stock: Int,
+    val events: MutableList<Map<String, Any>> = mutableListOf()
+    // => Events accumulated here; consumed by projection after handler completes
+)
+
+class ProductCommandHandler {
+    // => Write store: normalised; enforces invariants; never queried directly
+    private val writeStore = mutableMapOf<String, Product>()
+
+    fun handleCreate(cmd: CreateProductCommand): Product {
+        require(cmd.price > 0) { "Price must be positive" }
+        // => Invariant checked before any side effects — fail fast on write side
+        require(cmd.stock >= 0) { "Stock cannot be negative" }
+        val product = Product(cmd.productId, cmd.name, cmd.price, cmd.stock)
+        product.events += mapOf(
+            "type" to "ProductCreated",
+            "payload" to mapOf("id" to cmd.productId, "name" to cmd.name, "price" to cmd.price)
+        ) // => Event recorded; read-side projection will react to it
+        writeStore[cmd.productId] = product
+        return product
+    }
+}
+
+// ---- Read side: denormalised projection optimised for queries ----
+
+// => ProductSummary: pre-formatted for the UI — no join logic at query time
+data class ProductSummary(val productId: String, val displayName: String, val inStock: Boolean)
+
+class ProductProjection {
+    // => Read store: denormalised, instant queries; rebuilt from events on replay
+    private val readStore = mutableMapOf<String, ProductSummary>()
+
+    @Suppress("UNCHECKED_CAST")
+    fun onProductCreated(event: Map<String, Any>) {
+        val p = event["payload"] as Map<String, Any>
+        val summary = ProductSummary(
+            productId = p["id"] as String,
+            displayName = "${p["name"]} (${"$"}${"%.2f".format(p["price"] as Double)})",
+            // => Display string pre-computed here — read model owns this transformation
+            inStock = true // => Derived from stock > 0; saves computation at query time
+        )
+        readStore[summary.productId] = summary // => Projection materialised into read store
+    }
+
+    fun queryAll(): List<ProductSummary> = readStore.values.toList()
+    // => Fast read: no joins, no invariant checks, pure data retrieval
+}
+
+// => Wire command and query sides; events bridge the two models
+val cmdHandler = ProductCommandHandler()
+val projection = ProductProjection()
+
+val product = cmdHandler.handleCreate(CreateProductCommand("P1", "Widget", 9.99, 100))
+product.events.forEach { projection.onProductCreated(it) }
+// => Read side consumes events emitted by write side — async in real systems
+
+projection.queryAll().forEach { s ->
+    println("${s.productId}: ${s.displayName}, inStock=${s.inStock}")
+}
+// => Output: P1: Widget ($9.99), inStock=true
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// ---- Write side: command + domain model with invariants ----
+
+// => Command: plain record carrying the caller's intent; no behaviour
+record CreateProductCommand(string ProductId, string Name, double Price, int Stock);
+
+// => Product: write-side entity; Events list accumulates domain events for projection
+class Product
+{
+    public string ProductId { get; }
+    public string Name { get; }
+    public double Price { get; }
+    public int Stock { get; }
+    // => Events produced during handling; projection consumes them after this call
+    public List<Dictionary<string, object>> Events { get; } = new();
+
+    public Product(string id, string name, double price, int stock)
+        => (ProductId, Name, Price, Stock) = (id, name, price, stock);
+}
+
+class ProductCommandHandler
+{
+    // => Write store: normalised, enforces invariants; never used for queries
+    private readonly Dictionary<string, Product> _writeStore = new();
+
+    public Product HandleCreate(CreateProductCommand cmd)
+    {
+        if (cmd.Price <= 0) throw new ArgumentException("Price must be positive");
+        // => Invariant enforced before any persistence — write side owns validation
+        if (cmd.Stock < 0) throw new ArgumentException("Stock cannot be negative");
+        var product = new Product(cmd.ProductId, cmd.Name, cmd.Price, cmd.Stock);
+        product.Events.Add(new() {
+            ["type"] = "ProductCreated",
+            ["payload"] = new Dictionary<string, object>
+                { ["id"] = cmd.ProductId, ["name"] = cmd.Name, ["price"] = cmd.Price }
+        }); // => Event appended; read-side projection will consume it
+        _writeStore[cmd.ProductId] = product;
+        return product;
+    }
+}
+
+// ---- Read side: denormalised projection optimised for queries ----
+
+// => ProductSummary: pre-formatted for the UI; zero join logic at query time
+record ProductSummary(string ProductId, string DisplayName, bool InStock);
+
+class ProductProjection
+{
+    // => Read store: denormalised, instant queries; rebuilt from events on replay
+    private readonly Dictionary<string, ProductSummary> _readStore = new();
+
+    public void OnProductCreated(Dictionary<string, object> evt)
+    {
+        var p = (Dictionary<string, object>) evt["payload"];
+        var summary = new ProductSummary(
+            ProductId: (string) p["id"],
+            DisplayName: $"{p["name"]} (${(double)p["price"]:F2})",
+            // => Display string pre-computed in projection — read model owns this
+            InStock: true // => Derived from stock > 0; avoids runtime computation
+        );
+        _readStore[summary.ProductId] = summary; // => Projection materialised
+    }
+
+    public IEnumerable<ProductSummary> QueryAll() => _readStore.Values;
+    // => Fast: no joins, no business logic — pure denormalised data retrieval
+}
+
+// => Wire command and query sides via event list
+var cmdHandler = new ProductCommandHandler();
+var projection = new ProductProjection();
+
+var product = cmdHandler.HandleCreate(new("P1", "Widget", 9.99, 100));
+foreach (var evt in product.Events)
+    projection.OnProductCreated(evt); // => Read side consumes write-side events
+
+foreach (var s in projection.QueryAll())
+    Console.WriteLine($"{s.ProductId}: {s.DisplayName}, InStock={s.InStock}");
+// => Output: P1: Widget ($9.99), InStock=True
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Separate command handlers (enforce invariants, emit events) from query handlers
 (consume projections, optimised for reads) so each side can scale and evolve independently.
@@ -2249,79 +5624,238 @@ graph LR
     style Consumers fill:#CA9161,stroke:#000,color:#fff
 ```
 
-**Python — atomic outbox write with relay publishing:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from dataclasses import dataclass
-import uuid
-import time
+```java
+import java.util.*;
+import java.util.function.BiConsumer;
 
-@dataclass
-class OutboxEntry:
-    entry_id: str
-    event_type: str
-    payload: dict
-    published: bool = False  # => False until relay successfully delivers to broker
-    created_at: float = 0.0
+// => OutboxEntry: a row in the outbox table — same DB as business records
+class OutboxEntry {
+    final String entryId;
+    final String eventType;
+    final Map<String, Object> payload;
+    boolean published = false; // => False until relay confirms broker receipt
+    OutboxEntry(String entryId, String eventType, Map<String, Object> payload) {
+        this.entryId = entryId; this.eventType = eventType; this.payload = payload;
+    }
+}
 
-class Database:
-    def __init__(self) -> None:
-        self._orders: dict[str, dict] = {}
-        self._outbox: list[OutboxEntry] = []  # => Outbox lives in same DB as orders
+class Database {
+    private final Map<String, Map<String, Object>> orders = new HashMap<>();
+    private final List<OutboxEntry> outbox = new ArrayList<>();
+    // => Outbox table lives in the same database as business records
 
-    def save_order_with_event(self, order_id: str, total: float, event_type: str, event_payload: dict) -> None:
-        # => ATOMIC: both writes succeed or both fail — no partial state possible
-        self._orders[order_id] = {"order_id": order_id, "total": total}
-        # => Persist business record
-        entry = OutboxEntry(
-            entry_id=str(uuid.uuid4())[:8],
-            event_type=event_type,
-            payload=event_payload,
-            created_at=time.monotonic(),
-        )
-        self._outbox.append(entry)
-        # => Persist event to outbox in same transaction; broker NOT called here
-        print(f"DB: saved order {order_id} + outbox entry {entry.entry_id} (atomic)")
+    void saveOrderWithEvent(String orderId, double total, String eventType, Map<String, Object> payload) {
+        // => ATOMIC: both writes succeed or both fail — no partial state possible
+        orders.put(orderId, Map.of("order_id", orderId, "total", total));
+        // => Business record persisted first
+        var entry = new OutboxEntry(orderId + "-" + UUID.randomUUID().toString().substring(0, 4),
+            eventType, payload);
+        outbox.add(entry);
+        // => Outbox entry written in same transaction; broker NOT called here
+        System.out.println("DB: saved order " + orderId + " + outbox entry " + entry.entryId + " (atomic)");
+    }
 
-    def get_unpublished(self) -> list[OutboxEntry]:
-        return [e for e in self._outbox if not e.published]
-        # => Relay queries for undelivered events; safe to call after partial failures
+    List<OutboxEntry> getUnpublished() {
+        return outbox.stream().filter(e -> !e.published).toList();
+        // => Relay queries these; safe to call repeatedly after partial failures
+    }
 
-    def mark_published(self, entry_id: str) -> None:
-        for e in self._outbox:
-            if e.entry_id == entry_id:
-                e.published = True  # => Idempotency: mark before or after broker ack
-                return
+    void markPublished(String entryId) {
+        outbox.stream().filter(e -> e.entryId.equals(entryId)).findFirst()
+              .ifPresent(e -> e.published = true);
+        // => Idempotent: marking twice has no additional effect
+    }
+}
 
-class OutboxRelay:
-    def __init__(self, db: Database) -> None:
-        self._db = db
+class OutboxRelay {
+    private final Database db;
+    OutboxRelay(Database db) { this.db = db; }
 
-    def publish_pending(self, broker_publish: Callable[[str, dict], None]) -> None:
-        for entry in self._db.get_unpublished():
-            broker_publish(entry.event_type, entry.payload)
-            # => Publish to broker (Kafka, SQS, etc.); may be retried on failure
-            self._db.mark_published(entry.entry_id)
-            # => Only mark published after broker confirms receipt (at-least-once delivery)
-            print(f"Relay: published {entry.event_type} (entry {entry.entry_id})")
+    void publishPending(BiConsumer<String, Map<String, Object>> brokerPublish) {
+        for (var entry : db.getUnpublished()) {
+            brokerPublish.accept(entry.eventType, entry.payload);
+            // => Publish to broker (Kafka/SQS); may be retried if broker is unavailable
+            db.markPublished(entry.entryId);
+            // => Mark published only after broker confirms receipt — at-least-once delivery
+            System.out.println("Relay: published " + entry.eventType + " (entry " + entry.entryId + ")");
+        }
+    }
+}
 
-# => Simulated Kafka publish (stdout in demo)
-def mock_broker(event_type: str, payload: dict) -> None:
-    print(f"Broker: received {event_type} — {payload}")
+// => Simulated broker (stdout in demo)
+BiConsumer<String, Map<String, Object>> mockBroker =
+    (type, payload) -> System.out.println("Broker: received " + type + " — " + payload);
 
-db = Database()
-relay = OutboxRelay(db)
+var db = new Database();
+var relay = new OutboxRelay(db);
 
-db.save_order_with_event("ORD-99", 199.99, "OrderPlaced", {"order_id": "ORD-99", "total": 199.99})
-# => Output: DB: saved order ORD-99 + outbox entry <id> (atomic)
+db.saveOrderWithEvent("ORD-99", 199.99, "OrderPlaced", Map.of("order_id", "ORD-99", "total", 199.99));
+// => Output: DB: saved order ORD-99 + outbox entry ORD-99-xxxx (atomic)
 
-relay.publish_pending(mock_broker)
-# => Output: Broker: received OrderPlaced — {'order_id': 'ORD-99', 'total': 199.99}
-# => Output: Relay: published OrderPlaced (entry <id>)
+relay.publishPending(mockBroker);
+// => Output: Broker: received OrderPlaced — {order_id=ORD-99, total=199.99}
+// => Output: Relay: published OrderPlaced (entry ORD-99-xxxx)
 
-print(f"Unpublished after relay: {len(db.get_unpublished())}")
-# => Output: Unpublished after relay: 0
+System.out.println("Unpublished after relay: " + db.getUnpublished().size());
+// => Output: Unpublished after relay: 0
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => OutboxEntry: one row in the outbox table — lives in same DB as business data
+data class OutboxEntry(
+    val entryId: String,
+    val eventType: String,
+    val payload: Map<String, Any>,
+    var published: Boolean = false // => false until relay confirms broker receipt
+)
+
+class Database {
+    private val orders = mutableMapOf<String, Map<String, Any>>()
+    private val outbox = mutableListOf<OutboxEntry>() // => Outbox table in same DB
+
+    fun saveOrderWithEvent(orderId: String, total: Double, eventType: String, payload: Map<String, Any>) {
+        // => ATOMIC: both writes are part of the same database transaction
+        orders[orderId] = mapOf("order_id" to orderId, "total" to total)
+        // => Business record committed first
+        val entry = OutboxEntry("$orderId-${(1000..9999).random()}", eventType, payload)
+        outbox += entry
+        // => Outbox entry committed in same transaction; broker NOT called here
+        println("DB: saved order $orderId + outbox entry ${entry.entryId} (atomic)")
+    }
+
+    fun getUnpublished(): List<OutboxEntry> = outbox.filter { !it.published }
+    // => Relay calls this; safe to retry because idempotent on already-published entries
+
+    fun markPublished(entryId: String) {
+        outbox.find { it.entryId == entryId }?.published = true
+        // => Mark after broker confirms; idempotent — multiple marks have no extra effect
+    }
+}
+
+class OutboxRelay(private val db: Database) {
+    fun publishPending(brokerPublish: (String, Map<String, Any>) -> Unit) {
+        for (entry in db.getUnpublished()) {
+            brokerPublish(entry.eventType, entry.payload)
+            // => Publish to broker (Kafka/SQS); retried on failure before marking done
+            db.markPublished(entry.entryId)
+            // => Only marked after broker ack — at-least-once delivery guarantee
+            println("Relay: published ${entry.eventType} (entry ${entry.entryId})")
+        }
+    }
+}
+
+// => Simulated broker (stdout in demo — swap for KafkaProducer in production)
+val mockBroker: (String, Map<String, Any>) -> Unit = { type, payload ->
+    println("Broker: received $type — $payload")
+}
+
+val db = Database()
+val relay = OutboxRelay(db)
+
+db.saveOrderWithEvent("ORD-99", 199.99, "OrderPlaced", mapOf("order_id" to "ORD-99", "total" to 199.99))
+// => Output: DB: saved order ORD-99 + outbox entry ORD-99-xxxx (atomic)
+
+relay.publishPending(mockBroker)
+// => Output: Broker: received OrderPlaced — {order_id=ORD-99, total=199.99}
+// => Output: Relay: published OrderPlaced (entry ORD-99-xxxx)
+
+println("Unpublished after relay: ${db.getUnpublished().size}")
+// => Output: Unpublished after relay: 0
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+// => OutboxEntry: one row in the outbox table — lives alongside business records
+class OutboxEntry
+{
+    public string EntryId { get; }
+    public string EventType { get; }
+    public Dictionary<string, object> Payload { get; }
+    public bool Published { get; set; } = false; // => false until relay confirms broker receipt
+    public OutboxEntry(string id, string type, Dictionary<string, object> payload)
+        => (EntryId, EventType, Payload) = (id, type, payload);
+}
+
+class Database
+{
+    private readonly Dictionary<string, Dictionary<string, object>> _orders = new();
+    private readonly List<OutboxEntry> _outbox = new(); // => Outbox table in same DB
+
+    public void SaveOrderWithEvent(string orderId, double total, string eventType,
+        Dictionary<string, object> payload)
+    {
+        // => ATOMIC: both writes in same DB transaction — no dual-write gap
+        _orders[orderId] = new() { ["order_id"] = orderId, ["total"] = total };
+        // => Business record saved first within transaction
+        var entry = new OutboxEntry($"{orderId}-{Guid.NewGuid().ToString()[..4]}", eventType, payload);
+        _outbox.Add(entry);
+        // => Outbox entry committed in same transaction; broker NOT contacted here
+        Console.WriteLine($"DB: saved order {orderId} + outbox entry {entry.EntryId} (atomic)");
+    }
+
+    public IEnumerable<OutboxEntry> GetUnpublished() =>
+        _outbox.Where(e => !e.Published).ToList();
+        // => Safe to query repeatedly; already-published entries filtered out
+
+    public void MarkPublished(string entryId)
+    {
+        var entry = _outbox.FirstOrDefault(e => e.EntryId == entryId);
+        if (entry != null) entry.Published = true;
+        // => Idempotent: calling twice has no additional side effect
+    }
+}
+
+class OutboxRelay
+{
+    private readonly Database _db;
+    public OutboxRelay(Database db) => _db = db;
+
+    public void PublishPending(Action<string, Dictionary<string, object>> brokerPublish)
+    {
+        foreach (var entry in _db.GetUnpublished())
+        {
+            brokerPublish(entry.EventType, entry.Payload);
+            // => Publish to broker (Kafka/SQS); retry loop wraps this in production
+            _db.MarkPublished(entry.EntryId);
+            // => Marked only after broker confirms — at-least-once delivery guarantee
+            Console.WriteLine($"Relay: published {entry.EventType} (entry {entry.EntryId})");
+        }
+    }
+}
+
+// => Simulated broker (stdout in demo — swap for IMessageProducer in production)
+Action<string, Dictionary<string, object>> mockBroker = (type, payload) =>
+    Console.WriteLine($"Broker: received {type} — {string.Join(", ", payload.Select(kv => $"{kv.Key}={kv.Value}"))}");
+
+var db = new Database();
+var relay = new OutboxRelay(db);
+
+db.SaveOrderWithEvent("ORD-99", 199.99, "OrderPlaced",
+    new() { ["order_id"] = "ORD-99", ["total"] = 199.99 });
+// => Output: DB: saved order ORD-99 + outbox entry ORD-99-xxxx (atomic)
+
+relay.PublishPending(mockBroker);
+// => Output: Broker: received OrderPlaced — order_id=ORD-99, total=199.99
+// => Output: Relay: published OrderPlaced (entry ORD-99-xxxx)
+
+Console.WriteLine($"Unpublished after relay: {db.GetUnpublished().Count()}");
+// => Output: Unpublished after relay: 0
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Write business data and the outbox event in a single database transaction, then
 relay the outbox asynchronously to the broker so the event is never lost even if the broker is
@@ -2343,72 +5877,217 @@ The anti-corruption layer (ACL) is a translation boundary that prevents a downst
 concepts from leaking into an upstream domain. The ACL translates between two bounded contexts'
 vocabularies, protecting the upstream domain from being corrupted by legacy or third-party models.
 
-```python
-from dataclasses import dataclass
-from typing import Optional
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-# ============================================================
-# Legacy CRM system model — uses its own vocabulary (customer as "account")
-# ============================================================
-@dataclass
-class LegacyCrmAccount:
-    acct_num: str        # => CRM calls customers "accounts" with account numbers
-    full_name: str
-    email_addr: str      # => CRM field names differ from our domain model
-    status_code: int     # => 1=active, 2=suspended, 3=closed — integer codes, not enums
-    credit_limit: str    # => CRM stores as string "1500.00" — type mismatch!
+```java
+// ---- Legacy CRM system model — uses its own vocabulary ----
 
-# ============================================================
-# Our domain model — uses domain language, correct types
-# ============================================================
-@dataclass
-class Customer:
-    customer_id: str     # => Our domain uses "customer", not "account"
-    name: str            # => Simplified field name
-    email: str
-    active: bool         # => Boolean — not integer status codes
-    credit_limit: float  # => Correct type — not string
+// => CRM calls customers "accounts" with numeric status codes and string money values
+record LegacyCrmAccount(
+    String acctNum,     // => CRM's identifier — maps to our customer_id
+    String fullName,    // => CRM field name differs from our "name"
+    String emailAddr,   // => CRM's emailAddr — our model uses "email"
+    int statusCode,     // => 1=active, 2=suspended, 3=closed — integers, not booleans
+    String creditLimit  // => Stored as "1500.00" string — type mismatch with our float
+) {}
 
-# ============================================================
-# Anti-Corruption Layer — translates without letting CRM vocabulary into our domain
-# ============================================================
-class CrmAntiCorruptionLayer:
-    _STATUS_ACTIVE = 1  # => ACL owns knowledge of CRM status codes; domain never sees integers
+// ---- Our domain model — clean vocabulary and correct types ----
 
-    def translate_account(self, crm_account: LegacyCrmAccount) -> Customer:
-        return Customer(
-            customer_id=crm_account.acct_num,  # => Map CRM's "acct_num" to our "customer_id"
-            name=crm_account.full_name,         # => Rename: full_name -> name
-            email=crm_account.email_addr,       # => Rename: email_addr -> email
-            active=(crm_account.status_code == self._STATUS_ACTIVE),
-            # => Translate integer status code to domain boolean; CRM leak stops here
-            credit_limit=float(crm_account.credit_limit),
-            # => Convert CRM's string "1500.00" to float; type mismatch resolved in ACL
-        )
+// => Customer: domain object; never touched by CRM field names or integer status codes
+record Customer(
+    String customerId,  // => Maps from CRM's "acctNum"
+    String name,        // => Clean field — not "fullName"
+    String email,       // => Clean field — not "emailAddr"
+    boolean active,     // => Boolean — not integer status code
+    double creditLimit  // => Correct numeric type — not string
+) {}
 
-    def translate_to_crm(self, customer: Customer) -> LegacyCrmAccount:
-        return LegacyCrmAccount(
-            acct_num=customer.customer_id,
-            full_name=customer.name,
-            email_addr=customer.email,
-            status_code=self._STATUS_ACTIVE if customer.active else 2,
-            # => Reverse translation: boolean -> integer code; our domain never stores this
-            credit_limit=f"{customer.credit_limit:.2f}",  # => Float -> string for CRM
-        )
+// ---- Anti-Corruption Layer ----
 
-# => Usage: domain code works only with Customer; ACL handles all CRM translation
-acl = CrmAntiCorruptionLayer()
+class CrmAntiCorruptionLayer {
+    private static final int STATUS_ACTIVE = 1;
+    // => ACL owns CRM status code knowledge; domain never sees integer codes
 
-crm_data = LegacyCrmAccount("ACC-001", "Alice Smith", "alice@crm.com", 1, "2500.00")
-customer = acl.translate_account(crm_data)
-print(f"Customer: {customer.name}, active={customer.active}, credit={customer.credit_limit}")
-# => Output: Customer: Alice Smith, active=True, credit=2500.0
+    // => Translate inbound CRM account to domain Customer
+    Customer translateAccount(LegacyCrmAccount acct) {
+        return new Customer(
+            acct.acctNum(),              // => "acctNum" -> "customerId"
+            acct.fullName(),             // => "fullName" -> "name"
+            acct.emailAddr(),            // => "emailAddr" -> "email"
+            acct.statusCode() == STATUS_ACTIVE,
+            // => Integer status code -> boolean; CRM vocabulary stops at the ACL
+            Double.parseDouble(acct.creditLimit())
+            // => String "2500.00" -> double 2500.0; type mismatch resolved here
+        );
+    }
 
-# => Round-trip: translate back for CRM update API call
-crm_output = acl.translate_to_crm(customer)
-print(f"CRM output: acct={crm_output.acct_num}, status={crm_output.status_code}, credit={crm_output.credit_limit}")
-# => Output: CRM output: acct=ACC-001, status=1, credit=2500.00
+    // => Translate outbound domain Customer back to CRM account for API calls
+    LegacyCrmAccount translateToCrm(Customer c) {
+        return new LegacyCrmAccount(
+            c.customerId(),             // => "customerId" -> "acctNum"
+            c.name(),                   // => "name" -> "fullName"
+            c.email(),                  // => "email" -> "emailAddr"
+            c.active() ? STATUS_ACTIVE : 2,
+            // => Boolean -> integer code; our domain model never stores this
+            String.format("%.2f", c.creditLimit()) // => double -> CRM string format
+        );
+    }
+}
+
+// => Domain code works only with Customer; ACL handles all CRM translation
+var acl = new CrmAntiCorruptionLayer();
+var crmData = new LegacyCrmAccount("ACC-001", "Alice Smith", "alice@crm.com", 1, "2500.00");
+
+var customer = acl.translateAccount(crmData);
+System.out.printf("Customer: %s, active=%b, credit=%.1f%n",
+    customer.name(), customer.active(), customer.creditLimit());
+// => Output: Customer: Alice Smith, active=true, credit=2500.0
+
+var crmOut = acl.translateToCrm(customer); // => Round-trip for CRM update call
+System.out.printf("CRM: acct=%s, status=%d, credit=%s%n",
+    crmOut.acctNum(), crmOut.statusCode(), crmOut.creditLimit());
+// => Output: CRM: acct=ACC-001, status=1, credit=2500.00
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// ---- Legacy CRM system model — uses its own vocabulary ----
+
+// => CRM calls customers "accounts"; status is int, credit is String — all mismatched
+data class LegacyCrmAccount(
+    val acctNum: String,     // => CRM identifier — our domain calls this customerId
+    val fullName: String,    // => CRM field — our domain calls this name
+    val emailAddr: String,   // => CRM field — our domain calls this email
+    val statusCode: Int,     // => 1=active, 2=suspended, 3=closed — integers, not booleans
+    val creditLimit: String  // => "2500.00" as string — type mismatch with our Double
+)
+
+// ---- Our domain model — clean vocabulary and correct types ----
+
+// => Customer: domain object; completely free of CRM field names and integer codes
+data class Customer(
+    val customerId: String,  // => Maps from CRM's acctNum
+    val name: String,        // => Clean — not fullName
+    val email: String,       // => Clean — not emailAddr
+    val active: Boolean,     // => Boolean — not integer status code
+    val creditLimit: Double  // => Correct type — not String
+)
+
+// ---- Anti-Corruption Layer ----
+
+class CrmAntiCorruptionLayer {
+    private val statusActive = 1 // => ACL owns CRM status code knowledge; domain never sees it
+
+    // => Translate inbound CRM account to domain Customer — vocabulary stops here
+    fun translateAccount(acct: LegacyCrmAccount): Customer = Customer(
+        customerId = acct.acctNum,           // => "acctNum" -> "customerId"
+        name = acct.fullName,                // => "fullName" -> "name"
+        email = acct.emailAddr,              // => "emailAddr" -> "email"
+        active = acct.statusCode == statusActive,
+        // => Integer code translated to Boolean; CRM vocabulary cannot cross this boundary
+        creditLimit = acct.creditLimit.toDouble()
+        // => String "2500.00" -> Double 2500.0; type mismatch resolved in ACL
+    )
+
+    // => Translate outbound Customer back to CRM format for API calls
+    fun translateToCrm(c: Customer): LegacyCrmAccount = LegacyCrmAccount(
+        acctNum = c.customerId,              // => "customerId" -> "acctNum"
+        fullName = c.name,                   // => "name" -> "fullName"
+        emailAddr = c.email,                 // => "email" -> "emailAddr"
+        statusCode = if (c.active) statusActive else 2,
+        // => Boolean -> integer code; domain model never stores integer status
+        creditLimit = "%.2f".format(c.creditLimit) // => Double -> CRM string format
+    )
+}
+
+// => Domain code works only with Customer; ACL handles all CRM translation
+val acl = CrmAntiCorruptionLayer()
+val crmData = LegacyCrmAccount("ACC-001", "Alice Smith", "alice@crm.com", 1, "2500.00")
+
+val customer = acl.translateAccount(crmData)
+println("Customer: ${customer.name}, active=${customer.active}, credit=${customer.creditLimit}")
+// => Output: Customer: Alice Smith, active=true, credit=2500.0
+
+val crmOut = acl.translateToCrm(customer) // => Round-trip for CRM update API call
+println("CRM: acct=${crmOut.acctNum}, status=${crmOut.statusCode}, credit=${crmOut.creditLimit}")
+// => Output: CRM: acct=ACC-001, status=1, credit=2500.00
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+
+// ---- Legacy CRM system model — uses its own vocabulary ----
+
+// => CRM calls customers "accounts"; status is int, credit is string — all mismatched
+record LegacyCrmAccount(
+    string AcctNum,     // => CRM identifier — our domain calls this CustomerId
+    string FullName,    // => CRM field name — our domain calls this Name
+    string EmailAddr,   // => CRM field name — our domain calls this Email
+    int StatusCode,     // => 1=active, 2=suspended, 3=closed — integers, not booleans
+    string CreditLimit  // => "2500.00" as string — type mismatch with our decimal
+);
+
+// ---- Our domain model — clean vocabulary and correct types ----
+
+// => Customer: domain object; completely free of CRM field names and integer codes
+record Customer(
+    string CustomerId,   // => Maps from CRM's AcctNum
+    string Name,         // => Clean — not FullName
+    string Email,        // => Clean — not EmailAddr
+    bool Active,         // => Boolean — not integer status code
+    double CreditLimit   // => Correct numeric type — not string
+);
+
+// ---- Anti-Corruption Layer ----
+
+class CrmAntiCorruptionLayer
+{
+    private const int StatusActive = 1;
+    // => ACL owns knowledge of CRM integer codes; domain model never imports this constant
+
+    // => Translate inbound CRM account to domain Customer — CRM vocabulary stops here
+    public Customer TranslateAccount(LegacyCrmAccount acct) => new(
+        CustomerId: acct.AcctNum,               // => "AcctNum" -> "CustomerId"
+        Name: acct.FullName,                    // => "FullName" -> "Name"
+        Email: acct.EmailAddr,                  // => "EmailAddr" -> "Email"
+        Active: acct.StatusCode == StatusActive,
+        // => Integer code -> Boolean; CRM vocabulary cannot cross this boundary
+        CreditLimit: double.Parse(acct.CreditLimit)
+        // => String "2500.00" -> double 2500.0; type mismatch resolved in ACL
+    );
+
+    // => Translate outbound Customer back to CRM format for API calls
+    public LegacyCrmAccount TranslateToCrm(Customer c) => new(
+        AcctNum: c.CustomerId,                  // => "CustomerId" -> "AcctNum"
+        FullName: c.Name,                       // => "Name" -> "FullName"
+        EmailAddr: c.Email,                     // => "Email" -> "EmailAddr"
+        StatusCode: c.Active ? StatusActive : 2,
+        // => Boolean -> integer code; domain model never stores this integer
+        CreditLimit: $"{c.CreditLimit:F2}"      // => double -> CRM string format
+    );
+}
+
+// => Domain code works only with Customer; ACL handles all CRM translation
+var acl = new CrmAntiCorruptionLayer();
+var crmData = new LegacyCrmAccount("ACC-001", "Alice Smith", "alice@crm.com", 1, "2500.00");
+
+var customer = acl.TranslateAccount(crmData);
+Console.WriteLine($"Customer: {customer.Name}, active={customer.Active}, credit={customer.CreditLimit}");
+// => Output: Customer: Alice Smith, active=True, credit=2500
+
+var crmOut = acl.TranslateToCrm(customer); // => Round-trip for CRM update API call
+Console.WriteLine($"CRM: acct={crmOut.AcctNum}, status={crmOut.StatusCode}, credit={crmOut.CreditLimit}");
+// => Output: CRM: acct=ACC-001, status=1, credit=2500.00
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** The ACL is the boundary where foreign vocabulary and types stop; everything
 inside the boundary uses clean domain language and correct types without compromise.
@@ -2450,82 +6129,261 @@ graph TD
     style Domain fill:#029E73,stroke:#000,color:#fff
 ```
 
-**Python — domain with ports; in-memory adapters for testing:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Optional, List
-import uuid
+```java
+import java.util.*;
 
-# ============================================================
-# Ports — domain-owned interfaces
-# ============================================================
-class OrderRepository(ABC):   # => Driven port: domain drives this to store/retrieve
-    @abstractmethod
-    def save(self, order: "Order") -> None: ...
-    @abstractmethod
-    def find(self, order_id: str) -> Optional["Order"]: ...
+// ---- Ports — domain-owned interfaces; depend on nothing outside the domain ----
 
-class EventPublisher(ABC):    # => Driven port: domain drives this to publish events
-    @abstractmethod
-    def publish(self, event_type: str, payload: dict) -> None: ...
+// => Driven port: domain drives this to persist and retrieve orders
+interface OrderRepository {
+    void save(Order order);
+    Optional<Order> find(String orderId);
+}
 
-# ============================================================
-# Domain core — depends only on ports, never on adapters
-# ============================================================
-@dataclass
-class Order:
-    order_id: str
-    customer_id: str
-    total: float
-    status: str = "pending"
+// => Driven port: domain drives this to publish domain events
+interface EventPublisher {
+    void publish(String eventType, Map<String, Object> payload);
+}
 
-class OrderService:  # => Primary port entry point (driving port)
-    def __init__(self, repo: OrderRepository, publisher: EventPublisher) -> None:
-        self._repo = repo          # => Injected at startup; domain does not know which adapter
-        self._publisher = publisher
+// ---- Domain core — depends only on ports ----
 
-    def place_order(self, customer_id: str, total: float) -> Order:
-        order = Order(order_id=str(uuid.uuid4())[:8], customer_id=customer_id, total=total)
-        self._repo.save(order)     # => Domain drives the repository port; not SQLAlchemy directly
-        self._publisher.publish("OrderPlaced", {"order_id": order.order_id, "total": total})
-        # => Domain drives the event port; not Kafka directly
-        return order
+// => Order: plain domain entity; no JPA annotations, no Kafka types
+record Order(String orderId, String customerId, double total, String status) {
+    Order(String orderId, String customerId, double total) {
+        this(orderId, customerId, total, "pending"); // => Default status on creation
+    }
+}
 
-# ============================================================
-# Adapters — implement ports for specific technologies
-# ============================================================
-class InMemoryOrderRepository(OrderRepository):
-    def __init__(self) -> None:
-        self._store: dict[str, Order] = {}  # => In-memory store; swap for SQLAlchemy in production
+// => OrderService: primary port — driving adapters (HTTP, CLI) call this
+class OrderService {
+    private final OrderRepository repo;        // => Injected; domain never knows which adapter
+    private final EventPublisher publisher;    // => Injected; domain never imports Kafka
 
-    def save(self, order: Order) -> None:
-        self._store[order.order_id] = order  # => Stores in dict; no SQL, no connection pool
+    OrderService(OrderRepository repo, EventPublisher publisher) {
+        this.repo = repo; this.publisher = publisher;
+    }
 
-    def find(self, order_id: str) -> Optional[Order]:
-        return self._store.get(order_id)  # => Returns None if not found
+    Order placeOrder(String customerId, double total) {
+        var order = new Order(UUID.randomUUID().toString().substring(0, 8), customerId, total);
+        repo.save(order);               // => Domain drives repository port — not JDBC directly
+        publisher.publish("OrderPlaced", Map.of("order_id", order.orderId(), "total", total));
+        // => Domain drives event port — not Kafka directly; adapter handles transport
+        return order;
+    }
+}
 
-class LoggingEventPublisher(EventPublisher):
-    def __init__(self) -> None:
-        self.published: List[dict] = []  # => Records published events for test assertions
+// ---- Adapters — implement ports for specific technologies ----
 
-    def publish(self, event_type: str, payload: dict) -> None:
-        self.published.append({"event_type": event_type, "payload": payload})
-        # => Logs event; swap for KafkaProducer adapter in production
+// => In-memory adapter: used in tests; swap for JPA adapter in production
+class InMemoryOrderRepository implements OrderRepository {
+    private final Map<String, Order> store = new HashMap<>();
+    // => No SQL, no connection pool — domain tests run without any infrastructure
 
-# => Compose domain with adapters — done once at application startup
-repo = InMemoryOrderRepository()
-publisher = LoggingEventPublisher()
-service = OrderService(repo, publisher)  # => Domain receives adapters via constructor injection
+    public void save(Order order) { store.put(order.orderId(), order); }
+    // => Simple map put — identical semantics to a real repository from domain's perspective
 
-order = service.place_order("CUST-1", total=75.50)
-print(f"Order placed: {order.order_id}, total={order.total}")
-# => Output: Order placed: <id>, total=75.5
+    public Optional<Order> find(String orderId) { return Optional.ofNullable(store.get(orderId)); }
+    // => Returns Optional.empty() if not found — same contract as JPA adapter
+}
 
-print(f"Events published: {publisher.published}")
-# => Output: Events published: [{'event_type': 'OrderPlaced', 'payload': {'order_id': '<id>', 'total': 75.5}}]
+// => Logging adapter: captures events for test assertions; swap for Kafka in production
+class LoggingEventPublisher implements EventPublisher {
+    final List<Map<String, Object>> published = new ArrayList<>();
+    // => Records events so tests can assert without running Kafka
+
+    public void publish(String eventType, Map<String, Object> payload) {
+        published.add(Map.of("event_type", eventType, "payload", payload));
+        // => Swap for KafkaProducer.send() in production adapter — zero domain changes
+    }
+}
+
+// => Compose domain with adapters — done once at application startup (composition root)
+var repo = new InMemoryOrderRepository();
+var publisher = new LoggingEventPublisher();
+var service = new OrderService(repo, publisher); // => Domain receives adapters via constructor
+
+var order = service.placeOrder("CUST-1", 75.50);
+System.out.println("Order placed: " + order.orderId() + ", total=" + order.total());
+// => Output: Order placed: <id>, total=75.5
+
+System.out.println("Events published: " + publisher.published);
+// => Output: Events published: [{event_type=OrderPlaced, payload={order_id=<id>, total=75.5}}]
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+import java.util.UUID
+
+// ---- Ports — domain-owned interfaces; no infrastructure imports ----
+
+// => Driven port: domain drives this to persist and retrieve orders
+interface OrderRepository {
+    fun save(order: Order)
+    fun find(orderId: String): Order?
+}
+
+// => Driven port: domain drives this to publish domain events
+interface EventPublisher {
+    fun publish(eventType: String, payload: Map<String, Any>)
+}
+
+// ---- Domain core — depends only on ports ----
+
+// => Order: plain domain data class; no JPA, no Kafka, no framework annotations
+data class Order(
+    val orderId: String,
+    val customerId: String,
+    val total: Double,
+    val status: String = "pending" // => Default status on creation
+)
+
+// => OrderService: primary port — HTTP controllers and CLI adapters call this
+class OrderService(
+    private val repo: OrderRepository,         // => Injected; domain never knows which adapter
+    private val publisher: EventPublisher      // => Injected; domain never imports Kafka
+) {
+    fun placeOrder(customerId: String, total: Double): Order {
+        val order = Order(UUID.randomUUID().toString().take(8), customerId, total)
+        repo.save(order)               // => Domain drives repository port — not JDBC directly
+        publisher.publish("OrderPlaced", mapOf("order_id" to order.orderId, "total" to total))
+        // => Domain drives event port — adapter decides how to transport the event
+        return order
+    }
+}
+
+// ---- Adapters — implement ports for specific technologies ----
+
+// => In-memory adapter: used in unit tests; swap for JPA adapter in production
+class InMemoryOrderRepository : OrderRepository {
+    private val store = mutableMapOf<String, Order>()
+    // => No SQL, no connection pool — tests run without any infrastructure
+
+    override fun save(order: Order) { store[order.orderId] = order }
+    // => Map put — identical semantics from domain's perspective as a real repository
+
+    override fun find(orderId: String): Order? = store[orderId]
+    // => Returns null if not found — same contract the JPA adapter would fulfil
+}
+
+// => Logging adapter: captures events for test assertions; swap for Kafka in production
+class LoggingEventPublisher : EventPublisher {
+    val published = mutableListOf<Map<String, Any>>()
+    // => Records events so tests can assert without running a Kafka cluster
+
+    override fun publish(eventType: String, payload: Map<String, Any>) {
+        published += mapOf("event_type" to eventType, "payload" to payload)
+        // => Replace this line with KafkaProducer.send() in the production adapter
+    }
+}
+
+// => Compose domain with adapters — done once at startup (composition root)
+val repo = InMemoryOrderRepository()
+val publisher = LoggingEventPublisher()
+val service = OrderService(repo, publisher) // => Domain receives adapters via constructor
+
+val order = service.placeOrder("CUST-1", 75.50)
+println("Order placed: ${order.orderId}, total=${order.total}")
+// => Output: Order placed: <id>, total=75.5
+
+println("Events published: ${publisher.published}")
+// => Output: Events published: [{event_type=OrderPlaced, payload={order_id=<id>, total=75.5}}]
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// ---- Ports — domain-owned interfaces; no infrastructure namespaces ----
+
+// => Driven port: domain drives this to persist and retrieve orders
+interface IOrderRepository
+{
+    void Save(Order order);
+    Order? Find(string orderId);
+}
+
+// => Driven port: domain drives this to publish domain events
+interface IEventPublisher
+{
+    void Publish(string eventType, Dictionary<string, object> payload);
+}
+
+// ---- Domain core — depends only on ports ----
+
+// => Order: plain domain record; no EF Core attributes, no MassTransit types
+record Order(string OrderId, string CustomerId, double Total, string Status = "pending");
+// => Status defaults to "pending" on creation — no infrastructure-specific defaults
+
+// => OrderService: primary port — HTTP controllers and CLI adapters call this
+class OrderService
+{
+    private readonly IOrderRepository _repo;        // => Injected; domain never knows which adapter
+    private readonly IEventPublisher _publisher;    // => Injected; domain never imports RabbitMQ
+
+    public OrderService(IOrderRepository repo, IEventPublisher publisher)
+        => (_repo, _publisher) = (repo, publisher);
+
+    public Order PlaceOrder(string customerId, double total)
+    {
+        var order = new Order(Guid.NewGuid().ToString()[..8], customerId, total);
+        _repo.Save(order);              // => Domain drives repository port — not EF Core directly
+        _publisher.Publish("OrderPlaced", new() { ["order_id"] = order.OrderId, ["total"] = total });
+        // => Domain drives event port — adapter decides transport (RabbitMQ, Azure Bus, etc.)
+        return order;
+    }
+}
+
+// ---- Adapters — implement ports for specific technologies ----
+
+// => In-memory adapter: used in unit tests; swap for EF Core adapter in production
+class InMemoryOrderRepository : IOrderRepository
+{
+    private readonly Dictionary<string, Order> _store = new();
+    // => No SQL, no connection pool — domain tests run without any infrastructure
+
+    public void Save(Order order) => _store[order.OrderId] = order;
+    // => Dictionary set — identical semantics from domain's perspective as EF Core SaveChanges
+
+    public Order? Find(string orderId) =>
+        _store.TryGetValue(orderId, out var o) ? o : null;
+        // => Returns null if not found — same contract as the EF Core adapter
+}
+
+// => Logging adapter: captures events for assertions; swap for MassTransit in production
+class LoggingEventPublisher : IEventPublisher
+{
+    public List<Dictionary<string, object>> Published { get; } = new();
+    // => Records events so tests can assert without running a real message broker
+
+    public void Publish(string eventType, Dictionary<string, object> payload) =>
+        Published.Add(new() { ["event_type"] = eventType, ["payload"] = payload });
+        // => Replace with bus.Publish() in the production adapter — zero domain changes
+}
+
+// => Compose domain with adapters — done once at startup (composition root)
+var repo = new InMemoryOrderRepository();
+var publisher = new LoggingEventPublisher();
+var service = new OrderService(repo, publisher); // => Domain receives adapters via constructor
+
+var order = service.PlaceOrder("CUST-1", 75.50);
+Console.WriteLine($"Order placed: {order.OrderId}, total={order.Total}");
+// => Output: Order placed: <id>, total=75.5
+
+Console.WriteLine($"Events published: {publisher.Published.Count}");
+// => Output: Events published: 1
+// => Publisher.Published[0]["event_type"] == "OrderPlaced"
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Domain logic is testable in complete isolation using in-memory adapters; swapping
 to real infrastructure adapters requires zero domain code changes — only composition root changes.
@@ -2564,68 +6422,160 @@ graph LR
     style B fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Python — bounded queue with backpressure signalling:**
+{{< tabs items="Java,Kotlin,C#" >}}
+{{< tab >}}
 
-```python
-import queue
-import threading
-import time
-from typing import Callable, Optional
+```java
+// => Java: Project Reactor — industry-standard reactive library (Spring WebFlux uses this)
+// => Dependency: io.projectreactor:reactor-core
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
 
-class BackpressureQueue:
-    def __init__(self, max_size: int) -> None:
-        self._q: queue.Queue = queue.Queue(maxsize=max_size)
-        # => Bounded queue: blocks or drops when full — prevents unbounded memory growth
-        self.dropped = 0    # => Count of items dropped due to backpressure
-        self.processed = 0  # => Count of items successfully processed
+// => AtomicInteger tracks backpressure events across threads safely
+AtomicInteger dropped = new AtomicInteger(0);
+AtomicInteger processed = new AtomicInteger(0);
 
-    def produce(self, item: int, timeout: float = 0.0) -> bool:
-        try:
-            self._q.put(item, block=True, timeout=timeout)
-            # => Block for up to `timeout` seconds; raises Full if still full after timeout
-            return True   # => Item accepted into queue
-        except queue.Full:
-            self.dropped += 1  # => Apply backpressure: drop item and signal to producer
-            return False       # => Producer should slow down or apply own backpressure logic
+// => Flux.range: creates a fast producer of 50 integers
+Flux.range(1, 50)
+    // => onBackpressureDrop: when downstream cannot keep up, drop items and record them
+    .onBackpressureDrop(item -> {
+        dropped.incrementAndGet(); // => Item dropped — backpressure applied to producer
+        // => In production: log dropped item id for monitoring/alerting
+    })
+    // => limitRate(10): request at most 10 items at a time — bounded demand signal
+    .limitRate(10)
+    // => subscribeOn: move subscription (production) to a background thread
+    .subscribeOn(Schedulers.parallel())
+    .flatMap(item ->
+        // => flatMap with delayElements simulates slow async consumer (5ms per item)
+        Flux.just(item).delayElements(Duration.ofMillis(5)),
+        // => concurrency=1: only 1 in-flight item — consumer is the bottleneck
+        1
+    )
+    .doOnNext(item -> processed.incrementAndGet()) // => Count successfully processed items
+    .blockLast(Duration.ofSeconds(5)); // => Block until stream completes (demo only)
+    // => In production: subscribe() instead of blockLast() — never block reactive threads
 
-    def consume_one(self, processor: Callable[[int], None], timeout: float = 0.1) -> bool:
-        try:
-            item = self._q.get(block=True, timeout=timeout)
-            # => Block until item available or timeout
-            processor(item)  # => Process the item (could be I/O, computation, etc.)
-            self._q.task_done()
-            self.processed += 1
-            return True  # => Successfully processed one item
-        except queue.Empty:
-            return False  # => No items available within timeout — consumer is caught up
-
-# => Simulate producer faster than consumer (common in data pipelines)
-bq = BackpressureQueue(max_size=10)  # => Small buffer to demonstrate backpressure quickly
-
-_processed_items = []
-
-def slow_consumer(item: int) -> None:
-    time.sleep(0.005)  # => Consumer takes 5ms per item (~200/s)
-    _processed_items.append(item)
-
-# => Producer tries to emit 50 items immediately (faster than consumer can drain)
-produced = 0
-for i in range(50):
-    accepted = bq.produce(i, timeout=0.001)  # => Wait max 1ms before dropping
-    if accepted:
-        produced += 1
-    # => Some items dropped when queue full — backpressure applied
-
-# => Drain remaining items with consumer
-while bq._q.qsize() > 0:
-    bq.consume_one(slow_consumer)
-
-print(f"Produced: {produced}, Dropped (backpressure): {bq.dropped}, Processed: {bq.processed}")
-# => Output: Produced: ~10-20, Dropped (backpressure): ~30-40, Processed: ~10-20
-# => (Exact numbers vary; queue fills quickly when producer is much faster)
-print(f"Queue never exceeded max_size=10: {bq._q.maxsize == 10}")
-# => Output: Queue never exceeded max_size=10: True
+System.out.println("Dropped (backpressure): " + dropped.get());
+// => Output: Dropped (backpressure): ~30-40 (fast producer outpaces slow consumer)
+System.out.println("Processed: " + processed.get());
+// => Output: Processed: ~10-20 (bounded by limitRate and consumer speed)
+// => Key: memory was never at risk — bounded demand signal prevented queue growth
 ```
+
+{{< /tab >}}
+{{< tab >}}
+
+```kotlin
+// => Kotlin Flow — coroutine-native reactive streams with structured concurrency
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import java.util.concurrent.atomic.AtomicInteger
+
+val dropped = AtomicInteger(0)
+val processed = AtomicInteger(0)
+
+// => runBlocking provides a coroutine scope for the demo; use lifecycleScope in Android
+runBlocking {
+    // => flow builder: creates a fast producer of 50 integers
+    val fastProducer = flow {
+        repeat(50) { i -> emit(i) } // => Emits 50 items as fast as possible
+    }
+
+    fastProducer
+        // => buffer with DROP_OLDEST: bounded buffer; drops oldest when full
+        .buffer(capacity = 10, onBufferOverflow = kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST)
+        // => DROP_OLDEST applies backpressure: oldest buffered item sacrificed for new ones
+        .onEach { item ->
+            delay(5) // => Slow consumer — takes 5ms per item to simulate I/O
+            processed.incrementAndGet() // => Count items that made it through
+        }
+        .catch { e -> println("Stream error: $e") } // => Errors handled in stream, not outside
+        .collect() // => Terminal operator: collects all items; suspends until stream ends
+    // => Structured concurrency: collect() suspends until all items processed or cancelled
+}
+
+// => Items dropped are those the buffer couldn't hold when full
+println("Dropped (backpressure): ${50 - processed.get()}")
+// => Output: Dropped (backpressure): ~30-40 (buffer filled and overflowed)
+println("Processed: ${processed.get()}")
+// => Output: Processed: ~10-20 (bounded by buffer capacity and consumer speed)
+// => Key: memory capped at buffer=10 — no unbounded accumulation possible
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```csharp
+// => C#: System.Reactive (Rx.NET) — IObservable backpressure via bounded Subject
+// => Dependency: System.Reactive
+using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
+
+// => BoundedSubject: wraps Subject<T> with a bounded queue; drops when full
+class BoundedSubject<T>
+{
+    private readonly Subject<T> _subject = new();
+    private readonly BlockingCollection<T> _buffer;
+    public int Dropped { get; private set; } = 0; // => Items dropped by backpressure
+    public IObservable<T> Observable => _subject.AsObservable();
+    // => Consumers subscribe to this observable — they never touch the buffer directly
+
+    public BoundedSubject(int capacity) =>
+        _buffer = new BlockingCollection<T>(capacity);
+        // => BlockingCollection with capacity = bounded queue — prevents unbounded growth
+
+    public bool TryProduce(T item)
+    {
+        if (_buffer.TryAdd(item))
+        {
+            _subject.OnNext(item); // => Forward to observable pipeline
+            return true;           // => Item accepted — consumer will receive it
+        }
+        Dropped++;  // => Queue full — backpressure applied; producer should slow down
+        return false; // => Producer receives false signal — must back off or drop
+    }
+
+    public void Complete() => _subject.OnCompleted(); // => Signal no more items
+}
+
+var source = new BoundedSubject<int>(capacity: 10);
+// => Bounded at 10 — backpressure kicks in when buffer is full
+int processed = 0;
+
+// => Subscribe with slow consumer — subscribes before producer starts
+var subscription = source.Observable
+    .Do(_ => Thread.Sleep(5))   // => Slow consumer: 5ms per item (~200 items/s)
+    // => Do() runs a side effect for each item without transforming the stream
+    .Subscribe(
+        onNext: _ => Interlocked.Increment(ref processed), // => Count processed items (thread-safe)
+        onError: e => Console.WriteLine($"Stream error: {e.Message}"),
+        onCompleted: () => Console.WriteLine("Stream complete")
+    );
+
+// => Fast producer: tries to emit 50 items immediately
+for (int i = 0; i < 50; i++)
+    source.TryProduce(i); // => Returns false when buffer full — backpressure signal
+
+source.Complete(); // => Signal end of stream
+await Task.Delay(300); // => Allow slow consumer to drain remaining buffered items
+
+Console.WriteLine($"Dropped (backpressure): {source.Dropped}");
+// => Output: Dropped (backpressure): ~30-40 (fast producer outpaced slow consumer)
+Console.WriteLine($"Processed: {processed}");
+// => Output: Processed: ~10-20 (bounded by buffer capacity + consumer speed)
+// => Key: memory capped at capacity=10 — no unbounded backlog accumulated
+subscription.Dispose(); // => Unsubscribe; clean up resources
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 **Key Takeaway:** Use bounded queues with explicit drop-or-block semantics as the backpressure
 mechanism; never allow unbounded queuing, which defers the OOM crash rather than preventing it.

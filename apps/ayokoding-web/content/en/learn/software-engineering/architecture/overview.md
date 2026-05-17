@@ -7,13 +7,24 @@ weight: 10000000
 
 Architecture patterns and methodologies provide structured approaches to designing complex software systems. This section covers fundamental architectural frameworks that help organize system components, manage complexity, and communicate design decisions effectively.
 
+## 🧭 Software Architecture vs. System Design
+
+This section is about **software architecture** — the structure **inside a single application** (or service). Patterns here organize classes, modules, layers, and code-level concerns: SOLID, layered architecture, hexagonal/clean architecture, DDD building blocks, GoF design patterns, FSMs.
+
+The sibling [**System Design**](/en/learn/software-engineering/system-design) section covers a different layer: **how multiple services, databases, caches, and queues interact across machines and regions** — load balancing, sharding, CAP theorem, sagas, microservices, multi-region deployments.
+
+Both disciplines complement each other. An e-commerce monolith primarily needs software architecture; a multi-region payment platform needs both. Use this section for in-app structure; cross to System Design when the scope expands beyond one service.
+
 ## 🎯 What You'll Learn
 
 This section explores proven architectural methodologies used in modern software engineering:
 
+- **By Example** (umbrella): 85 heavily annotated examples across all patterns, available in OOP (Java, Kotlin, C#) and FP (F#) variants
 - **C4 Model**: Hierarchical approach to visualizing software architecture at multiple levels of abstraction (Context, Containers, Components, Code)
 - **Domain-Driven Design (DDD)**: Strategic and tactical patterns for modeling complex business domains and organizing code around business concepts
+- **Hexagonal Architecture**: Ports-and-adapters approach that isolates the domain core from external concerns (databases, frameworks, UIs)
 - **Finite State Machine (FSM)**: Mathematical model for designing systems with discrete states and well-defined transitions
+- **DDD + Hexagonal in Practice**: Production wiring tutorials that combine DDD and Hexagonal patterns in real-world code (F# and Java tracks)
 
 ## 📐 Why Architecture Patterns Matter
 

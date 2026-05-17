@@ -7,6 +7,14 @@ weight: 10000
 
 This directory contains hands-on system design study cases and tutorials. Each case walks through the design of a real-world system, covering architectural decisions, trade-offs, and implementation considerations.
 
+## 🧭 System Design vs. Software Architecture
+
+This section is about **system design** — how **multiple services, databases, caches, and queues interact across machines and regions**. Patterns here address distributed-system concerns: load balancing, sharding, CAP theorem, replication, sagas, microservices decomposition, multi-region deployments, scale-level architectural decisions.
+
+The sibling [**Architecture**](/en/learn/software-engineering/architecture) section covers a different layer: **the structure inside a single application** — SOLID, layered architecture, hexagonal/clean architecture, DDD building blocks, GoF design patterns, FSMs.
+
+Both disciplines complement each other. An e-commerce monolith primarily needs software architecture; a multi-region payment platform needs both. Use this section when the problem spans multiple services or scales; cross to Architecture for in-app structure.
+
 ## 🎯 Scope & Focus
 
 These tutorials are **language-agnostic** and **tech-stack independent**:
