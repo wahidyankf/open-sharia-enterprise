@@ -3,2851 +3,1660 @@ title: "Beginner"
 weight: 10000003
 date: 2026-05-09T00:00:00+07:00
 draft: false
-description: "Examples 1-25: DDD tactical building blocks shown in Java, Kotlin, and C# (0-40% coverage)"
+description: "Examples 1-25: DDD tactical building blocks in the purchasing context — PurchaseRequisition, Money, SkuCode, Quantity, and related value objects in Java 21+, with Kotlin and C# for variety"
 tags: ["ddd", "domain-driven-design", "tutorial", "by-example", "oop", "java", "kotlin", "csharp", "beginner"]
 ---
 
-Examples 1–25 walk through DDD tactical patterns using an e-commerce order domain. Every code block is self-contained and runnable. Annotation density targets 1.0–2.25 comment lines per code line.
+Examples 1–25 walk through DDD tactical patterns using the `purchasing` bounded context of a Procure-to-Pay (P2P) platform. The aggregate is `PurchaseRequisition`; value objects are `Money`, `SkuCode`, `Quantity`, `RequisitionId`, `ApprovalLevel`, and `UnitOfMeasure`. Every code block is self-contained. Annotation density targets 1.0–2.25 comment lines per code line per example.
 
 ## Ubiquitous Language and Value Objects (Examples 1–5)
 
-### Example 1: Ubiquitous Language — naming domain types
+### Example 1: Ubiquitous Language — naming domain types from the purchasing glossary
 
-Every class name should come directly from the domain glossary. When the code says `Order`, `Customer`, and `Money`, developers and domain experts share a single vocabulary — no translation layer, no `OrderDTO` or `OrderData`.
+Every class name comes directly from the domain glossary that procurement specialists use. When code says `PurchaseRequisition`, `Money`, and `Quantity`, developers and business analysts share a single vocabulary with no silent translation layer.
 
 **Java**:
 
 ```java
-// Ubiquitous Language: names come from the domain glossary, not technical layers
-// => "Order" not "OrderData"; "Money" not "BigDecimal"; "Quantity" not "int"
-public record Order(
-    OrderId id,           // => Strongly-typed id, not raw String or long
-    CustomerId customerId, // => Makes relationship explicit at the type level
-    Money total,          // => Money carries currency — BigDecimal does not
-    Quantity quantity      // => Business concept, not primitive int
+// Ubiquitous Language: class names match the purchasing domain glossary exactly
+// => "PurchaseRequisition" not "RequestForm"; "Money" not "BigDecimal"; "SkuCode" not "String"
+public record PurchaseRequisition(
+    RequisitionId id,      // => Strongly-typed id, not raw String or long
+    SkuCode       skuCode, // => Domain concept; validates format at construction
+    Quantity      quantity, // => Carries unit of measure — int alone does not
+    Money         estimatedCost // => Money carries currency — double does not
 ) {}
 
-// Anti-pattern: primitive names lose all domain meaning
-// => String id1, String id2 — which is order id? which is customer id?
-// => double amount — what currency? what unit?
-public record AntiPattern(String id1, String id2, double amount, int count) {}
+// Anti-pattern: primitive names lose all purchasing domain meaning
+// => String id, String sku — same type, easy to pass in wrong order
+// => double amount — what currency? what rounding mode?
+public record AntiPattern(String id, String sku, int qty, double amount) {}
 
-// Usage: UL version reads like a business requirement
-Order o = new Order(
-    new OrderId("ord-1"),      // => Typed; wrong id kind caught at compile time
-    new CustomerId("cust-7"),  // => Cannot accidentally pass OrderId here
-    new Money("50.00", "USD"), // => Currency embedded in the value
-    new Quantity(3)            // => Quantity, not "3 of what?"
+// Ubiquitous Language version reads like a business requirement
+PurchaseRequisition req = new PurchaseRequisition(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"), // => typed id; wrong kind caught at compile time
+    new SkuCode("OFF-001234"),   // => validates regex at construction
+    new Quantity(10, UnitOfMeasure.BOX), // => unit embedded in value
+    new Money("250.00", "USD")   // => currency embedded; cannot lose it
 );
 ```
 
-**Kotlin**:
+**Key Takeaway**: Name every domain type using exact vocabulary from the purchasing glossary. When code reads like a procurement business requirement, specification drift surfaces in code review rather than in production.
 
-```kotlin
-// Kotlin: same UL principle; data class adds structural equality automatically
-// => Names are identical to Java version — UL is language-agnostic
-data class Order(                                                     // => class Order
-    val id: OrderId,           // => val = immutable after construction
-    val customerId: CustomerId, // => Separate type prevents id mix-up
-    val total: Money,          // => Money, not Double
-    val quantity: Quantity      // => Domain concept elevated to type
-)
-
-// Factory usage mirrors domain expert speech: "place an order for 3 items"
-val order = Order(                                                    // => order initialised
-    id = OrderId("ord-1"),           // => Named params improve call-site clarity
-    customerId = CustomerId("cust-7"), // => Explicit; no positional confusion
-    total = Money("50.00", "USD"),    // => Currency always present
-    quantity = Quantity(3)            // => Type enforces positive int constraint
-)
-```
-
-**C#**:
-
-```csharp
-// C# record: init-only properties enforce immutability alongside UL naming
-// => Primary constructor syntax keeps declaration concise
-public record Order(                                                  // => record Order
-    OrderId Id,            // => Typed identity; init-only after construction
-    CustomerId CustomerId, // => Pascal case follows C# convention; still UL
-    Money Total,           // => Money not decimal; carries currency semantics
-    Quantity Quantity       // => Business concept, not int
-);                                                                    // => expression
-
-// Instantiation reads like business language
-var order = new Order(                                                // => order initialised
-    Id: new OrderId("ord-1"),           // => Named args clarify intent
-    CustomerId: new CustomerId("cust-7"), // => Compile-time id safety
-    Total: new Money(50.00m, "USD"),     // => Currency locked at creation
-    Quantity: new Quantity(3)            // => Quantity validates positive value
-);                                                                    // => expression
-```
-
-**Key Takeaway**: Name every domain type using exact vocabulary from the domain glossary. When code reads like business requirements, the translation gap that causes most logic bugs disappears.
-
-**Why It Matters**: Teams using Ubiquitous Language spend less time in requirements-clarification meetings because there is no silent translation between "order" and `OrderData`. When a developer says "Order" and the domain expert hears "Order" and the code shows `Order`, misunderstandings surface during code review rather than in production. This single practice eliminates an entire category of specification drift in long-running enterprise systems.
+**Why It Matters**: Teams using Ubiquitous Language eliminate the silent translation layer between requirements and code. A buyer saying "requisition" and a developer coding `PurchaseRequisition` speak the same word. Any mismatch becomes immediately visible during review rather than silently causing wrong behavior months later in a live procurement system.
 
 ---
 
 ### Example 2: Value Object — immutable `Money`
 
-A Value Object has no identity — two `Money` instances with the same amount and currency are identical. Immutability guarantees no side-effects: you cannot accidentally mutate a shared `Money` reference.
+A Value Object has no identity. Two `Money` instances with the same amount and currency are equal. Immutability means no operation modifies an existing instance — arithmetic always returns a new `Money`.
 
 ```mermaid
 %% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05
 graph LR
     A["Money #40;Value Object#41;"]:::blue
     B["amount: BigDecimal"]:::teal
-    C["currency: String"]:::teal
+    C["currency: ISO 4217"]:::teal
     D["add#40;Money#41; → Money"]:::orange
+    E["multiply#40;int#41; → Money"]:::orange
     A --> B
     A --> C
     A --> D
+    A --> E
 
     classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-**Java**:
-
 ```java
-import java.math.BigDecimal; // => BigDecimal: exact decimal arithmetic; never use double for money
-import java.util.Objects;    // => Objects.hash: null-safe hash helper
+import java.math.BigDecimal; // => exact decimal arithmetic; never use double for money
+import java.util.Objects;    // => null-safe hash helper
 
-// Value Object: identity-free; two instances with equal fields ARE equal
-// => No id field anywhere — Money IS defined by amount + currency
-public final class Money {  // => final: cannot be subclassed; value semantics preserved
-    private final BigDecimal amount;  // => final: immutable after construction
-    private final String currency;    // => final: currency locked at creation
+// Value Object: identity-free; equal fields = interchangeable instances
+// => No id field; Money IS its amount + currency
+public final class Money { // => final: no subclass can weaken immutability guarantee
+    private final BigDecimal amount;   // => final: field cannot be reassigned
+    private final String     currency; // => ISO 4217 code, e.g. "USD", "IDR"
 
-    public Money(BigDecimal amount, String currency) {                // => Money method
-        // => Validate before storing; invalid Money cannot exist as an object
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0)  // => precondition check
-            throw new IllegalArgumentException("Amount must be non-negative"); // => fail fast
-        // => Currency must be non-blank; "USD", "EUR" etc.
-        if (currency == null || currency.isBlank())                   // => precondition check
-            throw new IllegalArgumentException("Currency required"); // => empty string rejected
-        this.amount = amount;     // => Stored; no setter exists on this class
-        this.currency = currency; // => Stored; cannot change after this line
+    public Money(String amount, String currency) { // => String input: avoids double imprecision
+        // => Validate before storing — invalid Money must never exist as an object
+        if (amount == null)                                    // => null guard
+            throw new IllegalArgumentException("amount is null");
+        BigDecimal bd = new BigDecimal(amount);               // => NumberFormatException if malformed
+        if (bd.compareTo(BigDecimal.ZERO) < 0)                // => domain invariant: amount >= 0
+            throw new IllegalArgumentException("amount must be >= 0");
+        if (currency == null || currency.length() != 3)       // => ISO 4217 = 3 uppercase letters
+            throw new IllegalArgumentException("currency must be 3-letter ISO code");
+        this.amount   = bd;       // => stored only after validation passes
+        this.currency = currency.toUpperCase(); // => normalise; "usd" == "USD"
     }
 
-    // Operations produce NEW instances — original is unchanged
-    public Money add(Money other) { // => returns Money; never void; immutable design
-        // => Mismatched currency is a domain error, not a rounding issue
-        if (!this.currency.equals(other.currency))                    // => precondition check
-            throw new IllegalArgumentException("Currency mismatch: " + currency + " vs " + other.currency); // => throws if guard fails
-            // => detect mix-up at the domain boundary; fail before arithmetic proceeds
-        return new Money(this.amount.add(other.amount), this.currency); // => returns new Money(this.amount.add(othe
-        // => new Money returned; neither this nor other is mutated
+    // Operations return NEW instances; originals are unchanged
+    public Money add(Money other) { // => never void; immutable design principle
+        if (!this.currency.equals(other.currency))            // => domain rule: cannot add USD + IDR
+            throw new IllegalArgumentException("Currency mismatch");
+        return new Money(this.amount.add(other.amount).toPlainString(), this.currency);
+        // => new Money; neither this nor other is mutated
+    }
+
+    public Money multiply(int factor) { // => scale quantity cost in line items
+        if (factor <= 0)                                      // => domain guard: factor must be positive
+            throw new IllegalArgumentException("factor must be > 0");
+        return new Money(this.amount.multiply(BigDecimal.valueOf(factor)).toPlainString(), this.currency);
+        // => new Money returned; this is unchanged
     }
 
     public BigDecimal getAmount()  { return amount; }   // => read-only accessor
     public String    getCurrency() { return currency; } // => read-only accessor
 
-    @Override public boolean equals(Object o) { // => override required for structural equality
-        // => Structural equality: same amount+currency = interchangeable
-        if (!(o instanceof Money m)) return false; // => pattern variable m; type-safe cast
-        return amount.compareTo(m.amount) == 0 && currency.equals(m.currency); // => returns amount.compareTo(m.amount) ==
-        // => compareTo not equals for BigDecimal: "10.00".equals("10") is false; compareTo == 0 is true
+    @Override public boolean equals(Object o) { // => structural equality required for VO
+        if (!(o instanceof Money m)) return false; // => pattern match; safe cast
+        return amount.compareTo(m.amount) == 0 && currency.equals(m.currency);
+        // => compareTo not equals: "10.00".equals("10") is false; compareTo is true
     }
-    @Override public int hashCode() { // => must match equals; same fields, same hash
-        return Objects.hash(amount.stripTrailingZeros(), currency);   // => returns Objects.hash(amount.stripTrail
-        // => stripTrailingZeros: "10.00" and "10" hash equally — consistent with compareTo
+    @Override public int hashCode() {
+        return Objects.hash(amount.stripTrailingZeros(), currency); // => consistent with compareTo
     }
-    @Override public String toString() { return amount + " " + currency; } // => "10.00 USD"
+    @Override public String toString() { return amount + " " + currency; } // => "250.00 USD"
 }
 
-Money price = new Money(new BigDecimal("10.00"), "USD"); // => price = 10.00 USD
-Money tax   = new Money(new BigDecimal("1.00"),  "USD"); // => tax   =  1.00 USD
-Money total = price.add(tax);   // => total = 11.00 USD (brand-new object)
-// price is still 10.00 USD — immutability guaranteed; no shared-state bug possible
+Money unitPrice = new Money("25.00", "USD");  // => unitPrice = 25.00 USD
+Money total     = unitPrice.multiply(10);     // => total     = 250.00 USD (new object)
+// unitPrice is still 25.00 USD — immutability guaranteed
+Money tax       = new Money("12.50", "USD");  // => tax = 12.50 USD
+Money grandTotal = total.add(tax);            // => grandTotal = 262.50 USD
 ```
 
-**Kotlin** — `data class` generates `equals`/`hashCode`/`toString` automatically:
+**Key Takeaway**: Value Objects are immutable and identity-free. All operations return new instances, making shared-state bugs structurally impossible.
 
-```kotlin
-import java.math.BigDecimal                                           // => namespace/package import
-
-// data class: structural equality and copy() generated; val fields = immutable
-// => No manual equals/hashCode; Kotlin compiler produces correct implementations
-data class Money(val amount: BigDecimal, val currency: String) {      // => class Money
-    init {                                                            // => expression
-        // => init block runs after primary constructor; enforces invariants
-        require(amount >= BigDecimal.ZERO) { "Amount must be non-negative: $amount" } // => precondition check
-        require(currency.isNotBlank())     { "Currency must not be blank" } // => precondition check
-        // => If require fails, IllegalArgumentException thrown automatically
-    }
-
-    fun add(other: Money): Money {                                    // => add method
-        // => Reject mixed-currency; domain rule enforced here, not in callers
-        require(currency == other.currency) { "Currency mismatch: $currency vs ${other.currency}" } // => precondition check
-        return Money(amount + other.amount, currency) // => new instance; inputs unchanged
-    }
-}
-
-val price = Money(BigDecimal("10.00"), "USD") // => Money(amount=10.00, currency=USD)
-val tax   = Money(BigDecimal("1.00"),  "USD") // => Money(amount=1.00,  currency=USD)
-val total = price.add(tax)                    // => Money(amount=11.00, currency=USD)
-// price is still Money(amount=10.00) — val fields cannot be reassigned
-```
-
-**C#** — `record` provides `with`-expressions and built-in structural equality:
-
-```csharp
-// sealed record: init-only properties, structural ==, with-expressions built in
-// => No manual Equals() or GetHashCode(); compiler generates from all properties
-public sealed record Money                                            // => record Money
-{
-    public decimal Amount   { get; init; } // => init-only: set once, then immutable
-    public string  Currency { get; init; } // => init-only: currency locked after ctor
-
-    public Money(decimal amount, string currency)                     // => Money method
-    {
-        // => Validate before assigning; invalid Money cannot be constructed
-        if (amount < 0)                        throw new ArgumentException("Negative amount"); // => throws if guard fails
-        if (string.IsNullOrWhiteSpace(currency)) throw new ArgumentException("Currency required"); // => throws if guard fails
-        Amount   = amount;   // => Assigned once; init property blocks future mutation
-        Currency = currency; // => Assigned once
-    }
-
-    public Money Add(Money other)                                     // => Add method
-    {
-        // => Currency must match; no silent conversion allowed
-        if (Currency != other.Currency) throw new InvalidOperationException("Currency mismatch"); // => throws if guard fails
-        return this with { Amount = Amount + other.Amount };          // => returns this with { Amount = Amount +
-        // => with-expression produces a new record; this is unchanged
-    }
-}
-
-var price = new Money(10.00m, "USD"); // => { Amount=10.00, Currency="USD" }
-var tax   = new Money(1.00m,  "USD"); // => { Amount=1.00,  Currency="USD" }
-var total = price.Add(tax);           // => { Amount=11.00, Currency="USD" }
-// price still { Amount=10.00 } — init-only; with-expression created a new record
-```
-
-**Key Takeaway**: A Value Object is defined by its attributes alone. Immutability means shared references are safe — no caller can corrupt a `Money` value you handed out.
-
-**Why It Matters**: Financial systems that use raw `double` or `BigDecimal` fields suffer from silent currency-mixing bugs and mutation surprises. Elevating money to a first-class Value Object moves currency-mismatch detection to construction time and type-checking, not to test or production. Every financial domain — banking, e-commerce, payroll — gains immediately from this pattern.
+**Why It Matters**: In procurement, prices appear on requisitions, purchase orders, invoices, and payment records simultaneously. If `Money` were mutable, a price change on one document could silently corrupt another. Immutability eliminates that entire class of concurrency and reference-sharing bugs — the JVM garbage collector handles disposal automatically.
 
 ---
 
-### Example 3: Value Object equality — structural, not reference
+### Example 3: Value Object — `SkuCode` with regex validation
 
-Two distinct Value Object instances with identical attributes must compare as equal. This structural equality distinguishes a Value Object from an Entity, and most OOP languages require deliberate implementation.
-
-**Java**:
+`SkuCode` wraps a plain string but enforces the procurement catalog format `^[A-Z]{3}-\d{4,8}$`. Once constructed, the code is guaranteed valid. Callers never need to re-validate.
 
 ```java
-import java.util.Objects;                                             // => namespace/package import
+import java.util.regex.Pattern; // => compile regex once; reuse for all validations
 
-// EmailAddress: single-field Value Object; equality must be structural
-// => Two EmailAddress("a@b.com") instances must be equal even as different objects
-public final class EmailAddress {                                     // => EmailAddress field
-    private final String value; // => normalised lowercase; single source of truth
+// Value Object with format invariant: guarantees well-formed SKU throughout system
+// => Wrapping String in a type also prevents passing arbitrary strings where SkuCode is expected
+public final class SkuCode {
+    // => compile once at class load; Pattern.compile is expensive
+    private static final Pattern FORMAT = Pattern.compile("^[A-Z]{3}-\\d{4,8}$");
+    private final String value; // => final: immutable after construction
 
-    public EmailAddress(String value) {                               // => EmailAddress method
-        // => Validate format; reject null and missing '@'
-        if (value == null || !value.contains("@"))                    // => precondition check
-            throw new IllegalArgumentException("Invalid email: " + value); // => throws if guard fails
-        this.value = value.toLowerCase(); // => normalise; equality is case-insensitive
+    public SkuCode(String value) {           // => smart constructor enforces invariant
+        if (value == null)                   // => null guard first
+            throw new IllegalArgumentException("SkuCode cannot be null");
+        if (!FORMAT.matcher(value).matches()) // => regex check
+            throw new IllegalArgumentException(
+                "SkuCode must match [A-Z]{3}-\\d{4,8}, got: " + value);
+        this.value = value; // => stored only after validation passes
     }
 
-    // Structural equality: compare field, not memory address
-    @Override public boolean equals(Object o) {                       // => expression
-        if (!(o instanceof EmailAddress e)) return false; // => type-safe pattern variable
-        return value.equals(e.value);  // => attribute comparison, not reference comparison
+    public String getValue() { return value; } // => read-only; no setter
+
+    @Override public boolean equals(Object o) { // => structural equality
+        return o instanceof SkuCode s && value.equals(s.value);
     }
-    @Override public int hashCode() { return Objects.hash(value); } // => hash must match equals
-    @Override public String toString() { return value; } // => "alice@example.com"
+    @Override public int    hashCode() { return value.hashCode(); }
+    @Override public String toString() { return value; } // => "OFF-001234"
 }
 
-EmailAddress a = new EmailAddress("Alice@Example.com"); // => normalised: alice@example.com
-EmailAddress b = new EmailAddress("alice@example.com"); // => normalised: alice@example.com
-boolean structural = a.equals(b);    // => true — same attribute values
-boolean reference  = (a == b);       // => false — different heap objects
-// Without overriding equals(), structural would be false — a common VO bug
-```
+// Valid usage
+SkuCode office = new SkuCode("OFF-001234"); // => office = SkuCode("OFF-001234")
+SkuCode tools  = new SkuCode("TLS-9999");  // => tools  = SkuCode("TLS-9999")
+System.out.println(office);               // => Output: OFF-001234
 
-**Kotlin**:
-
-```kotlin
-// Kotlin data class: equals() compares all val fields automatically
-// => No manual override needed; data class IS the correct choice for Value Objects
-data class EmailAddress(val value: String) {                          // => class EmailAddress
-    init {                                                            // => expression
-        // => Validate in init; invalid email cannot be constructed
-        require(value.isNotBlank() && value.contains("@")) { "Invalid email: $value" } // => precondition check
-    }
+// Invalid — throws at construction, not later
+try {
+    SkuCode bad = new SkuCode("invalid");  // => IllegalArgumentException; regex fails
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage());   // => Output: SkuCode must match [A-Z]{3}-\d{4,8}, got: invalid
 }
-
-val a = EmailAddress("alice@example.com") // => EmailAddress(value=alice@example.com)
-val b = EmailAddress("alice@example.com") // => EmailAddress(value=alice@example.com)
-val structural = a == b    // => true  — data class == delegates to field comparison
-val reference  = a === b   // => false — different object references in memory
-// == is structural; === is referential — data class makes == do the right thing
+// => bad was never created; invalid state structurally impossible
 ```
 
-**C#**:
+**Key Takeaway**: Encode format invariants in the constructor so every `SkuCode` in the system is guaranteed valid. Downstream code never needs defensive checks.
 
-```csharp
-// C# record: == operator uses structural equality automatically
-// => Compiler generates Equals() comparing all init-only properties
-public record EmailAddress(string Value)                              // => record EmailAddress
-{
-    // Primary constructor syntax; Value is init-only
-    public EmailAddress(string value) : this(value.ToLowerInvariant()) // => EmailAddress method
-    {
-        // => Normalise to lowercase before calling the generated init
-        if (!value.Contains('@')) throw new ArgumentException("Invalid email"); // => throws if guard fails
-        // => Validation after normalisation; Value property now holds lowercase
-    }
-}
-
-var a = new EmailAddress("Alice@Example.com"); // => Value = "alice@example.com"
-var b = new EmailAddress("alice@example.com"); // => Value = "alice@example.com"
-bool structural = a == b;                // => true  — record == is structural
-bool reference  = ReferenceEquals(a, b); // => false — different objects
-// C# record provides correct VO equality without a single line of boilerplate
-```
-
-**Key Takeaway**: Value Object equality must compare attributes, not memory addresses. Without overriding `equals`/`hashCode` in Java, two logically identical values behave as unequal — a common source of bugs in collections and caches.
-
-**Why It Matters**: Dictionary lookups, Set membership, and unit-test assertions all depend on correct equality semantics. When `EmailAddress("a@b.com").equals(EmailAddress("a@b.com"))` returns `false`, duplicates accumulate in sets and caches return stale values silently. These bugs are notoriously hard to trace because the values look identical when logged. Structural equality in Value Objects eliminates this entire class of problem by making equality a property of value, not object identity.
+**Why It Matters**: In a catalog with thousands of SKUs, a single malformed code silently routes to a non-existent product. Catching that at the construction boundary — not at purchase order issuance or goods receipt — compresses the distance between error and detection from days to milliseconds.
 
 ---
 
-### Example 4: Value Object validation in constructor (smart constructor)
+### Example 4: Value Object — `Quantity` with `UnitOfMeasure`
 
-Moving validation into the constructor ensures that an invalid Value Object can never be constructed. The type itself becomes proof of validity — any variable of type `PostalCode` is a guaranteed-valid postal code.
-
-**Java**:
+`Quantity` pairs a positive integer count with an immutable unit of measure. The enum `UnitOfMeasure` closes the set of valid units — no magic strings allowed.
 
 ```java
-import java.util.regex.Pattern;                                       // => namespace/package import
-
-// Smart constructor: validation is mandatory, not optional
-// => Caller cannot construct a PostalCode and then forget to validate
-public final class PostalCode {                                       // => PostalCode field
-    private static final Pattern US = Pattern.compile("^\\d{5}(-\\d{4})?$"); // => US declared
-    // => Compiled once at class load; cheap to reuse on every validation
-    private final String value; // => final: immutable after validation passes
-
-    public PostalCode(String value) {                                 // => PostalCode method
-        // => Validate before storing; invalid cannot escape this constructor
-        if (value == null || !US.matcher(value).matches())            // => precondition check
-            throw new IllegalArgumentException("Invalid US postal code: " + value); // => throws if guard fails
-        this.value = value; // => Only reachable if pattern matched
-    }
-
-    // Static factory: same validation, reads more naturally at call sites
-    public static PostalCode of(String v) { return new PostalCode(v); } // => of method
-    // => PostalCode.of("10001") vs new PostalCode("10001") — both identical behaviour
-
-    public String getValue()          { return value; } // => read-only
-    @Override public String toString() { return value; } // => "10001"
+// Closed enum: exactly these units exist in the procurement domain
+// => Adding "PALLET" requires a deliberate code change, not a stray string
+public enum UnitOfMeasure {
+    EACH,  // => individual items, e.g. pens
+    BOX,   // => packaged boxes
+    KG,    // => kilogram weight
+    LITRE, // => liquid volume
+    HOUR   // => service time, e.g. consulting hours
 }
 
-PostalCode valid = PostalCode.of("10001");   // => Succeeds; value = "10001"
-// PostalCode bad = PostalCode.of("abc");    // => throws IllegalArgumentException
-// After construction, every PostalCode variable is guaranteed valid — no null-checks downstream
+// Value Object: count + unit form an inseparable pair
+// => Java 21 record: immutable by default; equals/hashCode/toString generated
+public record Quantity(int value, UnitOfMeasure unit) {
+    // => Compact constructor: runs inside record; no boilerplate field assignments
+    public Quantity { // => compact constructor syntax
+        if (value <= 0)  // => domain invariant: quantity must be positive
+            throw new IllegalArgumentException("Quantity.value must be > 0, got: " + value);
+        if (unit == null) // => unit is required; enum ensures valid values
+            throw new IllegalArgumentException("UnitOfMeasure required");
+        // => fields assigned automatically by record after compact constructor body
+    }
+}
+
+Quantity pens    = new Quantity(500, UnitOfMeasure.EACH);  // => pens    = Quantity[value=500, unit=EACH]
+Quantity paper   = new Quantity(10,  UnitOfMeasure.BOX);   // => paper   = Quantity[value=10, unit=BOX]
+Quantity consult = new Quantity(8,   UnitOfMeasure.HOUR);  // => consult = Quantity[value=8,  unit=HOUR]
+System.out.println(pens);    // => Output: Quantity[value=500, unit=EACH]
+System.out.println(paper);   // => Output: Quantity[value=10, unit=BOX]
+
+// Invalid — throws immediately
+try {
+    new Quantity(-1, UnitOfMeasure.KG); // => value <= 0 triggers guard
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage()); // => Output: Quantity.value must be > 0, got: -1
+}
 ```
 
-**Kotlin**:
+**Key Takeaway**: `Quantity` as a record pairs count with unit, and the compact constructor enforces the positive-value invariant. The closed enum prevents unit drift from free-form strings.
 
-```kotlin
-// private constructor + companion factory: callers must use of(); cannot bypass validation
-class PostalCode private constructor(val value: String) {             // => class PostalCode
-    // => private constructor: prevents direct new PostalCode("abc")
-    init {                                                            // => expression
-        // => init runs after constructor; validates invariant
-        require(value.matches(Regex("^\\d{5}(-\\d{4})?\$"))) {        // => precondition check
-            "Invalid US postal code: $value" // => message embedded in require
+**Why It Matters**: A receiving team once misread "500" (EACH) as "500 KG" because both were raw integers in a shared spreadsheet column. Embedding the unit in the type makes that confusion structurally impossible — you cannot create a `Quantity` without committing to a `UnitOfMeasure`.
+
+---
+
+### Example 5: Value Object — `RequisitionId` as a typed identity handle
+
+`RequisitionId` wraps a UUID string in the format `req_<uuid>`. Strong typing prevents accidentally using a `PurchaseOrderId` where a `RequisitionId` is expected — the compiler catches the mistake.
+
+```java
+// Identity value object: not for the aggregate's identity per se, but as a typed reference
+// => Record provides equals/hashCode/toString; id comparison is structural
+public record RequisitionId(String value) {
+    private static final String PREFIX = "req_"; // => format prefix constant
+
+    public RequisitionId { // => compact constructor
+        if (value == null || value.isBlank()) // => null/blank guard
+            throw new IllegalArgumentException("RequisitionId cannot be blank");
+        if (!value.startsWith(PREFIX))        // => prefix format check
+            throw new IllegalArgumentException("RequisitionId must start with 'req_', got: " + value);
+        // => No UUID regex for brevity; production code would add UUID format check
+    }
+
+    @Override public String toString() { return value; } // => "req_550e8400-..."
+}
+
+// Separate type for PO ids — compiler blocks accidental swap
+public record PurchaseOrderId(String value) {
+    public PurchaseOrderId {
+        if (value == null || !value.startsWith("po_")) // => prefix check
+            throw new IllegalArgumentException("PurchaseOrderId must start with 'po_'");
+    }
+}
+
+RequisitionId rid = new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000");
+// => rid = RequisitionId[value=req_550e8400-...]
+
+PurchaseOrderId pid = new PurchaseOrderId("po_6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+// => pid = PurchaseOrderId[value=po_6ba7b810-...]
+
+// The following would be a compile error — type safety enforced
+// void approve(RequisitionId id) {}
+// approve(pid); // => COMPILE ERROR: PurchaseOrderId ≠ RequisitionId
+```
+
+**Key Takeaway**: Wrapping each id category in its own record makes id-type mix-ups a compile error instead of a runtime bug traced through logs at 2 AM.
+
+**Why It Matters**: In a P2P system every workflow step passes multiple ids (requisition, purchase order, supplier, invoice). Primitive id strings are interchangeable in a function call — a compiler cannot help. Typed id records make every incorrect pass visible immediately in the IDE, before the code ever runs.
+
+---
+
+## Smart Constructors and Validation (Examples 6–10)
+
+### Example 6: Smart constructor — preventing invalid `Money` creation
+
+A smart constructor is a factory method or constructor body that rejects invalid inputs before they can reach field assignment. The object is either fully valid or it does not exist.
+
+```java
+// Smart constructor: validation inside constructor; no separate validate() step
+// => Pattern: check → throw → assign. Never assign then check.
+public final class Money {
+    private final java.math.BigDecimal amount;
+    private final String currency;
+
+    public Money(String rawAmount, String rawCurrency) {
+        // => Step 1: null guards (fail fast on obviously wrong input)
+        if (rawAmount  == null) throw new IllegalArgumentException("amount is null");
+        if (rawCurrency == null) throw new IllegalArgumentException("currency is null");
+
+        // => Step 2: parse — NumberFormatException surfaces malformed strings
+        java.math.BigDecimal bd;
+        try {
+            bd = new java.math.BigDecimal(rawAmount); // => may throw NumberFormatException
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("amount is not a valid decimal: " + rawAmount, e);
+            // => wrap in IllegalArgumentException with context; caller gets clear message
         }
+
+        // => Step 3: domain invariants — amount >= 0, currency is 3-letter ISO code
+        if (bd.compareTo(java.math.BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("amount must be >= 0, got: " + rawAmount);
+        if (rawCurrency.length() != 3 || !rawCurrency.matches("[A-Z]{3}"))
+            throw new IllegalArgumentException("currency must be 3-letter uppercase ISO code, got: " + rawCurrency);
+
+        // => Step 4: assign ONLY after all checks pass; partial state is impossible
+        this.amount   = bd;
+        this.currency = rawCurrency;
     }
 
-    companion object {                                                // => expression
-        fun of(value: String): PostalCode = PostalCode(value)         // => of method
-        // => Factory delegates to private constructor; same validation path
-    }
-
-    override fun toString() = value // => prints as raw string, not PostalCode(value=10001)
+    public java.math.BigDecimal getAmount()  { return amount;   }
+    public String               getCurrency(){ return currency; }
+    @Override public String toString()       { return amount + " " + currency; }
 }
 
-val valid = PostalCode.of("10001")   // => Succeeds; valid.value = "10001"
-// val bad = PostalCode.of("abc")    // => throws IllegalArgumentException
-// Every PostalCode reference is structurally guaranteed valid — invariant held by type
-```
+// Valid: passes all guards
+Money m1 = new Money("250.00", "USD"); // => Money[250.00 USD]
+System.out.println(m1);               // => Output: 250.00 USD
 
-**C#**:
-
-```csharp
-using System.Text.RegularExpressions;                                 // => namespace/package import
-
-// sealed record: immutable after construction; static factory for fluent API
-public sealed record PostalCode                                       // => record PostalCode
-{
-    private static readonly Regex Us = new(@"^\d{5}(-\d{4})?$", RegexOptions.Compiled); // => Us initialised
-    // => static readonly: compiled once; RegexOptions.Compiled = faster repeat usage
-
-    public string Value { get; } // => get-only: no setter; immutable after ctor
-
-    public PostalCode(string value)                                   // => PostalCode method
-    {
-        // => Validate before assigning; invalid cannot escape constructor
-        if (!Us.IsMatch(value ?? string.Empty))                       // => precondition check
-            throw new ArgumentException($"Invalid US postal code: {value}"); // => throws if guard fails
-        Value = value; // => Only assigned when pattern matched
-    }
-
-    public static PostalCode Of(string v) => new(v);                  // => Of method
-    // => PostalCode.Of("10001") — static factory; identical validation path
-
-    public override string ToString() => Value; // => "10001"
+// Invalid: negative amount
+try {
+    new Money("-1.00", "USD");         // => guard at Step 3 fires
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage()); // => Output: amount must be >= 0, got: -1.00
 }
 
-var valid = PostalCode.Of("10001");  // => Value = "10001"
-// var bad = PostalCode.Of("abc");   // => throws ArgumentException
-// Downstream code needs no format-check — the type proves validity
+// Invalid: malformed decimal
+try {
+    new Money("twenty", "USD");        // => NumberFormatException caught at Step 2
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage()); // => Output: amount is not a valid decimal: twenty
+}
 ```
 
-**Key Takeaway**: Validate in the constructor so that constructing the object IS the validation. A successfully constructed `PostalCode` is a proof — no further null-checks or format-checks are needed.
+**Key Takeaway**: The smart constructor validates in order (null → parse → domain invariant → assign), making invalid object states structurally impossible.
 
-**Why It Matters**: When validation is optional and scattered across callers, invalid values reach deeper layers where their origin is hard to trace. Centralising validation in the constructor creates a single failure point: if construction succeeds, the value is valid everywhere. This principle — "make illegal states unrepresentable" — is one of the highest-leverage design moves in domain modelling.
+**Why It Matters**: If validation lives in a separate `validate()` method, callers can forget to call it. A constructor that validates before assignment makes valid state the only path to existence — the guarantee holds even when callers are written months later by a different team.
 
 ---
 
-### Example 5: Value Object composition — `Address` from primitives
+### Example 7: Java 21 record compact constructor for `Quantity`
 
-Complex Value Objects compose simpler validated ones. An `Address` that composes `Street`, `City`, and `PostalCode` objects inherits their validations — a valid `Address` is proof that each constituent is valid.
+Java 21 records compact constructors express invariants concisely without boilerplate field assignment — the compiler inserts assignments after the constructor body.
+
+```java
+// Java 21 record with compact constructor
+// => No "this.value = value" needed; compiler inserts it after compact body
+public record Quantity(int value, UnitOfMeasure unit) {
+    public Quantity { // => compact constructor: no parameter list; fields auto-assigned after
+        // => Invariant 1: purchasing domain requires positive quantity
+        if (value <= 0)
+            throw new IllegalArgumentException("Quantity.value must be > 0, got: " + value);
+        // => Invariant 2: unit required; closed enum prevents invalid strings
+        if (unit == null)
+            throw new IllegalArgumentException("unit is required");
+        // => After this block, compiler emits: this.value = value; this.unit = unit;
+    }
+    // => equals/hashCode/toString generated by record; no manual code needed
+}
+
+enum UnitOfMeasure { EACH, BOX, KG, LITRE, HOUR } // => closed set; no stray strings
+
+// Records have generated accessor methods: value() and unit() (not getters)
+Quantity q = new Quantity(10, UnitOfMeasure.BOX);
+System.out.println(q.value()); // => Output: 10
+System.out.println(q.unit());  // => Output: BOX
+System.out.println(q);         // => Output: Quantity[value=10, unit=BOX]
+
+// Structural equality: two records with same fields are equal
+Quantity q2 = new Quantity(10, UnitOfMeasure.BOX);
+System.out.println(q.equals(q2)); // => Output: true (same value+unit)
+System.out.println(q == q2);      // => Output: false (different object references; irrelevant for VO)
+
+// Invalid
+try {
+    new Quantity(0, UnitOfMeasure.EACH); // => compact constructor fires; value <= 0
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage()); // => Output: Quantity.value must be > 0, got: 0
+}
+```
+
+**Key Takeaway**: Records with compact constructors deliver immutability, structural equality, and validation in minimal lines — they are the canonical Java 21 Value Object implementation.
+
+**Why It Matters**: Before Java 21 records, a manually written immutable class required `final` fields, a constructor, two accessors, `equals`, `hashCode`, and `toString` — about 40 lines for a two-field value. Records collapse that to under 10 lines while being provably equivalent. Less boilerplate means fewer opportunities to introduce bugs in the plumbing.
+
+---
+
+### Example 8: `ApprovalLevel` derived from `Money` total
+
+`ApprovalLevel` is a value object derived from the requisition's estimated cost. The derivation rule lives in a factory method rather than in the caller — one source of truth.
+
+```java
+// ApprovalLevel enum: derived from PO/requisition total; one derivation rule in one place
+// => L1 <= $1000, L2 <= $10000, L3 > $10000
+public enum ApprovalLevel {
+    L1, // => team lead approval; up to $1,000
+    L2, // => department head; $1,001 – $10,000
+    L3; // => CFO / board; above $10,000
+
+    // Factory method: deriving level from Money keeps rule in the enum, not in callers
+    public static ApprovalLevel from(Money total) {
+        if (total == null) // => null guard; Money could theoretically be null in early code
+            throw new IllegalArgumentException("total is required to derive ApprovalLevel");
+        java.math.BigDecimal amount = total.getAmount(); // => extract comparable value
+        java.math.BigDecimal oneK   = new java.math.BigDecimal("1000");  // => $1,000 threshold
+        java.math.BigDecimal tenK   = new java.math.BigDecimal("10000"); // => $10,000 threshold
+
+        if (amount.compareTo(oneK) <= 0)  return L1; // => amount <= 1000 => L1
+        if (amount.compareTo(tenK) <= 0)  return L2; // => 1000 < amount <= 10000 => L2
+        return L3;                                    // => amount > 10000 => L3
+    }
+}
+
+// Usage: level derived at need; no magic number scattered across services
+Money small  = new Money("500.00",   "USD"); // => small  = 500.00 USD
+Money medium = new Money("5000.00",  "USD"); // => medium = 5000.00 USD
+Money large  = new Money("15000.00", "USD"); // => large  = 15000.00 USD
+
+System.out.println(ApprovalLevel.from(small));  // => Output: L1
+System.out.println(ApprovalLevel.from(medium)); // => Output: L2
+System.out.println(ApprovalLevel.from(large));  // => Output: L3
+// => Boundary value: exactly $1000
+Money boundary = new Money("1000.00", "USD");
+System.out.println(ApprovalLevel.from(boundary)); // => Output: L1 (amount <= 1000)
+```
+
+**Key Takeaway**: Centralise derivation logic in a factory method on the enum. Callers never need to know threshold values — they call `ApprovalLevel.from(total)` and get a typed result.
+
+**Why It Matters**: In a procurement system, approval thresholds change over time. If the rule is embedded in fifteen different service methods, a threshold change requires finding and updating all fifteen. A single factory method contains the rule in one place — one change, zero missed spots.
+
+---
+
+### Example 9: Kotlin data class as Value Object — `Money`
+
+Kotlin's `data class` generates `equals`, `hashCode`, `toString`, and `copy` automatically. Combined with `init` blocks, it achieves the same guarantees as the Java 21 record with less ceremony.
+
+```kotlin
+import java.math.BigDecimal
+
+// data class: structural equality, copy(), and toString generated by compiler
+// => val fields = immutable after construction; no var allowed for true VO
+data class Money(val amount: BigDecimal, val currency: String) {
+    init {
+        // => init block runs after primary constructor; enforces invariants
+        require(amount >= BigDecimal.ZERO) { "amount must be >= 0: $amount" }
+        // => require: Kotlin standard; throws IllegalArgumentException on failure
+        require(currency.length == 3 && currency.all { it.isUpperCase() }) {
+            "currency must be 3-letter uppercase ISO code: $currency"
+        }
+        // => If both pass, fields are already assigned (Kotlin constructor order)
+    }
+
+    fun add(other: Money): Money { // => returns new Money; this is unchanged
+        require(currency == other.currency) { "Currency mismatch: $currency vs ${other.currency}" }
+        return Money(amount + other.amount, currency) // => + operator on BigDecimal works in Kotlin
+    }
+
+    fun multiply(factor: Int): Money { // => scale for line-item cost
+        require(factor > 0) { "factor must be > 0: $factor" }
+        return Money(amount * BigDecimal.valueOf(factor.toLong()), currency)
+    }
+}
+
+val unitPrice = Money(BigDecimal("25.00"), "USD") // => Money(amount=25.00, currency=USD)
+val lineTotal = unitPrice.multiply(10)             // => Money(amount=250.00, currency=USD)
+val tax       = Money(BigDecimal("12.50"), "USD")  // => Money(amount=12.50, currency=USD)
+val grandTotal = lineTotal.add(tax)                // => Money(amount=262.50, currency=USD)
+println(grandTotal) // => Output: Money(amount=262.50, currency=USD)
+
+// copy(): change one field, keep others — useful for currency conversion scenarios
+val converted = grandTotal.copy(currency = "IDR") // => Money(amount=262.50, currency=IDR)
+// => Note: copy does NOT run init block in older Kotlin; careful with constraint evasion
+println(converted) // => Output: Money(amount=262.50, currency=IDR)
+```
+
+**Key Takeaway**: Kotlin `data class` with `init` delivers Value Object guarantees in fewer lines than Java. `copy()` is useful but bypasses `init` in some Kotlin versions — verify invariants hold after copy in critical code.
+
+**Why It Matters**: The `copy()` bypass is a real footgun: `Money(BigDecimal("-1"), "USD")` cannot be constructed directly, but `validMoney.copy(amount = BigDecimal("-1"))` can in some Kotlin versions. Understanding this nuance prevents subtle bugs when VO constraints are security-critical (e.g., negative procurement amounts triggering accounting reversals).
+
+---
+
+### Example 10: C# record as Value Object — `SkuCode`
+
+C# `record` provides `==` operator, `GetHashCode`, and `ToString` via positional or property syntax. `with`-expressions create modified copies without mutation.
+
+```csharp
+using System.Text.RegularExpressions;
+
+// C# sealed record: primary constructor, structural ==, with-expressions, ToString
+// => sealed: no subclass can relax the invariant
+public sealed record SkuCode
+{
+    // => Private setter enforces immutability; only constructor can assign
+    public string Value { get; }
+
+    private static readonly Regex Format = new(@"^[A-Z]{3}-\d{4,8}$", RegexOptions.Compiled);
+    // => Compiled regex: pattern compiled once at class load for performance
+
+    public SkuCode(string value) // => constructor validation; no public setter
+    {
+        if (string.IsNullOrWhiteSpace(value))      // => null/blank guard
+            throw new ArgumentException("SkuCode cannot be blank");
+        if (!Format.IsMatch(value))                // => regex guard
+            throw new ArgumentException($"SkuCode must match [A-Z]{{3}}-\\d{{4,8}}, got: {value}");
+        Value = value; // => assign only after validation; immutable from here
+    }
+
+    // => with-expression syntax works via record copy constructor; Value is the only field
+    public override string ToString() => Value; // => "OFF-001234"
+}
+
+// Valid
+var office = new SkuCode("OFF-001234"); // => office = SkuCode { Value = OFF-001234 }
+var tools  = new SkuCode("TLS-9999");  // => tools  = SkuCode { Value = TLS-9999 }
+Console.WriteLine(office == tools);     // => Output: False (structural ==)
+Console.WriteLine(office == new SkuCode("OFF-001234")); // => Output: True
+
+// Invalid — throws at construction
+try
+{
+    var bad = new SkuCode("invalid");  // => regex fails
+}
+catch (ArgumentException e)
+{
+    Console.WriteLine(e.Message); // => Output: SkuCode must match [A-Z]{3}-\d{4,8}, got: invalid
+}
+```
+
+**Key Takeaway**: C# `record` with a validation constructor provides structural equality and immutability with minimal boilerplate. `sealed` ensures no subclass can weaken the invariant.
+
+**Why It Matters**: In a procurement catalog, an invalid SKU silently routes to a ghost product. Catching malformed codes at construction — not at purchase order creation hours later — compresses the error-detection window from hours to milliseconds and keeps the error message close to the cause.
+
+---
+
+## Entities and the Aggregate Root (Examples 11–15)
+
+### Example 11: Entity vs Value Object — identity matters
+
+An Entity has a unique identity that persists across state changes. Two `LineItem` entities with identical fields but different ids are NOT the same entity.
 
 ```mermaid
-%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05, Brown #CA9161
-graph TD
-    A["Address #40;Composed VO#41;"]:::blue
-    B["Street #40;VO#41;"]:::teal
-    C["City #40;VO#41;"]:::teal
-    D["PostalCode #40;VO#41;"]:::teal
-    E["non-blank string"]:::orange
-    F["non-blank string"]:::orange
-    G["regex-validated string"]:::brown
+%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05
+graph LR
+    A["Entity: LineItem"]:::blue
+    B["id: LineItemId #40;identity#41;"]:::orange
+    C["skuCode: SkuCode #40;VO#41;"]:::teal
+    D["quantity: Quantity #40;VO#41;"]:::teal
+    E["unitPrice: Money #40;VO#41;"]:::teal
     A --> B
     A --> C
     A --> D
-    B --> E
-    C --> F
-    D --> G
+    A --> E
 
     classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
-    classDef brown fill:#CA9161,stroke:#000,color:#fff,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
 ```
-
-**Java**:
 
 ```java
-// Leaf Value Objects: each wraps a validated primitive
-public record Street(String value) {                                  // => record Street
-    public Street { // => compact constructor validates in-place
-        if (value == null || value.isBlank()) throw new IllegalArgumentException("Street required"); // => throws if guard fails
-        // => blank street is a domain error; rejected at the Street boundary
+// LineItemId: typed identity for this entity
+public record LineItemId(String value) {
+    public LineItemId { // => compact constructor
+        if (value == null || value.isBlank())
+            throw new IllegalArgumentException("LineItemId cannot be blank");
     }
 }
 
-public record City(String value) {                                    // => record City
-    public City { // => compact constructor
-        if (value == null || value.isBlank()) throw new IllegalArgumentException("City required"); // => throws if guard fails
-        // => same pattern: invalid city cannot exist as a City object
+// Entity: equality based on id, NOT field values
+// => Two line items with identical sku/qty/price but different ids are DIFFERENT entities
+public class LineItem {
+    private final LineItemId id;      // => identity; never changes after creation
+    private final SkuCode    skuCode; // => what is being requisitioned
+    private Quantity         quantity; // => mutable: quantity can be revised pre-approval
+    private final Money      unitPrice; // => final: price locked at requisition time
+
+    public LineItem(LineItemId id, SkuCode skuCode, Quantity quantity, Money unitPrice) {
+        // => All required; no partial construction
+        if (id == null || skuCode == null || quantity == null || unitPrice == null)
+            throw new IllegalArgumentException("All LineItem fields required");
+        this.id        = id;
+        this.skuCode   = skuCode;
+        this.quantity  = quantity;
+        this.unitPrice = unitPrice;
+    }
+
+    // => Domain method: revise quantity pre-approval; business operation, not raw setter
+    public void reviseQuantity(Quantity newQty) {
+        if (newQty == null) throw new IllegalArgumentException("newQty required");
+        this.quantity = newQty; // => allowed before requisition is submitted
+    }
+
+    public Money lineTotal() {
+        return unitPrice.multiply(quantity.value()); // => computed; not stored
+    }
+
+    // => Entity equality: ONLY id matters; two items with same sku are still different
+    @Override public boolean equals(Object o) {
+        return o instanceof LineItem li && id.equals(li.id);
+    }
+    @Override public int hashCode() { return id.hashCode(); }
+    @Override public String toString() {
+        return "LineItem[" + id + ", " + skuCode + ", " + quantity + ", " + unitPrice + "]";
     }
 }
 
-// PostalCode from Example 4 — already validates regex
-// Composed VO: valid Address proves valid Street, City, and PostalCode
-public record Address(Street street, City city, PostalCode postalCode) { // => record Address
-    public Address {                                                  // => expression
-        // => Null check at composition level; each sub-VO validated itself
-        if (street == null || city == null || postalCode == null)     // => precondition check
-            throw new IllegalArgumentException("All address fields required"); // => throws if guard fails
-        // => If street/city/postalCode were constructed, they are already valid
-    }
-}
+// Demonstrate identity-based equality
+LineItemId idA = new LineItemId("li-001");
+LineItemId idB = new LineItemId("li-002");
+SkuCode    sku = new SkuCode("OFF-001234");
+Quantity   qty = new Quantity(10, UnitOfMeasure.BOX);
+Money      prc = new Money("25.00", "USD");
 
-Address addr = new Address(                                           // => expression
-    new Street("123 Main St"),     // => Street validated: non-blank
-    new City("Springfield"),       // => City validated: non-blank
-    PostalCode.of("10001")         // => PostalCode validated: regex
-); // => addr is fully valid; no further checks needed anywhere
+LineItem itemA = new LineItem(idA, sku, qty, prc); // => idA entity
+LineItem itemB = new LineItem(idB, sku, qty, prc); // => idB entity; same fields, different id
+System.out.println(itemA.equals(itemB)); // => Output: false (different ids)
+
+LineItem itemA2 = new LineItem(idA, sku, qty, prc); // => same id as itemA
+System.out.println(itemA.equals(itemA2)); // => Output: true (same id)
 ```
 
-**Kotlin**:
+**Key Takeaway**: Entities carry identity; two entities are equal only if their ids match, regardless of field values. Value Objects are equal if all fields match, regardless of reference.
 
-```kotlin
-// Leaf VOs: data classes with init validation
-data class Street(val value: String) {                                // => class Street
-    init { require(value.isNotBlank()) { "Street required" } }        // => value.isNotBlank() called
-    // => require throws IllegalArgumentException on blank
-}
-data class City(val value: String) {                                  // => class City
-    init { require(value.isNotBlank()) { "City required" } }          // => value.isNotBlank() called
-    // => each VO guards its own invariant
-}
-
-// Composed VO: structural equality covers all nested fields via data class
-data class Address(val street: Street, val city: City, val postalCode: PostalCode) { // => class Address
-    init {                                                            // => expression
-        // => Kotlin's require checks null via non-null types; this guards logical completeness
-        require(street.value.isNotBlank() && city.value.isNotBlank()) { "All fields required" } // => precondition check
-        // => postalCode already validated; composition cascades correctness
-    }
-}
-
-val address = Address(                                                // => address initialised
-    Street("123 Main St"),   // => validated non-blank
-    City("Springfield"),     // => validated non-blank
-    PostalCode.of("10001")   // => validated regex
-) // => address is sound; every field proven valid by its own constructor
-```
-
-**C#**:
-
-```csharp
-// Leaf VOs: records with validation in constructor
-public record Street(string Value)                                    // => record Street
-// => begins block
-{
-    public Street(string value) : this(value)                         // => Street method
-    // => begins block
-    {
-        if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("Street required"); // => throws if guard fails
-        // => rejects blank; primary ctor sets Value
-    // => ends block
-    }
-// => ends block
-}
-public record City(string Value)                                      // => record City
-// => begins block
-{
-    public City(string value) : this(value)                           // => City method
-    // => begins block
-    {
-        if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("City required"); // => throws if guard fails
-        // => same guard pattern for consistency
-    // => ends block
-    }
-}
-
-// Composed VO: == operator compares all three nested records structurally
-public record Address(Street Street, City City, PostalCode PostalCode) // => record Address
-{
-    public Address(Street street, City city, PostalCode postalCode) : this(street, city, postalCode) // => Address method
-    {
-        // => null-guard; sub-VOs already validated their own values
-        ArgumentNullException.ThrowIfNull(street);                    // => ArgumentNullException.ThrowIfNull() called
-        ArgumentNullException.ThrowIfNull(city);                      // => ArgumentNullException.ThrowIfNull() called
-        ArgumentNullException.ThrowIfNull(postalCode);                // => ArgumentNullException.ThrowIfNull() called
-    }
-}
-
-var address = new Address(                                            // => address initialised
-    new Street("123 Main St"),    // => validated: non-blank
-    new City("Springfield"),      // => validated: non-blank
-    PostalCode.Of("10001")        // => validated: regex
-); // => address fully valid; downstream code reads fields without defensive checks
-```
-
-**Key Takeaway**: Compose validated Value Objects rather than raw strings. If construction succeeds, validity is guaranteed end-to-end — no defensive checks scattered across callers.
-
-**Why It Matters**: Passing raw strings through an address object means every caller must re-validate. Composing validated leaf VOs pushes that cost to one moment — construction — and makes "invalid address" a compile-time impossibility rather than a runtime concern. This is the difference between defensive programming (check everywhere) and design-by-contract (prove it once).
+**Why It Matters**: A procurement line item must be traceable from requisition through delivery. If equality were field-based, updating a quantity would make the "updated" item appear to be a completely new item — audit trails would break and receiving teams would have no way to match deliveries back to original lines.
 
 ---
 
-## Entities (Examples 6–12)
+### Example 12: `PurchaseRequisition` as the Aggregate Root
 
-### Example 6: Entity — identity field anchors lifetime
+`PurchaseRequisition` is the Aggregate Root of the `purchasing` bounded context. All state changes go through its methods — no external code modifies its internals directly.
 
-An Entity has a unique identity that persists across its entire lifetime. Two `Order` objects with different IDs are different orders even if every other field is identical. The ID, not the data, defines the Entity.
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+// PurchaseRequisition: Aggregate Root
+// => Controls all state changes; external code calls methods, never fields
+public class PurchaseRequisition {
+    public enum Status { DRAFT, SUBMITTED, MANAGER_REVIEW, APPROVED, REJECTED, CONVERTED_TO_PO }
+
+    private final RequisitionId      id;       // => identity; immutable
+    private final String             requesterId; // => who raised the requisition
+    private       Status             status;   // => mutable; lifecycle state
+    private final List<LineItem>     lineItems; // => encapsulated; exposed read-only
+
+    public PurchaseRequisition(RequisitionId id, String requesterId) {
+        if (id == null || requesterId == null || requesterId.isBlank())
+            throw new IllegalArgumentException("id and requesterId required");
+        this.id          = id;
+        this.requesterId = requesterId;
+        this.status      = Status.DRAFT;    // => starts in DRAFT; only valid initial state
+        this.lineItems   = new ArrayList<>(); // => starts empty; lines added via addLine()
+    }
+
+    // => Domain method: add a line item; only allowed in DRAFT
+    public void addLine(LineItem line) {
+        if (status != Status.DRAFT)           // => guard: cannot add lines after submission
+            throw new IllegalStateException("Lines can only be added in DRAFT, current: " + status);
+        if (line == null)
+            throw new IllegalArgumentException("line is required");
+        lineItems.add(line); // => protected by the aggregate root; no direct list access
+    }
+
+    // => Domain method: submit for review; guards business rules
+    public void submit() {
+        if (status != Status.DRAFT)           // => idempotency guard; cannot submit twice
+            throw new IllegalStateException("Can only submit from DRAFT, current: " + status);
+        if (lineItems.isEmpty())              // => domain rule: no empty requisitions
+            throw new IllegalStateException("Cannot submit a requisition with no line items");
+        this.status = Status.SUBMITTED;       // => state transition; recorded here
+    }
+
+    // => Derived value: total computed from all lines; not stored to avoid sync issues
+    public Money estimatedTotal() {
+        return lineItems.stream()
+            .map(LineItem::lineTotal)         // => each line's unit price * quantity
+            .reduce(new Money("0.00", "USD"), Money::add); // => fold; default 0.00 USD
+    }
+
+    // => Derived value: approval level from total
+    public ApprovalLevel requiredApprovalLevel() {
+        return ApprovalLevel.from(estimatedTotal()); // => delegates to enum factory
+    }
+
+    // => Read-only view; callers cannot mutate the list
+    public List<LineItem> getLineItems() { return Collections.unmodifiableList(lineItems); }
+    public RequisitionId  getId()        { return id; }
+    public Status         getStatus()    { return status; }
+    public String         getRequesterId(){ return requesterId; }
+}
+```
+
+**Key Takeaway**: The Aggregate Root is the sole entry point for all state changes. External code calls its methods; it protects internal consistency.
+
+**Why It Matters**: Without an Aggregate Root, any code can reach in and modify line items directly, bypassing status checks. In procurement, that means a line could be added to an already-approved requisition without triggering the approval workflow again — a compliance failure that real audit committees flag.
+
+---
+
+### Example 13: Adding line items and computing `estimatedTotal`
+
+Demonstrating the full lifecycle of a `PurchaseRequisition` from construction through total computation.
+
+```java
+// Setup: value objects
+RequisitionId rid  = new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000");
+String requesterId = "emp-42"; // => who raised the requisition
+
+// Create aggregate in DRAFT state
+PurchaseRequisition req = new PurchaseRequisition(rid, requesterId);
+// => req.status = DRAFT; req.lineItems = []
+
+// Build line items (entities)
+LineItem item1 = new LineItem(
+    new LineItemId("li-001"),
+    new SkuCode("OFF-001234"),       // => office supplies SKU
+    new Quantity(500, UnitOfMeasure.EACH),
+    new Money("0.50", "USD")         // => $0.50 per pen
+); // => li-001: 500 EACH × $0.50 = $250.00
+
+LineItem item2 = new LineItem(
+    new LineItemId("li-002"),
+    new SkuCode("PPR-8500"),         // => paper SKU
+    new Quantity(10,  UnitOfMeasure.BOX),
+    new Money("25.00", "USD")        // => $25.00 per box
+); // => li-002: 10 BOX × $25.00 = $250.00
+
+// Add through aggregate root (guards apply)
+req.addLine(item1); // => lineItems = [li-001]
+req.addLine(item2); // => lineItems = [li-001, li-002]
+
+// Derived values
+Money total = req.estimatedTotal();
+// => total = 250.00 + 250.00 = 500.00 USD
+System.out.println(total); // => Output: 500.00 USD
+
+ApprovalLevel level = req.requiredApprovalLevel();
+// => 500.00 <= 1000.00 => L1
+System.out.println(level); // => Output: L1
+
+// Submit
+req.submit(); // => status transitions DRAFT -> SUBMITTED
+System.out.println(req.getStatus()); // => Output: SUBMITTED
+
+// Guard: cannot add lines after submission
+try {
+    req.addLine(item1); // => throws; status is SUBMITTED not DRAFT
+} catch (IllegalStateException e) {
+    System.out.println(e.getMessage()); // => Output: Lines can only be added in DRAFT, current: SUBMITTED
+}
+```
+
+**Key Takeaway**: The Aggregate Root's domain methods sequence validation, state change, and computation in a single cohesive unit. Callers never manage these steps manually.
+
+**Why It Matters**: If callers orchestrate validation, state change, and total computation themselves, each caller can get the sequence subtly wrong. Centralising it in `submit()` means that even a new developer adding a tenth entry point cannot accidentally bypass the "no empty requisition" rule.
+
+---
+
+### Example 14: Immutability in practice — `with`-style copy via records
+
+Java 21 records have no `with`-expression built-in (unlike C#), but a manual `withQuantity` builder method on a `LineItem` record delivers the same semantics.
+
+```java
+// LineItem as a record: immutable, with a domain-specific copy helper
+// => Records in Java 21 cannot have with-expressions; we write a targeted copy method
+public record LineItem(LineItemId id, SkuCode skuCode, Quantity quantity, Money unitPrice) {
+    public LineItem { // => compact constructor: validate all fields
+        if (id == null || skuCode == null || quantity == null || unitPrice == null)
+            throw new IllegalArgumentException("All fields required");
+    }
+
+    // Domain method: create a revised copy with updated quantity
+    // => Immutable pattern: never modify; return new instance
+    public LineItem withQuantity(Quantity newQuantity) {
+        if (newQuantity == null) throw new IllegalArgumentException("newQuantity required");
+        return new LineItem(id, skuCode, newQuantity, unitPrice);
+        // => id, skuCode, unitPrice unchanged; only quantity is replaced
+    }
+
+    public Money lineTotal() {
+        return unitPrice.multiply(quantity.value()); // => computed from current quantity
+    }
+}
+
+// Demonstrate immutable revision
+LineItem original = new LineItem(
+    new LineItemId("li-001"),
+    new SkuCode("OFF-001234"),
+    new Quantity(500, UnitOfMeasure.EACH),
+    new Money("0.50", "USD")
+); // => original: 500 EACH × $0.50 = $250.00
+System.out.println(original.lineTotal()); // => Output: 250.00 USD
+
+LineItem revised = original.withQuantity(new Quantity(1000, UnitOfMeasure.EACH));
+// => revised: 1000 EACH × $0.50 = $500.00; original is unchanged
+System.out.println(revised.lineTotal());  // => Output: 500.00 USD
+System.out.println(original.lineTotal()); // => Output: 250.00 USD (original intact)
+
+// Identity preserved in revision
+System.out.println(original.id().equals(revised.id())); // => Output: true (same id)
+// => Same entity identity, different value snapshot — correct for domain revision tracking
+```
+
+**Key Takeaway**: Returning a new instance from copy-methods (`withQuantity`) preserves immutability while enabling domain-driven revision semantics. The original is never lost.
+
+**Why It Matters**: Procurement audits require the history of quantity revisions. If `setQuantity` mutated in place, the original value would be gone. Immutable copy-returns make it natural to store both versions — before and after — enabling audit log generation without extra infrastructure.
+
+---
+
+### Example 15: Factory method — `PurchaseRequisition.create`
+
+A static factory method encapsulates construction logic, provides a meaningful name, and can enforce creation-time invariants that go beyond a single constructor call.
+
+```java
+// Factory method: named, discoverable, validates creation context
+// => hides constructor; callers see intent, not plumbing
+public class PurchaseRequisition {
+    public enum Status { DRAFT, SUBMITTED, MANAGER_REVIEW, APPROVED, REJECTED, CONVERTED_TO_PO }
+
+    private final RequisitionId  id;
+    private final String         requesterId;
+    private       Status         status;
+    private final java.util.List<LineItem> lineItems = new java.util.ArrayList<>();
+
+    // Private constructor: callers must use factory
+    private PurchaseRequisition(RequisitionId id, String requesterId) {
+        this.id          = id;
+        this.requesterId = requesterId;
+        this.status      = Status.DRAFT;
+    }
+
+    // Factory method: validates, names intent, constructs
+    // => "create" communicates domain action; "new" communicates plumbing
+    public static PurchaseRequisition create(RequisitionId id, String requesterId) {
+        if (id == null)
+            throw new IllegalArgumentException("RequisitionId required");
+        if (requesterId == null || requesterId.isBlank())
+            throw new IllegalArgumentException("requesterId required; cannot be anonymous");
+        // => Future: check requester exists in employee service (application layer concern)
+        return new PurchaseRequisition(id, requesterId); // => valid state guaranteed
+    }
+
+    public void addLine(LineItem line) {
+        if (status != Status.DRAFT)
+            throw new IllegalStateException("Lines only in DRAFT, current: " + status);
+        lineItems.add(line);
+    }
+    public void submit() {
+        if (status != Status.DRAFT)  throw new IllegalStateException("Only from DRAFT");
+        if (lineItems.isEmpty())     throw new IllegalStateException("No line items");
+        status = Status.SUBMITTED;
+    }
+    public RequisitionId getId()     { return id; }
+    public Status        getStatus() { return status; }
+}
+
+// Usage: factory method communicates intent
+PurchaseRequisition req = PurchaseRequisition.create(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"),
+    "emp-42"
+); // => req.status = DRAFT
+System.out.println(req.getStatus()); // => Output: DRAFT
+
+// Invalid requesterId rejected at factory, not deep inside business logic
+try {
+    PurchaseRequisition.create(
+        new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"),
+        ""   // => blank requesterId; anonymous requisition not allowed
+    );
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage()); // => Output: requesterId required; cannot be anonymous
+}
+```
+
+**Key Takeaway**: Static factory methods name the creation intent, control the constructor's visibility, and validate creation-time business rules in a single discoverable location.
+
+**Why It Matters**: In procurement compliance, a requisition must always be traceable to a named requester. Hiding the constructor behind `create` ensures that requirement is enforced at the only creation point, not scattered across every caller that might remember (or forget) to check requesterId.
+
+---
+
+## State Machines and Lifecycle (Examples 16–20)
+
+### Example 16: State machine — `PurchaseRequisition` lifecycle
+
+The `Status` enum with a transition table makes invalid state changes a runtime error rather than a silent no-op.
 
 ```mermaid
-%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05
-graph LR
-    A["Order #40;Entity#41;"]:::blue
-    B["OrderId — FIXED"]:::teal
-    C["total: Money — mutable"]:::orange
-    D["status: OrderStatus — mutable"]:::orange
-    A -->|"identity"| B
-    A -->|"state"| C
-    A -->|"state"| D
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05, Purple #CC78BC
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Submitted : submit
+    Submitted --> ManagerReview : escalate
+    ManagerReview --> Approved : approve
+    ManagerReview --> Rejected : reject
+    Approved --> ConvertedToPO : convert
+    Rejected --> [*]
+    ConvertedToPO --> [*]
 ```
-
-**Java**:
 
 ```java
-import java.util.UUID;                                                // => namespace/package import
-
-// Entity: identity is the anchor; state changes do not alter identity
-// => id is final; total and status are mutable — that is the correct split
-public class Order {                                                  // => Order field
-    private final OrderId id;        // => final: identity never changes after construction
-    private Money total;             // => mutable: total grows as lines are added
-    private OrderStatus status;      // => mutable: moves through lifecycle states
-
-    public Order(OrderId id, Money initialTotal) {                    // => Order method
-        this.id     = id;                         // => identity locked here, forever
-        this.total  = initialTotal;               // => initial state; mutable via behaviour methods
-        this.status = OrderStatus.PENDING;        // => all orders begin in PENDING state
-    }
-
-    public OrderId     getId()     { return id; }     // => expose identity for reference
-    public Money       getTotal()  { return total; }  // => read current state
-    public OrderStatus getStatus() { return status; } // => read current lifecycle position
-}
-
-// OrderId is itself a Value Object — typed identity
-public record OrderId(UUID value) {                                   // => record OrderId
-    // => record provides structural equality; two OrderId with same UUID are equal
-    public static OrderId generate() { return new OrderId(UUID.randomUUID()); } // => generate method
-    // => static factory: creates a globally unique identity
-}
-
-OrderId  id    = OrderId.generate();                         // => e.g. OrderId[value=3fa8...]
-Order    order = new Order(id, new Money(new java.math.BigDecimal("0"), "USD")); // => math.BigDecimal() called
-// => order.id is permanent; order.total and order.status will change over its lifetime
-```
-
-**Kotlin**:
-
-```kotlin
-import java.util.UUID                                                 // => namespace/package import
-
-// Entity: use class not data class — data class would compare all fields, breaking entity semantics
-// => equals() by id only (overridden below); data class equals() by all fields is WRONG for entities
-class Order(                                                          // => class Order
-    val id: OrderId,          // => val: identity immutable; this is what "same order" means
-    initialTotal: Money       // => constructor param; stored as var property below
-) {                                                                   // => expression
-    var total: Money = initialTotal  // => var: mutable state
-        private set                  // => only mutated through behaviour methods in this class
-    var status: OrderStatus = OrderStatus.PENDING // => starts PENDING
-        private set                                                   // => expression
-
-    // Identity-based equality: two Order references with same id are equal
-    override fun equals(other: Any?) = other is Order && id == other.id // => equals method
-    override fun hashCode() = id.hashCode() // => hash matches equals; id-only
-}
-
-@JvmInline value class OrderId(val value: UUID) {                     // => class OrderId
-    // => value class: zero-overhead wrapper; erased to UUID at runtime
-    companion object { fun generate() = OrderId(UUID.randomUUID()) }  // => UUID.randomUUID() called
-    // => generate() is the one creation path; callers never see raw UUIDs
-}
-
-val order = Order(OrderId.generate(), Money(java.math.BigDecimal.ZERO, "USD")) // => order initialised
-// => order.id is fixed; order.total and order.status change through lifecycle
-```
-
-**C#**:
-
-```csharp
-using System;                                                         // => namespace/package import
-
-// Entity: class not record — record would use structural equality, wrong for entities
-// => override Equals to compare by id only; class default is reference equality
-public class Order                                                    // => class Order
-{
-    public OrderId      Id     { get; }              // => init-only: identity locked in ctor
-    public Money        Total  { get; private set; } // => private set: mutable via methods only
-    public OrderStatus  Status { get; private set; } = OrderStatus.Pending; // => Status field
-    // => Defaults to Pending; private set enforces encapsulation
-
-    public Order(OrderId id, Money initialTotal)                      // => Order method
-    {
-        Id    = id;           // => identity locked; no setter to reassign it
-        Total = initialTotal; // => initial state; changes via behaviour methods
-    }
-
-    // Identity-based equality: same id = same order, regardless of current state
-    public override bool Equals(object? obj) => obj is Order o && Id == o.Id; // => Equals method
-    public override int  GetHashCode()       => Id.GetHashCode(); // => id-based hash
-}
-
-public record OrderId(Guid Value)                                     // => record OrderId
-{
-    // => record gives structural ==; two OrderId with same Guid are equal
-    public static OrderId Generate() => new(Guid.NewGuid()); // => new unique id
-}
-
-var order = new Order(OrderId.Generate(), new Money(0m, "USD"));      // => order initialised
-// => order.Id is fixed; order.Total and order.Status change through lifecycle
-```
-
-**Key Takeaway**: An Entity's identity is fixed at birth and never changes. State changes do not alter identity — the same `Order` is the same order from creation to fulfillment.
-
-**Why It Matters**: In business systems, things like orders, customers, and accounts persist through state changes. Without a stable identity anchor, the system cannot track "this specific order" across database updates, distributed messages, and state transitions. A customer who changes their email address must still be the same customer — their entire order history must remain associated with them. Identity is the bedrock of business continuity in enterprise software.
-
----
-
-### Example 7: Entity equality — by ID only, ignores other fields
-
-Entity equality compares only identity fields. Two `Customer` references with different in-memory states are equal if they share the same `CustomerId`. Field values play no role.
-
-**Java**:
-
-```java
-import java.util.Objects;                                             // => namespace/package import
-
-public class Customer {                                               // => Customer field
-    private final CustomerId id; // => identity; used exclusively in equals/hashCode
-    private String name;          // => mutable state — NOT part of equality
-    private EmailAddress email;   // => mutable state — NOT part of equality
-
-    public Customer(CustomerId id, String name, EmailAddress email) { // => Customer method
-        this.id    = id;    // => identity locked
-        this.name  = name;  // => initial state; can change without affecting equality
-        this.email = email; // => initial state; can change without affecting equality
-    }
-
-    // Equality by id ONLY — not name, not email
-    @Override public boolean equals(Object o) {                       // => expression
-        if (!(o instanceof Customer c)) return false;                 // => precondition check
-        return id.equals(c.id); // => only id compared; name/email irrelevant to identity
-    }
-    @Override public int hashCode() { return Objects.hash(id); } // => hash from id only
-
-    public void rename(String newName) { this.name = newName; } // => state change; equality unchanged
-    public CustomerId getId() { return id; }                          // => getId method
-}
-
-// Demonstration: same id, different state — entities are still equal
-var sharedId = new CustomerId(java.util.UUID.randomUUID()); // => one UUID shared by both
-Customer c1 = new Customer(sharedId, "Alice",       new EmailAddress("a@b.com")); // => expression
-Customer c2 = new Customer(sharedId, "Alice Smith", new EmailAddress("asmith@b.com")); // => expression
-// => c1 and c2 have different names and emails
-boolean equal = c1.equals(c2); // => true — same id; state differences are irrelevant
-```
-
-**Kotlin**:
-
-```kotlin
-// Kotlin: override equals() manually; do NOT use data class for entities
-// => data class compares all fields — that is Value Object semantics, not Entity semantics
-class Customer(                                                       // => class Customer
-    val id: CustomerId, // => identity; val: immutable
-    var name: String,   // => mutable state; var
-    var email: EmailAddress // => mutable state; var
-) {                                                                   // => expression
-    override fun equals(other: Any?): Boolean {                       // => equals method
-        if (other !is Customer) return false                          // => precondition check
-        return id == other.id  // => id equality only; name and email excluded
-    }
-    override fun hashCode() = id.hashCode() // => consistent with equals
-}
-
-val sharedId = CustomerId(java.util.UUID.randomUUID()) // => one UUID
-val c1 = Customer(sharedId, "Alice",       EmailAddress("a@b.com"))   // => c1 initialised
-val c2 = Customer(sharedId, "Alice Smith", EmailAddress("asmith@b.com")) // => c2 initialised
-println(c1 == c2)  // => true — same id; different names; identity wins
-```
-
-**C#**:
-
-```csharp
-public class Customer                                                 // => class Customer
-// => begins block
-{
-    public CustomerId   Id    { get; }               // => identity; immutable
-    public string       Name  { get; private set; }  // => mutable state
-    public EmailAddress Email { get; private set; }  // => mutable state
-
-    public Customer(CustomerId id, string name, EmailAddress email)   // => Customer method
-    // => begins block
-    {
-        Id    = id;    // => identity locked in constructor
-        Name  = name;  // => initial state
-        Email = email; // => initial state
-    // => ends block
-    }
-
-    // Equality by id ONLY — name and email excluded from comparison
-    public override bool Equals(object? obj) => obj is Customer c && Id == c.Id; // => Equals method
-    public override int  GetHashCode()       => Id.GetHashCode(); // => id-based hash
-
-    public void Rename(string newName) { Name = newName; } // => state change; equality unchanged
-}
-
-var sharedId = CustomerId.Generate(); // => one id shared by both instances
-var c1 = new Customer(sharedId, "Alice",       new EmailAddress("a@b.com")); // => c1 initialised
-var c2 = new Customer(sharedId, "Alice Smith", new EmailAddress("asmith@b.com")); // => c2 initialised
-bool equal = c1.Equals(c2); // => true — same id; Name/Email differences ignored
-```
-
-**Key Takeaway**: Entity equality checks identity only. Renaming a customer does not create a new customer — it updates the same entity. Equality must reflect this.
-
-**Why It Matters**: If entity equality compared all fields, renaming a customer would cause it to "disappear" from hash sets and dictionary lookups — a catastrophic bug in any system that tracks entities by reference. The entity does not become a different entity when its data changes; only its identity defines sameness. Identity-only equality keeps entity semantics stable across all state transitions and ensures aggregation operations behave correctly.
-
----
-
-### Example 8: Entity mutable state — only via behaviour methods
-
-Entity state must change only through named behaviour methods, never through public setters. Named methods communicate intent, enforce invariants, and can emit domain events.
-
-**Java**:
-
-```java
-public class Order {                                                  // => Order field
-    private final OrderId id;    // => identity: immutable
-    private Money total;          // => state: mutable, but only via methods below
-    private OrderStatus status;   // => state: mutable, but only via methods below
-
-    public Order(OrderId id, Money initialTotal) {                    // => Order method
-        this.id     = id;                                             // => this.id assigned
-        this.total  = initialTotal;                                   // => this.total assigned
-        this.status = OrderStatus.PENDING; // => always starts PENDING
-    }
-
-    // Named behaviour: communicates intent and enforces lifecycle rule
-    public void confirm() {                                           // => confirm method
-        // => Guard: confirm() only valid from PENDING state
-        if (status != OrderStatus.PENDING)                            // => precondition check
-            throw new IllegalStateException("Cannot confirm order in state: " + status); // => throws if guard fails
-        this.status = OrderStatus.CONFIRMED; // => state transition enforced here
-        // => domain event could be collected here (see Example 25)
-    }
-
-    public void cancel() {                                            // => cancel method
-        // => Cannot cancel a shipped order — domain invariant enforced in method
-        if (status == OrderStatus.SHIPPED)                            // => precondition check
-            throw new IllegalStateException("Cannot cancel a shipped order"); // => throws if guard fails
-        this.status = OrderStatus.CANCELLED; // => only reachable if not SHIPPED
-    }
-
-    // No setStatus() — callers cannot bypass lifecycle rules
-    public OrderId     getId()     { return id; }                     // => getId method
-    public OrderStatus getStatus() { return status; }                 // => getStatus method
-    public Money       getTotal()  { return total; }                  // => getTotal method
-}
-
-Order order = new Order(OrderId.generate(), new Money(new java.math.BigDecimal("50"), "USD")); // => OrderId.generate() called
-order.confirm();  // => status becomes CONFIRMED; invariant checked
-// order.setStatus(SHIPPED) — does not exist; cannot bypass confirm()
-```
-
-**Kotlin**:
-
-```kotlin
-class Order(val id: OrderId, initialTotal: Money) {                   // => class Order
-    var total: Money = initialTotal                                   // => expression
-        private set           // => readable externally; writable only inside class
-    var status: OrderStatus = OrderStatus.PENDING                     // => expression
-        private set           // => no public setter; only behaviour methods can mutate
-
-    fun confirm() {                                                   // => confirm method
-        // => Enforce lifecycle: PENDING → CONFIRMED only
-        check(status == OrderStatus.PENDING) { "Cannot confirm order in state: $status" } // => precondition check
-        status = OrderStatus.CONFIRMED // => private set allows mutation from within
-    }
-
-    fun cancel() {                                                    // => cancel method
-        // => Enforce lifecycle: cannot cancel SHIPPED
-        check(status != OrderStatus.SHIPPED) { "Cannot cancel a shipped order" } // => precondition check
-        status = OrderStatus.CANCELLED // => reached only if check() passes
-    }
-    // No setStatus — callers use confirm()/cancel(); invariants always enforced
-}
-
-val order = Order(OrderId.generate(), Money(java.math.BigDecimal("50"), "USD")) // => order initialised
-order.confirm() // => status = CONFIRMED; invariant checked inside confirm()
-```
-
-**C#**:
-
-```csharp
-public class Order                                                    // => class Order
-// => Entity class: uses reference equality by default; Equals overridden to use Id
-{
-    public OrderId      Id     { get; }                               // => Id field
-    // => get-only: Id locked at construction; identity never changes
-    public Money        Total  { get; private set; } // => private set; mutable via methods
-    // => Mutable state: Total changes as lines are added; private set enforces encapsulation
-    public OrderStatus  Status { get; private set; } = OrderStatus.Pending; // => Status field
-    // => defaults to Pending; private set prevents external mutation
-
-    public Order(OrderId id, Money initialTotal) { Id = id; Total = initialTotal; } // => Order method
-    // => Constructor: sets both required fields; Status defaults to Pending automatically
-
-    public void Confirm()                                             // => Confirm method
-    // => Named method: communicates intent; can add events, logging, metrics here
-    {
-        // => Guard: only PENDING orders can be confirmed
-        if (Status != OrderStatus.Pending)                            // => precondition check
-            throw new InvalidOperationException($"Cannot confirm order in state {Status}"); // => throws if guard fails
-        // => $"...{Status}" includes current status in the message for diagnostics
-        Status = OrderStatus.Confirmed; // => private set accessible within the class
-        // => Transition happens after guard; no partial state possible
-    }
-
-    public void Cancel()                                              // => Cancel method
-    // => Named method: one place to add "why was this cancelled?" auditing in future
-    {
-        // => Guard: SHIPPED orders cannot be cancelled
-        if (Status == OrderStatus.Shipped)                            // => precondition check
-            throw new InvalidOperationException("Cannot cancel a shipped order"); // => throws if guard fails
-        // => All other statuses (Pending, Confirmed) are cancellable
-        Status = OrderStatus.Cancelled; // => reachable only if not SHIPPED
-    }
-    // No SetStatus() — public API is confirm/cancel; invariants always run
-}
-
-var order = new Order(OrderId.Generate(), new Money(50m, "USD"));     // => order initialised
-// => order.Status = Pending (default); order.Total = 50 USD
-order.Confirm(); // => Status = Confirmed; lifecycle rule enforced
-```
-
-**Key Takeaway**: State mutation belongs in named behaviour methods, not setters. A method named `confirm()` communicates intent, enforces invariants, and can emit domain events — a `setStatus()` method does none of these.
-
-**Why It Matters**: Anemic models with public setters let any caller mutate state in any order, making it impossible to guarantee invariants. When an order skips CONFIRMED and jumps straight to SHIPPED via a raw setter, the bug is invisible until a downstream process fails. Named behaviour methods eliminate this entire category of invariant violation.
-
----
-
-### Example 9: Entity vs Value Object — when to choose
-
-The decision between Entity and Value Object determines whether two instances with the same data are the same thing or just equivalent. The wrong choice leads to either lost identity or unnecessary identity tracking.
-
-```mermaid
-%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05
-graph LR
-    A{"Same data\n= same thing?"}:::blue
-    B["Value Object\nStructural equality\nNo ID needed"]:::teal
-    C["Entity\nIdentity equality\nID field required"]:::orange
-    A -->|"Yes — interchangeable"| B
-    A -->|"No — tracked over time"| C
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
-```
-
-**Java**:
-
-```java
-// Value Object: two instances with same data ARE the same thing
-// => Money(10, "USD") and Money(10, "USD") are interchangeable — no tracking needed
-public record Money(java.math.BigDecimal amount, String currency) {}  // => record Money
-// => record provides structural equals/hashCode; correct for VO
-
-// Entity: two instances with same data are NOT necessarily the same thing
-// => Two bank accounts at $0 balance are different accounts — track by id
-public class BankAccount {                                            // => BankAccount field
-    private final AccountId id;    // => identity: THIS specific account
-    private Money balance;          // => state: can change without affecting identity
-
-    public BankAccount(AccountId id, Money initial) {                 // => BankAccount method
-        this.id      = id;                                            // => this.id assigned
-        this.balance = initial;                                       // => this.balance assigned
-    }
-
-    // Two $0 accounts are still two different accounts — never merge them
-    @Override public boolean equals(Object o) {                       // => expression
-        if (!(o instanceof BankAccount a)) return false;              // => precondition check
-        return id.equals(a.id); // => only id; balance is irrelevant for identity
-    }
-    @Override public int hashCode() { return id.hashCode(); }         // => id.hashCode() called
-}
-
-// Rule of thumb: ask "if I replace this with an equal instance, does anything break?"
-// => If yes → Entity (history matters)   If no → Value Object (interchangeable)
-```
-
-**Kotlin**:
-
-```kotlin
-// Value Object: data class = structural equality = correct VO choice
-data class Money(val amount: java.math.BigDecimal, val currency: String)
-// => data class generates equals() comparing amount and currency — correct for VO
-
-// Entity: class = reference equality by default; override to id-based equality
-class BankAccount(val id: AccountId, initialBalance: Money) {
-    var balance: Money = initialBalance
-        private set  // => mutable state; but changing balance doesn't change which account
-
-    override fun equals(other: Any?) = other is BankAccount && id == other.id
-    override fun hashCode() = id.hashCode()
-    // => Two $0 accounts at same bank are still different accounts — id distinguishes them
-}
-
-// Rule of thumb in Kotlin:
-// data class → Value Object (structural equality, immutable val fields)
-// class       → Entity (identity equality, mutable var state, override equals)
-```
-
-**C#**:
-
-```csharp
-// Value Object: record = structural ==; correct for VO
-public record Money(decimal Amount, string Currency);
-// => record == compares Amount and Currency — Money(10m,"USD") == Money(10m,"USD")
-
-// Entity: class = reference equality by default; override to id-based
-public class BankAccount
-{
-    public AccountId Id      { get; }
-    public Money     Balance { get; private set; } // => mutable state
-
-    public BankAccount(AccountId id, Money initial) { Id = id; Balance = initial; }
-
-    // Two $0 accounts are different — id is the only equality criterion
-    public override bool Equals(object? obj) => obj is BankAccount a && Id == a.Id;
-    public override int  GetHashCode()       => Id.GetHashCode();
-    // => Changing Balance does not change which account this is
-}
-
-// Rule of thumb in C#:
-// record → Value Object (structural equality provided by compiler)
-// class  → Entity (identity equality via manual override)
-```
-
-**Key Takeaway**: Use a Value Object when replacing an instance with an equal one is harmless. Use an Entity when the instance has a history that must be tracked — when "same data" does not mean "same thing."
-
-**Why It Matters**: Misclassifying a concept causes subtle, hard-to-trace bugs. Treating a bank account as a VO means two accounts with the same balance could be merged — funds disappear. Treating a currency code as an Entity means it gets a database row and an identity column for a concept that is purely a value. Getting this choice right is the first design question in any domain model.
-
----
-
-### Example 10: Smart constructor / factory method enforcing invariants
-
-Factory methods add validation to construction and provide descriptive failure messages. They also allow returning subtypes or throwing richer domain exceptions than a raw constructor can.
-
-**Java**:
-
-```java
-// Static factory method: named, validated construction with descriptive errors
-// => Factory can return subtypes, use caching, or throw domain-specific exceptions
-public final class Quantity {                                         // => Quantity field
-    private final int value; // => int value wrapped; always positive
-
-    private Quantity(int value) { this.value = value; } // => private: factory is the only path
-
-    public static Quantity of(int value) {                            // => of method
-        // => Named validation; message references domain concept, not technical detail
-        if (value <= 0) throw new IllegalArgumentException("Quantity must be positive, got: " + value); // => throws if guard fails
-        return new Quantity(value); // => only reachable after validation passes
-    }
-
-    public int getValue() { return value; } // => read-only
-    public Quantity add(Quantity other) {                             // => add method
-        return new Quantity(this.value + other.value); // => produces new Quantity; addition always positive
-    }
-    @Override public String toString() { return String.valueOf(value); } // => "3"
-}
-
-Quantity q = Quantity.of(3);    // => Succeeds; q.getValue() = 3
-// Quantity bad = Quantity.of(0); // => throws "Quantity must be positive, got: 0"
-// private constructor: new Quantity(3) is compile error from outside the class
-```
-
-**Kotlin**:
-
-```kotlin
-// companion object factory: private constructor forces use of of()
-class Quantity private constructor(val value: Int) {                  // => class Quantity
-    // => private constructor: no new Quantity(0) from outside
-    companion object {                                                // => expression
-        fun of(value: Int): Quantity {                                // => of method
-            require(value > 0) { "Quantity must be positive, got: $value" } // => precondition check
-            // => require throws IllegalArgumentException with the lambda message
-            return Quantity(value) // => private ctor accessible from companion
+import java.util.EnumSet;
+import java.util.Map;
+
+// Transition table: maps current status to allowed next statuses
+// => Explicit table; no ad-hoc if-else scattered across methods
+public class PurchaseRequisition {
+    public enum Status {
+        DRAFT, SUBMITTED, MANAGER_REVIEW, APPROVED, REJECTED, CONVERTED_TO_PO;
+
+        private static final Map<Status, EnumSet<Status>> TRANSITIONS = Map.of(
+            DRAFT,           EnumSet.of(SUBMITTED),           // => DRAFT -> SUBMITTED only
+            SUBMITTED,       EnumSet.of(MANAGER_REVIEW),      // => SUBMITTED -> MANAGER_REVIEW
+            MANAGER_REVIEW,  EnumSet.of(APPROVED, REJECTED),  // => manager decides
+            APPROVED,        EnumSet.of(CONVERTED_TO_PO),     // => approved -> PO
+            REJECTED,        EnumSet.noneOf(Status.class),    // => terminal state
+            CONVERTED_TO_PO, EnumSet.noneOf(Status.class)     // => terminal state
+        );
+
+        public Status transitionTo(Status next) { // => guard then return
+            if (!TRANSITIONS.getOrDefault(this, EnumSet.noneOf(Status.class)).contains(next))
+                throw new IllegalStateException(
+                    "Invalid transition: " + this + " -> " + next);
+            return next; // => caller assigns result; this enum value is immutable
         }
     }
-    operator fun plus(other: Quantity) = Quantity(value + other.value) // => operator overload for +
-    override fun toString() = value.toString() // => "3"
-}
 
-val q = Quantity.of(3)   // => Succeeds; q.value = 3
-// val bad = Quantity.of(0)  // => throws IllegalArgumentException
-// operator: Quantity.of(2) + Quantity.of(3) = Quantity(5) — idiomatic Kotlin
-```
+    private final RequisitionId id;
+    private       Status        status = Status.DRAFT;
 
-**C#**:
-
-```csharp
-// sealed record with private constructor and static factory
-public sealed record Quantity                                         // => record Quantity
-{
-    public int Value { get; } // => get-only; no setter; immutable after factory
-
-    private Quantity(int value) { Value = value; } // => private: factory is the one path
-
-    public static Quantity Of(int value)                              // => Of method
-    {
-        // => Domain-language error message; makes failure traceable to business rule
-        if (value <= 0) throw new ArgumentException($"Quantity must be positive, got: {value}"); // => throws if guard fails
-        return new Quantity(value); // => only reached after validation
+    public PurchaseRequisition(RequisitionId id) {
+        if (id == null) throw new IllegalArgumentException("id required");
+        this.id = id;
     }
 
-    public Quantity Add(Quantity other) => new(Value + other.Value);  // => Add method
-    // => produces new Quantity; no mutation; sum always positive (both inputs positive)
+    private void transition(Status next) {
+        this.status = status.transitionTo(next); // => guard in transitionTo; assigns if valid
+    }
 
-    public override string ToString() => Value.ToString(); // => "3"
+    public void submit()       { transition(Status.SUBMITTED); }       // => DRAFT -> SUBMITTED
+    public void escalate()     { transition(Status.MANAGER_REVIEW); }  // => SUBMITTED -> MANAGER_REVIEW
+    public void approve()      { transition(Status.APPROVED); }        // => MANAGER_REVIEW -> APPROVED
+    public void reject()       { transition(Status.REJECTED); }        // => MANAGER_REVIEW -> REJECTED
+    public void convertToPO()  { transition(Status.CONVERTED_TO_PO); } // => APPROVED -> CONVERTED_TO_PO
+
+    public Status getStatus()    { return status; }
+    public RequisitionId getId() { return id; }
 }
 
-var q = Quantity.Of(3);   // => Value = 3
-// var bad = Quantity.Of(0); // => throws ArgumentException
-// private ctor: new Quantity(3) is a compile error outside the class
+// Happy path
+PurchaseRequisition req = new PurchaseRequisition(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"));
+req.submit();     // => DRAFT -> SUBMITTED
+req.escalate();   // => SUBMITTED -> MANAGER_REVIEW
+req.approve();    // => MANAGER_REVIEW -> APPROVED
+req.convertToPO(); // => APPROVED -> CONVERTED_TO_PO
+System.out.println(req.getStatus()); // => Output: CONVERTED_TO_PO
+
+// Invalid transition
+PurchaseRequisition req2 = new PurchaseRequisition(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-000000000001"));
+req2.submit();
+try {
+    req2.approve(); // => SUBMITTED -> APPROVED is not in table; must go through MANAGER_REVIEW
+} catch (IllegalStateException e) {
+    System.out.println(e.getMessage()); // => Output: Invalid transition: SUBMITTED -> APPROVED
+}
 ```
 
-**Key Takeaway**: A static factory method is the single validated creation path. Private constructors ensure no instance can be created without passing validation.
+**Key Takeaway**: A transition table makes every legal state change explicit and enforces it at runtime, preventing silent invalid transitions.
 
-**Why It Matters**: Factory methods improve discoverability (`Quantity.of(3)` reads like a domain sentence), allow richer error messages tied to business rules, and centralise construction logic in one place. When a Quantity invariant changes — say, the business decides maximum quantity is 1000 — the factory is the one place to update, not every constructor call site.
+**Why It Matters**: Approval workflow bypasses are a common source of fraud in procurement systems. An explicit transition table means a requisition cannot skip the manager review step — not by accident, not by a rushed developer, and not by a misconfigured UI. The domain itself enforces the workflow.
 
 ---
 
-### Example 11: Self-encapsulation — private fields, intention-revealing accessors
+### Example 17: Guard methods — `canSubmit` and `canApprove`
 
-Self-encapsulation means all access to fields, even within the class, goes through accessors. This enforces uniform invariant-checking and allows future behaviour to be added without changing callers.
-
-**Java**:
+Guard predicates expose read-only queries about state eligibility, useful for UI enablement and pre-submission checks without triggering state changes.
 
 ```java
-public class Order {                                                  // => Order field
-    private final OrderId id;     // => identity
-    private Money total;           // => private; accessed only via getTotal()
-    private OrderStatus status;    // => private; transitions via named methods
+// Adding guard predicates to PurchaseRequisition aggregate
+// => canX methods: pure query; no side effects; safe to call any time
+public class PurchaseRequisition {
+    public enum Status { DRAFT, SUBMITTED, MANAGER_REVIEW, APPROVED, REJECTED, CONVERTED_TO_PO }
 
-    public Order(OrderId id) {                                        // => Order method
-        this.id     = id;                                             // => this.id assigned
-        this.total  = Money.zero("USD"); // => factory method; starts at zero
-        this.status = OrderStatus.PENDING;                            // => this.status assigned
-    // => ends block
+    private final RequisitionId    id;
+    private final java.util.List<LineItem> lineItems = new java.util.ArrayList<>();
+    private       Status           status = Status.DRAFT;
+
+    public PurchaseRequisition(RequisitionId id) {
+        this.id = id;
     }
 
-    // Intention-revealing accessor: name says what it means, not how it's stored
-    public Money       getTotal()  { return total; }   // => readable; not settable
-    public OrderStatus getStatus() { return status; }  // => readable; not settable
-    public OrderId     getId()     { return id; }      // => readable; immutable
-
-    // Encapsulated mutation: logic lives here, not scattered in callers
-    public void addToTotal(Money extra) {                             // => addToTotal method
-        // => currency-matching enforced by Money.add(); invariant inside VO
-        this.total = this.total.add(extra); // => replaces total with new Money instance
+    // => Pure predicate: answers "can this req be submitted now?"
+    public boolean canSubmit() {
+        return status == Status.DRAFT && !lineItems.isEmpty();
+        // => Both conditions required: must be DRAFT and have at least one line
     }
 
-    private void transitionTo(OrderStatus next) {                     // => transitionTo method
-        // => private helper enforces allowed transitions — callers use public methods
-        this.status = next;                                           // => this.status assigned
+    // => Pure predicate: answers "is manager approval currently possible?"
+    public boolean canApprove() {
+        return status == Status.MANAGER_REVIEW;
+        // => Only valid when escalated to manager review
     }
 
-    public void confirm() {                                           // => confirm method
-        if (status != OrderStatus.PENDING)                            // => precondition check
-            throw new IllegalStateException("Only PENDING orders can be confirmed"); // => throws if guard fails
-        transitionTo(OrderStatus.CONFIRMED); // => private helper called internally
+    public void addLine(LineItem line) {
+        if (status != Status.DRAFT)
+            throw new IllegalStateException("Only in DRAFT");
+        lineItems.add(line);
     }
+
+    public void submit() {
+        if (!canSubmit())   // => reuse guard; single source of truth for submit eligibility
+            throw new IllegalStateException(
+                "Cannot submit: status=" + status + ", lineCount=" + lineItems.size());
+        status = Status.SUBMITTED;
+    }
+
+    public void approve() {
+        if (!canApprove())  // => reuse guard
+            throw new IllegalStateException("Cannot approve: status=" + status);
+        status = Status.APPROVED;
+    }
+
+    public Status getStatus()    { return status; }
+    public int    lineCount()    { return lineItems.size(); }
 }
+
+PurchaseRequisition req = new PurchaseRequisition(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"));
+
+System.out.println(req.canSubmit()); // => Output: false (no line items)
+
+req.addLine(new LineItem(
+    new LineItemId("li-001"),
+    new SkuCode("OFF-001234"),
+    new Quantity(10, UnitOfMeasure.BOX),
+    new Money("25.00", "USD")
+)); // => lineItems = [li-001]
+
+System.out.println(req.canSubmit()); // => Output: true (DRAFT + has lines)
+System.out.println(req.canApprove()); // => Output: false (not in MANAGER_REVIEW)
+
+req.submit(); // => DRAFT -> SUBMITTED
+System.out.println(req.canSubmit()); // => Output: false (no longer DRAFT)
 ```
 
-**Kotlin**:
+**Key Takeaway**: Guard predicates (`canSubmit`, `canApprove`) are pure queries that expose eligibility without side effects. Domain methods reuse them so eligibility logic has one source of truth.
 
-```kotlin
-class Order(val id: OrderId) {                                        // => class Order
-    // => backing properties private; exposed via getters with intention-revealing names
-    private var _total: Money = Money(java.math.BigDecimal.ZERO, "USD") // => method declaration
-    private var _status: OrderStatus = OrderStatus.PENDING            // => expression
-
-    val total:  Money       get() = _total   // => read-only public getter
-    val status: OrderStatus get() = _status  // => read-only public getter
-
-    fun addToTotal(extra: Money) {                                    // => addToTotal method
-        _total = _total.add(extra) // => encapsulated; no external mutation of _total
-    // => ends block
-    }
-
-    fun confirm() {                                                   // => confirm method
-        check(_status == OrderStatus.PENDING) { "Only PENDING orders can be confirmed" } // => precondition check
-        _status = OrderStatus.CONFIRMED // => only reachable if check passes
-    }
-    // No _total = ... from outside the class; Kotlin val getter prevents it
-}
-```
-
-**C#**:
-
-```csharp
-public class Order                                                    // => class Order
-// => begins block
-{
-    private Money       _total;  // => private backing field; only mutated through AddToTotal()
-    private OrderStatus _status; // => private backing field; only mutated through Confirm()
-
-    public OrderId      Id     { get; }                      // => immutable; public read-only
-    public Money        Total  => _total;                     // => expression-bodied getter; readonly projection
-    public OrderStatus  Status => _status;                    // => expression-bodied getter; readonly projection
-    // => No public setter for Total or Status; only domain methods may mutate backing fields
-
-    public Order(OrderId id)                                          // => Order method
-    {
-        Id      = id;                                                 // => Id assigned
-        // => Id locked at construction; no reassignment possible (get-only property)
-        _total  = new Money(0m, "USD"); // => starts at zero
-        // => Initial total is zero; grows via AddToTotal()
-        _status = OrderStatus.Pending;                                // => _status assigned
-        // => All orders start Pending; lifecycle methods control transitions
-    }
-
-    public void AddToTotal(Money extra)                               // => AddToTotal method
-    {
-        _total = _total.Add(extra); // => encapsulated mutation; callers cannot bypass
-        // => Add returns a new Money instance; _total is reassigned, not mutated in place
-    }
-
-    public void Confirm()                                             // => Confirm method
-    {
-        if (_status != OrderStatus.Pending)                           // => precondition check
-            throw new InvalidOperationException("Only Pending orders can be confirmed"); // => throws if guard fails
-        // => Guard: CONFIRMED → re-confirm is rejected; PENDING is the only valid source state
-        _status = OrderStatus.Confirmed; // => private field writable here; not via property
-        // => Callers reading Status property see Confirmed; they cannot set it directly
-    }
-}
-```
-
-**Key Takeaway**: Keep fields private and expose only intention-revealing accessors. This gives you one place to add logging, validation, or domain events — the accessor — without changing any caller.
-
-**Why It Matters**: Self-encapsulation is the smallest unit of OOP discipline. When every field access is mediated by an accessor, the class controls its own invariants completely. Refactoring from a simple field to a computed or cached value becomes a local change, invisible to callers. This is why DDD tactical patterns work well in languages with proper encapsulation.
+**Why It Matters**: Without guard predicates, the eligibility condition is duplicated in the domain method and in every UI button or API pre-check. When the rule changes — say, requiring two line items instead of one — only one method needs updating instead of five.
 
 ---
 
-### Example 12: Tell-don't-ask method on Entity
+### Example 18: Domain events — recording what happened
 
-"Tell, don't ask" means you tell an object to do something rather than asking for its data and computing the result externally. This keeps domain logic inside the domain object where it belongs.
-
-**Java**:
+A domain event is an immutable record of a significant occurrence in the domain. `RequisitionSubmitted` is raised when `PurchaseRequisition.submit()` succeeds.
 
 ```java
-// Tell-don't-ask: Order computes its own total from lines — callers do not extract and sum
-public class Order {                                                  // => Order field
-    private final OrderId id;                                         // => id field
-    private final java.util.List<OrderLine> lines = new java.util.ArrayList<>(); // => method declaration
-    private OrderStatus status = OrderStatus.PENDING;                 // => status declared
+import java.time.Instant;
 
-    public Order(OrderId id) { this.id = id; }                        // => Order method
+// Domain Event: immutable record of a fact that occurred in the domain
+// => Record: structural equality, toString, hashCode generated; all fields final
+public record RequisitionSubmitted(
+    RequisitionId requisitionId,  // => which requisition was submitted
+    String        requesterId,    // => who submitted it
+    Money         estimatedTotal, // => total at time of submission (snapshot)
+    ApprovalLevel requiredLevel,  // => approval level needed
+    Instant       occurredAt      // => when it happened; Instant = UTC always
+) {}
 
-    // WRONG (ask): external code asks for lines, then computes total
-    // callers would do: order.getLines().stream().map(l -> l.price).reduce(...)
-    // => logic duplicated across callers; no single place to change
+// PurchaseRequisition collects events internally
+public class PurchaseRequisition {
+    public enum Status { DRAFT, SUBMITTED, MANAGER_REVIEW, APPROVED, REJECTED, CONVERTED_TO_PO }
 
-    // RIGHT (tell): Order tells itself to compute total — logic stays inside
-    public Money calculateTotal() {                                   // => calculateTotal method
-        return lines.stream()                                         // => returns lines.stream()
-            .map(OrderLine::subtotal)  // => delegate to child; each line knows its own subtotal
-            .reduce(Money.zero("USD"), Money::add); // => fold into running total
-        // => caller receives result; never sees individual lines for calculation purposes
+    private final RequisitionId id;
+    private final String requesterId;
+    private       Status  status = Status.DRAFT;
+    private final java.util.List<LineItem>             lineItems   = new java.util.ArrayList<>();
+    private final java.util.List<RequisitionSubmitted> domainEvents = new java.util.ArrayList<>();
+    // => events collected here; application layer dispatches after transaction commit
+
+    public PurchaseRequisition(RequisitionId id, String requesterId) {
+        this.id = id; this.requesterId = requesterId;
+    }
+    public void addLine(LineItem l) { if (status==Status.DRAFT) lineItems.add(l); }
+
+    public void submit() {
+        if (status != Status.DRAFT || lineItems.isEmpty())
+            throw new IllegalStateException("Cannot submit");
+        status = Status.SUBMITTED; // => state change first
+
+        Money total = lineItems.stream()
+            .map(LineItem::lineTotal)
+            .reduce(new Money("0.00","USD"), Money::add); // => compute total
+
+        domainEvents.add(new RequisitionSubmitted( // => record the fact
+            id, requesterId, total,
+            ApprovalLevel.from(total),
+            Instant.now()   // => UTC timestamp; wall clock at commit time
+        )); // => event collected; not dispatched here; application layer dispatches
     }
 
-    public void addLine(ProductId pid, Quantity qty, Money price) {   // => addLine method
-        lines.add(new OrderLine(OrderLineId.generate(), pid, qty, price)); // => lines.add() called
-        // => Order creates child; callers do not construct OrderLine directly
+    public java.util.List<RequisitionSubmitted> pullEvents() {
+        var copy = java.util.List.copyOf(domainEvents); // => immutable snapshot
+        domainEvents.clear();                           // => clear after pull; events are one-shot
+        return copy;
     }
-
-    public java.util.List<OrderLine> getLines() {                     // => getLines method
-        return java.util.Collections.unmodifiableList(lines);         // => returns java.util.Collections.unmodifi
-        // => read-only view; callers can read but not mutate the list
-    }
-}
-```
-
-**Kotlin**:
-
-```kotlin
-class Order(val id: OrderId) {                                        // => class Order
-    private val _lines = mutableListOf<OrderLine>() // => private mutable backing list
-    val lines: List<OrderLine> get() = _lines.toList() // => defensive copy; caller gets snapshot
-
-    // Tell-don't-ask: Order computes total; callers do not iterate lines externally
-    fun calculateTotal(): Money =                                     // => calculateTotal method
-        _lines.fold(Money(java.math.BigDecimal.ZERO, "USD")) { acc, line -> // => _lines.fold() called
-            acc.add(line.subtotal()) // => each line delegates to itself (tell-don't-ask recursively)
-        } // => returns total; caller never needs to know how lines are stored
-
-    fun addLine(pid: ProductId, qty: Quantity, price: Money) {        // => addLine method
-        _lines += OrderLine(OrderLineId.generate(), pid, qty, price)  // => _lines assigned
-        // => Order owns child creation; caller provides data, Order creates the child
-    }
-}
-```
-
-**C#**:
-
-```csharp
-public class Order                                                    // => class Order
-{
-    private readonly List<OrderLine> _lines = new();                  // => List method
-    // => private list; external code cannot manipulate it directly
-
-    public OrderId Id { get; }                                        // => Id field
-    // => immutable identity
-
-    public IReadOnlyList<OrderLine> Lines => _lines.AsReadOnly();     // => IReadOnlyList method
-    // => read-only view; callers can enumerate but not add/remove
-
-    public Order(OrderId id) { Id = id; }                             // => Order method
-
-    // Tell-don't-ask: ask Order for its total; don't ask for lines to compute it yourself
-    public Money CalculateTotal() =>                                  // => CalculateTotal method
-        _lines.Aggregate(new Money(0m, "USD"), (acc, line) => acc.Add(line.Subtotal())); // => _lines.Aggregate() called
-        // => LINQ Aggregate folds lines into total; caller gets Money back; no line details needed
-
-    public void AddLine(ProductId pid, Quantity qty, Money price)     // => AddLine method
-    {
-        _lines.Add(new OrderLine(OrderLineId.Generate(), pid, qty, price)); // => _lines.Add() called
-        // => Order creates child; callers call AddLine with data, not with an OrderLine object
-    }
-}
-```
-
-**Key Takeaway**: Tell objects to do things rather than asking for their internals. `order.calculateTotal()` keeps total-calculation logic inside `Order`; asking for lines and summing externally spreads that logic across callers.
-
-**Why It Matters**: "Ask" style scatters business logic across the codebase. When the business changes how totals are computed (add tax, apply discount), you hunt through every caller. "Tell" style localises that change to the entity's method. Entities become self-contained units of behaviour, not passive data bags, which is the core promise of DDD's rich domain model.
-
----
-
-## Strongly-Typed IDs and Enums (Examples 13–15)
-
-### Example 13: Domain primitive — typed wrapper around `String` for `EmailAddress`
-
-A domain primitive wraps a single primitive value with validation and domain-specific meaning. `EmailAddress` wraps `String` but is not just a string — it carries the guarantee that its value is a valid email.
-
-**Java**:
-
-```java
-import java.util.Objects;                                             // => namespace/package import
-
-// Domain primitive: wraps String; adds domain meaning and validation
-// => EmailAddress is not interchangeable with any String — type system enforces this
-public final class EmailAddress {                                     // => EmailAddress field
-    private final String value; // => normalised lowercase value
-
-    public EmailAddress(String value) {                               // => EmailAddress method
-        // => validate format; reject null and malformed emails at construction
-        if (value == null || !value.contains("@") || value.length() < 3) // => precondition check
-            throw new IllegalArgumentException("Invalid email: " + value); // => throws if guard fails
-        this.value = value.toLowerCase(); // => normalise; consistent equality
-    }
-
-    public String getValue() { return value; } // => read-only accessor
-    @Override public boolean equals(Object o) {                       // => expression
-        if (!(o instanceof EmailAddress e)) return false;             // => precondition check
-        return value.equals(e.value); // => structural equality
-    }
-    @Override public int hashCode() { return Objects.hash(value); }   // => Objects.hash() called
-    @Override public String toString() { return value; } // => "alice@example.com"
-}
-
-// Usage: type system prevents passing a raw String where EmailAddress expected
-// void sendWelcome(EmailAddress email) — compiler rejects sendWelcome("raw string")
-EmailAddress email = new EmailAddress("Alice@Example.com"); // => "alice@example.com"
-// sendWelcome(email) — correct; sendWelcome("alice@example.com") — compile error
-```
-
-**Kotlin**:
-
-```kotlin
-// @JvmInline value class: zero-overhead wrapper; erased to String at runtime
-@JvmInline value class EmailAddress(val value: String) {
-    // => value class: no allocation overhead; wrapped value stored directly
-    init {
-        require(value.isNotBlank() && value.contains("@")) { "Invalid email: $value" }
-        // => init block runs at construction; validation always applies
-    }
-}
-
-// Usage: function signature is self-documenting and type-safe
-fun sendWelcome(email: EmailAddress) { /* ... */ }
-val email = EmailAddress("alice@example.com") // => validated at creation
-// sendWelcome(email)               — correct
-// sendWelcome("alice@example.com") — compile error: String is not EmailAddress
-```
-
-**C#**:
-
-```csharp
-// readonly record struct: value semantics, zero heap allocation, structural equality
-public readonly record struct EmailAddress                            // => record struct
-{
-    public string Value { get; } // => get-only; immutable after construction
-
-    public EmailAddress(string value)                                 // => EmailAddress method
-    {
-        // => validate; reject null/blank/missing @
-        if (string.IsNullOrWhiteSpace(value) || !value.Contains('@')) // => precondition check
-            throw new ArgumentException($"Invalid email: {value}");   // => throws if guard fails
-        Value = value.ToLowerInvariant(); // => normalise for consistent equality
-    }
-
-    public override string ToString() => Value; // => "alice@example.com"
-}
-
-// Function accepts EmailAddress, not string — compiler enforces at call site
-void SendWelcome(EmailAddress email) { /* ... */ }                    // => expression
-var email = new EmailAddress("Alice@Example.com"); // => Value = "alice@example.com"
-// SendWelcome(email)                — correct
-// SendWelcome("alice@example.com")  — compile error: string ≠ EmailAddress
-```
-
-**Key Takeaway**: A domain primitive wraps a single value with validation and domain meaning. The type system enforces that you cannot accidentally pass a raw string where an `EmailAddress` is required.
-
-**Why It Matters**: "Primitive obsession" — using raw `String`, `int`, `double` for domain concepts — is one of the most common sources of bugs. When methods accept `String email`, any string compiles. When they accept `EmailAddress`, invalid emails are caught at construction time, and id mix-ups (passing a product id where a customer id is expected) become compile errors rather than runtime surprises.
-
----
-
-### Example 14: Strongly-typed IDs — `OrderId` ≠ `CustomerId` at compile time
-
-Separate typed IDs prevent passing an `OrderId` where a `CustomerId` is expected. This is a zero-cost correctness guarantee — the types are erased at runtime but enforced at compile time.
-
-**Java**:
-
-```java
-import java.util.UUID;
-
-// Separate record types for each aggregate's id
-// => OrderId and CustomerId are structurally identical but type-incompatible
-public record OrderId(UUID value) {
-    public static OrderId generate() { return new OrderId(UUID.randomUUID()); }
-    // => factory: ensures every id is a real UUID
-}
-
-public record CustomerId(UUID value) {
-    public static CustomerId generate() { return new CustomerId(UUID.randomUUID()); }
-    // => same UUID internally, but separate type from OrderId
-}
-
-// Usage: method signatures prevent id mix-up at compile time
-public Order findOrder(OrderId id) { /* ... */ return null; } // => accepts only OrderId
-// findOrder(new CustomerId(UUID.randomUUID())) — compile error: CustomerId ≠ OrderId
-// findOrder(new OrderId(UUID.randomUUID()))    — correct
-
-// Before typed ids: findOrder(UUID id) accepts any UUID — wrong ids compile silently
-```
-
-**Kotlin**:
-
-```kotlin
-// @JvmInline value classes: zero-overhead; erased to UUID at runtime; distinct types at compile time
-@JvmInline value class OrderId(val value: java.util.UUID) {           // => class OrderId
-    companion object { fun generate() = OrderId(java.util.UUID.randomUUID()) } // => UUID.randomUUID() called
-    // => generate() is the canonical factory
-}
-@JvmInline value class CustomerId(val value: java.util.UUID) {        // => class CustomerId
-    companion object { fun generate() = CustomerId(java.util.UUID.randomUUID()) } // => UUID.randomUUID() called
-    // => same UUID type inside, but CustomerId ≠ OrderId at the Kotlin type level
-}
-
-fun findOrder(id: OrderId): Order? = null  // => only OrderId accepted
-// findOrder(CustomerId.generate()) — compile error
-// findOrder(OrderId.generate())    — correct; no runtime cost from @JvmInline
-```
-
-**C#**:
-
-```csharp
-// readonly record struct: value semantics, no heap allocation, type-distinct ids
-public readonly record struct OrderId(Guid Value)                     // => record struct
-// => begins block
-{
-    public static OrderId Generate() => new(Guid.NewGuid()); // => canonical factory
-}
-public readonly record struct CustomerId(Guid Value)                  // => record struct
-{
-    public static CustomerId Generate() => new(Guid.NewGuid()); // => separate type
-}
-
-Order? FindOrder(OrderId id) => null; // => only OrderId compiles here
-// FindOrder(CustomerId.Generate()) — compile error: CustomerId ≠ OrderId
-// FindOrder(OrderId.Generate())    — correct; record struct = zero allocation
-```
-
-**Key Takeaway**: Give each aggregate its own ID type. The compiler then prevents every cross-aggregate ID mix-up for free — no runtime cost, no extra tests needed.
-
-**Why It Matters**: UUID/string mix-ups — passing an order ID to a customer lookup — are notoriously hard to catch in tests because both IDs are valid GUIDs. They surface in production as "customer not found" or corrupted associations. Strongly-typed IDs convert runtime surprises into compile errors. The refactor from `UUID` to `OrderId` is mechanical and pays for itself the first time a swapped-id bug is prevented.
-
----
-
-### Example 15: Enum as domain concept — `OrderStatus`
-
-An enum elevates a set of named states to a first-class type. `OrderStatus` is clearer, more safe, and more maintainable than using raw strings or integers for lifecycle states.
-
-**Java**:
-
-```java
-// Enum as domain concept: exhaustive; type-safe; no invalid status possible
-// => Cannot pass "SHPIED" (typo) — only enum constants compile
-public enum OrderStatus {
-    PENDING,    // => Order created; awaiting confirmation
-    CONFIRMED,  // => Payment authorised; awaiting shipment
-    SHIPPED,    // => Physical goods dispatched
-    CANCELLED;  // => Order cancelled before or after confirmation
-
-    // Domain behaviour inside the enum: isTerminal tells callers which states end the lifecycle
-    public boolean isTerminal() {
-        return this == SHIPPED || this == CANCELLED;
-        // => PENDING and CONFIRMED are interim; SHIPPED and CANCELLED are final
-    }
-}
-
-// Usage: switch is exhaustive when all cases are handled
-OrderStatus s = OrderStatus.PENDING;
-boolean terminal = s.isTerminal(); // => false — PENDING is not terminal
-// String-based equivalent: switch("PENDNG") compiles — typo not caught; enum prevents this
-```
-
-**Kotlin**:
-
-```kotlin
-// Kotlin sealed class or enum; enum is simpler for fixed finite states
-enum class OrderStatus {                                              // => enum class
-    PENDING,    // => created; awaiting confirmation
-    CONFIRMED,  // => payment authorised
-    SHIPPED,    // => dispatched
-    CANCELLED;  // => terminal; no further transitions
-
-    fun isTerminal() = this == SHIPPED || this == CANCELLED           // => isTerminal method
-    // => business rule embedded in enum; callers ask status.isTerminal() — tell-don't-ask
-}
-
-// Kotlin when is exhaustive on enum — compiler warns on missing cases
-fun describe(s: OrderStatus) = when (s) {                             // => describe method
-    OrderStatus.PENDING   -> "Awaiting confirmation"  // => all cases covered
-    OrderStatus.CONFIRMED -> "Ready to ship"                          // => expression
-    OrderStatus.SHIPPED   -> "On its way"                             // => expression
-    OrderStatus.CANCELLED -> "Order cancelled"                        // => expression
-} // => no else needed; missing case = compile warning
-```
-
-**C#**:
-
-```csharp
-// C# enum: strongly typed; switch expressions can be exhaustive with default handling
-public enum OrderStatus                                               // => enum OrderStatus
-{
-    Pending   = 1, // => start at 1; avoids default(int) = 0 acting as Pending silently
-    Confirmed = 2, // => payment confirmed
-    Shipped   = 3, // => dispatched
-    Cancelled = 4  // => terminal
-}
-
-// Extension method: domain behaviour near the enum
-public static class OrderStatusExtensions                             // => class OrderStatusExtensions
-{
-    public static bool IsTerminal(this OrderStatus s) =>              // => IsTerminal method
-        s is OrderStatus.Shipped or OrderStatus.Cancelled;            // => expression
-        // => C# 9 pattern: readable OR pattern in is-expression
+    public Status getStatus() { return status; }
 }
 
 // Usage
-var s = OrderStatus.Pending;                                          // => s initialised
-bool terminal = s.IsTerminal(); // => false
-// switch expression enforces handling: compiler warning if a case is missing
+PurchaseRequisition req = new PurchaseRequisition(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"), "emp-42");
+req.addLine(new LineItem(new LineItemId("li-001"), new SkuCode("OFF-001234"),
+    new Quantity(500, UnitOfMeasure.EACH), new Money("0.50","USD")));
+req.submit(); // => raises RequisitionSubmitted event internally
+
+var events = req.pullEvents(); // => [RequisitionSubmitted{...}]
+System.out.println(events.size());                  // => Output: 1
+System.out.println(events.get(0).estimatedTotal()); // => Output: 250.00 USD
+System.out.println(events.get(0).requiredLevel());  // => Output: L1
 ```
 
-**Key Takeaway**: Represent domain lifecycle states with enums, not strings or integers. The type system then prevents invalid states at compile time, and behaviour can be embedded directly in the enum.
+**Key Takeaway**: Domain events capture significant state transitions as immutable facts. The aggregate collects them; the application layer dispatches them after the transaction commits.
 
-**Why It Matters**: String-based status fields are a common source of bugs: typos compile, comparisons are case-sensitive, and the set of valid states is invisible to the type checker. Enum-based status makes the complete state space explicit, enables exhaustive switch expressions, and allows domain behaviour — like `isTerminal()` — to live right next to the states it describes.
+**Why It Matters**: Dispatching events inside the aggregate's own transaction risks double-dispatch on retry. Collecting and pulling after commit is the established pattern for reliable once-exactly event delivery in procurement workflows where duplicate approval emails or duplicate payment triggers are serious compliance issues.
 
 ---
 
-## Aggregates and Repositories (Examples 16–21)
+### Example 19: Optional — representing absent domain values
 
-### Example 16: Aggregate — single root + child entities
-
-An Aggregate is a cluster of domain objects treated as a single unit for data changes. The Aggregate Root controls all access to the cluster — external code can only reach child entities through the root.
-
-```mermaid
-%% Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph TD
-    A["Order #40;Aggregate Root#41;"]:::blue
-    B["OrderLine #40;Child Entity#41;"]:::orange
-    C["OrderLine #40;Child Entity#41;"]:::orange
-    D["ShippingAddress #40;Value Object#41;"]:::teal
-    A --> B
-    A --> C
-    A --> D
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-```
-
-**Java**:
+`Optional<T>` is Java's explicit wrapper for a value that might not be present. In domain code, it communicates intent clearly: `findById` either returns a `PurchaseRequisition` or nothing.
 
 ```java
-import java.util.*; // => List, ArrayList, Collections — all standard library
-
-// Aggregate Root: sole entry point into the Order cluster
-// => No external code directly constructs or modifies OrderLine
-public class Order { // => class not record: mutable state; identity-based equality
-    private final OrderId id;                                   // => final: identity locked
-    private final List<OrderLine> lines = new ArrayList<>();    // => private; root owns children
-    private Address shippingAddress;                             // => Value Object child; replaceable
-    private OrderStatus status = OrderStatus.PENDING;           // => starts PENDING; transitions via methods
-
-    public Order(OrderId id, Address shippingAddress) {               // => Order method
-        this.id              = id;              // => identity locked in constructor
-        this.shippingAddress = shippingAddress; // => initial Value Object; may be updated
-    }
-
-    // External code adds lines through this method — never by creating OrderLine directly
-    public void addLine(ProductId productId, Quantity quantity, Money unitPrice) { // => addLine method
-        // => Root enforces invariant before creating child
-        if (status != OrderStatus.PENDING)      // => lifecycle gate: only PENDING accepts new lines
-            throw new IllegalStateException("Cannot add lines to non-pending order"); // => domain rule as exception
-        OrderLineId lineId = OrderLineId.generate();  // => Root generates child's identity
-        lines.add(new OrderLine(lineId, productId, quantity, unitPrice)); // => Root creates and owns child
-    }
-
-    public Money calculateTotal() { // => tell-don't-ask: caller gets total; never iterates lines
-        return lines.stream().map(OrderLine::subtotal)  // => each line computes its subtotal
-            .reduce(Money.zero("USD"), Money::add);      // => fold: accumulate into running total
-    }
-
-    public List<OrderLine> getLines() { return Collections.unmodifiableList(lines); } // => getLines method
-    // => unmodifiable view: callers can read but not mutate the list
-    public OrderId getId() { return id; } // => expose identity for repository lookup
-}
-
-// Package-private: external code outside the aggregate package cannot construct OrderLine
-class OrderLine { // => package-private class: invisible outside domain.order package
-    private final OrderLineId id;       // => final: line identity immutable
-    private final ProductId productId;  // => which product
-    private final Quantity quantity;    // => how many
-    private final Money unitPrice;      // => price per unit at time of addition
-
-    OrderLine(OrderLineId id, ProductId productId, Quantity quantity, Money unitPrice) { // => OrderLine() called
-        // => package-private constructor: only Order (same package) can call this
-        this.id = id; this.productId = productId;                     // => this.id assigned
-        this.quantity = quantity; this.unitPrice = unitPrice; // => all fields set; no setters
-    }
-
-    Money subtotal() { return unitPrice.multiply(quantity.getValue()); } // => unitPrice.multiply() called
-    // => line computes its own subtotal — tell-don't-ask within the aggregate
-}
-```
-
-**Kotlin**:
-
-```kotlin
-class Order(val id: OrderId, shippingAddress: Address) {              // => class Order
-    private val _lines = mutableListOf<OrderLine>() // => private mutable list
-    val lines: List<OrderLine> get() = _lines.toList() // => defensive copy on each read
-
-    var status: OrderStatus = OrderStatus.PENDING                     // => expression
-        private set // => only aggregate root methods can change status
-
-    fun addLine(productId: ProductId, quantity: Quantity, unitPrice: Money) { // => addLine method
-        // => invariant: only PENDING orders accept new lines
-        check(status == OrderStatus.PENDING) { "Cannot add lines to non-pending order" } // => precondition check
-        _lines += OrderLine(OrderLineId.generate(), productId, quantity, unitPrice) // => _lines assigned
-        // => Root creates child with generated id; external code cannot create OrderLine
-    }
-
-    fun calculateTotal(): Money =                                     // => calculateTotal method
-        _lines.fold(Money(java.math.BigDecimal.ZERO, "USD")) { acc, line -> // => _lines.fold() called
-            acc.add(line.subtotal()) // => delegate to child; aggregate folds results
-        }
-}
-
-// internal: visible only within the module; not accessible from outside the aggregate module
-internal class OrderLine(  // => internal: module-scoped; not in public API
-    val id: OrderLineId,    // => identity; immutable val
-    val productId: ProductId, // => which product
-    val quantity: Quantity,   // => how many
-    val unitPrice: Money      // => price per unit at time of line creation
-) {                                                                   // => expression
-    fun subtotal(): Money = unitPrice.multiply(quantity.value) // => line computes its own subtotal
-    // => tell-don't-ask: caller asks for subtotal; never asks for fields to compute it
-}
-```
-
-**C#**:
-
-```csharp
-public class Order // => class not record: mutable state; override Equals for id-based equality
-// => begins block
-{
-    private readonly List<OrderLine> _lines = new(); // => private; root controls membership
-    public OrderId     Id     { get; }               // => immutable identity
-    public OrderStatus Status { get; private set; } = OrderStatus.Pending; // => starts Pending
-
-    public IReadOnlyList<OrderLine> Lines => _lines.AsReadOnly();     // => IReadOnlyList method
-    // => read-only interface: callers can read, not mutate
-
-    public Order(OrderId id) { Id = id; } // => identity locked; no other constructor overload
-
-    public void AddLine(ProductId productId, Quantity quantity, Money unitPrice) // => AddLine method
-    // => begins block
-    {
-        // => invariant enforced before creating child
-        if (Status != OrderStatus.Pending)          // => lifecycle gate: only Pending accepts lines
-            throw new InvalidOperationException("Cannot add lines to non-pending order"); // => domain rule
-        _lines.Add(new OrderLine(OrderLineId.Generate(), productId, quantity, unitPrice)); // => _lines.Add() called
-        // => Root creates and owns the child; callers only provide data, not an OrderLine instance
-    }
-
-    public Money CalculateTotal() =>                                  // => CalculateTotal method
-        _lines.Aggregate(new Money(0m, "USD"), (acc, line) => acc.Add(line.Subtotal())); // => _lines.Aggregate() called
-        // => fold lines into total; all line logic stays in OrderLine.Subtotal()
-}
-
-// internal: only accessible within this assembly (same as the aggregate)
-internal sealed class OrderLine                                       // => class OrderLine
-{
-    public OrderLineId Id         { get; }                            // => Id field
-    public ProductId   ProductId  { get; }                            // => ProductId field
-    public Quantity    Quantity   { get; }                            // => Quantity field
-    public Money       UnitPrice  { get; }                            // => UnitPrice field
-
-    internal OrderLine(OrderLineId id, ProductId productId, Quantity quantity, Money unitPrice) // => OrderLine method
-    {
-        Id = id; ProductId = productId; Quantity = quantity; UnitPrice = unitPrice; // => Id assigned
-        // => internal constructor: only Order (same assembly) can create OrderLine
-    }
-
-    internal Money Subtotal() => UnitPrice.Multiply(Quantity.Value); // => line computes itself
-}
-```
-
-**Key Takeaway**: The Aggregate Root is the only entry point into the cluster. External code accesses children only through root methods — never directly.
-
-**Why It Matters**: Direct access to child entities bypasses the root's invariant checks. Without an Aggregate Root mediating access, any service can mutate order lines in ways that corrupt the order's total or violate lifecycle rules. Production incidents frequently trace back to a background job directly updating a child entity and breaking an invariant that the root was supposed to enforce. The aggregate boundary makes the root the single, auditable source of truth for consistency within the cluster.
-
----
-
-### Example 17: Aggregate Root enforces invariants on child changes
-
-The Aggregate Root re-checks cross-child invariants whenever the cluster changes. Single-entity invariants live in the entity; cross-entity invariants live in the root.
-
-```mermaid
-%% Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Brown #CA9161
-flowchart LR
-    E["External caller"]:::brown
-    R["Order Root\n#40;Aggregate Root#41;"]:::blue
-    I{"Invariant\ncheck"}:::orange
-    C["OrderLine\n#40;Child Entity#41;"]:::teal
-    ERR["Exception\n#40;invariant violated#41;"]:::brown
-
-    E -->|"addLine#40;...#41;"| R
-    R --> I
-    I -->|"pass"| C
-    I -->|"fail"| ERR
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-    classDef brown fill:#CA9161,stroke:#000,color:#fff,stroke-width:2px
-```
-
-**Java**:
-
-```java
-public class Order { // => Aggregate Root; owns invariants for the whole cluster
-    private static final int MAX_LINES = 50; // => business rule: orders capped at 50 lines
-    private final OrderId id;                // => identity; final
-    private final List<OrderLine> lines = new ArrayList<>(); // => mutable child collection
-    private OrderStatus status = OrderStatus.PENDING;        // => lifecycle state
-
-    public Order(OrderId id) { this.id = id; } // => minimal constructor; no other arg needed here
-
-    public void addLine(ProductId productId, Quantity quantity, Money unitPrice) { // => addLine method
-        // => Cross-child invariant 1: order must be in a state that accepts new lines
-        if (status != OrderStatus.PENDING)    // => status check before any mutation
-            throw new IllegalStateException("Non-pending order cannot accept new lines"); // => domain rule
-        // => Cross-child invariant 2: cannot exceed maximum line count
-        if (lines.size() >= MAX_LINES)        // => size check before adding
-            throw new IllegalStateException("Order cannot exceed " + MAX_LINES + " lines"); // => domain cap
-        lines.add(new OrderLine(OrderLineId.generate(), productId, quantity, unitPrice)); // => lines.add() called
-        // => Child added only after both invariants pass; cluster stays consistent
-    }
-
-    public void confirm() {                                           // => confirm method
-        // => Cross-child invariant: cannot confirm empty order
-        if (lines.isEmpty()) throw new IllegalStateException("Cannot confirm order with no lines"); // => throws if guard fails
-        if (status != OrderStatus.PENDING) throw new IllegalStateException("Only PENDING orders can be confirmed"); // => throws if guard fails
-        status = OrderStatus.CONFIRMED; // => all invariants passed; transition is safe
-    }
-}
-```
-
-**Kotlin**:
-
-```kotlin
-class Order(val id: OrderId) {
-    // => Primary constructor: id is a val property; immutable after construction
-    companion object { const val MAX_LINES = 50 } // => named constant; domain rule is visible
-    // => companion object: Kotlin's static scope; MAX_LINES accessible as Order.MAX_LINES
-    private val _lines = mutableListOf<OrderLine>()
-    // => Private mutable list; backing storage for the child entity collection
-    var status: OrderStatus = OrderStatus.PENDING; private set
-    // => Starts PENDING; private set: callers can read but not directly assign status
-
-    fun addLine(productId: ProductId, quantity: Quantity, unitPrice: Money) {
-        // => Invariant 1: lifecycle gate
-        check(status == OrderStatus.PENDING) { "Non-pending order cannot accept new lines" }
-        // => check() throws IllegalStateException if status is not PENDING
-        // => Invariant 2: size limit — cross-child rule owned by root
-        check(_lines.size < MAX_LINES) { "Order cannot exceed $MAX_LINES lines" }
-        // => Size check: _lines.size returns current count; < MAX_LINES is the constraint
-        _lines += OrderLine(OrderLineId.generate(), productId, quantity, unitPrice)
-        // => Both checks passed; child safely added
-        // => += is shorthand for _lines.add(); new OrderLine created with generated id
-    }
-
-    fun confirm() {
-        // => Cross-child invariant: at least one line required
-        check(_lines.isNotEmpty()) { "Cannot confirm order with no lines" }
-        // => isNotEmpty(): returns true if _lines has at least one element
-        check(status == OrderStatus.PENDING) { "Only PENDING orders can be confirmed" }
-        // => Second guard: status must still be PENDING when confirm() is called
-        status = OrderStatus.CONFIRMED
-        // => private set accessible within Order; external code cannot set this directly
-    }
-}
-```
-
-**C#**:
-
-```csharp
-public class Order                                                    // => class Order
-{
-    private const int MaxLines = 50; // => named constant; documents the business rule
-    private readonly List<OrderLine> _lines = new();                  // => List method
-    // => Private mutable backing list; external code gets read-only view only
-    public OrderId     Id     { get; }                                // => Id field
-    // => Identity: set in constructor, never reassigned
-    public OrderStatus Status { get; private set; } = OrderStatus.Pending; // => Status field
-    // => Starts Pending; private set ensures only Order methods can transition status
-
-    public Order(OrderId id) { Id = id; }                             // => Order method
-    // => New orders start with empty line list and Pending status
-
-    public void AddLine(ProductId productId, Quantity quantity, Money unitPrice) // => AddLine method
-    {
-        // => Invariant 1: status gate before modifying the cluster
-        if (Status != OrderStatus.Pending)                            // => precondition check
-            throw new InvalidOperationException("Non-pending order cannot accept new lines"); // => throws if guard fails
-        // => Confirmed or shipped orders cannot grow; only Pending accepts new lines
-        // => Invariant 2: size limit enforced by root; no individual line knows about this
-        if (_lines.Count >= MaxLines)                                 // => precondition check
-            throw new InvalidOperationException($"Order cannot exceed {MaxLines} lines"); // => throws if guard fails
-        // => 50 is the business rule; MaxLines documents why, not just what
-        _lines.Add(new OrderLine(OrderLineId.Generate(), productId, quantity, unitPrice)); // => _lines.Add() called
-        // => OrderLine created by root with a new generated id; caller never constructs OrderLine directly
-    }
-
-    public void Confirm()                                             // => Confirm method
-    {
-        // => Cross-child invariant: non-empty order required before confirmation
-        if (_lines.Count == 0)  throw new InvalidOperationException("Cannot confirm empty order"); // => throws if guard fails
-        // => Root checks aggregate-level invariant: one or more lines required
-        if (Status != OrderStatus.Pending) throw new InvalidOperationException("Only Pending orders can be confirmed"); // => throws if guard fails
-        // => Lifecycle guard: only Pending → Confirmed is allowed here
-        Status = OrderStatus.Confirmed; // => all invariants satisfied; transition safe
-    }
-}
-```
-
-**Key Takeaway**: Cross-child invariants live in the Aggregate Root. Individual child invariants live in the child. Each layer enforces only what it can see.
-
-**Why It Matters**: A 51st order line or confirming an empty order are invariants that no single `OrderLine` can enforce because they involve the entire cluster's state. Centralising these rules in the root ensures they fire consistently regardless of which code path triggers the change — whether it is a REST endpoint, a background import job, or an admin CLI. Without this centralisation, each entry point must duplicate the rule, and a missed copy causes a production invariant violation.
-
----
-
-### Example 18: Aggregate boundary — never expose mutable children
-
-Exposing mutable child entities directly lets external code bypass Aggregate Root invariant checks. The root must return read-only views or immutable snapshots.
-
-```mermaid
-%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05, Brown #CA9161
-graph TD
-    EXT["External Code"]:::brown
-    ROOT["Order Root"]:::blue
-    RO["unmodifiableList\n#40;read-only view#41;"]:::teal
-    LINES["List#60;OrderLine#62;\n#40;mutable internals#41;"]:::orange
-
-    EXT -->|"getLines#40;#41;"| ROOT
-    ROOT --> RO
-    RO -.->|"view only"| LINES
-    EXT -.-x|"cannot reach directly"| LINES
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
-    classDef brown fill:#CA9161,stroke:#000,color:#fff,stroke-width:2px
-```
-
-**Java**:
-
-```java
-import java.util.*;                                                   // => namespace/package import
-
-public class Order {                                                  // => Order field
-    private final List<OrderLine> lines = new ArrayList<>(); // => mutable internal list
-    private OrderStatus status = OrderStatus.PENDING;                 // => status declared
-    // ...
-
-    // WRONG: returns mutable list — caller can add/remove lines without root's knowledge
-    // public List<OrderLine> getLines() { return lines; } // => anti-pattern; never do this
-
-    // CORRECT: returns read-only view — caller can iterate, never mutate
-    public List<OrderLine> getLines() {                               // => getLines method
-        return Collections.unmodifiableList(lines);                   // => returns Collections.unmodifiableList(l
-        // => UnsupportedOperationException if caller tries lines.add(...) or lines.remove(...)
-    }
-
-    // ALSO CORRECT: return defensive copy — caller gets a snapshot; no view into internals
-    public List<OrderLine> getLinesSnapshot() {                       // => getLinesSnapshot method
-        return new ArrayList<>(lines); // => copy; caller mutations don't affect the original
-    }
-
-    // External add goes through root — invariants enforced
-    public void addLine(ProductId pid, Quantity qty, Money price) {   // => addLine method
-        if (status != OrderStatus.PENDING) throw new IllegalStateException("Order not pending"); // => throws if guard fails
-        lines.add(new OrderLine(OrderLineId.generate(), pid, qty, price)); // => lines.add() called
-        // => only reachable after invariant check; aggregate stays consistent
-    }
-}
-```
-
-**Kotlin**:
-
-```kotlin
-class Order(val id: OrderId) {                                        // => class Order
-    private val _lines = mutableListOf<OrderLine>() // => private mutable; internal
-    var status: OrderStatus = OrderStatus.PENDING; private set        // => expression
-
-    // Exposes read-only List interface — caller cannot call add/remove
-    val lines: List<OrderLine> get() = _lines.toList() // => defensive copy each time
-    // => caller gets a snapshot; mutations to their copy don't affect _lines
-
-    fun addLine(pid: ProductId, qty: Quantity, price: Money) {        // => addLine method
-        check(status == OrderStatus.PENDING) { "Order not pending" }  // => precondition check
-        _lines += OrderLine(OrderLineId.generate(), pid, qty, price)  // => _lines assigned
-        // => only through this method; invariant always runs
-    }
-}
-```
-
-**C#**:
-
-```csharp
-public class Order                                                    // => class Order
-{
-    private readonly List<OrderLine> _lines = new(); // => private; root owns this
-    public OrderStatus Status { get; private set; } = OrderStatus.Pending; // => Status field
-
-    // IReadOnlyList<T>: exposes Count and indexer but no Add/Remove/Clear
-    public IReadOnlyList<OrderLine> Lines => _lines.AsReadOnly();     // => IReadOnlyList method
-    // => AsReadOnly() wraps _lines; changes to _lines are visible but callers cannot mutate
-
-    // Alternatively: return an IEnumerable<OrderLine> for even more encapsulation
-    // public IEnumerable<OrderLine> Lines => _lines; // => read-only; no Count without LINQ
-
-    public void AddLine(ProductId pid, Quantity qty, Money price)     // => AddLine method
-    {
-        if (Status != OrderStatus.Pending)                            // => precondition check
-            throw new InvalidOperationException("Order not pending"); // => throws if guard fails
-        _lines.Add(new OrderLine(OrderLineId.Generate(), pid, qty, price)); // => _lines.Add() called
-        // => invariant checked; child added through the root only
-    }
-}
-```
-
-**Key Takeaway**: Return read-only views or defensive copies of child collections. Never return the mutable internal list — doing so hands a bypass key to every caller.
-
-**Why It Matters**: When external code can add lines directly to the backing list, it bypasses the root's invariant checks — maximum line count, duplicate detection, and status-gating are all skippable with a single list reference. The aggregate boundary becomes meaningless in that case. Read-only views make the enforcement contract physical: the type system prevents the bypass, not documentation or convention, and no code review discipline can be as reliable as a compile-time error.
-
----
-
-### Example 19: Aggregate as transactional boundary
-
-One transaction should change at most one aggregate. Cross-aggregate eventual consistency is achieved through domain events, not distributed transactions.
-
-**Java**:
-
-```java
-// Application Service: one transaction = one aggregate; see Example 23 for full service
-public class ConfirmOrderService {
-    private final OrderRepository orderRepo;       // => loads/saves Order aggregate
-    private final CustomerRepository customerRepo; // => separate aggregate; separate transaction
-
-    public ConfirmOrderService(OrderRepository o, CustomerRepository c) {
-        this.orderRepo   = o;
-        this.customerRepo = c;
-    }
-
-    // WRONG: two aggregates in one transaction — tight coupling, hard to scale
-    // public void confirmAndUpdateCustomer(OrderId oid, CustomerId cid) {
-    //   Order o = orderRepo.findById(oid);    // => first aggregate loaded
-    //   Customer c = customerRepo.findById(cid); // => second aggregate loaded
-    //   o.confirm();
-    //   c.recordPurchase(o.getTotal()); // => BOTH saved in one transaction — fragile
-    // }
-
-    // CORRECT: confirm only touches Order; Customer updated via domain event (see Example 25)
-    public void confirm(OrderId orderId) {
-        Order order = orderRepo.findById(orderId) // => loads one aggregate
-            .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
-        order.confirm();          // => domain logic on one aggregate
-        orderRepo.save(order);    // => one save; one transaction boundary
-        // => OrderConfirmed event collected inside order; published after save (Example 25)
-    }
-}
-```
-
-**Kotlin**:
-
-```kotlin
-class ConfirmOrderService(                                            // => class ConfirmOrderService
-    private val orderRepo: OrderRepository,    // => Order aggregate repository
-    private val customerRepo: CustomerRepository // => Customer aggregate repository — separate
-) {                                                                   // => expression
-    fun confirm(orderId: OrderId) {                                   // => confirm method
-        // => One transaction touches one aggregate only
-        val order = orderRepo.findById(orderId) ?: throw IllegalArgumentException("Not found: $orderId") // => order initialised
-        order.confirm()        // => domain logic; event collected inside
-        orderRepo.save(order)  // => persist; transaction commits here
-        // => CustomerRepository not touched in this transaction; Customer updated via event
-    }
-}
-```
-
-**C#**:
-
-```csharp
-public class ConfirmOrderService                                      // => class ConfirmOrderService
-// => Application Service: orchestrates one use case per public method
-{
-    private readonly IOrderRepository    _orderRepo;                  // => orderRepo field
-    // => Interface dependency: domain code never imports EF Core or SQL directly
-    private readonly ICustomerRepository _customerRepo; // => separate aggregate; NOT used here
-    // => Injected to illustrate that Customer is NOT touched in this transaction
-
-    public ConfirmOrderService(IOrderRepository orders, ICustomerRepository customers) // => ConfirmOrderService method
-    // => Constructor injection: dependencies provided at registration time
-    {
-        _orderRepo    = orders;                                       // => _orderRepo assigned
-        // => Stored; used in Confirm() to load and save the Order
-        _customerRepo = customers; // => injected but not used in this transaction
-        // => Stored; used by other methods that need customer access
-    }
-
-    public void Confirm(OrderId orderId)                              // => Confirm method
-    // => Confirm use case: load Order, call domain method, persist; one aggregate, one TX
-    {
-        // => One transaction = one aggregate: only Order touched here
-        var order = _orderRepo.FindById(orderId)                      // => order initialised
-            ?? throw new KeyNotFoundException($"Order not found: {orderId}"); // => throws if guard fails
-        // => FindById returns null if not found; null-coalescing throw makes that explicit
-        order.Confirm();         // => domain logic inside aggregate
-        // => Aggregate validates status and collects domain events; no persistence yet
-        _orderRepo.Save(order);  // => persist; transaction boundary ends here
-        // => DB commit happens at Save(); if Confirm() threw, we never reach this line
-        // => Customer consistency achieved via OrderConfirmed event; not here
-    }
-}
-```
-
-**Key Takeaway**: One transaction touches one aggregate. Cross-aggregate consistency uses domain events and eventual consistency, not extending the transaction boundary.
-
-**Why It Matters**: Distributed transactions spanning multiple aggregates are fragile, hard to scale, and difficult to reason about. Keeping the transaction boundary at the aggregate level makes systems resilient: if the customer-update fails, the order still exists. Eventual consistency is a business decision — and most business stakeholders accept that loyalty points may update "in a few seconds" rather than atomically with the order.
-
----
-
-### Example 20: Repository interface — collection illusion in domain layer
-
-The Repository presents a collection-like interface to the domain, hiding all persistence details. The domain layer works with an in-memory abstraction; infrastructure implements it with a database.
-
-```mermaid
-%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05, Brown #CA9161
-graph TD
-    APP["Application Service\n#40;domain layer#41;"]:::blue
-    REPO["IOrderRepository\n#40;interface — domain#41;"]:::teal
-    IMPL["JpaOrderRepository\n#40;implementation — infra#41;"]:::orange
-    DB["Database"]:::brown
-
-    APP -->|"depends on interface"| REPO
-    IMPL -->|"implements"| REPO
-    IMPL -->|"queries"| DB
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
-    classDef brown fill:#CA9161,stroke:#000,color:#fff,stroke-width:2px
-```
-
-**Java**:
-
-```java
-import java.util.Optional;                                            // => namespace/package import
-
-// Repository interface lives in the domain layer — no infrastructure imports
-// => Domain layer depends on abstraction; infrastructure implements it
-public interface OrderRepository {                                    // => OrderRepository field
-    Optional<Order> findById(OrderId id); // => Optional: communicates "may not exist"
-    void save(Order order);               // => upsert semantics: insert or update
-    void delete(OrderId id);              // => remove from collection
-    // => No SQL, no JPA, no database — pure domain concepts
-}
-
-// Infrastructure implementation — lives in the infra layer
-// (Shown here for illustration; in production, this is in a separate package/module)
-public class InMemoryOrderRepository implements OrderRepository {     // => OrderRepository field
-    private final java.util.Map<OrderId, Order> store = new java.util.HashMap<>(); // => method declaration
-    // => HashMap simulates a database for tests; real impl uses JPA/JDBC
-
-    @Override public Optional<Order> findById(OrderId id) {           // => expression
-        return Optional.ofNullable(store.get(id)); // => null → empty Optional
-    }
-    @Override public void save(Order order) {                         // => expression
-        store.put(order.getId(), order); // => insert or overwrite
-    }
-    @Override public void delete(OrderId id) {                        // => expression
-        store.remove(id); // => remove entry
-    }
-}
-
-// Domain service depends only on the interface — testable without a database
-OrderRepository repo = new InMemoryOrderRepository(); // => inject in production
-Order o = new Order(OrderId.generate(), new Address(new Street("1 Main"), new City("NYC"), PostalCode.of("10001"))); // => OrderId.generate() called
-repo.save(o);                                     // => stored
-Optional<Order> found = repo.findById(o.getId()); // => found.isPresent() = true
-```
-
-**Kotlin**:
-
-```kotlin
-import java.util.Optional                                             // => namespace/package import
-
-// Interface in domain layer: no database imports allowed here
-interface OrderRepository {                                           // => interface OrderRepository
-    fun findById(id: OrderId): Order?       // => nullable return: idiomatic Kotlin optional
-    fun save(order: Order)                  // => upsert
-    fun delete(id: OrderId)                 // => remove
-}
-
-// In-memory implementation for tests and development
-class InMemoryOrderRepository : OrderRepository {                     // => class InMemoryOrderRepository
-    private val store = mutableMapOf<OrderId, Order>() // => mutable map simulates persistence
-
-    override fun findById(id: OrderId) = store[id]    // => null if not found
-    override fun save(order: Order) { store[order.id] = order } // => upsert
-    override fun delete(id: OrderId) { store.remove(id) }      // => remove
-}
-
-val repo: OrderRepository = InMemoryOrderRepository() // => inject; swap for JPA impl in prod
-```
-
-**C#**:
-
-```csharp
-// Interface in domain layer: only domain types; no EF, no IQueryable
-public interface IOrderRepository                                     // => interface IOrderRepository
-// => begins block
-{
-    Order? FindById(OrderId id);   // => nullable: communicates "may not exist"
-    void Save(Order order);         // => upsert semantics
-    void Delete(OrderId id);        // => remove
-}
-
-// In-memory implementation for tests
-public sealed class InMemoryOrderRepository : IOrderRepository        // => class InMemoryOrderRepository
-{
-    private readonly Dictionary<OrderId, Order> _store = new();       // => Dictionary method
-    // => Dictionary simulates a database; real impl uses EF Core
-
-    public Order?  FindById(OrderId id)     => _store.GetValueOrDefault(id); // => null if missing
-    public void    Save(Order order)         => _store[order.Id] = order;    // => insert or overwrite
-    public void    Delete(OrderId id)        => _store.Remove(id);           // => remove entry
-}
-
-IOrderRepository repo = new InMemoryOrderRepository(); // => inject at composition root
-```
-
-**Key Takeaway**: The Repository interface lives in the domain layer. Infrastructure implements it. The domain never imports a database driver.
-
-**Why It Matters**: When domain objects import JPA or Entity Framework, they become coupled to persistence technology. Switching from a relational database to an event store requires touching every domain class. The Repository pattern inverts this dependency — the domain defines the interface it needs; infrastructure provides the implementation. This makes domain logic testable with in-memory fakes in milliseconds, and persistence technology freely swappable without altering domain behaviour.
-
----
-
-### Example 21: Repository methods — `findById` / `save` / `delete`
-
-Consistent repository method names across all aggregates create a uniform API. The team can use any repository without reading its documentation because the signatures are predictable.
-
-**Java**:
-
-```java
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-// Consistent interface contract: every aggregate repository follows the same pattern
-// => findById returns Optional; save is upsert; delete takes the id type
-public interface CustomerRepository {
-    Optional<Customer> findById(CustomerId id); // => mirrors OrderRepository.findById pattern
-    void save(Customer customer);               // => same upsert semantics as OrderRepository
-    void delete(CustomerId id);                 // => same delete signature; id-typed
+// Simple in-memory repository for illustration
+// => Production: this would be an interface; implementation lives in the infrastructure layer
+public class InMemoryRequisitionRepository {
+    private final Map<String, PurchaseRequisition> store = new HashMap<>();
+    // => String key is the RequisitionId.value(); Map is the backing store
 
-    // Optional enrichment: collection-style finders
-    java.util.List<Customer> findByEmail(EmailAddress email);
-    // => additional methods allowed; base CRUD must stay consistent
+    public void save(PurchaseRequisition req) {
+        store.put(req.getId().value(), req); // => upsert; same id overwrites
+    }
+
+    // => Returns Optional: caller must explicitly handle the "not found" case
+    public Optional<PurchaseRequisition> findById(RequisitionId id) {
+        if (id == null) return Optional.empty(); // => null id => empty Optional; no NPE
+        return Optional.ofNullable(store.get(id.value()));
+        // => ofNullable: empty if not in map; present if found
+    }
 }
 
-// Usage: predictable API reduces cognitive load
-CustomerRepository repo = new InMemoryCustomerRepository(); // => any implementation
-Customer customer = new Customer(CustomerId.generate(), "Alice", new EmailAddress("a@b.com"));
-repo.save(customer);                                     // => persisted
-Optional<Customer> found = repo.findById(customer.getId()); // => found
-repo.delete(customer.getId());                           // => removed
-// => Same method names as OrderRepository; no documentation needed
+// Usage: Optional makes the "not found" branch visible at the call site
+InMemoryRequisitionRepository repo = new InMemoryRequisitionRepository();
+
+PurchaseRequisition req = new PurchaseRequisition(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"), "emp-42");
+repo.save(req); // => stored
+
+// Found case
+Optional<PurchaseRequisition> found = repo.findById(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"));
+// => found = Optional[PurchaseRequisition{...}]
+found.ifPresent(r -> System.out.println("Found: " + r.getId()));
+// => Output: Found: req_550e8400-e29b-41d4-a716-446655440000
+
+// Not found case
+Optional<PurchaseRequisition> missing = repo.findById(
+    new RequisitionId("req_00000000-0000-0000-0000-000000000000"));
+// => missing = Optional.empty()
+PurchaseRequisition result = missing.orElseThrow(
+    () -> new IllegalStateException("Requisition not found"));
+// => throws IllegalStateException; caller handles domain "not found" explicitly
 ```
 
-**Kotlin**:
+**Key Takeaway**: `Optional<T>` makes absent values explicit at the API boundary, forcing callers to handle both found and not-found cases rather than receiving a null and perhaps failing with `NullPointerException` many call frames later.
 
-```kotlin
-// Kotlin: interface with nullable return type; consistent naming pattern
-interface CustomerRepository {                                        // => interface CustomerRepository
-    fun findById(id: CustomerId): Customer?              // => null if absent; same as Order repo
-    fun save(customer: Customer)                          // => upsert; same as Order repo
-    fun delete(id: CustomerId)                            // => remove; same as Order repo
-    fun findByEmail(email: EmailAddress): List<Customer>  // => optional enrichment
-// => ends block
-}
-
-class InMemoryCustomerRepository : CustomerRepository {               // => class InMemoryCustomerRepository
-    private val store = mutableMapOf<CustomerId, Customer>()          // => store declared
-    override fun findById(id: CustomerId) = store[id]            // => null if missing
-    override fun save(c: Customer)        { store[c.id] = c }    // => upsert
-    override fun delete(id: CustomerId)   { store.remove(id) }   // => remove
-    override fun findByEmail(email: EmailAddress) =                   // => findByEmail method
-        store.values.filter { it.email == email } // => linear scan; real impl uses index
-}
-```
-
-**C#**:
-
-```csharp
-// Consistent interface: FindById/Save/Delete pattern matches IOrderRepository
-// => Same method names across all repositories; no per-repo API to learn
-public interface ICustomerRepository
-{
-    Customer? FindById(CustomerId id);               // => nullable; same pattern as IOrderRepository
-    // => C# nullable reference type: ? signals "may be null if not found"
-    void Save(Customer customer);                     // => upsert
-    // => Single method covers both insert (new id) and update (existing id)
-    void Delete(CustomerId id);                       // => remove by id
-    // => Takes only id; no need to load Customer first
-    IReadOnlyList<Customer> FindByEmail(EmailAddress email); // => optional enrichment
-    // => Returns IReadOnlyList: read-only; callers cannot add to the returned list
-}
-
-public sealed class InMemoryCustomerRepository : ICustomerRepository
-// => sealed: not subclassable; in-memory impl is for tests and demos only
-{
-    private readonly Dictionary<CustomerId, Customer> _store = new();
-    // => CustomerId key; O(1) lookups by id
-
-    public Customer?              FindById(CustomerId id)    => _store.GetValueOrDefault(id);
-    // => GetValueOrDefault: returns null if key absent; no KeyNotFoundException
-    public void                   Save(Customer c)            => _store[c.Id] = c;
-    // => Indexer assignment: insert if new id, replace if existing id
-    public void                   Delete(CustomerId id)       => _store.Remove(id);
-    // => Remove: no-op if id not found; idempotent deletion
-    public IReadOnlyList<Customer> FindByEmail(EmailAddress e) =>
-        _store.Values.Where(c => c.Email == e).ToList().AsReadOnly();
-        // => LINQ filter; real impl delegates to database index
-        // => AsReadOnly(): wraps mutable List<T> as IReadOnlyList<T>
-}
-```
-
-**Key Takeaway**: Use `findById`/`save`/`delete` consistently across all repository interfaces. Uniform naming reduces cognitive overhead — developers know the API before they read it.
-
-**Why It Matters**: Inconsistent repository signatures — `get` vs `load` vs `fetch`, `insert`+`update` vs `save` — force developers to read each repository's source before using it, multiplying cognitive overhead across every feature. Consistent naming from a shared convention makes every repository immediately understandable and reduces onboarding time for new team members. This productivity benefit compounds in large domain models with dozens of aggregate types and multiple contributing developers.
+**Why It Matters**: In a procurement system, a "not found" requisition could mean it was never created, it was deleted, or the caller has the wrong id. Returning `null` silently propagates that ambiguity until a NPE surfaces somewhere unexpected. `Optional` forces the caller to decide what the absence means — in the right place, at the right time.
 
 ---
 
-## Domain Services, Application Services, and Events (Examples 22–25)
+### Example 20: Kotlin data class — `PurchaseRequisition` line item (variety)
 
-### Example 22: Domain Service — operation spanning two aggregates
-
-Some domain operations belong to neither aggregate because they require collaboration between two. A Domain Service hosts these cross-aggregate operations while keeping them in the domain layer.
-
-```mermaid
-%% Palette: Blue #0173B2, Teal #029E73, Purple #CC78BC
-graph LR
-    DS["TransferService\n#40;Domain Service#41;"]:::purple
-    A1["BankAccount A\n#40;Aggregate#41;"]:::blue
-    A2["BankAccount B\n#40;Aggregate#41;"]:::teal
-    DS -->|"withdraw"| A1
-    DS -->|"deposit"| A2
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
-```
-
-**Java**:
-
-```java
-// Domain Service: stateless; encapsulates domain logic that spans two aggregates
-// => Not application logic (no repo calls); pure domain logic with domain objects
-public class TransferService {                                        // => TransferService field
-    // => No fields; stateless — can be called repeatedly without side effects
-
-    public void transfer(BankAccount from, BankAccount to, Money amount) { // => transfer method
-        // => Both aggregates passed in; service does not load them (app service does that)
-        if (!from.getCurrency().equals(amount.getCurrency()))         // => precondition check
-            throw new IllegalArgumentException("Currency mismatch between account and amount"); // => throws if guard fails
-        // => Domain rule enforced here: funds must cover the transfer
-        from.withdraw(amount); // => mutates 'from' aggregate; invariant checked inside BankAccount
-        to.deposit(amount);    // => mutates 'to' aggregate; both aggregates now in new states
-        // => App service (Example 23) saves both aggregates and publishes events
-    }
-}
-
-// Simplified BankAccount aggregate (full aggregate has more invariants)
-public class BankAccount {                                            // => BankAccount field
-    private final AccountId id;                                       // => id field
-    private Money balance;                                            // => balance field
-    private final String currency; // => accounts are single-currency
-
-    public BankAccount(AccountId id, Money initialBalance) {          // => BankAccount method
-        this.id = id; this.balance = initialBalance;                  // => this.id assigned
-        this.currency = initialBalance.getCurrency();                 // => this.currency assigned
-    }
-
-    public void withdraw(Money amount) {                              // => withdraw method
-        // => Invariant: balance must not go negative
-        if (balance.getAmount().compareTo(amount.getAmount()) < 0)    // => precondition check
-            throw new IllegalStateException("Insufficient funds");    // => throws if guard fails
-        this.balance = balance.subtract(amount); // => state change after invariant check
-    }
-
-    public void deposit(Money amount) {                               // => deposit method
-        this.balance = balance.add(amount); // => always valid; balance increases
-    }
-
-    public String getCurrency() { return currency; }                  // => getCurrency method
-    public AccountId getId()    { return id; }                        // => getId method
-}
-```
-
-**Kotlin**:
+Kotlin `data class` with an `init` block as a concise Entity in the purchasing context, demonstrating the same patterns in a different language.
 
 ```kotlin
-// Domain Service: stateless object — uses object keyword for singleton
-object TransferService {                                              // => object TransferService
-    // => object: singleton; no constructor; stateless by design
-    fun transfer(from: BankAccount, to: BankAccount, amount: Money) { // => transfer method
-        // => Domain rule: currency must match
-        require(from.currency == amount.currency) { "Currency mismatch" } // => precondition check
-        from.withdraw(amount) // => aggregate enforces its own invariants
-        to.deposit(amount)    // => aggregate enforces its own invariants
-        // => Application Service (outside domain) loads and saves both aggregates
-    // => ends block
+import java.math.BigDecimal
+
+// Value objects as data classes
+data class Money(val amount: BigDecimal, val currency: String) {
+    init {
+        require(amount >= BigDecimal.ZERO) { "amount >= 0 required" }
+        require(currency.length == 3)      { "3-letter ISO currency required" }
+    }
+    operator fun plus(other: Money): Money { // => + operator overload
+        require(currency == other.currency)  { "currency mismatch" }
+        return Money(amount + other.amount, currency)
+    }
+    operator fun times(factor: Int): Money { // => * operator overload
+        require(factor > 0) { "factor > 0 required" }
+        return Money(amount * BigDecimal.valueOf(factor.toLong()), currency)
     }
 }
 
-class BankAccount(val id: AccountId, initialBalance: Money) {         // => class BankAccount
-    var balance: Money = initialBalance; private set                  // => expression
-    val currency: String = initialBalance.currency // => locked at creation
+enum class UnitOfMeasure { EACH, BOX, KG, LITRE, HOUR }
 
-    fun withdraw(amount: Money) {                                     // => withdraw method
-        require(balance.amount >= amount.amount) { "Insufficient funds" } // => precondition check
-        balance = balance.subtract(amount) // => private set; mutation via this method only
-    }
-
-    fun deposit(amount: Money) {                                      // => deposit method
-        balance = balance.add(amount) // => always valid; add is positive
-    }
+// Quantity as data class with compact validation
+data class Quantity(val value: Int, val unit: UnitOfMeasure) {
+    init { require(value > 0) { "value > 0 required" } }
 }
+
+// LineItem as data class: Kotlin generates equals/hashCode from all constructor params
+// => In Kotlin, data class equality is structural; for entity semantics, override equals
+data class LineItem(
+    val id: String,       // => entity identity
+    val skuCode: String,  // => simplified for illustration; production uses SkuCode VO
+    val quantity: Quantity,
+    val unitPrice: Money
+) {
+    fun lineTotal(): Money = unitPrice * quantity.value // => * via operator overload
+
+    // => Entity equality: override data class default to use id only
+    override fun equals(other: Any?) = other is LineItem && id == other.id
+    override fun hashCode()          = id.hashCode()
+}
+
+// Usage
+val item = LineItem(
+    id        = "li-001",
+    skuCode   = "OFF-001234",
+    quantity  = Quantity(500, UnitOfMeasure.EACH),
+    unitPrice = Money(BigDecimal("0.50"), "USD")
+) // => item = LineItem(id=li-001, ..., unitPrice=Money(0.50, USD))
+
+val total = item.lineTotal()             // => Money(250.00, USD) via operator overload
+println(total)                           // => Output: Money(amount=250.00, currency=USD)
+
+val revised = item.copy(quantity = Quantity(1000, UnitOfMeasure.EACH))
+// => copy preserves id; only quantity changes
+println(revised.lineTotal())             // => Output: Money(amount=500.00, currency=USD)
+println(item.lineTotal())               // => Output: Money(amount=250.00, currency=USD) (unchanged)
+println(item == revised)                // => Output: true (same id; entity equality)
 ```
 
-**C#**:
+**Key Takeaway**: Kotlin operator overloads (`+`, `*`) on `Money` make line-item total computation read as natural arithmetic while preserving immutability. Overriding `equals` on a `data class` gives entity semantics.
 
-```csharp
-// Domain Service: static class signals stateless; no DI needed; pure domain logic
-public static class TransferService                                   // => class TransferService
-// => begins block
-{
-    public static void Transfer(BankAccount from, BankAccount to, Money amount) // => Transfer method
-    // => begins block
-    {
-        // => Domain rule checked in service; both aggregates passed in by caller
-        if (from.Currency != amount.Currency)                         // => precondition check
-            throw new ArgumentException("Currency mismatch between account and amount"); // => throws if guard fails
-        from.Withdraw(amount); // => BankAccount enforces its own balance invariant
-        to.Deposit(amount);    // => BankAccount updates its own balance
-        // => Application Service saves both aggregates; not this service's responsibility
-    // => ends block
-    }
-// => ends block
-}
-
-public class BankAccount                                              // => class BankAccount
-{
-    public AccountId Id       { get; }                                // => Id field
-    public Money     Balance  { get; private set; } // => private set; mutation via Withdraw/Deposit
-    public string    Currency { get; }                                // => Currency field
-
-    public BankAccount(AccountId id, Money initial) { Id = id; Balance = initial; Currency = initial.Currency; } // => BankAccount method
-
-    public void Withdraw(Money amount)                                // => Withdraw method
-    {
-        // => Domain invariant: balance must cover withdrawal
-        if (Balance.Amount < amount.Amount) throw new InvalidOperationException("Insufficient funds"); // => throws if guard fails
-        Balance = Balance.Subtract(amount); // => private set accessible within class
-    }
-
-    public void Deposit(Money amount) { Balance = Balance.Add(amount); } // => always valid
-}
-```
-
-**Key Takeaway**: A Domain Service hosts domain logic that spans multiple aggregates. It is stateless, lives in the domain layer, and receives aggregates as arguments rather than loading them itself.
-
-**Why It Matters**: Without Domain Services, cross-aggregate logic lands in Application Services (making them fat with business rules) or gets forced into one aggregate (creating inappropriate coupling that bleeds its boundary). A named Domain Service like `TransferService` makes the operation visible in the ubiquitous language and keeps domain logic squarely in the domain layer. Domain experts can point to `TransferService` as a named concept; they cannot point to an anonymous if-statement buried in a controller.
+**Why It Matters**: Kotlin's `data class` defaults to structural equality — two line items with different ids but the same fields would appear equal. In procurement, that means two separate line items for the same product would be considered duplicates. Overriding `equals` to use id restores correct entity semantics while keeping the other `data class` conveniences.
 
 ---
 
-### Example 23: Application Service — use-case orchestrator
+## Advanced Value Object Patterns (Examples 21–25)
 
-The Application Service is the entry point for a use case. It is thin: load aggregates from repositories, call domain objects, save results, publish events. It contains no domain logic itself.
+### Example 21: Value Object comparison and ordering — `Money`
 
-```mermaid
-%% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05, Brown #CA9161, Purple #CC78BC
-flowchart TD
-    CMD["PlaceOrderCommand\n#40;input DTO#41;"]:::brown
-    AS["PlaceOrderApplicationService\n#40;orchestrates; no domain logic#41;"]:::blue
-    REPO["IOrderRepository\n#40;load/save#41;"]:::teal
-    AGG["Order Aggregate\n#40;domain logic lives here#41;"]:::orange
-    PUB["DomainEventPublisher\n#40;publish events#41;"]:::purple
-
-    CMD --> AS
-    AS -->|"1. load"| REPO
-    REPO --> AGG
-    AS -->|"2. call placeOrder"| AGG
-    AS -->|"3. save"| REPO
-    AS -->|"4. publish events"| PUB
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
-    classDef brown fill:#CA9161,stroke:#000,color:#fff,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
-```
-
-**Java**:
+Business rules often require ordering `Money` values (e.g., checking whether a requisition total exceeds a threshold). Implementing `Comparable<Money>` enables natural ordering.
 
 ```java
-// Application Service: thin orchestrator; all business rules are in domain objects
-// => No if-statements about business logic here; only coordination
-public class PlaceOrderApplicationService {                           // => PlaceOrderApplicationService field
-    private final OrderRepository    orderRepo;    // => loads/saves Order aggregate
-    private final CustomerRepository customerRepo; // => loads Customer for validation
-    private final DomainEventPublisher publisher;  // => dispatches collected events
+import java.math.BigDecimal;
+import java.util.Objects;
 
-    public PlaceOrderApplicationService(OrderRepository orders, CustomerRepository customers, // => PlaceOrderApplicationService method
-                                        DomainEventPublisher pub) {   // => expression
-        this.orderRepo    = orders;                                   // => this.orderRepo assigned
-        this.customerRepo = customers;                                // => this.customerRepo assigned
-        this.publisher    = pub;                                      // => this.publisher assigned
+// Money with Comparable: enables direct comparisons and sorting
+// => Comparable<Money> allows use in TreeSet, sort(), and compareTo() calls
+public final class Money implements Comparable<Money> {
+    private final BigDecimal amount;
+    private final String     currency;
+
+    public Money(String amount, String currency) {
+        if (amount == null)  throw new IllegalArgumentException("amount required");
+        BigDecimal bd = new BigDecimal(amount);
+        if (bd.compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("amount >= 0 required");
+        if (currency == null || currency.length() != 3)
+            throw new IllegalArgumentException("3-letter currency required");
+        this.amount   = bd;
+        this.currency = currency.toUpperCase();
     }
 
-    // Use case: one method = one use case
-    public OrderId placeOrder(CustomerId customerId, ProductId productId, Quantity quantity, Money price) { // => placeOrder method
-        // => Step 1: load aggregate — repository hides database details
-        Customer customer = customerRepo.findById(customerId)         // => customerRepo.findById() called
-            .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + customerId)); // => expression
-        // => Step 2: create new Order aggregate via factory
-        Order order = customer.startOrder(OrderId.generate());        // => customer.startOrder() called
-        // => Step 3: call domain behaviour — business rule is inside addLine(), not here
-        order.addLine(productId, quantity, price);                    // => order.addLine() called
-        // => Step 4: save — repository persists the aggregate
-        orderRepo.save(order);                                        // => orderRepo.save() called
-        // => Step 5: publish domain events collected inside the aggregate
-        order.getDomainEvents().forEach(publisher::publish);          // => order.getDomainEvents() called
-        order.clearDomainEvents(); // => prevent double-publishing
-        return order.getId(); // => return id to caller (controller/API layer)
+    // => compareTo: natural ordering by amount within same currency
+    @Override public int compareTo(Money other) {
+        if (!this.currency.equals(other.currency))         // => guard: only compare same currency
+            throw new IllegalArgumentException(
+                "Cannot compare Money across currencies: " + currency + " vs " + other.currency);
+        return this.amount.compareTo(other.amount);
+        // => negative: this < other; 0: equal; positive: this > other
     }
+
+    public boolean isGreaterThan(Money other) { return compareTo(other) > 0; }  // => this > other
+    public boolean isLessThan(Money other)    { return compareTo(other) < 0; }  // => this < other
+
+    public BigDecimal getAmount()  { return amount; }
+    public String     getCurrency(){ return currency; }
+
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof Money m)) return false;
+        return amount.compareTo(m.amount) == 0 && currency.equals(m.currency);
+    }
+    @Override public int    hashCode() { return Objects.hash(amount.stripTrailingZeros(), currency); }
+    @Override public String toString() { return amount + " " + currency; }
 }
+
+// Threshold check: does this requisition require L3 approval?
+Money total    = new Money("15000.00", "USD"); // => total = 15000.00 USD
+Money l3Floor  = new Money("10000.00", "USD"); // => L3 threshold
+
+System.out.println(total.isGreaterThan(l3Floor)); // => Output: true (15000 > 10000)
+
+// Sorting multiple line totals
+java.util.List<Money> totals = java.util.List.of(
+    new Money("5000.00", "USD"),
+    new Money("250.00",  "USD"),
+    new Money("15000.00","USD")
+);
+totals.stream()
+    .sorted()                         // => uses compareTo; ascending
+    .forEach(System.out::println);
+// => Output: 250.00 USD
+// => Output: 5000.00 USD
+// => Output: 15000.00 USD
 ```
 
-**Kotlin**:
+**Key Takeaway**: Implementing `Comparable<Money>` on a Value Object enables direct ordering, making threshold checks and sorting idiomatic and safe.
 
-```kotlin
-// Application Service: coordinates; delegates all logic to domain objects
-class PlaceOrderApplicationService(                                   // => class PlaceOrderApplicationService
-    private val orderRepo:    OrderRepository,     // => Order persistence
-    private val customerRepo: CustomerRepository,  // => Customer lookup
-    private val publisher:    DomainEventPublisher // => event dispatch
-) {                                                                   // => expression
-    fun placeOrder(customerId: CustomerId, productId: ProductId, qty: Quantity, price: Money): OrderId { // => placeOrder method
-        // => 1. load Customer aggregate
-        val customer = customerRepo.findById(customerId) ?: throw IllegalArgumentException("Customer not found") // => customer initialised
-        // => 2. factory method on Customer creates Order (domain logic in Customer)
-        val order = customer.startOrder(OrderId.generate())           // => order initialised
-        // => 3. domain behaviour on Order (invariants inside Order.addLine)
-        order.addLine(productId, qty, price)                          // => order.addLine() called
-        // => 4. persist
-        orderRepo.save(order)                                         // => orderRepo.save() called
-        // => 5. publish events collected inside Order
-        order.domainEvents.forEach { publisher.publish(it) }          // => publisher.publish() called
-        order.clearDomainEvents()                                     // => order.clearDomainEvents() called
-        return order.id // => return to caller
-    }
-}
-```
-
-**C#**:
-
-```csharp
-// Application Service: thin; all business decisions delegated to aggregates and domain services
-public class PlaceOrderApplicationService                             // => class PlaceOrderApplicationService
-{
-    private readonly IOrderRepository    _orderRepo;                  // => orderRepo field
-    private readonly ICustomerRepository _customerRepo;               // => customerRepo field
-    private readonly IDomainEventPublisher _publisher;                // => publisher field
-
-    public PlaceOrderApplicationService(IOrderRepository orders, ICustomerRepository customers, // => PlaceOrderApplicationService method
-                                        IDomainEventPublisher pub)    // => expression
-    {
-        _orderRepo    = orders;                                       // => _orderRepo assigned
-        _customerRepo = customers;                                    // => _customerRepo assigned
-        _publisher    = pub;                                          // => _publisher assigned
-    }
-
-    public OrderId PlaceOrder(CustomerId customerId, ProductId productId, Quantity qty, Money price) // => PlaceOrder method
-    {
-        // => 1. load Customer aggregate; throw if not found
-        var customer = _customerRepo.FindById(customerId)             // => customer initialised
-            ?? throw new KeyNotFoundException($"Customer not found: {customerId}"); // => throws if guard fails
-        // => 2. Customer aggregate creates the Order (domain logic inside StartOrder)
-        var order = customer.StartOrder(OrderId.Generate());          // => order initialised
-        // => 3. domain behaviour; business rules inside Order.AddLine
-        order.AddLine(productId, qty, price);                         // => order.AddLine() called
-        // => 4. persist through repository interface
-        _orderRepo.Save(order);                                       // => _orderRepo.Save() called
-        // => 5. publish events; save first, then publish (order matters — see Example 25)
-        foreach (var evt in order.DomainEvents) _publisher.Publish(evt); // => iteration over collection
-        order.ClearDomainEvents();                                    // => order.ClearDomainEvents() called
-        return order.Id; // => return id to the calling layer
-    }
-}
-```
-
-**Key Takeaway**: An Application Service orchestrates — it loads, calls domain objects, saves, and publishes. It contains zero business rules. If you see an `if` that reflects a business decision in an Application Service, it belongs in a domain object.
-
-**Why It Matters**: Fat Application Services are the most common DDD anti-pattern in practice. When business logic leaks from domain objects into Application Services, it becomes invisible to domain experts, is duplicated across services when a second entry point is added, and resists unit testing without spinning up infrastructure. Thin Application Services keep the domain model as the single source of business truth, testable independently of HTTP, queues, and databases.
+**Why It Matters**: Procurement systems compare request totals against approval thresholds constantly. Without `Comparable`, callers extract raw `BigDecimal` and compare it directly — losing the currency-mismatch guard. With `compareTo` on `Money`, a cross-currency comparison fails loudly instead of silently producing a meaningless ordering.
 
 ---
 
-### Example 24: Domain Event — past-tense fact
+### Example 22: Defensive copying — protecting mutable collections in the aggregate
 
-A Domain Event records that something significant happened in the domain. Events are named in past tense (`OrderPlaced`, `OrderConfirmed`) because they describe facts that have already occurred and cannot be undone.
-
-**Java**:
+The aggregate must not expose mutable internal collections. Returning an unmodifiable view or a defensive copy prevents external code from bypassing domain logic.
 
 ```java
-import java.time.Instant;                                             // => namespace/package import
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-// Domain Event: immutable record of a past fact; carry data about what happened
-// => Past tense: OrderPlaced, not PlaceOrder (which is a command)
-public record OrderPlaced(                                            // => record OrderPlaced
-    OrderId   orderId,    // => which order was placed
-    CustomerId customerId, // => who placed it
-    Money      total,     // => total at the moment of placement
-    Instant    occurredAt  // => when it happened; Instant = UTC timestamp
-) {                                                                   // => expression
-    // => record: immutable; structural equality; no setters — events are facts
-    public static OrderPlaced now(OrderId oid, CustomerId cid, Money total) { // => now method
-        return new OrderPlaced(oid, cid, total, Instant.now());       // => returns new OrderPlaced(oid, cid, tota
-        // => factory captures current time; callers don't need to pass timestamp manually
+// Aggregate: demonstrates defensive copy patterns for internal collections
+public class PurchaseRequisition {
+    public enum Status { DRAFT, SUBMITTED, APPROVED }
+    private final RequisitionId id;
+    private       Status        status = Status.DRAFT;
+    private final List<LineItem> lineItems = new ArrayList<>(); // => mutable internally
+
+    public PurchaseRequisition(RequisitionId id) { this.id = id; }
+
+    public void addLine(LineItem line) {
+        if (status != Status.DRAFT) throw new IllegalStateException("Only in DRAFT");
+        lineItems.add(line);
     }
-}
 
-public record OrderConfirmed(                                         // => record OrderConfirmed
-    OrderId orderId,     // => which order was confirmed
-    Money   total,       // => confirmed total (may differ from placed total)
-    Instant occurredAt   // => UTC timestamp
-) {                                                                   // => expression
-    public static OrderConfirmed now(OrderId oid, Money total) {      // => now method
-        return new OrderConfirmed(oid, total, Instant.now());         // => returns new OrderConfirmed(oid, total,
+    // Pattern A: unmodifiable view (cheapest; backed by original list)
+    // => Changes to internal list visible through view, but caller cannot add/remove
+    public List<LineItem> getLineItems() {
+        return Collections.unmodifiableList(lineItems); // => wrapper; O(1)
+        // => UnsupportedOperationException if caller calls add/remove
     }
+
+    // Pattern B: defensive copy (most isolated; caller gets a snapshot)
+    // => Caller changes don't affect aggregate; aggregate changes don't surprise caller
+    public List<LineItem> getLineItemsCopy() {
+        return List.copyOf(lineItems); // => Java 9+; immutable copy; O(n)
+        // => caller has a frozen snapshot; fine for read-only consumers
+    }
+
+    public Status getStatus() { return status; }
 }
 
-// Event is data — create and inspect
-OrderPlaced evt = OrderPlaced.now(OrderId.generate(), CustomerId.generate(), new Money(new java.math.BigDecimal("50"), "USD")); // => OrderPlaced.now() called
-// => evt.orderId(), evt.customerId(), evt.total(), evt.occurredAt() are all readable
-// => evt cannot be mutated — record fields are final
-```
+PurchaseRequisition req = new PurchaseRequisition(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"));
+req.addLine(new LineItem(new LineItemId("li-001"), new SkuCode("OFF-001234"),
+    new Quantity(10, UnitOfMeasure.BOX), new Money("25.00","USD")));
 
-**Kotlin**:
+// Pattern A: unmodifiable view
+List<LineItem> view = req.getLineItems();
+System.out.println(view.size()); // => Output: 1
 
-```kotlin
-import java.time.Instant                                              // => namespace/package import
-
-// Sealed interface for event hierarchy: all order events share this type
-// => sealed: exhaustive when-expressions; compile error if new subtype is missed
-sealed interface OrderEvent {                                         // => interface OrderEvent
-    val orderId: OrderId  // => every order event knows its order
-    val occurredAt: Instant // => every event records when it happened
+try {
+    view.add(null); // => UnsupportedOperationException; cannot mutate through view
+} catch (UnsupportedOperationException e) {
+    System.out.println("Add rejected by unmodifiable view"); // => Output: Add rejected by unmodifiable view
 }
 
-// data class for events: structural equality, toString, copy — all useful for events
-data class OrderPlaced(                                               // => class OrderPlaced
-    override val orderId:    OrderId,   // => which order
-    val customerId:          CustomerId, // => who placed it
-    val total:               Money,     // => total at placement time
-    override val occurredAt: Instant = Instant.now() // => default to now; override in tests
-) : OrderEvent                                                        // => expression
-
-data class OrderConfirmed(                                            // => class OrderConfirmed
-    override val orderId:    OrderId,                                 // => expression
-    val total:               Money,                                   // => expression
-    override val occurredAt: Instant = Instant.now()                  // => method declaration
-) : OrderEvent                                                        // => expression
-
-// Usage: when is exhaustive on sealed interface
-fun handle(event: OrderEvent) = when (event) {                        // => handle method
-    is OrderPlaced    -> println("Order placed: ${event.total}")   // => typed access to OrderPlaced fields
-    is OrderConfirmed -> println("Order confirmed: ${event.total}") // => typed access to OrderConfirmed fields
-} // => no else needed; sealed ensures exhaustiveness
+// Pattern B: copy
+List<LineItem> copy = req.getLineItemsCopy();
+System.out.println(copy.size()); // => Output: 1 (snapshot)
+// Adding another line to aggregate does not affect the copy already taken
+req.addLine(new LineItem(new LineItemId("li-002"), new SkuCode("PPR-8500"),
+    new Quantity(5, UnitOfMeasure.BOX), new Money("50.00","USD")));
+System.out.println(copy.size()); // => Output: 1 (snapshot frozen at copy time)
+System.out.println(req.getLineItems().size()); // => Output: 2 (live view)
 ```
 
-**C#**:
+**Key Takeaway**: Expose internal collections only through unmodifiable views or defensive copies. This is the boundary that keeps the Aggregate Root the sole controller of its state.
 
-```csharp
-using System;                                                         // => namespace/package import
-
-// Abstract record base: all order domain events share common fields
-// => record = immutable; abstract = must subclass; sealed subclasses prevent further extension
-public abstract record OrderEvent(OrderId OrderId, DateTimeOffset OccurredAt); // => record OrderEvent
-// => OrderId and OccurredAt on every event; no event exists without these
-
-// Concrete event records: immutable; structural ==; past-tense naming
-public sealed record OrderPlaced(                                     // => record OrderPlaced
-    OrderId      OrderId,    // => inherited from base
-    CustomerId   CustomerId, // => who placed it
-    Money        Total,      // => total at placement time
-    DateTimeOffset OccurredAt // => UTC timestamp
-) : OrderEvent(OrderId, OccurredAt);                                  // => expression
-// => with-expression available if a projection is needed
-
-public sealed record OrderConfirmed(                                  // => record OrderConfirmed
-    OrderId        OrderId,                                           // => expression
-    Money          Total,                                             // => expression
-    DateTimeOffset OccurredAt                                         // => expression
-) : OrderEvent(OrderId, OccurredAt);                                  // => expression
-
-// Usage: pattern matching is exhaustive with sealed hierarchy
-void Handle(OrderEvent e)                                             // => expression
-{
-    _ = e switch {                                                    // => _ assigned
-        OrderPlaced    p => Console.WriteLine($"Placed: {p.Total}"),    // => typed
-        OrderConfirmed c => Console.WriteLine($"Confirmed: {c.Total}"), // => typed
-        _ => throw new ArgumentOutOfRangeException(nameof(e))           // => defensive default
-    };
-}
-```
-
-**Key Takeaway**: Domain Events are immutable records of facts. Past-tense naming (`OrderPlaced`) signals that the event describes something that happened, not a command to do something.
-
-**Why It Matters**: Domain Events decouple the moment something happens from the reactions to it. When `OrderPlaced` is published, a notification service, a loyalty-points service, and an analytics service can each react independently — without the Order aggregate knowing about any of them. This loose coupling is the foundation of scalable event-driven systems.
+**Why It Matters**: A mutable list reference returned directly allows any caller to add, remove, or reorder line items without triggering domain guards. In procurement, that means bypassing quantity checks, status guards, and approval recalculation — all silently. Defensive exposure makes the encapsulation boundary real, not just a naming convention.
 
 ---
 
-### Example 25: Aggregate publishing domain events
+### Example 23: C# record with `with`-expression — immutable `Quantity` revision
 
-Aggregates collect domain events internally during state changes. The Application Service publishes them after saving, ensuring events are never published for changes that were rolled back.
-
-**Java**:
-
-```java
-import java.time.Instant;                                             // => namespace/package import
-import java.util.*;                                                   // => namespace/package import
-
-// Aggregate with event collection: events gathered internally; published externally
-public class Order {                                                  // => Order field
-    private final OrderId id;                                         // => id field
-    private final CustomerId customerId;                              // => customerId field
-    private OrderStatus status = OrderStatus.PENDING;                 // => status declared
-    private final List<Object> _events = new ArrayList<>(); // => internal event queue
-
-    public Order(OrderId id, CustomerId customerId) {                 // => Order method
-        this.id = id; this.customerId = customerId;                   // => this.id assigned
-        // => Collect OrderPlaced when order is created
-        _events.add(new OrderPlaced(id, customerId, new Money(java.math.BigDecimal.ZERO, "USD"), Instant.now())); // => _events.add() called
-    }
-
-    public void confirm(Money total) {                                // => confirm method
-        // => Invariant: only PENDING orders can be confirmed
-        if (status != OrderStatus.PENDING) throw new IllegalStateException("Order not pending"); // => throws if guard fails
-        status = OrderStatus.CONFIRMED;                               // => status assigned
-        // => Collect event AFTER state change; event reflects new reality
-        _events.add(new OrderConfirmed(id, total, Instant.now()));    // => _events.add() called
-    }
-
-    // Application Service reads events after save, then clears
-    public List<Object> getDomainEvents() { return Collections.unmodifiableList(_events); } // => getDomainEvents method
-    public void clearDomainEvents()       { _events.clear(); } // => called after publishing
-    public OrderId getId() { return id; }                             // => getId method
-}
-
-// Application Service: save → publish → clear (order is critical)
-public class ConfirmOrderApplicationService {                         // => ConfirmOrderApplicationService field
-    private final OrderRepository    repo;                            // => repo field
-    private final DomainEventPublisher publisher;                     // => publisher field
-
-    public ConfirmOrderApplicationService(OrderRepository repo, DomainEventPublisher pub) { // => ConfirmOrderApplicationService method
-        this.repo = repo; this.publisher = pub;                       // => this.repo assigned
-    }
-
-    public void confirm(OrderId id, Money total) {                    // => confirm method
-        Order order = repo.findById(id).orElseThrow(); // => load aggregate
-        order.confirm(total);         // => mutate + collect event internally
-        repo.save(order);             // => persist FIRST; transaction commits here
-        // => Publish AFTER save: if publish fails, at-least-once delivery retries safely
-        order.getDomainEvents().forEach(publisher::publish);          // => order.getDomainEvents() called
-        order.clearDomainEvents();    // => prevent double-publish on retry
-    }
-}
-```
-
-**Kotlin**:
-
-```kotlin
-import java.time.Instant                                              // => namespace/package import
-
-class Order(val id: OrderId, val customerId: CustomerId) {            // => class Order
-    private val _events = mutableListOf<Any>() // => internal event accumulator
-    val domainEvents: List<Any> get() = _events.toList() // => defensive snapshot
-
-    var status: OrderStatus = OrderStatus.PENDING; private set        // => expression
-
-    init {                                                            // => expression
-        // => Collect placement event when aggregate is constructed
-        _events += OrderPlaced(id, customerId, Money(java.math.BigDecimal.ZERO, "USD"), Instant.now()) // => _events assigned
-    // => ends block
-    }
-
-    fun confirm(total: Money) {                                       // => confirm method
-        check(status == OrderStatus.PENDING) { "Order not pending" }  // => precondition check
-        status = OrderStatus.CONFIRMED  // => state change
-        _events += OrderConfirmed(id, total, Instant.now()) // => event collected after change
-    // => ends block
-    }
-
-    fun clearDomainEvents() { _events.clear() } // => called by app service after publishing
-// => ends block
-}
-
-class ConfirmOrderService(                                            // => class ConfirmOrderService
-    private val repo:      OrderRepository,                           // => expression
-    private val publisher: DomainEventPublisher                       // => expression
-) {                                                                   // => expression
-    fun confirm(id: OrderId, total: Money) {                          // => confirm method
-        val order = repo.findById(id) ?: throw IllegalArgumentException("Not found") // => order initialised
-        order.confirm(total)           // => mutate + collect
-        repo.save(order)               // => persist FIRST; publish after
-        order.domainEvents.forEach { publisher.publish(it) } // => publish collected events
-        order.clearDomainEvents()      // => clear to prevent re-publish
-    // => ends block
-    }
-}
-```
-
-**C#**:
+C# records support `with`-expressions natively, making immutable copy-and-modify idiomatic without writing manual copy methods.
 
 ```csharp
-using System;                       // => DateTime and InvalidOperationException
-using System.Collections.Generic;  // => List<T>, IReadOnlyList<T>, KeyNotFoundException
-
-public class Order
+// C# sealed record: primary constructor syntax; with-expressions built in
+// => sealed: no subclass can add mutable state
+public sealed record Quantity(int Value, UnitOfMeasure Unit)
 {
-    private readonly List<OrderEvent> _events = new(); // => private accumulator
-    // => List<OrderEvent>: typed event queue; only OrderEvent subtypes allowed
-    public IReadOnlyList<OrderEvent> DomainEvents => _events.AsReadOnly();
-    // => read-only view for Application Service to iterate after save
-    // => AsReadOnly(): returns wrapper that throws on Add/Remove; original list still mutable inside Order
-
-    public OrderId     Id         { get; }
-    // => get-only: identity fixed at construction, never reassigned
-    public CustomerId  CustomerId { get; }
-    // => get-only: customer link immutable after construction
-    public OrderStatus Status     { get; private set; } = OrderStatus.Pending;
-    // => Starts Pending; private set: only Order methods may change status
-
-    public Order(OrderId id, CustomerId customerId)
-    // => Constructor: only creation path for Order; sets immutable identity fields
+    // => Primary constructor validation via positional record syntax
+    public Quantity
     {
-        Id = id; CustomerId = customerId;
-        // => Assign identity fields; both are get-only after this point
-        // => Collect event on construction; placement is the first event
-        _events.Add(new OrderPlaced(id, customerId, new Money(0m, "USD"), DateTimeOffset.UtcNow));
-        // => OrderPlaced event queued immediately; application service publishes it after save
-        // => Money(0m, "USD"): placeholder total; real total set when order is confirmed
+        if (Value <= 0)   // => domain invariant
+            throw new ArgumentException($"Quantity.Value must be > 0, got: {Value}");
+        if (Unit == default) // => default(UnitOfMeasure) = 0; treat as unset
+            throw new ArgumentException("UnitOfMeasure required");
     }
-
-    public void Confirm(Money total)
-    // => Confirm: domain method; validates lifecycle, transitions state, raises event
-    {
-        if (Status != OrderStatus.Pending)
-            throw new InvalidOperationException("Order not pending");
-        // => Lifecycle guard: only Pending orders can be confirmed
-        // => InvalidOperationException: caller attempted an illegal state transition
-        Status = OrderStatus.Confirmed;   // => state change
-        // => private set accessible inside Order; external code cannot bypass this guard
-        _events.Add(new OrderConfirmed(Id, total, DateTimeOffset.UtcNow));
-        // => event collected AFTER state change; reflects confirmed reality
-        // => DateTimeOffset.UtcNow captures the exact confirmation timestamp
-        // => Id is the order identity; total is passed in from application service
-    }
-
-    public void ClearDomainEvents() => _events.Clear(); // => called after publish
-    // => Clears accumulator; called by app service to prevent double-publish on retry
-    // => Expression-bodied method: single statement; Clear() removes all elements
 }
 
-public class ConfirmOrderService
-// => Application Service: thin orchestrator; coordinates domain, repo, and publisher
+public enum UnitOfMeasure { Each, Box, Kg, Litre, Hour }
+
+// LineItem record: with-expression enables immutable field revision
+public sealed record LineItem(string Id, string SkuCode, Quantity Quantity, decimal UnitPrice)
 {
-    private readonly IOrderRepository    _repo;
-    // => Injected repository; domain code depends on interface, not concrete class
-    private readonly IDomainEventPublisher _publisher;
-    // => Injected publisher; domain code does not know about Kafka, RabbitMQ, etc.
-
-    public ConfirmOrderService(IOrderRepository repo, IDomainEventPublisher publisher)
-    // => Constructor injection: dependencies provided by IoC container in production
-    {
-        _repo      = repo;
-        // => Stored for use in Confirm method; readonly prevents reassignment
-        _publisher = publisher;
-        // => Stored; all event publishing delegated to this abstraction
-    }
-
-    public void Confirm(OrderId id, Money total)
-    // => Confirm: the application service method; orchestrates load → domain logic → persist → publish
-    {
-        var order = _repo.FindById(id) ?? throw new KeyNotFoundException();
-        // => Load aggregate; null-coalescing throw: KeyNotFoundException if not found
-        order.Confirm(total);                                  // => mutate + collect
-        // => Aggregate validates and transitions state; events queued internally
-        _repo.Save(order);                                     // => persist first
-        // => DB commit happens here; events must not be published before this succeeds
-        foreach (var evt in order.DomainEvents) _publisher.Publish(evt); // => publish after save
-        // => Iterate DomainEvents (read-only); publish each to message bus
-        order.ClearDomainEvents();  // => prevent double-publish
-        // => Clear after publish; if method is called again, no events are re-published
-    }
+    public decimal LineTotal => UnitPrice * Quantity.Value; // => computed property; no backing field
 }
+
+// Demonstrate with-expression for immutable revision
+var original = new LineItem(
+    Id       : "li-001",
+    SkuCode  : "OFF-001234",
+    Quantity : new Quantity(500, UnitOfMeasure.Each),
+    UnitPrice: 0.50m
+); // => original: 500 Each × $0.50 = $250.00
+Console.WriteLine(original.LineTotal); // => Output: 250
+
+// with-expression: creates new record, changes only Quantity field
+var revised = original with { Quantity = new Quantity(1000, UnitOfMeasure.Each) };
+// => revised: 1000 Each × $0.50 = $500.00; original is unchanged
+Console.WriteLine(revised.LineTotal);  // => Output: 500
+Console.WriteLine(original.LineTotal); // => Output: 250 (original intact)
+
+// Identity preserved
+Console.WriteLine(original.Id == revised.Id); // => Output: True (same entity id)
+Console.WriteLine(original == revised);       // => Output: False (Quantity differs; structural ==)
 ```
 
-**Key Takeaway**: Aggregates collect events internally; the Application Service publishes them after saving. This ordering guarantees that events are never published for changes that were not persisted.
+**Key Takeaway**: C# `with`-expressions on records make immutable field revision native syntax, removing the need for hand-written copy methods while preserving structural equality semantics.
 
-**Why It Matters**: Publishing events before saving creates phantom events — listeners react to changes that were then rolled back, causing inconsistency that is hard to detect and painful to compensate. Saving without publishing misses downstream reactions silently. The collect-save-publish sequence is the correct ordering for reliable event-driven systems. Combined with the outbox pattern (see Advanced section), this sequence can be made durable even if the process crashes after saving but before publishing.
+**Why It Matters**: The `with`-expression is not just syntactic sugar — it communicates "this is an immutable copy with one field changed," which is exactly the intent when revising a procurement line item before approval. That intent is lost when callers call a setter or construct from scratch with scattered arguments.
+
+---
+
+### Example 24: Aggregate boundary — rejecting external line item mutation
+
+This example tests the aggregate's encapsulation boundary directly: external code should not be able to mutate line items by keeping a reference from before they were added.
+
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+// Demonstrates that aggregate encapsulation holds even when caller holds a reference
+// => Key test: does mutating the original object mutate the aggregate's internal state?
+
+// For this test, LineItem is a mutable entity (pre-Java-record style)
+class MutableLineItem {
+    private final String id;
+    private       int    quantity; // => mutable: can be changed
+
+    MutableLineItem(String id, int quantity) {
+        this.id = id;
+        this.quantity = quantity;
+    }
+
+    void setQuantity(int q) { this.quantity = q; } // => setter: mutation point
+    int  getQuantity()      { return quantity; }
+    String getId()          { return id; }
+}
+
+class ReqWithMutableLines {
+    private final List<MutableLineItem> lines = new ArrayList<>();
+
+    // Defensive store: does NOT copy; stores reference directly (anti-pattern shown)
+    void addLineDirect(MutableLineItem line) { lines.add(line); } // => anti-pattern
+
+    // Defensive store: copies on input (correct pattern)
+    void addLineSafe(MutableLineItem line) {
+        lines.add(new MutableLineItem(line.getId(), line.getQuantity())); // => defensive copy
+        // => now internal copy is independent of caller's reference
+    }
+
+    List<MutableLineItem> getLines() { return Collections.unmodifiableList(lines); }
+}
+
+MutableLineItem external = new MutableLineItem("li-001", 10);
+// => external.quantity = 10
+
+ReqWithMutableLines badReq = new ReqWithMutableLines();
+badReq.addLineDirect(external); // => stores reference; no copy
+System.out.println(badReq.getLines().get(0).getQuantity()); // => Output: 10
+
+external.setQuantity(999); // => caller mutates original
+System.out.println(badReq.getLines().get(0).getQuantity()); // => Output: 999 (leaked mutation!)
+// => aggregate's internal state was silently changed; encapsulation broken
+
+ReqWithMutableLines goodReq = new ReqWithMutableLines();
+goodReq.addLineSafe(external); // => stores defensive copy
+System.out.println(goodReq.getLines().get(0).getQuantity()); // => Output: 999 (copy took current value)
+
+external.setQuantity(12345); // => caller mutates again
+System.out.println(goodReq.getLines().get(0).getQuantity()); // => Output: 999 (copy unaffected)
+// => aggregate's copy is independent; encapsulation holds
+```
+
+**Key Takeaway**: Storing references to mutable objects breaks aggregate encapsulation — external mutation leaks through. Defensive copy on input prevents the leak.
+
+**Why It Matters**: Records and immutable Value Objects eliminate this class of problem entirely. If mutable entities must be used, defensive copying on input is the safety net that prevents external code from bypassing aggregate guards. In procurement, a bypassed guard could mean a line item quantity changes after manager approval — a compliance gap detectable only by a full audit.
+
+---
+
+### Example 25: Putting it together — full `PurchaseRequisition` lifecycle in Java 21
+
+A complete end-to-end demonstration: create a requisition, add lines with value objects, submit, verify approval level, and check the domain event raised.
+
+```java
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.*;
+
+// ---- Value Objects (abbreviated; full validation shown in earlier examples) ----
+record RequisitionId(String value) {
+    RequisitionId { Objects.requireNonNull(value, "id required"); }
+}
+record SkuCode(String value) {
+    SkuCode { if (value == null || !value.matches("^[A-Z]{3}-\\d{4,8}$"))
+                  throw new IllegalArgumentException("invalid SkuCode: " + value); }
+}
+record Quantity(int value, UnitOfMeasure unit) {
+    Quantity { if (value <= 0) throw new IllegalArgumentException("qty > 0 required"); }
+}
+enum UnitOfMeasure { EACH, BOX, KG, LITRE, HOUR }
+
+final class Money {
+    final BigDecimal amount; final String currency;
+    Money(String a, String c) {
+        amount = new BigDecimal(a);
+        if (amount.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("amount >= 0");
+        if (c == null || c.length() != 3)           throw new IllegalArgumentException("3-letter currency");
+        currency = c.toUpperCase();
+    }
+    Money add(Money o) {
+        if (!currency.equals(o.currency)) throw new IllegalArgumentException("currency mismatch");
+        return new Money(amount.add(o.amount).toPlainString(), currency);
+    }
+    Money multiply(int f) {
+        if (f <= 0) throw new IllegalArgumentException("factor > 0");
+        return new Money(amount.multiply(BigDecimal.valueOf(f)).toPlainString(), currency);
+    }
+    @Override public String toString() { return amount + " " + currency; }
+}
+
+enum ApprovalLevel {
+    L1, L2, L3;
+    static ApprovalLevel from(Money m) {
+        BigDecimal a = m.amount;
+        if (a.compareTo(new BigDecimal("1000")) <= 0) return L1;
+        if (a.compareTo(new BigDecimal("10000")) <= 0) return L2;
+        return L3;
+    }
+}
+
+// ---- Entity ----
+record LineItem(String id, SkuCode skuCode, Quantity quantity, Money unitPrice) {
+    Money lineTotal() { return unitPrice.multiply(quantity.value()); }
+}
+
+// ---- Domain Event ----
+record RequisitionSubmitted(RequisitionId id, Money total, ApprovalLevel level, Instant at) {}
+
+// ---- Aggregate Root ----
+class PurchaseRequisition {
+    enum Status { DRAFT, SUBMITTED }
+    private final RequisitionId id;
+    private final String        requesterId;
+    private       Status        status     = Status.DRAFT;
+    private final List<LineItem>             lines  = new ArrayList<>();
+    private final List<RequisitionSubmitted> events = new ArrayList<>();
+
+    static PurchaseRequisition create(RequisitionId id, String requesterId) {
+        if (id == null || requesterId == null || requesterId.isBlank())
+            throw new IllegalArgumentException("id and requesterId required");
+        return new PurchaseRequisition(id, requesterId);
+    }
+    private PurchaseRequisition(RequisitionId id, String requesterId) {
+        this.id = id; this.requesterId = requesterId;
+    }
+
+    void addLine(LineItem l) {
+        if (status != Status.DRAFT) throw new IllegalStateException("only in DRAFT");
+        lines.add(l); // => aggregate controls all line additions
+    }
+
+    void submit() {
+        if (status != Status.DRAFT || lines.isEmpty())
+            throw new IllegalStateException("cannot submit");
+        status = Status.SUBMITTED;                         // => state transition
+        Money total = lines.stream()
+            .map(LineItem::lineTotal)
+            .reduce(new Money("0.00","USD"), Money::add);  // => compute total
+        events.add(new RequisitionSubmitted(id, total, ApprovalLevel.from(total), Instant.now()));
+        // => domain event collected; application layer will dispatch
+    }
+
+    List<RequisitionSubmitted> pullEvents() {
+        var e = List.copyOf(events); events.clear(); return e; // => pull and clear
+    }
+    Status getStatus()       { return status; }
+    RequisitionId getId()    { return id; }
+    Money estimatedTotal()   {
+        return lines.stream().map(LineItem::lineTotal).reduce(new Money("0.00","USD"), Money::add);
+    }
+}
+
+// ---- Full lifecycle demonstration ----
+PurchaseRequisition req = PurchaseRequisition.create(
+    new RequisitionId("req_550e8400-e29b-41d4-a716-446655440000"),
+    "emp-42"
+); // => status=DRAFT; lines=[]
+
+req.addLine(new LineItem("li-001", new SkuCode("OFF-001234"),
+    new Quantity(500, UnitOfMeasure.EACH), new Money("0.50","USD")));
+// => li-001: 500 EACH × $0.50 = $250.00
+
+req.addLine(new LineItem("li-002", new SkuCode("PPR-8500"),
+    new Quantity(10, UnitOfMeasure.BOX), new Money("25.00","USD")));
+// => li-002: 10 BOX × $25.00 = $250.00
+
+System.out.println("Total: " + req.estimatedTotal()); // => Output: Total: 500.00 USD
+System.out.println("Level: " + ApprovalLevel.from(req.estimatedTotal())); // => Output: Level: L1
+
+req.submit(); // => DRAFT -> SUBMITTED; raises RequisitionSubmitted event
+System.out.println("Status: " + req.getStatus()); // => Output: Status: SUBMITTED
+
+var events = req.pullEvents(); // => [RequisitionSubmitted{...}]
+System.out.println("Events: " + events.size());              // => Output: Events: 1
+System.out.println("Event total: " + events.get(0).total()); // => Output: Event total: 500.00 USD
+System.out.println("Event level: " + events.get(0).level()); // => Output: Event level: L1
+```
+
+**Key Takeaway**: The full lifecycle — value object construction, entity creation, aggregate-root-gated operations, derived values, and domain event collection — flows through a single coherent model without any framework annotations in the domain layer.
+
+**Why It Matters**: Pure domain models are independently testable, portable across frameworks, and readable by non-engineers familiar with the procurement domain. When the entire requisition lifecycle can be exercised in a plain Java `main` method with no Spring context or database, the domain is correctly isolated — and onboarding a new developer takes minutes, not days.

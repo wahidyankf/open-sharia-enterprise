@@ -3,7 +3,7 @@ title: "Beginner"
 weight: 10000012
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Beginner DDD + Hexagonal in Practice guides (Guides 1–7) — one context as one hexagon, reading the per-context package layout, domain types, application service signatures, repository port interface, Spring @RestController as primary adapter, and Spring @Configuration as composition root"
+description: "Beginner DDD + Hexagonal in Practice guides (Guides 1–7) — one context as one hexagon, per-context package layout, domain types, application service signatures, repository port interface, Spring @RestController as primary adapter, and Spring @Configuration as composition root"
 tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "in-the-field", "beginner"]
 ---
 
@@ -11,29 +11,29 @@ tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "in-the-field", "
 
 ### Why It Matters
 
-A bounded context is not just a package name — it is an isolation unit. Every time two contexts share a repository directly or call each other's domain objects without an explicit port, a change in one cascades invisibly into the other. In the `talks-platform-be` service, each bounded context owns its own `domain`, `application`, `infrastructure`, and `presentation` packages. Nothing crosses the context boundary except through an interface declared in the `application` package. Getting this isolation invariant right from day one is the single most valuable structural decision in a DDD + hexagonal Java codebase.
+A bounded context is not just a package name — it is an isolation unit. Every time two contexts share a repository directly or call each other's domain objects without an explicit port, a change in one cascades invisibly into the other. In the `procurement-platform-be` service, each bounded context owns its own `domain`, `application`, `infrastructure`, and `presentation` packages. Nothing crosses the context boundary except through an interface declared in the `application` package. Getting this isolation invariant right from day one is the single most valuable structural decision in a DDD + hexagonal Java codebase.
 
 ### Standard Library First
 
-Java packages group related classes but enforce no architectural boundary. The compiler does not stop `scheduling` from importing `TalkRepository` directly from another context's `infrastructure` package. The package system provides cohesion, not isolation.
+Java packages group related classes but enforce no architectural boundary. The compiler does not stop `receiving` from importing `PurchaseOrderRepository` directly from another context's `infrastructure` package. The package system provides cohesion, not isolation.
 
 ```java
 // Standard library approach: packages group code but enforce no boundary
 // Demonstrates the stdlib package approach that the hexagonal context layout supersedes.
 
-package com.talksplatform.scheduling;
+package com.procurement.platform.receiving;
 
 // Direct import from another context's infrastructure — no barrier here
-import com.talksplatform.submission.infrastructure.JdbcTalkRepository;
+import com.procurement.platform.purchasing.infrastructure.JdbcPurchaseOrderRepository;
 // => Java allows cross-package imports unconditionally
-// => The compiler sees no violation even though scheduling is
-//    reading submission infrastructure internals directly
-// => Any refactor of JdbcTalkRepository silently breaks scheduling logic
+// => The compiler sees no violation even though receiving is
+//    reading purchasing infrastructure internals directly
+// => Any refactor of JdbcPurchaseOrderRepository silently breaks receiving logic
 
-public class SessionAllocationService {
-    private final JdbcTalkRepository talkRepo; // infrastructure type leaking into a domain service
-    // => SessionAllocationService now depends on a Spring Data JDBC interface
-    // => Unit testing SessionAllocationService requires a full Spring context or a mock of JdbcTalkRepository
+public class GoodsReceiptService {
+    private final JdbcPurchaseOrderRepository poRepo; // infrastructure type leaking into a domain service
+    // => GoodsReceiptService now depends on a Spring Data JDBC class
+    // => Unit testing GoodsReceiptService requires a full Spring context or a mock of JdbcPurchaseOrderRepository
     // => The boundary exists only in the developer's head
 }
 ```
@@ -42,25 +42,25 @@ public class SessionAllocationService {
 
 ### Production Framework
 
-The hexagonal pattern enforces the boundary by making each context own its `domain`, `application`, `infrastructure`, and `presentation` packages, and only exposing types through interfaces declared in the `application` package. No class in `scheduling.domain` imports anything from `submission.infrastructure` — it talks to the submission context through a port interface declared in `scheduling.application`.
+The hexagonal pattern enforces the boundary by making each context own its `domain`, `application`, `infrastructure`, and `presentation` packages, and only exposing types through interfaces declared in the `application` package. No class in `receiving.domain` imports anything from `purchasing.infrastructure` — it talks to the purchasing context through a port interface declared in `receiving.application`.
 
 ```mermaid
 flowchart LR
-    subgraph ctx["submission context"]
+    subgraph ctx["purchasing context"]
         direction TB
-        dom["domain/\n(Talk, TalkId records)"]:::blue
-        app["application/\n(TalkRepository port)"]:::orange
-        inf["infrastructure/\n(JdbcTalkRepository)"]:::teal
+        dom["domain/\n(PurchaseOrder, PurchaseOrderId records)"]:::blue
+        app["application/\n(PurchaseOrderRepository port)"]:::orange
+        inf["infrastructure/\n(JdbcPurchaseOrderRepository)"]:::teal
         pres["presentation/\n(@RestController)"]:::purple
     end
-    subgraph sched["scheduling context"]
+    subgraph recv["receiving context"]
         direction TB
-        sdom["domain/\n(Session, SessionId records)"]:::blue
-        sapp["application/\n(TalkQueryPort interface)"]:::orange
-        sinf["infrastructure/\n(TalkQueryAcl)"]:::teal
+        rdom["domain/\n(GoodsReceiptNote, GoodsReceiptId records)"]:::blue
+        rapp["application/\n(PurchaseOrderQueryPort interface)"]:::orange
+        rinf["infrastructure/\n(PurchaseOrderQueryAcl)"]:::teal
     end
-    sapp -->|"consumes port only"| app
-    sinf -->|"calls HTTP / DB"| inf
+    rapp -->|"consumes port only"| app
+    rinf -->|"calls HTTP / DB"| inf
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
     classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
@@ -68,34 +68,34 @@ flowchart LR
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
 ```
 
-The `talks-platform-be` service places each bounded context at its own top-level package under `com.talksplatform`:
+The `procurement-platform-be` service places each bounded context at its own top-level package under `com.procurement.platform`:
 
 ```java
-// Submission context domain layer — Talk aggregate identity
-package com.talksplatform.submission.domain;
+// Purchasing context domain layer — PurchaseOrder aggregate identity
+package com.procurement.platform.purchasing.domain;
 
-// => Package path mirrors the hexagonal layer: submission context, domain layer
+// => Package path mirrors the hexagonal layer: purchasing context, domain layer
 // => No Spring imports anywhere in this file — records are pure Java SE
 
 import java.util.Objects;
 import java.util.UUID;
 
-public record TalkId(UUID value) {
-    // => Strongly-typed wrapper: prevents passing a session ID where a talk ID is expected
+public record PurchaseOrderId(UUID value) {
+    // => Strongly-typed wrapper: prevents passing a supplier ID where a PO ID is expected
     // => Java record provides equals, hashCode, toString automatically
     // => Compact constructor adds validation
-    public TalkId {
-        Objects.requireNonNull(value, "TalkId value must not be null");
+    public PurchaseOrderId {
+        Objects.requireNonNull(value, "PurchaseOrderId value must not be null");
         // => Canonical constructor validation — throws NullPointerException if null
     }
 }
 
-public record Talk(
-    TalkId id,           // => Aggregate identity — drives equality
-    SpeakerId speakerId, // => Strongly-typed speaker reference — not a raw UUID
-    Abstract abstract_,  // => Value object wrapping a validated, bounded String
-    Format format,       // => Sealed interface — Lightning, Standard, or Workshop
-    TalkStatus status    // => Enum: Draft → Submitted → UnderReview → Accepted | Rejected | Waitlisted
+public record PurchaseOrder(
+    PurchaseOrderId id,           // => Aggregate identity — drives equality
+    SupplierId supplierId,        // => Strongly-typed supplier reference — not a raw UUID
+    Money totalAmount,            // => Value object: amount + ISO 4217 currency code
+    ApprovalLevel approvalLevel,  // => Enum: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+    PurchaseOrderStatus status    // => Enum: Draft → AwaitingApproval → Approved → … → Closed
 ) {}
 // => Plain Java record: immutable, no @Entity, no @Column, no Jackson @JsonProperty
 // => The ORM mapping lives in the infrastructure layer (Guide 8)
@@ -110,15 +110,15 @@ public record Talk(
 
 ### Why It Matters
 
-The production layout for `talks-platform-be` places every bounded context at a dedicated top-level package under `com.talksplatform`. Each context owns four sub-packages: `domain`, `application`, `infrastructure`, and `presentation`. Before writing any new feature code you need to read this layout fluently — otherwise you misplace new files or misread which types belong to the domain boundary versus the infrastructure boundary.
+The production layout for `procurement-platform-be` places every bounded context at a dedicated top-level package under `com.procurement.platform`. Each context owns four sub-packages: `domain`, `application`, `infrastructure`, and `presentation`. Before writing any new feature code you need to read this layout fluently — otherwise you misplace new files or misread which types belong to the domain boundary versus the infrastructure boundary.
 
 ### Standard Library First
 
 A flat layout is a direct consequence of starting with a single-concern Spring Boot scaffold. Spring Boot's `@SpringBootApplication` scans the entire root package and registers everything it finds. A flat layout means all domain-adjacent classes sit near the root package, sharing the same Spring component scan. This is the zero-ceremony stdlib approach: it compiles, it runs, and it is adequate for a one-context prototype.
 
 ```java
-// Flat layout bootstrap: TalksPlatformApplication.java — Spring Boot entry point
-package com.talksplatform;
+// Flat layout bootstrap: ProcurementPlatformApplication.java — Spring Boot entry point
+package com.procurement.platform;
 // => Root package: Spring component scan starts here and covers all sub-packages
 // => @SpringBootApplication covers @Configuration + @EnableAutoConfiguration + @ComponentScan
 
@@ -131,9 +131,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 // => Triggers auto-configuration for everything on the classpath: Spring MVC,
 //    Jackson, Actuator — no explicit setup needed for defaults
-public class TalksPlatformApplication {
+public class ProcurementPlatformApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TalksPlatformApplication.class, args);
+        SpringApplication.run(ProcurementPlatformApplication.class, args);
         // => SpringApplication.run bootstraps the ApplicationContext
         // => The class argument tells Spring Boot which package to scan from
         // => Args forwarded: supports --server.port, --spring.profiles.active, etc.
@@ -148,60 +148,68 @@ public class TalksPlatformApplication {
 The hexagonal layout replaces the implicit root scan with explicit per-context `@Configuration` classes that register only their own beans. The `@SpringBootApplication` retains the scan only at the root level to discover the explicit configurations; it does not need to discover individual `@Service` or `@Repository` beans scattered across contexts.
 
 ```java
-// Per-context package structure: submission context
-// com.talksplatform.submission.domain/
-//   Talk.java, TalkId.java, SpeakerId.java, Abstract.java, Format.java
-
-package com.talksplatform.submission.domain;
+// Per-context package structure: purchasing context domain value objects
+package com.procurement.platform.purchasing.domain;
 // => Domain package: no Spring, no JDBC, no Jackson imports allowed here
 // => All types are pure Java records or sealed interfaces
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
-public record Abstract(String value) {
-    // => Value object wrapping the talk abstract text
+public record Money(BigDecimal amount, String currency) {
+    // => Value object wrapping an amount and a 3-letter ISO 4217 currency code
     // => Compact constructor enforces invariants at object boundary
-    public Abstract {
-        Objects.requireNonNull(value, "Abstract must not be null");
-        // => Null guard: enforced at construction — never a null Abstract in the domain
-        if (value.isBlank()) throw new IllegalArgumentException("Abstract must not be blank");
-        // => Domain invariant: a talk cannot have an empty abstract
-        if (value.length() > 2000) throw new IllegalArgumentException("Abstract exceeds 2000 chars");
-        // => Domain invariant: abstracts are bounded to 2000 characters for readability
+    public Money {
+        Objects.requireNonNull(amount, "Money amount must not be null");
+        // => Null guard: enforced at construction — never a null amount in the domain
+        if (amount.compareTo(BigDecimal.ZERO) < 0)
+            throw new IllegalArgumentException("Money amount must not be negative");
+        // => Domain invariant: monetary amounts are non-negative
+        Objects.requireNonNull(currency, "Money currency must not be null");
+        if (currency.length() != 3)
+            throw new IllegalArgumentException("Currency must be a 3-letter ISO 4217 code");
+        // => Domain invariant: ISO 4217 codes are exactly 3 characters
     }
 }
 ```
 
-The full `com.talksplatform` package tree follows the four-layer convention in every context:
+The full `com.procurement.platform` package tree follows the four-layer convention in every context:
 
 ```
-com.talksplatform
-├── submission
-│   ├── domain          // Talk, TalkId, Abstract, Format (no Spring annotations)
-│   ├── application     // SubmitTalkService, TalkRepository port interface
-│   ├── infrastructure  // JdbcTalkRepository, OutboxEventPublisher
-│   └── presentation    // TalkController (@RestController)
-├── review
+com.procurement.platform
+├── purchasing
+│   ├── domain          // PurchaseOrder, PurchaseOrderId, Money, ApprovalLevel (no Spring annotations)
+│   ├── application     // IssuePurchaseOrderService, PurchaseOrderRepository port interface
+│   ├── infrastructure  // JdbcPurchaseOrderRepository, OutboxEventPublisher
+│   └── presentation    // PurchaseOrderController (@RestController)
+├── supplier
 │   ├── domain
 │   ├── application
 │   ├── infrastructure
 │   └── presentation
-├── scheduling
+├── receiving
 │   ├── domain
 │   ├── application
 │   ├── infrastructure
 │   └── presentation
-├── aiassist
-│   ├── application     // AiProvider port interface
-│   └── infrastructure  // OpenRouterAiProvider (Spring RestClient)
+├── invoicing
+│   ├── domain
+│   ├── application
+│   ├── infrastructure
+│   └── presentation
+├── payments
+│   ├── domain
+│   ├── application
+│   ├── infrastructure
+│   └── presentation
 ├── shared
 │   ├── event           // DomainEvent sealed interface
 │   ├── config          // @ConfigurationProperties records
 │   └── observability   // shared Micrometer wiring
-└── TalksPlatformApplication.java
+└── ProcurementPlatformApplication.java
 ```
 
-**Trade-offs**: keeping the per-context layout consistent means new bounded context types always go into `com.talksplatform.<context>/{domain,application,infrastructure,presentation}/`. The flat `TalksPlatformApplication` remains as the scan entry point, not as a template for new classes. Any class that does not fit a context layer goes into `shared/`.
+**Trade-offs**: keeping the per-context layout consistent means new bounded context types always go into `com.procurement.platform.<context>/{domain,application,infrastructure,presentation}/`. The flat `ProcurementPlatformApplication` remains as the scan entry point, not as a template for new classes. Any class that does not fit a context layer goes into `shared/`.
 
 ---
 
@@ -209,7 +217,7 @@ com.talksplatform
 
 ### Why It Matters
 
-The single most common way a hexagonal architecture collapses into a layered monolith is when domain types carry framework annotations. The moment a `Talk` record has `@Entity`, `@Column`, or `@JsonProperty`, the domain layer depends on a persistence or serialization framework. Switching frameworks — or testing the domain in isolation — now requires framework setup. In `talks-platform-be`, keeping the domain records free of `jakarta.persistence`, `com.fasterxml.jackson`, or Spring annotations is the invariant that makes everything else possible.
+The single most common way a hexagonal architecture collapses into a layered monolith is when domain types carry framework annotations. The moment a `PurchaseOrder` record has `@Entity`, `@Column`, or `@JsonProperty`, the domain layer depends on a persistence or serialization framework. Switching frameworks — or testing the domain in isolation — now requires framework setup. In `procurement-platform-be`, keeping the domain records free of `jakarta.persistence`, `com.fasterxml.jackson`, or Spring annotations is the invariant that makes everything else possible.
 
 ### Standard Library First
 
@@ -217,43 +225,43 @@ Java records carry no annotations by default. The language gives you a pure, fra
 
 ```java
 // Standard library: pure Java record, zero framework annotations
-package com.talksplatform.submission.domain;
+package com.procurement.platform.purchasing.domain;
 // => Domain package: no Spring, no JPA, no Jackson imports allowed here
 
+import java.util.List;
 import java.util.Objects;
 // => Objects.requireNonNull: standard null guard — throws NullPointerException on null
-import java.util.UUID;
-// => UUID: java.util identity type — no framework dependency needed for aggregate IDs
 
-public record Talk(
-    TalkId id,
+public record PurchaseOrder(
+    PurchaseOrderId id,
     // => Strongly-typed identity — prevents confusion with other aggregate IDs
-    // => TalkId wraps UUID: the compiler rejects a raw UUID where a TalkId is expected
-    SpeakerId speakerId,
-    // => Reference to the speaker — a strongly-typed value object, not a raw String
-    // => Cross-context coupling via typed ID: the submission context never imports a Speaker aggregate
-    Abstract abstract_,
-    // => Value object wrapping the talk abstract text with validated invariants
-    // => abstract_ trailing underscore avoids collision with the Java keyword "abstract"
-    Format format,
-    // => Sealed interface: Lightning (10 min), Standard (30 min), Workshop (90 min)
-    // => The compiler rejects any Format implementation not declared in the permits clause
-    TalkStatus status
-    // => Enum: Draft → Submitted → UnderReview → Accepted | Rejected | Waitlisted
+    // => PurchaseOrderId wraps UUID: the compiler rejects a raw UUID where a PurchaseOrderId is expected
+    SupplierId supplierId,
+    // => Reference to the supplier — a strongly-typed value object, not a raw String
+    // => Cross-context coupling via typed ID: the purchasing context never imports a Supplier aggregate
+    List<PurchaseOrderLine> lines,
+    // => Value objects representing individual line items — immutable list
+    // => Domain invariant: lines must not be empty after PO issuance
+    Money totalAmount,
+    // => Derived or calculated: the sum of all line totals
+    ApprovalLevel approvalLevel,
+    // => Enum derived from totalAmount: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+    PurchaseOrderStatus status
+    // => Enum: Draft → AwaitingApproval → Approved → Issued → … → Closed
     // => No ORM column mapping annotation — the infrastructure layer owns that mapping
 ) {
     // => Java record compact constructor: runs before each component is assigned
     // => All validation happens here — the record is immutable after construction
-    public Talk {
-        Objects.requireNonNull(id, "Talk id must not be null");
+    public PurchaseOrder {
+        Objects.requireNonNull(id, "PurchaseOrder id must not be null");
         // => Null guard for identity — throws NullPointerException at construction time
-        Objects.requireNonNull(speakerId, "Talk speakerId must not be null");
-        // => Every talk must have a speaker — orphan talks violate the domain model
-        Objects.requireNonNull(abstract_, "Talk abstract must not be null");
-        // => Abstract value object already validates its own invariants — double safety here
-        Objects.requireNonNull(format, "Talk format must not be null");
-        // => Format is a sealed interface — null is not a valid format choice
-        Objects.requireNonNull(status, "Talk status must not be null");
+        Objects.requireNonNull(supplierId, "PurchaseOrder supplierId must not be null");
+        // => Every PO must reference a supplier — orphan POs violate the domain model
+        Objects.requireNonNull(lines, "PurchaseOrder lines must not be null");
+        // => Lines list must be present — may be empty for Draft state, validated on issuance
+        Objects.requireNonNull(totalAmount, "PurchaseOrder totalAmount must not be null");
+        Objects.requireNonNull(approvalLevel, "PurchaseOrder approvalLevel must not be null");
+        Objects.requireNonNull(status, "PurchaseOrder status must not be null");
         // => Status must be initialized — Draft is the correct initial value, enforced by factory methods
     }
 }
@@ -267,7 +275,7 @@ The hexagonal answer is: ORM and serialization mappings live in the infrastructu
 
 ```java
 // GlobalExceptionHandler.java — Spring exception mapping in the shared config layer, not domain
-package com.talksplatform.shared.config;
+package com.procurement.platform.shared.config;
 // => shared/config/ is the infrastructure/framework wiring layer — not a domain package
 
 import org.springframework.http.HttpStatus;
@@ -282,12 +290,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 // => @RestControllerAdvice: applies @ExceptionHandler methods to all @RestControllers
 // => This is infrastructure wiring — it lives in shared/config/, not in any bounded context domain package
-// => Domain exceptions (e.g., TalkNotFoundException) bubble up; this class translates them to HTTP
+// => Domain exceptions (e.g., PurchaseOrderNotFoundException) bubble up; this class translates them to HTTP
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     // => Catch-all handler: covers any exception not matched by a more specific @ExceptionHandler
-    // => More specific handlers (e.g., for SubmissionException) can be added without touching domain code
+    // => More specific handlers (e.g., for PurchasingException) can be added without touching domain code
     public ProblemDetail handleGenericException(Exception ex) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         // => ProblemDetail.forStatus: produces an RFC 9457 JSON body with status 500
@@ -311,7 +319,7 @@ The dependency rule flows inward: `infrastructure` and `presentation` know about
 
 ### Why It Matters
 
-Application services are the orchestration layer between the driving adapter (the Spring `@RestController`) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the controller works with — Jackson-friendly classes with nullable fields, no invariants, and `@JsonProperty` annotations. When that happens, the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. In `talks-platform-be`, the design rule is: application services accept and return domain aggregates; the controller owns the DTO translation.
+Application services are the orchestration layer between the driving adapter (the Spring `@RestController`) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the controller works with — Jackson-friendly classes with nullable fields, no invariants, and `@JsonProperty` annotations. When that happens, the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. In `procurement-platform-be`, the design rule is: application services accept and return domain aggregates; the controller owns the DTO translation.
 
 ### Standard Library First
 
@@ -319,36 +327,36 @@ Java interfaces naturally express an application service contract with domain ty
 
 ```java
 // Standard library: application service as a plain interface with domain types only
-package com.talksplatform.submission.application;
+package com.procurement.platform.purchasing.application;
 // => application/ package: orchestration contracts and service interfaces
 // => No Spring imports — the interface is framework-agnostic
 
-import com.talksplatform.submission.domain.Talk;
-// => Talk: the domain aggregate — the service returns fully validated Talk records
-import com.talksplatform.submission.domain.TalkId;
-// => TalkId: the strongly-typed identity — prevents raw String/UUID passing at the boundary
-import com.talksplatform.submission.domain.Abstract;
-// => Abstract: value object — passed as a domain type, not a raw String
+import com.procurement.platform.purchasing.domain.PurchaseOrder;
+// => PurchaseOrder: the domain aggregate — the service returns fully validated records
+import com.procurement.platform.purchasing.domain.PurchaseOrderId;
+// => PurchaseOrderId: the strongly-typed identity — prevents raw String/UUID passing at the boundary
+import com.procurement.platform.purchasing.domain.SupplierId;
+// => SupplierId: strongly-typed supplier reference — passed as a domain type, not a raw String
 import java.util.Optional;
-// => Optional for absence: findById returns Optional<Talk>, not null
+// => Optional for absence: findById returns Optional<PurchaseOrder>, not null
 
-public interface SubmitTalkService {
+public interface IssuePurchaseOrderService {
     // => Java interface: the contract without the implementation
     // => The implementation (the service class) lives in infrastructure/
 
-    Talk submit(SpeakerId speakerId, Abstract abstract_, Format format);
+    PurchaseOrder issue(SupplierId supplierId, List<PurchaseOrderLine> lines);
     // => Parameters are domain types — the smart constructor inside this method
     //    builds the aggregate and enforces invariants
     // => Returns the full domain aggregate, not a response DTO
 
-    Optional<Talk> findById(TalkId id);
-    // => Optional<Talk>: absence is a valid domain outcome, not null
-    // => TalkId is a strongly-typed domain value — not a raw UUID or String
+    Optional<PurchaseOrder> findById(PurchaseOrderId id);
+    // => Optional<PurchaseOrder>: absence is a valid domain outcome, not null
+    // => PurchaseOrderId is a strongly-typed domain value — not a raw UUID or String
     // => The controller translates absent -> 404, present -> 200 + DTO
 
-    Talk withdraw(TalkId id);
+    PurchaseOrder cancel(PurchaseOrderId id);
     // => Returns the updated aggregate — the controller translates to 200 + DTO
-    // => Throws a domain exception (e.g., TalkNotFoundException) if not found
+    // => Throws a domain exception (e.g., PurchaseOrderNotFoundException) if not found
     // => The GlobalExceptionHandler translates domain exceptions to HTTP status codes
 }
 ```
@@ -361,34 +369,35 @@ In the Spring stack the controller owns the DTO translation. The application ser
 
 ```java
 // Production application service interface with typed exceptions
-package com.talksplatform.submission.application;
+package com.procurement.platform.purchasing.application;
 
-import com.talksplatform.submission.domain.Talk;
-import com.talksplatform.submission.domain.TalkId;
-import com.talksplatform.submission.domain.Abstract;
-import com.talksplatform.submission.domain.Format;
-import com.talksplatform.submission.domain.SpeakerId;
+import com.procurement.platform.purchasing.domain.PurchaseOrder;
+import com.procurement.platform.purchasing.domain.PurchaseOrderId;
+import com.procurement.platform.purchasing.domain.PurchaseOrderLine;
+import com.procurement.platform.purchasing.domain.SupplierId;
 // => Only domain types imported — no Spring, no Jakarta, no Jackson
+import java.util.List;
 import java.util.Optional;
 
-public interface SubmitTalkService {
+public interface IssuePurchaseOrderService {
     // => Pure Java interface: zero Spring coupling
     // => Spring injects the @Service implementation at startup via constructor injection
     // => The controller declares this interface type — it never imports the concrete @Service class
 
-    Talk submit(SpeakerId speakerId, Abstract abstract_, Format format)
-            throws DuplicateTalkException;
-    // => Typed exception: DuplicateTalkException signals a business rule violation
+    PurchaseOrder issue(SupplierId supplierId, List<PurchaseOrderLine> lines)
+            throws DuplicatePurchaseOrderException;
+    // => Typed exception: DuplicatePurchaseOrderException signals a business rule violation
     // => The GlobalExceptionHandler (or a specific @ExceptionHandler) maps it to HTTP 409
     // => Declared in the throws clause: callers are aware of this outcome at compile time
 
-    Optional<Talk> findById(TalkId id);
+    Optional<PurchaseOrder> findById(PurchaseOrderId id);
     // => No checked exception: absence is not an error — it is returned as Optional.empty()
     // => The controller decides whether Optional.empty() means 404 or something else
 
-    Talk withdraw(TalkId id) throws TalkNotFoundException, InvalidTalkStateException;
-    // => TalkNotFoundException: a business rule violation — you cannot withdraw a nonexistent talk
-    // => InvalidTalkStateException: withdrawal is only valid for Draft or Submitted talks
+    PurchaseOrder cancel(PurchaseOrderId id)
+            throws PurchaseOrderNotFoundException, InvalidPurchaseOrderStateException;
+    // => PurchaseOrderNotFoundException: cannot cancel a nonexistent PO
+    // => InvalidPurchaseOrderStateException: cancellation only valid before Issued state
     // => The @ExceptionHandler maps each to a distinct HTTP status code
 }
 ```
@@ -401,7 +410,7 @@ public interface SubmitTalkService {
 
 ### Why It Matters
 
-Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In Java hexagonal architecture the idiomatic output port is a Java interface declared in the `application` package. The application service declares a dependency on the interface; Spring Boot wires the infrastructure adapter implementation at startup via constructor injection. This makes adapter swapping — in production and in tests — a configuration decision, not a code change. `talks-platform-be` uses this pattern for every infrastructure dependency: the repository, the event publisher, the AI provider, and the email notifier.
+Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In Java hexagonal architecture the idiomatic output port is a Java interface declared in the `application` package. The application service declares a dependency on the interface; Spring Boot wires the infrastructure adapter implementation at startup via constructor injection. This makes adapter swapping — in production and in tests — a configuration decision, not a code change. `procurement-platform-be` uses this pattern for every infrastructure dependency: the repository, the event publisher, the approval router, and the supplier notifier.
 
 ### Standard Library First
 
@@ -409,32 +418,36 @@ Java interfaces are the standard library's mechanism for expressing a contract w
 
 ```java
 // Standard library: output port as a plain Java interface
-package com.talksplatform.submission.application;
+package com.procurement.platform.purchasing.application;
 
-import com.talksplatform.submission.domain.Talk;
-import com.talksplatform.submission.domain.TalkId;
+import com.procurement.platform.purchasing.domain.PurchaseOrder;
+import com.procurement.platform.purchasing.domain.PurchaseOrderId;
 // => Only domain types in the application package — no JPA, no JDBC
 
 import java.util.Optional;
 
-public interface TalkRepository {
+public interface PurchaseOrderRepository {
     // => Java interface as output port: declares what the application layer needs
     // => No implementation here — the infrastructure adapter provides it
     // => This interface is the only thing the application service knows about persistence
 
-    void save(Talk talk);
-    // => Write-side port: persist a domain aggregate
-    // => void: the service trusts the adapter to persist atomically
+    PurchaseOrder save(PurchaseOrder purchaseOrder);
+    // => Write-side port: persist a domain aggregate, return saved instance
+    // => Returns PurchaseOrder: may include generated fields (e.g., database-assigned timestamps)
     // => Throws RuntimeException subtypes (e.g., RepositoryException) on failure
 
-    Optional<Talk> findById(TalkId id);
+    Optional<PurchaseOrder> findById(PurchaseOrderId id);
     // => Read-side port: retrieve by identity
     // => Optional wraps absence — the service does not receive null
-    // => The adapter queries the DB and maps the result to a domain Talk record
+    // => The adapter queries the DB and maps the result to a domain PurchaseOrder record
+
+    boolean existsById(PurchaseOrderId id);
+    // => Lightweight existence check: no full aggregate load needed for duplicate guards
+    // => Returns true if a PO with the given id exists; false otherwise
 }
 ```
 
-**Limitation for production**: a bare `void save(Talk talk)` gives the caller no way to distinguish a network failure from a constraint violation. Production ports declare specific exception types or use `Result`-style return types so the application service can react to failure modes.
+**Limitation for production**: a bare `PurchaseOrder save(PurchaseOrder)` gives the caller no way to distinguish a network failure from a constraint violation. Production ports declare specific exception types or use `Result`-style return types so the application service can react to failure modes.
 
 ### Production Framework
 
@@ -442,10 +455,10 @@ In the Spring stack the output port interface is declared in the `application` p
 
 ```mermaid
 flowchart LR
-    svc["SubmitTalkService\n(application package)"]:::orange
-    port["TalkRepository interface\n(application package)"]:::orange
-    jdbc["JdbcTalkRepository\n@Repository (infrastructure)"]:::teal
-    mem["InMemoryTalkRepository\n(test infrastructure)"]:::purple
+    svc["IssuePurchaseOrderService\n(application package)"]:::orange
+    port["PurchaseOrderRepository interface\n(application package)"]:::orange
+    jdbc["JdbcPurchaseOrderRepository\n@Repository (infrastructure)"]:::teal
+    mem["InMemoryPurchaseOrderRepository\n(test infrastructure)"]:::purple
     svc -->|"declares dependency on"| port
     port -->|"satisfied by"| jdbc
     port -->|"satisfied by in tests"| mem
@@ -457,40 +470,35 @@ flowchart LR
 
 ```java
 // Production output port with typed exceptions — application package
-package com.talksplatform.submission.application;
+package com.procurement.platform.purchasing.application;
 
-import com.talksplatform.submission.domain.Talk;
-import com.talksplatform.submission.domain.TalkId;
+import com.procurement.platform.purchasing.domain.PurchaseOrder;
+import com.procurement.platform.purchasing.domain.PurchaseOrderId;
 // => Only domain types imported — the interface is entirely in domain and stdlib terms
 
-import java.util.List;
 import java.util.Optional;
 
-public interface TalkRepository {
+public interface PurchaseOrderRepository {
     // => Output port interface declared in application/ — not in infrastructure/
     // => The @Repository adapter in infrastructure/ implements this interface
     // => The application service's constructor parameter is this interface type
 
-    void save(Talk talk) throws RepositoryException;
+    PurchaseOrder save(PurchaseOrder purchaseOrder) throws RepositoryException;
+    // => Returns the saved PurchaseOrder: database may enrich with timestamps or sequence values
     // => RepositoryException: domain-adjacent exception signalling an infrastructure failure
     // => The GlobalExceptionHandler maps RepositoryException to HTTP 500 + ProblemDetail (RFC 9457)
-    // => Callers can catch RepositoryException without importing any JDBC or Spring exception type
 
-    Optional<Talk> findById(TalkId id);
-    // => Read-side operation: returns Optional.empty() when the talk does not exist
+    Optional<PurchaseOrder> findById(PurchaseOrderId id);
+    // => Read-side operation: returns Optional.empty() when the PO does not exist
     // => Optional communicates absence without null — no NullPointerException risk
 
-    List<Talk> findBySpeakerId(SpeakerId speakerId);
-    // => Query port operation: returns all talks submitted by a given speaker
-    // => List is empty (not null) when the speaker has no submissions
-
-    void delete(TalkId id) throws TalkNotFoundException, RepositoryException;
-    // => Two typed exceptions: TalkNotFoundException if absent, RepositoryException on DB failure
-    // => Callers can pattern-match on exception type without string parsing or error-code inspection
+    boolean existsById(PurchaseOrderId id);
+    // => Lightweight existence check without loading the full aggregate
+    // => Callers use this for duplicate-check guard before saving a new PO
 }
 ```
 
-**Trade-offs**: a single `TalkRepository` interface with multiple operations is clean for CRUD aggregates. For aggregates with distinct read and write concerns, split the interface into a command repository and a query repository (CQRS at the port level). Adding methods to the interface requires updating all adapters — a useful forcing function to keep adapters honest.
+**Trade-offs**: a single `PurchaseOrderRepository` interface with multiple operations is clean for CRUD aggregates. For aggregates with distinct read and write concerns, split the interface into a command repository and a query repository (CQRS at the port level). Adding methods to the interface requires updating all adapters — a useful forcing function to keep adapters honest.
 
 ---
 
@@ -498,7 +506,7 @@ public interface TalkRepository {
 
 ### Why It Matters
 
-The Spring `@RestController` is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command or query, call the application service, and translate the domain result into an HTTP response. A controller that contains business logic, validates domain invariants, or directly calls a JDBC adapter has crossed out of the adapter layer into the domain or infrastructure — the most common source of untestable, entangled production code. In `talks-platform-be`, every controller serves one bounded context and delegates entirely to an application service interface.
+The Spring `@RestController` is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command or query, call the application service, and translate the domain result into an HTTP response. A controller that contains business logic, validates domain invariants, or directly calls a JDBC adapter has crossed out of the adapter layer into the domain or infrastructure — the most common source of untestable, entangled production code. In `procurement-platform-be`, every controller serves one bounded context and delegates entirely to an application service interface.
 
 ### Standard Library First
 
@@ -542,12 +550,12 @@ public class HealthServlet extends HttpServlet {
 
 ### Production Framework
 
-A `TalkController` shows the minimal Spring `@RestController` — the primary adapter for the submission context:
+A `PurchaseOrderController` shows the minimal Spring `@RestController` — the primary adapter for the purchasing context:
 
 ```java
-// Spring @RestController — primary (driving) adapter for the submission context
-package com.talksplatform.submission.presentation;
-// => submission/presentation/ package: @RestController adapters live here
+// Spring @RestController — primary (driving) adapter for the purchasing context
+package com.procurement.platform.purchasing.presentation;
+// => purchasing/presentation/ package: @RestController adapters live here
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -579,76 +587,78 @@ public class HealthController {
 }
 ```
 
-A domain-backed controller for `POST /api/v1/talks` follows the same pattern but adds the translation steps. The controller declares the application service interface — never the concrete `@Service` class — as a constructor parameter:
+A domain-backed controller for `POST /api/v1/purchase-orders` follows the same pattern but adds the translation steps. The controller declares the application service interface — never the concrete `@Service` class — as a constructor parameter:
 
 ```java
-// Domain-backed TalkController for a talk submission command
-package com.talksplatform.submission.presentation;
+// Domain-backed PurchaseOrderController for a PO issuance command
+package com.procurement.platform.purchasing.presentation;
 
-import com.talksplatform.submission.application.SubmitTalkService;
-import com.talksplatform.submission.application.DuplicateTalkException;
+import com.procurement.platform.purchasing.application.IssuePurchaseOrderService;
+import com.procurement.platform.purchasing.application.DuplicatePurchaseOrderException;
 // => Application layer interface and exception — not the @Service implementation
 // => The controller is decoupled from the concrete adapter class
-import com.talksplatform.submission.domain.Abstract;
-import com.talksplatform.submission.domain.Format;
-import com.talksplatform.submission.domain.SpeakerId;
+import com.procurement.platform.purchasing.domain.PurchaseOrderLine;
+import com.procurement.platform.purchasing.domain.SupplierId;
 // => Domain value objects used to build the aggregate command
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 // => Spring MVC annotations only — no JPA, no domain construction in the annotation block
 
+import java.util.List;
 import java.util.UUID;
 
-public record SubmitTalkRequest(String speakerId, String abstract_, String format) {}
+public record IssuePurchaseOrderRequest(String supplierId, List<PurchaseOrderLineRequest> lines) {}
 // => Request DTO as a Java record: immutable, no validation annotations at this level
 // => Lives in the presentation package — domain never imports this type
 
-public record TalkResponse(String id, String speakerId, String status) {}
+public record PurchaseOrderResponse(String id, String supplierId, String status, String approvalLevel) {}
 // => Response DTO: maps domain aggregate fields to JSON-serializable types
-// => String id: UUID converted to String for JSON — domain uses TalkId record
+// => String id: UUID converted to String for JSON — domain uses PurchaseOrderId record
 // => The application service never produces or consumes this type
 
 @RestController
 // => @RestController: combines @Controller and @ResponseBody — all methods return JSON
-@RequestMapping("/api/v1/talks")
-// => Base path scoped to the submission context — each context owns its URL prefix
-public class TalkController {
+@RequestMapping("/api/v1/purchase-orders")
+// => Base path scoped to the purchasing context — each context owns its URL prefix
+public class PurchaseOrderController {
 
-    private final SubmitTalkService submitTalkService;
+    private final IssuePurchaseOrderService issueService;
     // => Constructor injection: Spring Boot injects the @Service implementation at startup
     // => Field is final: immutable after construction — thread-safe by default
     // => Interface type declared here — the controller never imports the concrete @Service class
 
-    public TalkController(SubmitTalkService submitTalkService) {
-        this.submitTalkService = submitTalkService;
+    public PurchaseOrderController(IssuePurchaseOrderService issueService) {
+        this.issueService = issueService;
         // => No @Autowired annotation needed: Spring Boot auto-detects single-constructor injection
         // => Declaring the interface type means the controller works with any adapter implementation
     }
 
     @PostMapping
-    // => @PostMapping: handles HTTP POST to /api/v1/talks — no extra path segment needed
-    public ResponseEntity<TalkResponse> submitTalk(@RequestBody SubmitTalkRequest request) {
-        // => @RequestBody: Jackson deserializes the HTTP request body into SubmitTalkRequest
+    // => @PostMapping: handles HTTP POST to /api/v1/purchase-orders
+    public ResponseEntity<PurchaseOrderResponse> issuePurchaseOrder(
+            @RequestBody IssuePurchaseOrderRequest request) {
+        // => @RequestBody: Jackson deserializes the HTTP request body into IssuePurchaseOrderRequest
         // => Returns ResponseEntity to control the HTTP status code explicitly
-        var speakerId = new SpeakerId(UUID.fromString(request.speakerId()));
+        var supplierId = new SupplierId(UUID.fromString(request.supplierId()));
         // => Translate DTO -> domain value object: UUID.fromString throws on malformed input
-        var abstract_ = new Abstract(request.abstract_());
-        // => Abstract value object: compact constructor enforces non-empty and ≤ 2000 char invariants
-        var format = Format.valueOf(request.format());
-        // => Format.valueOf: maps the string to the sealed interface implementation
-        var talk = submitTalkService.submit(speakerId, abstract_, format);
+        var lines = request.lines().stream()
+            .map(l -> new PurchaseOrderLine(new SkuCode(l.skuCode()), new Quantity(l.quantity(), UnitOfMeasure.valueOf(l.unit())), new Money(l.unitPrice(), l.currency())))
+            .toList();
+        // => Map each request line to a domain value object — the domain rejects invalid values
+        var po = issueService.issue(supplierId, lines);
         // => Application service enforces domain invariants and persists the aggregate
-        var response = new TalkResponse(
-            talk.id().value().toString(),
-            // => talk.id().value(): unwrap TalkId -> UUID -> String for JSON
-            talk.speakerId().value().toString(),
-            talk.status().name()
+        var response = new PurchaseOrderResponse(
+            po.id().value().toString(),
+            // => po.id().value(): unwrap PurchaseOrderId -> UUID -> String for JSON
+            po.supplierId().value().toString(),
+            po.status().name(),
+            po.approvalLevel().name()
             // => Map each domain field to the response DTO — one mapping, one place
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
         // => HTTP 201 Created: the standard status for successful resource creation
-        // => body(response): Spring MVC / Jackson serializes TalkResponse to JSON
+        // => body(response): Spring MVC / Jackson serializes PurchaseOrderResponse to JSON
     }
 }
 ```
@@ -661,7 +671,7 @@ public class TalkController {
 
 ### Why It Matters
 
-The composition root is the single place in the application where all dependencies are wired together. In object-oriented hexagonal architecture, the composition root must know about concrete adapter classes — that is where the `new JdbcTalkRepository()` or `new InMemoryTalkRepository()` decision is made, not inside the application service. Spring Boot 4's `@Configuration` classes are the idiomatic composition root: they declare `@Bean` methods that construct and wire concrete types, while the rest of the codebase depends only on interfaces. Without a disciplined composition root, `@Autowired` field injection scatters wiring decisions across hundreds of classes, making adapter swapping impossible without touching production code.
+The composition root is the single place in the application where all dependencies are wired together. In object-oriented hexagonal architecture, the composition root must know about concrete adapter classes — that is where the `new JdbcPurchaseOrderRepository()` or `new InMemoryPurchaseOrderRepository()` decision is made, not inside the application service. Spring Boot 4's `@Configuration` classes are the idiomatic composition root: they declare `@Bean` methods that construct and wire concrete types, while the rest of the codebase depends only on interfaces. Without a disciplined composition root, `@Autowired` field injection scatters wiring decisions across hundreds of classes, making adapter swapping impossible without touching production code.
 
 ### Standard Library First
 
@@ -676,19 +686,19 @@ public class Application {
         // => Composition root: all concrete types constructed here
         // => The rest of the codebase only sees interfaces
 
-        var talkRepository = new InMemoryTalkRepository();
-        // => Concrete adapter chosen at startup — swap to JdbcTalkRepository for production
+        var purchaseOrderRepository = new InMemoryPurchaseOrderRepository();
+        // => Concrete adapter chosen at startup — swap to JdbcPurchaseOrderRepository for production
         // => No @Autowired magic: the dependency is explicit and visible
 
         var eventPublisher = new InMemoryEventPublisher();
         // => Concrete event publisher: in-memory for local dev, outbox for production
         // => The application service receives the interface — not InMemoryEventPublisher
 
-        var submitTalkService = new SubmitTalkServiceImpl(talkRepository, eventPublisher);
+        var issueService = new IssuePurchaseOrderServiceImpl(purchaseOrderRepository, eventPublisher);
         // => Constructor injection: service receives the interface, not the concrete class
         // => Changing the adapter means changing only this line
 
-        var talkController = new TalkController(submitTalkService);
+        var purchaseOrderController = new PurchaseOrderController(issueService);
         // => Controller receives the service interface — it does not know about InMemory or JDBC
         // => The entire wiring is visible in one place: this main method
     }
@@ -699,12 +709,12 @@ public class Application {
 
 ### Production Framework
 
-Spring Boot 4's `TalksPlatformApplication.java` is the entry point, but the wiring is expressed in `@Configuration` classes. For bounded context wiring with explicit port-to-adapter binding, a dedicated `@Configuration` class in the context's `infrastructure` package makes the dependency graph explicit:
+Spring Boot 4's `ProcurementPlatformApplication.java` is the entry point, but the wiring is expressed in `@Configuration` classes. For bounded context wiring with explicit port-to-adapter binding, a dedicated `@Configuration` class in the context's `infrastructure` package makes the dependency graph explicit:
 
 ```java
-// Current entry point: TalksPlatformApplication.java
-package com.talksplatform;
-// => com.talksplatform: root package — Spring Boot scans from here
+// Current entry point: ProcurementPlatformApplication.java
+package com.procurement.platform;
+// => com.procurement.platform: root package — Spring Boot scans from here
 
 import org.springframework.boot.SpringApplication;
 // => SpringApplication: entry-point bootstrap utility — run() starts the entire ApplicationContext
@@ -715,9 +725,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 // => Every @Component, @Service, @Repository, @RestController in sub-packages is registered
 // => Auto-configuration reads the classpath: spring-boot-starter-web adds DispatcherServlet,
 //    Jackson ObjectMapper, and Tomcat embedded server automatically
-public class TalksPlatformApplication {
+public class ProcurementPlatformApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TalksPlatformApplication.class, args);
+        SpringApplication.run(ProcurementPlatformApplication.class, args);
         // => SpringApplication.run: bootstraps ApplicationContext, starts embedded Tomcat,
         //    runs CommandLineRunner/ApplicationRunner beans, and begins accepting requests
         // => args forwarded to Spring: --server.port=8080, --spring.profiles.active=prod, etc.
@@ -728,12 +738,12 @@ public class TalksPlatformApplication {
 The per-context `@Configuration` class wires the port interface to its adapter explicitly, avoiding reliance on `@Autowired` field injection or accidental discovery:
 
 ```java
-// Production @Configuration — composition root for the submission context
-package com.talksplatform.submission.infrastructure;
+// Production @Configuration — composition root for the purchasing context
+package com.procurement.platform.purchasing.infrastructure;
 
-import com.talksplatform.submission.application.SubmitTalkService;
-import com.talksplatform.submission.application.TalkRepository;
-import com.talksplatform.submission.application.EventPublisher;
+import com.procurement.platform.purchasing.application.IssuePurchaseOrderService;
+import com.procurement.platform.purchasing.application.PurchaseOrderRepository;
+import com.procurement.platform.purchasing.application.EventPublisher;
 // => Application layer interfaces imported — not domain or presentation types
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -744,15 +754,15 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 @Configuration
 // => Spring registers this class during component scan
 // => All @Bean methods in this class are called once at startup to build the context
-public class SubmissionContextConfiguration {
+public class PurchasingContextConfiguration {
 
     @Bean
     // => @Bean: Spring calls this method and registers the return value as a singleton
-    public TalkRepository talkRepository(JdbcClient jdbc) {
-        return new JdbcTalkRepository(jdbc);
+    public PurchaseOrderRepository purchaseOrderRepository(JdbcClient jdbc) {
+        return new JdbcPurchaseOrderRepository(jdbc);
         // => Concrete adapter chosen here — in tests, replace this @Configuration
-        //    with a test @Configuration that returns new InMemoryTalkRepository()
-        // => The application service never sees JdbcTalkRepository — it receives TalkRepository
+        //    with a test @Configuration that returns new InMemoryPurchaseOrderRepository()
+        // => The application service never sees JdbcPurchaseOrderRepository — it receives PurchaseOrderRepository
     }
 
     @Bean
@@ -765,13 +775,14 @@ public class SubmissionContextConfiguration {
     }
 
     @Bean
-    public SubmitTalkService submitTalkService(TalkRepository talkRepository,
+    public IssuePurchaseOrderService issuePurchaseOrderService(
+            PurchaseOrderRepository purchaseOrderRepository,
             EventPublisher eventPublisher) {
         // => Spring injects the beans produced by the two @Bean methods above
         // => Constructor injection: explicit, visible, testable
         // => No @Autowired on the service class — the wiring is declared here
-        return new SubmitTalkServiceImpl(talkRepository, eventPublisher);
-        // => SubmitTalkServiceImpl is the @Service implementation
+        return new IssuePurchaseOrderServiceImpl(purchaseOrderRepository, eventPublisher);
+        // => IssuePurchaseOrderServiceImpl is the @Service implementation
         // => It receives the interface, not the concrete adapter
     }
 }

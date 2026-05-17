@@ -3,7 +3,7 @@ title: "Overview"
 weight: 10000002
 date: 2026-05-15T00:00:00+07:00
 draft: false
-description: "Hexagonal Architecture Using OOP by example: 80 annotated examples in Java 21+, Kotlin, and C# 12+ covering port interfaces, adapter implementations, application services, and strategic design"
+description: "Hexagonal Architecture Using OOP by example: 80 annotated examples in Java 21+, Kotlin, and C# 12+ using the procurement-platform-be domain — covering port interfaces, adapter implementations, application services, and strategic design"
 tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java", "kotlin", "csharp"]
 ---
 
@@ -27,7 +27,7 @@ This tutorial is code-first. Each example leads with working, self-contained cod
 
 Read one language deeply if you want to build fluency in that language's hexagonal idioms. Scan all three languages on each example if you want cross-language insight into how the same structural boundary maps onto different type systems and frameworks. Language contrasts are noted in examples where the difference matters to the hexagonal pattern.
 
-The running domain across all examples is **e-commerce order placement** — the same system used in the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/overview). Using a single domain lets you see how hexagonal boundaries fit around the DDD building blocks.
+The running domain across all examples is **procurement-platform-be** — a Procure-to-Pay (P2P) platform where employees request goods and services, managers approve, suppliers fulfill, and finance pays. The same domain is used in the [DDD OOP tutorial](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/overview), letting you see how hexagonal boundaries fit around DDD building blocks.
 
 ## What This Tutorial Covers
 
@@ -44,18 +44,18 @@ The running domain across all examples is **e-commerce order placement** — the
 **Intermediate patterns**:
 
 - CQRS with separate command/query ports
-- Domain events and event publishing ports
-- Clock, logger, configuration, and feature-flag ports
+- Domain events and event publishing ports (`EventPublisher`)
+- Clock, approval-router, and configuration ports
 - Retry, circuit-breaker, and idempotency in adapters
-- Multiple bounded contexts as separate hexagons
+- Multiple bounded contexts as separate hexagons (`purchasing` + `supplier`)
 - Anti-Corruption Layer adapters between contexts
 
 **Advanced patterns**:
 
-- Bounded context maps — hexagon relationships
-- Event sourcing port and adapter
-- Saga orchestration
-- Observability adapters (OpenTelemetry)
+- Bounded context maps — hexagon relationships across `receiving`, `invoicing`, and `payments`
+- `BankingPort` and retry-decorator adapter
+- `SupplierNotifierPort` with SMTP/EDI fallback
+- Observability adapters (OpenTelemetry via `Observability` port)
 - Domain evolution — adding a new port without breaking the domain
 - Adapter replacement without touching the domain
 
@@ -68,7 +68,7 @@ The running domain across all examples is **e-commerce order placement** — the
 
 ## Sibling Tutorial: Functional Programming Approach
 
-If you prefer a functional programming treatment of Hexagonal Architecture, see [Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/overview). That tutorial covers the same patterns through F# function type aliases, partial application, and Railway-Oriented Programming pipelines.
+If you prefer a functional programming treatment of Hexagonal Architecture, see [Hexagonal Architecture Using FP (F#) — By Example](/en/learn/software-engineering/architecture/hexagonal-architecture/fp-by-example/overview). That tutorial covers the same patterns through F# function type aliases, partial application, and Railway-Oriented Programming pipelines, using the same procurement-platform-be domain.
 
 ## Structure of Each Example
 
@@ -82,6 +82,6 @@ Every example follows a consistent five-part format:
 
 ## Tutorial Structure
 
-- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/beginner) — The three zones, port interfaces, adapter classes, package structure, dependency direction, in-memory adapters, application service wiring, and the full request/response flow.
-- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/intermediate) — CQRS ports, event publishing, infrastructure ports (clock, logger, cache), retry and circuit-breaker in adapters, ACL between contexts, saga orchestration, and integration testing strategies.
-- [Advanced (Examples 56–80)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/advanced) — Strategic multi-hexagon design, context maps, event sourcing, observability, domain evolution, adapter replacement, anti-patterns, and a full production reference architecture.
+- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/beginner) — The three zones, port interfaces, adapter classes, package structure, dependency direction, in-memory adapters, application service wiring, and the full request/response flow — all using the `purchasing` context of `procurement-platform-be`.
+- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/intermediate) — CQRS ports, `EventPublisher`, `ApprovalRouterPort`, infrastructure ports, retry and circuit-breaker in adapters, ACL between `purchasing` and `supplier` contexts, and integration testing strategies.
+- [Advanced (Examples 56–80)](/en/learn/software-engineering/architecture/hexagonal-architecture/oop-by-example/advanced) — Strategic multi-hexagon design across `purchasing`, `receiving`, `invoicing`, and `payments` contexts; `BankingPort` with retry decorator; `SupplierNotifierPort`; `Observability` adapter; domain evolution; adapter replacement; anti-patterns; and a full production reference architecture.

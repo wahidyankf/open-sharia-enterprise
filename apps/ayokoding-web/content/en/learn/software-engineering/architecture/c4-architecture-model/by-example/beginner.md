@@ -3,28 +3,28 @@ title: "Beginner"
 date: 2026-01-31T00:00:00+07:00
 draft: false
 weight: 10000001
-description: "Examples 1-30: Introduction to C4 Model, System Context diagrams, Container diagrams, Component diagrams, and basic integration patterns (0-40% coverage)"
+description: "Examples 1-30: C4 Level 1 System Context diagrams for the procurement-platform-be — actors, external systems, boundaries, and integration patterns (0-40% coverage)"
 tags: ["c4-model", "architecture", "tutorial", "by-example", "beginner", "diagrams"]
 ---
 
-This beginner-level tutorial introduces C4 Model fundamentals through 30 annotated diagram examples, covering system context, container, and component visualization techniques that form the foundation for architectural documentation.
+This beginner-level tutorial introduces C4 Model fundamentals through 30 annotated diagram examples. Every example uses the `procurement-platform-be` — a Procure-to-Pay (P2P) REST API backend — as the target system. All diagrams stay at System Context (Level 1): the platform is a black box and we draw only the actors, external systems, and their relationships at the boundary.
 
-## Introduction to C4 Model (Examples 1-3)
+## C4 Model Fundamentals (Examples 1–5)
 
-### Example 1: What is the C4 Model?
+### Example 1: The Four Levels of C4
 
-The C4 Model provides a hierarchical approach to visualizing software architecture through four levels of abstraction: Context, Containers, Components, and Code. This framework enables clear communication between technical and non-technical stakeholders.
+The C4 Model provides a hierarchical approach to visualizing software architecture through four levels of abstraction. Understanding this zoom hierarchy is the entry point to every diagram in this guide.
 
 ```mermaid
 graph TD
-    A["Context<br/>System relationships"]
-    B["Containers<br/>Applications and data stores"]
-    C["Components<br/>Internal structure"]
-    D["Code<br/>Classes and interfaces"]
+    A["Level 1 — Context<br/>System relationships"]
+    B["Level 2 — Containers<br/>Deployable units and data stores"]
+    C["Level 3 — Components<br/>Internal structure of a container"]
+    D["Level 4 — Code<br/>Classes, functions, interfaces"]
 
-    A -->|zoom in| B
-    B -->|zoom in| C
-    C -->|zoom in| D
+    A -->|"zoom in"| B
+    B -->|"zoom in"| C
+    C -->|"zoom in"| D
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff
@@ -34,1265 +34,1148 @@ graph TD
 
 **Key Elements**:
 
-- **Context**: Shows how the system fits in the overall IT environment
-- **Containers**: Separately deployable/executable units (web apps, databases, microservices)
-- **Components**: Groupings of related functionality within a container
-- **Code**: Class-level detail for critical components
+- **Level 1 Context** (blue): Who uses the system, what external systems does it touch?
+- **Level 2 Containers** (orange): What are the separately deployable/runnable parts?
+- **Level 3 Components** (teal): What logical groupings live inside one container?
+- **Level 4 Code** (purple): What classes/functions implement a critical component?
 
-**Design Rationale**: C4 Model uses four hierarchical levels rather than a single flat diagram because different stakeholders need different levels of detail. Executives need Context diagrams that fit on one slide, developers need Component diagrams with technical specifics, and a single diagram cannot serve both audiences effectively. The four-level hierarchy enables each audience to access the right abstraction without information overload.
+**Design Rationale**: C4 uses four levels because different stakeholders need different detail. Executives need one-slide Context views; developers need Component diagrams with API contracts; a single flat diagram cannot serve both.
 
-**Key Takeaway**: C4 Model provides four zoom levels for architecture documentation, enabling stakeholders at different technical levels to understand system design. Start with Context for high-level overview, drill down to Code for implementation details.
+**Key Takeaway**: Choose the right level for your audience. Start at Context, zoom in only when the audience or decision requires more detail.
 
-**Why It Matters**: Architecture diagrams often fail because they mix abstraction levels, showing both high-level system relationships and low-level class details in one view. C4 Model solves this by separating concerns—executives view Context diagrams, developers view Component diagrams, and each diagram remains focused and comprehensible. Hierarchical documentation matches how people naturally learn systems, starting with broad context before drilling into implementation details.
-
-### Example 2: System Context - Single System
-
-A System Context diagram shows your system (the focus) as a box in the center, surrounded by users and external systems it interacts with. This is the highest abstraction level, answering "What does this system do and who uses it?"
-
-```mermaid
-graph TD
-    A["Customer"]
-    B["E-Commerce System"]
-    C["Payment Gateway"]
-    D["Email Service"]
-
-    A -->|"Places orders<br/>Views products"| B
-    B -->|"Processes payments"| C
-    B -->|"Sends notifications"| D
-
-    style A fill:#CC78BC,stroke:#000,color:#fff
-    style B fill:#0173B2,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Customer** (purple): Human actor using the system
-- **E-Commerce System** (blue): The system being documented (always central and highlighted)
-- **Payment Gateway** (teal): External system dependency
-- **Email Service** (teal): External system dependency
-- **Arrows**: Show direction of interaction with brief descriptions
-
-**Design Rationale**: System Context diagrams deliberately omit internal structure (databases, microservices, modules) to focus on external relationships. This makes them ideal for stakeholder presentations and high-level documentation.
-
-**Key Takeaway**: Place your system in the center (highlighted in distinctive color), surround it with users and external systems, and label relationships with clear action descriptions. Keep it simple—internal structure belongs in Container diagrams.
-
-**Why It Matters**: Context diagrams prevent the common failure mode where architects create overly detailed diagrams that overwhelm stakeholders. By showing only external relationships, Context diagrams answer the critical question "What business value does this system provide?" This high-level view forces architects to articulate value and external dependencies before diving into technical complexity, making it easier to communicate with non-technical stakeholders.
-
-### Example 3: Notation Basics
-
-C4 Model uses simple boxes and arrows with consistent notation rules. Understanding these conventions ensures your diagrams communicate effectively across teams and organizations.
-
-```mermaid
-graph TD
-    Person["[Person]<br/>Customer<br/>Buys products"]
-    System["[Software System]<br/>E-Commerce Platform<br/>Sells products online"]
-    ExtSystem["[External System]<br/>Payment Gateway<br/>Processes payments"]
-
-    Person -->|HTTPS| System
-    System -->|API| ExtSystem
-
-    style Person fill:#CC78BC,stroke:#000,color:#fff
-    style System fill:#0173B2,stroke:#000,color:#fff
-    style ExtSystem fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **[Person]**: Human user - always purple/pink to distinguish from systems
-- **[Software System]**: The system being documented - blue to indicate primary focus
-- **[External System]**: Dependencies outside your control - teal/green to show external boundary
-- **Labels**: Format as "[Type]<br/>Name<br/>Description" for consistency
-- **Technology notes**: HTTPS, API - specify protocols when relevant
-
-**Design Rationale**: Color coding by type (not by team or technology) creates visual hierarchy. Purple draws attention to users (the "why"), blue highlights the system in focus, and teal indicates external dependencies requiring integration contracts.
-
-**Key Takeaway**: Use consistent colors and labeling format. Purple for people, blue for your system, teal for external systems. Include type, name, and brief description in each box.
-
-**Why It Matters**: Inconsistent notation is a primary reason architecture diagrams fail to communicate. Standardizing on C4 notation across teams reduces cognitive load and accelerates onboarding. Consistent colors allow developers to scan diagrams and immediately identify users, systems, and dependencies without reading labels—critical when reviewing multiple diagrams during incident response or system design reviews.
-
-## System Context Diagrams - Basic (Examples 4-8)
-
-### Example 4: System Context with Multiple Users
-
-Real systems serve multiple user types with different needs. This example shows how to represent distinct user personas in Context diagrams.
-
-```mermaid
-graph TD
-    Customer["[Person]<br/>Customer<br/>Browses and purchases"]
-    Admin["[Person]<br/>Admin<br/>Manages catalog"]
-    Support["[Person]<br/>Support Agent<br/>Handles issues"]
-
-    ECommerce["[Software System]<br/>E-Commerce Platform<br/>Online retail system"]
-
-    Customer -->|"Views products<br/>Places orders"| ECommerce
-    Admin -->|"Adds products<br/>Updates inventory"| ECommerce
-    Support -->|"Views orders<br/>Issues refunds"| ECommerce
-
-    style Customer fill:#CC78BC,stroke:#000,color:#fff
-    style Admin fill:#CC78BC,stroke:#000,color:#fff
-    style Support fill:#CC78BC,stroke:#000,color:#fff
-    style ECommerce fill:#0173B2,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Three user types**: Customer, Admin, Support Agent - each with distinct responsibilities
-- **Labeled interactions**: Each arrow describes what that user does with the system
-- **Same color for all users**: Purple indicates they're all people, not systems
-
-**Design Rationale**: Showing distinct user types reveals different usage patterns and helps prioritize features. Customer-facing features appear alongside administrative functions, making clear the system serves multiple audiences.
-
-**Key Takeaway**: Represent each significant user type separately with clear labels describing their primary actions. Group all people in the same color (purple) to distinguish them from systems.
-
-**Why It Matters**: User segmentation in architecture diagrams drives better design decisions. Explicitly showing different user types reveals which features serve which audiences and where system complexity concentrates. This visibility can inform architectural decisions about service boundaries, enabling teams to optimize for the most common use cases while maintaining clear boundaries for specialized functionality.
-
-### Example 5: System Context with Authentication
-
-Authentication systems are critical dependencies for most applications. This example shows how to represent authentication flows in System Context diagrams.
-
-```mermaid
-graph TD
-    User["[Person]<br/>End User<br/>Uses application"]
-
-    App["[Software System]<br/>Web Application<br/>Business application"]
-    Auth["[External System]<br/>Identity Provider<br/>OAuth2/OIDC service"]
-
-    User -->|"1. Login redirect"| App
-    App -->|"2. Authenticate"| Auth
-    Auth -->|"3. Token"| App
-    App -->|"4. Access granted"| User
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style App fill:#0173B2,stroke:#000,color:#fff
-    style Auth fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Numbered flow**: Shows authentication sequence (1-4)
-- **Identity Provider**: External system handling authentication (OAuth2/OIDC)
-- **Token exchange**: Authentication result flows back through the application
-- **Bidirectional relationship**: App initiates auth, receives token
-
-**Design Rationale**: Authentication is shown as external system dependency to highlight security boundary and delegation of credential management. Numbering reveals temporal sequence critical for understanding security flow.
-
-**Key Takeaway**: Use numbered steps (1, 2, 3...) to show temporal sequence when order matters. Represent authentication systems as external dependencies to highlight trust boundaries.
-
-**Why It Matters**: Security architectures fail when authentication boundaries are unclear. Context diagrams showing authentication flow help identify services that should delegate to central authentication rather than managing credentials directly. This visibility drives centralized security patterns and reduces the risk of credential exposure through direct database access or inconsistent token validation logic across services.
-
-### Example 6: System Context with Database
-
-Database systems appear in Context diagrams when they're shared across multiple systems or provided as external services. This example shows when to elevate databases to Context level.
-
-```mermaid
-graph TD
-    Admin["[Person]<br/>Administrator<br/>Manages system"]
-
-    AdminPanel["[Software System]<br/>Admin Panel<br/>Management interface"]
-    ReportingSystem["[Software System]<br/>Reporting System<br/>Analytics dashboard"]
-
-    SharedDB["[Software System]<br/>Customer Database<br/>Shared data store"]
-
-    Admin -->|"Manages data"| AdminPanel
-    Admin -->|"Views reports"| ReportingSystem
-
-    AdminPanel -->|"Reads/Writes customer data"| SharedDB
-    ReportingSystem -->|"Reads customer data"| SharedDB
-
-    style Admin fill:#CC78BC,stroke:#000,color:#fff
-    style AdminPanel fill:#0173B2,stroke:#000,color:#fff
-    style ReportingSystem fill:#0173B2,stroke:#000,color:#fff
-    style SharedDB fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Shared Database** (orange): Treated as separate system because multiple systems depend on it
-- **Two systems**: Admin Panel and Reporting System - both your systems (blue)
-- **Read/Write distinction**: AdminPanel writes, ReportingSystem reads (important for understanding data flow)
-
-**Design Rationale**: When a database is shared by multiple systems, it becomes a significant integration point deserving Context-level visibility. Orange color distinguishes it from external systems (teal) and your primary systems (blue).
-
-**Key Takeaway**: Show databases at Context level when they're shared across multiple systems or managed by external teams. Use orange to distinguish data stores from application systems.
-
-**Why It Matters**: Shared databases create tight coupling and coordination overhead that Context diagrams must make visible. When multiple systems depend on a single database, it becomes a critical integration point requiring careful governance. Making this dependency explicit in diagrams helps teams assess whether database decomposition would reduce coupling and enable more independent development and deployment cycles.
-
-### Example 7: System Context with Message Queue
-
-Asynchronous communication via message queues is fundamental to modern distributed systems. This example shows event-driven architecture at Context level.
-
-```mermaid
-graph TD
-    User["[Person]<br/>Customer<br/>Places orders"]
-
-    OrderService["[Software System]<br/>Order Service<br/>Manages orders"]
-    InventoryService["[Software System]<br/>Inventory Service<br/>Tracks stock"]
-    MessageQueue["[Software System]<br/>Message Queue<br/>Event broker"]
-
-    User -->|"Creates order"| OrderService
-    OrderService -->|"Publishes order.created event"| MessageQueue
-    MessageQueue -->|"Subscribes to order events"| InventoryService
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style InventoryService fill:#0173B2,stroke:#000,color:#fff
-    style MessageQueue fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Message Queue** (orange): Infrastructure component enabling async communication
-- **Publisher-Subscriber pattern**: OrderService publishes, InventoryService subscribes
-- **Event naming**: "order.created" shows explicit event schema
-- **Decoupled systems**: Services don't call each other directly
-
-**Design Rationale**: Message queues appear at Context level when they're the primary integration mechanism between systems. This reveals architectural style (event-driven) and highlights temporal decoupling.
-
-**Key Takeaway**: Show message queues as separate systems when they're central to system integration. Use event names on arrows to clarify what data flows through the queue.
-
-**Why It Matters**: Event-driven architectures hide complexity that Context diagrams must expose. As event-driven systems grow, the number and variety of event types can proliferate unchecked. Visualizing event flows in Context diagrams reveals this complexity and drives the need for schema governance through centralized event catalogs, preventing duplicate or inconsistent event definitions that break loose coupling guarantees.
-
-### Example 8: System Context with External APIs
-
-Most systems integrate with third-party APIs for specialized functionality. This example shows multiple external service dependencies.
-
-```mermaid
-graph TD
-    User["[Person]<br/>Mobile App User<br/>Orders ride"]
-
-    RideApp["[Software System]<br/>Ride Hailing App<br/>Connects riders and drivers"]
-
-    Maps["[External System]<br/>Maps API<br/>Route calculation"]
-    Payment["[External System]<br/>Payment Gateway<br/>Payment processing"]
-    SMS["[External System]<br/>SMS Service<br/>Notifications"]
-
-    User -->|"Requests ride"| RideApp
-    RideApp -->|"Gets directions"| Maps
-    RideApp -->|"Processes payment"| Payment
-    RideApp -->|"Sends confirmation"| SMS
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style RideApp fill:#0173B2,stroke:#000,color:#fff
-    style Maps fill:#029E73,stroke:#000,color:#fff
-    style Payment fill:#029E73,stroke:#000,color:#fff
-    style SMS fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Three external services** (teal): Maps, Payment, SMS - all outside your control
-- **Your system** (blue): Ride Hailing App orchestrates external services
-- **Clear purpose labels**: Each external system has specific responsibility
-- **API integration**: Arrows show API calls to external services
-
-**Design Rationale**: External service dependencies create architectural risk (availability, cost, vendor lock-in) that must be visible at Context level. Grouping them by color (teal) highlights how much the system depends on external parties.
-
-**Key Takeaway**: Represent each significant external API as a separate system. Use teal color to distinguish external dependencies from systems you control.
-
-**Why It Matters**: External dependencies are failure points and cost centers that executives must understand. Each external API dependency adds compounded availability risk—multiple dependencies with individual SLAs multiply together, potentially reducing overall system availability below expected levels. Visibility of external dependencies in Context diagrams drives investment in resilience patterns like retry logic, circuit breakers, and fallback mechanisms to maintain acceptable service levels.
-
-## System Context Diagrams - With External Systems (Examples 9-12)
-
-### Example 9: Multi-System Ecosystem
-
-Enterprise environments involve multiple interconnected systems. This example shows how to represent complex system relationships at Context level.
-
-```mermaid
-graph TD
-    Customer["[Person]<br/>Customer<br/>Uses services"]
-
-    WebPortal["[Software System]<br/>Web Portal<br/>Customer interface"]
-    MobileApp["[Software System]<br/>Mobile App<br/>iOS/Android client"]
-
-    APIGateway["[Software System]<br/>API Gateway<br/>Request routing"]
-
-    CRM["[Software System]<br/>CRM System<br/>Customer management"]
-    BillingSystem["[Software System]<br/>Billing System<br/>Invoice management"]
-
-    Customer -->|"Accesses via browser"| WebPortal
-    Customer -->|"Accesses via mobile"| MobileApp
-
-    WebPortal -->|"API calls"| APIGateway
-    MobileApp -->|"API calls"| APIGateway
-
-    APIGateway -->|"Customer data"| CRM
-    APIGateway -->|"Billing data"| BillingSystem
-
-    style Customer fill:#CC78BC,stroke:#000,color:#fff
-    style WebPortal fill:#0173B2,stroke:#000,color:#fff
-    style MobileApp fill:#0173B2,stroke:#000,color:#fff
-    style APIGateway fill:#0173B2,stroke:#000,color:#fff
-    style CRM fill:#DE8F05,stroke:#000,color:#fff
-    style BillingSystem fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Two client systems**: Web Portal and Mobile App (both blue, your systems)
-- **API Gateway**: Central routing point (blue, your system)
-- **Backend systems**: CRM and Billing (orange, shared data systems)
-- **Layered architecture**: Clients → Gateway → Backends
-
-**Design Rationale**: API Gateway pattern centralizes routing, authentication, and rate limiting. Showing this at Context level reveals that multiple client systems share backend infrastructure through a common gateway.
-
-**Key Takeaway**: Use layered layout (top to bottom or left to right) to show architectural tiers. Group systems by role (clients, gateways, backends) for visual clarity.
-
-**Why It Matters**: API Gateway patterns prevent direct client-to-backend coupling but introduce a critical single point of failure. Context diagrams showing many backend services routed through one gateway reveal this concentration of risk and drive investment in redundancy, caching, and graceful degradation strategies. Without resilience patterns, gateway failures can cascade to all dependent services; with proper circuit breakers and fallback routes, systems can maintain partial functionality during outages.
-
-### Example 10: Cross-Organization Integration
-
-B2B systems integrate across organizational boundaries. This example shows how to represent partner systems and integration contracts.
-
-```mermaid
-graph TD
-    Employee["[Person]<br/>Employee<br/>Books travel"]
-
-    TravelBookingSystem["[Software System]<br/>Travel Booking System<br/>Internal travel management"]
-
-    AirlineAPI["[External System]<br/>Airline API<br/>Flight booking - Partner A"]
-    HotelAPI["[External System]<br/>Hotel API<br/>Accommodation - Partner B"]
-    ExpenseSystem["[External System]<br/>Expense System<br/>Finance department"]
-
-    Employee -->|"Requests travel"| TravelBookingSystem
-    TravelBookingSystem -->|"Books flights"| AirlineAPI
-    TravelBookingSystem -->|"Books hotels"| HotelAPI
-    TravelBookingSystem -->|"Submits expenses"| ExpenseSystem
-
-    style Employee fill:#CC78BC,stroke:#000,color:#fff
-    style TravelBookingSystem fill:#0173B2,stroke:#000,color:#fff
-    style AirlineAPI fill:#029E73,stroke:#000,color:#fff
-    style HotelAPI fill:#029E73,stroke:#000,color:#fff
-    style ExpenseSystem fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Partner systems** (teal): Airline and Hotel APIs - external organizations
-- **Internal external system** (teal): Expense System - different department, outside your control
-- **Clear ownership**: Labels indicate Partner A, Partner B, Finance department
-- **Integration points**: Each arrow represents an API contract
-
-**Design Rationale**: Distinguishing between external partners (Airline, Hotel) and internal-but-external systems (Finance) helps identify different coordination mechanisms. Partner APIs require formal contracts; internal systems may allow informal coordination.
-
-**Key Takeaway**: Use teal for all systems outside your direct control, whether external companies or other departments. Add ownership labels (Partner A, Finance Dept) to clarify governance.
-
-**Why It Matters**: Cross-organizational dependencies have different SLAs, governance, and change management than systems you control. Context diagrams showing external partner integrations help teams plan for graceful degradation strategies. By understanding which dependencies are critical versus optional, systems can maintain core functionality even when external services are unavailable, prioritizing essential features over peripheral ones during partner outages.
-
-### Example 11: Real-Time Data Feeds
-
-Systems consuming real-time data from external sources require special consideration. This example shows streaming data architecture at Context level.
-
-```mermaid
-graph TD
-    Trader["[Person]<br/>Trader<br/>Monitors market"]
-
-    TradingPlatform["[Software System]<br/>Trading Platform<br/>Financial trading system"]
-
-    MarketDataFeed["[External System]<br/>Market Data Feed<br/>Real-time stock prices"]
-    NewsAPI["[External System]<br/>News API<br/>Financial news stream"]
-    RiskEngine["[External System]<br/>Risk Engine<br/>Compliance checking"]
-
-    Trader -->|"Executes trades"| TradingPlatform
-    MarketDataFeed -->|"Price updates (WebSocket)"| TradingPlatform
-    NewsAPI -->|"News events (SSE)"| TradingPlatform
-    TradingPlatform -->|"Trade validation"| RiskEngine
-
-    style Trader fill:#CC78BC,stroke:#000,color:#fff
-    style TradingPlatform fill:#0173B2,stroke:#000,color:#fff
-    style MarketDataFeed fill:#029E73,stroke:#000,color:#fff
-    style NewsAPI fill:#029E73,stroke:#000,color:#fff
-    style RiskEngine fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Streaming protocols**: WebSocket and SSE (Server-Sent Events) noted on arrows
-- **Push vs Pull**: Market data and news push to platform (arrows point inward)
-- **Synchronous validation**: Trade validation happens via request/response (outward arrow)
-- **Real-time requirements**: Protocol choices reveal latency requirements
-
-**Design Rationale**: Distinguishing push (real-time feeds) from pull (API calls) reveals system responsiveness requirements. WebSocket choice indicates sub-second latency needs; SSE shows acceptable one-way streaming.
-
-**Key Takeaway**: Specify protocols (WebSocket, SSE, HTTP) when they reveal architectural constraints. Show data flow direction (push vs pull) with arrow direction.
-
-**Why It Matters**: Real-time systems have fundamentally different availability and latency requirements than batch systems. Context diagrams help identify when real-time feeds and batch processing are incorrectly sharing infrastructure. Separating these workloads—dedicated infrastructure for low-latency streaming versus batch computation clusters—improves overall system availability during peak load by preventing resource contention between fundamentally different processing patterns.
-
-### Example 12: Compliance and Audit
-
-Regulatory requirements often mandate audit trails and compliance systems. This example shows how to represent compliance architecture at Context level.
-
-```mermaid
-graph TD
-    Customer["[Person]<br/>Customer<br/>Uses banking app"]
-    Auditor["[Person]<br/>Auditor<br/>Reviews transactions"]
-
-    BankingApp["[Software System]<br/>Banking Application<br/>Customer banking"]
-
-    AuditLog["[Software System]<br/>Audit Log<br/>Immutable event store"]
-    ComplianceEngine["[External System]<br/>Compliance Engine<br/>Regulatory checks"]
-    RegulatoryReporting["[External System]<br/>Regulatory Reporting<br/>Government system"]
-
-    Customer -->|"Performs transactions"| BankingApp
-    BankingApp -->|"Records all events"| AuditLog
-    BankingApp -->|"Validates compliance"| ComplianceEngine
-
-    Auditor -->|"Reviews logs"| AuditLog
-    AuditLog -->|"Daily reports"| RegulatoryReporting
-
-    style Customer fill:#CC78BC,stroke:#000,color:#fff
-    style Auditor fill:#CC78BC,stroke:#000,color:#fff
-    style BankingApp fill:#0173B2,stroke:#000,color:#fff
-    style AuditLog fill:#DE8F05,stroke:#000,color:#fff
-    style ComplianceEngine fill:#029E73,stroke:#000,color:#fff
-    style RegulatoryReporting fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Two user types**: Customer (operational) and Auditor (oversight)
-- **Audit Log** (orange): Critical data store requiring immutability guarantees
-- **Compliance Engine** (teal): External system enforcing regulatory rules
-- **Regulatory Reporting** (teal): Government-operated system receiving reports
-- **Event recording**: All transactions logged for audit trail
-
-**Design Rationale**: Separating operational flow (Customer → Banking App) from audit flow (Banking App → Audit Log → Regulatory Reporting) clarifies compliance architecture. Auditor access to logs (not the app) enforces separation of duties.
-
-**Key Takeaway**: Show audit and compliance systems explicitly. Use separate actors (Customer vs Auditor) to reveal different access patterns and governance requirements.
-
-**Why It Matters**: Compliance failures often stem from invisible audit flows. Context diagrams explicitly showing audit and compliance systems help ensure proper separation of concerns. Audit logs stored separately from operational data with immutability guarantees prevent tampering and meet regulatory requirements. Separating audit systems from operational systems in architecture diagrams drives better compliance design and makes governance requirements visible to all stakeholders.
-
-## Container Diagrams - Basic Web Apps (Examples 13-17)
-
-### Example 13: Simple Web Application
-
-Container diagrams zoom into a single system (from Context) and show its major building blocks. This example demonstrates a basic three-tier web architecture.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User"]
-
-    WebApp["[Container: Web Application]<br/>React SPA<br/>Runs in browser"]
-    APIServer["[Container: API Server]<br/>Node.js/Express<br/>REST API"]
-    Database["[Container: Database]<br/>PostgreSQL<br/>Stores user data"]
-
-    User -->|"HTTPS"| WebApp
-    WebApp -->|"JSON/HTTPS<br/>API calls"| APIServer
-    APIServer -->|"SQL<br/>Reads/Writes"| Database
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **[Container: Type]** notation: Each box labeled with container type
-- **Technology stack**: React, Node.js, PostgreSQL specified
-- **Three tiers**: Presentation (Web App), Logic (API Server), Data (Database)
-- **Protocols**: HTTPS for web, JSON/HTTPS for API, SQL for database
-- **Deployment units**: Each container can be deployed independently
-
-**Design Rationale**: Three-tier architecture separates concerns: WebApp handles UI, APIServer handles business logic, Database handles persistence. This enables independent scaling (e.g., 10 API servers, 1 database) and technology choices per tier.
-
-**Key Takeaway**: Label each container with [Container: Type], technology stack, and brief description. Show protocols on arrows. Use orange for databases to distinguish them from application containers.
-
-**Why It Matters**: Container diagrams reveal deployment and scaling strategies. Visualizing deployment units helps identify opportunities to split monolithic applications into independently scalable components. Separating concerns like web serving, API handling, and background job processing enables targeted scaling of bottleneck components. Container-level visibility drives infrastructure decisions—where to add caching, which components to containerize first, and what needs CDN support.
-
-### Example 14: Web App with File Storage
-
-Modern web applications often handle file uploads and storage. This example shows how to represent blob storage in Container diagrams.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User<br/>Uploads photos"]
-
-    WebApp["[Container: Web Application]<br/>Vue.js SPA<br/>Photo gallery UI"]
-    APIServer["[Container: API Server]<br/>Python/FastAPI<br/>REST API"]
-    Database["[Container: Database]<br/>PostgreSQL<br/>Photo metadata"]
-    BlobStorage["[Container: Blob Storage]<br/>S3-compatible storage<br/>Photo files"]
-
-    User -->|"HTTPS"| WebApp
-    WebApp -->|"Upload photo<br/>JSON/HTTPS"| APIServer
-    APIServer -->|"Save metadata<br/>SQL"| Database
-    APIServer -->|"Store file<br/>S3 API"| BlobStorage
-    WebApp -->|"Direct download<br/>Pre-signed URLs"| BlobStorage
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#fff
-    style BlobStorage fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Blob Storage** (orange): File storage separate from database
-- **Metadata vs Files**: Database stores metadata (filename, size), Blob Storage stores actual files
-- **Pre-signed URLs**: WebApp downloads directly from storage (not through API)
-- **S3-compatible API**: Standard protocol for object storage
-
-**Design Rationale**: Separating file storage from database prevents database bloat and enables CDN caching. Direct download from blob storage (using pre-signed URLs) reduces API server load and improves download performance.
-
-**Key Takeaway**: Show blob/object storage as separate container from database. Use direct connections (WebApp to BlobStorage) when appropriate to reveal optimization patterns like pre-signed URLs.
-
-**Why It Matters**: File storage architecture affects costs and performance dramatically. Container diagrams showing file flows help identify inefficient patterns like API servers proxying large file downloads. Implementing direct client-to-storage access patterns (like pre-signed URLs) reduces API server CPU load and improves download performance by eliminating unnecessary intermediaries. Visualizing file flow paths in Container diagrams drives these architectural optimization decisions.
-
-### Example 15: Web App with Background Jobs
-
-Long-running tasks should not block web requests. This example shows how to represent background job processing in Container diagrams.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User<br/>Requests report"]
-
-    WebApp["[Container: Web Application]<br/>React SPA<br/>Dashboard UI"]
-    APIServer["[Container: API Server]<br/>Django REST<br/>HTTP API"]
-    JobQueue["[Container: Message Queue]<br/>Redis/Celery<br/>Job queue"]
-    Worker["[Container: Background Worker]<br/>Python/Celery<br/>Processes jobs"]
-    Database["[Container: Database]<br/>PostgreSQL<br/>Application data"]
-
-    User -->|"Request report<br/>HTTPS"| WebApp
-    WebApp -->|"POST /reports<br/>JSON/HTTPS"| APIServer
-    APIServer -->|"Enqueue job<br/>Redis protocol"| JobQueue
-    JobQueue -->|"Fetch jobs<br/>Redis protocol"| Worker
-    Worker -->|"Read/Write data<br/>SQL"| Database
-    APIServer -->|"Read/Write data<br/>SQL"| Database
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style JobQueue fill:#DE8F05,stroke:#000,color:#fff
-    style Worker fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Job Queue** (orange): Redis-backed message queue for async tasks
-- **Background Worker**: Separate container processing queued jobs
-- **Async flow**: API enqueues job, worker processes separately
-- **Shared database**: Both API and Worker access database
-- **Decoupled execution**: Web request returns immediately, job runs later
-
-**Design Rationale**: Background jobs prevent timeout errors on long tasks (report generation, email sending, image processing). Separate worker containers enable independent scaling based on queue depth.
-
-**Key Takeaway**: Show background job processing as separate container. Include job queue as intermediary. Label async flows clearly (enqueue vs fetch).
-
-**Why It Matters**: Synchronous long-running tasks destroy user experience. Container diagrams revealing time-intensive operations blocking API responses drive architectural decisions to move these tasks to background workers. Asynchronous processing reduces user-facing response times while often improving job quality since workers can perform thorough processing without timeout constraints. Visualizing the separation between synchronous and asynchronous workloads helps teams optimize for both responsiveness and thoroughness.
-
-### Example 16: Web App with Caching
-
-Caching dramatically improves performance and reduces database load. This example shows cache integration in Container diagrams.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User<br/>Views products"]
-
-    WebApp["[Container: Web Application]<br/>Next.js SSR<br/>Server-rendered UI"]
-    APIServer["[Container: API Server]<br/>Go/Gin<br/>REST API"]
-    Cache["[Container: Cache]<br/>Redis<br/>In-memory cache"]
-    Database["[Container: Database]<br/>PostgreSQL<br/>Product catalog"]
-
-    User -->|"GET /products<br/>HTTPS"| WebApp
-    WebApp -->|"GET /api/products<br/>JSON/HTTPS"| APIServer
-    APIServer -->|"1. Check cache<br/>Redis protocol"| Cache
-    Cache -.->|"Cache miss"| APIServer
-    APIServer -->|"2. Query DB<br/>SQL"| Database
-    Database -->|"Product data"| APIServer
-    APIServer -->|"3. Update cache<br/>Redis protocol"| Cache
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Cache fill:#DE8F05,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Cache container** (orange): Redis for in-memory caching
-- **Numbered flow**: Shows cache-aside pattern (1. check cache, 2. query DB on miss, 3. update cache)
-- **Dotted line**: Cache miss indicates conditional flow
-- **Performance optimization**: Cache reduces database load
-
-**Design Rationale**: Cache-aside pattern (application manages cache) gives API Server control over cache invalidation. Redis positioned between API and database reveals it's a performance optimization, not a required dependency.
-
-**Key Takeaway**: Use numbered steps to show cache access patterns. Use dotted lines for conditional flows (cache miss). Position cache visually between API and database to show its role in data flow.
-
-**Why It Matters**: Caching strategy affects cost and performance at scale. Container diagrams showing data access patterns help identify queries for infrequently changing data that could benefit from caching. Implementing appropriate cache layers with TTLs matching data change frequency can dramatically reduce database load, potentially deferring expensive infrastructure upgrades. Visualizing cache position and data flow in Container diagrams drives these cost-saving optimization decisions.
-
-### Example 17: Web App with CDN
-
-Content Delivery Networks accelerate static asset delivery. This example shows CDN integration at Container level.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User<br/>Browses website"]
-
-    CDN["[Container: CDN]<br/>CloudFront/Cloudflare<br/>Global edge network"]
-    WebApp["[Container: Web Application]<br/>Static site (React build)<br/>Hosted on S3"]
-    APIServer["[Container: API Server]<br/>Node.js<br/>REST API"]
-    Database["[Container: Database]<br/>MongoDB<br/>Application data"]
-
-    User -->|"GET /assets/*<br/>HTTPS"| CDN
-    CDN -->|"Origin fetch<br/>(cache miss)"| WebApp
-    User -->|"GET /api/*<br/>HTTPS"| APIServer
-    APIServer -->|"Queries<br/>MongoDB protocol"| Database
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style CDN fill:#029E73,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **CDN** (teal): External service providing edge caching
-- **Path-based routing**: /assets/_to CDN, /api/_ to API Server
-- **Origin fetch**: CDN pulls from WebApp on cache miss
-- **Separation of concerns**: Static assets (CDN/S3) vs dynamic API
-
-**Design Rationale**: CDN handles static assets (HTML, CSS, JS, images) reducing origin server load and improving latency via geographic distribution. API calls bypass CDN and hit API Server directly because they're dynamic.
-
-**Key Takeaway**: Show CDN as external system (teal) even though it's part of your infrastructure. Use path patterns (/assets/_, /api/_) to clarify routing logic.
-
-**Why It Matters**: CDN architecture dramatically affects infrastructure costs and performance. Container diagrams showing routing patterns help identify static assets unnecessarily hitting origin servers. Proper CDN configuration with appropriate cache headers can reduce origin server load significantly, allowing systems to handle traffic spikes without infrastructure scaling. Visualizing CDN routing and cache patterns in Container diagrams drives performance optimization decisions and reveals opportunities to offload traffic to edge networks.
-
-## Container Diagrams - With Databases (Examples 18-22)
-
-### Example 18: Web App with Read Replicas
-
-Database read replicas improve read performance and availability. This example shows primary-replica database architecture.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User"]
-
-    WebApp["[Container: Web Application]<br/>Angular SPA"]
-    APIServer["[Container: API Server]<br/>Java/Spring Boot"]
-    PrimaryDB["[Container: Database - Primary]<br/>PostgreSQL Primary<br/>Writes + Reads"]
-    ReplicaDB1["[Container: Database - Replica]<br/>PostgreSQL Replica 1<br/>Reads only"]
-    ReplicaDB2["[Container: Database - Replica]<br/>PostgreSQL Replica 2<br/>Reads only"]
-
-    User -->|HTTPS| WebApp
-    WebApp -->|JSON/HTTPS| APIServer
-    APIServer -->|"Writes<br/>SQL"| PrimaryDB
-    APIServer -->|"Reads<br/>SQL"| ReplicaDB1
-    APIServer -->|"Reads<br/>SQL"| ReplicaDB2
-    PrimaryDB -.->|"Replication"| ReplicaDB1
-    PrimaryDB -.->|"Replication"| ReplicaDB2
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style PrimaryDB fill:#DE8F05,stroke:#000,color:#fff
-    style ReplicaDB1 fill:#CA9161,stroke:#000,color:#fff
-    style ReplicaDB2 fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Primary database** (orange): Handles all writes and some reads
-- **Replica databases** (brown): Handle read-only queries
-- **Replication flow** (dotted): Data replicates from primary to replicas
-- **Read/Write separation**: API writes to primary, reads from replicas
-- **Multiple replicas**: Load balancing across replicas
-
-**Design Rationale**: Read replicas scale read-heavy workloads by distributing queries across multiple database instances. Primary handles writes (requiring strong consistency), replicas handle reads (allowing eventual consistency).
-
-**Key Takeaway**: Use different colors for primary (orange) and replicas (brown) to distinguish roles. Show replication with dotted lines. Label read vs write flows explicitly.
-
-**Why It Matters**: Read scaling is a common database bottleneck. Container diagrams showing read/write patterns help identify workloads dominated by read queries. Adding read replicas and routing read traffic appropriately can dramatically reduce query latency with minimal application code changes—purely infrastructure optimization. Visualizing database access patterns in Container diagrams drives decisions about when replica scaling provides the most value versus other optimization strategies.
-
-### Example 19: Web App with Database Sharding
-
-Sharding distributes data across multiple databases by partition key. This example shows horizontal database scaling via sharding.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User"]
-
-    WebApp["[Container: Web Application]<br/>React SPA"]
-    APIServer["[Container: API Server]<br/>Python/Django"]
-    ShardRouter["[Container: Shard Router]<br/>Vitess/ProxySQL<br/>Query routing"]
-
-    Shard1["[Container: Database Shard 1]<br/>PostgreSQL<br/>User IDs 0-999999"]
-    Shard2["[Container: Database Shard 2]<br/>PostgreSQL<br/>User IDs 1000000-1999999"]
-    Shard3["[Container: Database Shard 3]<br/>PostgreSQL<br/>User IDs 2000000+"]
-
-    User -->|HTTPS| WebApp
-    WebApp -->|JSON/HTTPS| APIServer
-    APIServer -->|"SQL queries"| ShardRouter
-    ShardRouter -->|"Shard 1 queries"| Shard1
-    ShardRouter -->|"Shard 2 queries"| Shard2
-    ShardRouter -->|"Shard 3 queries"| Shard3
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style ShardRouter fill:#DE8F05,stroke:#000,color:#fff
-    style Shard1 fill:#CA9161,stroke:#000,color:#fff
-    style Shard2 fill:#CA9161,stroke:#000,color:#fff
-    style Shard3 fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Shard Router** (orange): Routes queries to appropriate shard based on partition key
-- **Three shards** (brown): Each handles a range of user IDs
-- **Partition strategy**: User ID ranges define shard boundaries
-- **Horizontal scaling**: Add more shards to increase capacity
-- **Technology**: Vitess/ProxySQL handles routing complexity
-
-**Design Rationale**: Sharding distributes data to overcome single-database limits (storage, throughput, connections). Router hides sharding complexity from application code, allowing transparent scaling.
-
-**Key Takeaway**: Show shard router as separate container. Label each shard with its partition range. Use consistent color for shards to show they're equivalent.
-
-**Why It Matters**: Sharding enables growth beyond single-database limits but adds operational complexity. Container diagrams showing sharding architecture reveal the multiplication of operational concerns—each shard requires backups, migrations, monitoring, and failure handling. This visibility drives investment in automation for shard provisioning, rebalancing, and management. Without proper tooling, operational overhead grows linearly with shard count; with automation, complexity increase becomes sub-linear even as data scales horizontally.
-
-### Example 20: Web App with Separate Read/Write Databases (CQRS)
-
-Command Query Responsibility Segregation (CQRS) uses separate databases for writes and reads. This example shows CQRS at Container level.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User"]
-
-    WebApp["[Container: Web Application]<br/>Vue.js SPA"]
-    WriteAPI["[Container: Write API]<br/>Node.js<br/>Command handlers"]
-    ReadAPI["[Container: Read API]<br/>Node.js<br/>Query handlers"]
-
-    WriteDB["[Container: Write Database]<br/>PostgreSQL<br/>Normalized schema"]
-    ReadDB["[Container: Read Database]<br/>MongoDB<br/>Denormalized views"]
-    EventBus["[Container: Event Bus]<br/>Kafka<br/>Change data capture"]
-
-    User -->|"Commands<br/>POST/PUT/DELETE"| WebApp
-    User -->|"Queries<br/>GET"| WebApp
-
-    WebApp -->|"POST /api/commands"| WriteAPI
-    WebApp -->|"GET /api/queries"| ReadAPI
-
-    WriteAPI -->|"SQL Writes"| WriteDB
-    ReadAPI -->|"MongoDB Queries"| ReadDB
-
-    WriteDB -->|"Change events"| EventBus
-    EventBus -->|"Update views"| ReadDB
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style WriteAPI fill:#0173B2,stroke:#000,color:#fff
-    style ReadAPI fill:#0173B2,stroke:#000,color:#fff
-    style WriteDB fill:#DE8F05,stroke:#000,color:#fff
-    style ReadDB fill:#CA9161,stroke:#000,color:#fff
-    style EventBus fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Separate APIs**: Write API handles commands, Read API handles queries
-- **Different databases**: PostgreSQL (normalized) for writes, MongoDB (denormalized) for reads
-- **Event Bus** (teal): Kafka propagates changes from write to read database
-- **Command/Query split**: POST/PUT/DELETE vs GET segregated at API level
-- **Eventual consistency**: Read database updated asynchronously via events
-
-**Design Rationale**: CQRS optimizes write and read paths independently. Write database uses normalized schema for data integrity; read database uses denormalized schema for query performance. Event bus decouples the two.
-
-**Key Takeaway**: Show write and read paths as completely separate flows. Use different colors for write database (orange) and read database (brown). Include event bus to show synchronization mechanism.
-
-**Why It Matters**: CQRS handles extreme read/write ratio imbalances. Container diagrams quantifying read versus write traffic help identify when separate optimization paths make sense. Building separate read infrastructure (denormalized, heavily cached, geographically distributed) can dramatically improve query latency while maintaining write consistency guarantees. CQRS architecture in Container diagrams makes read/write ratios and optimization opportunities visible, helping teams decide when the complexity tradeoff is justified.
-
-### Example 21: Multi-Tenant Web App with Database Isolation
-
-Multi-tenant systems require data isolation between customers. This example shows database-per-tenant architecture.
-
-```mermaid
-graph TD
-    TenantA["[Person]<br/>Tenant A User"]
-    TenantB["[Person]<br/>Tenant B User"]
-    TenantC["[Person]<br/>Tenant C User"]
-
-    WebApp["[Container: Web Application]<br/>React SPA<br/>Multi-tenant UI"]
-    APIServer["[Container: API Server]<br/>Ruby on Rails<br/>Tenant routing"]
-
-    DBTenantA["[Container: Tenant A Database]<br/>PostgreSQL<br/>Tenant A data"]
-    DBTenantB["[Container: Tenant B Database]<br/>PostgreSQL<br/>Tenant B data"]
-    DBTenantC["[Container: Tenant C Database]<br/>PostgreSQL<br/>Tenant C data"]
-
-    TenantA -->|"HTTPS + Tenant ID"| WebApp
-    TenantB -->|"HTTPS + Tenant ID"| WebApp
-    TenantC -->|"HTTPS + Tenant ID"| WebApp
-
-    WebApp -->|"API calls + Tenant ID"| APIServer
-
-    APIServer -->|"Tenant A queries"| DBTenantA
-    APIServer -->|"Tenant B queries"| DBTenantB
-    APIServer -->|"Tenant C queries"| DBTenantC
-
-    style TenantA fill:#CC78BC,stroke:#000,color:#fff
-    style TenantB fill:#CC78BC,stroke:#000,color:#fff
-    style TenantC fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style DBTenantA fill:#CA9161,stroke:#000,color:#fff
-    style DBTenantB fill:#CA9161,stroke:#000,color:#fff
-    style DBTenantC fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Three tenant users**: Each tenant isolated logically and physically
-- **Tenant routing**: API server routes to correct database based on tenant ID
-- **Database-per-tenant**: Complete data isolation between tenants
-- **Shared application tier**: Single web app and API server serve all tenants
-- **Tenant ID propagation**: Tenant identifier flows through all layers
-
-**Design Rationale**: Database-per-tenant provides strongest data isolation (regulatory compliance, customer-specific SLAs) at cost of operational complexity (N databases to manage). Alternative is shared database with row-level tenant ID filtering.
-
-**Key Takeaway**: Show each tenant database separately when using database-per-tenant architecture. Use tenant ID labels on connections to show routing logic.
-
-**Why It Matters**: Tenant isolation strategy affects compliance, costs, and blast radius. Container diagrams help teams evaluate different multi-tenancy approaches based on customer requirements. Hybrid architectures (database-per-tenant for compliance-sensitive customers, shared database for standard tiers) can optimize costs while meeting diverse regulatory needs. Visualizing tenant architecture in Container diagrams helps teams make business-critical tradeoffs between isolation guarantees, operational complexity, and infrastructure costs.
-
-### Example 22: Web App with Time-Series Database
-
-Time-series data (metrics, logs, sensor data) requires specialized databases. This example shows time-series database integration.
-
-```mermaid
-graph TD
-    User["[Person]<br/>User<br/>Views dashboards"]
-
-    WebApp["[Container: Web Application]<br/>Grafana<br/>Visualization dashboard"]
-    APIServer["[Container: API Server]<br/>Go/Gin<br/>Data collection API"]
-
-    TransactionalDB["[Container: Database]<br/>PostgreSQL<br/>Users and config"]
-    TimeSeriesDB["[Container: Time-Series Database]<br/>InfluxDB/TimescaleDB<br/>Metrics and events"]
-
-    User -->|"View metrics<br/>HTTPS"| WebApp
-    WebApp -->|"Query time-series<br/>InfluxQL"| TimeSeriesDB
-    WebApp -->|"Query config<br/>SQL"| TransactionalDB
-
-    APIServer -->|"Write metrics<br/>InfluxDB line protocol"| TimeSeriesDB
-    APIServer -->|"Read/Write config<br/>SQL"| TransactionalDB
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style TransactionalDB fill:#DE8F05,stroke:#000,color:#fff
-    style TimeSeriesDB fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Two database types**: PostgreSQL (relational) for config, InfluxDB (time-series) for metrics
-- **Specialized query languages**: SQL vs InfluxQL
-- **Write-optimized time-series**: InfluxDB handles high-volume metric writes
-- **Separate concerns**: User config in relational DB, time-series data in specialized DB
-- **Purpose-built storage**: Time-series databases optimize for time-based queries
-
-**Design Rationale**: Time-series databases provide compression, efficient time-range queries, and downsampling/retention policies that relational databases can't match. Separating transactional data (users, config) from time-series data (metrics, logs) optimizes each.
-
-**Key Takeaway**: Show time-series databases separately from transactional databases. Use different colors (brown for time-series) to distinguish. Note specialized protocols (InfluxDB line protocol, InfluxQL).
-
-**Why It Matters**: Time-series data volume overwhelms general-purpose databases. Container diagrams showing specialized database types help teams recognize when purpose-built storage provides significant advantages. Time-series databases offer superior compression and query performance for metrics and logs compared to relational databases. Visualizing database specialization drives technology selection—relational for transactions, time-series for metrics/logs/events, graph for relationships—matching storage technology to data access patterns.
-
-## Component Diagrams - Basic (Examples 23-27)
-
-### Example 23: API Server Internal Components
-
-Component diagrams zoom into a single container (from Container diagram) and show its internal structure. This example demonstrates a typical API server component organization.
-
-```mermaid
-graph TD
-    APIServer["API Server Container"]
-
-    AuthController["[Component]<br/>Auth Controller<br/>Handles login/logout"]
-    UserController["[Component]<br/>User Controller<br/>User CRUD operations"]
-    ProductController["[Component]<br/>Product Controller<br/>Product management"]
-
-    AuthService["[Component]<br/>Auth Service<br/>Token validation"]
-    UserService["[Component]<br/>User Service<br/>Business logic"]
-    ProductService["[Component]<br/>Product Service<br/>Business logic"]
-
-    UserRepository["[Component]<br/>User Repository<br/>Data access"]
-    ProductRepository["[Component]<br/>Product Repository<br/>Data access"]
-
-    AuthController -->|Uses| AuthService
-    UserController -->|Uses| AuthService
-    UserController -->|Uses| UserService
-    ProductController -->|Uses| AuthService
-    ProductController -->|Uses| ProductService
-
-    UserService -->|Uses| UserRepository
-    ProductService -->|Uses| ProductRepository
-
-    style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style AuthController fill:#DE8F05,stroke:#000,color:#fff
-    style UserController fill:#DE8F05,stroke:#000,color:#fff
-    style ProductController fill:#DE8F05,stroke:#000,color:#fff
-    style AuthService fill:#029E73,stroke:#000,color:#fff
-    style UserService fill:#029E73,stroke:#000,color:#fff
-    style ProductService fill:#029E73,stroke:#000,color:#fff
-    style UserRepository fill:#CC78BC,stroke:#000,color:#fff
-    style ProductRepository fill:#CC78BC,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Three layers**: Controllers (orange), Services (teal), Repositories (purple)
-- **Controller responsibility**: HTTP request handling and routing
-- **Service responsibility**: Business logic and orchestration
-- **Repository responsibility**: Database access and data mapping
-- **Cross-cutting concerns**: AuthService used by all controllers
-- **Dependencies flow downward**: Controllers → Services → Repositories
-
-**Design Rationale**: Layered architecture separates HTTP concerns (controllers) from business logic (services) from data access (repositories). This enables testing (mock services/repositories), technology changes (swap databases), and code reuse (multiple controllers using same service).
-
-**Key Takeaway**: Use color coding to show layers. Orange for controllers, teal for services, purple for repositories. Show dependencies with "Uses" relationships.
-
-**Why It Matters**: Component organization affects testability and maintenance. Component diagrams revealing architectural violations—such as controllers bypassing service layers to call repositories directly—help teams identify where business logic duplication and inconsistent rule enforcement occur. Enforcing proper layered architecture (controllers → services → repositories) reduces duplicate logic, improves testability through clear boundaries, and enables easier service extraction when migrating to microservices.
-
-### Example 24: Web Application Components (Frontend)
-
-Frontend applications have internal structure that Component diagrams reveal. This example shows React application component organization.
-
-```mermaid
-graph TD
-    WebApp["Web Application Container"]
-
-    AppShell["[Component]<br/>App Shell<br/>Layout and routing"]
-    AuthModule["[Component]<br/>Auth Module<br/>Login/logout UI"]
-    DashboardModule["[Component]<br/>Dashboard Module<br/>Dashboard pages"]
-    SettingsModule["[Component]<br/>Settings Module<br/>Settings pages"]
-
-    APIClient["[Component]<br/>API Client<br/>HTTP communication"]
-    AuthStore["[Component]<br/>Auth Store<br/>User state management"]
-    DataStore["[Component]<br/>Data Store<br/>Application state"]
-
-    AppShell -->|Renders| AuthModule
-    AppShell -->|Renders| DashboardModule
-    AppShell -->|Renders| SettingsModule
-
-    AuthModule -->|Uses| AuthStore
-    AuthModule -->|Uses| APIClient
-    DashboardModule -->|Uses| DataStore
-    DashboardModule -->|Uses| APIClient
-    SettingsModule -->|Uses| DataStore
-    SettingsModule -->|Uses| APIClient
-
-    AuthStore -->|Uses| APIClient
-    DataStore -->|Uses| APIClient
-
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style AppShell fill:#DE8F05,stroke:#000,color:#fff
-    style AuthModule fill:#029E73,stroke:#000,color:#fff
-    style DashboardModule fill:#029E73,stroke:#000,color:#fff
-    style SettingsModule fill:#029E73,stroke:#000,color:#fff
-    style APIClient fill:#CC78BC,stroke:#000,color:#fff
-    style AuthStore fill:#CA9161,stroke:#000,color:#fff
-    style DataStore fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **App Shell** (orange): Core layout and routing logic
-- **Feature modules** (teal): Auth, Dashboard, Settings - each encapsulates related UI
-- **API Client** (purple): Centralized HTTP communication
-- **State stores** (brown): AuthStore for user state, DataStore for application data
-- **Module independence**: Modules don't call each other, only shared services
-- **Centralized state**: Stores manage state, modules consume via subscriptions
-
-**Design Rationale**: Feature modules encapsulate related UI components (pages, forms, widgets) enabling code splitting and lazy loading. Centralized API client and state stores prevent duplicate fetch logic and ensure consistency.
-
-**Key Takeaway**: Show frontend structure with modules (feature areas), shared services (API client), and state management (stores). Use color to distinguish layers.
-
-**Why It Matters**: Frontend component organization affects bundle size and initial load time. Component diagrams showing feature module boundaries help identify opportunities for code splitting. Implementing lazy loading—where modules load on demand rather than upfront—can dramatically reduce initial bundle size and improve time-to-interactive, especially on slower network connections. Visualizing module dependencies drives decisions about what to load immediately versus defer until needed.
-
-### Example 25: Background Worker Components
-
-Background workers process queued jobs. This example shows internal organization of a worker container.
-
-```mermaid
-graph TD
-    Worker["Background Worker Container"]
-
-    JobDispatcher["[Component]<br/>Job Dispatcher<br/>Fetches jobs from queue"]
-    EmailHandler["[Component]<br/>Email Handler<br/>Processes email jobs"]
-    ReportHandler["[Component]<br/>Report Handler<br/>Generates reports"]
-    ImageHandler["[Component]<br/>Image Handler<br/>Processes images"]
-
-    EmailService["[Component]<br/>Email Service<br/>SMTP client"]
-    PDFService["[Component]<br/>PDF Service<br/>Report generation"]
-    ImageService["[Component]<br/>Image Service<br/>Resize/optimize"]
-
-    Logger["[Component]<br/>Logger<br/>Job logging"]
-
-    JobDispatcher -->|Routes| EmailHandler
-    JobDispatcher -->|Routes| ReportHandler
-    JobDispatcher -->|Routes| ImageHandler
-
-    EmailHandler -->|Uses| EmailService
-    EmailHandler -->|Uses| Logger
-    ReportHandler -->|Uses| PDFService
-    ReportHandler -->|Uses| Logger
-    ImageHandler -->|Uses| ImageService
-    ImageHandler -->|Uses| Logger
-
-    style Worker fill:#0173B2,stroke:#000,color:#fff
-    style JobDispatcher fill:#DE8F05,stroke:#000,color:#fff
-    style EmailHandler fill:#029E73,stroke:#000,color:#fff
-    style ReportHandler fill:#029E73,stroke:#000,color:#fff
-    style ImageHandler fill:#029E73,stroke:#000,color:#fff
-    style EmailService fill:#CC78BC,stroke:#000,color:#fff
-    style PDFService fill:#CC78BC,stroke:#000,color:#fff
-    style ImageService fill:#CC78BC,stroke:#000,color:#fff
-    style Logger fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Job Dispatcher** (orange): Routes incoming jobs to appropriate handlers
-- **Job Handlers** (teal): EmailHandler, ReportHandler, ImageHandler - each handles one job type
-- **Services** (purple): External integrations (SMTP, PDF, Image processing)
-- **Logger** (brown): Cross-cutting logging used by all handlers
-- **Routing logic**: Dispatcher determines handler based on job type
-
-**Design Rationale**: Separating job routing (dispatcher) from job processing (handlers) enables independent handler scaling and makes it easy to add new job types. Handlers don't call each other, preventing complex dependencies.
-
-**Key Takeaway**: Show job routing (dispatcher), job handlers (one per job type), and shared services (logging, monitoring). Use consistent color for handlers to show they're equivalent.
-
-**Why It Matters**: Worker component organization affects fault isolation and scalability. Component diagrams showing shared job dispatchers help identify single points of failure where one slow job type can block all others. Separating into dedicated worker pools per job type (email, image processing, report generation) isolates failures and enables independent scaling. This architectural separation ensures critical fast jobs continue processing even when resource-intensive jobs slow down under load.
-
-### Example 26: Microservice Internal Components
-
-Microservices are containers with focused responsibilities. This example shows typical microservice internal organization.
-
-```mermaid
-graph TD
-    OrderService["Order Service Container"]
-
-    OrderAPI["[Component]<br/>Order API<br/>REST endpoints"]
-    OrderEventHandler["[Component]<br/>Order Event Handler<br/>Consumes events"]
-
-    OrderBusinessLogic["[Component]<br/>Order Business Logic<br/>Validation and processing"]
-    OrderRepository["[Component]<br/>Order Repository<br/>Database access"]
-
-    EventPublisher["[Component]<br/>Event Publisher<br/>Publishes order events"]
-    PaymentClient["[Component]<br/>Payment Client<br/>Calls Payment Service"]
-
-    OrderAPI -->|Uses| OrderBusinessLogic
-    OrderEventHandler -->|Uses| OrderBusinessLogic
-
-    OrderBusinessLogic -->|Uses| OrderRepository
-    OrderBusinessLogic -->|Uses| EventPublisher
-    OrderBusinessLogic -->|Uses| PaymentClient
-
-    style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style OrderAPI fill:#DE8F05,stroke:#000,color:#fff
-    style OrderEventHandler fill:#DE8F05,stroke:#000,color:#fff
-    style OrderBusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style OrderRepository fill:#CC78BC,stroke:#000,color:#fff
-    style EventPublisher fill:#CA9161,stroke:#000,color:#fff
-    style PaymentClient fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Two entry points** (orange): OrderAPI (synchronous) and OrderEventHandler (asynchronous)
-- **Business logic** (teal): Shared by both entry points
-- **Repository** (purple): Database access layer
-- **Event Publisher** (brown): Publishes domain events to message bus
-- **Service Client** (brown): Calls other microservices (Payment Service)
-- **Hexagonal architecture**: Business logic at center, entry points and infrastructure at edges
-
-**Design Rationale**: Multiple entry points (API and event handler) enable both request/response and event-driven interactions. Shared business logic ensures consistency regardless of entry point. Repository and clients are pluggable infrastructure.
-
-**Key Takeaway**: Show entry points (API, event handlers), business logic, repository, and external integrations (event publisher, service clients). Use colors to distinguish layers.
-
-**Why It Matters**: Microservice component organization affects maintainability and testability. Component diagrams revealing business logic scattered across API handlers help identify duplication and testing challenges. Refactoring to hexagonal architecture (business logic at center, infrastructure at edges) consolidates logic, reduces duplication, and improves test coverage by isolating business rules from HTTP and database dependencies. This separation makes business logic independently testable without infrastructure concerns.
-
-### Example 27: Plugin Architecture Components
-
-Plugin systems enable extensibility through dynamically loaded components. This example shows plugin architecture at Component level.
-
-```mermaid
-graph TD
-    CoreApp["Core Application Container"]
-
-    PluginRegistry["[Component]<br/>Plugin Registry<br/>Manages plugins"]
-    CoreLogic["[Component]<br/>Core Logic<br/>Main application logic"]
-    PluginLoader["[Component]<br/>Plugin Loader<br/>Dynamic loading"]
-
-    PaymentPlugin["[Component]<br/>Payment Plugin<br/>Payment processing"]
-    ShippingPlugin["[Component]<br/>Shipping Plugin<br/>Shipping calculations"]
-    TaxPlugin["[Component]<br/>Tax Plugin<br/>Tax calculations"]
-
-    PluginInterface["[Component]<br/>Plugin Interface<br/>Contract definition"]
-
-    CoreLogic -->|Uses| PluginRegistry
-    PluginRegistry -->|Manages| PaymentPlugin
-    PluginRegistry -->|Manages| ShippingPlugin
-    PluginRegistry -->|Manages| TaxPlugin
-
-    PluginLoader -->|Loads| PaymentPlugin
-    PluginLoader -->|Loads| ShippingPlugin
-    PluginLoader -->|Loads| TaxPlugin
-
-    PaymentPlugin -.->|Implements| PluginInterface
-    ShippingPlugin -.->|Implements| PluginInterface
-    TaxPlugin -.->|Implements| PluginInterface
-
-    style CoreApp fill:#0173B2,stroke:#000,color:#fff
-    style PluginRegistry fill:#DE8F05,stroke:#000,color:#fff
-    style CoreLogic fill:#DE8F05,stroke:#000,color:#fff
-    style PluginLoader fill:#DE8F05,stroke:#000,color:#fff
-    style PaymentPlugin fill:#029E73,stroke:#000,color:#fff
-    style ShippingPlugin fill:#029E73,stroke:#000,color:#fff
-    style TaxPlugin fill:#029E73,stroke:#000,color:#fff
-    style PluginInterface fill:#CC78BC,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Core components** (orange): Registry, Logic, Loader - stable core
-- **Plugins** (teal): Payment, Shipping, Tax - interchangeable implementations
-- **Plugin Interface** (purple): Contract that plugins must implement
-- **Dotted lines**: "Implements" relationship (interface conformance)
-- **Dynamic loading**: PluginLoader enables runtime plugin addition
-- **Registry pattern**: PluginRegistry provides plugin discovery
-
-**Design Rationale**: Plugin architecture separates stable core from variable extensions. Core logic uses PluginRegistry (not plugins directly) to maintain loose coupling. PluginInterface defines contract enabling third-party plugins.
-
-**Key Takeaway**: Show core (orange), plugins (teal), and interface (purple). Use dotted lines for interface implementation. Label registry and loader to show plugin management.
-
-**Why It Matters**: Plugin architectures enable ecosystem growth but add complexity. Component diagrams showing plugin interfaces and registry patterns help teams design extensibility points that enable third-party contributions while maintaining system stability. Clear interface definitions prevent plugin conflicts and ensure consistent behavior. Visualizing plugin architecture drives extensibility decisions—identifying where to allow plugins (payment gateways, shipping providers) versus where to maintain strict control (core business logic).
-
-## Integration Basics (Examples 28-30)
-
-### Example 28: REST API Integration
-
-REST APIs are the most common integration pattern. This example shows RESTful service integration at Container level.
-
-```mermaid
-graph TD
-    MobileApp["[Container: Mobile App]<br/>iOS/Android<br/>Native app"]
-
-    APIGateway["[Container: API Gateway]<br/>Kong/Nginx<br/>Request routing"]
-
-    UserService["[Container: User Service]<br/>Java/Spring<br/>User management"]
-    OrderService["[Container: Order Service]<br/>Go<br/>Order processing"]
-
-    MobileApp -->|"GET /users/:id<br/>JSON/HTTPS"| APIGateway
-    MobileApp -->|"POST /orders<br/>JSON/HTTPS"| APIGateway
-
-    APIGateway -->|"Route to<br/>UserService"| UserService
-    APIGateway -->|"Route to<br/>OrderService"| OrderService
-
-    style MobileApp fill:#0173B2,stroke:#000,color:#fff
-    style APIGateway fill:#DE8F05,stroke:#000,color:#fff
-    style UserService fill:#029E73,stroke:#000,color:#fff
-    style OrderService fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Mobile App**: Client making HTTP requests
-- **API Gateway**: Routes requests to appropriate backend service
-- **RESTful endpoints**: GET /users/:id, POST /orders
-- **JSON payload**: Data format for requests/responses
-- **HTTPS protocol**: Secure transport
-- **Microservices**: UserService and OrderService behind gateway
-
-**Design Rationale**: API Gateway centralizes cross-cutting concerns (authentication, rate limiting, logging) while microservices behind it remain focused on domain logic. Clients call one endpoint (gateway), gateway routes to many services.
-
-**Key Takeaway**: Show REST integration with HTTP methods (GET, POST), URLs, and protocol (HTTPS). Use API Gateway to abstract backend complexity from clients.
-
-**Why It Matters**: API Gateway patterns reduce client-server coupling. Container diagrams showing many backend services reveal the complexity clients would face without an aggregation layer. API Gateway provides a single endpoint for clients, handling routing, retry, and circuit breaking centrally. This reduces mobile app complexity and enables backend service changes without requiring client updates, maintaining a stable contract while allowing backend evolution.
-
-### Example 29: GraphQL Integration
-
-GraphQL provides flexible querying capabilities. This example shows GraphQL integration compared to REST.
-
-```mermaid
-graph TD
-    WebApp["[Container: Web Application]<br/>React SPA<br/>GraphQL client"]
-
-    GraphQLServer["[Container: GraphQL Server]<br/>Apollo Server<br/>GraphQL API"]
-
-    UserService["[Container: User Service]<br/>REST API<br/>User data"]
-    ProductService["[Container: Product Service]<br/>REST API<br/>Product data"]
-    OrderService["[Container: Order Service]<br/>REST API<br/>Order data"]
-
-    WebApp -->|"GraphQL query<br/>Single endpoint<br/>POST /graphql"| GraphQLServer
-
-    GraphQLServer -->|"GET /users/:id"| UserService
-    GraphQLServer -->|"GET /products/:id"| ProductService
-    GraphQLServer -->|"GET /orders/:id"| OrderService
-
-    style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style GraphQLServer fill:#DE8F05,stroke:#000,color:#fff
-    style UserService fill:#029E73,stroke:#000,color:#fff
-    style ProductService fill:#029E73,stroke:#000,color:#fff
-    style OrderService fill:#029E73,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **GraphQL Server**: Aggregation layer translating GraphQL to REST
-- **Single endpoint**: POST /graphql (unlike REST's multiple endpoints)
-- **Client flexibility**: Clients specify exactly what data they need
-- **Service aggregation**: GraphQL server calls multiple backend services
-- **REST backends**: Existing REST services remain unchanged
-- **N+1 prevention**: GraphQL server batches requests to backends
-
-**Design Rationale**: GraphQL server acts as Backend-for-Frontend (BFF) aggregating multiple REST services into single flexible query interface. This reduces client-server round trips and prevents over-fetching.
-
-**Key Takeaway**: Show GraphQL server as aggregation layer between client and REST services. Label with "Single endpoint POST /graphql" to highlight GraphQL's unified interface.
-
-**Why It Matters**: GraphQL solves over-fetching and under-fetching problems. Container diagrams showing multiple REST calls to render single views reveal opportunities for query aggregation. GraphQL enables clients to request exactly the data they need in one query, reducing network round trips and data transfer. This is particularly valuable for mobile clients on constrained networks, where minimizing requests and payload size directly improves user experience.
-
-### Example 30: Event-Driven Integration
-
-Event-driven architectures enable loose coupling between services. This example shows pub/sub integration pattern.
-
-```mermaid
-graph TD
-    OrderService["[Container: Order Service]<br/>Creates orders"]
-    InventoryService["[Container: Inventory Service]<br/>Manages stock"]
-    EmailService["[Container: Email Service]<br/>Sends notifications"]
-    AnalyticsService["[Container: Analytics Service]<br/>Tracks metrics"]
-
-    EventBus["[Container: Event Bus]<br/>Kafka/RabbitMQ<br/>Message broker"]
-
-    OrderService -->|"Publish:<br/>order.created"| EventBus
-    EventBus -->|"Subscribe:<br/>order.created"| InventoryService
-    EventBus -->|"Subscribe:<br/>order.created"| EmailService
-    EventBus -->|"Subscribe:<br/>order.created"| AnalyticsService
-
-    style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style InventoryService fill:#029E73,stroke:#000,color:#fff
-    style EmailService fill:#029E73,stroke:#000,color:#fff
-    style AnalyticsService fill:#029E73,stroke:#000,color:#fff
-    style EventBus fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Publisher**: OrderService publishes events (doesn't know subscribers)
-- **Event Bus**: Kafka/RabbitMQ distributes events to subscribers
-- **Subscribers**: Inventory, Email, Analytics - each reacts independently
-- **Event schema**: "order.created" - well-defined event type
-- **Temporal decoupling**: Publisher and subscribers operate asynchronously
-- **Subscriber independence**: Adding new subscriber doesn't change publisher
-
-**Design Rationale**: Event-driven integration enables one-to-many communication without coupling. OrderService doesn't call Inventory/Email/Analytics directly; it publishes event and subscribers react independently. This enables adding new subscribers (e.g., FraudDetectionService) without modifying publisher.
-
-**Key Takeaway**: Show publisher publishing to event bus, subscribers subscribing to event bus. Label events with schema names (order.created). Use arrows to show data flow direction.
-
-**Why It Matters**: Event-driven architectures prevent cascade failures. Container diagrams showing synchronous calls to many downstream services reveal tight coupling and fragility—any slow or failing service can block critical operations. Switching to event-driven patterns (publish events, services subscribe) decouples operations, allowing core workflows to complete successfully even when downstream services are unavailable. This temporal decoupling significantly improves system resilience and reduces failure propagation.
+**Why It Matters**: Architecture diagrams routinely fail because they mix abstraction levels — placing a Kubernetes node next to a business actor in the same view. C4's four levels enforce separation of concerns at the diagram level, making communication cleaner and decisions more grounded. When you know which level you are at, you know which details belong and which are noise.
 
 ---
 
-This completes the beginner-level C4 Model by-example tutorial with 30 comprehensive examples covering introductory concepts, System Context diagrams, Container diagrams, Component diagrams, and basic integration patterns (0-40% coverage).
+### Example 2: C4 Notation Basics — Person, System, External System
+
+C4 notation uses three element types at Level 1. Understanding their shapes and labels is mandatory before reading any Context diagram.
+
+```mermaid
+graph TD
+    PersonEl["[Person]<br/>Buyer Employee<br/>A human user of the system"]
+    SystemEl["[Software System]<br/>Procurement Platform<br/>The system we are documenting"]
+    ExtEl["[External System]<br/>Bank<br/>A system outside our boundary"]
+
+    PersonEl -->|"Submits requisitions"| SystemEl
+    SystemEl -->|"Sends payment instructions"| ExtEl
+
+    style PersonEl fill:#029E73,stroke:#000,color:#fff
+    style SystemEl fill:#0173B2,stroke:#000,color:#fff
+    style ExtEl fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Person** (teal): A human role that interacts with the system
+- **Software System** (blue): The system under discussion — drawn as a single box at this level
+- **External System** (gray): A system outside your scope that you depend on or that depends on you
+
+**Design Rationale**: Using explicit type labels `[Person]` and `[External System]` prevents ambiguity. Without labels, a box could be anything; with labels, every reader immediately knows the nature of the element.
+
+**Key Takeaway**: Three element types — Person, Software System, External System — cover every actor at Level 1. Consistent labeling removes ambiguity for mixed technical/non-technical audiences.
+
+**Why It Matters**: Ambiguous diagrams drive ambiguous conversations. When a product manager sees `[Person] Buyer Employee` instead of just `Employee`, they immediately grasp the human-to-system boundary, which anchors feature discussions in the right scope.
+
+---
+
+### Example 3: Relationship Labels and Direction
+
+Every arrow in a C4 Context diagram carries a verb phrase explaining the nature of the relationship. Direction represents data or control flow.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee"]
+    Platform["[Software System]<br/>Procurement Platform"]
+    ERP["[External System]<br/>Internal ERP / GL"]
+
+    Buyer -->|"Submits purchase requisitions"| Platform
+    Platform -->|"Posts accounting entries [HTTPS/REST]"| ERP
+    ERP -->|"Provides chart of accounts [HTTPS/REST]"| Platform
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style ERP fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Verb phrases on arrows**: Describe purpose, not just "calls" or "uses"
+- **Protocol hints** `[HTTPS/REST]`: Optional but valuable for engineers
+- **Bidirectional flows**: ERP and Platform exchange data in both directions — modeled as two arrows
+
+**Design Rationale**: Relationship labels distinguish architectural intent from accident. "Posts accounting entries" says why the integration exists; "calls" says nothing.
+
+**Key Takeaway**: Always label relationships with a purposeful verb phrase. Adding protocol hints costs nothing and immediately answers "how do they talk?" for engineers in the room.
+
+**Why It Matters**: In cross-team discussions, unlabeled arrows cause ten-minute debates about what the arrow means. Purposeful labels prevent those debates and double as documentation that survives meeting notes.
+
+---
+
+### Example 4: System Boundary Box
+
+A system boundary box explicitly marks the edge of your system, separating internal from external. This clarifies scope for all readers.
+
+```mermaid
+graph TD
+    subgraph Boundary["Procurement Platform — System Boundary"]
+        Platform["[Software System]<br/>Procurement Platform<br/>P2P backend REST API"]
+    end
+
+    Buyer["[Person]<br/>Buyer Employee<br/>Submits requisitions"]
+    Supplier["[Person / External System]<br/>Supplier<br/>Receives POs, ships goods"]
+
+    Buyer -->|"Submits requisitions and approves POs"| Platform
+    Platform -->|"Sends purchase orders [EDI / SMTP]"| Supplier
+    Supplier -->|"Sends invoices [HTTPS]"| Platform
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Subgraph boundary**: The dashed box around `Procurement Platform` makes scope explicit
+- **Supplier dual role**: A Supplier is both a person (human account manager) and an external system (supplier portal) — the label clarifies this duality
+- **EDI / SMTP**: Real integration protocol shown on the PO delivery arrow
+
+**Design Rationale**: Without a boundary box, readers may not know which boxes are "yours" vs. external dependencies. The boundary box resolves ownership instantly.
+
+**Key Takeaway**: Use a boundary box whenever the system scope is non-obvious or when you are presenting to an audience unfamiliar with your organizational landscape.
+
+**Why It Matters**: Scope disagreements between teams often trace back to diagrams with no explicit boundary. The boundary box is the cheapest contract you can draw.
+
+---
+
+### Example 5: C4 Level Selection Guide
+
+Choosing the wrong level wastes diagram effort. This example shows a decision tree for selecting the right C4 level for a given situation.
+
+```mermaid
+graph TD
+    Q1{"Who is the audience?"}
+    Q2{"Do they need to see<br/>internal structure?"}
+    Q3{"Do they need to see<br/>code-level detail?"}
+    L1["Use Level 1<br/>System Context"]
+    L2["Use Level 2<br/>Container Diagram"]
+    L3["Use Level 3<br/>Component Diagram"]
+    L4["Use Level 4<br/>Code Diagram"]
+
+    Q1 -->|"Executive / Business"| L1
+    Q1 -->|"Tech lead / Architect"| Q2
+    Q2 -->|"No — deployment boundaries only"| L2
+    Q2 -->|"Yes — internal design of one container"| Q3
+    Q3 -->|"No"| L3
+    Q3 -->|"Yes — class/function design"| L4
+
+    style Q1 fill:#DE8F05,stroke:#000,color:#fff
+    style Q2 fill:#DE8F05,stroke:#000,color:#fff
+    style Q3 fill:#DE8F05,stroke:#000,color:#fff
+    style L1 fill:#0173B2,stroke:#000,color:#fff
+    style L2 fill:#029E73,stroke:#000,color:#fff
+    style L3 fill:#CC78BC,stroke:#000,color:#fff
+    style L4 fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Audience-first decision**: The first branch is audience, not technical complexity
+- **Incremental zoom**: Each level answers a progressively narrower question
+- **Code diagrams are rare**: Most situations stop at Level 3; Level 4 is for critical algorithms
+
+**Design Rationale**: Teams over-document at Level 3/4 and under-document at Level 1. Audience-first selection corrects this by forcing the author to identify the reader before picking a level.
+
+**Key Takeaway**: Always ask "who reads this and what decision do they need to make?" before opening your diagram tool. The answer determines your level.
+
+**Why It Matters**: Over-detailed diagrams for business audiences and under-detailed diagrams for engineers are equal failures. Selecting the right level is the single most impactful C4 skill.
+
+---
+
+## System Context — Core Actors (Examples 6–12)
+
+### Example 6: Minimal System Context — Buyer and Platform
+
+The simplest valid Context diagram shows one person and the system they use. Start here when introducing the platform to a new audience.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee<br/>Company staff who initiates<br/>procurement requests"]
+    Platform["[Software System]<br/>Procurement Platform<br/>Manages the full P2P lifecycle<br/>from requisition to payment"]
+
+    Buyer -->|"Submits purchase requisitions<br/>Tracks order status"| Platform
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Single actor focus**: One person, one system — maximum clarity
+- **Multi-line label on Platform**: Includes a brief responsibility statement
+- **Bidirectional intent in one arrow**: "Submits" and "Tracks" are both outbound actions but represented on one label for brevity
+
+**Design Rationale**: A two-element diagram is often the best starting slide for a new stakeholder. Complexity can always be added; once complexity is in, it cannot be removed without creating a second diagram.
+
+**Key Takeaway**: Start with the minimum viable Context diagram. Add actors only when the additional relationship changes a decision or reveals a dependency.
+
+**Why It Matters**: Most system presentations overwhelm stakeholders on the first diagram. Starting minimal builds a shared mental model before adding complexity, reducing misunderstanding in architectural reviews.
+
+---
+
+### Example 7: Adding the Supplier Actor
+
+The Supplier is both a destination (receives POs) and a source (sends invoices back). This bidirectional relationship is central to P2P.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee<br/>Initiates and approves<br/>procurement"]
+    Platform["[Software System]<br/>Procurement Platform<br/>Core P2P backend"]
+    Supplier["[Person / External System]<br/>Supplier<br/>Fulfills orders,<br/>sends invoices"]
+
+    Buyer -->|"Submits requisitions<br/>Approves POs"| Platform
+    Platform -->|"Issues purchase orders [EDI / SMTP]"| Supplier
+    Supplier -->|"Sends invoices [HTTPS portal]"| Platform
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Supplier dual nature**: Both a human contact and a machine-to-machine integration
+- **Two protocols**: EDI for machine delivery, HTTPS portal for human submission
+- **Separate arrows for each direction**: Avoids ambiguous bidirectional arrows
+
+**Design Rationale**: Showing EDI vs. HTTPS on separate arrows signals that two different integration implementations are needed, which immediately surfaces an engineering conversation.
+
+**Key Takeaway**: When a relationship has different protocols in each direction, draw separate labeled arrows. Bidirectional arrows hide protocol complexity.
+
+**Why It Matters**: Integration decisions made early in a project (EDI vs. REST vs. portal) have long-term cost and maintenance implications. Surfacing them at Context level brings them into architectural conversations before contracts are signed.
+
+---
+
+### Example 8: Adding the Bank External System
+
+The Bank receives payment instructions from the platform. This is a pure system-to-system relationship — no human on the bank side at this level.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee"]
+    Platform["[Software System]<br/>Procurement Platform"]
+    Supplier["[Person / External System]<br/>Supplier"]
+    Bank["[External System]<br/>Bank<br/>Processes supplier<br/>disbursements"]
+
+    Buyer -->|"Submits and approves"| Platform
+    Platform -->|"Issues purchase orders [EDI]"| Supplier
+    Supplier -->|"Sends invoices [HTTPS]"| Platform
+    Platform -->|"Sends payment instructions [ISO 20022]"| Bank
+    Bank -->|"Confirms disbursement status [webhook]"| Platform
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **ISO 20022**: Standard financial messaging format — naming it signals compliance requirements
+- **Webhook callback**: Bank confirms success asynchronously — important for resilience design
+- **Gray for external systems**: Visually separates internal platform from third-party dependencies
+
+**Design Rationale**: Naming ISO 20022 at Context level is deliberate. It tells compliance and finance teams exactly which standard governs the payment integration before any code is written.
+
+**Key Takeaway**: Use protocol and standard names (ISO 20022, EDI 850) as labels when they carry compliance or contractual weight. This surfaces non-functional requirements early.
+
+**Why It Matters**: Financial integrations carry regulatory obligations. A Context diagram that names the payment standard anchors compliance discussions at the correct level of abstraction, preventing expensive late-stage discoveries.
+
+---
+
+### Example 9: Adding the Internal ERP / GL
+
+The Internal ERP receives accounting entries after payments are made. This closes the financial loop in P2P.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee"]
+    Platform["[Software System]<br/>Procurement Platform"]
+    Supplier["[Person / External System]<br/>Supplier"]
+    Bank["[External System]<br/>Bank"]
+    ERP["[External System]<br/>Internal ERP / GL<br/>SAP or equivalent —<br/>chart of accounts and<br/>accounting postings"]
+
+    Buyer -->|"Submits and approves"| Platform
+    Platform -->|"Issues POs [EDI]"| Supplier
+    Supplier -->|"Sends invoices"| Platform
+    Platform -->|"Sends payment instructions [ISO 20022]"| Bank
+    Bank -->|"Confirms disbursement"| Platform
+    Platform -->|"Posts accounting journal entries [REST]"| ERP
+    ERP -->|"Provides chart of accounts and GL codes [REST]"| Platform
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style ERP fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **ERP as data provider**: The ERP gives GL codes to the platform; the platform posts entries back
+- **Bidirectional REST**: Both directions use REST but serve different purposes
+- **Purple for ERP**: Visually distinguishes internal enterprise systems from external third parties
+
+**Design Rationale**: Showing the ERP as both a source (GL codes) and a sink (accounting postings) reveals that P2P cannot function without ERP master data — a dependency that must be addressed in integration planning.
+
+**Key Takeaway**: Show bidirectional ERP relationships explicitly. Hidden data dependencies on ERP master data are among the most common causes of P2P implementation delays.
+
+**Why It Matters**: Finance and IT teams often treat ERP integration as an afterthought. A Context diagram that shows ERP as a dependency from day one forces the conversation onto the project timeline before it becomes a blocker.
+
+---
+
+### Example 10: Full Level 1 — All Four Actors
+
+This is the complete System Context diagram for the Procurement Platform with all primary actors in one view.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee<br/>Submits requisitions,<br/>approves POs"]
+    Manager["[Person]<br/>Approving Manager<br/>Approves or rejects<br/>requisitions"]
+    Platform["[Software System]<br/>Procurement Platform<br/>End-to-end P2P backend"]
+    Supplier["[Person / External System]<br/>Supplier<br/>Receives POs,<br/>ships goods, invoices"]
+    Bank["[External System]<br/>Bank<br/>Disburses payments"]
+    ERP["[External System]<br/>Internal ERP / GL<br/>Chart of accounts,<br/>accounting postings"]
+
+    Buyer -->|"Submits purchase requisitions"| Platform
+    Manager -->|"Approves or rejects requisitions and POs"| Platform
+    Platform -->|"Issues purchase orders [EDI / SMTP]"| Supplier
+    Supplier -->|"Delivers invoices [HTTPS portal]"| Platform
+    Platform -->|"Disburses payments [ISO 20022]"| Bank
+    Bank -->|"Confirms payment status [webhook]"| Platform
+    Platform -->|"Posts accounting entries [REST]"| ERP
+    ERP -->|"Provides GL codes and chart of accounts [REST]"| ERP
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Manager fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style ERP fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Two person roles**: Buyer Employee (initiator) vs. Approving Manager (approver) — distinct responsibilities
+- **Four external touchpoints**: Supplier, Bank, ERP — each with distinct integration pattern
+- **Complete P2P loop**: Requisition → PO → Goods → Invoice → Payment → Accounting
+
+**Design Rationale**: This is the "executive slide" — one diagram that answers "what does the platform do and who uses it?" without any internal detail.
+
+**Key Takeaway**: A complete Level 1 diagram fits on one slide and tells the full system story. If it requires more than six actors to be comprehensible, consider splitting into multiple context diagrams.
+
+**Why It Matters**: Executive sign-off on a platform investment requires understanding scope and boundary. This diagram provides that understanding in thirty seconds, enabling faster and more informed decision-making.
+
+---
+
+### Example 11: Approval Workflow Actor — The Approving Manager
+
+The Approving Manager is a distinct person from the Buyer. Showing them separately clarifies the approval chain that drives L1/L2/L3 approval levels.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee<br/>Requests goods and services"]
+    Manager["[Person]<br/>Approving Manager<br/>L1 approver for POs ≤ $1k<br/>L2 for POs ≤ $10k"]
+    CFO["[Person]<br/>CFO / Finance Director<br/>L3 approver for POs > $10k"]
+    Platform["[Software System]<br/>Procurement Platform"]
+
+    Buyer -->|"Submits purchase requisition"| Platform
+    Platform -->|"Notifies approver by email"| Manager
+    Manager -->|"Approves or rejects [web portal]"| Platform
+    Platform -->|"Escalates high-value requests"| CFO
+    CFO -->|"Approves or rejects [web portal]"| Platform
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Manager fill:#029E73,stroke:#000,color:#fff
+    style CFO fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Three approval tiers**: L1 (Manager), L2 (Manager), L3 (CFO) — dollar thresholds shown in labels
+- **Email notification**: Platform actively routes approval requests — not a passive inbox
+- **Web portal approval**: Both Manager and CFO use the same portal channel
+
+**Design Rationale**: Approval routing levels (L1/L2/L3) are a business requirement, not a technical one. Showing them in the Context diagram keeps finance stakeholders engaged and prevents developers from hard-coding approval logic.
+
+**Key Takeaway**: When approval chains have business-defined tiers, model each tier as a distinct person in the Context diagram. This makes the routing logic visible to business stakeholders who own the rules.
+
+**Why It Matters**: Approval threshold rules change frequently as organizations grow. Surfacing them at Context level keeps business owners accountable for defining and maintaining them, rather than burying the rules in code.
+
+---
+
+### Example 12: Supplier as External System — EDI Integration
+
+When the supplier is a large enterprise with machine-to-machine EDI capability, model them as an External System rather than a Person.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    SupplierPortal["[Person / External System]<br/>Small Supplier<br/>Uses web portal<br/>(human interaction)"]
+    SupplierEDI["[External System]<br/>Large Supplier ERP<br/>Machine-to-machine<br/>EDI X12 integration"]
+
+    Platform -->|"Sends PO [SMTP / portal]"| SupplierPortal
+    SupplierPortal -->|"Sends invoice [web upload]"| Platform
+    Platform -->|"Sends PO [EDI 850 transaction set]"| SupplierEDI
+    SupplierEDI -->|"Sends invoice [EDI 810 transaction set]"| Platform
+    SupplierEDI -->|"Sends ASN / shipping notice [EDI 856]"| Platform
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style SupplierPortal fill:#CA9161,stroke:#000,color:#fff
+    style SupplierEDI fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Two supplier archetypes**: Small suppliers use a web portal; large suppliers use EDI
+- **EDI transaction set numbers**: 850 (PO), 810 (Invoice), 856 (ASN) — precise and contractual
+- **ASN (Advance Ship Notice)**: EDI-capable suppliers send shipping notices proactively
+
+**Design Rationale**: Platform must support both integration patterns simultaneously. Showing both archetypes in one diagram surfaces the need for two separate adapter implementations early in design.
+
+**Key Takeaway**: Model different integration patterns for the same logical actor as separate elements when they require different implementations. Conflating them hides adapter complexity.
+
+**Why It Matters**: EDI integration with large suppliers is contractually mandated in many industries. Discovering this requirement at the Context level prevents the late-stage realization that a portal-only implementation cannot onboard key suppliers.
+
+---
+
+## System Context — External System Integrations (Examples 13–20)
+
+### Example 13: Bank Integration — Payment Disbursement
+
+Modeling the bank relationship precisely prevents incorrect assumptions about synchronous vs. asynchronous payment confirmation.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    Bank["[External System]<br/>Bank<br/>Processes outbound<br/>payment runs"]
+    Supplier["[Person / External System]<br/>Supplier<br/>Receives payment<br/>to bank account"]
+
+    Platform -->|"Sends payment file [ISO 20022 pain.001]"| Bank
+    Bank -->|"Sends payment status report [ISO 20022 pain.002]"| Platform
+    Bank -->|"Disburses funds to supplier account"| Supplier
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **pain.001 / pain.002**: ISO 20022 message types for payment initiation and status
+- **Asynchronous confirmation**: Bank sends status back as a separate message, not as a synchronous response
+- **Indirect to supplier**: The platform never pays the supplier directly — the bank handles fund transfer
+
+**Design Rationale**: Naming pain.001 and pain.002 at this level signals to architects that the payment subsystem must handle asynchronous status reconciliation, not a simple HTTP response check.
+
+**Key Takeaway**: Use standard message type identifiers (pain.001, EDI 810) as labels when they carry compliance or contractual weight. This prevents implementation teams from choosing incompatible formats.
+
+**Why It Matters**: Payment file format is often mandated by the bank. Discovering a pain.001 requirement after building a custom CSV-based integration forces a complete rewrite — a costly lesson that a labeled Context diagram prevents.
+
+---
+
+### Example 14: ERP Integration — Chart of Accounts
+
+The ERP is not just a data sink. It provides master data (GL codes) that the platform needs before it can post entries.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    ERP["[External System]<br/>Internal ERP / GL<br/>SAP or equivalent"]
+
+    ERP -->|"Provides GL codes on demand [REST]"| Platform
+    ERP -->|"Provides cost center master data [REST]"| Platform
+    Platform -->|"Posts journal entries on payment [REST]"| ERP
+    Platform -->|"Posts accrual entries on PO approval [REST]"| ERP
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style ERP fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Two ERP data feeds**: GL codes and cost center data — separate calls with different caching needs
+- **Two posting events**: Journal entries on payment AND accrual entries on PO approval
+- **REST in both directions**: Same protocol, but the data shape and business rules differ per call
+
+**Design Rationale**: Many P2P implementations post only on payment and skip accrual entries. Showing accrual posting at Context level forces finance stakeholders to confirm or deny this requirement before development begins.
+
+**Key Takeaway**: Show all ERP integration points including read dependencies. Hidden master-data dependencies on ERP are the most common P2P integration blocker.
+
+**Why It Matters**: Accrual accounting is a generally accepted accounting principle (GAAP) requirement in many organizations. Surfacing it at Context level brings the finance team into the design conversation before the posting architecture is locked.
+
+---
+
+### Example 15: Supplier Notification System
+
+The platform must notify suppliers of PO status changes. This can flow through email, EDI, or a supplier portal — the choice belongs at Context level.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    EmailSvc["[External System]<br/>Email Service<br/>SMTP relay<br/>(SendGrid / SES)"]
+    SupplierPortal["[External System]<br/>Supplier Self-Service Portal<br/>Web portal for PO tracking"]
+    Supplier["[Person / External System]<br/>Supplier"]
+
+    Platform -->|"Sends PO notification email [SMTP]"| EmailSvc
+    EmailSvc -->|"Delivers to supplier inbox"| Supplier
+    Platform -->|"Updates PO status in portal [REST]"| SupplierPortal
+    Supplier -->|"Checks order status [HTTPS browser]"| SupplierPortal
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style EmailSvc fill:#808080,stroke:#000,color:#fff
+    style SupplierPortal fill:#DE8F05,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Dual notification channels**: Email for push notification, portal for pull status check
+- **External email relay**: Platform does not send SMTP directly — uses a managed relay
+- **Supplier portal as separate system**: Could be built in-house or third-party SaaS
+
+**Design Rationale**: Separating email relay from portal access shows that two different integration adapters are required. If both are lumped into "notify supplier," the distinct implementation needs are invisible.
+
+**Key Takeaway**: When a single business action (notify supplier) involves multiple external systems, draw each external system as a separate node. Lumping them into one box hides adapter complexity.
+
+**Why It Matters**: Supplier experience directly affects supply chain reliability. Platform teams that treat notification as a single checkbox find supplier complaints about missed POs are often a system integration problem, not a human one.
+
+---
+
+### Example 16: Secret Manager Integration
+
+The platform must retrieve database credentials and API keys at runtime without storing them in configuration files.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    SecretMgr["[External System]<br/>Secret Manager<br/>AWS Secrets Manager<br/>or HashiCorp Vault"]
+    DB["[External System]<br/>PostgreSQL Database<br/>Primary write store"]
+
+    Platform -->|"Requests DB credentials at startup [HTTPS]"| SecretMgr
+    SecretMgr -->|"Returns rotated credentials [HTTPS]"| Platform
+    Platform -->|"Connects with retrieved credentials [TCP/5432]"| DB
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style SecretMgr fill:#808080,stroke:#000,color:#fff
+    style DB fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **No hardcoded credentials**: Platform retrieves credentials at runtime, not deploy time
+- **Credential rotation**: Secret Manager handles rotation; platform re-fetches on rotation event
+- **TCP/5432**: PostgreSQL native protocol — distinct from the HTTPS used for secret retrieval
+
+**Design Rationale**: Showing Secret Manager at Context level makes credential management a first-class architectural concern, not a deployment afterthought.
+
+**Key Takeaway**: Include secret management infrastructure in Context diagrams. Treating credentials as a deploy-time concern rather than a runtime integration produces systems that fail silently when credentials rotate.
+
+**Why It Matters**: Credential leaks are the most common cause of cloud data breaches. Architectural diagrams that normalize secret management at the system boundary set the security standard for the entire implementation team.
+
+---
+
+### Example 17: Murabaha Bank — Optional Sharia Financing
+
+For organizations operating under Sharia-compliant procurement rules, a Murabaha Bank finances asset purchases under a cost-plus markup contract.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    Bank["[External System]<br/>Bank<br/>Standard disbursement"]
+    MurabahaBank["[External System]<br/>Murabaha Bank<br/>Sharia-compliant<br/>Islamic finance institution"]
+    Supplier["[Person / External System]<br/>Supplier"]
+
+    Platform -->|"Requests murabaha financing for PO [REST]"| MurabahaBank
+    MurabahaBank -->|"Acquires asset from supplier on behalf of buyer [wire]"| Supplier
+    MurabahaBank -->|"Resells asset to buyer at cost-plus markup [contract]"| Platform
+    Platform -->|"Schedules installment payments [ISO 20022]"| MurabahaBank
+    Platform -->|"Sends standard payments [ISO 20022]"| Bank
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style MurabahaBank fill:#CC78BC,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Murabaha flow**: Bank buys asset from supplier, then resells to buyer at markup — two transactions
+- **Installment payments**: Buyer pays the bank in installments, not a lump sum to the supplier
+- **Optional context**: This financing path coexists with standard payment — not all POs use murabaha
+
+**Design Rationale**: Murabaha financing changes the payment flow fundamentally: the bank, not the platform, pays the supplier. Showing this at Context level makes the three-party contract visible to legal and compliance stakeholders.
+
+**Key Takeaway**: Model optional financing paths as separate external system relationships. Murabaha financing is architecturally distinct from standard bank disbursement and must not be conflated.
+
+**Why It Matters**: Islamic finance compliance is a regulatory requirement in many markets. Surfacing the Murabaha Bank as a distinct external system anchors legal, finance, and engineering conversations in the correct contractual structure from the first design session.
+
+---
+
+### Example 18: System Context with Compliance and Audit
+
+Regulated industries require audit trails accessible to external auditors. This example shows the compliance integration.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    AuditLog["[External System]<br/>Immutable Audit Log<br/>Append-only event store<br/>(AWS S3 + Athena or equivalent)"]
+    Auditor["[Person]<br/>External Auditor<br/>Regulatory or internal audit"]
+    Regulator["[External System]<br/>Regulatory Authority<br/>Receives compliance reports"]
+
+    Platform -->|"Streams all state-change events [async]"| AuditLog
+    Auditor -->|"Queries audit trail [read-only REST]"| AuditLog
+    Platform -->|"Submits periodic compliance reports [SFTP]"| Regulator
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style AuditLog fill:#CA9161,stroke:#000,color:#fff
+    style Auditor fill:#029E73,stroke:#000,color:#fff
+    style Regulator fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Immutable audit log**: Separate from the operational database — cannot be altered
+- **Auditor read-only**: Auditor queries the log, never the live system
+- **SFTP compliance reports**: Regulatory submissions use SFTP, not REST
+
+**Design Rationale**: Compliance requirements mandate that audit evidence is tamper-evident and separate from operational data. Showing the immutable log as an external system signals this separation to architects.
+
+**Key Takeaway**: Model compliance and audit infrastructure as distinct external systems, not as features of the primary database. Tamper-evident audit trails require architectural separation, not just a log table.
+
+**Why It Matters**: Regulatory audits that discover audit trails co-mingled with operational data can result in findings that invalidate the entire audit. Architectural separation is not optional in regulated procurement environments.
+
+---
+
+### Example 19: Notification Service — Multiple Channels
+
+A dedicated notification service decouples the platform from channel-specific delivery logic.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    NotifSvc["[External System]<br/>Notification Service<br/>Multi-channel delivery<br/>(internal or SaaS)"]
+    Email["[External System]<br/>Email Provider<br/>SendGrid / SES"]
+    SMS["[External System]<br/>SMS Provider<br/>Twilio"]
+    Buyer["[Person]<br/>Buyer Employee"]
+    Manager["[Person]<br/>Approving Manager"]
+
+    Platform -->|"Publishes notification events [async queue]"| NotifSvc
+    NotifSvc -->|"Sends approval request email"| Email
+    NotifSvc -->|"Sends urgent SMS for high-value POs"| SMS
+    Email -->|"Delivers to manager inbox"| Manager
+    SMS -->|"Sends text to manager mobile"| Manager
+    Email -->|"Delivers status update"| Buyer
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style NotifSvc fill:#DE8F05,stroke:#000,color:#fff
+    style Email fill:#808080,stroke:#000,color:#fff
+    style SMS fill:#808080,stroke:#000,color:#fff
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Manager fill:#029E73,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Notification Service mediator**: Platform publishes one event; service routes to correct channel
+- **Async queue**: Platform does not wait for delivery confirmation — fire and forget
+- **Channel selection logic**: Urgent high-value POs escalate to SMS; routine POs use email
+
+**Design Rationale**: Publishing to a notification service rather than calling email/SMS directly means the platform is not impacted if a delivery channel goes down. Decoupling is visible at Context level.
+
+**Key Takeaway**: Introduce a notification mediator when multi-channel delivery is required. Letting the platform call each channel directly creates tight coupling that makes channel changes expensive.
+
+**Why It Matters**: Notification channel preferences change. SMS costs, email deliverability issues, and push notification adoption each affect channel strategy. Decoupling through a notification service makes channel changes a configuration concern, not a code change.
+
+---
+
+### Example 20: Observability and Monitoring Integration
+
+The platform must emit telemetry to an external observability stack for production monitoring.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    OtelCollector["[External System]<br/>OpenTelemetry Collector<br/>Receives traces and metrics"]
+    Grafana["[External System]<br/>Grafana / Prometheus<br/>Metrics dashboards"]
+    Jaeger["[External System]<br/>Jaeger / Tempo<br/>Distributed tracing"]
+    OnCall["[Person]<br/>On-Call Engineer<br/>Monitors production health"]
+
+    Platform -->|"Emits traces [OTLP/gRPC]"| OtelCollector
+    Platform -->|"Emits metrics [OTLP/gRPC]"| OtelCollector
+    OtelCollector -->|"Forwards metrics"| Grafana
+    OtelCollector -->|"Forwards traces"| Jaeger
+    Grafana -->|"Alerts on threshold breach"| OnCall
+    Jaeger -->|"Shows slow traces on demand"| OnCall
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style OtelCollector fill:#DE8F05,stroke:#000,color:#fff
+    style Grafana fill:#CA9161,stroke:#000,color:#fff
+    style Jaeger fill:#CA9161,stroke:#000,color:#fff
+    style OnCall fill:#029E73,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **OpenTelemetry Collector**: Vendor-neutral collector receives all telemetry; backends are swappable
+- **OTLP/gRPC**: Standard telemetry protocol — not vendor-specific
+- **On-call engineer**: The human consumer of observability data
+
+**Design Rationale**: Using OpenTelemetry Collector as the intermediary decouples the platform from specific observability vendors. Swapping Jaeger for Tempo or Prometheus for Datadog requires only collector config changes.
+
+**Key Takeaway**: Model observability infrastructure in Context diagrams. Teams that treat monitoring as a post-launch concern regularly deploy platforms that are blind in production.
+
+**Why It Matters**: P2P platforms handle financial transactions. Production incidents with no telemetry result in extended outages and financial data integrity questions. Observability is an architectural requirement, not an operational nicety.
+
+---
+
+## System Context — Integration Patterns (Examples 21–30)
+
+### Example 21: Synchronous vs. Asynchronous Relationships
+
+Some relationships in the system are synchronous (blocking), others asynchronous (event-driven). C4 Context diagrams can show this distinction.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    ERP["[External System]<br/>Internal ERP / GL"]
+    Bank["[External System]<br/>Bank"]
+    EventBus["[External System]<br/>Event Bus<br/>Kafka cluster"]
+    SupplierSvc["[External System]<br/>Supplier Notification<br/>Service"]
+
+    Platform -->|"Reads GL codes synchronously [REST, blocking]"| ERP
+    Platform -->|"Submits payment file synchronously [ISO 20022]"| Bank
+    Platform -->|"Publishes domain events asynchronously [Kafka]"| EventBus
+    EventBus -->|"Delivers events asynchronously"| SupplierSvc
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style ERP fill:#CC78BC,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style EventBus fill:#DE8F05,stroke:#000,color:#fff
+    style SupplierSvc fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Blocking label**: `[REST, blocking]` signals that ERP latency directly impacts P2P response times
+- **Asynchronous label**: `[Kafka]` signals eventual consistency; the platform does not wait for delivery
+- **Event Bus as mediator**: Kafka sits between platform and downstream consumers
+
+**Design Rationale**: Distinguishing synchronous from asynchronous relationships at Context level surfaces latency risk. If ERP is slow, blocking REST calls will make the platform slow too — a performance requirement that must be addressed in design.
+
+**Key Takeaway**: Label relationship synchronicity in Context diagrams. Synchronous dependencies create cascading latency risk; asynchronous dependencies create eventual consistency risk. Both risks must be acknowledged.
+
+**Why It Matters**: P2P platforms often fail performance SLAs because synchronous ERP dependencies were not visible at design time. Making synchronicity explicit at Context level forces the team to plan for circuit breakers or caching.
+
+---
+
+### Example 22: Approval Workflow — Three Levels Shown
+
+The approval chain for purchase orders spans three authorization levels. Modeling them at Context shows the business rule before it becomes code.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee<br/>Requisition initiator"]
+    L1Manager["[Person]<br/>Line Manager<br/>L1: POs ≤ $1,000"]
+    L2Manager["[Person]<br/>Department Head<br/>L2: POs ≤ $10,000"]
+    L3Finance["[Person]<br/>CFO<br/>L3: POs > $10,000"]
+    Platform["[Software System]<br/>Procurement Platform"]
+
+    Buyer -->|"Submits requisition"| Platform
+    Platform -->|"Routes to line manager for L1 approval"| L1Manager
+    L1Manager -->|"Approves or rejects [portal]"| Platform
+    Platform -->|"Escalates to department head for L2"| L2Manager
+    L2Manager -->|"Approves or rejects [portal]"| Platform
+    Platform -->|"Escalates to CFO for L3"| L3Finance
+    L3Finance -->|"Approves or rejects [portal]"| Platform
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style L1Manager fill:#029E73,stroke:#000,color:#fff
+    style L2Manager fill:#029E73,stroke:#000,color:#fff
+    style L3Finance fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Three approval persons**: Each with distinct dollar threshold — drives dynamic routing logic
+- **Platform routes actively**: Platform does not just notify; it routes to the correct approver
+- **Consistent portal channel**: All approvers use the same web portal regardless of level
+
+**Design Rationale**: Showing three approval persons forces business stakeholders to confirm the routing rules. If L2 is actually a committee rather than a single person, this diagram reveals that gap immediately.
+
+**Key Takeaway**: Model each approval role as a distinct person with threshold labels. Collapsing all approvers into one generic "Manager" actor hides routing logic that the platform must implement.
+
+**Why It Matters**: Approval routing errors are a primary audit finding in P2P systems. Incorrect routing allows purchases above an employee's authority threshold to be approved without appropriate oversight — a financial controls failure.
+
+---
+
+### Example 23: Goods Receipt — Warehouse Actor
+
+Goods receipt introduces a new person: the Warehouse Operator who physically verifies delivery and enters receipt data.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    Warehouse["[Person]<br/>Warehouse Operator<br/>Physically receives goods,<br/>enters GRN data"]
+    Supplier["[Person / External System]<br/>Supplier<br/>Delivers goods to warehouse"]
+    Buyer["[Person]<br/>Buyer Employee"]
+
+    Buyer -->|"Submits purchase requisition"| Platform
+    Platform -->|"Issues PO to supplier"| Supplier
+    Supplier -->|"Physically delivers goods to warehouse"| Warehouse
+    Warehouse -->|"Enters Goods Receipt Note [web portal]"| Platform
+    Platform -->|"Notifies buyer: goods received"| Buyer
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Warehouse fill:#029E73,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Warehouse Operator**: A new person role distinct from Buyer — performs physical verification
+- **Physical delivery outside system**: The actual goods movement is not mediated by the platform
+- **GRN as platform event**: Only the receipt acknowledgment enters the system digitally
+
+**Design Rationale**: Showing the physical delivery as an arrow from Supplier to Warehouse (not to Platform) is architecturally accurate. The platform cannot track physical goods; it records the human confirmation.
+
+**Key Takeaway**: Model the boundary between physical and digital accurately. Physical events (goods delivery) happen outside the system; the platform records only the human-entered acknowledgment.
+
+**Why It Matters**: Three-way matching (PO ↔ GRN ↔ Invoice) is the cornerstone of P2P fraud prevention. The matching cannot succeed if goods receipt data is incomplete. Showing the Warehouse Operator as a first-class actor signals the data quality dependency to operations teams.
+
+---
+
+### Example 24: Invoice Registration — Finance Clerk Actor
+
+Invoice processing introduces the Finance Clerk who registers supplier invoices into the platform for three-way matching.
+
+```mermaid
+graph TD
+    Platform["[Software System]<br/>Procurement Platform"]
+    Supplier["[Person / External System]<br/>Supplier"]
+    FinanceClerk["[Person]<br/>Finance Clerk<br/>Registers invoices,<br/>resolves matching exceptions"]
+    Buyer["[Person]<br/>Buyer Employee"]
+
+    Supplier -->|"Sends paper or email invoice"| FinanceClerk
+    FinanceClerk -->|"Registers invoice in platform [web portal]"| Platform
+    Platform -->|"Runs three-way match: PO vs GRN vs Invoice [auto]"| Platform
+    Platform -->|"Alerts clerk on matching exception"| FinanceClerk
+    FinanceClerk -->|"Resolves dispute [web portal]"| Platform
+    Platform -->|"Notifies buyer of matched invoice"| Buyer
+
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style FinanceClerk fill:#029E73,stroke:#000,color:#fff
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Finance Clerk**: Manual entry role for invoice registration — a common process gap in P2P
+- **Auto three-way match**: Platform performs matching automatically after registration
+- **Exception loop**: Clerk receives alert on exception and resolves it — a process loop in the diagram
+
+**Design Rationale**: Showing the Finance Clerk as a distinct actor makes the manual invoice entry step visible. Many P2P implementations underestimate this step and fail to budget for the clerk portal UI.
+
+**Key Takeaway**: Model every human touchpoint in the P2P process as a distinct Person actor. Hidden manual steps lead to under-designed user interfaces and process bottlenecks.
+
+**Why It Matters**: Invoice matching exceptions are the most common cause of payment delays in P2P. A platform that makes the exception resolution workflow invisible during design will deliver a poor finance user experience, resulting in slow payment runs and supplier relationship damage.
+
+---
+
+### Example 25: Complete P2P Flow — All Actors
+
+A single Context diagram that traces the full Procure-to-Pay lifecycle from requisition to accounting entry, showing every person and external system.
+
+```mermaid
+graph LR
+    Buyer["[Person]<br/>Buyer Employee"]
+    Manager["[Person]<br/>Approving Manager"]
+    Warehouse["[Person]<br/>Warehouse Operator"]
+    FinClerk["[Person]<br/>Finance Clerk"]
+    Platform["[Software System]<br/>Procurement Platform"]
+    Supplier["[Person / Ext System]<br/>Supplier"]
+    Bank["[External System]<br/>Bank"]
+    ERP["[External System]<br/>Internal ERP / GL"]
+
+    Buyer -->|"1. Submits requisition"| Platform
+    Platform -->|"2. Routes for approval"| Manager
+    Manager -->|"3. Approves PO"| Platform
+    Platform -->|"4. Issues PO"| Supplier
+    Supplier -->|"5. Delivers goods"| Warehouse
+    Warehouse -->|"6. Enters GRN"| Platform
+    Supplier -->|"7. Sends invoice"| FinClerk
+    FinClerk -->|"8. Registers invoice"| Platform
+    Platform -->|"9. Disburses payment"| Bank
+    Bank -->|"10. Pays supplier"| Supplier
+    Platform -->|"11. Posts accounting"| ERP
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Manager fill:#029E73,stroke:#000,color:#fff
+    style Warehouse fill:#029E73,stroke:#000,color:#fff
+    style FinClerk fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style ERP fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Numbered arrows**: 11-step P2P lifecycle made explicit
+- **Left-to-right layout**: Matches the temporal flow of the business process
+- **All eight actors**: Every person and system involved in P2P in one view
+
+**Design Rationale**: Using numbered arrows transforms a static Context diagram into a process walkthrough. Business stakeholders can trace the flow and immediately spot missing steps or incorrect ordering.
+
+**Key Takeaway**: For process-oriented systems, number the relationship arrows in execution order. This converts a static view into an interactive walkthrough for business stakeholder meetings.
+
+**Why It Matters**: P2P process reviews with stakeholders often uncover missing steps, incorrect approval routing, or missing actors. A numbered-arrow Context diagram makes these gaps findable in a meeting rather than in a production incident.
+
+---
+
+### Example 26: System Boundary — What Is In and What Is Out
+
+Explicitly marking what the Procurement Platform owns vs. what external systems own prevents scope creep and misaligned expectations.
+
+```mermaid
+graph TD
+    subgraph InScope["IN SCOPE — Procurement Platform owns"]
+        PRLifecycle["Requisition lifecycle management"]
+        POLifecycle["Purchase order issuance and tracking"]
+        GRNEntry["Goods receipt recording"]
+        InvMatching["Invoice three-way matching"]
+        PayRun["Payment run scheduling"]
+    end
+
+    subgraph OutOfScope["OUT OF SCOPE — External systems own"]
+        ERPAccounting["General ledger and chart of accounts"]
+        BankDisbursement["Actual fund disbursement"]
+        EDINetwork["EDI value-added network"]
+        InventoryMgmt["Warehouse inventory management"]
+    end
+
+    InScope -->|"Integrates via REST and events"| OutOfScope
+
+    style PRLifecycle fill:#0173B2,stroke:#000,color:#fff
+    style POLifecycle fill:#0173B2,stroke:#000,color:#fff
+    style GRNEntry fill:#0173B2,stroke:#000,color:#fff
+    style InvMatching fill:#0173B2,stroke:#000,color:#fff
+    style PayRun fill:#0173B2,stroke:#000,color:#fff
+    style ERPAccounting fill:#808080,stroke:#000,color:#fff
+    style BankDisbursement fill:#808080,stroke:#000,color:#fff
+    style EDINetwork fill:#808080,stroke:#000,color:#fff
+    style InventoryMgmt fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Two subgraphs**: In-scope and out-of-scope separated visually
+- **Capability list**: Each box names a capability, not a technical component
+- **Inventory management is out-of-scope**: Common misunderstanding — P2P does not manage inventory
+
+**Design Rationale**: Scope boundaries prevent feature creep and misaligned budget expectations. The "OUT OF SCOPE" box is as important as the "IN SCOPE" box.
+
+**Key Takeaway**: Draw the out-of-scope boundary explicitly. Unspecified scope is assumed to be in-scope by stakeholders, leading to scope creep and budget overruns.
+
+**Why It Matters**: P2P implementations frequently expand to absorb inventory management, ERP functionality, and supplier master data management — all out of scope for a P2P backend. A boundary diagram prevents these expansions from silently entering the project.
+
+---
+
+### Example 27: Multiple Buyer Organizations — Multi-Tenancy at Context
+
+A SaaS Procurement Platform serves multiple buyer organizations. Each organization is a distinct tenant with isolated data.
+
+```mermaid
+graph TD
+    OrgA["[Person]<br/>Buyer Employee — Org A"]
+    OrgB["[Person]<br/>Buyer Employee — Org B"]
+    Platform["[Software System]<br/>Procurement Platform<br/>Multi-tenant SaaS"]
+    BankA["[External System]<br/>Bank A<br/>Org A's bank"]
+    BankB["[External System]<br/>Bank B<br/>Org B's bank"]
+    SharedERP["[External System]<br/>ERP<br/>Shared across orgs"]
+
+    OrgA -->|"Submits requisitions [tenant: org-a]"| Platform
+    OrgB -->|"Submits requisitions [tenant: org-b]"| Platform
+    Platform -->|"Disburses org-a payments"| BankA
+    Platform -->|"Disburses org-b payments"| BankB
+    Platform -->|"Posts accounting entries [org-scoped GL codes]"| SharedERP
+
+    style OrgA fill:#029E73,stroke:#000,color:#fff
+    style OrgB fill:#029E73,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style BankA fill:#808080,stroke:#000,color:#fff
+    style BankB fill:#808080,stroke:#000,color:#fff
+    style SharedERP fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Tenant labels on arrows**: `[tenant: org-a]` makes tenant isolation visible at Context
+- **Per-org banks**: Each organization may have a different banking relationship
+- **Shared ERP with org-scoped GL codes**: Single ERP instance, per-org chart of accounts
+
+**Design Rationale**: Showing tenant labels at Context level forces the team to plan data isolation from the beginning. Systems designed without explicit multi-tenancy at Context routinely leak cross-tenant data.
+
+**Key Takeaway**: Model multi-tenancy at Context level with explicit tenant labels on actor-to-system arrows. Invisible multi-tenancy in diagrams produces invisible data isolation bugs in production.
+
+**Why It Matters**: Cross-tenant data leaks in SaaS procurement platforms expose supplier pricing and purchase volumes — commercially sensitive data that damages customer trust and triggers regulatory action. Architectural visibility is the first line of defense.
+
+---
+
+### Example 28: Geographic Distribution — Regional Deployments
+
+A globally-deployed platform must show regional instances and data residency boundaries.
+
+```mermaid
+graph TD
+    subgraph APAC["APAC Region"]
+        APACBuyer["[Person]<br/>Buyer — APAC"]
+        APACPlatform["[Software System]<br/>Procurement Platform<br/>APAC instance"]
+        APACBank["[External System]<br/>APAC Regional Bank"]
+    end
+
+    subgraph EU["EU Region"]
+        EUBuyer["[Person]<br/>Buyer — EU"]
+        EUPlatform["[Software System]<br/>Procurement Platform<br/>EU instance (GDPR-compliant)"]
+        EUBank["[External System]<br/>EU Bank"]
+    end
+
+    GlobalERP["[External System]<br/>Global ERP / GL<br/>Cross-region consolidation"]
+
+    APACBuyer --> APACPlatform
+    APACPlatform -->|"Disburses payments"| APACBank
+    EUBuyer --> EUPlatform
+    EUPlatform -->|"Disburses payments"| EUBank
+    APACPlatform -->|"Posts entries [region-scoped]"| GlobalERP
+    EUPlatform -->|"Posts entries [EU data stays in EU]"| GlobalERP
+
+    style APACBuyer fill:#029E73,stroke:#000,color:#fff
+    style APACPlatform fill:#0173B2,stroke:#000,color:#fff
+    style APACBank fill:#808080,stroke:#000,color:#fff
+    style EUBuyer fill:#029E73,stroke:#000,color:#fff
+    style EUPlatform fill:#0173B2,stroke:#000,color:#fff
+    style EUBank fill:#808080,stroke:#000,color:#fff
+    style GlobalERP fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Regional subgraphs**: APAC and EU instances in separate boundary boxes
+- **GDPR label**: EU data residency requirement noted on platform box
+- **Global ERP consolidation**: Single ERP consolidates across regions with region-scoped entries
+
+**Design Rationale**: Regional subgraphs make data residency visible. GDPR compliance requires EU data to stay in EU — this cannot be discovered at deployment time.
+
+**Key Takeaway**: Show regional deployments and data residency constraints at Context level. Data sovereignty requirements discovered post-deployment require expensive re-architecture.
+
+**Why It Matters**: GDPR fines for cross-border data transfers reach 4% of global annual turnover. Architectural diagrams that make data residency constraints explicit from day one prevent regulatory exposure.
+
+---
+
+### Example 29: System Context with Security Boundary
+
+A security-focused Context diagram highlights trust boundaries and authentication checkpoints.
+
+```mermaid
+graph TD
+    subgraph Internet["Untrusted Zone — Public Internet"]
+        Buyer["[Person]<br/>Buyer Employee<br/>Authenticates via SSO"]
+        Supplier["[Person / External System]<br/>Supplier<br/>Authenticates via API key"]
+    end
+
+    subgraph DMZ["DMZ — API Gateway"]
+        APIGW["[External System]<br/>API Gateway<br/>WAF, rate limiting,<br/>auth token validation"]
+    end
+
+    subgraph TrustedZone["Trusted Zone — Private Network"]
+        Platform["[Software System]<br/>Procurement Platform"]
+        DB["[External System]<br/>PostgreSQL<br/>No public access"]
+    end
+
+    Buyer -->|"HTTPS + JWT [SSO/OIDC]"| APIGW
+    Supplier -->|"HTTPS + API key"| APIGW
+    APIGW -->|"Validated requests [internal mTLS]"| Platform
+    Platform -->|"Queries data [TCP/5432, VPC internal]"| DB
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style APIGW fill:#DE8F05,stroke:#000,color:#fff
+    style Platform fill:#0173B2,stroke:#000,color:#fff
+    style DB fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Three security zones**: Untrusted (internet), DMZ (gateway), Trusted (private network)
+- **mTLS inside trusted zone**: Mutual TLS for service-to-service — not just external TLS
+- **Database no public access**: DB is in trusted zone and not reachable from DMZ
+
+**Design Rationale**: Security zone diagrams communicate the defense-in-depth strategy. Each zone boundary is a security enforcement point, not just a deployment boundary.
+
+**Key Takeaway**: Model security trust zones explicitly in Context diagrams for security-sensitive systems. Each zone boundary represents a distinct authentication/authorization enforcement point.
+
+**Why It Matters**: P2P platforms hold payment credentials and supplier contracts — high-value targets. Security architecture decisions made at Context level (DMZ, mTLS, private DB) drive implementation decisions across every container and component in the system.
+
+---
+
+### Example 30: Context Diagram Anti-Patterns to Avoid
+
+Understanding what makes a Context diagram fail is as important as knowing what makes one succeed.
+
+```mermaid
+graph TD
+    subgraph Bad["Anti-Pattern: Too Much Detail"]
+        User2["Person"]
+        System2["Our System"]
+        DB2["PostgreSQL DB<br/>users table<br/>orders table"]
+        Cache2["Redis Cache<br/>session store"]
+        MQ2["RabbitMQ<br/>order.created topic"]
+        User2 --> System2
+        System2 --> DB2
+        System2 --> Cache2
+        System2 --> MQ2
+    end
+
+    subgraph Good["Correct Level 1: System Boundary Only"]
+        User1["[Person]<br/>Buyer Employee"]
+        System1["[Software System]<br/>Procurement Platform"]
+        Ext1["[External System]<br/>Bank"]
+        User1 -->|"Submits requisitions"| System1
+        System1 -->|"Disburses payments"| Ext1
+    end
+
+    style User1 fill:#029E73,stroke:#000,color:#fff
+    style System1 fill:#0173B2,stroke:#000,color:#fff
+    style Ext1 fill:#808080,stroke:#000,color:#fff
+    style User2 fill:#DE8F05,stroke:#000,color:#fff
+    style System2 fill:#DE8F05,stroke:#000,color:#fff
+    style DB2 fill:#DE8F05,stroke:#000,color:#fff
+    style Cache2 fill:#DE8F05,stroke:#000,color:#fff
+    style MQ2 fill:#DE8F05,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Anti-pattern (orange)**: Database tables, cache, and message queue are Level 2/3 concerns shown at Level 1
+- **Correct pattern (green/blue)**: Only persons, the system, and external systems appear at Level 1
+- **No internal infrastructure at Level 1**: Redis and RabbitMQ belong in Container diagrams
+
+**Design Rationale**: The most common C4 mistake is leaking container and component detail into Context diagrams. This happens because developers think in terms of technology rather than actors.
+
+**Key Takeaway**: Level 1 Context diagrams contain only three element types: Person, Software System, External System. If you see a database, cache, or queue in a Context diagram, the diagram is at the wrong level.
+
+**Why It Matters**: Context diagrams that mix abstraction levels confuse both technical and non-technical audiences. Business stakeholders disengage when they see Redis; engineers miss the boundary-level relationships because their eyes go to the technology they recognize. Pure Level 1 diagrams serve both audiences cleanly.

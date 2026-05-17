@@ -3,7 +3,7 @@ title: "Intermediate"
 date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000004
-description: "Examples 26-55: Function composition, pipelines, Railway-Oriented Programming, validation accumulation, workflow signatures, and the functional core / imperative shell boundary in F#"
+description: "Examples 26-55: Function composition, pipelines, Railway-Oriented Programming, domain events, PurchaseOrder state machine, and the functional core / imperative shell boundary in F# for a Procure-to-Pay platform"
 tags:
   [
     "ddd",
@@ -16,24 +16,26 @@ tags:
     "dependency-injection",
     "by-example",
     "intermediate",
+    "software-architecture",
+    "tutorial",
   ]
 ---
 
-This intermediate section builds on the type vocabulary from the beginner section and introduces the pipeline mechanics that make functional DDD compelling in practice: function composition, Railway-Oriented Programming, computation expressions, validation accumulation, and pushing effects to the edges.
+This intermediate section builds on the type vocabulary from the beginner section and introduces the pipeline mechanics that make functional DDD compelling in practice: function composition, Railway-Oriented Programming, the `PurchaseOrder` state machine, domain events (`PurchaseOrderIssued`, `RequisitionApproved`), and pushing effects to the edges.
 
 ## Function Composition and Pipelines (Examples 26–29)
 
 ### Example 26: Function Composition with >>
 
-The `>>` operator composes two functions into one. It is the mathematical composition operator: `(f >> g) x = g(f(x))`. In domain workflows, composition lets you assemble a pipeline from individually testable steps. Wlaschin introduces `>>` in Ch 8.
+The `>>` operator composes two functions into one. It is the mathematical composition operator: `(f >> g) x = g(f(x))`. In procurement workflows, composition lets you assemble a pipeline from individually testable steps.
 
 ```mermaid
 graph LR
-    In["'  oo1234  '\n(raw input)"]
+    In["'  req-f4c2  '\n(raw input)"]
     T["trimInput\nstring→string"]
     U["toUpperCase\nstring→string"]
     P["addPrefix\nstring→string"]
-    Out["'ORD-OO1234'\n(normalised)"]
+    Out["'REQ_F4C2'\n(normalised)"]
 
     In --> T --> U --> P --> Out
 
@@ -51,2586 +53,2365 @@ graph LR
 // Individual pipeline steps — each is a pure function, independently testable
 let trimInput (s: string) : string =
     s.Trim()
-    // => Removes leading and trailing whitespace
+    // => Removes leading and trailing whitespace from raw user input
 
 let toUpperCase (s: string) : string =
     s.ToUpperInvariant()
-    // => Normalises to uppercase for consistent storage
+    // => Normalises to uppercase for consistent storage in the requisition database
 
-let addPrefix (s: string) : string =
-    "ORD-" + s
-    // => Applies the order ID prefix convention
+let normaliseReqId (s: string) : string =
+    "REQ_" + s.Replace("-", "_")
+    // => Applies the canonical requisition ID prefix and replaces hyphens with underscores
 
 // Composing three steps into one function using >>
-let normaliseOrderId: string -> string =
-    trimInput >> toUpperCase >> addPrefix
-    // => Reads left to right: trim, then uppercase, then prefix
-    // => normaliseOrderId : string -> string — three functions become one
+let normaliseRequisitionId : string -> string =
+    trimInput >> toUpperCase >> normaliseReqId
+    // => Reads left to right: trim, then uppercase, then normalise
+    // => normaliseRequisitionId : string -> string — three functions become one
 
 // Test the composed function
-let raw = "  oo1234  "
-// => raw : string = "  oo1234  " — has leading/trailing whitespace and lowercase
-let normalised = normaliseOrderId raw
-// => Step 1: trimInput "  oo1234  " = "oo1234"
-// => Step 2: toUpperCase "oo1234" = "OO1234"
-// => Step 3: addPrefix "OO1234" = "ORD-OO1234"
-// => normalised = "ORD-OO1234"
+let raw = "  req-f4c2  "
+// => raw : string = "  req-f4c2  " — has leading/trailing whitespace and hyphens
+let normalised = normaliseRequisitionId raw
+// => Step 1: trimInput "  req-f4c2  " = "req-f4c2"
+// => Step 2: toUpperCase "req-f4c2" = "REQ-F4C2"
+// => Step 3: normaliseReqId "REQ-F4C2" = "REQ_F4C2"
+// => normalised = "REQ_F4C2"
 
 printfn "Raw: '%s'" raw
-// => Output: Raw: '  oo1234  '
-
+// => Output: Raw: '  req-f4c2  '
 printfn "Normalised: '%s'" normalised
-// => Output: Normalised: 'ORD-OO1234'
+// => Output: Normalised: 'REQ_F4C2'
 
 // Each step can be tested independently
-printfn "Trim step: '%s'" (trimInput raw)
-// => Output: Trim step: 'oo1234'
+printfn "Trim only: '%s'" (trimInput raw)
+// => Output: Trim only: 'req-f4c2'
 ```
 
 **Key Takeaway**: The `>>` operator composes functions left-to-right, producing a single function from a sequence of steps, each of which can be tested and reasoned about independently.
 
-**Why It Matters**: Composed pipelines replace long chains of intermediate `let` bindings with a single, readable declaration of intent. More importantly, each step in the composition is independently testable — you can unit test `trimInput`, `toUpperCase`, and `addPrefix` in isolation, then compose them with confidence. Wlaschin shows in Ch 8 that this composability is what makes functional workflows both robust and maintainable: you add a new step by inserting it into the composition, and the compiler verifies the type alignment automatically.
+**Why It Matters**: Composed pipelines replace long chains of intermediate `let` bindings with a single, readable declaration of intent. Each step in the composition is independently testable — you can unit test `trimInput`, `toUpperCase`, and `normaliseReqId` in isolation, then compose them with confidence. When a new normalisation step is needed (e.g., stripping special characters), it is inserted into the composition chain and the compiler verifies type alignment automatically.
 
 ---
 
 ### Example 27: Pipe Operator |>
 
-The `|>` (pipe) operator passes a value as the last argument to a function: `x |> f = f x`. It enables a left-to-right reading of data transformations, matching how domain experts describe workflows. Wlaschin uses `|>` throughout the book.
+The `|>` (pipe) operator passes a value as the last argument to a function: `x |> f = f x`. It enables a left-to-right reading of data transformations, matching how procurement domain experts describe workflows — "take the requisition, validate it, compute the total, derive the approval level."
 
 ```fsharp
-// |> pipes a value through a series of functions — reads like natural language.
-// Eliminates deeply nested function calls and intermediate variable names.
+// |> is the forward pipe operator: x |> f = f x.
+// Enables left-to-right reading of data transformations.
 
-// Without pipe — reads inside-out, harder to follow
-let withoutPipe =
-    List.sum (List.map (fun x -> x * x) (List.filter (fun x -> x % 2 = 0) [1..10]))
-    // => Nested calls: filter, then map, then sum — but written innermost-first
-    // => withoutPipe = 220 — same result but harder to read
+type ApprovalLevel = L1 | L2 | L3
+// => Three approval tiers in the procurement domain
 
-// With pipe — reads left to right, matches the order of operations
-let withPipe =
-    [1..10]
-    // => Input: integers 1 through 10
-    |> List.filter (fun x -> x % 2 = 0)
-    // => [2; 4; 6; 8; 10] — keep even numbers
-    |> List.map (fun x -> x * x)
-    // => [4; 16; 36; 64; 100] — square each even number
-    |> List.sum
-    // => 4 + 16 + 36 + 64 + 100 = 220 — sum all squared evens
-    // => withPipe = 220
+// Pure domain functions
+let validateNotEmpty (s: string) : string option =
+    if System.String.IsNullOrWhiteSpace(s) then None
+    else Some (s.Trim())
+    // => Returns None for blank/whitespace, Some trimmed string for valid input
 
-printfn "Without pipe: %d" withoutPipe
-// => withoutPipe = 220 — same result as withPipe
-// => Output: Without pipe: 220
+let computeLineTotal (qty: int) (price: decimal) : decimal =
+    decimal qty * price
+    // => Pure arithmetic — no side effects
 
-printfn "With pipe: %d" withPipe
-// => withPipe = 220 — identical result, more readable code
-// => Output: With pipe: 220
+let sumLineTotals (totals: decimal list) : decimal =
+    List.sum totals
+    // => Sum a list of decimal line totals into a requisition total
 
-// Domain example: transforming an order ID
-let processOrderId (raw: string) =
-    raw
-    |> fun s -> s.Trim()
-    // => Remove whitespace
-    |> fun s -> s.ToUpperInvariant()
-    // => Normalise case
-    |> fun s -> if s.Length > 0 then Some s else None
-    // => Return None for blank input
+let deriveLevel (total: decimal) : ApprovalLevel =
+    if total <= 1000m then L1
+    elif total <= 10000m then L2
+    else L3
+    // => Pure derivation — same input always produces same output
 
-printfn "Processed: %A" (processOrderId "  ord-001  ")
-// => Output: Processed: Some "ORD-001"
+// Reading a pipeline left-to-right using |>
+let rawLines = [(10, 8.50m); (3, 899.99m); (5, 25.00m)]
+// => rawLines : (int * decimal) list — (quantity, unitPrice) tuples
 
-printfn "Processed empty: %A" (processOrderId "   ")
-// => Output: Processed empty: None
+let approvalLevel =
+    rawLines
+    |> List.map (fun (qty, price) -> computeLineTotal qty price)
+    // => Maps each (qty, price) to its line total: [85.00; 2699.97; 125.00]
+    |> sumLineTotals
+    // => Sums the list: 85.00 + 2699.97 + 125.00 = 2909.97
+    |> deriveLevel
+    // => 2909.97 > 1000 and <= 10000 — ApprovalLevel = L2
+// => approvalLevel : ApprovalLevel = L2
+
+printfn "Approval level: %A" approvalLevel
+// => Output: Approval level: L2
+
+// Contrast: without |>, the nesting reads right-to-left (inside-out)
+let approvalLevelNested =
+    deriveLevel (sumLineTotals (List.map (fun (qty, price) -> computeLineTotal qty price) rawLines))
+// => Same result, but reads right-to-left — harder to follow
+// => approvalLevelNested : ApprovalLevel = L2
+printfn "Same result: %A" approvalLevelNested
+// => Output: Same result: L2
 ```
 
-**Key Takeaway**: The pipe operator `|>` makes data transformation pipelines read in the same order as the operations are applied — left to right, top to bottom — dramatically improving readability.
+**Key Takeaway**: The `|>` operator enables left-to-right pipeline reading that matches how procurement domain experts describe workflows, making code readable without sacrificing functional purity.
 
-**Why It Matters**: Domain workflows are naturally described as a sequence of steps: "take the input, validate it, price it, acknowledge it, publish the events." The pipe operator maps directly to this sequential description. When a domain expert reads a piped expression, they see the same flow they described in conversation. This alignment between business language and code structure is the essence of Wlaschin's "ubiquitous language in the implementation" principle.
+**Why It Matters**: The pipe operator is one of F#'s most-cited readability features. In a procurement context, the pipeline `rawLines |> computeTotals |> sumTotals |> deriveLevel` reads exactly like the domain description: "take the lines, compute their totals, sum them, then determine the approval level." This alignment between code and domain description reduces the translation overhead between domain expert and developer, a core goal of DDD.
 
 ---
 
 ### Example 28: Currying — Every F# Function is One-Arg
 
-In F#, every function is curried by default: a two-argument function is actually a one-argument function that returns another one-argument function. This enables partial application (Example 29) and seamless composition with operators like `>>` and `|>`. Wlaschin explains currying in Ch 8.
-
-```mermaid
-graph LR
-    Add["add: int → int → int\n(conceptually two-arg)"]
-    Add5["addFive = add 5\nint → int\n(x=5 captured)"]
-    Result["addFive 10 = 15"]
-
-    Add -- "partial apply\nadd 5" --> Add5
-    Add5 -- "apply 10" --> Result
-
-    style Add fill:#0173B2,stroke:#000,color:#fff
-    style Add5 fill:#029E73,stroke:#000,color:#fff
-    style Result fill:#DE8F05,stroke:#000,color:#000
-```
+Every F# function technically takes one argument and returns a function or a value. This is currying. It enables partial application: supplying some arguments up front to produce a specialised function. In the procurement domain, partial application injects dependencies like approval thresholds into workflow functions.
 
 ```fsharp
-// Every F# function is curried: multi-arg functions are actually one-arg functions
-// returning functions. This enables partial application and composition.
+// Every multi-argument F# function is syntactic sugar for a chain of one-arg functions.
+// This enables partial application: supply some args to get a specialised function.
 
 // A two-argument function
-let add (x: int) (y: int) : int =
-    x + y
-    // => add : int -> int -> int
-    // => Read as: "given an int, return a function (int -> int)"
+let applyApprovalThreshold (threshold: decimal) (total: decimal) : bool =
+    // => applyApprovalThreshold : decimal -> decimal -> bool
+    // => The arrow type shows the curried structure: threshold → (total → bool)
+    total > threshold
+    // => Returns true if the total exceeds the threshold — triggers escalation
 
-// Partially apply: provide only the first argument
-let addFive = add 5
-// => addFive : int -> int — a new function with x=5 captured
-// => addFive y = add 5 y = 5 + y
+// Partial application: supply the threshold, get back a (decimal -> bool) function
+let requiresL2Approval : decimal -> bool =
+    applyApprovalThreshold 1000m
+    // => requiresL2Approval : decimal -> bool
+    // => The threshold 1000m is baked in — only the total is needed at call time
 
-printfn "add 3 4 = %d" (add 3 4)
-// => Output: add 3 4 = 7
+let requiresL3Approval : decimal -> bool =
+    applyApprovalThreshold 10000m
+    // => requiresL3Approval : decimal -> bool
+    // => The threshold 10000m is baked in
 
-printfn "addFive 10 = %d" (addFive 10)
-// => Output: addFive 10 = 15
+// Use the specialised functions
+let total1 = 500m
+// => total1 : decimal = 500 — under both thresholds
+let total2 = 5000m
+// => total2 : decimal = 5000 — over L2 threshold but under L3
+let total3 = 50000m
+// => total3 : decimal = 50000 — over both thresholds
 
-// Domain example: validation function with a product lookup dependency
-let validateProductCode (lookupProduct: string -> bool) (code: string) : Result<string, string> =
-    // => lookupProduct: injected dependency — checks catalogue
-    // => code: the product code to validate
-    if lookupProduct code then
-        Ok code
-        // => Product exists in catalogue — validation passes
-    else
-        Error (sprintf "Product code '%s' not found in catalogue" code)
-        // => Product not found — validation fails
+printfn "$500: L2=%b, L3=%b" (requiresL2Approval total1) (requiresL3Approval total1)
+// => 500 > 1000 = false; 500 > 10000 = false
+// => Output: $500: L2=false, L3=false
 
-// Partially apply the lookup function to create a reusable validator
-let validateWithRealLookup = validateProductCode (fun code -> code.StartsWith("W") || code.StartsWith("G"))
-// => validateWithRealLookup : string -> Result<string, string>
-// => The lookup function is "baked in" — only the code argument remains
+printfn "$5000: L2=%b, L3=%b" (requiresL2Approval total2) (requiresL3Approval total2)
+// => 5000 > 1000 = true; 5000 > 10000 = false
+// => Output: $5000: L2=true, L3=false
 
-printfn "%A" (validateWithRealLookup "W1234")
-// => Output: Ok "W1234"
-
-printfn "%A" (validateWithRealLookup "X999")
-// => Output: Error "Product code 'X999' not found in catalogue"
+printfn "$50000: L2=%b, L3=%b" (requiresL2Approval total3) (requiresL3Approval total3)
+// => 50000 > 1000 = true; 50000 > 10000 = true
+// => Output: $50000: L2=true, L3=true
 ```
 
-**Key Takeaway**: Currying turns every multi-argument function into a pipeline of single-argument functions, enabling partial application and seamless composition with `>>` and `|>`.
+**Key Takeaway**: Currying turns multi-argument functions into pipelines of one-argument functions, enabling partial application that bakes in dependencies (like approval thresholds) to produce specialised, reusable functions.
 
-**Why It Matters**: Currying is the mechanism that makes dependency injection via partial application (Example 29) work naturally in F#. Instead of constructor injection or service locators, you partially apply a function with its dependencies baked in and pass the resulting function where needed. This keeps functions pure and testable: in tests, you substitute a simple lambda for the dependency; in production, you pass the real implementation. No mocking frameworks required.
+**Why It Matters**: Partial application is the functional equivalent of dependency injection without a container. In the procurement domain, thresholds like `$1,000` and `$10,000` come from configuration. Partially applying `applyApprovalThreshold` with a runtime-loaded threshold produces a specialised function (`requiresL2Approval`) that can be passed into workflows without coupling the workflow to configuration loading. This is the foundation of the dependency injection pattern explored in Examples 45–50.
 
 ---
 
-### Example 29: Partial Application as Dependency Injection
+### Example 29: Workflow Expressed as Function Composition
 
-Partially applying a function with its dependencies baked in is the functional equivalent of constructor injection. The resulting function takes only its domain input, while the dependency is captured in the closure. Wlaschin makes this the primary DI mechanism in Ch 9.
+A complete procurement workflow is a composition of pure steps. The `submitAndRoute` workflow composes validation, total computation, approval level derivation, and event production into a single pipeline using `>>` and `|>`.
 
 ```fsharp
-// Partial application as DI: inject dependencies by partially applying functions.
-// The result is a function with the same signature as the workflow step type.
+// A procurement workflow assembled from pure, composable steps.
 
-// Infrastructure function signatures (interfaces as function types)
-type CheckProductCodeExists = string -> bool
-// => "Given a product code, does it exist?" — a dependency
-// => bool return: true = exists, false = not in catalogue
+type ApprovalLevel = L1 | L2 | L3
+type RequisitionId = RequisitionId of string
 
-type GetProductPrice = string -> Result<decimal, string>
-// => "Given a product code, what is the price?" — another dependency
-// => Result because price lookup can fail (product in catalogue but no price)
+type RawLine = { Sku: string; Qty: int; Price: decimal }
+// => Unvalidated line arriving from the HTTP layer
 
-// Workflow step that depends on both functions
-let validateAndPriceItem
-    (checkExists: CheckProductCodeExists)
-    // => First argument: the product lookup dependency
-    (getPrice: GetProductPrice)
-    // => Second argument: the price lookup dependency
-    (code: string)
-    // => Third argument: the product code to validate and price
-    (qty: int)
-    // => Fourth argument: the quantity to multiply by
-    : Result<decimal, string> =
-    // => Returns the line total (Ok) or an error if product not found or price missing
-    if not (checkExists code) then
-        Error (sprintf "Product '%s' not found" code)
-        // => First dependency used — product existence check
-        // => Short-circuits: no point looking up price if product doesn't exist
-    else
-        getPrice code
-        // => Second dependency used — price lookup
-        |> Result.map (fun unitPrice -> unitPrice * decimal qty)
-        // => Result.map: if Ok, multiply unit price by quantity; if Error, propagate
-        // => Second dependency used — price lookup, then multiply by quantity
+type RequisitionSubmittedPayload = {
+    Id:            RequisitionId
+    ApprovalLevel: ApprovalLevel
+    RequestedBy:   string
+    TotalAmount:   decimal
+}
+// => Event payload — everything a downstream consumer needs
 
-// Production partial application — inject real implementations
-let realCheckExists : CheckProductCodeExists = fun code ->
-    code.StartsWith("W") || code.StartsWith("G")
-    // => "W" prefix = Widget; "G" prefix = Gizmo — both are valid product codes
-    // => Real implementation: checks code format (simplified)
+// Individual pure steps
+let validateLines (lines: RawLine list) : Result<RawLine list, string> =
+    if lines.IsEmpty then Error "At least one line item is required"
+    // => Business rule: blank requisitions cannot be submitted
+    elif lines |> List.exists (fun l -> l.Qty <= 0) then Error "All quantities must be > 0"
+    // => Business rule: zero or negative quantities are invalid
+    else Ok lines
+    // => All lines pass basic validation
 
-let realGetPrice : GetProductPrice = fun code ->
-    if code.StartsWith("W") then Ok 9.99m
-    // => Widget price: £9.99
-    elif code.StartsWith("G") then Ok 24.99m
-    // => Gizmo price: £24.99
-    else Error "Unknown product type"
-    // => Real implementation: price by product type
+let computeTotal (lines: RawLine list) : decimal =
+    lines |> List.sumBy (fun l -> decimal l.Qty * l.Price)
+    // => Pure arithmetic — sums all line totals
 
-// Partially apply to create the production version
-let validateAndPriceProd = validateAndPriceItem realCheckExists realGetPrice
-// => validateAndPriceProd : string -> int -> Result<decimal, string>
-// => Dependencies are baked in — only domain arguments remain
-// => Calling validateAndPriceProd "W1234" 3 = 9.99 × 3 = Ok 29.97M
+let deriveLevel (total: decimal) : ApprovalLevel =
+    if total <= 1000m then L1 elif total <= 10000m then L2 else L3
+    // => Derives approval level from total — same input always yields same output
 
-// Test version with stub dependencies
-let validateAndPriceTest = validateAndPriceItem (fun _ -> true) (fun _ -> Ok 5.00m)
-// => Stubs: always exists, always £5.00 — simple lambdas, no mocking framework needed
-// => Simplified stubs for testing — no mocking framework needed
+let buildEvent (requestedBy: string) (level: ApprovalLevel) (total: decimal) : RequisitionSubmittedPayload =
+    { Id            = RequisitionId ("req_" + System.Guid.NewGuid().ToString("N").[..7])
+      ApprovalLevel = level
+      RequestedBy   = requestedBy
+      TotalAmount   = total }
+    // => Assembles the event payload from validated, derived values
 
-printfn "Prod result: %A" (validateAndPriceProd "W1234" 3)
-// => realCheckExists "W1234" = true; realGetPrice "W1234" = Ok 9.99; 9.99 × 3 = 29.97
-// => Output: Prod result: Ok 29.97M
+// Composed workflow
+let submitRequisition (requestedBy: string) (lines: RawLine list) : Result<RequisitionSubmittedPayload, string> =
+    lines
+    |> validateLines
+    // => Step 1: validate — returns Result; short-circuits on Error
+    |> Result.map computeTotal
+    // => Step 2: compute total from validated lines — runs only if Ok
+    |> Result.map (fun total ->
+        let level = deriveLevel total
+        // => Step 3: derive approval level from total
+        buildEvent requestedBy level total
+        // => Step 4: build the event payload
+    )
+    // => Entire pipeline: validate → total → level → event
 
-printfn "Test result: %A" (validateAndPriceTest "ANYTHING" 2)
-// => stub exists "ANYTHING" = true; stub price "ANYTHING" = Ok 5.00; 5.00 × 2 = 10.00
-// => Output: Test result: Ok 10.00M
+// Test
+let lines = [{ Sku = "OFF-0042"; Qty = 10; Price = 8.50m }
+             { Sku = "ELE-0099"; Qty = 3;  Price = 899.99m }]
+// => Two valid lines — total = 85.00 + 2699.97 = 2784.97
+
+let result = submitRequisition "emp_00456" lines
+// => validateLines: Ok; computeTotal: 2784.97; deriveLevel: L2; buildEvent: Ok payload
+
+match result with
+| Ok payload -> printfn "Submitted: level=%A total=%M" payload.ApprovalLevel payload.TotalAmount
+// => Output: Submitted: level=L2 total=2784.9700M
+| Error e    -> printfn "Error: %s" e
 ```
 
-**Key Takeaway**: Partial application injects dependencies by baking them into a function's closure, producing a new function with the dependency-free signature that workflows expect — no DI containers or mocking frameworks needed.
+**Key Takeaway**: A procurement workflow assembled from pure composable steps is easier to test, extend, and reason about than a single monolithic function — each step is independently testable and the composition is explicit.
 
-**Why It Matters**: Constructor injection in OOP requires classes, interfaces, and often a DI container. Partial application achieves the same result with plain functions. In tests, you replace real implementations with simple lambdas. In production, you pass the real functions. Wlaschin argues in Ch 9 that this approach is simpler, more transparent, and easier to reason about than class-based DI — there is no hidden magic, just function application.
+**Why It Matters**: When an approval threshold changes from `$1,000` to `$2,000`, only `deriveLevel` needs updating. When a new validation rule is added, it is inserted into the pipeline as a new step. The composition makes the workflow's structure visible at a glance, and the `Result.map` chain ensures errors propagate cleanly without try/catch blocks scattered through the implementation.
 
 ---
 
 ## Railway-Oriented Programming (Examples 30–36)
 
-### Example 30: Result.map and Result.mapError
+### Example 30: Result Type — Ok and Error
 
-`Result.map` applies a function to the `Ok` value of a `Result`, leaving the `Error` unchanged. `Result.mapError` transforms the `Error` value, leaving `Ok` unchanged. Together they let you transform the "happy path" and "sad path" independently. Wlaschin introduces these in Ch 10.
+`Result<'T, 'Error>` is F#'s built-in type for computations that can fail. It is a discriminated union with two cases: `Ok value` (success) and `Error err` (failure). Using `Result` instead of exceptions keeps failure handling in the type system and forces callers to acknowledge both paths.
 
 ```fsharp
-// Result.map transforms the Ok value; Result.mapError transforms the Error value.
-// Neither function touches the other case.
+// Result<'T, 'Error> — the foundation of Railway-Oriented Programming.
+// Ok carries the success value; Error carries the failure description.
 
-// Result.map: apply a function inside Ok, pass Error through unchanged
-let doubled = Result.map (fun x -> x * 2) (Ok 21)
-// => doubled : Result<int, 'a> = Ok 42
-// => The function (x * 2) was applied to 21 inside the Ok
+// Domain errors for the purchasing context — named, not stringly-typed
+type ProcurementError =
+    | RequisitionNotFound    of id: string
+    // => Database lookup returned nothing for this ID
+    | InsufficientBudget     of required: decimal * available: decimal
+    // => The requisition total exceeds the department budget
+    | SupplierNotApproved    of supplierId: string
+    // => The selected supplier is Suspended or Blacklisted
+    | DuplicateRequisition   of existingId: string
+    // => A requisition for the same items was already submitted this week
 
-let mapOnError = Result.map (fun x -> x * 2) (Error "something went wrong")
-// => mapOnError : Result<int, string> = Error "something went wrong"
-// => Error case is passed through — the function is NOT called
+// Functions that can fail return Result — not throw exceptions
+let findRequisition (id: string) (store: Map<string, string>) : Result<string, ProcurementError> =
+    // => store: Map<string, string> simulates a lookup (id → serialised requisition)
+    match Map.tryFind id store with
+    | Some req -> Ok req
+    // => Found — return the requisition as Ok
+    | None     -> Error (RequisitionNotFound id)
+    // => Not found — return a named error, not null, not an exception
 
-printfn "map Ok: %A" doubled
-// => Output: map Ok: Ok 42
+let checkBudget (required: decimal) (available: decimal) : Result<unit, ProcurementError> =
+    // => Checks that the required amount does not exceed available budget
+    if required > available then
+        Error (InsufficientBudget (required, available))
+        // => Budget exceeded — named error with both amounts for the error message
+    else
+        Ok ()
+        // => Budget sufficient — Ok unit (no useful success value to return here)
 
-printfn "map Error: %A" mapOnError
-// => Output: map Error: Error "something went wrong"
+// Test the Result-returning functions
+let store = Map.ofList [("req_f4c2a1b7", "requisition data")]
+// => store : Map<string, string> — simulated data store with one entry
 
-// Result.mapError: transform the Error value, pass Ok through unchanged
-let uppercaseError = Result.mapError (fun e -> e.ToString().ToUpperInvariant()) (Error "invalid input")
-// => uppercaseError : Result<'a, string> = Error "INVALID INPUT"
-// => The function was applied to the error message
+let found    = findRequisition "req_f4c2a1b7" store
+// => "req_f4c2a1b7" is in the store — found : Result<string, ProcurementError> = Ok "requisition data"
+let notFound = findRequisition "req_missing" store
+// => "req_missing" is not in the store — notFound : Result<string, ProcurementError> = Error (RequisitionNotFound "req_missing")
 
-let mapErrorOnOk = Result.mapError (fun e -> e.ToString().ToUpperInvariant()) (Ok 42)
-// => mapErrorOnOk : Result<int, string> = Ok 42
-// => Ok case is passed through — the function is NOT called
+let budgetOk  = checkBudget 2784.97m 5000m
+// => 2784.97 <= 5000 — budgetOk : Result<unit, ProcurementError> = Ok ()
+let budgetErr = checkBudget 2784.97m 1000m
+// => 2784.97 > 1000 — budgetErr : Result<unit, ProcurementError> = Error (InsufficientBudget (2784.97, 1000))
 
-printfn "mapError Error: %A" uppercaseError
-// => Output: mapError Error: Error "INVALID INPUT"
+match notFound with
+| Ok req  -> printfn "Found: %s" req
+| Error e -> printfn "Error: %A" e
+// => Output: Error: RequisitionNotFound "req_missing"
 
-printfn "mapError Ok: %A" mapErrorOnOk
-// => Output: mapError Ok: Ok 42
-
-// Practical: transform a domain error to an API error at the boundary
-type DomainError = | ValidationError of string | ProductNotFound of string
-type ApiError    = | BadRequest of string | NotFound of string
-
-let mapToApiError (e: DomainError) : ApiError =
-    match e with
-    | ValidationError msg   -> BadRequest msg
-    // => Domain validation errors become HTTP 400
-    | ProductNotFound code  -> NotFound (sprintf "Product '%s' not found" code)
-    // => Domain not-found errors become HTTP 404
-
-let domainResult : Result<string, DomainError> = Error (ValidationError "OrderId blank")
-// => domainResult : Result<string, DomainError> = Error (ValidationError "OrderId blank")
-let apiResult = domainResult |> Result.mapError mapToApiError
-// => Result.mapError applies mapToApiError to the Error case
-// => ValidationError "OrderId blank" → BadRequest "OrderId blank"
-// => apiResult : Result<string, ApiError> = Error (BadRequest "OrderId blank")
-
-printfn "API error: %A" apiResult
-// => Output: API error: Error (BadRequest "OrderId blank")
+match budgetErr with
+| Ok ()   -> printfn "Budget ok"
+| Error e -> printfn "Error: %A" e
+// => Output: Error: InsufficientBudget (2784.97M, 1000M)
 ```
 
-**Key Takeaway**: `Result.map` and `Result.mapError` let you transform success or failure values independently without touching the other case, keeping the two tracks cleanly separated.
+**Key Takeaway**: `Result<'T, 'Error>` makes the possibility of failure explicit in the type system, forcing callers to handle both success and failure paths rather than relying on exceptions that can be silently swallowed.
 
-**Why It Matters**: At API boundaries, domain errors must be translated into HTTP status codes and response shapes. `Result.mapError` makes this translation a single, explicit transformation rather than a try/catch block. Similarly, `Result.map` lets you transform domain objects into DTOs on the success path without unwrapping the `Result`. Together they are the building blocks of Railway-Oriented Programming: you work on the rails (Ok or Error) without ever leaving the railway.
+**Why It Matters**: Procurement workflows have many potential failure modes: requisitions not found, budgets exceeded, suppliers suspended, duplicate submissions. Using named `ProcurementError` cases instead of generic exceptions means the API layer can map each error to the correct HTTP status code (404, 422, 409) with a meaningful error body. It also means the compiler prevents forgetting to handle a failure case — there is no equivalent of an unchecked exception.
 
 ---
 
 ### Example 31: Result.bind — Chaining Fallible Steps
 
-`Result.bind` applies a function that itself returns a `Result` to the `Ok` value of an existing `Result`. If the input is `Error`, it short-circuits without calling the function. This is the core of Railway-Oriented Programming: chaining fallible steps. Wlaschin presents `bind` as the central ROP primitive in Ch 10.
-
-```fsharp
-// Result.bind: chain a fallible function onto an existing Result.
-// Error short-circuits; Ok flows forward.
-
-// Three fallible validation steps
-let validateOrderId (raw: string) : Result<string, string> =
-    // => Returns Ok trimmed id, or Error with a diagnostic message
-    if System.String.IsNullOrWhiteSpace(raw) then Error "OrderId must not be blank"
-    // => Guard 1: blank or whitespace ID rejected immediately
-    elif raw.Length > 50 then Error "OrderId too long"
-    // => Guard 2: IDs over 50 chars rejected (domain rule)
-    else Ok (raw.Trim())
-    // => Returns Ok with the trimmed id, or Error with a message
-
-let validateCustomerName (raw: string) : Result<string, string> =
-    // => Returns Ok trimmed name, or Error if blank
-    if System.String.IsNullOrWhiteSpace(raw) then Error "CustomerName must not be blank"
-    // => Guard: blank name is not valid in the domain
-    else Ok (raw.Trim())
-    // => Returns Ok with the trimmed name, or Error
-
-let validateQuantity (qty: int) : Result<int, string> =
-    // => Returns Ok with the quantity, or Error if zero or negative
-    if qty <= 0 then Error (sprintf "Quantity must be positive (got %d)" qty)
-    // => Guard: zero or negative quantity violates the positive-quantity invariant
-    else Ok qty
-    // => Returns Ok with the quantity, or Error
-
-// Chaining with Result.bind — steps execute only if the previous succeeded
-let validateOrder orderId customerName quantity =
-    validateOrderId orderId
-    // => Step 1: validate order ID — if this fails, steps 2 and 3 are skipped
-    |> Result.bind (fun validId ->
-        // => bind: validId is the unwrapped Ok value from step 1
-        validateCustomerName customerName
-        // => Step 2: validate customer name — only runs if step 1 returned Ok
-        |> Result.map (fun validName -> (validId, validName)))
-        // => Result.map pairs validId and validName in a tuple — no failure here
-    // => bind: apply the next fallible step only if validateOrderId succeeded
-    |> Result.bind (fun (validId, validName) ->
-        // => bind: (validId, validName) unwrapped from the tuple in the Ok
-        validateQuantity quantity
-        // => Step 3: validate quantity — only runs if steps 1 and 2 returned Ok
-        |> Result.map (fun validQty -> (validId, validName, validQty)))
-        // => Result.map assembles the final triple — all three validated values
-    // => bind again: chain the third step
-
-let success = validateOrder "ORD-001" "Alice Johnson" 3
-// => All three steps returned Ok — the tuple is assembled
-// => success : Result<string * string * int, string> = Ok ("ORD-001", "Alice Johnson", 3)
-
-let failure = validateOrder "" "Alice Johnson" 3
-// => Step 1 failed: empty string → Error "OrderId must not be blank"
-// => failure : Result<string * string * int, string> = Error "OrderId must not be blank"
-// => Short-circuited after the first Error — later steps were not called
-
-printfn "Success: %A" success
-// => Output: Success: Ok ("ORD-001", "Alice Johnson", 3)
-
-printfn "Failure: %A" failure
-// => Output: Failure: Error "OrderId must not be blank"
-```
-
-**Key Takeaway**: `Result.bind` chains fallible steps so that the first failure short-circuits the pipeline — exactly like try/catch but expressed as composable function application rather than exception handling.
-
-**Why It Matters**: Exception-based error handling allows failures to be thrown and caught at arbitrary distances from their source, making control flow hard to follow. `Result.bind` makes the failure path explicit and local: each step either succeeds and passes the `Ok` value to the next step, or fails and returns the `Error` without calling any subsequent step. The resulting pipeline is entirely readable as a sequence of transformations, and the error handling is impossible to accidentally omit.
-
----
-
-### Example 32: Railway-Oriented Programming — Full Pipeline
-
-The "two-track" or "railway-oriented" model visualises a pipeline as two parallel tracks: the Ok track (happy path) and the Error track (failure path). Functions that can fail are "switches" that can divert from Ok to Error but never back. Wlaschin introduces this metaphor in Ch 10 as the conceptual model for `Result.bind`.
+`Result.bind` chains two fallible steps: if the first step succeeds, it passes the `Ok` value into the second step; if the first fails, the `Error` propagates without running the second step. This is the foundation of Railway-Oriented Programming.
 
 ```mermaid
 graph LR
-    Input["UnvalidatedInput"]
-    V{"validateInput\n(switch)"}
-    P{"priceInput\n(switch)"}
-    A{"acknowledgeInput\n(switch)"}
-    OkOut["Ok: confirmation string"]
-    ErrOut["Error track\n(any failure)"]
+    Input["Input\n(raw id)"]
+    S1["findRequisition\nResult<Req, Err>"]
+    S2["checkBudget\nResult<unit, Err>"]
+    S3["deriveLevel\nResult<Level, Err>"]
+    OkOut["Ok ApprovalLevel\n(all steps succeeded)"]
+    ErrOut["Error ProcurementError\n(first failure short-circuits)"]
 
-    Input --> V
-    V -- "Ok" --> P
-    V -- "Error" --> ErrOut
-    P -- "Ok" --> A
-    P -- "Error" --> ErrOut
-    A -- "Ok" --> OkOut
-    A -- "Error" --> ErrOut
+    Input --> S1
+    S1 -- "Ok req" --> S2
+    S2 -- "Ok ()" --> S3
+    S3 -- "Ok level" --> OkOut
+    S1 -- "Error" --> ErrOut
+    S2 -- "Error" --> ErrOut
+    S3 -- "Error" --> ErrOut
 
-    style Input fill:#DE8F05,stroke:#000,color:#000
     style OkOut fill:#029E73,stroke:#000,color:#fff
     style ErrOut fill:#CC78BC,stroke:#000,color:#000
-    style V fill:#0173B2,stroke:#000,color:#fff
-    style P fill:#0173B2,stroke:#000,color:#fff
-    style A fill:#0173B2,stroke:#000,color:#fff
+    style Input fill:#DE8F05,stroke:#000,color:#000
+    style S1 fill:#0173B2,stroke:#000,color:#fff
+    style S2 fill:#0173B2,stroke:#000,color:#fff
+    style S3 fill:#0173B2,stroke:#000,color:#fff
 ```
 
 ```fsharp
-// Railway-Oriented Programming: two tracks, switch functions, and a full pipeline.
-// The "railway" metaphor: Ok track = happy path, Error track = failure path.
-// Once on the Error track, all subsequent switches are bypassed automatically.
+// Result.bind chains fallible steps — short-circuits on the first Error.
+// This is the "railway" metaphor: Ok stays on the happy track, Error diverts.
 
-// ── Domain types ─────────────────────────────────────────────────────────
-type UnvalidatedInput = { OrderId: string; Qty: int; ProductCode: string }
-// => Raw input entering the railway — nothing trusted yet
+type ApprovalLevel = L1 | L2 | L3
 
-type ValidatedInput   = { OrderId: string; Qty: int; ProductCode: string }
-// => Input after validation — same shape, different type guarantees validity
-// => If ValidatedInput exists, OrderId was non-blank and Qty was positive
+type ProcurementError =
+    | RequisitionNotFound of id: string
+    | InsufficientBudget  of required: decimal * available: decimal
+    | SupplierNotApproved of supplierId: string
 
-type PricedInput      = { OrderId: string; Qty: int; ProductCode: string; Total: decimal }
-// => Input after pricing — extended with the calculated total
-// => If PricedInput exists, pricing has already been computed
+// Three fallible steps in the approval workflow
+let lookupRequisition (id: string) : Result<decimal, ProcurementError> =
+    // => Simulate: returns the requisition total if found
+    if id = "req_f4c2a1b7" then Ok 2784.97m
+    // => Found — return the total amount
+    else Error (RequisitionNotFound id)
+    // => Not found — short-circuit with a named error
 
-// ── Switch functions — each can divert to the Error track ─────────────────
-let validateInput (input: UnvalidatedInput) : Result<ValidatedInput, string> =
-    // => Returns Ok to stay on the Ok track, or Error to divert to the Error track
-    if System.String.IsNullOrWhiteSpace(input.OrderId) then Error "OrderId blank"
-    // => Guard 1: blank OrderId — diverts to Error track immediately
-    elif input.Qty <= 0 then Error "Quantity must be positive"
-    // => Guard 2: non-positive quantity — diverts to Error track
-    else Ok { OrderId = input.OrderId.Trim(); Qty = input.Qty; ProductCode = input.ProductCode }
-    // => Both guards passed — stay on Ok track with the validated data
+let verifyBudget (total: decimal) : Result<decimal, ProcurementError> =
+    // => Simulate: checks the department budget (budget = $5,000)
+    if total <= 5000m then Ok total
+    // => Within budget — pass the total forward
+    else Error (InsufficientBudget (total, 5000m))
+    // => Exceeds budget — short-circuit
 
-let priceInput (validated: ValidatedInput) : Result<PricedInput, string> =
-    // => Only called if validateInput returned Ok — already on the Ok track
-    let unitPrice = if validated.ProductCode.StartsWith "W" then 9.99m else 24.99m
-    // => Look up price by product type: Widget £9.99, Gizmo £24.99
-    if unitPrice <= 0m then Error "Invalid price"
-    // => Safety guard — diverts to Error track (unreachable in this example but shows the pattern)
-    else Ok { OrderId = validated.OrderId; Qty = validated.Qty
-              ProductCode = validated.ProductCode; Total = unitPrice * decimal validated.Qty }
-    // => Stay on Ok track — adds the calculated total to the record
+let computeLevel (total: decimal) : Result<ApprovalLevel, ProcurementError> =
+    // => Derives the approval level — always succeeds for valid totals
+    let level = if total <= 1000m then L1 elif total <= 10000m then L2 else L3
+    Ok level
+    // => Wraps the level in Ok — could fail if additional constraints applied
 
-let acknowledgeInput (priced: PricedInput) : Result<string, string> =
-    // => Only called if both previous steps returned Ok
-    Ok (sprintf "Order %s acknowledged — total £%.2f" priced.OrderId priced.Total)
-    // => Terminal step — produces the confirmation string and stays on Ok track
+// Chaining with Result.bind
+let approvalWorkflow (reqId: string) : Result<ApprovalLevel, ProcurementError> =
+    lookupRequisition reqId
+    // => Step 1: look up — may fail with RequisitionNotFound
+    |> Result.bind verifyBudget
+    // => Step 2: verify budget — runs only if Step 1 was Ok; may fail with InsufficientBudget
+    |> Result.bind computeLevel
+    // => Step 3: compute level — runs only if Step 2 was Ok
 
-// ── The full railway pipeline ─────────────────────────────────────────────
-let placeOrder (input: UnvalidatedInput) : Result<string, string> =
-    // => All three steps are wired together with Result.bind
-    input
-    |> validateInput
-    // => Switch 1: validate or divert to Error track
-    |> Result.bind priceInput
-    // => Switch 2: price or divert — only executes if switch 1 returned Ok
-    |> Result.bind acknowledgeInput
-    // => Switch 3: acknowledge or divert — only executes if switch 2 returned Ok
+// Happy path
+let happy = approvalWorkflow "req_f4c2a1b7"
+// => Step 1 Ok 2784.97 → Step 2 Ok 2784.97 → Step 3 Ok L2
+// => happy : Result<ApprovalLevel, ProcurementError> = Ok L2
 
-// ── Three test cases: happy path and two failure paths ────────────────────
-let goodInput   = { OrderId = "ORD-001"; Qty = 3;  ProductCode = "W1234" }
-// => Valid input — all three switches will stay on the Ok track
-let badOrderId  = { OrderId = "";        Qty = 3;  ProductCode = "W1234" }
-// => Invalid: empty OrderId — switch 1 will divert to Error track
-let badQuantity = { OrderId = "ORD-002"; Qty = -1; ProductCode = "W1234" }
-// => Invalid: negative quantity — switch 1 will divert to Error track
+// Error path — fails at Step 1
+let missing = approvalWorkflow "req_missing"
+// => Step 1 Error (RequisitionNotFound "req_missing") — Steps 2 and 3 skipped
+// => missing : Result<ApprovalLevel, ProcurementError> = Error (RequisitionNotFound "req_missing")
 
-printfn "Good:        %A" (placeOrder goodInput)
-// => Output: Good:        Ok "Order ORD-001 acknowledged — total £29.97"
-
-printfn "Bad orderId: %A" (placeOrder badOrderId)
-// => Output: Bad orderId: Error "OrderId blank"
-// => Switches 2 and 3 were never called — Error propagated straight through
-
-printfn "Bad quantity:%A" (placeOrder badQuantity)
-// => Output: Bad quantity:Error "Quantity must be positive"
-// => Same short-circuit behaviour — early Error stops the pipeline
+printfn "Happy: %A" happy
+// => Output: Happy: Ok L2
+printfn "Missing: %A" missing
+// => Output: Missing: Error (RequisitionNotFound "req_missing")
 ```
 
-**Key Takeaway**: Railway-Oriented Programming models fallible pipelines as two parallel tracks — the Ok track flows straight through, and any switch that returns `Error` diverts all subsequent steps onto the Error track, which flows to the end without executing any more domain logic.
+**Key Takeaway**: `Result.bind` creates a clean error-propagation pipeline where the first failure short-circuits the rest of the chain — no nested if/else, no try/catch, no null checks.
 
-**Why It Matters**: The railway metaphor makes the error-handling strategy immediately visible to anyone reading the code. Unlike try/catch, which can catch errors from any depth and resume control at arbitrary points, ROP pipelines have a single, clear failure mode: Error short-circuits and propagates. This predictability is invaluable in complex domain workflows where understanding exactly what happens when validation fails is a business requirement, not just an implementation detail.
+**Why It Matters**: Without `Result.bind`, chaining three fallible steps requires nested match expressions or if/else chains that obscure the happy path. With `Result.bind`, the pipeline reads linearly and the error handling is structural. Adding a new step (e.g., checking supplier eligibility) means inserting one more `|> Result.bind checkSupplier` — no restructuring of the error-handling logic required.
 
 ---
 
-### Example 33: Computation Expression — result { let! ... }
+### Example 32: Result.map — Transforming the Success Value
 
-F# computation expressions provide syntactic sugar for monadic chains. The `result` computation expression unwraps `Result` values with `let!` and rewraps the final expression in `Ok`, so the code reads like imperative steps while remaining fully functional. Wlaschin introduces computation expressions in Ch 10.
-
-```mermaid
-graph TD
-    A["let! validId = validateId orderId"]
-    B{"Ok?"}
-    C["let! validQty = validateQty qty"]
-    D{"Ok?"}
-    E["let! unitPrice = getUnitPrice code"]
-    F{"Ok?"}
-    G["return: Ok 'Order total: £X'"]
-    H["short-circuit: Error propagated"]
-
-    A --> B
-    B -- "Ok" --> C
-    B -- "Error" --> H
-    C --> D
-    D -- "Ok" --> E
-    D -- "Error" --> H
-    E --> F
-    F -- "Ok" --> G
-    F -- "Error" --> H
-
-    style G fill:#029E73,stroke:#000,color:#fff
-    style H fill:#CC78BC,stroke:#000,color:#000
-```
+`Result.map` transforms the `Ok` value of a `Result` without touching the `Error` case. It is the non-fallible counterpart to `Result.bind` — use `map` when the transformation cannot fail, `bind` when it can.
 
 ```fsharp
-// The 'result' computation expression: imperative-looking code that is actually
-// a chain of Result.bind calls — syntactic sugar for ROP.
+// Result.map transforms the Ok value; Error passes through unchanged.
+// Use map for infallible transformations inside a Result pipeline.
 
-// Define a minimal result computation expression builder
+type ApprovalLevel = L1 | L2 | L3
+
+type ApprovalRouting = {
+    Level:         ApprovalLevel
+    ApproverEmail: string
+    SlaDays:       int
+}
+// => The output of the routing step — derived from ApprovalLevel
+
+// An infallible transformation: ApprovalLevel → ApprovalRouting
+let buildRouting (level: ApprovalLevel) : ApprovalRouting =
+    // => This cannot fail — every ApprovalLevel maps to a routing record
+    match level with
+    | L1 -> { Level = L1; ApproverEmail = "manager@co.example"; SlaDays = 2 }
+    // => L1: direct manager, 2-day SLA
+    | L2 -> { Level = L2; ApproverEmail = "dept-head@co.example"; SlaDays = 5 }
+    // => L2: department head, 5-day SLA
+    | L3 -> { Level = L3; ApproverEmail = "cfo@co.example"; SlaDays = 10 }
+    // => L3: CFO, 10-day SLA
+
+// A fallible step that returns Result<ApprovalLevel, string>
+let deriveLevel (total: decimal) : Result<ApprovalLevel, string> =
+    if total < 0m then Error "Total cannot be negative"
+    // => Guard: negative totals are a data error
+    else Ok (if total <= 1000m then L1 elif total <= 10000m then L2 else L3)
+    // => Derives the level — wrapped in Ok
+
+// Using Result.map to apply the infallible buildRouting transformation
+let routingResult =
+    deriveLevel 2784.97m
+    // => Ok L2 — 2784.97 is within L2 range
+    |> Result.map buildRouting
+    // => Result.map applies buildRouting to the L2 value inside Ok
+    // => buildRouting L2 = { Level = L2; ApproverEmail = "dept-head@co.example"; SlaDays = 5 }
+    // => routingResult : Result<ApprovalRouting, string> = Ok { Level = L2; ... }
+
+// Error case — map is skipped
+let errorResult =
+    deriveLevel (-1m)
+    // => Error "Total cannot be negative"
+    |> Result.map buildRouting
+    // => Result.map is skipped — Error passes through unchanged
+    // => errorResult : Result<ApprovalRouting, string> = Error "Total cannot be negative"
+
+match routingResult with
+| Ok r  -> printfn "Route to %s (SLA: %d days)" r.ApproverEmail r.SlaDays
+// => Output: Route to dept-head@co.example (SLA: 5 days)
+| Error e -> printfn "Error: %s" e
+
+match errorResult with
+| Ok _    -> printfn "Should not reach here"
+| Error e -> printfn "Error passthrough: %s" e
+// => Output: Error passthrough: Total cannot be negative
+```
+
+**Key Takeaway**: `Result.map` applies an infallible transformation to the `Ok` value and passes `Error` through unchanged — keeping the error channel clean without re-wrapping or unwrapping.
+
+**Why It Matters**: In a procurement pipeline, many steps are infallible transformations: deriving approval routing from a level, formatting an email notification, building a PO number from a sequence. Using `Result.map` for these steps keeps the pipeline uniform — every step in the chain produces a `Result`, and the composition rules are consistent throughout.
+
+---
+
+### Example 33: Validation Accumulation with List of Errors
+
+`Result.bind` short-circuits on the first error. But form validation requires collecting _all_ errors so the user can fix everything at once. Applicative validation accumulates errors using a custom `Validation` type.
+
+```fsharp
+// Validation accumulation: collect all errors, not just the first.
+// Use this for user-facing form validation (HTTP 400 responses with full error list).
+
+// A Validation type that accumulates errors in a list
+type Validation<'a, 'e> =
+    | ValidationOk    of 'a
+    // => All fields passed — carry the valid value
+    | ValidationError of 'e list
+    // => One or more fields failed — carry the list of errors
+
+// Lift a Result into a Validation (single-error case)
+let ofResult (r: Result<'a, 'e>) : Validation<'a, 'e> =
+    match r with
+    | Ok v    -> ValidationOk v
+    // => Success becomes ValidationOk
+    | Error e -> ValidationError [e]
+    // => Single error becomes a one-element list — ready for accumulation
+
+// Apply: combine two Validations, accumulating errors from both
+let apply (fVal: Validation<'a -> 'b, 'e>) (xVal: Validation<'a, 'e>) : Validation<'b, 'e> =
+    match fVal, xVal with
+    | ValidationOk f,    ValidationOk x    -> ValidationOk (f x)
+    // => Both ok — apply the function to the value
+    | ValidationError e, ValidationOk _    -> ValidationError e
+    // => Function failed — carry its errors forward
+    | ValidationOk _,    ValidationError e -> ValidationError e
+    // => Value failed — carry its errors forward
+    | ValidationError e1, ValidationError e2 -> ValidationError (e1 @ e2)
+    // => Both failed — concatenate the error lists (accumulation!)
+
+// Domain: validate a line item, accumulating all field errors
+let validateSku (raw: string) : Validation<string, string> =
+    if System.String.IsNullOrWhiteSpace(raw) then ValidationError ["SkuCode is required"]
+    // => Blank SKU — collect this error
+    elif raw.Length < 5 then ValidationError [sprintf "SkuCode '%s' is too short (min 5 chars)" raw]
+    // => Too short — collect this error
+    else ValidationOk raw
+    // => Valid SKU
+
+let validateQty (qty: int) : Validation<int, string> =
+    if qty <= 0 then ValidationError [sprintf "Quantity must be > 0, got %d" qty]
+    // => Non-positive quantity — collect this error
+    else ValidationOk qty
+    // => Valid quantity
+
+let validatePrice (price: decimal) : Validation<decimal, string> =
+    if price <= 0m then ValidationError [sprintf "UnitPrice must be > 0, got %M" price]
+    // => Non-positive price — collect this error
+    else ValidationOk price
+    // => Valid price
+
+// Accumulate all errors from a line item
+type ValidLine = { Sku: string; Qty: int; Price: decimal }
+
+let validateLine (sku: string) (qty: int) (price: decimal) : Validation<ValidLine, string> =
+    let mkLine s q p = { Sku = s; Qty = q; Price = p }
+    // => Constructor function for ValidLine — partially applied below
+    apply (apply (apply (ValidationOk mkLine) (validateSku sku)) (validateQty qty)) (validatePrice price)
+    // => Applicative style: accumulates errors from all three field validations
+
+// Test: line with two errors
+let result = validateLine "" (-1) 10m
+// => SkuCode blank → ValidationError ["SkuCode is required"]
+// => Quantity -1   → ValidationError ["Quantity must be > 0, got -1"]
+// => UnitPrice 10  → ValidationOk 10
+// => Combined:       ValidationError ["SkuCode is required"; "Quantity must be > 0, got -1"]
+
+match result with
+| ValidationOk line   -> printfn "Valid line: %A" line
+| ValidationError errs -> errs |> List.iter (printfn "- %s")
+// => Output: - SkuCode is required
+// => Output: - Quantity must be > 0, got -1
+```
+
+**Key Takeaway**: Applicative validation accumulates all errors from all fields simultaneously, enabling user-facing form validation that reports every problem at once rather than one at a time.
+
+**Why It Matters**: A procurement requisition form with ten fields should report all validation errors in a single response, not force the user to submit and resubmit ten times. The applicative validation pattern separates "collect all errors" (validation) from "stop at first error" (domain pipeline). Both use `Result`-like types, but serve different concerns: validation serves the UI, `Result.bind` pipelines serve the domain logic.
+
+---
+
+### Example 34: Computation Expression for Result
+
+F#'s `result` computation expression (a.k.a. "do notation") lets you write `Result.bind` chains in imperative-looking syntax. The `let!` keyword desugars to `Result.bind`, making the pipeline read like sequential steps without explicit chaining.
+
+```fsharp
+// The result computation expression: bind chains in imperative style.
+// let! desugars to Result.bind; return desugars to Ok.
+
+// A simple Result CE builder
 type ResultBuilder() =
-    member _.Return(x) = Ok x
-    // => Wraps a plain value in Ok
-    member _.ReturnFrom(x) = x
-    // => Passes a Result through as-is
-    member _.Bind(x, f) = Result.bind f x
-    // => Unwraps Ok and applies f; short-circuits on Error
-    member _.Zero() = Ok ()
-    // => Default for empty computation expressions
+    member _.Bind(m, f)   = Result.bind f m
+    // => let! x = m desugars to Result.bind (fun x -> ...) m
+    member _.Return(x)    = Ok x
+    // => return x desugars to Ok x
+    member _.ReturnFrom(m) = m
+    // => return! m desugars to m (pass through)
 
 let result = ResultBuilder()
-// => result : ResultBuilder — our CE builder instance
+// => result : ResultBuilder — the computation expression builder
 
-// Smart constructors (simplified)
-let validateId (raw: string) =
-    // => Returns Ok trimmed id if non-blank; Error if blank
-    if System.String.IsNullOrWhiteSpace(raw) then Error "Id must not be blank"
-    // => Guard: blank or whitespace strings are not valid IDs
-    else Ok raw.Trim()
-    // => Ok with trimmed string — normalised
+type ProcurementError = NotFound of string | InvalidAmount of decimal | SupplierBlocked of string
+// => Named errors for the procurement domain
 
-let validateQty (qty: int) =
-    // => Returns Ok qty if positive; Error if zero or negative
-    if qty <= 0 then Error "Quantity must be positive"
-    // => Guard: zero and negatives are not valid quantities
-    else Ok qty
-    // => Ok qty — passes through unchanged
+// Functions that return Result
+let loadRequisition (id: string) : Result<decimal, ProcurementError> =
+    if id = "req_f4c2" then Ok 2784.97m
+    else Error (NotFound id)
+    // => Returns the total if found, NotFound error otherwise
 
-let getUnitPrice (code: string) =
-    // => Returns Ok price for known product codes; Error for unknown
-    if code.StartsWith "W" then Ok 9.99m
-    // => Widget codes start with "W" — price is £9.99
-    elif code.StartsWith "G" then Ok 24.99m
-    // => Gizmo codes start with "G" — price is £24.99
-    else Error (sprintf "Unknown product: %s" code)
-    // => Unknown code — returns Error with the code for diagnostics
+let checkApprovalBudget (total: decimal) : Result<decimal, ProcurementError> =
+    if total > 50000m then Error (InvalidAmount total)
+    else Ok total
+    // => Rejects totals over $50,000 without special override
 
-// The computation expression — reads like sequential imperative code
-let buildOrderTotal orderId qty productCode =
+let lookupSupplier (supplierId: string) : Result<string, ProcurementError> =
+    if supplierId = "sup_blacklisted" then Error (SupplierBlocked supplierId)
+    else Ok "approved-supplier"
+    // => Returns supplier name if approved, SupplierBlocked if blacklisted
+
+// Using the computation expression — reads like sequential imperative code
+let approveRequisition (reqId: string) (supplierId: string) : Result<string, ProcurementError> =
     result {
-        let! validId    = validateId orderId
-        // => let! desugars to .Bind(validateId orderId, fun validId -> ...)
-        // => validId : string = orderId.Trim() if non-blank
-        let! validQty   = validateQty qty
-        // => Second validation — only reached if first succeeded
-        // => validQty : int = qty if positive
-        let! unitPrice  = getUnitPrice productCode
-        // => Third step — only reached if both validations succeeded
-        // => unitPrice : decimal = 9.99 for "W1234"
-        let total = unitPrice * decimal validQty
-        // => Plain let — no Result unwrapping needed; just arithmetic
-        // => total = 9.99 × 3 = 29.97 for validQty=3
-        return sprintf "Order %s total: £%.2f" validId total
-        // => return desugars to .Return(...) which wraps in Ok
-        // => return wraps the final value in Ok
+        let! total    = loadRequisition reqId
+        // => let! desugars to Result.bind — if Error, short-circuits here
+        let! verified = checkApprovalBudget total
+        // => Only runs if loadRequisition returned Ok
+        let! supplier = lookupSupplier supplierId
+        // => Only runs if checkApprovalBudget returned Ok
+        return sprintf "Approved: req=%s total=%M supplier=%s" reqId verified supplier
+        // => return desugars to Ok — reached only if all three steps succeed
     }
-    // => Equivalent to: validateId >> Result.bind (fun id -> ...) >> Result.bind ...
 
-printfn "%A" (buildOrderTotal "ORD-001" 3 "W1234")
-// => All three validations pass; total = 9.99 × 3 = 29.97
-// => Output: Ok "Order ORD-001 total: £29.97"
+// Happy path
+let happy = approveRequisition "req_f4c2" "sup_acme"
+// => loadRequisition: Ok 2784.97 → checkApprovalBudget: Ok 2784.97 → lookupSupplier: Ok "approved-supplier"
+// => happy : Result<string, ProcurementError> = Ok "Approved: req=req_f4c2 total=2784.9700M supplier=approved-supplier"
 
-printfn "%A" (buildOrderTotal "" 3 "W1234")
-// => Output: Error "Id must not be blank"
+// Error path
+let blocked = approveRequisition "req_f4c2" "sup_blacklisted"
+// => loadRequisition: Ok → checkApprovalBudget: Ok → lookupSupplier: Error (SupplierBlocked "sup_blacklisted")
+// => blocked : Result<string, ProcurementError> = Error (SupplierBlocked "sup_blacklisted")
 
-printfn "%A" (buildOrderTotal "ORD-002" 3 "X999")
-// => Output: Error "Unknown product: X999"
+printfn "%A" happy
+// => Output: Ok "Approved: ..."
+printfn "%A" blocked
+// => Output: Error (SupplierBlocked "sup_blacklisted")
 ```
 
-**Key Takeaway**: The `result` computation expression makes Railway-Oriented Programming look like sequential imperative code while preserving the short-circuit semantics of `Result.bind` — the best of both worlds.
+**Key Takeaway**: The `result` computation expression writes `Result.bind` chains in familiar sequential syntax, making complex multi-step procurement pipelines readable without sacrificing functional error propagation.
 
-**Why It Matters**: Deeply nested `Result.bind` calls become unreadable for more than three steps. Computation expressions flatten the nesting into a `let!`-based imperative style that most developers find intuitive. Wlaschin recommends computation expressions for complex multi-step workflows while keeping simpler two- or three-step pipelines as explicit `|> Result.bind` chains. The key is that the underlying semantics are identical — the CE is purely syntactic sugar.
+**Why It Matters**: The CE syntax is a significant ergonomic improvement for workflows with many sequential fallible steps. A five-step approval workflow using explicit `Result.bind` chains requires five levels of nesting or five `|>` operators; the CE writes it as five sequential `let!` bindings that read like straightforward procedural code while remaining purely functional in semantics.
 
 ---
 
-### Example 34: Async + Result Composition
+### Example 35: Async Result — Effects at the Edges
 
-Real workflows involve I/O: database reads, HTTP calls, and message bus interactions. In F#, `Async<Result<'a, 'e>>` is the standard type for a computation that is both asynchronous and fallible. Composing these requires an `asyncResult` computation expression. Wlaschin addresses this in Ch 10.
-
-```mermaid
-graph TD
-    A["asyncResult CE"]
-    B["let! customerName = fetchCustomer customerId"]
-    C{"Result?"}
-    D["let! unitPrice = fetchProductPrice code"]
-    E{"Result?"}
-    F["return Ok 'Order for Alice: £29.97'"]
-    G["return Error\n'Customer not found'"]
-    H["return Error\n'No price for product'"]
-
-    A --> B
-    B --> C
-    C -- "Ok" --> D
-    C -- "Error" --> G
-    D --> E
-    E -- "Ok" --> F
-    E -- "Error" --> H
-
-    style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#CC78BC,stroke:#000,color:#000
-    style H fill:#CC78BC,stroke:#000,color:#000
-```
+Real procurement workflows involve I/O: loading a requisition from Postgres, calling the approval router API, publishing a domain event. `Async<Result<'T, 'Error>>` composes the two: `Async` handles the effect, `Result` handles the failure.
 
 ```fsharp
-// Async<Result<'a,'e>> = an asynchronous operation that can succeed or fail.
-// asyncResult CE composes these cleanly.
+// Async<Result<'T, 'Error>> combines effects with structured failure handling.
+// Async = I/O effect; Result = domain failure. Both compose cleanly.
 
-// Simulate async I/O operations
-let fetchCustomer (customerId: string) : Async<Result<string, string>> =
+type ProcurementError = DbTimeout | NotFound of string | PublishFailed of string
+// => Infrastructure errors join domain errors in the same union
+
+// Simulated async operations (would call Postgres / Kafka in production)
+let loadRequisitionAsync (id: string) : Async<Result<decimal, ProcurementError>> =
     async {
-        // => Simulates an async database call
-        if customerId = "CUST-42" then
-            return Ok "Alice Johnson"
-            // => Customer found
-        else
-            return Error (sprintf "Customer '%s' not found" customerId)
-            // => Customer not in the database
+        do! Async.Sleep 0
+        // => Simulate async I/O — zero delay for the example
+        if id = "req_f4c2" then return Ok 2784.97m
+        // => Found — return the requisition total
+        else return Error (NotFound id)
+        // => Not found — return named error
     }
 
-let fetchProductPrice (code: string) : Async<Result<decimal, string>> =
+let publishEventAsync (reqId: string) (total: decimal) : Async<Result<unit, ProcurementError>> =
     async {
-        // => Simulates an async price service call
-        if code.StartsWith "W" then return Ok 9.99m
-        // => Widget codes → £9.99 per unit
-        elif code.StartsWith "G" then return Ok 24.99m
-        // => Gizmo codes → £24.99 per unit
-        else return Error (sprintf "No price for product '%s'" code)
-        // => Unknown product code → Error; the workflow will short-circuit here
+        do! Async.Sleep 0
+        // => Simulate async publish to Kafka/outbox
+        printfn "[EventBus] Publishing RequisitionSubmitted for %s (total: %M)" reqId total
+        // => Side effect: publishing the event — happens at the edge
+        return Ok ()
+        // => Publish succeeded
     }
 
-// asyncResult CE builder — composes Async<Result> values with let!
-type AsyncResultBuilder() =
-    member _.Return(x)       = async { return Ok x }
-    // => return: wrap a plain value in Ok and lift into Async
-    member _.ReturnFrom(x)   = x
-    // => return!: pass an existing Async<Result> through unchanged
-    member _.Bind(x, f) =
-        async {
-            let! result = x
-            // => Await the async operation — result : Result<'a, 'e>
-            match result with
-            | Ok v    -> return! f v
-            // => If Ok, apply the next function (which is also Async<Result>)
-            // => f v produces another Async<Result> that is awaited recursively
-            | Error e -> return Error e
-            // => If Error, short-circuit without calling f
-            // => Error propagates all the way out of the asyncResult block
-        }
-
-let asyncResult = AsyncResultBuilder()
-// => asyncResult : AsyncResultBuilder — the CE instance used below
-// => CE syntax: `asyncResult { let! x = ... }` desugars to .Bind(x, ...) calls
-
-// Full async workflow
-let placeOrderAsync customerId productCode qty =
-    asyncResult {
-        let! customerName = fetchCustomer customerId
-        // => Await fetchCustomer; customerName is the unwrapped string if Ok
-        // => Await and unwrap — short-circuits on Error
-        let! unitPrice    = fetchProductPrice productCode
-        // => Await fetchProductPrice; only runs if customer fetch succeeded
-        // => unitPrice is the unwrapped decimal if Ok
-        // => Await and unwrap — only runs if customer fetch succeeded
-        let total         = unitPrice * decimal qty
-        // => Synchronous arithmetic — no Async or Result wrapping needed here
-        // => total = 9.99 × 3 = 29.97 for W1234
-        // => Synchronous arithmetic inside the async workflow
-        return sprintf "Order for %s: £%.2f" customerName total
-        // => return wraps the string in Ok and lifts into Async<Result>
-        // => Wraps the result in Async<Result<string, string>>
+// Composing Async<Result> steps with asyncResult helper
+let bindAsyncResult
+    (f: 'a -> Async<Result<'b, 'e>>)
+    (ar: Async<Result<'a, 'e>>) : Async<Result<'b, 'e>> =
+    async {
+        let! r = ar
+        // => Await the first Async to get its Result
+        match r with
+        | Ok v    -> return! f v
+        // => Success — pass value into next async step
+        | Error e -> return Error e
+        // => Failure — short-circuit; don't run next step
     }
 
-// Run the async workflow synchronously for demonstration
-let resultOk = placeOrderAsync "CUST-42" "W1234" 3 |> Async.RunSynchronously
-// => fetchCustomer "CUST-42" = Ok "Alice Johnson"
-// => fetchProductPrice "W1234" = Ok 9.99
-// => total = 9.99 × 3 = 29.97
-// => resultOk : Result<string, string> = Ok "Order for Alice Johnson: £29.97"
+// The workflow: load requisition, then publish event
+let submitWorkflow (reqId: string) : Async<Result<unit, ProcurementError>> =
+    loadRequisitionAsync reqId
+    // => Step 1: load from database (async I/O)
+    |> bindAsyncResult (fun total -> publishEventAsync reqId total)
+    // => Step 2: publish event (async I/O) — only if Step 1 succeeded
 
-let resultErr = placeOrderAsync "UNKNOWN" "W1234" 3 |> Async.RunSynchronously
-// => fetchCustomer "UNKNOWN" = Error "Customer 'UNKNOWN' not found"
-// => fetchProductPrice never called — short-circuited by the customer error
-// => resultErr : Result<string, string> = Error "Customer 'UNKNOWN' not found"
+// Run the workflow
+let runResult = Async.RunSynchronously (submitWorkflow "req_f4c2")
+// => Runs the async workflow synchronously for demonstration purposes
+// => Step 1: Ok 2784.97 → Step 2: publishes event → Ok ()
 
-printfn "Success: %A" resultOk
-// => Output: Success: Ok "Order for Alice Johnson: £29.97"
-
-printfn "Failure: %A" resultErr
-// => Output: Failure: Error "Customer 'UNKNOWN' not found"
+printfn "Result: %A" runResult
+// => Output: [EventBus] Publishing RequisitionSubmitted for req_f4c2 (total: 2784.9700M)
+// => Output: Result: Ok null
 ```
 
-**Key Takeaway**: `Async<Result<'a,'e>>` combined with an `asyncResult` computation expression lets you write asynchronous, fallible workflows in a sequential, readable style while maintaining full control over both the async and the error dimensions.
+**Key Takeaway**: `Async<Result<'T, 'Error>>` separates the concern of "this involves I/O" (Async) from "this can fail with a named error" (Result), composing both without losing either.
 
-**Why It Matters**: In production systems, almost every external call is both asynchronous (database, HTTP, message bus) and fallible (network errors, not-found, timeouts). Composing these without a CE leads to deeply nested `Async.bind` and `Result.bind` calls. The `asyncResult` CE resolves both dimensions simultaneously, producing code that reads like a synchronous happy-path script while handling failures and async transparently. This pattern is the practical foundation of the workflow pipeline in Example 44.
+**Why It Matters**: In a production procurement system, almost every workflow step involves I/O: database reads, event publishing, supplier API calls, approval system webhooks. Mixing `Async` and `Result` without a principled composition strategy leads to deeply nested match expressions inside async blocks. The `Async<Result<>>` pattern gives both dimensions a clean composition model, enabling workflows of ten or more async fallible steps to be written as a flat pipeline.
 
 ---
 
-### Example 35: AsyncResult Builder
+### Example 36: Domain Error DU — Every Failure Mode Named
 
-This example provides a more complete `AsyncResult` builder and demonstrates its use with a three-step async workflow. The builder handles the monadic plumbing so that business logic code stays clean.
-
-```fsharp
-// AsyncResult module: wraps Async<Result<'a,'e>> with standard operations.
-// Provides the building blocks for async workflow pipelines.
-
-module AsyncResult =
-    // Core operations as standalone functions — usable without a CE
-    // => Mirrors the standard monadic operations: map, bind, return, ofResult
-
-    let map (f: 'a -> 'b) (ar: Async<Result<'a,'e>>) : Async<Result<'b,'e>> =
-        // => Transforms the Ok value; leaves Error unchanged
-        async {
-            let! r = ar
-            // => Await the async operation; r : Result<'a,'e>
-            return Result.map f r
-            // => Apply f to Ok value, or pass Error through unchanged
-            // => Transform the Ok value; leave Error unchanged
-        }
-
-    let bind (f: 'a -> Async<Result<'b,'e>>) (ar: Async<Result<'a,'e>>) : Async<Result<'b,'e>> =
-        // => Chains two async fallible operations — the core of the CE
-        async {
-            let! r = ar
-            // => Await first async operation; r : Result<'a,'e>
-            match r with
-            | Ok v    -> return! f v
-            // => Ok: apply f and await the next async operation
-            | Error e -> return Error e
-            // => Error: short-circuit without calling f
-        }
-
-    let retn (x: 'a) : Async<Result<'a,'e>> =
-        // => Lifts a pure value into Async<Result> — the "unit" of the monad
-        async { return Ok x }
-        // => Wrap x in Ok and immediately complete the async workflow
-
-    let ofResult (r: Result<'a,'e>) : Async<Result<'a,'e>> =
-        // => Lifts a synchronous Result into Async<Result> for uniform composition
-        async { return r }
-        // => The async computation immediately returns r — no actual I/O
-        // => Enables mixing sync validation (via ofResult) with async I/O in the same pipeline
-        // => Lift a synchronous Result into Async<Result>
-
-// ── Workflow using the AsyncResult module ─────────────────────────────────
-let validateAsync (orderId: string) : Async<Result<string, string>> =
-    AsyncResult.ofResult (if orderId.Length > 0 then Ok orderId else Error "OrderId blank")
-    // => Synchronous validation lifted into Async<Result>
-    // => AsyncResult.ofResult wraps a synchronous Result in Async for uniform composition
-
-let lookupPriceAsync (code: string) : Async<Result<decimal, string>> =
-    async { return (if code.StartsWith "W" then Ok 9.99m else Error "Unknown product") }
-    // => Simulated async price lookup
-    // => Widget codes starting with "W" get £9.99; others get an error
-
-let buildConfirmation (orderId: string) (price: decimal) : Async<Result<string, string>> =
-    AsyncResult.retn (sprintf "Confirmed: %s @ £%.2f" orderId price)
-    // => AsyncResult.retn lifts a plain string into Async<Result<string, string>>
-    // => Simple confirmation lifted into Async<Result>
-
-// Pipeline using AsyncResult.bind
-let workflow orderId productCode =
-    validateAsync orderId
-    // => Step 1: validate order ID — produces Async<Result<string, string>>
-    |> AsyncResult.bind (fun validId ->
-        // => bind awaits and unwraps; validId = the validated order ID string
-        // => This is AsyncResult.bind, not Result.bind — handles the Async wrapper
-        lookupPriceAsync productCode
-        // => Step 2: look up price — only runs if step 1 returned Ok
-        |> AsyncResult.bind (fun price ->
-            // => price = the decimal price value from the Ok case
-            buildConfirmation validId price))
-            // => Step 3: build the confirmation message
-    // => Three async steps chained with AsyncResult.bind
-
-let result1 = workflow "ORD-001" "W1234" |> Async.RunSynchronously
-// => All three steps ran; "ORD-001" is valid; "W1234" → £9.99
-// => result1 : Result<string, string> = Ok "Confirmed: ORD-001 @ £9.99"
-
-printfn "%A" result1
-// => Output: Ok "Confirmed: ORD-001 @ £9.99"
-```
-
-**Key Takeaway**: The `AsyncResult` module provides standalone `map`, `bind`, and `retn` functions that compose async fallible steps without requiring a CE, useful for two- or three-step workflows where the CE overhead is not justified.
-
-**Why It Matters**: Having both CE syntax (Example 33–34) and explicit `AsyncResult.bind` syntax gives you the right tool for the job. Short pipelines are readable with explicit `bind`; long pipelines benefit from CE syntax. Wlaschin's approach in Ch 10 is to build the `AsyncResult` module first and then layer the CE on top — understanding both forms makes it easier to debug and reason about the underlying semantics.
-
----
-
-### Example 36: Validation Accumulation — Collecting All Errors
-
-`Result.bind` short-circuits on the first error. When validating a form with multiple fields, you want to collect all errors at once rather than presenting them one by one. The `Validation` applicative (a parallel, not sequential, combinator) accumulates errors into a list. Wlaschin presents this in Ch 10.
-
-```mermaid
-graph TD
-    Input["name: string\nemail: string"]
-
-    subgraph Parallel["Parallel validation (applicative)"]
-        VN["validateName name"]
-        VE["validateEmail email"]
-    end
-
-    Combine["Validation.apply\n(combine results)"]
-    Both["Valid ('Alice', 'alice@example.com')"]
-    Acc["Invalid\n['Name blank'; 'Email invalid']"]
-
-    Input --> VN
-    Input --> VE
-    VN --> Combine
-    VE --> Combine
-    Combine -- "both valid" --> Both
-    Combine -- "errors accumulate" --> Acc
-
-    style Both fill:#029E73,stroke:#000,color:#fff
-    style Acc fill:#CC78BC,stroke:#000,color:#000
-    style Parallel fill:#0173B2,stroke:#000,color:#fff
-```
+A comprehensive `ProcurementError` discriminated union names every failure mode the purchasing context can produce. Named errors enable precise API error mapping, monitoring alerts, and domain-specific retry policies.
 
 ```fsharp
-// Validation accumulation: collect ALL errors, not just the first.
-// Uses an applicative functor pattern, not monadic bind.
+// Every failure mode in the purchasing context is a named DU case.
+// This drives precise HTTP status codes, alerting, and retry logic.
 
-// Validation type: same as Result but Error is always a list
-type Validation<'a, 'e> =
-    | Valid   of 'a
-    | Invalid of 'e list
-    // => Error is a LIST — multiple errors accumulate
+type RequisitionId   = RequisitionId   of string
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
 
-module Validation =
-    // Apply: combines two Validation values, accumulating errors from both
-    let apply (vf: Validation<'a -> 'b, 'e>) (va: Validation<'a, 'e>) : Validation<'b, 'e> =
-        // => vf: a Validation wrapping a function; va: a Validation wrapping a value
-        match vf, va with
-        | Valid f,   Valid a   -> Valid (f a)
-        // => Both valid: apply the function to the value — produces a Valid result
-        | Invalid e1, Invalid e2 -> Invalid (e1 @ e2)
-        // => Both invalid: concatenate error lists — KEY difference from bind
-        // => e1 @ e2 merges the two error lists — all failures visible at once
-        | Invalid e,  Valid _  -> Invalid e
-        // => Only function side invalid: propagate its error list unchanged
-        | Valid _,    Invalid e -> Invalid e
-        // => Only value side invalid: propagate its error list unchanged
+// The complete purchasing context error DU
+type PurchasingError =
+    // Requisition errors
+    | RequisitionNotFound      of RequisitionId
+    // => The requisition ID does not exist in the database (404)
+    | RequisitionAlreadySubmitted of RequisitionId
+    // => Attempt to submit a requisition that is already Submitted (409 Conflict)
+    | RequisitionHasNoLines    of RequisitionId
+    // => Cannot submit a requisition with zero line items (422 Unprocessable)
+    | InvalidSkuCode           of sku: string
+    // => A line item's SKU does not match the required format (422)
+    | NegativeQuantity         of sku: string * qty: int
+    // => A line item's quantity is ≤ 0 (422)
+    | NegativePrice            of sku: string * price: decimal
+    // => A line item's unit price is ≤ 0 (422)
+    // Supplier errors
+    | SupplierNotFound         of SupplierId
+    // => The selected supplier does not exist in the supplier master (404)
+    | SupplierNotApproved      of SupplierId
+    // => The supplier is Pending, Suspended, or Blacklisted — cannot receive POs (422)
+    // Budget errors
+    | BudgetExceeded           of required: decimal * available: decimal
+    // => The requisition total exceeds the department's available budget (422)
+    | ApprovalLevelNotMet      of required: string * actual: string
+    // => The approver does not have sufficient authority level (403)
 
-    let retn (x: 'a) = Valid x
-    // => Lift a pure value into Validation — analogous to Result's Ok
-    // => Used to wrap the multi-arg constructor before applying values
+// Map error to HTTP status code — lives at the API boundary, not the domain
+let toHttpStatus (error: PurchasingError) : int =
+    match error with
+    | RequisitionNotFound _            -> 404
+    | SupplierNotFound _               -> 404
+    // => Not found errors → 404
+    | RequisitionAlreadySubmitted _    -> 409
+    // => Conflict (duplicate action) → 409
+    | ApprovalLevelNotMet _            -> 403
+    // => Insufficient authority → 403
+    | RequisitionHasNoLines _
+    | InvalidSkuCode _
+    | NegativeQuantity _
+    | NegativePrice _
+    | SupplierNotApproved _
+    | BudgetExceeded _                 -> 422
+    // => Business rule violations → 422 Unprocessable Entity
 
-    let map (f: 'a -> 'b) (v: Validation<'a, 'e>) : Validation<'b, 'e> =
-        match v with
-        | Valid a   -> Valid (f a)
-        // => Valid: apply f to the value and re-wrap
-        | Invalid e -> Invalid e
-        // => Invalid: propagate errors unchanged — same semantics as Result.map
+// Test
+let err1 = SupplierNotApproved (SupplierId "sup_blocked")
+// => err1 : PurchasingError = SupplierNotApproved (SupplierId "sup_blocked")
+let err2 = BudgetExceeded (15000m, 10000m)
+// => err2 : PurchasingError = BudgetExceeded (15000M, 10000M)
 
-// Validation functions returning Validation instead of Result
-let validateName (raw: string) : Validation<string, string> =
-    // => Returns Valid with the trimmed name, or Invalid with the error in a list
-    if System.String.IsNullOrWhiteSpace(raw) then Invalid ["Name must not be blank"]
-    // => Guard 1: blank name rejected — error wrapped in a list for accumulation
-    elif raw.Length > 50                     then Invalid ["Name must be 50 chars or fewer"]
-    // => Guard 2: too long rejected — error wrapped in a list
-    else Valid raw.Trim()
-    // => Both guards passed — trim and return as Valid
-
-let validateEmail (raw: string) : Validation<string, string> =
-    // => Returns Valid with the lowercase email, or Invalid with the error in a list
-    if System.Text.RegularExpressions.Regex.IsMatch(raw, @"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-    then Valid (raw.ToLowerInvariant())
-    // => Valid email format — normalise to lowercase and return Valid
-    else Invalid [sprintf "'%s' is not a valid email" raw]
-    // => Invalid format — error wrapped in a list for accumulation
-
-// Apply all validations — errors accumulate
-let validateCustomer name email =
-    let ctorResult = Validation.retn (fun n e -> (n, e))
-    // => Lift the tuple constructor (fun n e -> (n, e)) into Validation
-    // => ctorResult : Validation<string -> string -> string * string, string>
-    let nameResult = validateName name
-    // => nameResult : Validation<string, string> — Valid or Invalid
-    let emailResult = validateEmail email
-    // => emailResult : Validation<string, string> — Valid or Invalid
-    Validation.apply (Validation.apply ctorResult nameResult) emailResult
-    // => First apply: (fun n e -> (n, e)) applied to nameResult → Validation<string -> string * string>
-    // => Second apply: that function applied to emailResult → Validation<string * string, string>
-    // => If both valid: Valid ("Alice", "alice@example.com")
-    // => If both invalid: Invalid (nameErrors @ emailErrors) — BOTH errors collected
-
-printfn "%A" (validateCustomer "Alice" "alice@example.com")
-// => Both validations passed: name is "Alice", email is valid
-// => Output: Valid ("Alice", "alice@example.com")
-
-printfn "%A" (validateCustomer "" "not-an-email")
-// => Both validations failed: name is blank AND email format is wrong
-// => Output: Invalid ["Name must not be blank"; "'not-an-email' is not a valid email"]
-// => BOTH errors collected — user sees all problems at once
+printfn "Status: %d — %A" (toHttpStatus err1) err1
+// => Output: Status: 422 — SupplierNotApproved (SupplierId "sup_blocked")
+printfn "Status: %d — %A" (toHttpStatus err2) err2
+// => Output: Status: 422 — BudgetExceeded (15000M, 10000M)
 ```
 
-**Key Takeaway**: The `Validation` applicative accumulates all validation errors into a list, so users see all field errors at once rather than correcting them one at a time.
+**Key Takeaway**: A comprehensive named error DU makes every failure mode visible, testable, and precisely mappable to API responses — stringly-typed errors or generic exceptions cannot provide this level of precision.
 
-**Why It Matters**: Nothing frustrates users more than fixing one form error only to be shown the next. Applicative validation (`apply`) collects all errors in parallel, while monadic validation (`bind`) stops at the first. In real applications, form validation uses `Validation` (accumulate all errors), while workflow steps use `Result.bind` (stop at the first critical failure). Wlaschin distinguishes these two patterns explicitly in Ch 10, naming them "applicative" and "monadic" validation.
+**Why It Matters**: In a procurement API, returning the right HTTP status code and error body is contractual — clients (web UIs, ERP integrations, EDI systems) rely on these codes to decide whether to retry, alert, or present a user-facing message. A named `PurchasingError` DU makes the `toHttpStatus` mapping exhaustive (the compiler enforces it) and documents every error mode as part of the domain contract.
 
 ---
 
 ## Workflow Signatures and Domain Architecture (Examples 37–50)
 
-### Example 37: Make-Illegal-States-Unrepresentable Case Study
+### Example 37: PurchaseOrder Aggregate — Full State Machine
 
-A `Contact` record has an email address and/or a phone number — but at least one must be present. Representing this with two optional fields allows the invalid "both absent" state. A discriminated union eliminates it. This is Wlaschin's central case study in Ch 6.
-
-```mermaid
-graph TD
-    subgraph Bad["BadContact (wrong approach)"]
-        BC["{ Email: string option\n  Phone: string option }"]
-        Invalid["{ Email=None; Phone=None }\n← illegal but compiles"]
-    end
-    subgraph Good["ContactMethod (correct approach)"]
-        CM["ContactMethod (OR type)"]
-        E["EmailOnly of email"]
-        P["PhoneOnly of phone"]
-        EP["EmailAndPhone of email * phone"]
-    end
-
-    BC --> Invalid
-
-    CM --> E
-    CM --> P
-    CM --> EP
-
-    style Bad fill:#CC78BC,stroke:#000,color:#000
-    style Good fill:#029E73,stroke:#000,color:#fff
-    style Invalid fill:#CA9161,stroke:#000,color:#000
-```
-
-```fsharp
-// "Make illegal states unrepresentable" — Wlaschin Ch 6.
-// A Contact must have at least one way to be reached.
-
-// WRONG: two optional fields allow the "no contact method" state
-type BadContact = {
-    Email: string option
-    // => Email is optional — but if Phone is also None, no contact method exists
-    Phone: string option
-    // => Both could be None — an invalid state that compiles fine
-    // => BadContact {} (empty record) would fail because at least one field is needed;
-    // => but BadContact { Email = None; Phone = None } compiles — and represents "unreachable contact"
-}
-
-// RIGHT: discriminated union captures the three valid cases
-type ContactMethod =
-    // => Exactly one of three valid cases — "both absent" is impossible
-    | EmailOnly  of email: string
-    // => Case 1: only email provided
-    | PhoneOnly  of phone: string
-    // => Case 2: only phone provided
-    | EmailAndPhone of email: string * phone: string
-    // => Case 3: both provided
-
-// Contact now ALWAYS has a way to be reached
-type Contact = {
-    Name: string
-    ContactMethod: ContactMethod
-    // => Required — a Contact without a contact method cannot be constructed
-}
-
-// All valid states — none of them represent "no contact method"
-let contact1 = { Name = "Alice"; ContactMethod = EmailOnly "alice@example.com" }
-// => contact1 : Contact, ContactMethod = EmailOnly — case 1: email only, valid
-
-let contact2 = { Name = "Bob"; ContactMethod = PhoneOnly "+1-555-0100" }
-// => contact2 : Contact, ContactMethod = PhoneOnly — case 2: phone only, valid
-
-let contact3 = { Name = "Carol"; ContactMethod = EmailAndPhone ("carol@example.com", "+1-555-0200") }
-// => contact3 : Contact, ContactMethod = EmailAndPhone — case 3: both present, valid
-// => EmailAndPhone carries a (email, phone) tuple — both values available to callers
-
-// The compiler enforces exhaustive handling of all three cases
-let describeContact (c: Contact) =
-    // => match must cover EmailOnly, PhoneOnly, and EmailAndPhone — no wildcard needed
-    match c.ContactMethod with
-    | EmailOnly e         -> sprintf "%s: email %s" c.Name e
-    // => e : string — the email address extracted from EmailOnly case
-    | PhoneOnly p         -> sprintf "%s: phone %s" c.Name p
-    // => p : string — the phone number extracted from PhoneOnly case
-    | EmailAndPhone (e,p) -> sprintf "%s: email %s, phone %s" c.Name e p
-    // => e, p : string * string — both extracted from the EmailAndPhone tuple
-
-printfn "%s" (describeContact contact1)
-// => Matched EmailOnly; e = "alice@example.com"
-// => Output: Alice: email alice@example.com
-printfn "%s" (describeContact contact2)
-// => Matched PhoneOnly; p = "+1-555-0100"
-// => Output: Bob: phone +1-555-0100
-printfn "%s" (describeContact contact3)
-// => Matched EmailAndPhone; e = "carol@example.com", p = "+1-555-0200"
-// => Output: Carol: email carol@example.com, phone +1-555-0200
-```
-
-**Key Takeaway**: Replacing two optional fields with a discriminated union of the valid combination cases eliminates illegal states from the type system, removing entire categories of defensive null checks.
-
-**Why It Matters**: This is Wlaschin's most-cited example of the "make illegal states unrepresentable" principle. With `{ Email: string option; Phone: string option }`, a new developer can create `{ Email = None; Phone = None }` and the compiler is fine with it. The bug only surfaces at runtime. With `ContactMethod`, the union of valid cases is closed — there is no way to construct a contactless contact. Every function that receives a `Contact` can be written with full confidence that a contact method is present.
-
----
-
-### Example 38: Refactor Primitive Obsession — Typed Wrapper
-
-Primitive obsession is using raw strings, ints, or decimals for domain concepts that have their own identity and constraints. This example refactors a function from primitive obsession to typed wrappers, showing the before and after.
-
-```fsharp
-// Before: primitive obsession — all arguments are raw strings.
-// After: typed wrappers — distinct types, constraints enforced.
-
-// ── BEFORE: primitive obsession ───────────────────────────────────────────
-let processOrderBefore (orderId: string) (customerId: string) (productCode: string) (qty: int) =
-    // => All arguments are raw primitives — easy to confuse order
-    // => processOrderBefore "CUST-1" "ORD-1" "W1234" 3 — wrong arg order, compiles fine
-    // => The compiler cannot detect the transposition — both are strings
-    sprintf "Processing order %s for customer %s: %s × %d" orderId customerId productCode qty
-
-// ── AFTER: typed wrappers ─────────────────────────────────────────────────
-type OrderId'    = OrderId'    of string
-// => Single-case DU wrapper for order IDs — nominally distinct from all other string types
-type CustomerId' = CustomerId' of string
-// => Nominally distinct from OrderId' — cannot be accidentally substituted
-type ProductCode'= ProductCode'of string
-// => Nominally distinct product code — prevents mixing with IDs
-type Quantity'   = Quantity'   of int
-// => Wraps int — enables constraint validation via the smart constructor below
-
-module Quantity' =
-    let create (n: int) : Result<Quantity', string> =
-        // => Smart constructor: validates the positive-quantity invariant
-        if n <= 0 then Error (sprintf "Quantity must be positive (got %d)" n)
-        // => n=0 and negatives are rejected — at least 1 unit required
-        else Ok (Quantity' n)
-        // => n > 0: wrap in the Quantity' DU and return Ok
-    let value (Quantity' n) = n
-    // => Unwrap accessor: extracts the raw int for arithmetic or persistence
-
-let processOrderAfter (OrderId' oid) (CustomerId' cid) (ProductCode' pcode) (Quantity' qty) =
-    // => Pattern-matching in parameters unwraps all four wrappers inline
-    // => processOrderAfter (CustomerId' "C1") (OrderId' "O1") ... ← compile error
-    // => The compiler detects the argument order mistake — protects against transposition
-    sprintf "Processing order %s for customer %s: %s × %d" oid cid pcode qty
-    // => oid, cid, pcode, qty are the raw unwrapped values — safe to use here
-
-// Correct usage
-let order    = OrderId'     "ORD-001"
-// => order : OrderId' — nominally distinct from CustomerId' and ProductCode'
-let customer = CustomerId'  "CUST-42"
-// => customer : CustomerId' — cannot be passed where OrderId' is expected
-let product  = ProductCode' "W1234"
-// => product : ProductCode' — its own type, not interchangeable with order or customer
-let quantity = Quantity' 3
-// => quantity : Quantity' — wraps int; Quantity'.create would validate > 0
-
-// => All arguments are distinct types — cannot be accidentally transposed
-printfn "%s" (processOrderAfter order customer product quantity)
-// => Output: Processing order ORD-001 for customer CUST-42: W1234 × 3
-```
-
-**Key Takeaway**: Replacing primitive arguments with typed wrappers prevents transposition bugs and makes every function signature self-documenting — the type names ARE the documentation.
-
-**Why It Matters**: Primitive obsession is the most pervasive DDD anti-pattern. Functions with signatures like `(string, string, string, int)` invite argument transposition bugs that are invisible in tests using simple sequential values (1, 2, 3). Typed wrappers cost one line per type and pay dividends in readability, refactoring safety, and bug prevention throughout the system's lifetime. Wlaschin devotes a section of Ch 5 to this specific refactoring.
-
----
-
-### Example 39: ValidatedOrder Type Emitted by Validation Step
-
-The `ValidatedOrder` type is what the validation step produces. It uses constrained types for all fields, replacing the raw strings of `UnvalidatedOrder`. This demonstrates the "type-state" pattern: advancing through the workflow changes the type.
-
-```fsharp
-// ValidatedOrder: the type produced by the ValidateOrder workflow step.
-// All fields use constrained types — if a ValidatedOrder exists, it is valid.
-
-// Constrained types (abbreviated from earlier examples)
-type OrderId    = private OrderId    of string
-// => Private constructor: only the OrderId module can create values
-type String50   = private String50   of string
-// => Private constructor: only values that passed the 50-char check exist
-type EmailAddress = private EmailAddress of string
-// => Private constructor: only values containing "@" in the right place exist
-
-module OrderId    = let create s = if s = "" then Error "blank" else Ok (OrderId s)
-                   // => Returns Ok if non-blank; Error "blank" if empty
-                   // => Abbreviated: real version uses a longer error message
-                   let value (OrderId s) = s
-                   // => Unwrap accessor for the raw string
-module String50   = let create _ s = if s = "" then Error "blank" else Ok (String50 s)
-                   // => Field name parameter for diagnostic messages; validates non-blank
-                   // => Abbreviated: real version also checks length ≤50
-                   let value (String50 s) = s
-                   // => Unwrap accessor — used when writing to the database or UI
-module EmailAddress = let create s = if s.Contains "@" then Ok (EmailAddress s) else Error "invalid"
-                     // => Minimal "@" check; full validation uses a regex pattern
-                     let value (EmailAddress s) = s
-                     // => Unwrap accessor
-
-// Constrained address type (all validated fields)
-type ValidatedAddress = {
-    AddressLine1: String50
-    // => Non-blank, ≤50 chars — validated via String50.create
-    City: String50
-    // => Non-blank city name — validated
-    ZipCode: String50
-    // => Postal code — validated for non-blank (format check would use a ZipCode type)
-    Country: String50
-    // => Two or three letter country code — validated for non-blank
-}
-
-// Constrained customer info type
-type ValidatedCustomerInfo = {
-    FirstName: String50
-    // => Non-blank first name — validated on entry
-    LastName: String50
-    // => Non-blank last name — validated on entry
-    EmailAddress: EmailAddress
-    // => Valid email address — contains "@" separator; validated on entry
-}
-
-// ValidatedOrderLine: uses constrained types for all fields
-type ValidatedOrderLine = {
-    OrderLineId: String50
-    // => Non-blank line identifier — validated
-    ProductCode: String50
-    // => Would use ProductCode DU from Example 15 in the full model
-    Quantity: decimal
-    // => Would use constrained UnitQuantity or KilogramQuantity in the full model
-    // => Positive decimal — enforced by the validator when reading from UnvalidatedOrderLine
-}
-
-// The validated order — all fields are guaranteed valid by construction
-type ValidatedOrder = {
-    OrderId: OrderId
-    // => Validated, non-blank
-    CustomerInfo: ValidatedCustomerInfo
-    // => All customer fields validated — FirstName, LastName, EmailAddress
-    ShippingAddress: ValidatedAddress
-    // => All address fields validated — Line1, City, ZipCode, Country
-    BillingAddress: ValidatedAddress
-    // => Separate billing address — may differ from shipping address
-    OrderLines: ValidatedOrderLine list
-    // => Non-empty list — at least one line required (enforced in the validator)
-    // => Each line has a valid ProductCode and positive Quantity
-}
-
-printfn "ValidatedOrder type defined — all fields use constrained types"
-// => ValidatedOrder only exists if all fields passed their respective smart constructors
-// => Output: ValidatedOrder type defined — all fields use constrained types
-printfn "If a ValidatedOrder exists, all its fields passed validation"
-// => Compiler-enforced invariant: no way to construct ValidatedOrder with invalid fields
-// => Downstream functions can skip defensive validation — the type provides the guarantee
-// => Output: If a ValidatedOrder exists, all its fields passed validation
-// => This is the "types as proof" principle: the type IS the proof of validity
-```
-
-**Key Takeaway**: The `ValidatedOrder` type documents in the type system that all fields have been checked — downstream functions that accept `ValidatedOrder` can skip redundant null and range checks.
-
-**Why It Matters**: Without type-state progression, validation logic tends to be duplicated: the controller validates, the service layer validates again, and the domain object validates a third time "just in case." When different state types represent different lifecycle stages, validation happens exactly once — at the `UnvalidatedOrder → ValidatedOrder` transition. Functions that accept `ValidatedOrder` are contractually guaranteed to receive valid data, eliminating defensive duplication.
-
----
-
-### Example 40: PricedOrder Type Emitted by Pricing Step
-
-The `PricedOrder` type extends `ValidatedOrder` with pricing information: each line has a price, and the order has a total. This is only available after the pricing step. Functions that need prices must accept `PricedOrder`, enforcing that pricing has already occurred.
-
-```fsharp
-// PricedOrder: the type produced by the PriceOrder workflow step.
-// Extends the validated information with computed prices.
-
-// Reuse types from Example 39 (abbreviated)
-type OrderId       = OrderId       of string
-// => Validated order identifier — non-blank
-// => Note: in a compiled project these types would be imported from the domain module
-// => These abbreviations omit the private constructor for brevity
-type String50      = String50      of string
-// => Validated string — non-blank, ≤50 chars
-type EmailAddress  = EmailAddress  of string
-// => Validated email — contains "@" separator
-// => All three wrapper types prevent accidental mixing of IDs and strings
-
-type PricedOrderLine = {
-    // => Extends ValidatedOrderLine with a calculated price
-    OrderLineId:  string
-    // => Line identifier — carried through from ValidatedOrderLine
-    ProductCode:  string
-    // => Product code — unchanged from validation stage
-    Quantity:     decimal
-    // => Quantity — unchanged from validation stage
-    LinePrice:    decimal
-    // => LinePrice = unit price × quantity — only available after pricing
-    // => This field makes PricedOrderLine distinct from ValidatedOrderLine
-}
-
-type BillingAmount = {
-    // => The total billed amount — a domain concept with its own constraints
-    Amount: decimal
-    // => Total in the specified currency — sum of all PricedOrderLine.LinePrice values
-    Currency: string
-    // => Simplified — full version would use constrained types
-}
-
-type PricedOrder = {
-    OrderId:         string
-    // => Carried forward from ValidatedOrder
-    CustomerName:    string
-    // => Carried forward — needed for acknowledgment email
-    ShippingAddress: string
-    // => Simplified — full version would use ValidatedAddress type
-    BillingAddress:  string
-    // => May differ from shipping address for corporate orders
-    OrderLines:      PricedOrderLine list
-    // => Each line now carries its calculated price — distinct from ValidatedOrderLine
-    AmountToBill:    BillingAmount
-    // => The total — computed from the sum of all line prices
-}
-
-// Functions that need prices accept PricedOrder
-let calculateTotal (order: PricedOrder) : decimal =
-    // => Only a PricedOrder can be passed — ValidatedOrder won't compile here
-    // => The type system enforces that pricing has already occurred
-    order.OrderLines |> List.sumBy (fun line -> line.LinePrice)
-    // => Sum all line prices — safe because each line is guaranteed to have a price
-    // => List.sumBy: applies the selector to each element and returns the sum
-
-// Building a sample PricedOrder
-let samplePriced : PricedOrder = {
-    // => samplePriced : PricedOrder — all fields set, all prices computed
-    // => The type annotation ensures all required fields are present at construction time
-    OrderId = "ORD-001"; CustomerName = "Alice"; ShippingAddress = "10 Main St"; BillingAddress = "10 Main St"
-    OrderLines = [
-        { OrderLineId = "L1"; ProductCode = "W1234"; Quantity = 2m; LinePrice = 19.98m }
-        // => Line 1: 2 × £9.99 = £19.98
-        { OrderLineId = "L2"; ProductCode = "G456";  Quantity = 1m; LinePrice = 24.99m }
-        // => Line 2: 1 × £24.99 = £24.99
-    ]
-    AmountToBill = { Amount = 44.97m; Currency = "GBP" }
-    // => AmountToBill = £19.98 + £24.99 = £44.97
-}
-
-printfn "Total: £%.2f" (calculateTotal samplePriced)
-// => calculateTotal sums LinePrice for L1 (19.98) and L2 (24.99)
-// => Output: Total: £44.97
-```
-
-**Key Takeaway**: The `PricedOrder` type makes the pricing step's output explicit — functions that need prices are contractually guaranteed they will receive them, without defensive "has this been priced?" checks.
-
-**Why It Matters**: In a mutable OOP model, an `Order` object might have nullable `LinePrice` fields that are populated by the pricing service. Callers must defensively check for null prices. With distinct `ValidatedOrder` and `PricedOrder` types, the type signature enforces that pricing has already occurred. A function that generates an invoice must receive a `PricedOrder` — the compiler prevents it from accidentally receiving an un-priced order.
-
----
-
-### Example 41: ValidateOrder Workflow Signature with Dependencies
-
-The `ValidateOrder` function takes three dependencies (product existence check, address validation service, quantity unit lookup) and the input, and returns either a `ValidatedOrder` or a list of validation errors. Wlaschin presents this signature in Ch 7.
-
-```fsharp
-// ValidateOrder: the full signature with injected dependencies and Async<Result> return.
-
-// Dependency function types — infrastructure interfaces as function types
-type CheckProductCodeExists = string -> bool
-// => Synchronous product lookup (could use the catalogue in memory)
-// => Returns bool: true if product exists in the catalogue, false otherwise
-
-type CheckAddressExists = string -> Async<Result<string, string>>
-// => Async address verification service call
-// => Returns Async<Result<string, string>>: Ok verified address or Error message
-
-// Abbreviated domain types
-type UnvalidatedOrder = { OrderId: string; ProductCode: string; Qty: int; Address: string }
-// => Raw input — all fields are primitives, none validated yet
-type ValidatedOrder   = { OrderId: string; ProductCode: string; Qty: int; Address: string }
-// => Same shape here; full model uses constrained types (OrderId, ProductCode DU, etc.)
-
-// The workflow function signature with all dependencies
-let validateOrder
-    (checkProductExists: CheckProductCodeExists)
-    // => Dependency 1: synchronous product lookup
-    (checkAddressExists: CheckAddressExists)
-    // => Dependency 2: async address verification
-    (input: UnvalidatedOrder)
-    // => The workflow input
-    : Async<Result<ValidatedOrder, string list>> =
-    // => Async because address check is async; Result because validation can fail
-    // => Error is string list for accumulation (cf. Example 36)
-    async {
-        // Validate product code (synchronous)
-        let productOk = checkProductExists input.ProductCode
-        // => productOk : bool — true if product exists in the catalogue
-        // => Returns bool — no async needed for in-memory catalogue
-
-        // Validate address (async)
-        let! addressResult = checkAddressExists input.Address
-        // => addressResult : Result<string, string> — Ok validated address or Error message
-        // => Await the async address service
-
-        match productOk, addressResult with
-        | true, Ok validAddress ->
-            // => Both validations passed — product exists AND address is valid
-            return Ok { OrderId = input.OrderId; ProductCode = input.ProductCode
-                        Qty = input.Qty; Address = validAddress }
-            // => Return ValidatedOrder with the verified address from the service
-        | false, Ok _ ->
-            // => Product not found but address was valid — only product error
-            return Error [ sprintf "Product '%s' not found" input.ProductCode ]
-            // => Single-element error list — applicative pattern (Example 36)
-        | true, Error e ->
-            // => Product exists but address was invalid — only address error
-            return Error [ sprintf "Address invalid: %s" e ]
-            // => Single-element error list with the address service's error message
-        | false, Error e ->
-            // => Both failed — accumulate both errors into a list
-            return Error [ sprintf "Product '%s' not found" input.ProductCode
-                           sprintf "Address invalid: %s" e ]
-            // => Accumulate both errors — user sees both problems at once
-    }
-
-printfn "ValidateOrder signature: UnvalidatedOrder -> Async<Result<ValidatedOrder, string list>>"
-// => Async: address check is I/O; Result: validation can fail; string list: all errors collected
-// => Output: ValidateOrder signature: UnvalidatedOrder -> Async<Result<ValidatedOrder, string list>>
-```
-
-**Key Takeaway**: Expressing all dependencies as function-type parameters produces a self-documenting signature where every input, output, and effect is visible and compiler-checked.
-
-**Why It Matters**: OOP dependency injection hides dependencies behind constructor parameters and interface registrations that are invisible in the method signature. The functional approach makes every dependency an explicit parameter. This means the signature alone tells you: "this function checks products and verifies addresses; it may fail with a list of errors; it involves I/O (Async)." No reading the implementation required — a prerequisite for writing good tests and reviewing code changes safely.
-
----
-
-### Example 42: PriceOrder Workflow Signature with Dependencies
-
-The `PriceOrder` function takes a price lookup dependency and a `ValidatedOrder`, and returns a `PricedOrder`. It can fail if a product's price is not in the catalogue. Wlaschin presents this in Ch 7.
-
-```fsharp
-// PriceOrder: ValidatedOrder -> Async<Result<PricedOrder, PricingError>>
-
-// Domain types (abbreviated)
-type ValidatedOrderLine = { ProductCode: string; Qty: decimal }
-// => Validated line: ProductCode and Qty have been checked; no pricing yet
-type PricedOrderLine    = { ProductCode: string; Qty: decimal; Price: decimal }
-// => Priced line: extends ValidatedOrderLine with the calculated Price
-type ValidatedOrder     = { OrderId: string; Lines: ValidatedOrderLine list }
-// => Validated order: all lines validated; ready for pricing step
-type PricedOrder        = { OrderId: string; Lines: PricedOrderLine list; Total: decimal }
-// => Priced order: all lines have prices; Total is the sum
-
-// Error type for the pricing step
-type PricingError =
-    | ProductPriceNotFound of productCode: string
-    // => Product is in the catalogue but has no price
-    // => Caller should surface this as a 500-level error — catalogue data issue
-    | PriceCalculationError of message: string
-    // => Arithmetic issue (e.g. overflow)
-    // => Rare but must be handled: very large quantities × very high prices
-
-// Dependency: get the price for a product code
-type GetProductPrice = string -> Result<decimal, PricingError>
-// => Synchronous price lookup (catalogue lives in memory)
-// => Returns Ok decimal on success, or Error PricingError on failure
-
-// The workflow implementation
-let priceOrder
-    (getProductPrice: GetProductPrice)
-    // => Injected price lookup dependency
-    (validatedOrder: ValidatedOrder)
-    // => Input: already-validated order — Lines are known to be valid
-    : Result<PricedOrder, PricingError> =
-    // => Result only — price lookup is synchronous in this design
-    // => If any line fails, the whole order fails (short-circuit)
-    let priceLine (line: ValidatedOrderLine) =
-        // => Prices a single line: lookup price and compute line total
-        getProductPrice line.ProductCode
-        // => Returns Result<decimal, PricingError> — Ok unit price or Error
-        |> Result.map (fun unitPrice -> { ProductCode = line.ProductCode; Qty = line.Qty; Price = unitPrice * line.Qty })
-        // => Result.map: if Ok, compute Price = unitPrice × Qty; if Error, propagate
-        // => For each line: look up price and compute line total
-
-    // Inline implementation of sequenceResults — converts Result list to Result of list.
-    // No external packages required; runs on bare dotnet fsi.
-    let sequenceResults (results: Result<'a, 'e> list) : Result<'a list, 'e> =
-        // => Fold right, accumulating Ok values or short-circuiting on the first Error
-        List.foldBack
-            (fun r acc ->
-                match r, acc with
-                | Ok v, Ok vs   -> Ok (v :: vs)
-                // => Both Ok: prepend v to the accumulated list
-                | Error e, _    -> Error e
-                // => Current step failed: short-circuit with its error
-                | _, Error e    -> Error e
-                // => Accumulator already has an error: propagate it
-            )
-            results
-            (Ok [])
-        // => Start with Ok [] and fold each Result into it
-
-    validatedOrder.Lines
-    // => validatedOrder.Lines : ValidatedOrderLine list — one element per product ordered
-    |> List.map priceLine
-    // => Map each line through the pricing function — produces Result<PricedOrderLine, PricingError> list
-    |> sequenceResults
-    // => Convert Result list → Result of list; short-circuits on first Error
-    // => If any line's price lookup fails, the whole pricing step fails
-    // => sequenceResults: no external packages — pure standard library
-    |> Result.map (fun pricedLines ->
-        let total = pricedLines |> List.sumBy (fun l -> l.Price)
-        // => Total = sum of all line prices — e.g. 19.98 + 24.99 = 44.97
-        { OrderId = validatedOrder.OrderId; Lines = pricedLines; Total = total })
-    // => Assemble the PricedOrder with all priced lines and their sum
-    // => PricedOrder returned as Ok — callers use Result.bind to continue the pipeline
-
-printfn "PriceOrder: GetProductPrice -> ValidatedOrder -> Result<PricedOrder, PricingError>"
-// => Output: PriceOrder: GetProductPrice -> ValidatedOrder -> Result<PricedOrder, PricingError>
-```
-
-**Key Takeaway**: The `PriceOrder` function makes its dependency (price lookup) and its error modes (`PricingError`) explicit in the type signature, so consumers know exactly what can fail and why.
-
-**Why It Matters**: Pricing logic is one of the most frequently changing parts of a domain. If pricing errors are thrown as generic exceptions, callers may not know which exceptions to expect. `PricingError` as a discriminated union documents every pricing failure mode. When the catalogue team adds a new error case (e.g., `PriceTemporarilyUnavailable`), the compiler immediately flags every handler that does not cover the new case — making pricing evolution safe.
-
----
-
-### Example 43: AcknowledgeOrder Workflow Signature
-
-The `AcknowledgeOrder` step creates a customer acknowledgment and attempts to send it. If the send fails, the workflow should continue — a missing acknowledgment is not a reason to abort the order. Wlaschin discusses this side-effect-at-the-edge pattern in Ch 7.
-
-```fsharp
-// AcknowledgeOrder: send a confirmation email — failure is logged but not propagated.
-// Side effects (email sending) are at the edge; the core produces a pure output.
-
-// Domain types
-type PricedOrder = { OrderId: string; CustomerEmail: string; Total: decimal }
-// => The input — a priced order ready for acknowledgment
-
-type OrderAcknowledgment = { EmailAddress: string; Letter: string }
-// => The acknowledgment value — email address and content
-
-type SendResult = Sent | NotSent
-// => Whether the acknowledgment was delivered
-
-// Dependency: send the acknowledgment
-type SendAcknowledgment = OrderAcknowledgment -> SendResult
-// => Infrastructure function — email service, file system, etc.
-
-// Pure function: create the acknowledgment content from the order
-let createAcknowledgmentLetter (order: PricedOrder) : string =
-    // => Pure — no I/O, just string formatting
-    sprintf "Dear customer,\nYour order %s for £%.2f has been received.\nThank you!"
-        order.OrderId order.Total
-
-// Workflow step: create and attempt to send acknowledgment
-let acknowledgeOrder
-    (sendAcknowledgment: SendAcknowledgment)
-    // => Injected dependency — the sending function
-    (pricedOrder: PricedOrder)
-    // => Input: the priced order
-    : OrderAcknowledgment option =
-    // => Return type: the acknowledgment if sent, None if not
-    // => No Result — a send failure does NOT abort the workflow
-    let letter = createAcknowledgmentLetter pricedOrder
-    // => Create letter content — pure, no effects
-    let acknowledgment = { EmailAddress = pricedOrder.CustomerEmail; Letter = letter }
-    // => Assemble the acknowledgment value
-    match sendAcknowledgment acknowledgment with
-    | Sent    -> Some acknowledgment
-    // => Sent successfully — return the acknowledgment for event logging
-    | NotSent -> None
-    // => Send failed — return None; caller logs but does not abort
-
-let stubSend : SendAcknowledgment = fun _ -> Sent
-// => Stub: always succeeds — used in tests and happy-path demos
-// => In production: replace with a real email service function
-
-let order = { OrderId = "ORD-001"; CustomerEmail = "alice@example.com"; Total = 44.97m }
-// => order : PricedOrder — a sample order ready for acknowledgment
-let result = acknowledgeOrder stubSend order
-// => stubSend always returns Sent → acknowledgeOrder returns Some acknowledgment
-// => result : OrderAcknowledgment option = Some { EmailAddress = "alice@example.com"; Letter = "..." }
-
-printfn "Acknowledgment sent: %b" result.IsSome
-// => result.IsSome = true (stubSend returned Sent)
-// => Output: Acknowledgment sent: true
-```
-
-**Key Takeaway**: Making `AcknowledgeOrder` return `option` rather than `Result` communicates the domain decision that a failed acknowledgment is acceptable — the workflow continues regardless.
-
-**Why It Matters**: Not all failures are equal. A failed pricing step is critical — the order cannot proceed without a price. A failed acknowledgment email is regrettable but does not prevent the order from being fulfilled. Using `option` instead of `Result` makes this domain decision explicit in the type. Anyone reading the function signature knows immediately that acknowledgment failure is handled gracefully. Wlaschin dedicates a section of Ch 7 to this distinction between "errors that abort" and "errors that are logged and ignored."
-
----
-
-### Example 44: Pipeline Composition — Wiring Three Workflow Steps
-
-The `placeOrder` workflow composes validate, price, and acknowledge into a single function using the `asyncResult` CE. This is the culmination of the pipeline approach shown in earlier examples. Wlaschin assembles this in Ch 7 and revisits it in Ch 11.
-
-```mermaid
-sequenceDiagram
-    participant C as Caller
-    participant V as validateOrder
-    participant P as priceOrder
-    participant A as acknowledgeOrder
-    participant R as Result
-
-    C->>V: UnvalidatedOrder
-    V-->>C: Async<Result<ValidatedOrder>>
-    C->>P: ValidatedOrder (if Ok)
-    P-->>C: Result<PricedOrder>
-    C->>A: PricedOrder (if Ok) - side effect
-    A-->>C: unit
-    C->>R: Ok [OrderPlaced event]
-```
-
-```fsharp
-// The complete PlaceOrder workflow: validate → price → acknowledge → publish events.
-// Three steps composed using the asyncResult CE — readable, typed, individually testable.
-
-open System
-
-// ── Abbreviated types — one distinct type per lifecycle stage ──────────────
-type UnvalidatedOrder = { OrderId: string; ProductCode: string; Qty: int; Email: string }
-// => Raw input from the HTTP request — nothing validated
-// => All fields are raw primitives: strings and int, no constrained types
-
-type ValidatedOrder   = { OrderId: string; ProductCode: string; Qty: int; Email: string }
-// => Produced by validateOrder — all fields passed validation
-// => Same shape as UnvalidatedOrder here; full model uses constrained types
-
-type PricedOrder      = { OrderId: string; ProductCode: string; Qty: int; Email: string; Total: decimal }
-// => Produced by priceOrder — extended with the computed total
-// => Total is the only new field — the pricing step's output
-
-type OrderPlaced      = { OrderId: string; Total: decimal }
-// => Domain event emitted when the workflow succeeds
-// => Carries just the identifier and total — what downstream contexts need
-
-type PlacingOrderError =
-    // => Named error union — every failure mode explicit
-    | Validation of string
-    // => Input data failed validation — user-correctable
-    | Pricing    of string
-    // => Pricing calculation failed — catalogue/configuration error
-
-// ── Step 1: validateOrder — Async<Result<ValidatedOrder, PlacingOrderError>> ─────
-let validateOrder (input: UnvalidatedOrder) : Async<Result<ValidatedOrder, PlacingOrderError>> =
-    // => Async: real implementation would call an async address-verification service
-    // => Result: validation can fail with a named error
-    async {
-        if input.OrderId = "" then return Error (Validation "OrderId blank")
-        // => Short-circuit: empty OrderId diverts to Error track
-        else return Ok { OrderId = input.OrderId; ProductCode = input.ProductCode; Qty = input.Qty; Email = input.Email }
-        // => All checks passed: return ValidatedOrder on the Ok track
-    }
-
-// ── Step 2: priceOrder — Result<PricedOrder, PlacingOrderError> ─────────────
-let priceOrder (validated: ValidatedOrder) : Result<PricedOrder, PlacingOrderError> =
-    // => Synchronous: the product catalogue lives in memory — no async needed
-    let unitPrice = if validated.ProductCode.StartsWith "W" then 9.99m else 24.99m
-    // => Widget = £9.99, Gizmo = £24.99 — simplified catalogue lookup
-    Ok { OrderId = validated.OrderId; ProductCode = validated.ProductCode
-         Qty = validated.Qty; Email = validated.Email; Total = decimal validated.Qty * unitPrice }
-    // => Returns PricedOrder — Total = unitPrice * Qty = 9.99 * 3 = 29.97
-    // => This is the only place in the workflow where money arithmetic occurs
-
-// ── Step 3: acknowledgeOrder — side effect only, no Result ─────────────────
-let acknowledgeOrder (priced: PricedOrder) : unit =
-    // => Unit return: acknowledgment failure is non-critical (see Example 43)
-    // => Returning unit (not Result) signals: "failure here does not abort the workflow"
-    printfn "Acknowledgment queued for %s" priced.Email
-    // => In production: enqueue an email send job — effect at the edge
-
-// ── asyncResult CE builder — composes Async<Result> steps ─────────────────
-type AsyncResultBuilder() =
-    member _.Return x = async { return Ok x }
-    // => Lift a plain value into Async<Result>
-    member _.ReturnFrom x = x
-    // => Pass an Async<Result> through unchanged
-    member _.Bind(x: Async<Result<_,_>>, f) =
-        async {
-            let! r = x
-            // => Await the async operation
-            match r with Ok v -> return! f v | Error e -> return Error e
-            // => Ok: call next step; Error: short-circuit
-        }
-
-let asyncResult = AsyncResultBuilder()
-// => asyncResult : AsyncResultBuilder — the CE instance
-
-// ── The composed workflow ─────────────────────────────────────────────────
-let placeOrder (input: UnvalidatedOrder) : Async<Result<OrderPlaced list, PlacingOrderError>> =
-    // => Returns Async<Result<...>> — async because Step 1 is async; Result because Step 1 or 2 can fail
-    asyncResult {
-        let! validated = validateOrder input
-        // => let! awaits the Async and unwraps Ok; short-circuits on Error (Validation "OrderId blank")
-        // => validated : ValidatedOrder = { OrderId = "ORD-001"; ... } if input.OrderId is non-blank
-        let! priced    = async { return priceOrder validated }
-        // => priceOrder is sync — wrap in async for uniform CE composition
-        // => priced : PricedOrder = { ...; Total = 29.97M }
-        do acknowledgeOrder priced
-        // => do: side effect — acknowledgment email queued; not in the Result chain
-        return [ { OrderId = priced.OrderId; Total = priced.Total } ]
-        // => return wraps the event list in Ok — workflow complete
-        // => The list has one element: OrderPlaced { OrderId = "ORD-001"; Total = 29.97M }
-    }
-
-// ── Run and inspect ───────────────────────────────────────────────────────
-let testInput = { OrderId = "ORD-001"; ProductCode = "W1234"; Qty = 3; Email = "alice@example.com" }
-// => testInput : UnvalidatedOrder — a valid input that will flow through all three steps
-let result    = placeOrder testInput |> Async.RunSynchronously
-// => All three steps executed; acknowledgment side effect fired
-// => result : Result<OrderPlaced list, PlacingOrderError> = Ok [{ OrderId = "ORD-001"; Total = 29.97M }]
-
-match result with
-| Ok events -> printfn "Success — %d events: %A" (List.length events) events
-// => events : OrderPlaced list — 1 element with the OrderId and Total
-| Error e   -> printfn "Error: %A" e
-// => Not reached — testInput is valid
-// => Output: Acknowledgment queued for alice@example.com
-// => Output: Success — 1 events: [{ OrderId = "ORD-001"; Total = 29.97M }]
-```
-
-**Key Takeaway**: Composing three independently-testable workflow steps into a single pipeline using the `asyncResult` CE produces a readable, type-safe end-to-end workflow where each step's contract is enforced by the compiler.
-
-**Why It Matters**: The composition of validate → price → acknowledge is the backbone of Wlaschin's book. Its power lies in the individual testability of each step: you can unit test `validateOrder`, `priceOrder`, and `acknowledgeOrder` with simple stubs, then wire them together in the integration test. The types at each boundary (UnvalidatedOrder, ValidatedOrder, PricedOrder) prevent incorrect wiring. Adding a new step (e.g., a fraud check between validate and price) is as simple as inserting a new `let!` binding.
-
----
-
-### Example 45: Domain Error DU — Every Failure Mode Named
-
-Every failure mode in the PlaceOrder workflow is modelled as a named case in a `PlacingOrderError` discriminated union. This makes every error mode explicit, documentable, and exhaustively handleable. Wlaschin introduces the error type taxonomy in Ch 10.
-
-```fsharp
-// Every workflow failure mode is a named DU case — no generic exceptions.
-// Callers must handle each case explicitly.
-
-type PlacingOrderError =
-    // ── Validation errors (user correctable) ─────────────────────────────
-    | OrderIdIsBlank
-    // => Client sent an empty order ID — ask them to retry with a valid ID
-    | OrderHasNoLines
-    // => Client sent an order with zero lines — at least one required
-    | ProductCodeNotFound of productCode: string
-    // => A referenced product does not exist in the catalogue
-    | InvalidQuantity     of productCode: string * qty: decimal
-    // => Quantity is out of range for this product type
-
-    // ── Pricing errors (system/catalogue errors) ──────────────────────────
-    | ProductPriceNotFound of productCode: string
-    // => Product exists but has no price — catalogue data issue
-    | PriceOverflow
-    // => Total price exceeded decimal limits — unusual but must be handled
-
-    // ── Remote service errors ─────────────────────────────────────────────
-    | AddressCheckFailed   of message: string
-    // => External address verification service returned an error
-    | AcknowledgmentFailed of orderId: string
-    // => Email service could not deliver the acknowledgment (non-fatal by design)
-
-// Handling all error cases at the API boundary
-let toHttpResponse (error: PlacingOrderError) : int * string =
-    // => Maps domain errors to (HTTP status code, message) pairs
-    // => Returns (HTTP status code, message body) tuple — all cases must be handled
-    match error with
-    | OrderIdIsBlank            -> 400, "Order ID must not be blank"
-    // => 400 Bad Request: client sent an empty ID — ask them to provide a valid one
-    | OrderHasNoLines           -> 400, "Order must have at least one line"
-    // => 400 Bad Request: client sent an empty order — at least one line required
-    | ProductCodeNotFound code  -> 400, sprintf "Product '%s' not found" code
-    // => 400 Bad Request: client referenced an invalid product code
-    | InvalidQuantity (code, q) -> 400, sprintf "Invalid quantity %.2f for product '%s'" q code
-    // => 400 Bad Request: quantity is out of range for this product type
-    | ProductPriceNotFound code -> 500, sprintf "No price for product '%s' — please contact support" code
-    // => 500 Internal Error: product exists but has no price — a catalogue data issue, not client's fault
-    | PriceOverflow             -> 500, "Order total is too large — please contact support"
-    // => 500 Internal Error: arithmetic overflow — rare but must be handled
-    | AddressCheckFailed msg    -> 503, sprintf "Address service unavailable: %s" msg
-    // => 503 Service Unavailable: external dependency is down — client should retry
-    | AcknowledgmentFailed oid  -> 200, sprintf "Order %s placed (acknowledgment delayed)" oid
-    // => 200 OK: order succeeded; acknowledgment email delayed — domain decision (cf. Example 43)
-    // => AcknowledgmentFailed maps to 200 — domain decision (cf. Example 43)
-
-let sampleError = ProductCodeNotFound "X999"
-// => sampleError : PlacingOrderError = ProductCodeNotFound "X999"
-let (status, message) = toHttpResponse sampleError
-// => toHttpResponse ProductCodeNotFound maps to (400, "Product 'X999' not found")
-printfn "HTTP %d: %s" status message
-// => Output: HTTP 400: Product 'X999' not found
-```
-
-**Key Takeaway**: A comprehensive domain error DU documents every failure mode, forces exhaustive handling at the boundary, and carries the data needed to produce helpful error messages or retry logic.
-
-**Why It Matters**: Generic exception handling (`catch (Exception e)`) loses the semantic distinction between a bad request (user error, 400) and a service unavailability (500) and a deliberate domain decision (acknowledgment failure → still 200). Domain error DUs restore this semantic richness. When a new failure mode is added to the workflow, the compiler immediately flags the `toHttpResponse` function — ensuring the HTTP mapping stays up to date without manual auditing.
-
----
-
-### Example 46: Mapping Domain Error to API Error at the Boundary
-
-Domain errors live in the domain model and should not bleed into API responses. A translation layer at the boundary maps domain errors to API-specific response types. This is the functional equivalent of an exception handler at the controller layer. Wlaschin covers this boundary translation in Ch 12.
-
-```fsharp
-// Map domain errors to API errors at the HTTP boundary.
-// Domain model stays clean; API concerns are isolated to the translation function.
-
-// ── Domain error type ─────────────────────────────────────────────────────
-type DomainError =
-    | ValidationError    of field: string * message: string
-    // => Input field failed validation — user-correctable error
-    | ProductNotFound    of code: string
-    // => The referenced product does not exist — also user-correctable
-    | ServiceUnavailable of service: string
-    // => Infrastructure dependency is down — infrastructure error, not user error
-
-// ── API error type ─────────────────────────────────────────────────────────
-type ApiErrorResponse = {
-    StatusCode: int
-    // => HTTP status code: 400 (bad request), 404 (not found), 503 (service unavailable)
-    ErrorCode:  string
-    // => Machine-readable error code for client error handling (e.g. "PRODUCT_NOT_FOUND")
-    Message:    string
-    // => Human-readable error description for logging and developer debugging
-}
-
-// ── Translation function ───────────────────────────────────────────────────
-let toApiError (domainError: DomainError) : ApiErrorResponse =
-    // => Pure translation function — no side effects, fully testable
-    // => Takes a domain error and produces an API-friendly response shape
-    match domainError with
-    | ValidationError (field, msg) ->
-        // => field = the invalid field name; msg = the validation message
-        { StatusCode = 400
-          // => 400 Bad Request: the client sent invalid data
-          ErrorCode  = "VALIDATION_ERROR"
-          // => Machine-readable code for client-side error handling
-          Message    = sprintf "Field '%s': %s" field msg }
-          // => Human-readable message combining field name and reason
-        // => Bad Request — client can fix and retry
-
-    | ProductNotFound code ->
-        // => code = the product code that was not found in the catalogue
-        { StatusCode = 400
-          // => 400: the client referenced a non-existent product
-          ErrorCode  = "PRODUCT_NOT_FOUND"
-          // => Distinct error code from VALIDATION_ERROR — clients can handle differently
-          Message    = sprintf "Product '%s' does not exist in catalogue" code }
-          // => Includes the code so the client knows which product to fix
-        // => Also a bad request — client sent an invalid product code
-
-    | ServiceUnavailable service ->
-        // => service = the name of the unavailable external service
-        { StatusCode = 503
-          // => 503 Service Unavailable: an upstream dependency is down
-          ErrorCode  = "SERVICE_UNAVAILABLE"
-          // => Client should implement retry with backoff on 503
-          Message    = sprintf "The '%s' service is temporarily unavailable" service }
-          // => Includes the service name for operational clarity
-        // => Infrastructure error — client should retry after a delay
-
-// ── Workflow result mapped at the boundary ─────────────────────────────────
-let handleWorkflowResult (result: Result<string, DomainError>) : ApiErrorResponse option =
-    // => Converts a workflow Result into an optional API error response
-    match result with
-    | Ok _    -> None
-    // => Success — no error response needed; return None
-    | Error e -> Some (toApiError e)
-    // => Failure — translate domain error to API error and wrap in Some
-
-let domainResult : Result<string, DomainError> = Error (ProductNotFound "X999")
-// => domainResult simulates a workflow that failed because product "X999" was not found
-let apiError = handleWorkflowResult domainResult
-// => handleWorkflowResult matches Error → calls toApiError (ProductNotFound "X999")
-// => apiError : ApiErrorResponse option = Some { StatusCode = 400; ErrorCode = "PRODUCT_NOT_FOUND"; ... }
-
-match apiError with
-| Some e -> printfn "API error %d [%s]: %s" e.StatusCode e.ErrorCode e.Message
-// => e.StatusCode = 400; e.ErrorCode = "PRODUCT_NOT_FOUND"; e.Message = "Product 'X999' does not exist in catalogue"
-| None   -> printfn "No error"
-// => apiError = Some — so this branch prints the error
-// => Output: API error 400 [PRODUCT_NOT_FOUND]: Product 'X999' does not exist in catalogue
-```
-
-**Key Takeaway**: Isolating the domain-to-API error translation in a dedicated function keeps the domain model free of HTTP concerns and makes the translation logic testable and auditable.
-
-**Why It Matters**: Without a translation layer, domain types leak into HTTP responses (exposing internal field names and error structures to clients), or HTTP concerns (status codes, error codes) leak into the domain model (coupling it to a specific protocol). The translation function is small, pure, and exhaustively testable. Wlaschin's rule in Ch 12 is that the domain model should not know it is served over HTTP — the boundary translation is the adapter that enforces this separation.
-
----
-
-### Example 47: Pushing Effects to the Edges
-
-The functional core / imperative shell pattern keeps all domain logic pure and pushes I/O (database reads, HTTP calls, email sending) to the outermost layer. Wlaschin calls this "keeping I/O at the edges" throughout the book, especially in Ch 11.
-
-```mermaid
-graph TD
-    subgraph Shell["Imperative Shell (I/O)"]
-        Read["Read phase\n(DB reads, HTTP calls)"]
-        Write["Write phase\n(DB writes, events, email)"]
-    end
-    subgraph Core["Functional Core (pure)"]
-        V["validateOrderPure"]
-        C["calculateTotalPure"]
-        E["createEventPure"]
-    end
-
-    Read -- "data" --> V
-    V -- "Ok result" --> C
-    C -- "total" --> E
-    E -- "event data" --> Write
-
-    style Core fill:#0173B2,stroke:#000,color:#fff
-    style Shell fill:#DE8F05,stroke:#000,color:#000
-```
-
-```fsharp
-// Functional core: pure domain logic — no I/O.
-// Imperative shell: orchestrates I/O and calls the pure core.
-
-// ── Pure domain functions (no I/O, no Async) ──────────────────────────────
-let validateOrderPure (orderId: string) (qty: int) : Result<string * int, string> =
-    // => Pure — takes data, returns data, no effects
-    // => Result<string * int, string>: Ok (trimmedId, qty) or Error message
-    if orderId = ""  then Error "OrderId blank"
-    // => Guard 1: blank order ID rejected
-    elif qty <= 0    then Error "Quantity must be positive"
-    // => Guard 2: non-positive quantity rejected
-    else Ok (orderId.Trim(), qty)
-    // => Both guards passed — return the validated (id, qty) tuple
-
-let calculateTotalPure (unitPrice: decimal) (qty: int) : decimal =
-    unitPrice * decimal qty
-    // => Pure — just arithmetic; result = unitPrice × qty (e.g. 9.99 × 3 = 29.97)
-
-let createEventPure (orderId: string) (total: decimal) : string =
-    // => Pure — just a record constructor
-    sprintf "OrderPlaced:{orderId=%s,total=%.2f}" orderId total
-    // => e.g. "OrderPlaced:{orderId=ORD-001,total=29.97}" — the event as a JSON-like string
-
-// ── Imperative shell: orchestrates all I/O ────────────────────────────────
-let runPlaceOrder (rawOrderId: string) (rawQty: int) =
-    // => Shell: performs I/O, then delegates to pure core functions
-
-    // Step 1: I/O — read product price from "database" (simulated)
-    let unitPrice =
-        printfn "[I/O] Reading product price from database..."
-        // => Effect: database read
-        9.99m
-        // => Returns the price
-
-    // Step 2: Pure domain logic — no I/O here
-    let validationResult = validateOrderPure rawOrderId rawQty
-    // => Pure function call — no effects
-
-    match validationResult with
-    | Error e ->
-        printfn "[Shell] Validation failed: %s" e
-        // => I/O: logging — at the shell, not in the domain
-    | Ok (orderId, qty) ->
-        let total = calculateTotalPure unitPrice qty
-        // => total = 9.99 × 3 = 29.97 — pure arithmetic, no I/O
-        // => Pure: arithmetic
-        let event = createEventPure orderId total
-        // => event = "OrderPlaced:{orderId=ORD-001,total=29.97}" — pure string construction
-        // => Pure: event construction
-
-        // Step 3: I/O — publish the event (simulated)
-        printfn "[I/O] Publishing event: %s" event
-        // => Effect: message bus publish — at the edge
-        // => Only I/O happens here; the event itself was created by pure logic above
-
-runPlaceOrder "ORD-001" 3
-// => Output: [I/O] Reading product price from database...
-// => Output: [I/O] Publishing event: OrderPlaced:{orderId=ORD-001,total=29.97}
-```
-
-**Key Takeaway**: Separating pure domain logic from I/O effects makes the core independently testable — every pure function can be unit tested without mocks, databases, or message buses.
-
-**Why It Matters**: The hardest part of testing a DDD application is usually the I/O: mocking databases, HTTP clients, and message buses. If domain logic is pure, it needs no mocking — just call it with inputs and assert on outputs. Gary Bernhardt's "functional core, imperative shell" pattern (embraced and applied by Wlaschin in Ch 11) directs that all decisions happen in the pure core and all I/O happens in a thin shell. This maximises the testable surface area and minimises the infrastructure dependencies that slow down the test suite.
-
----
-
-### Example 48: Pure Core Wrapping at the Edge
-
-This example shows the complete shape of the edge wrapper: it performs all I/O reads before calling the pure core, calls the pure core, then performs all I/O writes after the core returns. No I/O appears inside the pure domain functions.
-
-```fsharp
-// Edge wrapper: read → pure core → write. No I/O inside the core.
-
-// ── Pure domain types and functions ──────────────────────────────────────
-type OrderData    = { OrderId: string; ProductCode: string; Qty: int }
-// => Input to the pure domain function — assembled from I/O results at the edge
-type ProductPrice = { Code: string; UnitPrice: decimal }
-// => The price record — loaded from catalogue/database at the edge
-type OrderTotal   = { OrderId: string; Total: decimal }
-// => Output of the pure domain function — the computed total
-
-let computeTotal (order: OrderData) (price: ProductPrice) : Result<OrderTotal, string> =
-    // => Pure: takes data, computes result — no effects
-    // => Returns Result: price code mismatch is a domain error, not an exception
-    if order.ProductCode <> price.Code then
-        Error (sprintf "Price for '%s' does not match order product '%s'" price.Code order.ProductCode)
-        // => Pure error — no throwing, no logging inside this function
-    else
-        Ok { OrderId = order.OrderId; Total = price.UnitPrice * decimal order.Qty }
-        // => Pure computation: Total = UnitPrice × Qty
-        // => e.g. 9.99 × 3 = 29.97
-
-// ── Imperative edge wrapper ───────────────────────────────────────────────
-let processOrder (rawOrderId: string) (rawCode: string) (rawQty: int) =
-    // ─ READ PHASE: all I/O reads happen here ─────────────────────────────
-    printfn "[Edge] Reading price from catalogue..."
-    // => Simulate a database/cache read — real implementation would be async
-    let productPrice = { Code = rawCode; UnitPrice = 9.99m }
-    // => productPrice : ProductPrice — loaded from catalogue; UnitPrice = £9.99 (simplified)
-    // => In production: fetch from real data store
-
-    let order = { OrderId = rawOrderId; ProductCode = rawCode; Qty = rawQty }
-    // => order : OrderData — assembled from raw parameters; no validation here
-    // => Assemble the domain input — no validation here, just construction
-
-    // ─ PURE CORE: call the domain function ───────────────────────────────
-    let result = computeTotal order productPrice
-    // => Pure function — fast, testable, no I/O
-
-    // ─ WRITE PHASE: all I/O writes happen here ───────────────────────────
-    match result with
-    | Ok total ->
-        printfn "[Edge] Persisting order total: £%.2f for %s" total.Total total.OrderId
-        // => Simulate a database write
-        printfn "[Edge] Publishing OrderPlaced event"
-        // => Simulate a message bus publish
-    | Error e ->
-        printfn "[Edge] Logging error: %s" e
-        // => Simulate error logging
-
-processOrder "ORD-001" "W1234" 3
-// => Output: [Edge] Reading price from catalogue...
-// => Output: [Edge] Persisting order total: £29.97 for ORD-001
-// => Output: [Edge] Publishing OrderPlaced event
-```
-
-**Key Takeaway**: The read → core → write structure of the edge wrapper clearly separates I/O from domain logic, making both independently testable and replaceable.
-
-**Why It Matters**: In practice, "pushing effects to the edges" means restructuring code to collect all needed data before calling the pure core, then applying all the computed effects after. This discipline pays dividends during refactoring: the pure core functions can be moved, renamed, and tested without touching the I/O layer. Conversely, the I/O layer (database, message bus, email) can be swapped (e.g., SQL to Cosmos DB) without touching domain logic. Wlaschin's Ch 11 demonstrates that this structure also simplifies transaction management, since all writes happen in one place.
-
----
-
-### Example 49: Dependency Injection via Partial Application — Concrete Example
-
-Wiring all dependencies at the composition root (the entry point of the application) via partial application is the functional equivalent of a DI container. All functions are partially applied once at startup; the resulting functions are passed into the workflow. Wlaschin shows this in Ch 9.
+The `PurchaseOrder` is the workhorse aggregate of the purchasing context. Its state machine governs the full lifecycle from `Draft` through `Issued`, `Received`, `Invoiced`, and `Paid` to `Closed`, with off-ramps to `Cancelled` and `Disputed`.
 
 ```mermaid
 graph LR
-    subgraph Root["Composition Root"]
-        realSave["realSave\n(DB implementation)"]
-        realLoad["realLoad\n(DB implementation)"]
-    end
-    subgraph Services["Partially Applied Services"]
-        createSvc["createOrderService\n= createOrder realSave"]
-        loadSvc["loadOrderService\n= loadOrder realLoad"]
-    end
-    subgraph Domain["Domain Functions"]
-        createOrder["createOrder\n(saveToDb, orderId, name)"]
-        loadOrder["loadOrder\n(loadFromDb, orderId)"]
-    end
+    D["Draft"]
+    AA["AwaitingApproval"]
+    AP["Approved"]
+    IS["Issued"]
+    CA["Cancelled"]
+    DI["Disputed"]
 
-    Root --> Domain
-    Domain --> Services
-    Services -- "orderId, name" --> createSvc
-    Services -- "orderId" --> loadSvc
+    D  -- "submit"   --> AA
+    AA -- "approve"  --> AP
+    AA -- "reject"   --> CA
+    AP -- "issue"    --> IS
+    IS -- "cancel"   --> CA
+    IS -- "dispute"  --> DI
+    DI -- "resolve-approve" --> AP
+    DI -- "resolve-cancel"  --> CA
 
-    style Root fill:#DE8F05,stroke:#000,color:#000
-    style Services fill:#0173B2,stroke:#000,color:#fff
-    style Domain fill:#029E73,stroke:#000,color:#fff
+    style D  fill:#DE8F05,stroke:#000,color:#000
+    style AA fill:#0173B2,stroke:#000,color:#fff
+    style AP fill:#029E73,stroke:#000,color:#fff
+    style IS fill:#029E73,stroke:#000,color:#fff
+    style CA fill:#CC78BC,stroke:#000,color:#000
+    style DI fill:#CA9161,stroke:#000,color:#000
 ```
 
 ```fsharp
-// Composition root: inject all dependencies via partial application at startup.
-// Downstream functions receive dependency-free signatures.
+// PurchaseOrder: the primary aggregate of the purchasing context.
+// States model the full lifecycle; transitions are typed functions.
 
-// ── Infrastructure function signatures ───────────────────────────────────
-type LoadOrderFromDb = string -> string option
-// => Load order by ID — returns None if not found
+type PurchaseOrderId = PurchaseOrderId of string
+type RequisitionId   = RequisitionId   of string
+type SupplierId      = SupplierId      of string
 
-type SaveOrderToDb   = string -> string -> unit
-// => Save order: first string = ID, second = serialised order
+// Line item on the purchase order
+type PoLine = { Sku: string; Quantity: int; UnitPrice: decimal }
+// => Simplified for this example — full version uses SkuCode, Quantity, UnitPrice value objects
 
-// ── Domain functions with dependency parameters ───────────────────────────
-let createOrder
-    (saveToDb: SaveOrderToDb)
-    // => Injected persistence dependency
-    (orderId: string)
-    (customerName: string)
-    : Result<string, string> =
-    if orderId = "" || customerName = "" then Error "OrderId and CustomerName are required"
+// PurchaseOrder states — each case carries only the data meaningful in that state
+type PurchaseOrder =
+    | Draft of {| Id: PurchaseOrderId; RequisitionId: RequisitionId; Lines: PoLine list |}
+    // => Draft: being built — lines can still be modified
+    | AwaitingApproval of {| Id: PurchaseOrderId; SupplierId: SupplierId; Lines: PoLine list; Total: decimal |}
+    // => Submitted for approval — lines are now locked for the review period
+    | Approved of {| Id: PurchaseOrderId; SupplierId: SupplierId; Lines: PoLine list; Total: decimal; ApprovedAt: System.DateTimeOffset |}
+    // => Approved — ready to be issued to the supplier
+    | Issued of {| Id: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset |}
+    // => Formally sent to the supplier — lines are now immutable
+    | Cancelled of {| Id: PurchaseOrderId; Reason: string |}
+    // => Cancelled — off-ramp from any pre-Paid state
+    | Disputed of {| Id: PurchaseOrderId; DisputeReason: string |}
+    // => Under dispute — can resolve to Approved or Cancelled
+
+// Transition: Draft → AwaitingApproval
+let submitPO (supplierId: SupplierId) (po: PurchaseOrder) : Result<PurchaseOrder, string> =
+    match po with
+    | Draft d ->
+        // => Only Draft POs can be submitted for approval
+        if d.Lines.IsEmpty then Error "Cannot submit a PO with no line items"
+        // => Invariant: at least one line item required before submission
+        else
+            let total = d.Lines |> List.sumBy (fun l -> decimal l.Quantity * l.UnitPrice)
+            // => Compute total at submission time — drives approval level routing
+            Ok (AwaitingApproval {| Id = d.Id; SupplierId = supplierId; Lines = d.Lines; Total = total |})
+            // => Produces AwaitingApproval state with total baked in
+    | other -> Error (sprintf "Cannot submit PO in state: %A" other)
+    // => Any non-Draft state is an invalid transition — rejected
+
+// Build a sample Draft PO
+let draft = Draft {| Id = PurchaseOrderId "po_e3d1f8a0"; RequisitionId = RequisitionId "req_f4c2"; Lines = [{ Sku = "ELE-0099"; Quantity = 3; UnitPrice = 899.99m }] |}
+// => draft : PurchaseOrder = Draft { Id = ...; Lines = [{ Sku = "ELE-0099"; Quantity = 3; UnitPrice = 899.99 }] }
+
+let submitted = submitPO (SupplierId "sup_acme") draft
+// => Lines not empty, supplier provided — transitions Draft → AwaitingApproval
+// => submitted : Result<PurchaseOrder, string> = Ok (AwaitingApproval { ...; Total = 2699.97 })
+
+printfn "Submitted: %A" submitted
+// => Output: Ok (AwaitingApproval {| Id = ...; Total = 2699.97M; ... |})
+```
+
+**Key Takeaway**: Modelling `PurchaseOrder` states as discriminated union cases with typed payloads enforces the state machine at the type level — a transition function that accepts `Draft` cannot be accidentally called with `Issued`.
+
+**Why It Matters**: The `PurchaseOrder` state machine is the compliance heart of any P2P system. Illegal transitions (issuing a PO that was never approved, paying an invoice before three-way matching) are not just business logic errors — they are audit failures. The typed state machine makes these errors impossible to produce, replacing runtime checks and test coverage with compile-time enforcement.
+
+---
+
+### Example 38: Domain Events from State Transitions
+
+When a `PurchaseOrder` transitions to `Issued`, it emits a `PurchaseOrderIssued` event. Domain events are the outputs of aggregate state transitions — they notify downstream contexts (`receiving`, `invoicing`, `supplier-notifier`) that something happened.
+
+```fsharp
+// Domain events are emitted by aggregate state transitions.
+// Each event carries enough context for all downstream consumers.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// Domain event emitted when a PO is issued to a supplier
+type PurchaseOrderIssued = {
+    PurchaseOrderId: PurchaseOrderId
+    // => Identity of the issued PO — used by receiving to open a GRN expectation
+    SupplierId:      SupplierId
+    // => Which supplier receives the PO — supplier-notifier sends EDI/email
+    IssuedAt:        System.DateTimeOffset
+    // => Timestamp — for SLA tracking and audit trail
+    TotalAmount:     decimal
+    // => Total value — for accounting to record the commitment
+}
+// => PurchaseOrderIssued : event payload — past tense, carries all consumer needs
+
+// Domain event emitted when a requisition is approved
+type RequisitionApproved = {
+    RequisitionId: string
+    // => Which requisition was approved
+    ApprovedBy:    string
+    // => Which manager approved it — for audit trail
+    ApprovedAt:    System.DateTimeOffset
+    // => Approval timestamp — for SLA reporting
+}
+// => RequisitionApproved : purchasing emits this; purchasing auto-converts to PO Draft
+
+// Union of all purchasing domain events
+type PurchasingEvent =
+    | PurchaseOrderIssued  of PurchaseOrderIssued
+    | RequisitionApproved  of RequisitionApproved
+    | PurchaseOrderCancelled of purchaseOrderId: string * reason: string
+    // => Cancelled event — supplier-notifier and accounting are consumers
+
+// A transition function returns both the new state and the events it emits
+type PoLine = { Sku: string; Quantity: int; UnitPrice: decimal }
+
+type ApprovedPo = {| Id: PurchaseOrderId; SupplierId: SupplierId; Lines: PoLine list; Total: decimal; ApprovedAt: System.DateTimeOffset |}
+type IssuedPo   = {| Id: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset |}
+
+// Issue transition: Approved → Issued, emitting PurchaseOrderIssued
+let issuePO (approved: ApprovedPo) : IssuedPo * PurchasingEvent list =
+    let issuedAt = System.DateTimeOffset.UtcNow
+    // => Capture issuance timestamp — used in the new state and the event
+    let newState = {| Id = approved.Id; SupplierId = approved.SupplierId; IssuedAt = issuedAt |}
+    // => New Issued state — lines dropped (immutable from this point; stored in event log)
+    let event = PurchaseOrderIssued {
+        PurchaseOrderId = approved.Id
+        // => Same ID carries across the transition — traceability
+        SupplierId      = approved.SupplierId
+        // => Supplier needs to know this PO was issued to them
+        IssuedAt        = issuedAt
+        // => Same timestamp as the state transition — consistency
+        TotalAmount     = approved.Total
+        // => Total baked into the event — accounting doesn't need to reload the PO
+    }
+    newState, [event]
+    // => Returns the new state AND the list of events — caller routes events to the bus
+
+// Test
+let approvedPo = {| Id = PurchaseOrderId "po_e3d1f8a0"; SupplierId = SupplierId "sup_acme"
+                    Lines = [{ Sku = "ELE-0099"; Quantity = 3; UnitPrice = 899.99m }]
+                    Total = 2699.97m; ApprovedAt = System.DateTimeOffset.UtcNow |}
+// => approvedPo : ApprovedPo — in Approved state, ready to be issued
+
+let (issuedState, events) = issuePO approvedPo
+// => issuedState : IssuedPo — PO is now Issued
+// => events : PurchasingEvent list = [PurchaseOrderIssued { ... }]
+
+printfn "Issued: %A" issuedState.Id
+// => Output: Issued: PurchaseOrderId "po_e3d1f8a0"
+printfn "Events: %d" events.Length
+// => Output: Events: 1
+```
+
+**Key Takeaway**: State transition functions that return `(newState, events)` pairs keep event emission co-located with the state change — ensuring events are always emitted when the transition occurs, never accidentally omitted.
+
+**Why It Matters**: `PurchaseOrderIssued` is consumed by at least three downstream contexts: `receiving` (opens a GRN expectation), `supplier-notifier` (sends the EDI/email to the supplier), and `accounting` (records the commitment). If event emission is separate from the state transition (e.g., called manually after saving), it is easy to forget to emit under certain error conditions. The `(newState, events)` return pattern makes emission structural — it cannot be omitted.
+
+---
+
+### Example 39: Supplier Aggregate — Lifecycle States
+
+The `Supplier` aggregate lives in the `supplier` bounded context. Its lifecycle (`Pending → Approved → Suspended → Blacklisted`) determines whether the purchasing context can issue new POs to it.
+
+```fsharp
+// Supplier: aggregate root of the supplier bounded context.
+// Lifecycle state determines eligibility for new POs.
+
+type SupplierId = SupplierId of string
+type Email      = Email      of string
+
+// Supplier lifecycle states
+type SupplierStatus =
+    | Pending     // => Submitted for vendor approval — not yet vetted
+    | Approved    // => Vetted and active — eligible for new POs
+    | Suspended   // => Temporarily ineligible — existing POs continue; no new POs
+    | Blacklisted // => Permanently excluded — existing POs forced to Disputed
+// => Exactly one state is active at any time — discriminated union enforces this
+
+// The supplier aggregate
+type Supplier = {
+    Id:        SupplierId
+    // => Supplier identity — format "sup_<uuid>"
+    Name:      string
+    // => Legal entity name — appears on POs and invoices
+    Email:     Email
+    // => Primary contact email — receives PO notifications via SupplierNotifierPort
+    Status:    SupplierStatus
+    // => Current lifecycle state — drives eligibility checks in the purchasing context
+    RiskScore: int option
+    // => Optional risk score (0–100) — populated after compliance vetting (None while Pending)
+}
+// => Supplier : aggregate root with identity, contact, status, and optional risk data
+
+// Domain events emitted by the supplier context
+type SupplierEvent =
+    | SupplierApproved  of SupplierId
+    // => Consumer: purchasing (eligible-for-PO list updated)
+    | SupplierSuspended of SupplierId * reason: string
+    // => Consumer: purchasing (blocks new POs to this supplier)
+    | SupplierBlacklisted of SupplierId * reason: string
+    // => Consumer: purchasing (forces existing POs to Disputed)
+
+// Transition: approve a pending supplier
+let approveSupplier (riskScore: int) (supplier: Supplier) : Result<Supplier * SupplierEvent list, string> =
+    match supplier.Status with
+    | Pending ->
+        // => Only Pending suppliers can be approved
+        if riskScore < 0 || riskScore > 100 then
+            Error (sprintf "Risk score must be 0–100, got %d" riskScore)
+            // => Validate the risk score before applying it
+        else
+            let approved = { supplier with Status = Approved; RiskScore = Some riskScore }
+            // => with-expression: create new Supplier record in Approved state
+            let event    = SupplierApproved supplier.Id
+            // => Emit SupplierApproved — purchasing context will add to eligible list
+            Ok (approved, [event])
+            // => Return new state and events together
+    | other -> Error (sprintf "Cannot approve a supplier in state: %A" other)
+    // => Non-Pending states cannot be approved — guard against invalid transitions
+
+// Test
+let pendingSupplier = {
+    Id        = SupplierId "sup_acme_001"
+    Name      = "Acme Office Supplies Pte Ltd"
+    Email     = Email "procurement@acme-supplies.com"
+    Status    = Pending
+    // => Starts in Pending — not yet eligible for POs
+    RiskScore = None
+    // => No risk score until vetting is complete
+}
+
+let approvalResult = approveSupplier 35 pendingSupplier
+// => Status is Pending — valid transition; riskScore 35 is in 0–100 range
+// => approvalResult : Result<Supplier * SupplierEvent list, string>
+
+match approvalResult with
+| Ok (s, events) ->
+    printfn "Supplier status: %A, risk: %A" s.Status s.RiskScore
+    // => Output: Supplier status: Approved, risk: Some 35
+    printfn "Events emitted: %d" events.Length
+    // => Output: Events emitted: 1
+| Error e -> printfn "Error: %s" e
+```
+
+**Key Takeaway**: The `Supplier` aggregate's discriminated union status makes eligibility checks (`isEligibleForNewPO`) compile-time safe — the purchasing context checks the status before creating a PO, and the status field cannot be in an undefined intermediate state.
+
+**Why It Matters**: A supplier transitioning to `Blacklisted` has material consequences: all its existing `Issued` POs must be moved to `Disputed`, and no new POs can be created until the dispute is resolved. Modelling this as a named state rather than a boolean `isBlacklisted` flag makes the transition explicit, auditable, and testable. The emitted `SupplierBlacklisted` event is consumed by the purchasing context to trigger the forced-Disputed transitions.
+
+---
+
+### Example 40: Aggregate Boundary — What Goes Inside
+
+The aggregate boundary defines what is consistent together and what is communicated via events. A `PurchaseOrder` owns its lines and status. It does not own the `Supplier` record or the `Invoice` — those are in different aggregates with their own boundaries.
+
+```fsharp
+// Aggregate boundaries: what is consistent together, what communicates via events.
+// A PurchaseOrder owns its lines. It references suppliers and invoices by ID only.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string  // => Reference only — not the Supplier aggregate
+type RequisitionId   = RequisitionId   of string  // => Reference only — not the Requisition aggregate
+
+// The PurchaseOrder owns its lines — lines are part of the PO aggregate
+type PoLine = {
+    LineNumber: int
+    Sku:        string
+    Quantity:   int
+    UnitPrice:  decimal
+}
+// => PoLine is inside the PO aggregate boundary — updated atomically with the PO
+
+// PO states (simplified to key states for boundary illustration)
+type PoStatus = Draft | AwaitingApproval | Approved | Issued | Cancelled
+// => Status is inside the boundary — must be consistent with the lines
+
+// The PurchaseOrder aggregate — owns only what must be consistent together
+type PurchaseOrderAgg = {
+    Id:            PurchaseOrderId
+    // => Aggregate identity
+    RequisitionId: RequisitionId
+    // => Reference to the originating requisition — ID only, not the full Requisition
+    SupplierId:    SupplierId
+    // => Reference to the supplier — ID only, not the full Supplier aggregate
+    Status:        PoStatus
+    // => Inside the boundary — status and lines must be consistent
+    Lines:         PoLine list
+    // => Inside the boundary — lines are owned by this PO
+    Total:         decimal
+    // => Derived from lines — stored for performance (avoids recomputing on every load)
+    UpdatedAt:     System.DateTimeOffset
+    // => Optimistic concurrency token — updated on every state transition
+}
+// => PurchaseOrderAgg : aggregate root — consistent unit; all fields update atomically
+
+// Invariant: once Issued, lines cannot change
+let addLine (line: PoLine) (po: PurchaseOrderAgg) : Result<PurchaseOrderAgg, string> =
+    match po.Status with
+    | Draft ->
+        // => Only Draft POs can have lines added
+        let newLines = po.Lines @ [line]
+        // => Append the new line — creates a new list (immutable)
+        let newTotal = newLines |> List.sumBy (fun l -> decimal l.Quantity * l.UnitPrice)
+        // => Recompute total — kept consistent with lines inside the aggregate
+        Ok { po with Lines = newLines; Total = newTotal; UpdatedAt = System.DateTimeOffset.UtcNow }
+        // => with-expression: atomic update of lines, total, and timestamp
+    | Issued | Approved | AwaitingApproval ->
+        Error "Lines are locked — PO has been submitted or issued"
+        // => Invariant: once submitted, lines are immutable until Cancelled
+    | Cancelled -> Error "Cannot add lines to a Cancelled PO"
+    // => Cancelled POs are terminal — no modifications allowed
+
+// Test
+let emptyDraft = {
+    Id = PurchaseOrderId "po_e3d1"; RequisitionId = RequisitionId "req_f4c2"
+    SupplierId = SupplierId "sup_acme"; Status = Draft; Lines = []; Total = 0m
+    UpdatedAt = System.DateTimeOffset.UtcNow
+}
+let addResult = addLine { LineNumber = 1; Sku = "ELE-0099"; Quantity = 3; UnitPrice = 899.99m } emptyDraft
+// => Status is Draft — line addition allowed; total updated to 2699.97
+
+match addResult with
+| Ok po   -> printfn "Lines: %d, Total: %M" po.Lines.Length po.Total
+// => Output: Lines: 1, Total: 2699.9700M
+| Error e -> printfn "Error: %s" e
+```
+
+**Key Takeaway**: An aggregate owns everything that must be consistent together and references other aggregates by ID only — this keeps transaction boundaries small and prevents cross-aggregate consistency violations.
+
+**Why It Matters**: If the `PurchaseOrder` held the full `Supplier` record inside itself, updating a supplier's contact email would require loading and saving every PO that references that supplier — a transaction spanning potentially thousands of records. By holding only `SupplierId`, the PO aggregate stays small, its transaction boundary is local, and supplier data is fetched via a separate query. This is the DDD aggregate boundary principle applied to the procurement domain.
+
+---
+
+### Example 41: Refactor Primitive Obsession — Typed Wrapper
+
+Primitive obsession is the anti-pattern of using raw `string`, `int`, or `decimal` where a domain type should be used. This example shows a before/after refactor of a PO approval function that suffers from primitive obsession and the improvement from introducing typed wrappers.
+
+```fsharp
+// Before: primitive obsession — all IDs are strings; easy to mix up
+let approvePrimitive (poId: string) (approverId: string) (approvedAt: System.DateTimeOffset) : string =
+    // => poId and approverId are both strings — nothing stops them being swapped at call site
+    sprintf "PO %s approved by %s at %O" poId approverId approvedAt
+    // => Returns a string status — caller cannot pattern-match on success vs failure
+
+// After: typed wrappers eliminate the confusion
+type PurchaseOrderId = PurchaseOrderId of string
+// => Distinct type for PO identity
+type ApproverId      = ApproverId      of string
+// => Distinct type for the approver identity — cannot be passed where PurchaseOrderId expected
+
+type ApprovalRecord = {
+    PoId:       PurchaseOrderId
+    // => Typed PO identity — compiler blocks passing an ApproverId here
+    ApproverId: ApproverId
+    // => Typed approver identity
+    ApprovedAt: System.DateTimeOffset
+    // => Approval timestamp — immutable once recorded
+}
+// => ApprovalRecord : value object — groups the three components of an approval
+
+let approveTyped (poId: PurchaseOrderId) (approverId: ApproverId) (at: System.DateTimeOffset) : ApprovalRecord =
+    // => All three parameters have distinct types — swapping them is a compile error
+    { PoId = poId; ApproverId = approverId; ApprovedAt = at }
+    // => Returns a structured record — caller can pattern-match and extract fields
+
+// Usage
+let (PurchaseOrderId rawPoId)    = PurchaseOrderId "po_e3d1f8a0"
+// => Destructure to access the raw string for display
+let (ApproverId rawApproverId)   = ApproverId "emp_mgr_007"
+// => Destructure the approver ID
+
+let record = approveTyped (PurchaseOrderId "po_e3d1f8a0") (ApproverId "emp_mgr_007") System.DateTimeOffset.UtcNow
+// => approveTyped accepts typed arguments — swapping poId and approverId is a compile error
+// => record : ApprovalRecord = { PoId = ...; ApproverId = ...; ApprovedAt = ... }
+
+printfn "Approved: PO=%s by=%s" rawPoId rawApproverId
+// => Output: Approved: PO=po_e3d1f8a0 by=emp_mgr_007
+printfn "Record: %A" record
+// => Output: Record: { PoId = PurchaseOrderId "po_e3d1f8a0"; ApproverId = ApproverId "emp_mgr_007"; ... }
+```
+
+**Key Takeaway**: Replacing raw primitives with named wrapper types eliminates the ID-confusion class of bugs at compile time — the cost is minimal syntactic overhead for a permanent correctness guarantee.
+
+**Why It Matters**: In a procurement system, confusing `PurchaseOrderId` with `RequisitionId` or `SupplierId` is a realistic bug: all three are UUID-formatted strings, all appear in the same function signatures, and the mistake is invisible in unit tests that use hardcoded values. Typed wrappers make the mistake a compile error, caught before any code runs.
+
+---
+
+### Example 42: ValidatedPurchaseOrder Type — Emitted by Validation Step
+
+The validation step of the approval workflow produces a `ValidatedPurchaseOrder` — a type that can only exist if all business rules passed. Downstream functions accept this type, not the raw `UnvalidatedPurchaseOrderCommand`, making the validation guarantee structural.
+
+```fsharp
+// ValidatedPurchaseOrder: produced by the validation step; consumed by downstream steps.
+// If a ValidatedPurchaseOrder exists, all field-level invariants have been checked.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// The raw command arriving from the HTTP layer
+type CreatePOCommand = {
+    RequisitionId: string  // => Raw — may be blank or wrong format
+    SupplierId:    string  // => Raw — may reference a non-existent supplier
+    Lines:         (string * int * decimal) list  // => Raw tuples — not validated
+}
+// => CreatePOCommand : DTO-shaped input — primitive types only
+
+// The validated result — only creatable through the validation function
+type ValidatedPoLine = {
+    Sku:      string   // => Validated SKU (format checked)
+    Quantity: int      // => Validated > 0
+    Price:    decimal  // => Validated > 0
+}
+// => ValidatedPoLine : validated line item — invariants met
+
+type ValidatedPurchaseOrder = {
+    Id:            PurchaseOrderId  // => Assigned at validation time
+    RequisitionId: string           // => Validated non-blank
+    SupplierId:    SupplierId       // => Validated non-blank, wrapped
+    Lines:         ValidatedPoLine list  // => All lines validated
+    Total:         decimal          // => Computed from validated lines
+}
+// => ValidatedPurchaseOrder : only exists if all validation passed
+
+// Validation function — the sole constructor for ValidatedPurchaseOrder
+let validateCreatePO (cmd: CreatePOCommand) : Result<ValidatedPurchaseOrder, string> =
+    if System.String.IsNullOrWhiteSpace(cmd.RequisitionId) then Error "RequisitionId required"
+    // => Guard 1: requisition reference is mandatory
+    elif System.String.IsNullOrWhiteSpace(cmd.SupplierId) then Error "SupplierId required"
+    // => Guard 2: supplier reference is mandatory
+    elif cmd.Lines.IsEmpty then Error "At least one line item required"
+    // => Guard 3: blank PO has no business meaning
     else
-        saveToDb orderId (sprintf "order:%s,customer:%s" orderId customerName)
-        // => Calls the injected save function
-        Ok (sprintf "Order %s created for %s" orderId customerName)
+        let validLines =
+            cmd.Lines |> List.mapi (fun i (sku, qty, price) ->
+                if qty <= 0 then Error (sprintf "Line %d: quantity must be > 0" (i+1))
+                elif price <= 0m then Error (sprintf "Line %d: price must be > 0" (i+1))
+                else Ok { Sku = sku; Quantity = qty; Price = price }
+            )
+        // => Validate each line; collect Results
+        let errors = validLines |> List.choose (function Error e -> Some e | Ok _ -> None)
+        // => Extract all Error cases
+        if not errors.IsEmpty then Error (String.concat "; " errors)
+        // => If any line failed, return concatenated errors
+        else
+            let lines = validLines |> List.choose (function Ok l -> Some l | Error _ -> None)
+            // => Extract all Ok cases — safe because errors.IsEmpty
+            let total = lines |> List.sumBy (fun l -> decimal l.Quantity * l.Price)
+            // => Compute total from validated lines
+            Ok { Id = PurchaseOrderId ("po_" + System.Guid.NewGuid().ToString("N").[..7])
+                 RequisitionId = cmd.RequisitionId; SupplierId = SupplierId cmd.SupplierId
+                 Lines = lines; Total = total }
+            // => Return validated PO — all invariants guaranteed
 
-let loadOrder
-    (loadFromDb: LoadOrderFromDb)
-    // => Injected load dependency
-    (orderId: string)
-    : Result<string, string> =
-    match loadFromDb orderId with
-    | Some order -> Ok order
-    | None       -> Error (sprintf "Order '%s' not found" orderId)
+// Test
+let cmd = { RequisitionId = "req_f4c2"; SupplierId = "sup_acme"
+            Lines = [("ELE-0099", 3, 899.99m); ("OFF-0042", 10, 8.50m)] }
+// => cmd : CreatePOCommand — two valid raw lines
 
-// ── Composition root: inject real dependencies ────────────────────────────
-let realDb = System.Collections.Generic.Dictionary<string, string>()
-// => In-memory substitute for a real database
-// => In production this would be replaced by a SQL or document database connection
-// => The same type (Dictionary) satisfies both SaveOrderToDb and LoadOrderFromDb
+let validated = validateCreatePO cmd
+// => All guards pass — returns Ok ValidatedPurchaseOrder with total 2784.97
 
-let realSave : SaveOrderToDb   = fun id data -> realDb.[id] <- data; printfn "[DB] Saved %s" id
-// => realSave satisfies SaveOrderToDb — stores the serialised order and logs the save
-// => type annotation ensures realSave : SaveOrderToDb (not just a plain lambda)
-let realLoad : LoadOrderFromDb = fun id -> if realDb.ContainsKey id then Some realDb.[id] else None
-// => realLoad satisfies LoadOrderFromDb — returns Some data if found, None if not
-// => Real implementations — in production these would call actual database clients
-
-// Partially apply to create dependency-free service functions
-let createOrderService = createOrder realSave
-// => Partially apply createOrder with realSave — bakes in the dependency
-// => createOrderService : string -> string -> Result<string, string>
-// => The saveToDb dependency is now "baked in" via partial application
-// => Callers only see (orderId, customerName) — no visible database dependency
-
-let loadOrderService = loadOrder realLoad
-// => loadOrderService : string -> Result<string, string>
-// => The loadFromDb dependency is baked in — callers only pass the orderId
-
-// Use the services — no DI container needed
-let created = createOrderService "ORD-001" "Alice Johnson"
-// => Calls createOrder with realSave baked in
-// => Saves "order:ORD-001,customer:Alice Johnson" to realDb and returns Ok
-// => created : Result<string, string> = Ok "Order ORD-001 created for Alice Johnson"
-
-let loaded  = loadOrderService "ORD-001"
-// => Calls loadOrder with realLoad baked in
-// => realDb.["ORD-001"] = "order:ORD-001,customer:Alice Johnson" → Some → Ok
-// => loaded : Result<string, string> = Ok "order:ORD-001,customer:Alice Johnson"
-
-printfn "Create: %A" created
-// => Output: [DB] Saved ORD-001
-// => Output: Create: Ok "Order ORD-001 created for Alice Johnson"
-
-printfn "Load: %A" loaded
-// => Output: Load: Ok "order:ORD-001,customer:Alice Johnson"
+match validated with
+| Ok po   -> printfn "Validated PO: %A total=%M" po.Id po.Total
+// => Output: Validated PO: PurchaseOrderId "po_..." total=2784.9700M
+| Error e -> printfn "Error: %s" e
 ```
 
-**Key Takeaway**: Partially applying dependency functions at the composition root produces domain service functions with clean, dependency-free signatures — testable with inline lambda stubs, production-ready with real implementations.
+**Key Takeaway**: Introducing a `ValidatedPurchaseOrder` type makes the validation guarantee structural — downstream functions that accept it cannot be called before validation runs, because the type cannot be constructed any other way.
 
-**Why It Matters**: DI containers add runtime complexity (registration, resolution, scoping) and obscure the actual dependencies behind container magic. Partial application at the composition root is static, compiler-checked, and requires no framework. Tests substitute simple lambdas; production code passes real infrastructure functions. Wlaschin recommends this pattern in Ch 9 as the idiomatic F# alternative to constructor injection — it scales naturally from small workflows to large systems.
+**Why It Matters**: Without a `ValidatedPurchaseOrder` type, any function in the approval workflow might be accidentally called with an unvalidated command, relying on the caller to have validated first. The type eliminates this assumption by making the valid state a distinct type — the compiler enforces the validation step as a prerequisite for every downstream operation.
 
 ---
 
-### Example 50: Persistence Interface as a Record of Functions
+### Example 43: IssuedPurchaseOrder Type — Emitted by Issue Step
 
-In OOP, persistence is modelled as an interface. In functional F#, the idiomatic equivalent is a record of functions — each field is a function type. The record is passed as a parameter, enabling the same polymorphism and substitutability as an interface. Wlaschin introduces this in Ch 12.
+After an `Approved` PO is issued to the supplier, it enters the `Issued` state. The `IssuedPurchaseOrder` type carries the issuance timestamp and the event that was emitted, providing a typed record that downstream steps (receiving context) can depend on.
 
 ```fsharp
-// A record of functions replaces an interface for persistence operations.
-// Fields are function types — the record IS the interface.
+// IssuedPurchaseOrder: the result of issuing an Approved PO to a supplier.
+// Carries the new state and the emitted event — both needed by the caller.
 
-// ── The persistence "interface" as a record of functions ─────────────────
-type OrderRepository = {
-    GetById:  string -> Async<string option>
-    // => Load an order by ID; None if not found
-    // => Async because real implementations call a database (I/O)
-    Save:     string -> string -> Async<Result<unit, string>>
-    // => Save an order: ID -> serialised data -> Async<Result>
-    Delete:   string -> Async<Result<unit, string>>
-    // => Delete an order by ID
-    ListAll:  unit   -> Async<string list>
-    // => List all order IDs (for admin purposes)
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// Input: the approved PO ready to be issued
+type ApprovedPurchaseOrder = {
+    Id:         PurchaseOrderId
+    SupplierId: SupplierId
+    Total:      decimal
+    ApprovedAt: System.DateTimeOffset
 }
+// => ApprovedPurchaseOrder : can only exist after the approve transition
 
-// ── In-memory implementation ──────────────────────────────────────────────
-let inMemoryRepo () : OrderRepository =
-    let db = System.Collections.Generic.Dictionary<string, string>()
-    // => In-memory store — used in tests and for local development
-    // => In production: replace with a real database client; interface is the same
-    {
-        GetById = fun id -> async { return if db.ContainsKey id then Some db.[id] else None }
-        // => Returns Some if found, None otherwise
-        // => async: matches the signature even though the lookup is synchronous
+// Output: the issued PO state
+type IssuedPurchaseOrder = {
+    Id:         PurchaseOrderId
+    SupplierId: SupplierId
+    IssuedAt:   System.DateTimeOffset
+}
+// => IssuedPurchaseOrder : issued state — lines are now immutable
 
-        Save = fun id data -> async {
-            db.[id] <- data
-            // => Upsert: insert or replace — same key replaces the previous value
+// Domain event produced by the issuance
+type PurchaseOrderIssuedEvent = {
+    PurchaseOrderId: PurchaseOrderId
+    SupplierId:      SupplierId
+    IssuedAt:        System.DateTimeOffset
+    TotalAmount:     decimal
+}
+// => PurchaseOrderIssuedEvent : consumed by receiving, supplier-notifier, accounting
+
+// Issue transition — returns both new state and the emitted event
+let issuePO (approved: ApprovedPurchaseOrder) : IssuedPurchaseOrder * PurchaseOrderIssuedEvent =
+    let now = System.DateTimeOffset.UtcNow
+    // => Capture issuance timestamp — same value used in both state and event
+    let issued = { Id = approved.Id; SupplierId = approved.SupplierId; IssuedAt = now }
+    // => New IssuedPurchaseOrder state — carries only what is meaningful post-issuance
+    let event  = { PurchaseOrderId = approved.Id; SupplierId = approved.SupplierId
+                   IssuedAt = now; TotalAmount = approved.Total }
+    // => PurchaseOrderIssuedEvent — all consumer needs in one payload
+    issued, event
+    // => Return tuple: (new state, emitted event)
+
+// Test
+let approved = {
+    Id = PurchaseOrderId "po_e3d1f8a0"; SupplierId = SupplierId "sup_acme"
+    Total = 2699.97m; ApprovedAt = System.DateTimeOffset.UtcNow
+}
+// => approved : ApprovedPurchaseOrder — ready to be issued
+
+let (issued, event) = issuePO approved
+// => issued : IssuedPurchaseOrder — new state
+// => event  : PurchaseOrderIssuedEvent — to be published to the event bus
+
+printfn "Issued PO: %A at %O" issued.Id issued.IssuedAt
+// => Output: Issued PO: PurchaseOrderId "po_e3d1f8a0" at 2026-...
+printfn "Event total: %M" event.TotalAmount
+// => Output: Event total: 2699.9700M
+```
+
+**Key Takeaway**: Returning `(IssuedPurchaseOrder, PurchaseOrderIssuedEvent)` from the issue transition makes event emission inseparable from the state change — the caller cannot save the new state without also handling the event.
+
+**Why It Matters**: Separating state persistence from event emission is a common source of consistency bugs: saving the new state to the database but failing to publish the event means downstream contexts (receiving, supplier-notifier) never react. The tuple return type makes the event a first-class output of the transition, not an optional side effect.
+
+---
+
+### Example 44: ApprovePO Workflow Signature with Dependencies
+
+The `ApprovePO` workflow needs access to the supplier repository (to check eligibility) and the approval router (to record the approval decision). These dependencies are expressed as function parameters, not class fields — the functional equivalent of constructor injection.
+
+```fsharp
+// ApprovePO workflow: dependencies expressed as function parameters.
+// No IoC container, no service locator — just function types and partial application.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+type ApproverId      = ApproverId      of string
+
+// The command arriving from the HTTP layer
+type ApprovePOCommand = {
+    PurchaseOrderId: string  // => Raw PO ID from the request
+    ApproverId:      string  // => Raw approver ID from the JWT
+}
+// => ApprovePOCommand : DTO input — primitive types only
+
+// Domain error cases
+type ApprovalError =
+    | PONotFound       of string
+    | AlreadyApproved  of PurchaseOrderId
+    | SupplierBlocked  of SupplierId
+    | InsufficientAuth of ApproverId
+// => Named errors — each maps to a specific HTTP status and alert
+
+// Port types — expressed as function type aliases (no interfaces, no classes)
+type LoadPurchaseOrder = PurchaseOrderId -> Async<Result<decimal * SupplierId, ApprovalError>>
+// => LoadPurchaseOrder : PurchaseOrderId → Async<Result<(total, supplierId), error>>
+// => Loads the PO total and supplier reference — what the approval step needs
+
+type CheckSupplierEligibility = SupplierId -> Async<Result<unit, ApprovalError>>
+// => CheckSupplierEligibility : SupplierId → Async<Result<unit, error>>
+// => Returns Ok () if supplier is Approved; Error SupplierBlocked otherwise
+
+type RecordApproval = PurchaseOrderId -> ApproverId -> Async<Result<unit, ApprovalError>>
+// => RecordApproval : PurchaseOrderId → ApproverId → Async<Result<unit, error>>
+// => Persists the approval record and timestamps
+
+// The workflow function — dependencies injected as parameters
+let approvePO
+    (loadPO:      LoadPurchaseOrder)
+    (checkSupplier: CheckSupplierEligibility)
+    (recordApproval: RecordApproval)
+    (cmd: ApprovePOCommand)
+    : Async<Result<string, ApprovalError>> =
+    // => loadPO, checkSupplier, recordApproval are the injected dependencies
+    // => cmd is the runtime input
+    async {
+        let poId     = PurchaseOrderId cmd.PurchaseOrderId
+        let approvId = ApproverId      cmd.ApproverId
+        // => Wrap raw strings in typed wrappers — validation would go here in full impl
+        let! (_, supplierId) = loadPO poId |> Async.map (Result.defaultWith (fun e -> failwithf "%A" e))
+        // => Load PO to get the supplier reference — simplified for demonstration
+        do! checkSupplier supplierId |> Async.map (Result.defaultWith (fun e -> failwithf "%A" e)) |> Async.Ignore
+        // => Check supplier eligibility — raises if blocked
+        do! recordApproval poId approvId |> Async.map (Result.defaultWith (fun e -> failwithf "%A" e)) |> Async.Ignore
+        // => Record the approval — raises if persistence fails
+        return Ok (sprintf "PO %s approved by %s" cmd.PurchaseOrderId cmd.ApproverId)
+        // => Return success message — events would be emitted here in full impl
+    }
+
+// The workflow TYPE signature — the domain contract
+type ApprovePOWorkflow =
+    LoadPurchaseOrder -> CheckSupplierEligibility -> RecordApproval -> ApprovePOCommand -> Async<Result<string, ApprovalError>>
+// => Arrow type reads: inject deps, then accept command, then produce async result
+// => Each arrow is a partial application step
+
+printfn "ApprovePO workflow signature defined — dependencies are function parameters"
+// => Output: ApprovePO workflow signature defined — dependencies are function parameters
+```
+
+**Key Takeaway**: Expressing workflow dependencies as function-type parameters makes the contract explicit — the caller must supply real or test implementations for every dependency, and the compiler verifies the types match.
+
+**Why It Matters**: Function-type parameters are testable without mocking frameworks: pass a test implementation (`fun poId -> async { return Ok (2699.97m, SupplierId "sup_test") }`) in unit tests, and the production implementation (querying Postgres) in production. The workflow function itself never changes — only the injected implementations differ. This is the functional core / imperative shell principle applied to dependency management.
+
+---
+
+### Example 45: IssuePO Workflow Signature with Dependencies
+
+The `IssuePO` workflow composes four steps: load the approved PO, verify it is in `Approved` state, persist the `Issued` state, and publish the `PurchaseOrderIssued` event. Each dependency is a function type parameter.
+
+```fsharp
+// IssuePO: four-step workflow with typed function dependencies.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+type IssuedPO = { Id: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset }
+// => The issued state produced by the transition
+
+type PoIssuedEvent = { PurchaseOrderId: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset; Total: decimal }
+// => Event payload for downstream contexts
+
+type IssueError =
+    | PONotFound    of PurchaseOrderId
+    | NotApproved   of PurchaseOrderId  // => Can only issue from Approved state
+    | SaveFailed    of string
+    | PublishFailed of string
+// => Named error union — each case drives a different alert/retry policy
+
+// Port type aliases
+type LoadApprovedPO  = PurchaseOrderId -> Async<Result<decimal * SupplierId, IssueError>>
+// => Loads the PO total and supplier ID; Error PONotFound if missing; Error NotApproved if wrong state
+type SaveIssuedPO    = IssuedPO -> Async<Result<unit, IssueError>>
+// => Persists the new Issued state to the database
+type PublishEvent    = PoIssuedEvent -> Async<Result<unit, IssueError>>
+// => Publishes to the event bus (outbox or direct Kafka)
+
+// The workflow — four sequential async steps
+let issuePOWorkflow
+    (load:    LoadApprovedPO)
+    (save:    SaveIssuedPO)
+    (publish: PublishEvent)
+    (poId:    PurchaseOrderId)
+    : Async<Result<IssuedPO, IssueError>> =
+    async {
+        let! loadResult = load poId
+        // => Step 1: load the approved PO from the repository
+        match loadResult with
+        | Error e -> return Error e
+        // => Not found or not in Approved state — short-circuit
+        | Ok (total, supplierId) ->
+            let now    = System.DateTimeOffset.UtcNow
+            // => Capture issuance timestamp
+            let issued = { Id = poId; SupplierId = supplierId; IssuedAt = now }
+            // => Build the new Issued state
+            let event  = { PurchaseOrderId = poId; SupplierId = supplierId; IssuedAt = now; Total = total }
+            // => Build the domain event
+            let! saveResult = save issued
+            // => Step 2: persist the new state
+            match saveResult with
+            | Error e -> return Error e
+            // => Persistence failed — short-circuit; event not published (at-least-once with outbox)
+            | Ok () ->
+                let! publishResult = publish event
+                // => Step 3: publish the domain event
+                match publishResult with
+                | Error e -> return Error e
+                // => Publish failed — caller can retry; state already saved
+                | Ok () -> return Ok issued
+                // => All steps succeeded — return the new Issued state
+    }
+
+// Test with stub implementations
+let stubLoad   _ = async { return Ok (2699.97m, SupplierId "sup_acme") }
+// => Stub load: always returns Ok with a fixed total and supplier
+let stubSave   _ = async { return Ok () }
+// => Stub save: always succeeds
+let stubPublish _ = async { return Ok () }
+// => Stub publish: always succeeds
+
+let result = Async.RunSynchronously (issuePOWorkflow stubLoad stubSave stubPublish (PurchaseOrderId "po_e3d1"))
+// => All stubs return Ok — result : Result<IssuedPO, IssueError> = Ok { Id = ...; ... }
+
+match result with
+| Ok issued -> printfn "Issued: %A at %O" issued.Id issued.IssuedAt
+// => Output: Issued: PurchaseOrderId "po_e3d1" at 2026-...
+| Error e   -> printfn "Error: %A" e
+```
+
+**Key Takeaway**: A four-step async workflow expressed with typed function dependencies is fully testable with in-memory stubs — no database, no Kafka, no network required to test the workflow logic.
+
+**Why It Matters**: The four steps of `issuePOWorkflow` (load, build state, save, publish) have a defined order with specific failure modes at each step. Testing this order and the failure short-circuiting with stub functions is trivial and fast. The production wiring — injecting the real Postgres adapter and the Kafka publisher — happens at the composition root, not inside the workflow.
+
+---
+
+### Example 46: AcknowledgePO Workflow Signature
+
+Once a `PurchaseOrder` is issued to the supplier, the supplier acknowledges receipt. The `AcknowledgePO` workflow transitions `Issued → Acknowledged` and emits `PurchaseOrderAcknowledged`, which opens a GRN expectation in the receiving context.
+
+```fsharp
+// AcknowledgePO: supplier acknowledges receipt of the issued PO.
+// Transitions Issued → Acknowledged; opens GRN expectation in receiving context.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// The state after supplier acknowledgement
+type AcknowledgedPO = {
+    Id:              PurchaseOrderId
+    SupplierId:      SupplierId
+    AcknowledgedAt:  System.DateTimeOffset
+    ExpectedDelivery: System.DateTimeOffset option
+    // => Supplier may provide an expected delivery date — optional at acknowledgement time
+}
+// => AcknowledgedPO : Acknowledged state — opens the receiving window
+
+// Event consumed by the receiving context
+type PurchaseOrderAcknowledgedEvent = {
+    PurchaseOrderId:  PurchaseOrderId
+    SupplierId:       SupplierId
+    AcknowledgedAt:   System.DateTimeOffset
+    ExpectedDelivery: System.DateTimeOffset option
+}
+// => Receiving context reacts: creates a GoodsReceiptNote expectation
+
+// Command from the supplier's acknowledgement API call
+type AcknowledgePOCommand = {
+    PurchaseOrderId:  string                        // => Raw PO ID
+    ExpectedDelivery: System.DateTimeOffset option  // => Optional delivery date from supplier
+}
+// => AcknowledgePOCommand : DTO from the supplier portal or EDI system
+
+type AckError = PONotFound of string | NotIssued of string | SaveFailed
+// => Three possible failure modes
+
+// Port types
+type LoadIssuedPO    = PurchaseOrderId -> Async<Result<SupplierId, AckError>>
+// => Loads the PO and verifies it is in Issued state
+type SaveAcknowledged = AcknowledgedPO -> Async<Result<unit, AckError>>
+// => Persists the Acknowledged state
+type PublishAckEvent  = PurchaseOrderAcknowledgedEvent -> Async<Result<unit, AckError>>
+// => Publishes to the event bus
+
+// The workflow
+let acknowledgePO
+    (load:    LoadIssuedPO)
+    (save:    SaveAcknowledged)
+    (publish: PublishAckEvent)
+    (cmd:     AcknowledgePOCommand)
+    : Async<Result<AcknowledgedPO, AckError>> =
+    async {
+        let poId = PurchaseOrderId cmd.PurchaseOrderId
+        // => Wrap the raw string in the typed wrapper
+        let! loadResult = load poId
+        // => Load and verify the PO is in Issued state
+        match loadResult with
+        | Error e -> return Error e
+        // => Not found or not Issued — short-circuit
+        | Ok supplierId ->
+            let now = System.DateTimeOffset.UtcNow
+            let acked = { Id = poId; SupplierId = supplierId
+                          AcknowledgedAt = now; ExpectedDelivery = cmd.ExpectedDelivery }
+            // => New Acknowledged state — carries optional delivery date
+            let event = { PurchaseOrderId = poId; SupplierId = supplierId
+                          AcknowledgedAt = now; ExpectedDelivery = cmd.ExpectedDelivery }
+            // => Event payload for the receiving context
+            let! saveResult = save acked
+            match saveResult with
+            | Error e -> return Error e
+            | Ok () ->
+                let! _ = publish event
+                // => Publish — receiving context opens GRN expectation on receipt
+                return Ok acked
+                // => Return the Acknowledged state
+    }
+
+// Demonstrate with stubs
+let stubLoad _    = async { return Ok (SupplierId "sup_acme") }
+let stubSave _    = async { return Ok () }
+let stubPublish _ = async { return Ok () }
+
+let cmd = { PurchaseOrderId = "po_e3d1"; ExpectedDelivery = Some (System.DateTimeOffset.UtcNow.AddDays(7.0)) }
+// => cmd : AcknowledgePOCommand — with a 7-day expected delivery
+
+let result = Async.RunSynchronously (acknowledgePO stubLoad stubSave stubPublish cmd)
+// => All stubs succeed — result : Result<AcknowledgedPO, AckError> = Ok { ... }
+
+match result with
+| Ok acked -> printfn "Acknowledged: delivery=%A" acked.ExpectedDelivery
+// => Output: Acknowledged: delivery=Some 2026-...
+| Error e  -> printfn "Error: %A" e
+```
+
+**Key Takeaway**: The `AcknowledgePO` workflow is structurally identical to `IssuePO` — load, build, save, publish — demonstrating that the same composition pattern scales to every step in the PO lifecycle.
+
+**Why It Matters**: When every workflow in the purchasing context follows the same (load, validate, transition, save, publish) structure, new developers can understand a new workflow immediately by recognising the pattern. Consistency also means tooling — logging middleware, retry logic, observability — can be applied uniformly at the composition layer rather than being hand-rolled in each workflow.
+
+---
+
+## Workflow Architecture (Examples 47–55)
+
+### Example 47: Pipeline Composition — Wiring Three Workflow Steps
+
+The complete PO lifecycle from Draft to Issued involves three workflow steps: `CreateDraftPO → ApprovePO → IssuePO`. Composing them in a pipeline demonstrates how functional workflow orchestration works without a workflow engine.
+
+```fsharp
+// Three PO lifecycle steps composed into a single pipeline.
+// Each step is a pure function or an async function with injected deps.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// Simplified state types for composition demonstration
+type DraftPO     = { Id: PurchaseOrderId; Total: decimal; SupplierId: SupplierId }
+type ApprovedPO  = { Id: PurchaseOrderId; Total: decimal; SupplierId: SupplierId; ApprovedAt: System.DateTimeOffset }
+type IssuedPO    = { Id: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset }
+
+// Step 1: create a draft PO (pure — no I/O)
+let createDraft (total: decimal) (supplierId: SupplierId) : DraftPO =
+    { Id = PurchaseOrderId ("po_" + System.Guid.NewGuid().ToString("N").[..7])
+      Total = total; SupplierId = supplierId }
+    // => Pure: no side effects, no Result needed — creation always succeeds
+
+// Step 2: approve the draft (pure — business rule only)
+let approveDraft (draft: DraftPO) : Result<ApprovedPO, string> =
+    if draft.Total <= 0m then Error "Cannot approve a zero-total PO"
+    // => Business rule: zero-value POs cannot be approved
+    else Ok { Id = draft.Id; Total = draft.Total; SupplierId = draft.SupplierId
+              ApprovedAt = System.DateTimeOffset.UtcNow }
+    // => Approved state carries the approval timestamp
+
+// Step 3: issue the approved PO (pure — returns both state and event)
+let issueApproved (approved: ApprovedPO) : IssuedPO * string =
+    let issued = { Id = approved.Id; SupplierId = approved.SupplierId; IssuedAt = System.DateTimeOffset.UtcNow }
+    // => New Issued state
+    let eventSummary = sprintf "PurchaseOrderIssued: %A to %A total=%M" approved.Id approved.SupplierId approved.Total
+    // => Simplified event summary — full version would produce a typed event record
+    issued, eventSummary
+    // => Return both state and event
+
+// Pipeline: wire all three steps
+let lifeCyclePipeline (total: decimal) (supplierId: SupplierId) : Result<IssuedPO * string, string> =
+    let draft = createDraft total supplierId
+    // => Step 1: create draft — always succeeds (pure)
+    draft
+    |> approveDraft
+    // => Step 2: approve — may fail if total <= 0
+    |> Result.map issueApproved
+    // => Step 3: issue — infallible if approve succeeded (Result.map)
+
+// Test
+let result = lifeCyclePipeline 2699.97m (SupplierId "sup_acme")
+// => createDraft: DraftPO; approveDraft: Ok ApprovedPO; issueApproved: (IssuedPO, eventSummary)
+
+match result with
+| Ok (issued, event) ->
+    printfn "Issued: %A" issued.Id
+    // => Output: Issued: PurchaseOrderId "po_..."
+    printfn "Event: %s" event
+    // => Output: Event: PurchaseOrderIssued: PurchaseOrderId "po_..." to SupplierId "sup_acme" total=2699.9700M
+| Error e -> printfn "Pipeline error: %s" e
+
+// Error path: zero-total PO
+let errorResult = lifeCyclePipeline 0m (SupplierId "sup_acme")
+// => approveDraft returns Error "Cannot approve a zero-total PO"
+// => issueApproved is skipped via Result.map
+match errorResult with
+| Ok _    -> printfn "Should not reach here"
+| Error e -> printfn "Error: %s" e
+// => Output: Error: Cannot approve a zero-total PO
+```
+
+**Key Takeaway**: Composing three workflow steps into a pipeline using `|>` and `Result.map` produces a readable, linear representation of the PO lifecycle without nested conditionals or try/catch blocks.
+
+**Why It Matters**: A three-step pipeline that reads `createDraft |> approveDraft |> issueApproved` tells the entire PO lifecycle story in three lines. When a compliance auditor asks "what happens between requisition approval and supplier notification?", a developer can point to this pipeline and walk through it step by step. The pipeline is also the natural insertion point for new workflow steps — adding budget verification between approval and issuance means inserting one more `|> Result.bind verifyBudget`.
+
+---
+
+### Example 48: Domain Error DU — Every Purchasing Failure Named
+
+A comprehensive `PurchasingContextError` DU covers every failure the purchasing workflows can produce — from field-level validation to infrastructure failures. This is the full error taxonomy for the context.
+
+```fsharp
+// Complete purchasing context error DU — every failure mode is named.
+// Named errors drive: HTTP status codes, alerting severity, retry eligibility.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type RequisitionId   = RequisitionId   of string
+type SupplierId      = SupplierId      of string
+
+type PurchasingContextError =
+    // ── Requisition errors ───────────────────────────────────────────────────
+    | RequisitionNotFound      of RequisitionId
+    // => 404: ID does not exist
+    | RequisitionAlreadyExists of RequisitionId
+    // => 409: duplicate submission
+    | RequisitionHasNoLines    of RequisitionId
+    // => 422: no line items
+    | InvalidSkuFormat         of sku: string
+    // => 422: SKU does not match ^[A-Z]{3}-\d{4,8}$
+    | InvalidQuantity          of sku: string * qty: int
+    // => 422: quantity ≤ 0
+    | InvalidUnitPrice         of sku: string * price: decimal
+    // => 422: price ≤ 0
+    // ── PO errors ────────────────────────────────────────────────────────────
+    | PONotFound               of PurchaseOrderId
+    // => 404: PO ID does not exist
+    | POInvalidTransition      of from: string * ``to``: string
+    // => 422: attempted state transition is not permitted
+    | POLinesLocked            of PurchaseOrderId
+    // => 422: attempt to modify lines on a submitted/issued PO
+    // ── Supplier errors ───────────────────────────────────────────────────────
+    | SupplierNotFound         of SupplierId
+    // => 404: supplier ID does not exist in the supplier master
+    | SupplierNotEligible      of SupplierId
+    // => 422: supplier is Pending/Suspended/Blacklisted
+    // ── Budget / authority errors ────────────────────────────────────────────
+    | BudgetExceeded           of required: decimal * available: decimal
+    // => 422: requisition total exceeds department budget
+    | ApprovalAuthorityTooLow  of approver: string * required: string
+    // => 403: approver's level is insufficient for this PO's total
+    // ── Infrastructure errors ─────────────────────────────────────────────────
+    | DatabaseTimeout          of operation: string
+    // => 503: database did not respond within the SLA (retry eligible)
+    | EventPublishFailed       of event: string
+    // => 500: event could not be published (outbox compensates)
+    | ConcurrencyConflict      of PurchaseOrderId
+    // => 409: optimistic lock conflict — caller should reload and retry
+
+// Map each error to HTTP status and retry eligibility
+let errorPolicy (err: PurchasingContextError) : int * bool =
+    // => Returns (httpStatus, isRetryEligible)
+    match err with
+    | RequisitionNotFound _ | PONotFound _ | SupplierNotFound _ -> (404, false)
+    // => Not found: no retry — the resource doesn't exist
+    | RequisitionAlreadyExists _ | ConcurrencyConflict _ -> (409, true)
+    // => Conflict: retry after reload
+    | ApprovalAuthorityTooLow _ -> (403, false)
+    // => Forbidden: retry won't help — need a different approver
+    | DatabaseTimeout _ | EventPublishFailed _ -> (503, true)
+    // => Infrastructure: retry eligible with backoff
+    | _ -> (422, false)
+    // => Business rule violations: no retry — data must be fixed first
+
+// Test
+let errors = [RequisitionNotFound (RequisitionId "req_missing"); BudgetExceeded (15000m, 10000m); DatabaseTimeout "save_po"]
+// => Three different error categories
+
+errors |> List.iter (fun e ->
+    let (status, retry) = errorPolicy e
+    printfn "%A → status=%d retry=%b" e status retry
+)
+// => Output: RequisitionNotFound ... → status=404 retry=false
+// => Output: BudgetExceeded ... → status=422 retry=false
+// => Output: DatabaseTimeout ... → status=503 retry=true
+```
+
+**Key Takeaway**: A comprehensive named error DU enables precise, policy-driven handling at the API boundary — each error case maps to an exact HTTP status, alerting severity, and retry eligibility without string parsing or `instanceof` checks.
+
+**Why It Matters**: Infrastructure errors (`DatabaseTimeout`) should trigger automatic retry with exponential backoff. Business rule violations (`BudgetExceeded`) should return 422 and surface a user-friendly message. Concurrency conflicts (`ConcurrencyConflict`) should trigger an optimistic lock retry loop. All of these policies are encoded as pattern matches on the named error DU — a new error case is added to the DU, the compiler highlights every policy function that needs updating, and the coverage is guaranteed complete.
+
+---
+
+### Example 49: Mapping Domain Error to API Error at the Boundary
+
+The API boundary translates `PurchasingContextError` into HTTP responses. This translation is a pure function that lives outside the domain — it is infrastructure, not domain logic.
+
+```fsharp
+// Translating domain errors to HTTP responses at the API boundary.
+// The translation is a pure function — no side effects, fully testable.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+type PurchasingContextError =
+    | RequisitionNotFound of id: string
+    | BudgetExceeded      of required: decimal * available: decimal
+    | SupplierNotEligible of SupplierId
+    | DatabaseTimeout     of operation: string
+// => Subset of the full error DU for this example
+
+// API error response — the DTO returned to the HTTP client
+type ApiError = {
+    Status:  int
+    Code:    string
+    Message: string
+    Retry:   bool
+}
+// => ApiError : the JSON body shape returned on error responses
+
+// Pure translation function — domain error → API error DTO
+let toApiError (err: PurchasingContextError) : ApiError =
+    match err with
+    | RequisitionNotFound id ->
+        { Status = 404; Code = "REQUISITION_NOT_FOUND"
+          Message = sprintf "Requisition '%s' not found" id; Retry = false }
+        // => 404: resource missing — message identifies which ID was not found
+    | BudgetExceeded (required, available) ->
+        { Status = 422; Code = "BUDGET_EXCEEDED"
+          Message = sprintf "Required %.2f exceeds available budget %.2f" required available
+          Retry   = false }
+        // => 422: business rule violation — message helps the requester know how much to trim
+    | SupplierNotEligible (SupplierId sid) ->
+        { Status = 422; Code = "SUPPLIER_NOT_ELIGIBLE"
+          Message = sprintf "Supplier '%s' is not approved for new purchase orders" sid
+          Retry   = false }
+        // => 422: supplier state is Pending, Suspended, or Blacklisted
+    | DatabaseTimeout op ->
+        { Status = 503; Code = "SERVICE_UNAVAILABLE"
+          Message = sprintf "Database operation '%s' timed out — please retry" op
+          Retry   = true }
+        // => 503: transient infrastructure error — retry is safe and encouraged
+
+// The API handler: run the domain workflow, translate the result
+let handleRequest (domainResult: Result<string, PurchasingContextError>) : int * string =
+    // => domainResult comes from the workflow function
+    // => Returns (httpStatus, responseBody) for the HTTP framework
+    match domainResult with
+    | Ok message ->
+        (200, sprintf """{"status":"ok","message":"%s"}""" message)
+        // => 200: success — wrap the domain message in a JSON envelope
+    | Error err ->
+        let apiErr = toApiError err
+        // => Translate domain error to API error DTO
+        (apiErr.Status, sprintf """{"code":"%s","message":"%s","retry":%b}""" apiErr.Code apiErr.Message apiErr.Retry)
+        // => Return the HTTP status and JSON-serialised error body
+
+// Test the translation
+let domainOk    = Ok "PO po_e3d1 approved"
+let domainError = Error (BudgetExceeded (15000m, 10000m))
+// => Two test results: success and a budget-exceeded error
+
+let (status1, body1) = handleRequest domainOk
+// => 200, JSON success body
+let (status2, body2) = handleRequest domainError
+// => 422, JSON error body with code, message, retry=false
+
+printfn "Success: %d %s" status1 body1
+// => Output: Success: 200 {"status":"ok","message":"PO po_e3d1 approved"}
+printfn "Error:   %d %s" status2 body2
+// => Output: Error:   422 {"code":"BUDGET_EXCEEDED","message":"Required 15000.00 exceeds available budget 10000.00","retry":false}
+```
+
+**Key Takeaway**: The API boundary translation is a pure function from domain errors to HTTP responses — it lives outside the domain, is independently testable, and keeps HTTP concerns out of the domain layer.
+
+**Why It Matters**: Domain logic must never contain HTTP status codes or JSON field names — those are infrastructure concerns. A pure `toApiError` translation function keeps the boundary clean: domain layer knows only `PurchasingContextError`, API layer knows only `ApiError`. When the API contract changes (adding a `retryAfterSeconds` field), only `toApiError` needs updating, not the domain workflows.
+
+---
+
+### Example 50: Pushing Effects to the Edges
+
+The functional core of the procurement domain is pure — no I/O, no side effects. Effects (database access, event publishing, email sending) are pushed to the edges of the system and injected as function parameters. The domain core is always testable without infrastructure.
+
+```fsharp
+// Functional core / imperative shell: domain logic is pure; I/O is at the edges.
+// The core computes; the shell executes.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// ── FUNCTIONAL CORE ─────────────────────────────────────────────────────────
+// Pure domain types and functions — no I/O, no Async, no side effects
+
+type DraftPO   = { Id: PurchaseOrderId; SupplierId: SupplierId; Total: decimal }
+type ApprovedPO = { Id: PurchaseOrderId; SupplierId: SupplierId; Total: decimal; ApprovedAt: System.DateTimeOffset }
+
+// Pure business rule: can this PO be approved?
+let canApprove (po: DraftPO) (approverBudget: decimal) : Result<unit, string> =
+    if po.Total <= 0m then Error "Cannot approve a zero-total PO"
+    // => Business rule 1: zero-value POs cannot be approved
+    elif po.Total > approverBudget then Error (sprintf "PO total %.2f exceeds approver budget %.2f" po.Total approverBudget)
+    // => Business rule 2: approver cannot exceed their authority
+    else Ok ()
+    // => Both rules pass — approval is permissible
+
+// Pure state transition: Draft → Approved
+let applyApproval (po: DraftPO) : ApprovedPO =
+    { Id = po.Id; SupplierId = po.SupplierId; Total = po.Total; ApprovedAt = System.DateTimeOffset.UtcNow }
+    // => Pure transition — no I/O; caller handles persistence
+
+// ── IMPERATIVE SHELL ─────────────────────────────────────────────────────────
+// The shell orchestrates I/O; delegates all decisions to the pure core
+
+// Effect types (function type aliases for the ports)
+type LoadDraftPO    = PurchaseOrderId -> Async<DraftPO option>
+// => Loads the PO from the database; None if not found
+type SaveApprovedPO = ApprovedPO -> Async<unit>
+// => Persists the approved state
+type NotifyApprover = PurchaseOrderId -> Async<unit>
+// => Sends notification email to the supplier or requester
+
+// The shell function: orchestrate I/O, delegate decisions to the pure core
+let approvePOShell
+    (load:   LoadDraftPO)
+    (save:   SaveApprovedPO)
+    (notify: NotifyApprover)
+    (poId:   PurchaseOrderId)
+    (approverBudget: decimal)
+    : Async<Result<ApprovedPO, string>> =
+    async {
+        let! poOpt = load poId
+        // => I/O: load from database — effect at the edge
+        match poOpt with
+        | None    -> return Error (sprintf "PO %A not found" poId)
+        // => Infrastructure failure — no domain logic involved
+        | Some po ->
+            match canApprove po approverBudget with
+            // => PURE CORE: domain decision — no I/O here
+            | Error e -> return Error e
+            // => Business rule failed — return without any I/O
+            | Ok () ->
+                let approved = applyApproval po
+                // => PURE CORE: state transition — no I/O
+                do! save approved
+                // => I/O: persist new state — effect at the edge
+                do! notify poId
+                // => I/O: send notification — effect at the edge
+                return Ok approved
+                // => Return the approved state to the caller
+    }
+
+// The pure core is testable without any async infrastructure
+let draft = { Id = PurchaseOrderId "po_e3d1"; SupplierId = SupplierId "sup_acme"; Total = 2699.97m }
+// => draft : DraftPO — in-memory, no database
+
+let canApproveResult = canApprove draft 5000m
+// => 2699.97 > 0 and <= 5000 — Ok () — approver budget sufficient
+// => canApproveResult : Result<unit, string> = Ok ()
+
+printfn "canApprove: %A" canApproveResult
+// => Output: canApprove: Ok null
+let approved = applyApproval draft
+// => Pure transition — no I/O needed
+printfn "Approved at: %O" approved.ApprovedAt
+// => Output: Approved at: 2026-...
+```
+
+**Key Takeaway**: Separating pure domain logic (decisions, transitions) from I/O effects (database, events, notifications) produces a domain core that is testable without infrastructure and a shell that is straightforward to replace or adapt.
+
+**Why It Matters**: The functional core / imperative shell pattern is the most important architectural boundary in a procurement system. Approval rules, budget checks, and state transitions are the domain core — they must be testable in milliseconds without Postgres or Kafka. Database loading, event publishing, and email notifications are the shell — they deal with the real world. Keeping them separate means compliance tests for the approval rules run in the CI pipeline in under a second.
+
+---
+
+### Example 51: Pure Core Wrapping at the Edge
+
+The edge of the system is where pure domain functions meet impure I/O. This example shows the precise composition point: the shell reads from I/O, passes the data to the pure core, collects the output, and writes the output back to I/O.
+
+```fsharp
+// The composition point: pure core sandwiched between I/O reads and I/O writes.
+// Load → pure → save → publish. Each boundary is explicit.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// Data types
+type PoData    = { Id: PurchaseOrderId; SupplierId: SupplierId; Total: decimal; Status: string }
+type PoIssued  = { Id: PurchaseOrderId; SupplierId: SupplierId; IssuedAt: System.DateTimeOffset }
+type PoEvent   = { Kind: string; PoId: string; At: System.DateTimeOffset }
+// => Simplified types for composition illustration
+
+// ── PURE CORE ────────────────────────────────────────────────────────────────
+let transition (data: PoData) : Result<PoIssued * PoEvent, string> =
+    // => Pure: no I/O — takes data, returns new state + event or error
+    if data.Status <> "Approved" then
+        Error (sprintf "Cannot issue PO in status '%s' — must be Approved" data.Status)
+        // => Business rule: only Approved POs can be issued
+    else
+        let now    = System.DateTimeOffset.UtcNow
+        let issued = { Id = data.Id; SupplierId = data.SupplierId; IssuedAt = now }
+        // => Pure state transition — no database, no clock side effect beyond DateTimeOffset.UtcNow
+        let event  = { Kind = "PurchaseOrderIssued"; PoId = string data.Id; At = now }
+        // => Pure event construction — caller publishes it
+        Ok (issued, event)
+        // => Return both outputs — caller saves and publishes
+
+// ── IMPERATIVE SHELL ─────────────────────────────────────────────────────────
+type LoadPo    = PurchaseOrderId -> Async<PoData option>
+// => I/O read: load from database
+type SaveIssued = PoIssued -> Async<unit>
+// => I/O write: save new state
+type PublishEv  = PoEvent -> Async<unit>
+// => I/O write: publish event
+
+let issueShell (load: LoadPo) (save: SaveIssued) (pub: PublishEv) (poId: PurchaseOrderId) : Async<Result<PoIssued, string>> =
+    async {
+        // ── LOAD (I/O read) ────────────────────────────────────────────────
+        let! dataOpt = load poId
+        // => Reads from database — impure
+        match dataOpt with
+        | None -> return Error (sprintf "PO %A not found" poId)
+        | Some data ->
+
+        // ── PURE CORE ──────────────────────────────────────────────────────
+        match transition data with
+        // => All domain logic is here — pure, no I/O
+        | Error e -> return Error e
+        | Ok (issued, event) ->
+
+        // ── SAVE + PUBLISH (I/O writes) ────────────────────────────────────
+        do! save issued
+        // => Writes new state to database — impure
+        do! pub event
+        // => Publishes event — impure
+        return Ok issued
+        // => Return the result of the pure transition
+    }
+
+// Test the pure core in isolation — no async needed
+let testData = { Id = PurchaseOrderId "po_e3d1"; SupplierId = SupplierId "sup_acme"
+                 Total = 2699.97m; Status = "Approved" }
+// => testData : PoData — constructed in memory; no database required
+
+let coreResult = transition testData
+// => Pure transition: Status = "Approved" → Ok (PoIssued, PoEvent)
+// => coreResult : Result<PoIssued * PoEvent, string>
+
+match coreResult with
+| Ok (issued, event) ->
+    printfn "Core: issued=%A event=%s" issued.Id event.Kind
+    // => Output: Core: issued=PurchaseOrderId "po_e3d1" event=PurchaseOrderIssued
+| Error e -> printfn "Error: %s" e
+```
+
+**Key Takeaway**: The composition point has a clear three-phase structure: I/O read → pure core → I/O write. This structure makes the boundary visible, testable, and replaceable at each phase independently.
+
+**Why It Matters**: Being able to test `transition` in isolation means every business rule in the PO issuance logic — status check, state construction, event payload — is verifiable without spinning up a database or a message broker. The CI pipeline can run thousands of such tests in seconds. The shell (load, save, publish) is tested separately with integration tests against real infrastructure.
+
+---
+
+### Example 52: Dependency Injection via Partial Application
+
+Partial application wires the production implementations of port functions into workflow functions at the composition root. The workflow is defined with all dependencies as parameters; the composition root supplies the real implementations.
+
+```fsharp
+// Partial application as dependency injection — composition root wires everything.
+// The workflow is generic; the composition root binds it to production implementations.
+
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
+
+// Port type aliases
+type LoadPO      = PurchaseOrderId -> Async<(decimal * SupplierId) option>
+type SavePO      = PurchaseOrderId -> System.DateTimeOffset -> Async<unit>
+type PublishIssuedEvent = PurchaseOrderId -> SupplierId -> decimal -> Async<unit>
+// => Three port types — one for each I/O operation in the workflow
+
+// Workflow with all dependencies as parameters
+let issueWorkflow
+    (load:    LoadPO)
+    (save:    SavePO)
+    (publish: PublishIssuedEvent)
+    (poId:    PurchaseOrderId)
+    : Async<Result<unit, string>> =
+    async {
+        let! dataOpt = load poId
+        match dataOpt with
+        | None -> return Error (sprintf "PO %A not found" poId)
+        | Some (total, supplierId) ->
+            let now = System.DateTimeOffset.UtcNow
+            do! save poId now
+            // => Persist the issued timestamp
+            do! publish poId supplierId total
+            // => Publish the PurchaseOrderIssued event
             return Ok ()
-            // => Returns Ok unit on success — no meaningful value to return
-        }
-
-        Delete = fun id -> async {
-            if db.Remove id then return Ok ()
-            // => Dictionary.Remove returns true if key existed and was removed
-            // => Removed successfully
-            else return Error (sprintf "Order '%s' not found" id)
-            // => Not found — return domain error — caller decides whether to escalate
-        }
-
-        ListAll = fun () -> async { return db.Keys |> Seq.toList }
-        // => db.Keys is a sequence; Seq.toList materialises it as a list
-        // => Returns all keys as a list
-    }
-    // => returns OrderRepository record with all four operations implemented
-
-// ── Usage ─────────────────────────────────────────────────────────────────
-let testWorkflow () =
-    async {
-        let repo = inMemoryRepo ()
-        // => repo : OrderRepository — the in-memory implementation
-        // => Instantiate the in-memory repo
-        let! _   = repo.Save "ORD-001" "Alice,W1234,3"
-        // => Saves "Alice,W1234,3" under key "ORD-001"
-        // => let! awaits the async save and discards the Ok unit result
-        let! loaded = repo.GetById "ORD-001"
-        // => loaded : string option = Some "Alice,W1234,3"
-        // => Load it back
-        printfn "Loaded: %A" loaded
-        // => Output: Loaded: Some "Alice,W1234,3"
-        let! all = repo.ListAll ()
-        // => all : string list = ["ORD-001"] — one key in the store
-        printfn "All orders: %A" all
-        // => Output: All orders: ["ORD-001"]
     }
 
-testWorkflow () |> Async.RunSynchronously
-// => Async.RunSynchronously blocks the current thread until the async workflow completes
-// => Runs the workflow synchronously for demonstration
-// => All three operations run: Save, GetById, ListAll
-// => The in-memory repo satisfies OrderRepository — same interface as a real database repo
+// ── Stub implementations (used in tests) ────────────────────────────────────
+let stubLoad    _      = async { return Some (2699.97m, SupplierId "sup_acme") }
+// => Always returns a fixed PO — no database needed
+let stubSave    _ _    = async { return () }
+// => No-op save — test verifies workflow logic, not persistence
+let stubPublish _ _ _  = async {
+    printfn "[stub] PurchaseOrderIssued published"
+    // => Simulates event publication — test can capture this output
+    return ()
+}
+
+// ── Production implementations (wired at composition root) ──────────────────
+// In production these would call the real database and Kafka:
+// let pgLoad    = PgPurchaseOrderRepository.load pgConnection
+// let pgSave    = PgPurchaseOrderRepository.saveIssued pgConnection
+// let kafkaPub  = KafkaEventPublisher.publish kafkaProducer
+
+// ── Partial application: bind dependencies ────────────────────────────────────
+let testIssueWorkflow : PurchaseOrderId -> Async<Result<unit, string>> =
+    issueWorkflow stubLoad stubSave stubPublish
+    // => Partially apply all three stubs — testIssueWorkflow is now a single-arg function
+    // => testIssueWorkflow : PurchaseOrderId -> Async<Result<unit, string>>
+
+// In production:
+// let productionIssueWorkflow = issueWorkflow pgLoad pgSave kafkaPub
+
+// Test
+let result = Async.RunSynchronously (testIssueWorkflow (PurchaseOrderId "po_e3d1"))
+// => All stubs succeed — result : Result<unit, string> = Ok ()
+
+printfn "Result: %A" result
+// => Output: [stub] PurchaseOrderIssued published
+// => Output: Result: Ok null
 ```
 
-**Key Takeaway**: A record of functions is the idiomatic F# substitute for an interface — it provides the same polymorphism and testability without requiring classes, abstract types, or interface declarations.
+**Key Takeaway**: Partial application binds dependencies to workflows at the composition root — the workflow function itself never changes, only the implementations supplied to it, making production and test configurations a matter of which functions are partially applied.
 
-**Why It Matters**: Interfaces in OOP require class-based implementation, and mocking them requires a mocking framework. A record of functions is a plain data structure — substituting the in-memory version for the production SQL version is as simple as passing a different record value. Tests use simple inline records with lambda implementations; production code uses records built from real database clients. Wlaschin makes this substitution throughout Ch 12, showing how persistence concerns remain at the edge while domain logic stays pure.
+**Why It Matters**: The composition root is the single point where production dependencies (Postgres connection pool, Kafka producer) are wired into workflow functions. In tests, the composition root supplies stubs. The workflow code is identical in both cases — there is no test-specific branching inside domain logic. This is the purest form of the dependency inversion principle, achieved with zero framework overhead.
 
 ---
 
-## Workflow Architecture (Examples 51–55)
+### Example 53: Persistence Interface as a Record of Functions
 
-### Example 51: Repository = OrderId -> Async<Order option> Function
-
-The minimal repository interface for the order-taking domain is a single function: given an `OrderId`, return the order if it exists or `None` if it does not. Representing this as a function type rather than an interface record emphasises that a repository is fundamentally a query function. Wlaschin discusses repository design in Ch 12.
+In functional F#, a repository is not an interface or an abstract class — it is a record of functions. This record is the port; the PostgreSQL implementation is one value of this record type; the in-memory test implementation is another.
 
 ```fsharp
-// The repository as a single function type — the simplest possible interface.
-// For most workflows, you only need to query or save; a full CRUD interface is overkill.
+// Repository as a record of functions — the functional port pattern.
+// One record type = one port; multiple record values = multiple adapters.
 
-// ── Minimal types ─────────────────────────────────────────────────────────
-type OrderId = OrderId of string
-// => Wrapper to prevent ID confusion
-// => OrderId is distinct from other string types at compile time
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
 
-type OrderData = { OrderId: OrderId; CustomerName: string; Total: decimal }
-// => The domain order value
-// => Simplified: full model uses constrained types for all fields
+// Simplified PO data
+type PoRecord = { Id: PurchaseOrderId; SupplierId: SupplierId; Status: string; Total: decimal }
+// => The full PO record stored in and loaded from the repository
 
-// ── Repository as a function type ─────────────────────────────────────────
-type GetOrder = OrderId -> Async<OrderData option>
-// => "Given an OrderId, asynchronously return the order or None"
-// => This is the entire read-side interface for many workflows
-// => A function type, not an interface — no class needed to implement it
+// The repository port — a record of functions (NOT an interface)
+type PurchaseOrderRepository = {
+    Load:   PurchaseOrderId -> Async<PoRecord option>
+    // => Load a PO by ID; None if not found
+    Save:   PoRecord -> Async<unit>
+    // => Insert or update the PO record
+    ListBySupplier: SupplierId -> Async<PoRecord list>
+    // => Query all POs for a given supplier — used by the supplier dashboard
+}
+// => PurchaseOrderRepository : record type — the port definition
 
-// ── In-memory implementation ──────────────────────────────────────────────
-let buildInMemoryGetOrder () : GetOrder =
-    let store = System.Collections.Generic.Dictionary<string, OrderData>()
-    // => In-memory backing store — swap for real DB in production
-    store.Add("ORD-001", { OrderId = OrderId "ORD-001"; CustomerName = "Alice"; Total = 29.97m })
-    // => Seed with test data — ORD-001 is available for lookup
-    fun (OrderId id) ->
-        // => Returns a function (the GetOrder implementation)
-        async { return if store.ContainsKey id then Some store.[id] else None }
-        // => The repository function: looks up by ID, returns option
-        // => Some if found, None if not found — no exceptions thrown
-
-// ── Using the repository in a workflow ───────────────────────────────────
-let getOrder : GetOrder = buildInMemoryGetOrder ()
-// => getOrder : GetOrder = a function that looks up orders from the in-memory store
-
-let workflow () =
-    async {
-        let! order = getOrder (OrderId "ORD-001")
-        // => Await the async lookup; order : OrderData option
-        // => Call the repository function — no interface, no class, just a function call
-        match order with
-        | Some o -> printfn "Found order for %s, total £%.2f" o.CustomerName o.Total
-        // => o.CustomerName = "Alice"; o.Total = 29.97
-        | None   -> printfn "Order not found"
-        // => Not reached — "ORD-001" was seeded in buildInMemoryGetOrder
-    }
-
-workflow () |> Async.RunSynchronously
-// => Async.RunSynchronously executes the workflow and blocks until complete
-// => Output: Found order for Alice, total £29.97
-```
-
-**Key Takeaway**: Expressing a repository as a single function type rather than a multi-method interface exposes the minimal contract needed by each workflow step, reducing coupling and simplifying testing.
-
-**Why It Matters**: A typical OOP repository interface has ten or more methods (FindById, FindAll, FindByCustomer, Save, Update, Delete, Count...). Most workflow steps only need one or two of these. Reducing each dependency to the minimum function type needed produces smaller, more focused contracts that are easier to test and evolve. If a new workflow only needs to read orders, it depends on `GetOrder`, not an `IOrderRepository` with nine other methods it does not use.
-
----
-
-### Example 52: Save = Order -> Async<Result<unit, PersistError>> Function
-
-The write-side repository is also a function type. `Save` takes a domain object and returns `Async<Result<unit, PersistError>>` — it is async (database I/O) and fallible (constraint violations, connectivity issues). Wlaschin pairs this with `GetOrder` in Ch 12.
-
-```fsharp
-// Save: the write-side repository function type.
-// Async because of I/O; Result because saving can fail.
-
-// Domain types
-type OrderId = OrderId of string
-// => Wrapper: prevents mixing order IDs with other strings
-type OrderData = { OrderId: OrderId; CustomerName: string; Total: decimal }
-// => The full domain order record to be persisted
-
-// Persistence error type
-type PersistError =
-    | DuplicateOrderId of OrderId
-    // => An order with this ID already exists — caller should reject or ignore
-    | ConnectionFailed of message: string
-    // => Database is unreachable — caller should retry with backoff
-    | ConstraintViolation of detail: string
-    // => A database constraint was violated (e.g. FK violation) — system error
-
-// The save function type
-type SaveOrder = OrderData -> Async<Result<unit, PersistError>>
-// => "Given an OrderData, asynchronously try to save it"
-// => unit because there is no meaningful return value on success
-// => Result because saving can fail with a named error
-// => Async because database writes are I/O operations
-
-// In-memory implementation
-let buildInMemorySave () : SaveOrder =
-    let store = System.Collections.Generic.Dictionary<string, OrderData>()
-    // => In-memory backing store — key is the raw order ID string
-
-    fun order ->
+// In-memory implementation (test adapter)
+let inMemoryRepo (store: System.Collections.Generic.Dictionary<string, PoRecord>) : PurchaseOrderRepository =
+    { Load = fun (PurchaseOrderId id) ->
         async {
-            let (OrderId id) = order.OrderId
-            // => Unwrap the OrderId wrapper to get the raw string for dictionary lookup
-            if store.ContainsKey id then
-                return Error (DuplicateOrderId order.OrderId)
-                // => ID already in store — return DuplicateOrderId error
-                // => Simulate duplicate key error
-            else
-                store.[id] <- order
-                // => Insert the order into the in-memory store
-                return Ok ()
-                // => Success — returns Ok unit; no data to return on a write
+            match store.TryGetValue(id) with
+            | true, po -> return Some po
+            // => Found in the dictionary
+            | _         -> return None
+            // => Not found — returns None
         }
-
-let saveOrder : SaveOrder = buildInMemorySave ()
-// => saveOrder : SaveOrder = an Async function that saves to the in-memory store
-// => In production: replace with a SQL or document database implementation; same interface
-
-let testSave () =
-    async {
-        let order = { OrderId = OrderId "ORD-001"; CustomerName = "Alice"; Total = 29.97m }
-        // => order : OrderData — a sample order with ID "ORD-001"
-        let! result1 = saveOrder order
-        // => First save — "ORD-001" not in store yet → Ok ()
-        // => First save — should succeed
-        printfn "First save: %A" result1
-        // => result1 = Ok () — the order was inserted
-        // => Output: First save: Ok null
-
-        let! result2 = saveOrder order
-        // => Second save — "ORD-001" already in store → DuplicateOrderId error
-        // => Second save — should fail with DuplicateOrderId
-        printfn "Second save: %A" result2
-        // => result2 = Error (DuplicateOrderId (OrderId "ORD-001"))
-        // => Output: Second save: Error (DuplicateOrderId (OrderId "ORD-001"))
-    }
-
-testSave () |> Async.RunSynchronously
-// => Runs both saves; first succeeds, second fails with DuplicateOrderId
-// => Async.RunSynchronously blocks until the entire testSave workflow completes
-```
-
-**Key Takeaway**: Modelling `Save` as a function returning `Async<Result<unit, PersistError>>` makes persistence errors part of the typed contract, forcing callers to handle duplicate key, connection, and constraint errors explicitly.
-
-**Why It Matters**: Database exceptions (duplicate key, connection timeout, constraint violation) are among the most common production failures. When `Save` returns `Result<unit, PersistError>`, the caller must handle each failure case explicitly rather than wrapping everything in a catch-all `try/catch`. This discipline surfaces persistence error handling decisions (retry on connection failure? reject on duplicate? escalate on constraint violation?) in the domain workflow rather than in infrastructure code, where they belong to the business logic.
-
----
-
-### Example 53: EventStore Append as a Function
-
-Publishing domain events to an event store is modelled as an append function: given an order ID and a list of events, append them. The function is `Async<Result<unit, AppendError>>`. Wlaschin discusses event publishing in Ch 12.
-
-```fsharp
-// Event store append: a function, not a class — consistent with the rest of the functional model.
-
-// Domain event type
-type OrderEvent =
-    | OrderPlaced   of orderId: string * total: decimal
-    // => Raised when a customer successfully places an order
-    | OrderCancelled of orderId: string * reason: string
-    // => Raised when an order is cancelled — carries the cancellation reason
-    | OrderShipped  of orderId: string * trackingNumber: string
-    // => Raised when the order is dispatched to the carrier
-
-// Error type for event store operations
-type AppendError =
-    | StreamConcurrencyConflict of streamId: string
-    // => Optimistic concurrency: another writer appended first
-    // => Caller should reload the stream and retry
-    | EventStoreUnavailable     of message: string
-    // => Event store is down — caller should retry with backoff
-
-// The append function type
-type AppendOrderEvents = string -> OrderEvent list -> Async<Result<unit, AppendError>>
-// => string = stream ID (typically the OrderId)
-// => OrderEvent list = the events to append — one or more at a time
-// => Async<Result<unit, AppendError>> = async and fallible
-// => unit return: no data returned on success; errors are named explicitly
-
-// In-memory event store implementation
-let buildInMemoryEventStore () : AppendOrderEvents =
-    let streams = System.Collections.Generic.Dictionary<string, OrderEvent list>()
-    // => In-memory event streams keyed by stream ID
-    // => In production: replace with EventStoreDB or Azure Event Hubs client
-
-    fun streamId events ->
-        // => Returns a function that appends events to the in-memory stream
+      Save = fun po ->
         async {
-            let existing = if streams.ContainsKey streamId then streams.[streamId] else []
-            // => Get existing events for this stream — empty list if first event
-            streams.[streamId] <- existing @ events
-            // => Append: existing events + new events = complete stream
-            // => @ is the F# list concatenation operator
-            printfn "[EventStore] Appended %d event(s) to stream '%s'" (List.length events) streamId
-            // => Log for observability
-            return Ok ()
-            // => Success — no data to return on successful append
+            let (PurchaseOrderId id) = po.Id
+            store.[id] <- po
+            // => Upsert into the dictionary — thread-unsafe for simplicity
         }
+      ListBySupplier = fun supplierId ->
+        async {
+            return store.Values |> Seq.filter (fun po -> po.SupplierId = supplierId) |> Seq.toList
+            // => Linear scan — acceptable for in-memory test adapter
+        }
+    }
+// => inMemoryRepo : PurchaseOrderRepository — test adapter, no database required
 
-let appendEvents : AppendOrderEvents = buildInMemoryEventStore ()
-// => appendEvents : AppendOrderEvents = a function backed by the in-memory store
-
-let testAppend () =
+// Using the repository in a workflow
+let loadAndPrint (repo: PurchaseOrderRepository) (poId: PurchaseOrderId) : Async<unit> =
     async {
-        let events = [ OrderPlaced ("ORD-001", 29.97m); ]
-        // => One OrderPlaced event to append — the usual case
-        let! result = appendEvents "ORD-001" events
-        // => Append to the "ORD-001" stream; result : Result<unit, AppendError>
-        // => Append to the "ORD-001" stream
-        printfn "Append result: %A" result
-        // => result = Ok () on success
+        let! result = repo.Load poId
+        // => Call through the port — works with any adapter (in-memory or Postgres)
+        match result with
+        | Some po -> printfn "PO: %A status=%s total=%M" po.Id po.Status po.Total
+        // => Found — print the PO details
+        | None    -> printfn "PO %A not found" poId
+        // => Not found — log the miss
     }
 
-testAppend () |> Async.RunSynchronously
-// => Output: [EventStore] Appended 1 event(s) to stream 'ORD-001'
-// => Output: Append result: Ok null
+// Wire up the in-memory adapter
+let store = System.Collections.Generic.Dictionary<string, PoRecord>()
+// => Empty in-memory store
+let testPO = { Id = PurchaseOrderId "po_e3d1"; SupplierId = SupplierId "sup_acme"; Status = "Draft"; Total = 2699.97m }
+store.["po_e3d1"] <- testPO
+// => Seed the store with a test PO
+
+let repo = inMemoryRepo store
+// => repo : PurchaseOrderRepository — in-memory adapter
+
+Async.RunSynchronously (loadAndPrint repo (PurchaseOrderId "po_e3d1"))
+// => Output: PO: PurchaseOrderId "po_e3d1" status=Draft total=2699.9700M
+
+Async.RunSynchronously (loadAndPrint repo (PurchaseOrderId "po_missing"))
+// => Output: PO: PurchaseOrderId "po_missing" not found
 ```
 
-**Key Takeaway**: Modelling event store operations as function types keeps the domain model decoupled from any specific event store technology and makes the dependency substitutable for testing.
+**Key Takeaway**: A record of functions is the idiomatic F# port — it groups related I/O operations into a cohesive unit that can be swapped between test and production implementations without changing the workflow code.
 
-**Why It Matters**: Event stores (EventStoreDB, Azure Event Hubs, custom SQL tables) have different APIs, but from the domain's perspective they all do the same thing: append events to a stream. A function type `AppendOrderEvents` abstracts this into a single, substitutable contract. Testing uses an in-memory implementation; production uses the real event store. Switching event store technologies requires changing only the function implementation at the composition root — the domain workflow is untouched.
+**Why It Matters**: The record-of-functions pattern makes the port boundary explicit and first-class without requiring abstract classes or mock frameworks. Passing an `inMemoryRepo` in tests and a `pgRepo` (backed by Npgsql) in production is a matter of constructing different records. The workflow function (`loadAndPrint`) receives `PurchaseOrderRepository` and never knows which adapter is behind it.
 
 ---
 
-### Example 54: DTO Record Separate from Domain Type
+### Example 54: Approval Level Enforcement — Invariant in the Domain
 
-DTOs (Data Transfer Objects) are the shapes used for serialization at system boundaries. They are separate from domain types and must be explicitly translated in both directions. Wlaschin dedicates Ch 11 to the DTO boundary. Keeping them separate prevents domain types from acquiring serialization annotations and coupling to specific transport formats.
+The invariant "a PO with total > $10,000 must be approved at L3" is a domain rule. It is checked inside the approval workflow, not in the controller or the database. If the approver's level is L1 or L2, the workflow returns a named error before any persistence occurs.
 
 ```fsharp
-// DTOs are separate from domain types — never use domain types for serialization.
-// Translation functions convert between the two worlds at the boundary.
+// Approval level enforcement: a domain invariant checked in the pure core.
+// The controller never makes this decision — the domain does.
 
-// ── Domain types — rich, validated, no serialization concerns ─────────────
-type OrderId       = OrderId       of string
-// => Wrapper type: distinct from a plain string at compile time
-// => OrderId "ORD-001" is a different type from CustomerName "Alice"
-type CustomerName  = CustomerName  of string
-// => Distinct wrapper: cannot accidentally pass a CustomerName where OrderId is expected
-// => Prevents ID confusion — the compiler rejects wrong-type substitutions
-type ProductCode   = ProductCode   of string
-// => Domain-level product code — validated before construction
+type PurchaseOrderId = PurchaseOrderId of string
+type ApprovalLevel   = L1 | L2 | L3
+// => Three approval tiers — derived from PO total
 
-type DomainOrderLine = {
-    ProductCode : ProductCode
-    // => Uses wrapper type, not raw string — compiler-checked
-    // => ProductCode wrapper enforces the W/G prefix format (in the full model)
-    Quantity    : int
-    // => Line quantity — would use PositiveInteger in the full model
+type ApproverId = ApproverId of string
+// => Typed approver identity
+
+type ApproverProfile = {
+    Id:    ApproverId
+    Level: ApprovalLevel
+    // => The highest approval level this approver holds
+    Name:  string
+    // => Display name for audit trail
 }
+// => ApproverProfile : value object — drives the authority check
 
-type DomainOrder = {
-    OrderId      : OrderId
-    // => Validated, non-blank order identifier
-    CustomerName : CustomerName
-    // => Validated customer name — no empty names in domain
-    Lines        : DomainOrderLine list
-    // => Non-empty list (enforced by the workflow, not the type here)
-    // => Each line has a validated ProductCode and positive Quantity
-    Total        : decimal
-    // => Computed total — would use Price type in the full model
-    // => Derived from summing all DomainOrderLine values
-}
+type ApprovalError =
+    | InsufficientAuthority of required: ApprovalLevel * actual: ApprovalLevel
+    // => Approver's level is too low for the PO total
+    | AlreadyApproved       of PurchaseOrderId
+    // => PO is already in Approved state
+// => Named errors for the approval step
 
-// ── DTO types — flat, serializable, no business rules ────────────────────
-// These are the shapes used for JSON serialization (e.g. with System.Text.Json)
-[<CLIMutable>]
-// => CLIMutable: needed by some .NET serializers to generate a parameterless constructor
-type OrderLineDto = {
-    mutable ProductCode : string
-    // => Raw string — DTO fields are mutable for deserializer compatibility
-    mutable Quantity    : int
-    // => Raw int — no PositiveInteger constraint at the DTO level
-}
+// Pure domain rule: derives the required approval level from the total
+let requiredLevel (total: decimal) : ApprovalLevel =
+    if total <= 1000m then L1 elif total <= 10000m then L2 else L3
+    // => Same rule as Example 5 — consistent across the codebase
 
-[<CLIMutable>]
-// => Second CLIMutable DTO — the full order matches the JSON object shape
-type OrderDto = {
-    mutable OrderId      : string
-    // => Raw string — no OrderId wrapper at the DTO level
-    mutable CustomerName : string
-    // => Raw string — no CustomerName wrapper
-    mutable Lines        : OrderLineDto list
-    // => List of DTO lines — each maps to a DomainOrderLine after validation
-    mutable Total        : decimal
-    // => Raw decimal — no Price type constraint
-    // => All four fields are mutable: required by .NET deserializers
-}
+// Pure invariant check: can this approver approve this PO?
+let checkAuthority (approver: ApproverProfile) (poTotal: decimal) : Result<unit, ApprovalError> =
+    let required = requiredLevel poTotal
+    // => Compute the required level from the total
+    let sufficient =
+        match approver.Level, required with
+        | L3, _        -> true   // => L3 approver can approve any PO
+        | L2, (L1|L2)  -> true   // => L2 approver can approve L1 and L2 POs
+        | L1, L1       -> true   // => L1 approver can only approve L1 POs
+        | _,  _        -> false  // => All other combinations are insufficient
+    // => Exhaustive match — compiler verifies all ApprovalLevel × ApprovalLevel combinations
+    if sufficient then Ok ()
+    // => Authority is sufficient — approval is permitted
+    else Error (InsufficientAuthority (required, approver.Level))
+    // => Authority is insufficient — named error carries both levels for the error message
 
-// ── Translation: DTO → Domain (with validation) ───────────────────────────
-let orderLineFromDto (dto: OrderLineDto) : Result<DomainOrderLine, string> =
-    // => Validates the DTO and wraps primitives in domain types; returns Result
-    if dto.ProductCode = "" then Error "ProductCode is required"
-    // => Guard: blank product code is not a valid domain value
-    elif dto.Quantity  <= 0 then Error "Quantity must be positive"
-    // => Guard: zero or negative quantity violates the domain rule
-    else Ok { ProductCode = ProductCode dto.ProductCode; Quantity = dto.Quantity }
-    // => Both guards passed — wrap the raw string in ProductCode and return Ok
+// Test the invariant
+let l2Approver = { Id = ApproverId "emp_mgr_dept"; Level = L2; Name = "Department Head" }
+// => l2Approver can approve L1 and L2 POs (up to $10,000)
 
-// ── Translation: Domain → DTO (always succeeds) ───────────────────────────
-let orderLineToDto (line: DomainOrderLine) : OrderLineDto =
-    // => Infallible: domain types are already valid, so unwrapping never fails
-    let (ProductCode code) = line.ProductCode
-    // => Pattern-match to unwrap the ProductCode wrapper to its raw string
-    { ProductCode = code; Quantity = line.Quantity }
-    // => Return flat DTO with raw primitives — no domain constraints needed here
+let smallPO = checkAuthority l2Approver 500m
+// => requiredLevel 500 = L1; L2 can approve L1 — Ok ()
+let mediumPO = checkAuthority l2Approver 5000m
+// => requiredLevel 5000 = L2; L2 can approve L2 — Ok ()
+let largePO  = checkAuthority l2Approver 50000m
+// => requiredLevel 50000 = L3; L2 cannot approve L3 — Error (InsufficientAuthority (L3, L2))
 
-printfn "DTO and domain types are separate — translation is explicit and testable"
-// => The boundary between domain types and DTOs is clear and explicit
-// => Each translation function is independently testable with simple unit tests
-// => Output: DTO and domain types are separate — translation is explicit and testable
+printfn "Small PO: %A" smallPO
+// => Output: Small PO: Ok null
+printfn "Large PO: %A" largePO
+// => Output: Large PO: Error (InsufficientAuthority (L3, L2))
 ```
 
-**Key Takeaway**: Keeping DTOs separate from domain types means domain types remain clean and focused on business rules, while DTOs absorb serialization concerns like `[<CLIMutable>]` and flat field names.
+**Key Takeaway**: Domain invariants enforced as pure functions in the domain layer are independently testable and guaranteed consistent — the same rule applies whether the approval request comes from the web UI, a batch job, or an API integration.
 
-**Why It Matters**: When domain types are also used for serialization, they accumulate attributes (`[<JsonPropertyName("order_id")>]`, `[<JsonIgnore>]`), nullable fields (to satisfy deserializer requirements), and public setters (to allow mutation during deserialization). All of these corrupt the domain model's integrity constraints. Separate DTOs absorb these concerns and translate cleanly to and from domain types at the boundary. Wlaschin's Ch 11 shows that this separation also insulates the domain from API versioning changes.
+**Why It Matters**: Approval authority rules are among the most audited in any procurement system. Placing the check in the domain layer (not the controller, not the database trigger) means it is version-controlled alongside the domain model, testable with pure unit tests, and guaranteed to run regardless of which entry point triggered the approval. A database trigger enforcing the same rule would be invisible in code review and untestable without a running database.
 
 ---
 
-### Example 55: fromDto / toDto Translation Functions
+### Example 55: Cancellation Workflow — Off-Ramp from Any Pre-Paid State
 
-The translation functions between DTO and domain types are the anti-corruption layer for the serialization boundary. `fromDto` validates and translates incoming data; `toDto` serialises domain values for output. Wlaschin implements both in Ch 11.
+The cancellation off-ramp applies to any PO in a pre-`Paid` state. Modelling cancellation as a typed transition that accepts a union of cancellable states prevents it from being accidentally called on a `Paid` or `Closed` PO.
 
 ```fsharp
-// fromDto: validates and translates DTO → domain type (fallible, returns Result).
-// toDto:   serialises domain type → DTO (infallible, returns DTO directly).
+// Cancellation: an off-ramp from any pre-Paid PO state.
+// A union type for "cancellable states" prevents calling cancel on terminal states.
 
-// Abbreviated types from Example 54
-type OrderId      = OrderId      of string
-// => Wrapper — distinguishes order IDs from other strings
-type CustomerName = CustomerName of string
-// => Wrapper — distinguishes customer names from other strings
+type PurchaseOrderId = PurchaseOrderId of string
+type SupplierId      = SupplierId      of string
 
-type DomainOrderLine = { ProductCode: string; Quantity: int }
-// => Domain line — ProductCode and Quantity already validated
-// => Simplified: full model uses ProductCode DU and PositiveInteger
-type DomainOrder     = { OrderId: OrderId; CustomerName: CustomerName; Lines: DomainOrderLine list; Total: decimal }
-// => Full domain order — all fields use domain types or primitives
+// States that can be cancelled
+type CancellablePO =
+    | CancellableDraft          of id: PurchaseOrderId
+    // => Draft POs can be cancelled before submission
+    | CancellableAwaitingApproval of id: PurchaseOrderId * supplierId: SupplierId
+    // => AwaitingApproval POs can be cancelled (approval rejected or withdrawn)
+    | CancellableApproved       of id: PurchaseOrderId * supplierId: SupplierId
+    // => Approved POs can be cancelled before issuance
+    | CancellableIssued         of id: PurchaseOrderId * supplierId: SupplierId
+    // => Issued POs can be cancelled (supplier notified)
+// => Terminal states (Paid, Closed) are NOT in this union — cannot be cancelled
 
-type OrderLineDto = { ProductCode: string; Quantity: int }
-// => DTO line — raw primitives, no domain constraints
-type OrderDto     = { OrderId: string; CustomerName: string; Lines: OrderLineDto list; Total: decimal }
-// => DTO order — flat structure for serialization
+// The result of a cancellation
+type CancelledPO = {
+    Id:         PurchaseOrderId
+    SupplierId: SupplierId option
+    // => Some supplier if the PO had been assigned; None for Draft
+    Reason:     string
+    // => Mandatory cancellation reason — for audit trail and supplier notification
+    CancelledAt: System.DateTimeOffset
+    // => Timestamp of cancellation — for SLA and reporting
+}
+// => CancelledPO : the terminal state — no further transitions possible
 
-// ── fromDto: DTO → Domain (with validation) ───────────────────────────────
-let orderLineFromDto (dto: OrderLineDto) : Result<DomainOrderLine, string> =
-    // => Validates each DTO line field and returns Ok domain line or Error
-    if dto.ProductCode = "" then Error "ProductCode required"
-    // => Guard: blank product code is an invalid domain state
-    elif dto.Quantity <= 0   then Error "Quantity must be positive"
-    // => Guard: zero or negative quantity violates the positive-quantity invariant
-    else Ok { ProductCode = dto.ProductCode; Quantity = dto.Quantity }
-    // => Returns Result — translation can fail if DTO is invalid
+// Domain event emitted on cancellation
+type PurchaseOrderCancelledEvent = {
+    PurchaseOrderId: PurchaseOrderId
+    Reason:          string
+    CancelledAt:     System.DateTimeOffset
+}
+// => Consumer: supplier-notifier (EDI/email), accounting (reverse commitment)
 
-let orderFromDto (dto: OrderDto) : Result<DomainOrder, string list> =
-    // => Returns string list to accumulate all errors (applicative style)
-    // => Validates all top-level fields independently — all errors collected at once
-    let idResult    = if dto.OrderId = "" then Error ["OrderId required"] else Ok (OrderId dto.OrderId)
-    // => idResult : Result<OrderId, string list> — wraps valid id in OrderId
-    let nameResult  = if dto.CustomerName = "" then Error ["CustomerName required"] else Ok (CustomerName dto.CustomerName)
-    // => nameResult : Result<CustomerName, string list> — wraps valid name in CustomerName
-    let linesResult =
-        dto.Lines
-        |> List.map orderLineFromDto
-        // => Map each DTO line through orderLineFromDto — produces Result list
-        |> List.choose (fun r -> match r with Error e -> Some e | Ok _ -> None)
-        // => Extract only the Error values — all line errors collected into a list
-        |> function
-            | []     -> Ok (dto.Lines |> List.map (fun d -> { ProductCode = d.ProductCode; Quantity = d.Quantity }))
-            // => No errors: all lines valid — wrap them as domain lines
-            | errors -> Error errors
-            // => One or more errors: return the accumulated error list
-    // => Collect all line errors into a list
-    match idResult, nameResult, linesResult with
-    | Ok id, Ok name, Ok lines ->
-        // => All three validations passed — assemble the full DomainOrder
-        Ok { OrderId = id; CustomerName = name; Lines = lines; Total = dto.Total }
-        // => Total is passed through as-is — would use Price type in the full model
-    | _ ->
-        // => At least one validation failed — accumulate all error messages
-        let errors = [ yield! (match idResult   with Error e -> e | _ -> [])
-                       // => Collect id errors if any
-                       yield! (match nameResult  with Error e -> e | _ -> [])
-                       // => Collect name errors if any
-                       yield! (match linesResult with Error e -> e | _ -> []) ]
-                       // => Collect line errors if any
-        Error errors
-        // => Return all accumulated errors as a single list
+// Cancel transition — accepts only cancellable states
+let cancelPO (reason: string) (po: CancellablePO) : CancelledPO * PurchaseOrderCancelledEvent =
+    // => reason: why the PO is being cancelled — mandatory
+    if reason = "" then failwith "Cancellation reason is required"
+    // => Guard: blank reason is not allowed — audit trail requires context
+    let (id, supplierOpt) =
+        match po with
+        | CancellableDraft id                        -> id, None
+        // => Draft: no supplier assigned yet
+        | CancellableAwaitingApproval (id, sup)      -> id, Some sup
+        // => AwaitingApproval: supplier may have been selected
+        | CancellableApproved (id, sup)              -> id, Some sup
+        // => Approved: supplier is confirmed
+        | CancellableIssued (id, sup)                -> id, Some sup
+        // => Issued: supplier must be notified via the event
+    let now = System.DateTimeOffset.UtcNow
+    let cancelled = { Id = id; SupplierId = supplierOpt; Reason = reason; CancelledAt = now }
+    // => New CancelledPO state — carries the reason and timestamp
+    let event = { PurchaseOrderId = id; Reason = reason; CancelledAt = now }
+    // => Event for supplier-notifier and accounting
+    cancelled, event
+    // => Return state and event — caller persists state and publishes event
 
-// ── toDto: Domain → DTO (infallible) ─────────────────────────────────────
-let orderLineToDto (line: DomainOrderLine) : OrderLineDto =
-    // => Unwraps domain line to flat DTO — no validation needed, domain is already valid
-    { ProductCode = line.ProductCode; Quantity = line.Quantity }
-    // => Direct mapping — domain types are already valid, no checks needed
+// Test: cancel a PO that is awaiting approval
+let awaitingPO = CancellableAwaitingApproval (PurchaseOrderId "po_e3d1", SupplierId "sup_acme")
+// => awaitingPO : CancellablePO — in AwaitingApproval state
 
-let orderToDto (order: DomainOrder) : OrderDto =
-    // => Infallible: domain order is guaranteed valid — serialization cannot fail
-    let (OrderId id) = order.OrderId
-    // => Pattern-match to unwrap OrderId wrapper to its raw string
-    let (CustomerName name) = order.CustomerName
-    // => Pattern-match to unwrap CustomerName wrapper to its raw string
-    { OrderId = id; CustomerName = name
-      Lines = order.Lines |> List.map orderLineToDto
-      // => Map each domain line to its DTO equivalent
-      Total = order.Total }
-    // => Always succeeds — domain types carry guarantees that DTOs do not need to re-validate
+let (cancelled, event) = cancelPO "Budget freeze — all non-essential POs cancelled" awaitingPO
+// => reason non-blank — cancellation proceeds
+// => cancelled : CancelledPO = { Id = ...; SupplierId = Some ...; Reason = "Budget freeze..."; ... }
+// => event : PurchaseOrderCancelledEvent = { PurchaseOrderId = ...; Reason = "Budget freeze..."; ... }
 
-let dto = { OrderId = "ORD-001"; CustomerName = "Alice"; Lines = [{ ProductCode = "W1234"; Quantity = 3 }]; Total = 29.97m }
-// => Sample DTO from an HTTP request or JSON file
-// => All fields are non-blank and quantity > 0 — this DTO will pass validation
-match orderFromDto dto with
-| Ok order -> printfn "Domain order: %A" (orderToDto order)
-// => fromDto succeeded — convert back to DTO and print
-// => order : DomainOrder with wrapped types; orderToDto converts back to flat DTO
-| Error errs -> printfn "Errors: %A" errs
-// => Not reached — all fields in dto are valid
-// => Output: Domain order: { OrderId = "ORD-001"; CustomerName = "Alice"; Lines = [...]; Total = 29.97 }
+printfn "Cancelled PO: %A" cancelled.Id
+// => Output: Cancelled PO: PurchaseOrderId "po_e3d1"
+printfn "Reason: %s" cancelled.Reason
+// => Output: Reason: Budget freeze — all non-essential POs cancelled
+printfn "Event: %A at %O" event.PurchaseOrderId event.CancelledAt
+// => Output: Event: PurchaseOrderId "po_e3d1" at 2026-...
 ```
 
-**Key Takeaway**: `fromDto` is the validation boundary — it produces `Result` to signal that incoming data may be invalid. `toDto` is always safe — domain values are already valid, so serialisation cannot fail.
+**Key Takeaway**: A `CancellablePO` union type restricts the cancellation workflow to only valid source states — calling `cancelPO` on a `Paid` PO is a compile error because `Paid` is not a case of `CancellablePO`.
 
-**Why It Matters**: The asymmetry between `fromDto` (fallible) and `toDto` (infallible) is a direct consequence of the domain type system's guarantees. Incoming data from the outside world is untrusted; outgoing data from the domain is already valid. Encoding this asymmetry in the type signatures makes the trust boundary explicit. When a serialisation format changes (new field, renamed field, format version bump), only the DTO type and the translation functions need updating — the domain model is completely insulated from transport format changes.
+**Why It Matters**: Cancelling a paid PO is a severe compliance issue in any procurement system — it would require reversing bank disbursements, notifying the supplier, and triggering an accounting credit note. The type system preventing this call at compile time is more reliable than any runtime check or validation test. When a new "cancellable" state is added to the procurement workflow, the developer adds it to the `CancellablePO` union and the compiler highlights every match expression that must handle it.

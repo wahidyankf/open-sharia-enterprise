@@ -3,1923 +3,1355 @@ title: "Intermediate"
 date: 2026-01-31T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Examples 31-60: Detailed component diagrams, deployment diagrams, dynamic sequence flows, advanced integration patterns, and multi-container architectures (40-75% coverage)"
+description: "Examples 31-60: C4 Level 2 Container and Level 3 Component diagrams for procurement-platform-be — web-ui, APIs, event bus, postgres, and internal component structure (40-75% coverage)"
 tags: ["c4-model", "architecture", "tutorial", "by-example", "intermediate", "diagrams"]
 ---
 
-This intermediate-level tutorial builds on beginner foundations with 30 examples covering detailed component organization, deployment strategies, dynamic interaction flows, advanced integration patterns, and production-ready multi-container architectures.
+This intermediate-level tutorial builds on the System Context foundation with 30 examples covering C4 Level 2 (Container) and Level 3 (Component) diagrams. Every example zooms into the `procurement-platform-be` containers — `web-ui`, `purchasing-api`, `receiving-api`, `invoicing-api`, `payments-worker`, `event-bus`, `postgres`, `read-store`, and `secret-manager` — and then into the internal component structure of `purchasing-api`.
 
-## Detailed Component Diagrams (Examples 31-38)
+## Container Diagrams — Core Containers (Examples 31–38)
 
-### Example 31: Modular Monolith Components
+### Example 31: Minimal Container Diagram — web-ui and purchasing-api
 
-Modular monoliths organize code into domain modules within a single deployment unit. This example shows internal boundaries that enable future microservices extraction.
+The first Container diagram zooms inside the system boundary and reveals the two most visible containers: the browser-based portal and the primary REST API.
 
 ```mermaid
 graph TD
-    MonolithApp["Modular Monolith Container"]
+    Buyer["[Person]<br/>Buyer Employee"]
+    WebUI["[Container: Browser App]<br/>web-ui<br/>Next.js portal<br/>Requisition and PO management"]
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Requisition and PO commands<br/>Node.js / TypeScript"]
 
-    APIGatewayModule["[Component]<br/>API Gateway Module<br/>Routing and auth"]
+    Buyer -->|"Submits requisitions [HTTPS browser]"| WebUI
+    WebUI -->|"POST /requisitions [HTTPS/JSON]"| PurchAPI
 
-    UserModule["[Component]<br/>User Module<br/>User domain logic"]
-    OrderModule["[Component]<br/>Order Module<br/>Order domain logic"]
-    ProductModule["[Component]<br/>Product Module<br/>Product domain logic"]
-
-    SharedKernel["[Component]<br/>Shared Kernel<br/>Common utilities"]
-
-    UserDB["[Component]<br/>User Schema<br/>User tables"]
-    OrderDB["[Component]<br/>Order Schema<br/>Order tables"]
-    ProductDB["[Component]<br/>Product Schema<br/>Product tables"]
-
-    APIGatewayModule -->|Routes to| UserModule
-    APIGatewayModule -->|Routes to| OrderModule
-    APIGatewayModule -->|Routes to| ProductModule
-
-    UserModule -->|Uses| SharedKernel
-    OrderModule -->|Uses| SharedKernel
-    ProductModule -->|Uses| SharedKernel
-
-    UserModule -->|Accesses| UserDB
-    OrderModule -->|Accesses| OrderDB
-    ProductModule -->|Accesses| ProductDB
-
-    OrderModule -.->|"Anti-corruption layer"| UserModule
-
-    style MonolithApp fill:#0173B2,stroke:#000,color:#fff
-    style APIGatewayModule fill:#DE8F05,stroke:#000,color:#fff
-    style UserModule fill:#029E73,stroke:#000,color:#fff
-    style OrderModule fill:#029E73,stroke:#000,color:#fff
-    style ProductModule fill:#029E73,stroke:#000,color:#fff
-    style SharedKernel fill:#CC78BC,stroke:#000,color:#fff
-    style UserDB fill:#CA9161,stroke:#000,color:#fff
-    style OrderDB fill:#CA9161,stroke:#000,color:#fff
-    style ProductDB fill:#CA9161,stroke:#000,color:#fff
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
 
-- **Domain modules** (teal): User, Order, Product - each encapsulates domain logic
-- **Separate schemas** (brown): Database organized by domain boundaries (not one shared schema)
-- **Shared Kernel** (purple): Common utilities used across modules
-- **Anti-corruption layer** (dotted): OrderModule calls UserModule through adapter preventing direct coupling
-- **API Gateway Module** (orange): Single entry point routing to appropriate module
-- **Module independence**: Each module could become microservice with minimal changes
+- **Container type labels**: `[Container: Browser App]` and `[Container: REST API]` prevent ambiguity
+- **Technology stack in label**: Next.js for web-ui, Node.js/TypeScript for API — architectural decisions visible
+- **Single data flow**: web-ui calls purchasing-api for all state changes; no direct DB access from browser
 
-**Design Rationale**: Modular monolith provides microservices benefits (domain boundaries, team autonomy) without microservices complexity (network calls, distributed transactions). Separate database schemas enforce boundaries while single deployment unit simplifies operations.
+**Design Rationale**: Starting with two containers and one relationship establishes the pattern before adding complexity. Every additional container is easier to understand once the basic browser-to-API pattern is established.
 
-**Key Takeaway**: Organize monoliths by domain modules with separate database schemas. Use anti-corruption layers for cross-module communication. This architecture enables incremental extraction to microservices when scaling demands it.
+**Key Takeaway**: Begin Container diagrams with the user-facing containers and their primary relationship. Add internal plumbing (databases, queues) only once the primary data flow is clear.
 
-**Why It Matters**: Modular monoliths prevent "big ball of mud" while deferring microservices complexity. Component diagrams showing tangled dependencies (every module calling every other module directly) reveal when refactoring to clearer boundaries is needed before attempting service extraction. Implementing modular architecture with anti-corruption layers enables safe, incremental extraction to microservices when scaling demands it. This approach allows teams to scale critical paths independently while maintaining overall system stability and avoiding risky big-bang migrations.
-
-### Example 32: Event Sourcing Components
-
-Event sourcing stores state changes as events rather than current state. This example shows event sourcing architecture at Component level.
-
-```mermaid
-graph TD
-    OrderService["Order Service Container"]
-
-    CommandHandler["[Component]<br/>Command Handler<br/>Processes commands"]
-    EventStore["[Component]<br/>Event Store<br/>Append-only event log"]
-    EventHandler["[Component]<br/>Event Handler<br/>Applies events"]
-
-    Aggregate["[Component]<br/>Order Aggregate<br/>Business logic"]
-    ReadModel["[Component]<br/>Read Model<br/>Current state projection"]
-
-    QueryHandler["[Component]<br/>Query Handler<br/>Handles queries"]
-
-    CommandHandler -->|"1. Load events"| EventStore
-    CommandHandler -->|"2. Rebuild state"| Aggregate
-    Aggregate -->|"3. Generate event"| CommandHandler
-    CommandHandler -->|"4. Append event"| EventStore
-
-    EventStore -->|"Event stream"| EventHandler
-    EventHandler -->|"5. Update projection"| ReadModel
-
-    QueryHandler -->|"Reads from"| ReadModel
-
-    style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style CommandHandler fill:#DE8F05,stroke:#000,color:#fff
-    style EventStore fill:#029E73,stroke:#000,color:#fff
-    style EventHandler fill:#DE8F05,stroke:#000,color:#fff
-    style Aggregate fill:#CC78BC,stroke:#000,color:#fff
-    style ReadModel fill:#CA9161,stroke:#000,color:#fff
-    style QueryHandler fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Event Store** (teal): Immutable append-only log of all state changes
-- **Command Handler** (orange): Processes write operations (CreateOrder, CancelOrder)
-- **Aggregate** (purple): Rebuilds current state from events, enforces business rules
-- **Event Handler** (orange): Consumes events to update read models
-- **Read Model** (brown): Denormalized view optimized for queries
-- **Query Handler** (orange): Handles read operations from read model
-- **Numbered flow**: Shows event sourcing write path (1-5)
-
-**Design Rationale**: Event sourcing provides complete audit trail and time travel capabilities. Separating write path (event store) from read path (read models) enables CQRS benefits. Events are source of truth; read models are derived projections.
-
-**Key Takeaway**: Store events (state changes) rather than current state. Rebuild state by replaying events. Maintain separate read models for query performance. This enables temporal queries ("what was state at time T?") and complete audit trails.
-
-**Why It Matters**: Event sourcing is valuable for domains requiring audit trails and temporal queries. Component diagrams showing event flow help teams understand how complete history of state changes enables faster dispute resolution. Event replay capabilities allow teams to prove system state at any point in time, significantly reducing manual investigation efforts. This makes event sourcing particularly valuable in financial and compliance-heavy domains.
-
-### Example 33: Hexagonal Architecture (Ports and Adapters)
-
-Hexagonal architecture isolates business logic from infrastructure concerns. This example shows ports and adapters pattern at Component level.
-
-```mermaid
-graph TD
-    ServiceCore["Service Container"]
-
-    RESTAdapter["[Component]<br/>REST Adapter<br/>HTTP interface"]
-    GraphQLAdapter["[Component]<br/>GraphQL Adapter<br/>GraphQL interface"]
-    MessageAdapter["[Component]<br/>Message Adapter<br/>Event consumer"]
-
-    InputPort["[Component]<br/>Input Port<br/>Use case interface"]
-
-    BusinessLogic["[Component]<br/>Business Logic<br/>Domain model and rules"]
-
-    OutputPort["[Component]<br/>Output Port<br/>Repository interface"]
-
-    PostgreSQLAdapter["[Component]<br/>PostgreSQL Adapter<br/>SQL implementation"]
-    MongoDBAdapter["[Component]<br/>MongoDB Adapter<br/>NoSQL implementation"]
-    EventPublisher["[Component]<br/>Event Publisher<br/>Kafka adapter"]
-
-    RESTAdapter -->|Calls| InputPort
-    GraphQLAdapter -->|Calls| InputPort
-    MessageAdapter -->|Calls| InputPort
-
-    InputPort -->|Invokes| BusinessLogic
-
-    BusinessLogic -->|Uses| OutputPort
-
-    OutputPort -->|Implemented by| PostgreSQLAdapter
-    OutputPort -->|Implemented by| MongoDBAdapter
-    OutputPort -->|Implemented by| EventPublisher
-
-    style ServiceCore fill:#0173B2,stroke:#000,color:#fff
-    style RESTAdapter fill:#029E73,stroke:#000,color:#fff
-    style GraphQLAdapter fill:#029E73,stroke:#000,color:#fff
-    style MessageAdapter fill:#029E73,stroke:#000,color:#fff
-    style InputPort fill:#DE8F05,stroke:#000,color:#fff
-    style BusinessLogic fill:#CC78BC,stroke:#000,color:#fff
-    style OutputPort fill:#DE8F05,stroke:#000,color:#fff
-    style PostgreSQLAdapter fill:#CA9161,stroke:#000,color:#fff
-    style MongoDBAdapter fill:#CA9161,stroke:#000,color:#fff
-    style EventPublisher fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Business Logic** (purple): Domain model at center—independent of infrastructure
-- **Input Port** (orange): Interface defining use cases (application boundary)
-- **Input Adapters** (teal): REST, GraphQL, Message—multiple ways to invoke business logic
-- **Output Port** (orange): Interface for infrastructure dependencies (repository, events)
-- **Output Adapters** (brown): PostgreSQL, MongoDB, Kafka—pluggable implementations
-- **Dependency inversion**: Business logic depends on abstractions (ports), not concrete implementations (adapters)
-- **Testability**: Mock output adapters to test business logic in isolation
-
-**Design Rationale**: Hexagonal architecture makes business logic the center, isolated from delivery mechanisms (HTTP, GraphQL, messaging) and infrastructure (databases, message queues). This enables technology changes without modifying business logic and comprehensive testing without infrastructure dependencies.
-
-**Key Takeaway**: Define input ports (use cases) and output ports (infrastructure interfaces). Implement adapters for each technology. Business logic depends only on ports (abstractions), not adapters (implementations). This achieves true technology independence.
-
-**Why It Matters**: Hexagonal architecture enables technology migration without rewriting business logic. Component diagrams showing ports and adapters help teams understand isolation boundaries. When business logic depends only on abstractions (ports), teams can add new adapters for different technologies while maintaining backward compatibility. This significantly reduces migration effort compared to traditional layered architectures where business logic is tightly coupled to specific delivery mechanisms.
-
-### Example 34: Microservice with Circuit Breaker
-
-Circuit breakers prevent cascading failures in distributed systems. This example shows circuit breaker integration at Component level.
-
-```mermaid
-graph TD
-    ServiceA["Service A Container"]
-
-    APIController["[Component]<br/>API Controller<br/>HTTP endpoints"]
-    BusinessLogic["[Component]<br/>Business Logic<br/>Core logic"]
-
-    CircuitBreaker["[Component]<br/>Circuit Breaker<br/>Hystrix/Resilience4j"]
-    ServiceBClient["[Component]<br/>Service B Client<br/>HTTP client"]
-
-    FallbackHandler["[Component]<br/>Fallback Handler<br/>Degraded mode logic"]
-    Cache["[Component]<br/>Local Cache<br/>Fallback data"]
-
-    MetricsCollector["[Component]<br/>Metrics Collector<br/>Failure tracking"]
-
-    APIController -->|Calls| BusinessLogic
-    BusinessLogic -->|Calls| CircuitBreaker
-    CircuitBreaker -->|"Protected call"| ServiceBClient
-
-    CircuitBreaker -.->|"Circuit OPEN"| FallbackHandler
-    FallbackHandler -->|"Returns stale data"| Cache
-
-    CircuitBreaker -->|"Records metrics"| MetricsCollector
-
-    style ServiceA fill:#0173B2,stroke:#000,color:#fff
-    style APIController fill:#DE8F05,stroke:#000,color:#fff
-    style BusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style CircuitBreaker fill:#CC78BC,stroke:#000,color:#fff
-    style ServiceBClient fill:#CA9161,stroke:#000,color:#fff
-    style FallbackHandler fill:#029E73,stroke:#000,color:#fff
-    style Cache fill:#CA9161,stroke:#000,color:#fff
-    style MetricsCollector fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Circuit Breaker** (purple): Hystrix/Resilience4j wrapper around service calls
-- **Three states**: CLOSED (normal), OPEN (failing), HALF-OPEN (testing recovery)
-- **Service B Client** (brown): HTTP client for calling Service B
-- **Fallback Handler** (teal): Executes when circuit is OPEN
-- **Local Cache** (brown): Stores stale data for degraded mode
-- **Metrics Collector** (brown): Tracks failure rates and circuit state
-- **Dotted line**: Conditional fallback path when circuit opens
-
-**Design Rationale**: Circuit breaker prevents cascading failures by failing fast when downstream service is unhealthy. After threshold failures, circuit opens and immediately returns fallback response without attempting call. This reduces load on failing service, giving it time to recover.
-
-**Key Takeaway**: Wrap external service calls with circuit breakers. Implement fallback logic returning cached or degraded data when circuit opens. Monitor circuit state metrics to detect failures. This prevents cascade failures and maintains partial functionality.
-
-**Why It Matters**: Circuit breakers contain failure blast radius in distributed systems. Component diagrams showing circuit breakers help teams understand how fallback mechanisms enable graceful degradation. When properly implemented, circuit breakers allow systems to maintain partial functionality using cached or degraded data instead of experiencing complete outages. Services without circuit breakers risk cascading failures where one service timeout propagates to all dependent services. Circuit breakers significantly reduce customer-facing impact by preventing failure amplification.
-
-### Example 35: Saga Pattern for Distributed Transactions
-
-Sagas coordinate distributed transactions across microservices using compensating actions. This example shows saga orchestration at Component level.
-
-```mermaid
-graph TD
-    OrderService["Order Service Container"]
-
-    SagaOrchestrator["[Component]<br/>Saga Orchestrator<br/>Coordinates transaction"]
-    SagaLog["[Component]<br/>Saga Log<br/>Tracks saga state"]
-
-    OrderManager["[Component]<br/>Order Manager<br/>Creates order"]
-    PaymentClient["[Component]<br/>Payment Client<br/>Calls Payment Service"]
-    InventoryClient["[Component]<br/>Inventory Client<br/>Calls Inventory Service"]
-    ShippingClient["[Component]<br/>Shipping Client<br/>Calls Shipping Service"]
-
-    CompensationHandler["[Component]<br/>Compensation Handler<br/>Rollback logic"]
-
-    SagaOrchestrator -->|"1. Create order"| OrderManager
-    SagaOrchestrator -->|"2. Reserve payment"| PaymentClient
-    SagaOrchestrator -->|"3. Reserve inventory"| InventoryClient
-    SagaOrchestrator -->|"4. Schedule shipping"| ShippingClient
-
-    SagaOrchestrator -->|"Log each step"| SagaLog
-
-    SagaOrchestrator -.->|"On failure"| CompensationHandler
-    CompensationHandler -.->|"Cancel order"| OrderManager
-    CompensationHandler -.->|"Refund payment"| PaymentClient
-    CompensationHandler -.->|"Release inventory"| InventoryClient
-
-    style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style SagaOrchestrator fill:#DE8F05,stroke:#000,color:#fff
-    style SagaLog fill:#029E73,stroke:#000,color:#fff
-    style OrderManager fill:#CC78BC,stroke:#000,color:#fff
-    style PaymentClient fill:#CA9161,stroke:#000,color:#fff
-    style InventoryClient fill:#CA9161,stroke:#000,color:#fff
-    style ShippingClient fill:#CA9161,stroke:#000,color:#fff
-    style CompensationHandler fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Saga Orchestrator** (orange): Coordinates multi-step transaction across services
-- **Saga Log** (teal): Persists saga state for crash recovery
-- **Service clients** (brown): Payment, Inventory, Shipping integrations
-- **Numbered sequence**: 1-4 shows happy path execution order
-- **Compensation Handler** (orange): Executes rollback compensating actions
-- **Dotted lines**: Compensation path when any step fails
-- **Forward recovery**: Each step logged before execution enables retry
-
-**Design Rationale**: Distributed transactions require coordination without 2-phase commit (which doesn't scale). Saga pattern breaks transaction into local transactions with compensating actions for rollback. Orchestrator-based saga (vs choreography) centralizes coordination logic.
-
-**Key Takeaway**: Implement sagas for multi-service transactions. Log each step before execution. Define compensating actions for rollback. On failure, execute compensations in reverse order. This achieves eventual consistency without distributed locking.
-
-**Why It Matters**: Sagas enable complex business processes across microservices while maintaining data consistency. Component diagrams showing saga orchestration help teams understand how multi-step transactions achieve high success rates despite individual service failures. Without sagas, partial failures leave systems in inconsistent states where some operations complete while others fail. Compensation logic ensures systems can roll back completed operations when later steps fail, significantly reducing inconsistent state occurrences. This makes sagas essential for distributed transaction management.
-
-### Example 36: API Gateway with Rate Limiting
-
-Rate limiting prevents abuse and ensures fair resource allocation. This example shows rate limiting implementation at Component level.
-
-```mermaid
-graph TD
-    Gateway["API Gateway Container"]
-
-    RequestRouter["[Component]<br/>Request Router<br/>Route to backend"]
-
-    RateLimiter["[Component]<br/>Rate Limiter<br/>Token bucket algorithm"]
-    RateLimitStore["[Component]<br/>Rate Limit Store<br/>Redis - token counts"]
-
-    AuthMiddleware["[Component]<br/>Auth Middleware<br/>Extract user/API key"]
-    QuotaManager["[Component]<br/>Quota Manager<br/>Per-user limits"]
-
-    ResponseCache["[Component]<br/>Response Cache<br/>Cached responses"]
-
-    BackendPool["[Component]<br/>Backend Pool<br/>Upstream services"]
-
-    RequestRouter -->|"1. Authenticate"| AuthMiddleware
-    AuthMiddleware -->|"2. Check quota"| QuotaManager
-    QuotaManager -->|"3. Get user limits"| RateLimitStore
-    QuotaManager -->|"4. Apply rate limit"| RateLimiter
-
-    RateLimiter -.->|"Rate limit exceeded"| RequestRouter
-    RateLimiter -->|"5. Check cache"| ResponseCache
-    ResponseCache -->|"6. Cache miss"| BackendPool
-
-    style Gateway fill:#0173B2,stroke:#000,color:#fff
-    style RequestRouter fill:#DE8F05,stroke:#000,color:#fff
-    style RateLimiter fill:#029E73,stroke:#000,color:#fff
-    style RateLimitStore fill:#CA9161,stroke:#000,color:#fff
-    style AuthMiddleware fill:#CC78BC,stroke:#000,color:#fff
-    style QuotaManager fill:#029E73,stroke:#000,color:#fff
-    style ResponseCache fill:#CA9161,stroke:#000,color:#fff
-    style BackendPool fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Rate Limiter** (teal): Implements token bucket algorithm for rate limiting
-- **Rate Limit Store** (brown): Redis stores per-user token counts
-- **Auth Middleware** (purple): Extracts user identity for quota lookup
-- **Quota Manager** (teal): Enforces per-user rate limits (free vs paid tiers)
-- **Response Cache** (brown): Reduces backend load for repeated requests
-- **Numbered flow**: 1-6 shows request processing sequence
-- **Dotted line**: Rate limit exceeded returns 429 Too Many Requests
-
-**Design Rationale**: Rate limiting at gateway protects backend services from overload and ensures fair resource allocation among users. Redis-backed counters enable distributed rate limiting across gateway instances. Multi-tier limits (per-second, per-minute, per-day) prevent both burst attacks and sustained abuse.
-
-**Key Takeaway**: Implement rate limiting at API gateway layer. Use distributed store (Redis) for counters. Enforce per-user quotas with different limits for free vs paid tiers. Return 429 status with Retry-After header when limit exceeded.
-
-**Why It Matters**: Rate limiting prevents denial-of-service scenarios and enables tiered business models. Component diagrams showing quota enforcement help teams understand how per-user limits protect infrastructure from abuse. Rate limiting allows systems to differentiate service tiers (free vs paid) with different request quotas, creating monetization opportunities while maintaining system stability. Without rate limiting, single users can exhaust resources affecting all users. Proper rate limiting implementation eliminates outages caused by API abuse and resource exhaustion.
-
-### Example 37: Cache Layers and Invalidation
-
-Multi-level caching improves performance but requires invalidation strategy. This example shows cache hierarchy at Component level.
-
-```mermaid
-graph TD
-    Service["Application Service Container"]
-
-    APIHandler["[Component]<br/>API Handler<br/>HTTP endpoints"]
-
-    L1Cache["[Component]<br/>L1 Cache<br/>In-memory cache"]
-    L2Cache["[Component]<br/>L2 Cache<br/>Redis cache"]
-
-    CacheInvalidator["[Component]<br/>Cache Invalidator<br/>Invalidation logic"]
-    EventListener["[Component]<br/>Event Listener<br/>Listens for updates"]
-
-    BusinessLogic["[Component]<br/>Business Logic<br/>Core service logic"]
-    Repository["[Component]<br/>Repository<br/>Database access"]
-
-    APIHandler -->|"1. Check L1"| L1Cache
-    L1Cache -.->|"L1 miss"| APIHandler
-    APIHandler -->|"2. Check L2"| L2Cache
-    L2Cache -.->|"L2 miss"| APIHandler
-    APIHandler -->|"3. Fetch from DB"| BusinessLogic
-    BusinessLogic -->|"Query"| Repository
-    Repository -->|"Data"| BusinessLogic
-    BusinessLogic -->|"4. Populate L2"| L2Cache
-    BusinessLogic -->|"5. Populate L1"| L1Cache
-
-    EventListener -->|"Data changed event"| CacheInvalidator
-    CacheInvalidator -->|"Invalidate L1"| L1Cache
-    CacheInvalidator -->|"Invalidate L2"| L2Cache
-
-    style Service fill:#0173B2,stroke:#000,color:#fff
-    style APIHandler fill:#DE8F05,stroke:#000,color:#fff
-    style L1Cache fill:#029E73,stroke:#000,color:#fff
-    style L2Cache fill:#CA9161,stroke:#000,color:#fff
-    style CacheInvalidator fill:#CC78BC,stroke:#000,color:#fff
-    style EventListener fill:#DE8F05,stroke:#000,color:#fff
-    style BusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style Repository fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **L1 Cache** (teal): In-process memory cache (fastest, smallest capacity)
-- **L2 Cache** (brown): Redis distributed cache (slower than L1, larger capacity)
-- **Cache hierarchy**: Check L1 → L2 → Database in order
-- **Cache invalidation**: Event-driven invalidation when data changes
-- **Event Listener** (orange): Subscribes to data change events
-- **Cache Invalidator** (purple): Removes stale entries from both cache levels
-- **Numbered flow**: Shows cache-aside pattern with multi-level lookup
-
-**Design Rationale**: Multi-level caching balances speed, capacity, and consistency. L1 cache eliminates network calls, L2 cache eliminates database queries. Event-driven invalidation maintains consistency by clearing caches when data changes.
-
-**Key Takeaway**: Implement cache hierarchy (in-memory → distributed → database). Check each level in order, populate higher levels on miss. Use event-driven invalidation to remove stale data. This optimizes both read performance and consistency.
-
-**Why It Matters**: Cache invalidation is notoriously difficult but critical for correctness. Component diagrams showing invalidation paths help teams understand how data changes must propagate through all cache levels. When invalidation events don't reach all cache levels, stale data persists causing consistency bugs where updates aren't reflected in the user interface. Implementing comprehensive multi-level invalidation (clearing both in-memory and distributed caches on data changes) dramatically reduces stale data percentages, fixing bugs where recent changes don't appear to users. Proper invalidation strategy is essential for maintaining data consistency in cached systems.
-
-### Example 38: Multi-Tenancy Component Organization
-
-Multi-tenant systems require tenant isolation at component level. This example shows tenant-aware component organization.
-
-```mermaid
-graph TD
-    MultiTenantApp["Multi-Tenant Application Container"]
-
-    TenantResolver["[Component]<br/>Tenant Resolver<br/>Extracts tenant ID"]
-    TenantContext["[Component]<br/>Tenant Context<br/>Thread-local storage"]
-
-    APIController["[Component]<br/>API Controller<br/>HTTP endpoints"]
-
-    TenantValidator["[Component]<br/>Tenant Validator<br/>Validates tenant access"]
-
-    BusinessLogic["[Component]<br/>Business Logic<br/>Core logic"]
-
-    TenantAwareRepository["[Component]<br/>Tenant-Aware Repository<br/>Filters by tenant ID"]
-
-    ConnectionPool["[Component]<br/>Connection Pool<br/>Database connections"]
-
-    TenantResolver -->|"Sets tenant ID"| TenantContext
-    APIController -->|"Reads tenant ID"| TenantContext
-    APIController -->|"Validates access"| TenantValidator
-    APIController -->|"Calls"| BusinessLogic
-    BusinessLogic -->|"Reads tenant ID"| TenantContext
-    BusinessLogic -->|"Calls"| TenantAwareRepository
-    TenantAwareRepository -->|"Appends WHERE tenant_id"| ConnectionPool
-
-    style MultiTenantApp fill:#0173B2,stroke:#000,color:#fff
-    style TenantResolver fill:#DE8F05,stroke:#000,color:#fff
-    style TenantContext fill:#CC78BC,stroke:#000,color:#fff
-    style APIController fill:#029E73,stroke:#000,color:#fff
-    style TenantValidator fill:#DE8F05,stroke:#000,color:#fff
-    style BusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style TenantAwareRepository fill:#CA9161,stroke:#000,color:#fff
-    style ConnectionPool fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Tenant Resolver** (orange): Extracts tenant ID from request (header, subdomain, JWT claim)
-- **Tenant Context** (purple): Thread-local storage propagating tenant ID through call stack
-- **Tenant Validator** (orange): Ensures user has access to requested tenant
-- **Tenant-Aware Repository** (brown): Automatically appends tenant ID filter to all queries
-- **Shared database**: All tenants share tables with tenant_id column (vs database-per-tenant)
-- **Automatic isolation**: Repository prevents cross-tenant data leaks
-
-**Design Rationale**: Tenant context propagation ensures tenant ID flows through entire request without explicit parameter passing. Tenant-aware repository acts as safety net—even if business logic forgets to filter by tenant, repository enforces isolation. This prevents catastrophic cross-tenant data leaks.
-
-**Key Takeaway**: Extract tenant ID at entry point, store in thread-local context. Implement tenant-aware repository automatically filtering all queries by tenant ID. Validate tenant access early. This prevents cross-tenant data leaks and simplifies business logic.
-
-**Why It Matters**: Multi-tenancy bugs cause catastrophic data breaches. Component diagrams showing tenant isolation help teams understand how automatic filtering prevents cross-tenant data leaks. When business logic queries databases without tenant filters, users can access other tenants' data. Implementing tenant-aware repositories that automatically apply tenant ID filters to all queries creates an architectural safeguard—even when developers forget to filter explicitly, the repository layer enforces isolation. This pattern prevents entire classes of security vulnerabilities and data breach scenarios in multi-tenant systems.
-
-## Deployment Diagrams (Examples 39-45)
-
-### Example 39: Simple Cloud Deployment (AWS)
-
-Deployment diagrams show how containers map to infrastructure. This example demonstrates basic AWS deployment with EC2, RDS, and S3.
-
-```mermaid
-graph TD
-    Internet["Internet"]
-
-    CloudFront["[AWS CloudFront]<br/>CDN<br/>Edge caching"]
-    ALB["[AWS ALB]<br/>Application Load Balancer<br/>Traffic distribution"]
-
-    EC2_1["[AWS EC2 Instance 1]<br/>t3.large<br/>US-East-1a"]
-    EC2_2["[AWS EC2 Instance 2]<br/>t3.large<br/>US-East-1b"]
-
-    WebApp1["[Container: Web App]<br/>React build"]
-    WebApp2["[Container: Web App]<br/>React build"]
-
-    APIServer1["[Container: API Server]<br/>Node.js:14"]
-    APIServer2["[Container: API Server]<br/>Node.js:14"]
-
-    RDS["[AWS RDS]<br/>PostgreSQL 14<br/>db.t3.medium"]
-    RDSReplica["[AWS RDS Replica]<br/>PostgreSQL 14<br/>db.t3.medium"]
-
-    S3["[AWS S3]<br/>File storage"]
-
-    Internet -->|HTTPS| CloudFront
-    CloudFront -->|Static assets| S3
-    Internet -->|HTTPS| ALB
-
-    ALB -->|Routes traffic| EC2_1
-    ALB -->|Routes traffic| EC2_2
-
-    EC2_1 -->|Hosts| WebApp1
-    EC2_1 -->|Hosts| APIServer1
-    EC2_2 -->|Hosts| WebApp2
-    EC2_2 -->|Hosts| APIServer2
-
-    APIServer1 -->|Writes| RDS
-    APIServer1 -->|Reads| RDSReplica
-    APIServer2 -->|Writes| RDS
-    APIServer2 -->|Reads| RDSReplica
-
-    RDS -.->|Replication| RDSReplica
-
-    style Internet fill:#CC78BC,stroke:#000,color:#fff
-    style CloudFront fill:#DE8F05,stroke:#000,color:#fff
-    style ALB fill:#DE8F05,stroke:#000,color:#fff
-    style EC2_1 fill:#029E73,stroke:#000,color:#fff
-    style EC2_2 fill:#029E73,stroke:#000,color:#fff
-    style WebApp1 fill:#0173B2,stroke:#000,color:#fff
-    style WebApp2 fill:#0173B2,stroke:#000,color:#fff
-    style APIServer1 fill:#0173B2,stroke:#000,color:#fff
-    style APIServer2 fill:#0173B2,stroke:#000,color:#fff
-    style RDS fill:#CA9161,stroke:#000,color:#fff
-    style RDSReplica fill:#CA9161,stroke:#000,color:#fff
-    style S3 fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **CloudFront** (orange): CDN serving static assets from S3
-- **Application Load Balancer** (orange): Distributes traffic across EC2 instances
-- **EC2 instances** (teal): Two instances across availability zones (1a, 1b)
-- **Container deployment**: WebApp and APIServer containers on same EC2 instances
-- **RDS Primary/Replica** (brown): PostgreSQL with read replica for scaling
-- **S3 storage** (brown): Blob storage for uploaded files
-- **High availability**: Multi-AZ deployment (instances in different zones)
-- **Instance types**: t3.large for compute, db.t3.medium for database
-
-**Design Rationale**: Multi-AZ deployment ensures high availability—if one availability zone fails, other zone continues serving traffic. Read replica scales read-heavy workloads. CloudFront reduces origin load and improves latency for global users.
-
-**Key Takeaway**: Deploy containers across multiple availability zones for high availability. Use managed services (RDS, S3, CloudFront) to reduce operational overhead. Specify instance types to communicate capacity planning.
-
-**Why It Matters**: Deployment topology directly impacts availability and cost trade-offs. Component diagrams showing single availability zone deployments help teams recognize infrastructure failure risks. When all instances run in one zone, zone failures cause complete outages. Multi-AZ deployment introduces modest cost increases but significantly improves availability by distributing instances across independent failure domains. This architecture reduces revenue loss from outages and improves overall system resilience. The availability-cost trade-off makes multi-AZ deployment essential for production systems.
-
-### Example 40: Kubernetes Deployment
-
-Kubernetes provides container orchestration. This example shows Kubernetes deployment architecture.
-
-```mermaid
-graph TD
-    Users["Users"]
-
-    Ingress["[K8s Ingress]<br/>NGINX Ingress Controller<br/>L7 routing"]
-
-    ServiceMesh["[K8s Service Mesh]<br/>Istio<br/>Traffic management"]
-
-    FrontendService["[K8s Service]<br/>Frontend Service<br/>ClusterIP"]
-    FrontendPods["[K8s Pods]<br/>Frontend Pods x3<br/>2 CPU, 4GB RAM"]
-
-    APIService["[K8s Service]<br/>API Service<br/>ClusterIP"]
-    APIPods["[K8s Pods]<br/>API Pods x5<br/>4 CPU, 8GB RAM"]
-
-    WorkerService["[K8s Service]<br/>Worker Service<br/>ClusterIP"]
-    WorkerPods["[K8s Pods]<br/>Worker Pods x2<br/>8 CPU, 16GB RAM"]
-
-    PVC["[K8s PVC]<br/>Persistent Volume<br/>100GB SSD"]
-
-    ExternalDB["[External]<br/>Managed PostgreSQL<br/>Outside cluster"]
-
-    Users -->|HTTPS| Ingress
-    Ingress -->|Routes| ServiceMesh
-    ServiceMesh -->|Frontend traffic| FrontendService
-    ServiceMesh -->|API traffic| APIService
-
-    FrontendService -->|Load balances| FrontendPods
-    APIService -->|Load balances| APIPods
-    WorkerService -->|Load balances| WorkerPods
-
-    APIPods -->|Reads/Writes| ExternalDB
-    WorkerPods -->|Reads/Writes| PVC
-    WorkerPods -->|Queries| ExternalDB
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style Ingress fill:#DE8F05,stroke:#000,color:#fff
-    style ServiceMesh fill:#DE8F05,stroke:#000,color:#fff
-    style FrontendService fill:#029E73,stroke:#000,color:#fff
-    style FrontendPods fill:#0173B2,stroke:#000,color:#fff
-    style APIService fill:#029E73,stroke:#000,color:#fff
-    style APIPods fill:#0173B2,stroke:#000,color:#fff
-    style WorkerService fill:#029E73,stroke:#000,color:#fff
-    style WorkerPods fill:#0173B2,stroke:#000,color:#fff
-    style PVC fill:#CA9161,stroke:#000,color:#fff
-    style ExternalDB fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Ingress Controller** (orange): NGINX handles external traffic routing
-- **Service Mesh** (orange): Istio provides traffic management, observability, security
-- **K8s Services** (teal): ClusterIP services for internal load balancing
-- **Pods** (blue): Running containers with resource specifications (CPU/RAM)
-- **Replica counts**: Frontend x3, API x5, Worker x2
-- **Persistent Volume Claim** (brown): Shared storage for workers
-- **External Database** (brown): Managed PostgreSQL outside Kubernetes
-
-**Design Rationale**: Kubernetes abstracts infrastructure—services provide stable endpoints, pods are ephemeral and auto-healing. Ingress handles external routing, service mesh handles internal routing. Managed database outside cluster simplifies operations and backups.
-
-**Key Takeaway**: Deploy containers as Kubernetes pods with replica counts. Use services for load balancing. Specify resource requests (CPU/RAM). Use ingress for external traffic, service mesh for internal. Keep stateful services (databases) outside cluster.
-
-**Why It Matters**: Kubernetes deployment architecture affects both reliability and infrastructure costs. Deployment diagrams showing pod replica counts help teams right-size infrastructure by revealing actual capacity needs. Over-provisioning wastes resources and increases costs, while under-provisioning causes availability issues. Proper replica sizing based on actual load patterns reduces unnecessary infrastructure spending while improving system availability. This balance between cost efficiency and reliability makes capacity planning critical in Kubernetes environments.
-
-### Example 41: Blue-Green Deployment
-
-Blue-green deployment enables zero-downtime releases. This example shows blue-green infrastructure pattern.
-
-```mermaid
-graph TD
-    Users["Users"]
-    Router["[Router/Load Balancer]<br/>Route53 or ALB<br/>Traffic switcher"]
-
-    BlueEnv["Blue Environment<br/>Version 1.0 (Current)"]
-    BlueInstances["[EC2 Instances]<br/>3x t3.large<br/>Version 1.0"]
-    BlueDB["[Database]<br/>RDS Primary<br/>Shared"]
-
-    GreenEnv["Green Environment<br/>Version 2.0 (Staging)"]
-    GreenInstances["[EC2 Instances]<br/>3x t3.large<br/>Version 2.0"]
-
-    Users -->|"100% traffic"| Router
-    Router -->|"Active"| BlueEnv
-    Router -.->|"0% traffic (idle)"| GreenEnv
-
-    BlueEnv -->|Contains| BlueInstances
-    BlueInstances -->|Connects| BlueDB
-
-    GreenEnv -->|Contains| GreenInstances
-    GreenInstances -->|Connects| BlueDB
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style Router fill:#DE8F05,stroke:#000,color:#fff
-    style BlueEnv fill:#0173B2,stroke:#000,color:#fff
-    style BlueInstances fill:#029E73,stroke:#000,color:#fff
-    style BlueDB fill:#CA9161,stroke:#000,color:#fff
-    style GreenEnv fill:#029E73,stroke:#000,color:#fff
-    style GreenInstances fill:#029E73,stroke:#000,color:#fff
-```
-
-**Deployment Process**:
-
-1. **Blue environment** serves 100% production traffic (Version 1.0)
-2. **Green environment** deployed with new version (Version 2.0) using same database
-3. **Test green environment** with smoke tests and validation
-4. **Switch router** from blue to green (instantly routes 100% traffic to Version 2.0)
-5. **Monitor green** for errors—if found, switch back to blue (instant rollback)
-6. **Decommission blue** after green proven stable
-
-**Key Elements**:
-
-- **Two identical environments**: Blue (current), Green (new version)
-- **Shared database**: Both environments connect to same database (requires backward-compatible schema changes)
-- **Router switching**: Single change redirects all traffic (Route53 DNS or ALB target group)
-- **Instant rollback**: Switch back to blue if issues detected
-- **Zero downtime**: No service interruption during switch
-
-**Design Rationale**: Blue-green deployment eliminates deployment downtime and enables instant rollback. Running both environments simultaneously costs 2x infrastructure during deployment but reduces risk. Shared database requires careful migration strategy (backward-compatible changes only).
-
-**Key Takeaway**: Maintain two production-like environments. Deploy new version to idle environment. Switch traffic atomically. Keep old environment for instant rollback. This achieves zero-downtime deployments with low risk.
-
-**Why It Matters**: Deployment downtime and risky rollbacks impact both revenue and user trust. Deployment diagrams showing blue-green architectures help teams understand how dual environments enable frequent deployments with minimal risk. Instant rollback capabilities (switching traffic back to the previous environment) dramatically reduce mean time to recovery from deployment issues. While infrastructure costs increase temporarily during deployment windows, this overhead is minimal compared to the business value of increased deployment velocity and reduced outage risk. Blue-green deployments make continuous delivery practical and safe.
-
-### Example 42: Canary Deployment
-
-Canary deployment gradually shifts traffic to new version. This example shows canary release pattern.
-
-```mermaid
-graph TD
-    Users["Users"]
-
-    TrafficSplitter["[Traffic Splitter]<br/>Istio/NGINX<br/>Weighted routing"]
-
-    StableVersion["[Stable Version]<br/>Version 1.0<br/>Pods x10"]
-    CanaryVersion["[Canary Version]<br/>Version 2.0<br/>Pods x1"]
-
-    MetricsCollector["[Metrics Collector]<br/>Prometheus<br/>Error rates, latency"]
-
-    AutomatedPromotion["[Promotion Controller]<br/>Flagger/Argo Rollouts<br/>Traffic shift automation"]
-
-    Users -->|100% traffic| TrafficSplitter
-
-    TrafficSplitter -->|"90% traffic"| StableVersion
-    TrafficSplitter -->|"10% traffic"| CanaryVersion
-
-    StableVersion -->|Metrics| MetricsCollector
-    CanaryVersion -->|Metrics| MetricsCollector
-
-    MetricsCollector -->|"Analysis"| AutomatedPromotion
-    AutomatedPromotion -->|"Adjust weights"| TrafficSplitter
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style TrafficSplitter fill:#DE8F05,stroke:#000,color:#fff
-    style StableVersion fill:#0173B2,stroke:#000,color:#fff
-    style CanaryVersion fill:#029E73,stroke:#000,color:#fff
-    style MetricsCollector fill:#CA9161,stroke:#000,color:#fff
-    style AutomatedPromotion fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Canary Progression**:
-
-1. **Initial state**: Stable version handles 100% traffic
-2. **Deploy canary**: New version deployed with 1 pod (10% capacity)
-3. **10% traffic**: Route 10% traffic to canary, 90% to stable
-4. **Monitor metrics**: Compare error rates, latency between stable and canary
-5. **Automated promotion**: If canary healthy, increase to 25%, then 50%, then 100%
-6. **Rollback**: If canary unhealthy (elevated errors), route 100% back to stable
-7. **Complete**: Canary becomes new stable, old version decommissioned
-
-**Key Elements**:
-
-- **Weighted traffic splitting**: 90% stable, 10% canary (adjustable)
-- **Metrics-driven**: Prometheus tracks error rates and latency
-- **Automated promotion**: Flagger/Argo Rollouts automate traffic shift based on metrics
-- **Gradual rollout**: 10% → 25% → 50% → 100% over 30-60 minutes
-- **Limited blast radius**: Only 10% users affected if canary has issues
-
-**Design Rationale**: Canary deployment detects production issues with minimal user impact. Automated promotion based on metrics (not manual decision) enables continuous delivery. Gradual rollout increases confidence before full deployment.
-
-**Key Takeaway**: Deploy new version alongside stable version. Route small percentage of traffic to canary (10%). Monitor metrics and automate promotion if healthy, rollback if unhealthy. Gradually increase traffic percentage until full rollout.
-
-**Why It Matters**: Canary deployments catch production-only bugs before they affect entire user bases. Deployment diagrams showing gradual rollout percentages help teams understand how incremental traffic routing limits blast radius. When bugs surface in canary environments, only a small percentage of users experience issues before automatic rollback occurs. Canary deployments with automated monitoring and rollback dramatically reduce the impact of production bugs compared to full deployments. This progressive delivery approach makes continuous deployment safer at scale.
-
-### Example 43: Multi-Region Active-Active Deployment
-
-Active-active deployment across regions provides disaster recovery and low latency. This example shows global multi-region architecture.
-
-```mermaid
-graph TD
-    GlobalUsers["Global Users"]
-
-    Route53["[AWS Route53]<br/>GeoDNS<br/>Latency-based routing"]
-
-    USEast["US-East Region"]
-    USEastALB["[ALB]<br/>US-East"]
-    USEastApp["[App Instances]<br/>3x EC2"]
-    USEastDB["[Aurora Primary]<br/>US-East"]
-
-    EUWest["EU-West Region"]
-    EUWestALB["[ALB]<br/>EU-West"]
-    EUWestApp["[App Instances]<br/>3x EC2"]
-    EUWestDB["[Aurora Primary]<br/>EU-West"]
-
-    APSoutheast["AP-Southeast Region"]
-    APSoutheastALB["[ALB]<br/>AP-Southeast"]
-    APSoutheastApp["[App Instances]<br/>3x EC2"]
-    APSoutheastDB["[Aurora Primary]<br/>AP-Southeast"]
-
-    GlobalCache["[CloudFront + ElastiCache Global Datastore]<br/>Distributed cache"]
-
-    GlobalUsers -->|GeoDNS routing| Route53
-
-    Route53 -->|"US traffic"| USEast
-    Route53 -->|"EU traffic"| EUWest
-    Route53 -->|"Asia traffic"| APSoutheast
-
-    USEast -->|Contains| USEastALB
-    USEastALB -->|Routes| USEastApp
-    USEastApp -->|Reads/Writes| USEastDB
-
-    EUWest -->|Contains| EUWestALB
-    EUWestALB -->|Routes| EUWestApp
-    EUWestApp -->|Reads/Writes| EUWestDB
-
-    APSoutheast -->|Contains| APSoutheastALB
-    APSoutheastALB -->|Routes| APSoutheastApp
-    APSoutheastApp -->|Reads/Writes| APSoutheastDB
-
-    USEastDB -.->|"Global database replication"| EUWestDB
-    EUWestDB -.->|"Global database replication"| APSoutheastDB
-    APSoutheastDB -.->|"Global database replication"| USEastDB
-
-    USEastApp -->|Cache| GlobalCache
-    EUWestApp -->|Cache| GlobalCache
-    APSoutheastApp -->|Cache| GlobalCache
-
-    style GlobalUsers fill:#CC78BC,stroke:#000,color:#fff
-    style Route53 fill:#DE8F05,stroke:#000,color:#fff
-    style USEast fill:#0173B2,stroke:#000,color:#fff
-    style EUWest fill:#0173B2,stroke:#000,color:#fff
-    style APSoutheast fill:#0173B2,stroke:#000,color:#fff
-    style USEastALB fill:#029E73,stroke:#000,color:#fff
-    style EUWestALB fill:#029E73,stroke:#000,color:#fff
-    style APSoutheastALB fill:#029E73,stroke:#000,color:#fff
-    style USEastApp fill:#029E73,stroke:#000,color:#fff
-    style EUWestApp fill:#029E73,stroke:#000,color:#fff
-    style APSoutheastApp fill:#029E73,stroke:#000,color:#fff
-    style USEastDB fill:#CA9161,stroke:#000,color:#fff
-    style EUWestDB fill:#CA9161,stroke:#000,color:#fff
-    style APSoutheastDB fill:#CA9161,stroke:#000,color:#fff
-    style GlobalCache fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Three regions**: US-East, EU-West, AP-Southeast (all active)
-- **GeoDNS routing**: Route53 directs users to nearest region based on latency
-- **Regional databases**: Each region has Aurora primary database
-- **Global database replication**: Bi-directional replication across regions (eventually consistent)
-- **Global cache**: CloudFront + ElastiCache Global Datastore for shared cache
-- **Identical stacks**: Each region runs complete application stack
-- **Disaster recovery**: If one region fails, traffic routes to healthy regions
-
-**Design Rationale**: Active-active multi-region provides lowest latency (users route to nearest region) and highest availability (survive entire region failure). Global database replication enables eventual consistency. Cache layer reduces cross-region database queries.
-
-**Key Takeaway**: Deploy identical application stacks in multiple regions. Use GeoDNS to route users to nearest region. Implement global database replication for data availability. Use distributed cache to minimize cross-region latency.
-
-**Why It Matters**: Multi-region active-active architecture provides both performance improvements and disaster recovery capabilities. Deployment diagrams showing geographic distribution help teams understand how regional redundancy maintains service availability during infrastructure failures. When one region experiences outages, traffic automatically routes to healthy regions, preventing complete service disruption. Multi-region deployments introduce infrastructure cost multipliers but deliver significantly higher availability levels. The trade-off between infrastructure cost and availability makes multi-region deployment essential for services requiring high uptime guarantees and global performance.
-
-### Example 44: Serverless Deployment (AWS Lambda)
-
-Serverless architectures eliminate server management. This example shows AWS Lambda-based deployment.
-
-```mermaid
-graph TD
-    Users["Users"]
-
-    CloudFront["[CloudFront]<br/>CDN + S3 Origin<br/>Static content"]
-    APIGateway["[API Gateway]<br/>HTTP API<br/>Lambda proxy"]
-
-    AuthFunction["[Lambda Function]<br/>Auth Handler<br/>Node.js 18<br/>512MB RAM"]
-    UserFunction["[Lambda Function]<br/>User Handler<br/>Python 3.11<br/>1GB RAM"]
-    OrderFunction["[Lambda Function]<br/>Order Handler<br/>Go 1.21<br/>2GB RAM"]
-
-    EventBridge["[EventBridge]<br/>Event bus<br/>Async processing"]
-
-    EmailFunction["[Lambda Function]<br/>Email Worker<br/>Node.js 18<br/>256MB RAM"]
-
-    DynamoDB["[DynamoDB]<br/>NoSQL database<br/>On-demand capacity"]
-    S3["[S3]<br/>File storage"]
-
-    Users -->|Static content| CloudFront
-    Users -->|API requests| APIGateway
-
-    APIGateway -->|POST /auth| AuthFunction
-    APIGateway -->|GET /users| UserFunction
-    APIGateway -->|POST /orders| OrderFunction
-
-    AuthFunction -->|Reads/Writes| DynamoDB
-    UserFunction -->|Reads/Writes| DynamoDB
-    OrderFunction -->|Reads/Writes| DynamoDB
-    OrderFunction -->|Publishes events| EventBridge
-
-    EventBridge -->|order.created| EmailFunction
-    EmailFunction -->|Reads templates| S3
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style CloudFront fill:#DE8F05,stroke:#000,color:#fff
-    style APIGateway fill:#DE8F05,stroke:#000,color:#fff
-    style AuthFunction fill:#0173B2,stroke:#000,color:#fff
-    style UserFunction fill:#0173B2,stroke:#000,color:#fff
-    style OrderFunction fill:#0173B2,stroke:#000,color:#fff
-    style EventBridge fill:#029E73,stroke:#000,color:#fff
-    style EmailFunction fill:#0173B2,stroke:#000,color:#fff
-    style DynamoDB fill:#CA9161,stroke:#000,color:#fff
-    style S3 fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Lambda Functions** (blue): Containerized business logic (Auth, User, Order, Email)
-- **API Gateway** (orange): HTTP endpoints invoking Lambda functions
-- **EventBridge** (teal): Event bus for async Lambda invocations
-- **DynamoDB** (brown): NoSQL database with on-demand capacity
-- **S3** (brown): Static content and file storage
-- **Resource specifications**: Runtime (Node.js, Python, Go), Memory (256MB-2GB)
-- **Auto-scaling**: Lambda scales automatically, no instance management
-
-**Design Rationale**: Serverless eliminates infrastructure management—no servers to provision, patch, or scale. Pay per request (not per hour) reduces costs for variable workloads. Event-driven architecture (EventBridge → Lambda) enables async processing.
-
-**Key Takeaway**: Deploy business logic as Lambda functions. Use API Gateway for HTTP endpoints. Use EventBridge for event-driven invocations. Specify runtime and memory for each function. Leverage auto-scaling—no capacity planning needed.
-
-**Why It Matters**: Serverless architecture fundamentally changes cost structures from fixed to variable. Deployment diagrams showing serverless functions help teams understand how automatic scaling handles traffic spikes without manual provisioning. Serverless costs scale with actual usage rather than provisioned capacity, dramatically reducing costs for workloads with variable traffic patterns. Reserved infrastructure remains idle during low-traffic periods, wasting resources. Serverless eliminates this waste by charging only for actual execution time, reducing costs for bursty workloads while improving spike handling through automatic scaling.
-
-### Example 45: Hybrid Cloud Deployment
-
-Hybrid cloud deploys across on-premises and cloud infrastructure. This example shows hybrid architecture.
-
-```mermaid
-graph TD
-    OnPremises["On-Premises Data Center"]
-    OnPremApp["[VM Cluster]<br/>Legacy Application<br/>VMware vSphere"]
-    OnPremDB["[Database]<br/>Oracle RAC<br/>Customer data"]
-
-    VPN["[VPN Gateway]<br/>Site-to-Site VPN<br/>Encrypted tunnel"]
-
-    AWSCloud["AWS Cloud"]
-    AWSVPC["[VPC]<br/>Private network"]
-
-    APIGateway["[EC2 Instances]<br/>API Gateway<br/>Integration layer"]
-    NewApps["[ECS Cluster]<br/>New Microservices<br/>Docker containers"]
-
-    AuroraDB["[Aurora]<br/>PostgreSQL<br/>New data"]
-
-    S3["[S3]<br/>Data lake<br/>Analytics"]
-
-    OnPremises -->|Contains| OnPremApp
-    OnPremises -->|Contains| OnPremDB
-    OnPremApp -->|Reads/Writes| OnPremDB
-
-    OnPremises <-->|Site-to-Site VPN| VPN
-    VPN <-->|Encrypted| AWSCloud
-
-    AWSCloud -->|Contains| AWSVPC
-    AWSVPC -->|Contains| APIGateway
-    AWSVPC -->|Contains| NewApps
-
-    APIGateway -->|Calls via VPN| OnPremApp
-    APIGateway <-->|Reads/Writes| AuroraDB
-    NewApps -->|Calls| APIGateway
-
-    OnPremDB -.->|"Daily sync"| S3
-    AuroraDB -.->|"Replication"| S3
-
-    style OnPremises fill:#CA9161,stroke:#000,color:#fff
-    style OnPremApp fill:#029E73,stroke:#000,color:#fff
-    style OnPremDB fill:#DE8F05,stroke:#000,color:#fff
-    style VPN fill:#CC78BC,stroke:#000,color:#fff
-    style AWSCloud fill:#0173B2,stroke:#000,color:#fff
-    style AWSVPC fill:#0173B2,stroke:#000,color:#fff
-    style APIGateway fill:#029E73,stroke:#000,color:#fff
-    style NewApps fill:#029E73,stroke:#000,color:#fff
-    style AuroraDB fill:#DE8F05,stroke:#000,color:#fff
-    style S3 fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **On-premises** (brown): Legacy application on VMware, Oracle database
-- **AWS Cloud** (blue): New microservices on ECS, Aurora database
-- **VPN Gateway** (purple): Site-to-site VPN connecting on-premises to AWS
-- **API Gateway** (teal): Integration layer mediating between old and new systems
-- **Data replication**: On-premises DB syncs to S3 data lake daily
-- **Hybrid workload**: New apps in cloud call legacy systems via VPN
-
-**Design Rationale**: Hybrid cloud enables gradual migration from on-premises to cloud. API Gateway abstracts deployment location—new microservices don't care whether they call on-premises or cloud services. VPN provides secure connectivity. Data lake (S3) aggregates data from both environments for analytics.
-
-**Key Takeaway**: Connect on-premises and cloud via VPN. Deploy integration layer (API Gateway) mediating between environments. Migrate workloads incrementally. Aggregate data in cloud data lake. This enables cloud benefits while preserving on-premises investments.
-
-**Why It Matters**: Hybrid cloud architecture reduces migration risk while enabling incremental cloud adoption. Deployment diagrams showing hybrid topologies help teams understand how to migrate workloads incrementally while maintaining legacy system integration. New workloads deployed to cloud benefit from reduced infrastructure costs and improved scalability, while core systems remain on-premises to satisfy regulatory or technical constraints. Integration layers enable cloud and on-premises systems to communicate efficiently. Gradual migration approaches reduce risk and maintain business continuity compared to "big bang" migrations that introduce significant operational risk.
-
-## Dynamic Diagrams - Sequence Flows (Examples 46-50)
-
-### Example 46: User Authentication Flow (OAuth2)
-
-Dynamic diagrams show temporal sequences. This example demonstrates OAuth2 authentication flow.
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant WebApp
-    participant AuthServer
-    participant ResourceAPI
-
-    User->>WebApp: 1. Click "Login"
-    WebApp->>AuthServer: 2. Redirect to /authorize<br/>(client_id, redirect_uri, scope)
-    AuthServer->>User: 3. Show login form
-    User->>AuthServer: 4. Submit credentials
-    AuthServer->>AuthServer: 5. Validate credentials
-    AuthServer->>WebApp: 6. Redirect with code<br/>(redirect_uri?code=abc123)
-    WebApp->>AuthServer: 7. POST /token<br/>(code, client_id, client_secret)
-    AuthServer->>AuthServer: 8. Validate code
-    AuthServer->>WebApp: 9. Return access_token + refresh_token
-    WebApp->>ResourceAPI: 10. GET /api/user<br/>Authorization: Bearer <access_token>
-    ResourceAPI->>ResourceAPI: 11. Validate token
-    ResourceAPI->>WebApp: 12. Return user data
-    WebApp->>User: 13. Show dashboard
-```
-
-**Key Steps**:
-
-1-2. **Initiate flow**: User clicks login, WebApp redirects to AuthServer
-3-4. **User authentication**: AuthServer shows form, user submits credentials 5. **Credential validation**: AuthServer verifies username/password 6. **Authorization code**: AuthServer redirects back with temporary code
-7-8. **Token exchange**: WebApp exchanges code for tokens (proves it's legitimate client) 9. **Tokens issued**: AuthServer returns access_token (for API calls) and refresh_token (for renewal)
-10-11. **API call**: WebApp calls Resource API with access_token in header
-12-13. **Data returned**: User sees dashboard with their data
-
-**Design Rationale**: OAuth2 authorization code flow prevents access_token exposure to browser. WebApp receives code (not token) via redirect, then exchanges code for token server-to-server (using client_secret). This protects tokens from XSS attacks.
-
-**Key Takeaway**: Use sequence diagrams to show authentication flows. Number steps sequentially. Show redirects, token exchanges, and API calls. OAuth2 authorization code flow is most secure for web apps.
-
-**Why It Matters**: Authentication flow design directly impacts account security. Sequence diagrams showing OAuth2 flows help teams understand the security implications of different token exchange patterns. Sending access tokens via browser redirects exposes them to browser history and cross-site scripting attacks. Server-side code exchange (authorization code flow) keeps access tokens away from browsers, significantly improving security. Proper authentication flow selection dramatically reduces account compromise rates by eliminating token exposure vectors.
-
-### Example 47: Microservice Saga Execution Flow
-
-Sagas coordinate distributed transactions. This example shows saga execution with compensation.
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant OrderService
-    participant PaymentService
-    participant InventoryService
-    participant ShippingService
-
-    Client->>OrderService: 1. POST /orders
-    OrderService->>OrderService: 2. Create order (status: pending)
-    OrderService->>PaymentService: 3. POST /payments/reserve
-    PaymentService->>PaymentService: 4. Reserve \$100
-    PaymentService->>OrderService: 5. Payment reserved (payment_id: 123)
-
-    OrderService->>InventoryService: 6. POST /inventory/reserve
-    InventoryService->>InventoryService: 7. Check stock (OUT OF STOCK)
-    InventoryService->>OrderService: 8. Error: Item unavailable
-
-    Note over OrderService: Saga failure - begin compensation
-
-    OrderService->>PaymentService: 9. POST /payments/123/cancel
-    PaymentService->>PaymentService: 10. Release \$100 reservation
-    PaymentService->>OrderService: 11. Payment cancelled
-
-    OrderService->>OrderService: 12. Update order (status: failed)
-    OrderService->>Client: 13. Error: Order failed - out of stock
-```
-
-**Key Steps**:
-
-1-2. **Order creation**: Client creates order, OrderService persists with "pending" status
-3-5. **Payment reservation**: OrderService reserves payment, receives payment_id for later capture
-6-8. **Inventory check**: OrderService attempts inventory reservation, fails (out of stock)
-9-11. **Compensation**: OrderService cancels payment reservation (rollback)
-12-13. **Saga failure**: Order marked failed, error returned to client
-
-**Design Rationale**: Saga pattern breaks distributed transaction into local transactions with compensating actions. When any step fails, saga executes compensations in reverse order to rollback. This achieves eventual consistency without distributed locking.
-
-**Key Takeaway**: Show saga happy path and compensation path in sequence diagrams. Number steps to show execution order. Highlight compensation logic when failures occur. Sagas enable distributed transactions across microservices.
-
-**Why It Matters**: Saga compensation logic is critical for preventing inconsistent distributed state. Sequence diagrams showing compensation paths help teams understand how failures at intermediate steps require rollback operations. Without proper compensation, partial saga failures leave systems in inconsistent states where some operations completed while others failed. Adding compensation actions for each saga step dramatically reduces inconsistent state occurrences by ensuring failed transactions roll back all completed operations. This makes saga compensation essential for distributed transaction integrity.
-
-### Example 48: Event-Driven Message Flow
-
-Event-driven systems use async messaging. This example shows pub/sub message flow with multiple consumers.
-
-```mermaid
-sequenceDiagram
-    participant OrderService
-    participant EventBus as Event Bus (Kafka)
-    participant InventoryService
-    participant EmailService
-    participant AnalyticsService
-
-    OrderService->>OrderService: 1. Create order (order_id: 456)
-    OrderService->>EventBus: 2. Publish event<br/>Topic: orders<br/>Event: order.created<br/>Payload: {order_id: 456, user_id: 789, total: \$50}
-
-    EventBus->>InventoryService: 3. Deliver event (offset: 12345)
-    EventBus->>EmailService: 4. Deliver event (offset: 12345)
-    EventBus->>AnalyticsService: 5. Deliver event (offset: 12345)
-
-    InventoryService->>InventoryService: 6. Decrement stock<br/>(order_id: 456)
-    InventoryService->>EventBus: 7. Commit offset 12345
-
-    EmailService->>EmailService: 8. Send confirmation email<br/>(user_id: 789)
-    EmailService->>EventBus: 9. Commit offset 12345
-
-    AnalyticsService->>AnalyticsService: 10. Update metrics<br/>(total: \$50)
-    AnalyticsService->>EventBus: 11. Commit offset 12345
-
-    Note over EventBus: All consumers processed event successfully
-```
-
-**Key Steps**:
-
-1-2. **Event publication**: OrderService creates order, publishes event to Kafka topic
-3-5. **Fan-out delivery**: Event bus delivers same event to three consumers (parallel)
-6-7. **Inventory processing**: InventoryService decrements stock, commits offset (marks event processed)
-8-9. **Email processing**: EmailService sends confirmation, commits offset
-10-11. **Analytics processing**: AnalyticsService updates metrics, commits offset
-
-**Design Rationale**: Event-driven architecture decouples services—OrderService doesn't know about consumers. Adding new consumer (FraudService) doesn't require OrderService changes. Kafka retains events enabling replay and new consumers to catch up.
-
-**Key Takeaway**: Show event publication and parallel consumption in sequence diagrams. Include offset commits to show guaranteed processing. Event-driven architecture enables loose coupling and independent scaling.
-
-**Why It Matters**: Event-driven architecture prevents tight coupling and enables system extensibility. Sequence diagrams showing event publication and consumption help teams understand how new consumers can be added without modifying producers. Event-driven systems allow new functionality to subscribe to existing event streams, replaying historical events to build initial state before processing real-time events. This enables zero-downtime feature deployment without changing existing services. Event-driven patterns make systems significantly more extensible than direct service-to-service coupling.
-
-### Example 49: Database Transaction with Rollback
-
-Database transactions ensure ACID properties. This example shows transaction lifecycle with rollback scenario.
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant AppServer
-    participant DatabasePool
-    participant Transaction
-    participant Database
-
-    Client->>AppServer: 1. POST /transfer<br/>{from: A, to: B, amount: \$100}
-    AppServer->>DatabasePool: 2. Get connection
-    DatabasePool->>AppServer: 3. Connection acquired
-
-    AppServer->>Transaction: 4. BEGIN TRANSACTION
-    Transaction->>Database: 5. Start transaction<br/>(isolation: READ COMMITTED)
-
-    AppServer->>Transaction: 6. SELECT balance FROM accounts WHERE id=A FOR UPDATE
-    Transaction->>Database: 7. Lock row A, read balance (\$150)
-    Database->>AppServer: 8. balance: \$150
-
-    AppServer->>Transaction: 9. UPDATE accounts SET balance=50 WHERE id=A
-    Transaction->>Database: 10. Write to transaction log (uncommitted)
-
-    AppServer->>Transaction: 11. SELECT balance FROM accounts WHERE id=B FOR UPDATE
-    Transaction->>Database: 12. Attempt lock row B
-    Database->>AppServer: 13. TIMEOUT - row locked by another transaction
-
-    Note over AppServer: Deadlock detected - rollback
-
-    AppServer->>Transaction: 14. ROLLBACK
-    Transaction->>Database: 15. Discard transaction log<br/>Release locks
-
-    AppServer->>DatabasePool: 16. Release connection
-    AppServer->>Client: 17. Error: Transfer failed - try again
-```
-
-**Key Steps**:
-
-1-3. **Connection management**: Client requests transfer, AppServer gets database connection
-4-5. **Transaction start**: BEGIN TRANSACTION starts transaction with READ COMMITTED isolation
-6-8. **Row locking**: SELECT FOR UPDATE locks account A row, reads balance (\$150)
-9-10. **Tentative update**: UPDATE modifies balance to \$50 (uncommitted, in transaction log)
-11-13. **Deadlock**: Attempt to lock account B times out (another transaction holds lock)
-14-15. **Rollback**: ROLLBACK discards transaction log, releases locks, restores balance to \$150
-16-17. **Error handling**: Connection returned to pool, error returned to client
-
-**Design Rationale**: SELECT FOR UPDATE pessimistically locks rows preventing concurrent modifications. Transaction log enables rollback—uncommitted changes exist only in log, not database. Deadlock detection prevents infinite waits.
-
-**Key Takeaway**: Show transaction lifecycle (BEGIN, operations, COMMIT/ROLLBACK) in sequence diagrams. Include locking (SELECT FOR UPDATE), rollback scenarios, and connection pool management. Transactions ensure atomicity.
-
-**Why It Matters**: Transaction boundary design directly impacts data correctness and prevents race conditions. Sequence diagrams showing transaction flows help teams understand where locking mechanisms are required. Without proper locking, concurrent transactions can read stale data, leading to lost updates and data inconsistencies. Implementing row-level locks (SELECT FOR UPDATE) prevents race conditions by ensuring only one transaction modifies a row at a time. Proper transaction design with appropriate locking eliminates entire classes of concurrency bugs in financial and other critical systems.
-
-### Example 50: API Rate Limiting with Backoff
-
-Rate limiting requires retry logic. This example shows rate limit enforcement with exponential backoff.
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant APIGateway
-    participant RateLimiter
-    participant BackendAPI
-
-    Client->>APIGateway: 1. GET /api/data (request 1)
-    APIGateway->>RateLimiter: 2. Check rate limit<br/>(user: alice, limit: 10/min)
-    RateLimiter->>RateLimiter: 3. Increment counter (1/10)
-    RateLimiter->>APIGateway: 4. OK - within limit
-    APIGateway->>BackendAPI: 5. Forward request
-    BackendAPI->>Client: 6. 200 OK + data
-
-    Note over Client: ... 9 more requests (total 10/10)
-
-    Client->>APIGateway: 11. GET /api/data (request 11)
-    APIGateway->>RateLimiter: 12. Check rate limit
-    RateLimiter->>RateLimiter: 13. Counter at 10/10 (limit exceeded)
-    RateLimiter->>APIGateway: 14. REJECT
-    APIGateway->>Client: 15. 429 Too Many Requests<br/>Retry-After: 45 seconds
-
-    Client->>Client: 16. Wait 2^1 = 2 seconds (exponential backoff attempt 1)
-    Client->>APIGateway: 17. GET /api/data (retry 1)
-    APIGateway->>RateLimiter: 18. Check rate limit (still 10/10)
-    RateLimiter->>APIGateway: 19. REJECT
-    APIGateway->>Client: 20. 429 Too Many Requests<br/>Retry-After: 43 seconds
-
-    Client->>Client: 21. Wait 2^2 = 4 seconds (exponential backoff attempt 2)
-    Client->>APIGateway: 22. GET /api/data (retry 2)
-
-    Note over RateLimiter: Window elapsed (60 seconds), counter reset to 0/10
-
-    APIGateway->>RateLimiter: 23. Check rate limit (0/10)
-    RateLimiter->>RateLimiter: 24. Increment counter (1/10)
-    RateLimiter->>APIGateway: 25. OK - within limit
-    APIGateway->>BackendAPI: 26. Forward request
-    BackendAPI->>Client: 27. 200 OK + data
-```
-
-**Key Steps**:
-
-1-6. **Normal request**: Within rate limit (1/10), request forwarded to backend
-11-15. **Rate limit exceeded**: 11th request rejected with 429 status and Retry-After header
-16-20. **First retry**: Client waits 2 seconds (2^1), retries, still rate limited
-21-27. **Successful retry**: After 4 more seconds (2^2), rate limit window elapsed, request succeeds
-
-**Design Rationale**: Exponential backoff prevents thundering herd—instead of all clients retrying immediately, exponential delays spread retries over time. Retry-After header communicates exact time to wait (better than guessing).
-
-**Key Takeaway**: Show rate limit enforcement, 429 responses with Retry-After, and client exponential backoff in sequence diagrams. Exponential backoff: wait 2^attempt seconds between retries.
-
-**Why It Matters**: Exponential backoff is critical for preventing retry storms in distributed systems. Sequence diagrams showing retry patterns help teams understand how linear backoff can cause cascading failures. When clients retry too quickly, they generate additional load before rate limit windows reset, amplifying the problem. Exponential backoff with jitter spreads retries over time, allowing systems to recover while preventing retry amplification. This pattern dramatically reduces rate limit error rates and prevents retry storms from overwhelming API gateways and backend services.
-
-## Advanced Integration Patterns (Examples 51-55)
-
-### Example 51: Backend for Frontend (BFF) Pattern
-
-BFF pattern creates specialized backends for different frontend clients. This example shows mobile and web BFFs.
-
-```mermaid
-graph TD
-    MobileApp["[Mobile App]<br/>iOS/Android<br/>Native clients"]
-    WebApp["[Web App]<br/>React SPA<br/>Browser client"]
-
-    MobileBFF["[Mobile BFF]<br/>GraphQL API<br/>Mobile-optimized"]
-    WebBFF["[Web BFF]<br/>REST API<br/>Web-optimized"]
-
-    UserService["[User Service]<br/>User management"]
-    ProductService["[Product Service]<br/>Product catalog"]
-    OrderService["[Order Service]<br/>Order processing"]
-    RecommendationService["[Recommendation Service]<br/>ML-based recommendations"]
-
-    MobileApp -->|"GraphQL queries"| MobileBFF
-    WebApp -->|"REST calls"| WebBFF
-
-    MobileBFF -->|"Aggregates"| UserService
-    MobileBFF -->|"Aggregates"| ProductService
-    MobileBFF -->|"Aggregates"| OrderService
-    MobileBFF -.->|"Omits (save bandwidth)"| RecommendationService
-
-    WebBFF -->|"Aggregates"| UserService
-    WebBFF -->|"Aggregates"| ProductService
-    WebBFF -->|"Aggregates"| OrderService
-    WebBFF -->|"Includes (more screen space)"| RecommendationService
-
-    style MobileApp fill:#CC78BC,stroke:#000,color:#fff
-    style WebApp fill:#CC78BC,stroke:#000,color:#fff
-    style MobileBFF fill:#0173B2,stroke:#000,color:#fff
-    style WebBFF fill:#0173B2,stroke:#000,color:#fff
-    style UserService fill:#029E73,stroke:#000,color:#fff
-    style ProductService fill:#029E73,stroke:#000,color:#fff
-    style OrderService fill:#029E73,stroke:#000,color:#fff
-    style RecommendationService fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Two BFFs**: MobileBFF (GraphQL) and WebBFF (REST)—separate backends for different frontends
-- **Mobile optimizations**: GraphQL enables clients to request exact data needed (reduce bandwidth)
-- **Web optimizations**: REST with richer responses (browsers have more bandwidth)
-- **Selective aggregation**: MobileBFF omits recommendations (save 3G bandwidth), WebBFF includes them
-- **Service aggregation**: Both BFFs call multiple backend services, aggregate responses
-- **Frontend-specific logic**: BFFs contain logic specific to mobile vs web UX
-
-**Design Rationale**: BFF pattern prevents "one-size-fits-all" API that serves all clients poorly. Mobile clients need minimal bandwidth (3G/4G), web clients can handle richer data. BFFs optimize for each client's constraints and capabilities.
-
-**Key Takeaway**: Create separate Backend-for-Frontend APIs for mobile, web, desktop. Optimize each BFF for its client (data format, payload size, features). Aggregate multiple backend services in BFF layer. This enables client-specific optimizations.
-
-**Why It Matters**: Backend-for-Frontend pattern enables client-specific optimizations that dramatically improve performance. Component diagrams showing BFF layers help teams understand how different clients have different data requirements. Mobile clients benefit from reduced payload sizes and optimized data formats, while desktop clients can receive full-resolution assets. Generic APIs force all clients to receive the same data, causing mobile clients to download unnecessary large payloads. BFF pattern allows each client type to receive optimally sized data, significantly improving mobile performance on bandwidth-constrained networks.
-
-### Example 52: Strangler Fig Pattern for Legacy Migration
-
-Strangler fig pattern gradually replaces legacy systems. This example shows incremental migration strategy.
-
-```mermaid
-graph TD
-    Users["Users"]
-
-    Proxy["[Routing Proxy]<br/>NGINX/Envoy<br/>Route by feature"]
-
-    LegacyMonolith["[Legacy Monolith]<br/>Rails application<br/>All features (80%)"]
-
-    NewUserService["[New User Service]<br/>User management<br/>Microservice (10%)"]
-    NewOrderService["[New Order Service]<br/>Order processing<br/>Microservice (10%)"]
-
-    LegacyDB["[Legacy Database]<br/>PostgreSQL<br/>Shared (read-only for new services)"]
-
-    NewUserDB["[New User Database]<br/>PostgreSQL<br/>User service owned"]
-    NewOrderDB["[New Order Database]<br/>PostgreSQL<br/>Order service owned"]
-
-    Users -->|All requests| Proxy
-
-    Proxy -->|"/users/* → new service (10%)"| NewUserService
-    Proxy -->|"/orders/* → new service (10%)"| NewOrderService
-    Proxy -->|"All other routes (80%)"| LegacyMonolith
-
-    LegacyMonolith -->|"Reads/Writes"| LegacyDB
-
-    NewUserService -->|"Writes"| NewUserDB
-    NewUserService -.->|"Reads (during migration)"| LegacyDB
-
-    NewOrderService -->|"Writes"| NewOrderDB
-    NewOrderService -.->|"Reads (during migration)"| LegacyDB
-
-    LegacyDB -.->|"Data sync"| NewUserDB
-    LegacyDB -.->|"Data sync"| NewOrderDB
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style Proxy fill:#DE8F05,stroke:#000,color:#fff
-    style LegacyMonolith fill:#CA9161,stroke:#000,color:#fff
-    style NewUserService fill:#0173B2,stroke:#000,color:#fff
-    style NewOrderService fill:#0173B2,stroke:#000,color:#fff
-    style LegacyDB fill:#029E73,stroke:#000,color:#fff
-    style NewUserDB fill:#029E73,stroke:#000,color:#fff
-    style NewOrderDB fill:#029E73,stroke:#000,color:#fff
-```
-
-**Migration Phases**:
-
-1. **Phase 1 (Current)**: Proxy routes 10% traffic (users, orders) to new microservices, 80% to legacy monolith
-2. **Phase 2**: Extract more domains (products, billing) incrementally, route 40% to microservices, 60% to legacy
-3. **Phase 3**: Continue until 90%+ traffic routed to microservices, legacy handles 10%
-4. **Phase 4**: Decommission legacy monolith completely
-
-**Key Elements**:
-
-- **Routing Proxy** (orange): Routes traffic based on URL path to new services or legacy
-- **Legacy Monolith** (brown): Existing system gradually being replaced
-- **New Microservices** (blue): User and Order services extracted so far (20% of features)
-- **Dual-write pattern**: New services write to their databases, read from legacy (during transition)
-- **Data synchronization**: Legacy DB syncs data to new databases incrementally
-- **Progressive migration**: 10% → 40% → 90% → 100% microservices over 2-3 years
-
-**Design Rationale**: Strangler fig pattern avoids risky "big bang" rewrites. Incremental extraction reduces risk—if new service fails, route traffic back to legacy. Dual-write and data sync maintain consistency during migration.
-
-**Key Takeaway**: Route traffic through proxy that directs requests to new services or legacy based on feature. Extract features incrementally (10% at a time). Maintain dual-write or data sync during transition. Decommission legacy only after 90%+ migrated.
-
-**Why It Matters**: Strangler fig pattern dramatically reduces migration risk compared to big bang rewrites. Complete system rewrites often fail to deliver, causing organizations to lose competitive position during multi-year rewrite efforts. Component diagrams showing incremental extraction help teams understand how to migrate functionality piece by piece while maintaining existing services. Strangler fig enables organizations to migrate systems gradually while shipping features continuously, achieving zero-downtime migrations over extended periods. This incremental approach eliminates the catastrophic "rewrite failed" scenarios common with big bang migrations.
-
-### Example 53: Service Mesh (Istio) Architecture
-
-Service mesh provides observability, security, and reliability for microservices. This example shows Istio service mesh.
-
-```mermaid
-graph TD
-    Users["Users"]
-    IngressGateway["[Istio Ingress Gateway]<br/>Entry point<br/>TLS termination"]
-
-    ServiceA["Service A Pod"]
-    ServiceAApp["[Container]<br/>Service A<br/>Business logic"]
-    ServiceAProxy["[Envoy Sidecar]<br/>Service A Proxy<br/>Traffic management"]
-
-    ServiceB["Service B Pod"]
-    ServiceBApp["[Container]<br/>Service B<br/>Business logic"]
-    ServiceBProxy["[Envoy Sidecar]<br/>Service B Proxy<br/>Traffic management"]
-
-    ControlPlane["[Istio Control Plane]<br/>Pilot + Citadel<br/>Config + Certificates"]
-
-    Telemetry["[Observability]<br/>Prometheus + Grafana<br/>Metrics + Tracing"]
-
-    Users -->|HTTPS| IngressGateway
-    IngressGateway -->|Routes| ServiceAProxy
-
-    ServiceA -->|Contains| ServiceAApp
-    ServiceA -->|Contains| ServiceAProxy
-    ServiceAProxy <-->|Intercepts traffic| ServiceAApp
-
-    ServiceAProxy -->|mTLS| ServiceBProxy
-
-    ServiceB -->|Contains| ServiceBApp
-    ServiceB -->|Contains| ServiceBProxy
-    ServiceBProxy <-->|Intercepts traffic| ServiceBApp
-
-    ControlPlane -.->|"Config + Certs"| ServiceAProxy
-    ControlPlane -.->|"Config + Certs"| ServiceBProxy
-
-    ServiceAProxy -.->|Metrics| Telemetry
-    ServiceBProxy -.->|Metrics| Telemetry
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style IngressGateway fill:#DE8F05,stroke:#000,color:#fff
-    style ServiceA fill:#029E73,stroke:#000,color:#fff
-    style ServiceAApp fill:#0173B2,stroke:#000,color:#fff
-    style ServiceAProxy fill:#CC78BC,stroke:#000,color:#fff
-    style ServiceB fill:#029E73,stroke:#000,color:#fff
-    style ServiceBApp fill:#0173B2,stroke:#000,color:#fff
-    style ServiceBProxy fill:#CC78BC,stroke:#000,color:#fff
-    style ControlPlane fill:#DE8F05,stroke:#000,color:#fff
-    style Telemetry fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Envoy sidecar proxies** (purple): Injected into every pod, intercept all traffic
-- **Service containers** (blue): Business logic unaware of service mesh
-- **Mutual TLS (mTLS)**: Service A → Service B traffic encrypted and authenticated automatically
-- **Control Plane** (orange): Pilot distributes routing config, Citadel manages certificates
-- **Telemetry** (brown): Prometheus collects metrics from sidecars, Grafana visualizes
-- **Traffic interception**: All service-to-service calls go through sidecars (transparent to app)
-
-**Design Rationale**: Service mesh moves cross-cutting concerns (observability, security, reliability) from application code to infrastructure layer. Sidecar pattern enables mesh features without application changes. mTLS provides zero-trust security automatically.
-
-**Key Takeaway**: Deploy service mesh with sidecar proxies intercepting all service traffic. Enable mTLS for service-to-service encryption. Use control plane for config distribution. Collect metrics from sidecars for observability. This provides security and observability without application code changes.
-
-**Why It Matters**: Service mesh architecture solves cross-cutting concerns at scale without requiring application code changes. Component diagrams showing sidecar proxies help teams understand how mesh infrastructure can implement security and observability uniformly across all services. Implementing mutual TLS across hundreds of microservices through application code changes requires substantial engineering effort. Service mesh provides automatic mTLS via sidecar proxies, dramatically reducing implementation time while preventing unencrypted service-to-service communication vulnerabilities. Centralized observability through mesh sidecars significantly improves mean time to detect issues by providing uniform telemetry across all services.
-
-### Example 54: Event Sourcing with CQRS
-
-Event Sourcing + CQRS provides audit trails and optimized reads. This example shows complete CQRS architecture.
-
-```mermaid
-graph TD
-    Users["Users"]
-
-    CommandAPI["[Command API]<br/>Write operations<br/>POST/PUT/DELETE"]
-    QueryAPI["[Query API]<br/>Read operations<br/>GET"]
-
-    CommandHandler["[Command Handler]<br/>Validates commands"]
-    EventStore["[Event Store]<br/>Immutable event log<br/>EventStoreDB"]
-
-    EventBus["[Event Bus]<br/>Kafka<br/>Event distribution"]
-
-    Projector1["[Projector 1]<br/>Order summary view"]
-    Projector2["[Projector 2]<br/>User dashboard view"]
-
-    ReadDB1["[Read Database 1]<br/>PostgreSQL<br/>Order summaries"]
-    ReadDB2["[Read Database 2]<br/>MongoDB<br/>User dashboards"]
-
-    Users -->|"Commands"| CommandAPI
-    Users -->|"Queries"| QueryAPI
-
-    CommandAPI -->|Validate| CommandHandler
-    CommandHandler -->|Append events| EventStore
-
-    EventStore -->|Publish events| EventBus
-
-    EventBus -->|order.* events| Projector1
-    EventBus -->|user.* events| Projector2
-
-    Projector1 -->|Updates| ReadDB1
-    Projector2 -->|Updates| ReadDB2
-
-    QueryAPI -->|Reads| ReadDB1
-    QueryAPI -->|Reads| ReadDB2
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style CommandAPI fill:#0173B2,stroke:#000,color:#fff
-    style QueryAPI fill:#0173B2,stroke:#000,color:#fff
-    style CommandHandler fill:#029E73,stroke:#000,color:#fff
-    style EventStore fill:#DE8F05,stroke:#000,color:#fff
-    style EventBus fill:#029E73,stroke:#000,color:#fff
-    style Projector1 fill:#CA9161,stroke:#000,color:#fff
-    style Projector2 fill:#CA9161,stroke:#000,color:#fff
-    style ReadDB1 fill:#CA9161,stroke:#000,color:#fff
-    style ReadDB2 fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Separate APIs**: CommandAPI for writes, QueryAPI for reads (complete CQRS separation)
-- **Event Store** (orange): Single source of truth storing all events immutably
-- **Event Bus** (teal): Distributes events to projectors
-- **Projectors** (brown): Consume events, update read models (denormalized views)
-- **Multiple Read DBs**: PostgreSQL for relational views, MongoDB for document views
-- **Optimized reads**: Each read model optimized for specific query pattern
-- **Eventual consistency**: Writes commit to event store immediately, read models update asynchronously
-
-**Design Rationale**: Event Sourcing provides complete audit trail and time-travel queries. CQRS optimizes write path (event store) and read path (denormalized views) independently. Multiple read models enable query-specific optimizations.
-
-**Key Takeaway**: Separate write operations (commands → event store) from read operations (queries → read models). Use projectors to build read models from events. Optimize each read model for its query pattern. Accept eventual consistency between writes and reads.
-
-**Why It Matters**: Event Sourcing combined with CQRS enables independent optimization of write and read paths for complex domains. Component diagrams showing separate paths help teams understand how to optimize write operations for low latency while optimizing read operations for complex query patterns. Without separation, complex reporting queries competing for the same database resources degrade write operation latency. CQRS allows writes to use event stores optimized for append-only operations while reads use materialized views optimized for specific query patterns. This architectural separation achieves both low-latency writes and efficient complex queries simultaneously.
-
-### Example 55: GraphQL Federation
-
-GraphQL federation unifies multiple GraphQL services. This example shows federated GraphQL architecture.
-
-```mermaid
-graph TD
-    Clients["Clients"]
-
-    ApolloGateway["[Apollo Gateway]<br/>GraphQL Federation<br/>Query orchestration"]
-
-    UserSubgraph["[User Subgraph]<br/>GraphQL Service<br/>User domain"]
-    ProductSubgraph["[Product Subgraph]<br/>GraphQL Service<br/>Product domain"]
-    OrderSubgraph["[Order Subgraph]<br/>GraphQL Service<br/>Order domain"]
-
-    UserDB["[User Database]<br/>PostgreSQL"]
-    ProductDB["[Product Database]<br/>MongoDB"]
-    OrderDB["[Order Database]<br/>PostgreSQL"]
-
-    Clients -->|"Unified GraphQL query"| ApolloGateway
-
-    ApolloGateway -->|"Fetches User fields"| UserSubgraph
-    ApolloGateway -->|"Fetches Product fields"| ProductSubgraph
-    ApolloGateway -->|"Fetches Order fields"| OrderSubgraph
-
-    UserSubgraph -->|Queries| UserDB
-    ProductSubgraph -->|Queries| ProductDB
-    OrderSubgraph -->|Queries| OrderDB
-
-    ApolloGateway -.->|"Stitches responses"| Clients
-
-    style Clients fill:#CC78BC,stroke:#000,color:#fff
-    style ApolloGateway fill:#DE8F05,stroke:#000,color:#fff
-    style UserSubgraph fill:#0173B2,stroke:#000,color:#fff
-    style ProductSubgraph fill:#0173B2,stroke:#000,color:#fff
-    style OrderSubgraph fill:#0173B2,stroke:#000,color:#fff
-    style UserDB fill:#CA9161,stroke:#000,color:#fff
-    style ProductDB fill:#CA9161,stroke:#000,color:#fff
-    style OrderDB fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Example Federated Query**:
-
-```graphql
-# Client sends single query to Gateway
-query {
-  user(id: "123") {
-    # Gateway routes to User Subgraph
-    name
-    email
-    orders {
-      # Gateway routes to Order Subgraph (references User)
-      id
-      total
-      items {
-        # Gateway routes to Product Subgraph (references Order)
-        product {
-          name
-          price
-        }
-      }
-    }
-  }
-}
-
-# Gateway orchestrates:
-# 1. Call UserSubgraph for user(id: "123") → returns user data
-# 2. Call OrderSubgraph with user reference → returns orders
-# 3. Call ProductSubgraph with order.items references → returns products
-# 4. Stitch all responses into single JSON response
-```
-
-**Key Elements**:
-
-- **Apollo Gateway** (orange): Federation gateway stitching subgraph responses
-- **Subgraphs** (blue): User, Product, Order—each owns portion of GraphQL schema
-- **Unified schema**: Clients query one schema, gateway splits query across subgraphs
-- **Entity references**: Subgraphs reference entities from other subgraphs (User in Order)
-- **Automatic stitching**: Gateway combines responses into single JSON
-- **Independent deployment**: Each subgraph deployed independently
-
-**Design Rationale**: GraphQL federation enables microservices architecture while maintaining single GraphQL schema for clients. Each team owns their subgraph schema and implementation. Gateway provides unified API hiding microservices complexity.
-
-**Key Takeaway**: Use GraphQL federation to unify multiple GraphQL services. Each service owns its subgraph schema. Gateway orchestrates queries across subgraphs and stitches responses. Clients see unified schema hiding distributed architecture.
-
-**Why It Matters**: GraphQL federation dramatically reduces client-side complexity in distributed systems. Component diagrams showing gateway orchestration help teams understand how unified schemas simplify client implementations. Without federation, clients must manage connections to dozens of individual GraphQL services, each requiring separate configuration, error handling, and retry logic. Federation allows clients to interact with a single gateway endpoint that orchestrates queries across multiple backend services. This significantly reduces client application size and complexity while simplifying mobile development by consolidating all backend communication through one unified interface.
-
-## Multi-Container Architectures (Examples 56-60)
-
-### Example 56: Microservices with Service Discovery
-
-Service discovery enables dynamic service location. This example shows Consul-based service discovery.
-
-```mermaid
-graph TD
-    APIGateway["[API Gateway]<br/>Entry point"]
-
-    ServiceRegistry["[Service Registry]<br/>Consul<br/>Service discovery"]
-
-    ServiceA1["[Service A Instance 1]<br/>10.0.1.10:8080"]
-    ServiceA2["[Service A Instance 2]<br/>10.0.1.11:8080"]
-    ServiceA3["[Service A Instance 3]<br/>10.0.1.12:8080"]
-
-    ServiceB1["[Service B Instance 1]<br/>10.0.2.10:8081"]
-    ServiceB2["[Service B Instance 2]<br/>10.0.2.11:8081"]
-
-    HealthCheck["[Health Check]<br/>Periodic polling"]
-
-    APIGateway -->|"1. Query: Where is Service A?"| ServiceRegistry
-    ServiceRegistry -->|"2. Return healthy instances"| APIGateway
-    APIGateway -->|"3. Load balance across instances"| ServiceA1
-    APIGateway -->|"3. Load balance across instances"| ServiceA2
-    APIGateway -->|"3. Load balance across instances"| ServiceA3
-
-    ServiceA1 -->|"4. Register on startup"| ServiceRegistry
-    ServiceA2 -->|"4. Register on startup"| ServiceRegistry
-    ServiceA3 -->|"4. Register on startup"| ServiceRegistry
-    ServiceB1 -->|"4. Register on startup"| ServiceRegistry
-    ServiceB2 -->|"4. Register on startup"| ServiceRegistry
-
-    HealthCheck -.->|"Periodic checks"| ServiceA1
-    HealthCheck -.->|"Periodic checks"| ServiceA2
-    HealthCheck -.->|"Periodic checks"| ServiceA3
-    ServiceA3 -.->|"Unhealthy"| HealthCheck
-    HealthCheck -.->|"Deregister Service A3"| ServiceRegistry
-
-    style APIGateway fill:#DE8F05,stroke:#000,color:#fff
-    style ServiceRegistry fill:#CC78BC,stroke:#000,color:#fff
-    style ServiceA1 fill:#0173B2,stroke:#000,color:#fff
-    style ServiceA2 fill:#0173B2,stroke:#000,color:#fff
-    style ServiceA3 fill:#CA9161,stroke:#000,color:#fff
-    style ServiceB1 fill:#029E73,stroke:#000,color:#fff
-    style ServiceB2 fill:#029E73,stroke:#000,color:#fff
-    style HealthCheck fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Service Registry** (purple): Consul maintains map of service names to instance IPs
-- **Dynamic registration**: Services register themselves on startup (IP + port)
-- **Health checks**: Periodic polling detects unhealthy instances (Service A3 failing)
-- **Automatic deregistration**: Unhealthy instances removed from registry
-- **Client-side discovery**: API Gateway queries registry, gets healthy instance list
-- **Load balancing**: API Gateway distributes requests across healthy instances
-
-**Design Rationale**: Service discovery enables dynamic scaling and fault tolerance. New instances auto-register, failed instances auto-deregister. Clients always query healthy instances without manual configuration.
-
-**Key Takeaway**: Use service registry (Consul, Eureka, etcd) for dynamic service discovery. Services register on startup, health checks detect failures. Clients query registry for current healthy instances. This enables auto-scaling and self-healing.
-
-**Why It Matters**: Service discovery is essential for elastic scaling in dynamic cloud environments. Component diagrams showing service registry patterns help teams understand how automatic registration eliminates manual configuration overhead. When services scale elastically based on demand, manually managing service instance configurations becomes impractical. Service discovery allows instances to self-register on startup and deregister on shutdown, eliminating configuration deployment overhead. Health checks automatically detect and remove unhealthy instances, enabling rapid automatic failover. This makes elastic scaling practical while maintaining service reliability.
-
-### Example 57: Distributed Tracing Architecture
-
-Distributed tracing tracks requests across microservices. This example shows Jaeger tracing architecture.
-
-```mermaid
-graph TD
-    User["User"]
-
-    Frontend["[Frontend]<br/>React SPA"]
-    Gateway["[API Gateway]<br/>Trace ID: abc123"]
-
-    ServiceA["[Service A]<br/>Trace ID: abc123<br/>Span ID: span-1"]
-    ServiceB["[Service B]<br/>Trace ID: abc123<br/>Span ID: span-2"]
-    ServiceC["[Service C]<br/>Trace ID: abc123<br/>Span ID: span-3"]
-
-    JaegerAgent["[Jaeger Agent]<br/>Sidecar collector"]
-    JaegerCollector["[Jaeger Collector]<br/>Aggregates spans"]
-    TracingDB["[Tracing Database]<br/>Elasticsearch<br/>Span storage"]
-    JaegerUI["[Jaeger UI]<br/>Trace visualization"]
-
-    User -->|"1. Request"| Frontend
-    Frontend -->|"2. Generate Trace ID: abc123"| Gateway
-    Gateway -->|"3. Call with Trace ID"| ServiceA
-    ServiceA -->|"4. Call with Trace ID"| ServiceB
-    ServiceB -->|"5. Call with Trace ID"| ServiceC
-
-    ServiceA -.->|"Span 1: Gateway→ServiceA (150ms)"| JaegerAgent
-    ServiceB -.->|"Span 2: ServiceA→ServiceB (200ms)"| JaegerAgent
-    ServiceC -.->|"Span 3: ServiceB→ServiceC (50ms)"| JaegerAgent
-
-    JaegerAgent -.->|Batched spans| JaegerCollector
-    JaegerCollector -.->|Stores| TracingDB
-
-    JaegerUI -.->|Queries| TracingDB
-
-    style User fill:#CC78BC,stroke:#000,color:#fff
-    style Frontend fill:#0173B2,stroke:#000,color:#fff
-    style Gateway fill:#DE8F05,stroke:#000,color:#fff
-    style ServiceA fill:#029E73,stroke:#000,color:#fff
-    style ServiceB fill:#029E73,stroke:#000,color:#fff
-    style ServiceC fill:#029E73,stroke:#000,color:#fff
-    style JaegerAgent fill:#CA9161,stroke:#000,color:#fff
-    style JaegerCollector fill:#CA9161,stroke:#000,color:#fff
-    style TracingDB fill:#CA9161,stroke:#000,color:#fff
-    style JaegerUI fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Trace Visualization**:
-
-```
-Trace ID: abc123 (Total: 400ms)
-├─ [Gateway] 150ms
-│  └─ [Service A] 200ms
-│     └─ [Service B] 50ms
-│        └─ [Service C] 50ms
-
-Timeline:
-|--Gateway:150ms--|
-                  |--ServiceA:200ms--|
-                                    |--ServiceB:50ms--|
-                                                      |--ServiceC:50ms--|
-0ms              150ms             350ms            400ms
-```
-
-**Key Elements**:
-
-- **Trace ID** (abc123): Unique identifier propagated across all services for one request
-- **Span IDs**: Each service creates span recording its processing time
-- **Context propagation**: Trace ID passed in HTTP headers (X-B3-TraceId, X-B3-SpanId)
-- **Jaeger Agent**: Sidecar collecting spans, batching for efficiency
-- **Jaeger Collector**: Aggregates spans from all agents into complete traces
-- **Tracing Database**: Elasticsearch stores spans for querying
-- **Jaeger UI**: Visualizes traces showing request flow and latency breakdown
-
-**Design Rationale**: Distributed tracing provides observability into request flow across microservices. Trace ID correlation enables reconstructing full request path. Span timing reveals bottlenecks (ServiceA: 200ms vs ServiceC: 50ms).
-
-**Key Takeaway**: Generate trace ID at entry point, propagate through all services. Each service creates span with timing. Collect spans via agents, aggregate in collector. Store for querying and visualization. This enables request-level debugging in distributed systems.
-
-**Why It Matters**: Distributed tracing is essential for performance debugging in microservice architectures. Component diagrams showing trace propagation help teams understand how to identify performance bottlenecks across service boundaries. In distributed systems, slow requests may result from any service in the call chain, making bottleneck identification challenging without tracing. Distributed traces reveal which services contribute most latency, allowing teams to focus optimization efforts. Without tracing, teams risk optimizing services that contribute minimal latency while ignoring actual bottlenecks. Tracing ensures performance optimization targets the right components.
-
-### Example 58: Asynchronous Processing Architecture
-
-Asynchronous processing improves responsiveness. This example shows job queue architecture with multiple worker types.
-
-```mermaid
-graph TD
-    Users["Users"]
-
-    WebAPI["[Web API]<br/>Accepts requests<br/>Returns immediately"]
-
-    JobQueue["[Job Queue]<br/>Redis/RabbitMQ<br/>Persistent queue"]
-
-    HighPriorityWorkers["[High Priority Workers]<br/>3x instances<br/>Critical jobs"]
-    NormalPriorityWorkers["[Normal Priority Workers]<br/>5x instances<br/>Standard jobs"]
-    LowPriorityWorkers["[Low Priority Workers]<br/>2x instances<br/>Batch jobs"]
-
-    ResultCache["[Result Cache]<br/>Redis<br/>Job results"]
-
-    NotificationService["[Notification Service]<br/>WebSocket/SSE<br/>Real-time updates"]
-
-    Database["[Database]<br/>PostgreSQL<br/>Persistent storage"]
-
-    Users -->|"1. POST /jobs"| WebAPI
-    WebAPI -->|"2. Enqueue job"| JobQueue
-    WebAPI -->|"3. Return job_id: xyz789"| Users
-
-    JobQueue -->|"High priority"| HighPriorityWorkers
-    JobQueue -->|"Normal priority"| NormalPriorityWorkers
-    JobQueue -->|"Low priority"| LowPriorityWorkers
-
-    HighPriorityWorkers -->|"Process job"| Database
-    NormalPriorityWorkers -->|"Process job"| Database
-    LowPriorityWorkers -->|"Process job"| Database
-
-    HighPriorityWorkers -->|"Store result"| ResultCache
-    NormalPriorityWorkers -->|"Store result"| ResultCache
-    LowPriorityWorkers -->|"Store result"| ResultCache
-
-    ResultCache -->|"Job completed"| NotificationService
-    NotificationService -.->|"WebSocket push"| Users
-
-    Users -->|"4. GET /jobs/xyz789/status"| WebAPI
-    WebAPI -->|"Query result"| ResultCache
-    WebAPI -->|"5. Return completed/pending"| Users
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style WebAPI fill:#0173B2,stroke:#000,color:#fff
-    style JobQueue fill:#DE8F05,stroke:#000,color:#fff
-    style HighPriorityWorkers fill:#029E73,stroke:#000,color:#fff
-    style NormalPriorityWorkers fill:#029E73,stroke:#000,color:#fff
-    style LowPriorityWorkers fill:#CA9161,stroke:#000,color:#fff
-    style ResultCache fill:#DE8F05,stroke:#000,color:#fff
-    style NotificationService fill:#CC78BC,stroke:#000,color:#fff
-    style Database fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Key Elements**:
-
-- **Job Queue** (orange): Persistent queue storing pending jobs (survives worker crashes)
-- **Priority-based workers**: High (3x, critical), Normal (5x, standard), Low (2x, batch)
-- **Immediate response**: WebAPI returns job_id instantly without waiting for completion
-- **Result Cache** (orange): Redis stores job results for fast status queries
-- **Real-time notifications**: WebSocket pushes completion notifications to users
-- **Status polling**: Users can poll GET /jobs/:id/status for job state
-- **Resource allocation**: More workers for high-priority jobs (3x vs 2x low-priority)
-
-**Design Rationale**: Async processing prevents timeout errors on long-running tasks. Priority-based workers ensure critical jobs process first. Result cache enables fast status checks without database queries.
-
-**Key Takeaway**: Enqueue long-running jobs instead of processing synchronously. Return job_id immediately. Use priority queues with dedicated workers per priority. Store results in cache. Push completion notifications via WebSocket. This improves responsiveness and enables priority management.
-
-**Why It Matters**: Asynchronous processing fundamentally transforms user experience by decoupling request handling from background work. Component diagrams showing job queue architectures help teams understand how to improve perceived responsiveness. Synchronous processing forces users to wait for all operations to complete before receiving responses. Asynchronous processing immediately returns control to users while enqueueing background work. Priority queues ensure critical tasks complete quickly while less important tasks process in background. This dramatically improves perceived application performance and enables better resource allocation for different task priorities.
-
-### Example 59: Multi-Tier Caching Strategy
-
-Multi-tier caching optimizes performance at different layers. This example shows comprehensive caching architecture.
-
-```mermaid
-graph TD
-    Users["Users"]
-
-    CDN["[CDN Layer]<br/>CloudFront<br/>Edge caching (static)"]
-
-    ApplicationServer["Application Server"]
-
-    L1Cache["[L1: In-Memory Cache]<br/>Local cache<br/>100ms TTL"]
-    L2Cache["[L2: Distributed Cache]<br/>Redis Cluster<br/>5min TTL"]
-    L3Cache["[L3: Database Query Cache]<br/>PostgreSQL<br/>Materialized views"]
-
-    PrimaryDB["[Primary Database]<br/>PostgreSQL<br/>Source of truth"]
-
-    CacheWarmer["[Cache Warmer]<br/>Background job<br/>Preload hot data"]
-
-    Users -->|"1. GET /products"| CDN
-    CDN -.->|"CDN miss"| ApplicationServer
-
-    ApplicationServer -->|"2. Check L1"| L1Cache
-    L1Cache -.->|"L1 miss"| ApplicationServer
-
-    ApplicationServer -->|"3. Check L2"| L2Cache
-    L2Cache -.->|"L2 miss"| ApplicationServer
-
-    ApplicationServer -->|"4. Check L3"| L3Cache
-    L3Cache -.->|"L3 miss"| ApplicationServer
-
-    ApplicationServer -->|"5. Query database"| PrimaryDB
-    PrimaryDB -->|"Data"| ApplicationServer
-
-    ApplicationServer -->|"6. Populate L3"| L3Cache
-    ApplicationServer -->|"7. Populate L2"| L2Cache
-    ApplicationServer -->|"8. Populate L1"| L1Cache
-
-    CacheWarmer -.->|"Preload popular items"| L2Cache
-
-    style Users fill:#CC78BC,stroke:#000,color:#fff
-    style CDN fill:#DE8F05,stroke:#000,color:#fff
-    style ApplicationServer fill:#0173B2,stroke:#000,color:#fff
-    style L1Cache fill:#029E73,stroke:#000,color:#fff
-    style L2Cache fill:#029E73,stroke:#000,color:#fff
-    style L3Cache fill:#029E73,stroke:#000,color:#fff
-    style PrimaryDB fill:#CA9161,stroke:#000,color:#fff
-    style CacheWarmer fill:#CC78BC,stroke:#000,color:#fff
-```
-
-**Cache Hierarchy Performance**:
-
-```
-CDN:           1-50ms    (edge locations globally, static content)
-L1 (In-Memory):  1-5ms    (local process memory, smallest capacity)
-L2 (Redis):      5-20ms   (network call, distributed, larger capacity)
-L3 (DB Cache):  20-50ms   (database query, materialized views)
-Database:      50-500ms   (disk I/O, query execution)
-```
-
-**Key Elements**:
-
-- **Four cache tiers**: CDN (static), L1 (in-memory), L2 (Redis), L3 (DB materialized views)
-- **Graduated TTLs**: L1 (100ms), L2 (5min), L3 (daily refresh)
-- **Cache-aside pattern**: Check L1 → L2 → L3 → DB, populate on miss
-- **Cache warmer**: Background job preloading frequently accessed data into L2
-- **Different optimization targets**: CDN (global latency), L1 (eliminate network), L2 (shared cache), L3 (complex queries)
-
-**Design Rationale**: Multi-tier caching balances latency, capacity, and consistency. L1 eliminates network calls (fastest, smallest). L2 provides shared cache across app servers (moderate speed, large capacity). L3 caches complex query results (slower than L2, avoids expensive computations). CDN serves static content from edge locations.
-
-**Key Takeaway**: Implement multiple cache tiers with different TTLs. Check caches in order of speed (L1 → L2 → L3 → DB). Populate higher tiers on lower-tier hits. Use cache warmer for predictable hot data. This optimizes both read latency and database load.
-
-**Why It Matters**: Multi-tier caching architectures dramatically reduce infrastructure costs at scale. Component diagrams showing cache hierarchies help teams understand how layered caching prevents database load. When high percentages of requests are served from cache, database query volumes decrease dramatically, deferring expensive database scaling investments. In-memory caches (L1) eliminate even distributed cache network calls, further reducing infrastructure costs. Multi-tier caching makes high-traffic applications economically viable by converting expensive database queries into cheap memory lookups. This cost reduction becomes increasingly significant at scale.
-
-### Example 60: Zero-Downtime Deployment Pipeline
-
-Zero-downtime deployment requires orchestrated updates. This example shows complete deployment pipeline with health checks.
-
-```mermaid
-graph TD
-    LoadBalancer["[Load Balancer]<br/>Routes traffic<br/>Health check enabled"]
-
-    BlueCluster["Blue Cluster (Current v1.0)"]
-    BlueInstance1["[Instance 1]<br/>v1.0 Healthy"]
-    BlueInstance2["[Instance 2]<br/>v1.0 Healthy"]
-    BlueInstance3["[Instance 3]<br/>v1.0 Healthy"]
-
-    GreenCluster["Green Cluster (Deploying v2.0)"]
-    GreenInstance1["[Instance 1]<br/>v2.0 Deploying"]
-    GreenInstance2["[Instance 2]<br/>v2.0 Idle"]
-    GreenInstance3["[Instance 3]<br/>v2.0 Idle"]
-
-    HealthCheck["[Health Check]<br/>Periodic polling<br/>/health endpoint"]
-
-    DeployOrchestrator["[Deploy Orchestrator]<br/>Rolling update<br/>One instance at a time"]
-
-    LoadBalancer -->|"100% traffic"| BlueCluster
-    LoadBalancer -.->|"0% traffic (warming up)"| GreenCluster
-
-    BlueCluster -->|Contains| BlueInstance1
-    BlueCluster -->|Contains| BlueInstance2
-    BlueCluster -->|Contains| BlueInstance3
-
-    GreenCluster -->|Contains| GreenInstance1
-    GreenCluster -->|Contains| GreenInstance2
-    GreenCluster -->|Contains| GreenInstance3
-
-    HealthCheck -.->|"GET /health"| BlueInstance1
-    HealthCheck -.->|"GET /health"| BlueInstance2
-    HealthCheck -.->|"GET /health"| BlueInstance3
-    HealthCheck -.->|"GET /health"| GreenInstance1
-
-    DeployOrchestrator -.->|"1. Deploy to Green 1"| GreenInstance1
-    DeployOrchestrator -.->|"2. Wait for healthy"| HealthCheck
-    HealthCheck -.->|"v2.0 healthy"| DeployOrchestrator
-    DeployOrchestrator -.->|"3. Route 10% traffic"| LoadBalancer
-    DeployOrchestrator -.->|"4. Monitor errors"| LoadBalancer
-    DeployOrchestrator -.->|"5. Deploy Green 2 & 3"| GreenInstance2
-
-    style LoadBalancer fill:#DE8F05,stroke:#000,color:#fff
-    style BlueCluster fill:#0173B2,stroke:#000,color:#fff
-    style BlueInstance1 fill:#029E73,stroke:#000,color:#fff
-    style BlueInstance2 fill:#029E73,stroke:#000,color:#fff
-    style BlueInstance3 fill:#029E73,stroke:#000,color:#fff
-    style GreenCluster fill:#0173B2,stroke:#000,color:#fff
-    style GreenInstance1 fill:#029E73,stroke:#000,color:#fff
-    style GreenInstance2 fill:#CA9161,stroke:#000,color:#fff
-    style GreenInstance3 fill:#CA9161,stroke:#000,color:#fff
-    style HealthCheck fill:#CC78BC,stroke:#000,color:#fff
-    style DeployOrchestrator fill:#DE8F05,stroke:#000,color:#fff
-```
-
-**Deployment Phases**:
-
-**Phase 1: Deploy Canary**
-
-- Deploy v2.0 to Green Instance 1
-- Wait for health check (GET /health returns 200 OK)
-- Route 10% traffic to Green Instance 1
-
-**Phase 2: Monitor Canary**
-
-- Monitor error rates on Green Instance 1 for 10 minutes
-- Compare error rate: Blue (v1.0) vs Green canary (v2.0)
-- If Green errors < Blue errors + 5%: proceed
-- If Green errors ≥ Blue errors + 5%: rollback (route 0% to Green)
-
-**Phase 3: Full Rollout**
-
-- Deploy v2.0 to Green Instances 2 & 3
-- Gradually shift traffic: 10% → 25% → 50% → 100% Green
-- Decommission Blue cluster after 100% traffic on Green
-
-**Key Elements**:
-
-- **Load Balancer** (orange): Routes traffic with health-check-based routing
-- **Blue cluster**: Current production version (v1.0) serving 100% traffic
-- **Green cluster**: New version (v2.0) being deployed incrementally
-- **Health Check** (purple): Polls /health endpoint every 5 seconds
-- **Deploy Orchestrator** (orange): Automates rolling update sequence
-- **Canary deployment**: Deploy one instance first, monitor before full rollout
-- **Automated rollback**: If canary shows elevated errors, route traffic back to blue
-
-**Design Rationale**: Zero-downtime deployment requires keeping old version running while new version deploys. Health checks ensure only healthy instances receive traffic. Canary deployment detects production issues before full rollout.
-
-**Key Takeaway**: Deploy new version to separate cluster while old version serves traffic. Use health checks to validate new instances. Route small percentage of traffic to canary. Monitor error rates. Gradually shift traffic if canary healthy. This achieves zero downtime with automated rollback.
-
-**Why It Matters**: Zero-downtime deployment strategies enable high-velocity continuous delivery. Deployment diagrams showing rolling updates with automated health checks help teams understand how to detect and rollback problematic deployments rapidly. Automated health checks detect issues early and remove unhealthy instances from load balancers before users are impacted. This dramatically reduces mean time to recovery compared to manual rollback processes. Zero-downtime deployments with automatic rollback enable organizations to deploy frequently while maintaining high availability, making aggressive deployment schedules practical and safe.
+**Why It Matters**: Container diagrams are the primary communication tool for engineering teams planning deployment topology. Starting with the user-facing path grounds the conversation in user value before infrastructure detail.
 
 ---
 
-This completes the intermediate-level C4 Model by-example tutorial with 30 comprehensive examples covering detailed component diagrams, deployment strategies, dynamic sequence flows, advanced integration patterns, and production-ready multi-container architectures (40-75% coverage).
+### Example 32: Adding PostgreSQL — the Write Store
+
+The primary datastore for all P2P state. Every command that changes PO or requisition state writes to PostgreSQL.
+
+```mermaid
+graph TD
+    WebUI["[Container: Browser App]<br/>web-ui<br/>Next.js portal"]
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Command handling"]
+    PG["[Container: Database]<br/>postgres<br/>PostgreSQL 16<br/>Primary write store"]
+
+    WebUI -->|"POST /requisitions [HTTPS/JSON]"| PurchAPI
+    PurchAPI -->|"Writes PO and requisition state [TCP/5432]"| PG
+    PurchAPI -->|"Reads PO details for responses [TCP/5432]"| PG
+
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Separate read and write arrows**: Command path writes; query path reads — different SQL patterns
+- **TCP/5432**: PostgreSQL native protocol — not an abstracted HTTP API
+- **PostgreSQL version 16**: Versioning in Container diagrams surfaces upgrade planning needs
+
+**Design Rationale**: Showing separate read and write arrows from purchasing-api to postgres signals that CQRS or read optimization patterns may apply. If both arrows are identical, the optimization opportunity is invisible.
+
+**Key Takeaway**: Show separate read and write relationships between an API and its database. This makes query optimization, read replicas, and CQRS patterns visible at Container level.
+
+**Why It Matters**: P2P systems have read-heavy query patterns (order tracking, status checks) and write-heavy command patterns (approvals, PO issuance). Treating reads and writes identically in the diagram produces a database that is over-provisioned for writes and under-provisioned for reads.
+
+---
+
+### Example 33: Adding the Event Bus — Kafka
+
+Domain events flow between containers through Kafka. This decouples purchasing-api from receiving-api and invoicing-api.
+
+```mermaid
+graph TD
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Requisition and PO commands"]
+    EventBus["[Container: Message Broker]<br/>event-bus<br/>Apache Kafka<br/>Domain event streaming"]
+    RecvAPI["[Container: REST API]<br/>receiving-api<br/>Goods receipt recording"]
+    InvAPI["[Container: REST API]<br/>invoicing-api<br/>Invoice registration"]
+
+    PurchAPI -->|"Publishes PurchaseOrderIssued [Kafka topic: po-events]"| EventBus
+    PurchAPI -->|"Publishes PurchaseOrderAcknowledged [Kafka topic: po-events]"| EventBus
+    EventBus -->|"Delivers po-events to receiving subscriber"| RecvAPI
+    EventBus -->|"Delivers po-events to invoicing subscriber"| InvAPI
+
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Domain event names**: `PurchaseOrderIssued`, `PurchaseOrderAcknowledged` — not generic messages
+- **Kafka topic names**: `po-events` on arrow labels — contractual interface between producer and consumers
+- **Fan-out pattern**: One topic, two subscribers — each processes events independently
+
+**Design Rationale**: Naming domain events (not just "sends message") in Container diagrams makes the event contract visible. This prevents publishing teams from changing event shapes without updating consumers.
+
+**Key Takeaway**: Show Kafka topic names and domain event names in Container diagrams. Generic "sends message" labels hide the event contract that drives cross-container consistency.
+
+**Why It Matters**: Event schema mismatches between producer and consumer cause silent data corruption in P2P. A Kafka consumer expecting `PurchaseOrderIssued` with a `supplierId` field that the producer drops will silently skip notifications — a failure that surfaces weeks later in supplier audits.
+
+---
+
+### Example 34: Adding the payments-worker Container
+
+The payments-worker is a background process, not a REST API. It polls for payment-ready invoices and triggers bank disbursement.
+
+```mermaid
+graph TD
+    InvAPI["[Container: REST API]<br/>invoicing-api<br/>Invoice registration and matching"]
+    EventBus["[Container: Message Broker]<br/>event-bus<br/>Kafka"]
+    PayWorker["[Container: Background Worker]<br/>payments-worker<br/>Payment run scheduling<br/>and bank disbursement"]
+    Bank["[External System]<br/>Bank<br/>ISO 20022 payment processing"]
+    PG["[Container: Database]<br/>postgres<br/>Primary write store"]
+
+    InvAPI -->|"Publishes InvoiceMatched [Kafka topic: invoice-events]"| EventBus
+    EventBus -->|"Delivers invoice-events"| PayWorker
+    PayWorker -->|"Reads payment schedule [TCP/5432]"| PG
+    PayWorker -->|"Writes payment status [TCP/5432]"| PG
+    PayWorker -->|"Sends payment file [ISO 20022 pain.001]"| Bank
+    Bank -->|"Returns status report [ISO 20022 pain.002]"| PayWorker
+
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Background Worker type**: Distinct container type from REST API — no HTTP server, no user-facing port
+- **Event-triggered execution**: Worker subscribes to `invoice-events` rather than being polled
+- **pain.001/pain.002**: ISO 20022 payment messages on both arrows — contractual format
+
+**Design Rationale**: Background workers are a distinct deployment unit with different scaling characteristics from REST APIs. Showing the worker as a separate container forces separate scaling and monitoring discussions.
+
+**Key Takeaway**: Model background workers as distinct Container elements with their own type label. Workers have different deployment, scaling, and failure characteristics from REST APIs — conflating them hides operational complexity.
+
+**Why It Matters**: Payment workers that share infrastructure with REST APIs suffer from noisy-neighbor problems during payment runs. Container separation makes the case for isolated worker nodes with dedicated resources during batch disbursement windows.
+
+---
+
+### Example 35: Adding the read-store Container
+
+A read-store (materialized views or read-optimized DB) separates query concerns from the primary write store, enabling CQRS.
+
+```mermaid
+graph TD
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Commands — write path"]
+    PG["[Container: Database]<br/>postgres<br/>Primary write store"]
+    EventBus["[Container: Message Broker]<br/>event-bus<br/>Kafka"]
+    ReadStore["[Container: Database]<br/>read-store<br/>Materialized views<br/>PostgreSQL read replica<br/>or ElasticSearch"]
+    WebUI["[Container: Browser App]<br/>web-ui<br/>Next.js portal"]
+
+    PurchAPI -->|"Writes state [TCP/5432]"| PG
+    PG -->|"Publishes change events [CDC / Debezium]"| EventBus
+    EventBus -->|"Delivers change events"| ReadStore
+    WebUI -->|"Queries order list and status [HTTPS/JSON]"| ReadStore
+
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style ReadStore fill:#CA9161,stroke:#000,color:#fff
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **CDC / Debezium**: Change Data Capture populates read-store from write-store events
+- **WebUI reads from read-store, not postgres**: Read path is isolated from write path
+- **Eventual consistency**: CDC introduces lag — read-store is eventually consistent
+
+**Design Rationale**: CQRS at Container level separates the write path (purchasing-api → postgres) from the read path (web-ui → read-store). This separation makes eventual consistency visible and forces the team to plan for it.
+
+**Key Takeaway**: When query patterns differ significantly from write patterns, model a separate read-store container. Eventual consistency introduced by CDC must be acknowledged at Container level, not discovered by users.
+
+**Why It Matters**: P2P dashboards (order status lists, spend analytics) have very different query patterns from command handlers. Without a read-store, complex reporting queries compete with transactional writes on the same database, causing performance degradation during month-end reporting runs.
+
+---
+
+### Example 36: Adding the secret-manager Container
+
+The secret-manager container stores and rotates credentials used by all other containers.
+
+```mermaid
+graph TD
+    PurchAPI["[Container: REST API]<br/>purchasing-api"]
+    RecvAPI["[Container: REST API]<br/>receiving-api"]
+    InvAPI["[Container: REST API]<br/>invoicing-api"]
+    PayWorker["[Container: Background Worker]<br/>payments-worker"]
+    SecretMgr["[Container: Secret Store]<br/>secret-manager<br/>AWS Secrets Manager<br/>or HashiCorp Vault"]
+
+    PurchAPI -->|"Retrieves DB credentials on startup [HTTPS]"| SecretMgr
+    RecvAPI -->|"Retrieves DB credentials on startup [HTTPS]"| SecretMgr
+    InvAPI -->|"Retrieves DB credentials on startup [HTTPS]"| SecretMgr
+    PayWorker -->|"Retrieves bank API key on startup [HTTPS]"| SecretMgr
+    SecretMgr -->|"Rotates credentials on schedule [internal]"| SecretMgr
+
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+    style SecretMgr fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **All containers fetch credentials**: No hardcoded secrets in any container's environment variables
+- **On startup retrieval**: Credentials fetched at container start — rotation triggers restart or cache refresh
+- **Bank API key in payments-worker**: Only the worker holds the bank credential — least-privilege
+
+**Design Rationale**: Drawing the secret-manager at Container level makes secret management a first-class architectural concern. Teams that leave it implicit discover credential rotation failures in production.
+
+**Key Takeaway**: Show secret-manager as a container that every credential-consuming container depends on. Secret management is an architectural dependency, not a deployment detail.
+
+**Why It Matters**: Hardcoded or environment-variable credentials cannot be rotated without redeployment. Secret manager integration enables zero-downtime credential rotation — a requirement in financial services where credential compromise triggers immediate rotation mandates.
+
+---
+
+### Example 37: Full Container Diagram — All Nine Containers
+
+The complete Level 2 view of the Procurement Platform with all containers in one diagram.
+
+```mermaid
+graph TD
+    Buyer["[Person]<br/>Buyer Employee"]
+    Supplier["[Person / Ext System]<br/>Supplier"]
+    Bank["[External System]<br/>Bank"]
+    ERP["[External System]<br/>Internal ERP / GL"]
+
+    WebUI["[Container: Browser App]<br/>web-ui<br/>Next.js portal"]
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Requisition and PO"]
+    RecvAPI["[Container: REST API]<br/>receiving-api<br/>Goods receipt"]
+    InvAPI["[Container: REST API]<br/>invoicing-api<br/>Invoice matching"]
+    PayWorker["[Container: Background Worker]<br/>payments-worker<br/>Payment runs"]
+    EventBus["[Container: Message Broker]<br/>event-bus<br/>Kafka"]
+    PG["[Container: Database]<br/>postgres<br/>Primary write store"]
+    ReadStore["[Container: Database]<br/>read-store<br/>Query projections"]
+    SecretMgr["[Container: Secret Store]<br/>secret-manager"]
+
+    Buyer -->|"Uses portal [HTTPS]"| WebUI
+    WebUI -->|"Commands [REST]"| PurchAPI
+    WebUI -->|"Queries [REST]"| ReadStore
+    PurchAPI -->|"Writes [TCP/5432]"| PG
+    PurchAPI -->|"Publishes events [Kafka]"| EventBus
+    RecvAPI -->|"Writes GRNs [TCP/5432]"| PG
+    RecvAPI -->|"Publishes GoodsReceived [Kafka]"| EventBus
+    InvAPI -->|"Writes invoices [TCP/5432]"| PG
+    InvAPI -->|"Publishes InvoiceMatched [Kafka]"| EventBus
+    EventBus -->|"Delivers po-events"| RecvAPI
+    EventBus -->|"Delivers invoice-events"| PayWorker
+    PG -->|"CDC to read-store [Debezium]"| ReadStore
+    PayWorker -->|"Writes payment status [TCP/5432]"| PG
+    PayWorker -->|"Sends payment file [ISO 20022]"| Bank
+    Bank -->|"Returns status [ISO 20022]"| PayWorker
+    PurchAPI -->|"Posts accounting [REST]"| ERP
+    Supplier -->|"Sends invoice [portal]"| InvAPI
+    PurchAPI -->|"Fetches credentials [HTTPS]"| SecretMgr
+    PayWorker -->|"Fetches bank key [HTTPS]"| SecretMgr
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+    style ERP fill:#CC78BC,stroke:#000,color:#fff
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+    style ReadStore fill:#CA9161,stroke:#000,color:#fff
+    style SecretMgr fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Nine internal containers**: All deployment units in one view
+- **Four external actors**: Buyer, Supplier, Bank, ERP from Level 1
+- **Event-driven backbone**: Kafka connects all three API containers asynchronously
+
+**Design Rationale**: The full Container diagram is the engineering team's primary shared mental model. It is updated when new containers are introduced and reviewed at every major architecture decision.
+
+**Key Takeaway**: Maintain one authoritative full Container diagram per system. It serves as the reference point for all technical discussions about deployment, scaling, and integration.
+
+**Why It Matters**: Engineering teams without a shared Container diagram make siloed decisions that create integration problems at deployment time. One authoritative diagram prevents duplicate containers, conflicting technology choices, and missed integration points.
+
+---
+
+### Example 38: Container Diagram — Technology Choices
+
+Annotating technology choices at Container level makes the architecture decision record visible without requiring a separate ADR document.
+
+```mermaid
+graph TD
+    WebUI["[Container: Browser App]<br/>web-ui<br/>Next.js 16 (App Router)<br/>TypeScript — deployed to Vercel"]
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Node.js 22 + Express<br/>TypeScript — Docker on ECS"]
+    EventBus["[Container: Message Broker]<br/>event-bus<br/>Apache Kafka 3.7<br/>MSK managed — 3 brokers"]
+    PG["[Container: Database]<br/>postgres<br/>PostgreSQL 16<br/>AWS RDS Multi-AZ"]
+    SecretMgr["[Container: Secret Store]<br/>secret-manager<br/>AWS Secrets Manager<br/>KMS encrypted"]
+
+    WebUI -->|"REST commands [HTTPS/JSON]"| PurchAPI
+    PurchAPI -->|"Publishes events [Kafka]"| EventBus
+    PurchAPI -->|"Reads/writes state [TCP/5432]"| PG
+    PurchAPI -->|"Retrieves credentials [HTTPS]"| SecretMgr
+
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+    style SecretMgr fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Version pinning in labels**: Next.js 16, Node.js 22, Kafka 3.7, PostgreSQL 16 — upgrade surface visible
+- **Deployment target in label**: Vercel, ECS, MSK, RDS — infrastructure ownership visible
+- **Managed vs. self-managed**: MSK (managed Kafka) vs. self-managed Kafka is architecturally significant
+
+**Design Rationale**: Technology choices in container labels transform diagrams from architecture into architecture decision records. Version numbers make upgrade planning visible without a separate document.
+
+**Key Takeaway**: Include technology name and version in container labels when those choices are consequential. Labels double as lightweight ADRs visible at a glance.
+
+**Why It Matters**: Teams that omit versions from Container diagrams routinely discover incompatible dependency updates during deployments. Version visibility at Container level enables proactive upgrade planning before security advisories force emergency patches.
+
+---
+
+## Container Diagrams — Integration Patterns (Examples 39–46)
+
+### Example 39: Request-Response vs. Event-Driven Containers
+
+The Container diagram can explicitly show which relationships are synchronous request-response and which are asynchronous event-driven.
+
+```mermaid
+graph TD
+    WebUI["[Container: Browser App]<br/>web-ui"]
+    PurchAPI["[Container: REST API]<br/>purchasing-api"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+    RecvAPI["[Container: REST API]<br/>receiving-api"]
+    PG["[Container: Database]<br/>postgres"]
+
+    WebUI -->|"SYNC: POST /requisitions [blocking HTTP]"| PurchAPI
+    PurchAPI -->|"SYNC: INSERT into po table [TCP]"| PG
+    PurchAPI -->|"ASYNC: Publish PurchaseOrderIssued [fire-and-forget]"| EventBus
+    EventBus -->|"ASYNC: Deliver to receiving subscriber"| RecvAPI
+    RecvAPI -->|"SYNC: INSERT into grn table [TCP]"| PG
+
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **SYNC / ASYNC prefixes**: Every arrow labeled with synchronicity character
+- **Fire-and-forget on Kafka**: Platform does not wait for receiving-api to consume the event
+- **Both sync writes to postgres**: Even event consumers write synchronously to their own tables
+
+**Design Rationale**: Mixing SYNC and ASYNC labels forces the team to identify failure modes for each path. Sync failures propagate up the call stack; async failures require independent retry mechanisms.
+
+**Key Takeaway**: Label every arrow with its synchronicity pattern (SYNC or ASYNC). This surfaces dead-letter queue requirements, retry policy needs, and user-facing latency commitments.
+
+**Why It Matters**: P2P teams frequently debug timeouts that trace to synchronous ERP calls blocking the user-facing requisition API. If the blocking call was labeled SYNC in the Container diagram, the latency risk would have been addressed at design time.
+
+---
+
+### Example 40: Container Diagram — Scaling Annotations
+
+Adding scaling strategy to container labels makes horizontal scaling decisions explicit.
+
+```mermaid
+graph TD
+    WebUI["[Container: Browser App]<br/>web-ui<br/>CDN-distributed<br/>Stateless, scales to edge"]
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Horizontally scalable<br/>3–10 instances behind ALB"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka<br/>3-broker cluster<br/>6 partitions per topic"]
+    PayWorker["[Container: Background Worker]<br/>payments-worker<br/>Single-instance preferred<br/>during payment runs"]
+    PG["[Container: Database]<br/>postgres<br/>Primary + 2 read replicas<br/>Multi-AZ failover"]
+
+    WebUI -->|"REST [HTTPS]"| PurchAPI
+    PurchAPI -->|"Publishes events"| EventBus
+    EventBus -->|"Delivers payment events"| PayWorker
+    PurchAPI -->|"Writes [TCP/5432 primary]"| PG
+
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Scale-out containers**: web-ui and purchasing-api labeled as horizontally scalable
+- **Single-instance payments-worker**: Payment runs require idempotency guarantees; multiple instances risk double-payment
+- **PostgreSQL Multi-AZ**: High availability for the write store
+- **Kafka partitions**: 6 partitions allows up to 6 parallel consumer instances per topic
+
+**Design Rationale**: Scaling annotations in container labels make the deployment topology's scaling constraints visible. The single-instance payments-worker constraint is critical — it must be enforced by infrastructure, not convention.
+
+**Key Takeaway**: Annotate scaling strategy on container labels. Single-instance constraints and scale-out expectations are architectural decisions that must survive into infrastructure configuration.
+
+**Why It Matters**: Accidental horizontal scaling of a payment worker that lacks idempotency protection causes double-payments — a financial error that is expensive to reverse and damages supplier relationships permanently.
+
+---
+
+### Example 41: Container Diagram — Failure Modes
+
+Annotating what happens when each container fails makes resilience design explicit.
+
+```mermaid
+graph TD
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>FAIL: Returns 503<br/>Retry with exponential backoff"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka<br/>FAIL: Events queued in outbox<br/>Delivered on recovery"]
+    RecvAPI["[Container: REST API]<br/>receiving-api<br/>FAIL: GRN entry blocked<br/>Alert warehouse team"]
+    PG["[Container: Database]<br/>postgres<br/>FAIL: Failover to standby<br/>~30s RTO via Multi-AZ"]
+    PayWorker["[Container: Background Worker]<br/>payments-worker<br/>FAIL: Payment run delayed<br/>Resume from last checkpoint"]
+
+    PurchAPI -->|"Publishes to outbox if Kafka unavailable"| EventBus
+    EventBus -->|"Delivers GoodsReceived to receiving"| RecvAPI
+    PurchAPI -->|"Writes [with circuit breaker]"| PG
+    EventBus -->|"Delivers InvoiceMatched to worker"| PayWorker
+
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **FAIL annotation per container**: Each container has an explicit failure mode in its label
+- **Outbox pattern**: Events stored in postgres outbox when Kafka is unavailable — no event loss
+- **Circuit breaker on DB**: Prevents cascading failure when postgres is slow or unavailable
+
+**Design Rationale**: Failure mode annotations force the team to design for resilience, not just the happy path. Each failure annotation becomes a test scenario in the integration test suite.
+
+**Key Takeaway**: Annotate failure behavior in container labels. If you cannot describe what happens when a container fails, you have not designed its resilience.
+
+**Why It Matters**: P2P platforms that lose events when Kafka is down require manual reconciliation of POs and GRNs — a time-consuming audit task. Outbox patterns prevent this, but only if they are designed in from the start.
+
+---
+
+### Example 42: Container Diagram — Network Topology
+
+Showing which containers are in which network zones reveals security and latency design.
+
+```mermaid
+graph TD
+    subgraph PublicInternet["Public Internet"]
+        Buyer["[Person]<br/>Buyer Employee"]
+        Supplier["[Person / Ext System]<br/>Supplier"]
+    end
+
+    subgraph PublicSubnet["Public Subnet — DMZ"]
+        WebUI["[Container: Browser App]<br/>web-ui<br/>Next.js — Vercel Edge"]
+        APIGW["[Container: API Gateway]<br/>API Gateway<br/>WAF + rate limiting"]
+    end
+
+    subgraph PrivateSubnet["Private Subnet — Application Tier"]
+        PurchAPI["[Container: REST API]<br/>purchasing-api"]
+        RecvAPI["[Container: REST API]<br/>receiving-api"]
+        InvAPI["[Container: REST API]<br/>invoicing-api"]
+        PayWorker["[Container: Background Worker]<br/>payments-worker"]
+        EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+    end
+
+    subgraph DataSubnet["Data Subnet — Storage Tier"]
+        PG["[Container: Database]<br/>postgres"]
+        ReadStore["[Container: Database]<br/>read-store"]
+        SecretMgr["[Container: Secret Store]<br/>secret-manager"]
+    end
+
+    Buyer -->|"HTTPS"| WebUI
+    Supplier -->|"HTTPS"| APIGW
+    WebUI -->|"REST [HTTPS]"| APIGW
+    APIGW -->|"mTLS"| PurchAPI
+    APIGW -->|"mTLS"| RecvAPI
+    APIGW -->|"mTLS"| InvAPI
+    PurchAPI -->|"TCP/5432"| PG
+    PurchAPI -->|"Kafka"| EventBus
+    PayWorker -->|"TCP/5432"| PG
+
+    style Buyer fill:#029E73,stroke:#000,color:#fff
+    style Supplier fill:#CA9161,stroke:#000,color:#fff
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style APIGW fill:#DE8F05,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+    style ReadStore fill:#CA9161,stroke:#000,color:#fff
+    style SecretMgr fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Three subnet tiers**: DMZ, Application, Data — defense-in-depth visible
+- **mTLS inside private subnet**: Service-to-service authentication within the trusted tier
+- **Data subnet has no public access**: postgres, read-store, and secret-manager cannot be reached from internet
+
+**Design Rationale**: Network topology at Container level makes security zone boundaries architectural, not operational. Security engineering can validate zone assignments before any infrastructure is provisioned.
+
+**Key Takeaway**: Show network zones in Container diagrams for security-sensitive systems. Zone assignment is an architectural decision — moving a container between zones after deployment is expensive.
+
+**Why It Matters**: Procurement platforms that accidentally expose postgres or secret-manager to public subnets have a misconfiguration that persists until a security audit or breach discovers it. Architectural diagrams with explicit zone labels prevent misconfigurations at provisioning time.
+
+---
+
+### Example 43: Container Diagram — Data Ownership
+
+Each container owns specific data. Making data ownership explicit prevents accidental cross-container data access.
+
+```mermaid
+graph TD
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>OWNS: purchase_requisitions<br/>purchase_orders tables"]
+    RecvAPI["[Container: REST API]<br/>receiving-api<br/>OWNS: goods_receipt_notes table"]
+    InvAPI["[Container: REST API]<br/>invoicing-api<br/>OWNS: invoices table"]
+    PayWorker["[Container: Background Worker]<br/>payments-worker<br/>OWNS: payments table"]
+    PG["[Container: Database]<br/>postgres<br/>Shared infrastructure<br/>Separate schemas per service"]
+
+    PurchAPI -->|"Reads/writes schema: purchasing"| PG
+    RecvAPI -->|"Reads/writes schema: receiving"| PG
+    InvAPI -->|"Reads/writes schema: invoicing"| PG
+    PayWorker -->|"Reads/writes schema: payments"| PG
+
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **OWNS annotation**: Each container's label includes the tables it owns
+- **Schema-per-service**: Shared postgres instance but separate schemas enforce ownership
+- **No cross-schema SQL**: Containers read each other's data through events, not JOIN queries
+
+**Design Rationale**: Schema-per-service in a shared postgres instance delivers microservice data isolation without the operational overhead of separate databases. Container labels make the ownership contract explicit.
+
+**Key Takeaway**: Annotate data ownership in container labels. Teams that leave data ownership implicit routinely introduce cross-service SQL JOINs that create tight coupling and make service extraction impossible.
+
+**Why It Matters**: P2P services that share tables develop hidden dependencies that prevent independent deployment. Schema-per-service boundaries enforced at the Container diagram level prevent these dependencies from forming in the first place.
+
+---
+
+### Example 44: Three-Way Match Flow — Container Interaction
+
+The invoice three-way matching process spans three containers. A container-level view shows which containers participate and in what order.
+
+```mermaid
+graph LR
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>Source: PO data"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+    RecvAPI["[Container: REST API]<br/>receiving-api<br/>Source: GRN data"]
+    InvAPI["[Container: REST API]<br/>invoicing-api<br/>Matcher: PO vs GRN vs Invoice"]
+    PayWorker["[Container: Background Worker]<br/>payments-worker<br/>Disburser on match"]
+
+    PurchAPI -->|"1. PurchaseOrderIssued"| EventBus
+    RecvAPI -->|"2. GoodsReceived"| EventBus
+    EventBus -->|"3. Delivers both events"| InvAPI
+    InvAPI -->|"4. InvoiceMatched (if all three match)"| EventBus
+    EventBus -->|"5. Triggers payment run"| PayWorker
+
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Numbered arrows**: Five-step matching flow made explicit
+- **invoicing-api as the matcher**: invoicing-api holds the three-way match logic, not a shared service
+- **Event-driven trigger**: Payment starts on InvoiceMatched event — no polling
+
+**Design Rationale**: Showing the three-way match as a numbered event flow makes the temporal dependency visible. invoicing-api cannot match until it has received both `PurchaseOrderIssued` and `GoodsReceived`.
+
+**Key Takeaway**: Use numbered arrows in Container diagrams to show multi-container process flows. The temporal dependency between events reveals the correlation logic that invoicing-api must implement.
+
+**Why It Matters**: Three-way match failures are the primary cause of incorrect payments in P2P. Architectural clarity about which container holds the match logic and which events trigger it makes the matching algorithm testable and auditable.
+
+---
+
+### Example 45: Container Diagram — Deployment Units and Teams
+
+Aligning containers to teams makes Conway's Law visible and enables autonomous team deployment.
+
+```mermaid
+graph TD
+    subgraph BuyerTeam["Buyer Experience Team"]
+        WebUI["[Container: Browser App]<br/>web-ui<br/>Next.js portal"]
+        PurchAPI["[Container: REST API]<br/>purchasing-api"]
+    end
+
+    subgraph OperationsTeam["Operations Team"]
+        RecvAPI["[Container: REST API]<br/>receiving-api"]
+    end
+
+    subgraph FinanceTeam["Finance Team"]
+        InvAPI["[Container: REST API]<br/>invoicing-api"]
+        PayWorker["[Container: Background Worker]<br/>payments-worker"]
+    end
+
+    subgraph PlatformTeam["Platform Team"]
+        EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+        PG["[Container: Database]<br/>postgres"]
+        ReadStore["[Container: Database]<br/>read-store"]
+        SecretMgr["[Container: Secret Store]<br/>secret-manager"]
+    end
+
+    WebUI -->|"REST"| PurchAPI
+    PurchAPI -->|"Events"| EventBus
+    EventBus -->|"Events"| RecvAPI
+    EventBus -->|"Events"| InvAPI
+    EventBus -->|"Events"| PayWorker
+
+    style WebUI fill:#0173B2,stroke:#000,color:#fff
+    style PurchAPI fill:#DE8F05,stroke:#000,color:#fff
+    style RecvAPI fill:#029E73,stroke:#000,color:#fff
+    style InvAPI fill:#029E73,stroke:#000,color:#fff
+    style PayWorker fill:#CC78BC,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+    style ReadStore fill:#CA9161,stroke:#000,color:#fff
+    style SecretMgr fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Team subgraphs**: Container ownership aligned to team — Conway's Law made visible
+- **Event-based inter-team communication**: Teams communicate through Kafka, not direct API calls
+- **Platform Team owns shared infrastructure**: EventBus, postgres, read-store
+
+**Design Rationale**: When container ownership matches team ownership, teams can deploy their containers independently. When multiple teams own one container, every deployment requires coordination.
+
+**Key Takeaway**: Align container boundaries to team boundaries. Containers shared across teams create deployment bottlenecks. Kafka as the inter-team communication layer enables independent deployment schedules.
+
+**Why It Matters**: Deployment coordination between teams is a leading cause of slow release cycles. Container diagrams that make team boundaries visible enable autonomous deployment — a prerequisite for continuous delivery in P2P platforms.
+
+---
+
+### Example 46: Container Diagram — Health and Readiness Boundaries
+
+Annotating health check behavior on containers makes the deployment contract explicit.
+
+```mermaid
+graph TD
+    LB["[Container: Load Balancer]<br/>ALB<br/>Routes traffic to healthy instances"]
+    PurchAPI["[Container: REST API]<br/>purchasing-api<br/>GET /health → 200 OK (liveness)<br/>GET /ready → 200 if DB connected (readiness)"]
+    PG["[Container: Database]<br/>postgres<br/>Monitored by RDS health checks<br/>Failover triggered at 30s timeout"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka<br/>Lag monitored per consumer group<br/>Alert if lag > 10k messages"]
+
+    LB -->|"Routes only to ready instances"| PurchAPI
+    PurchAPI -->|"Checks connectivity [TCP/5432]"| PG
+    PurchAPI -->|"Consumes and publishes events"| EventBus
+
+    style LB fill:#DE8F05,stroke:#000,color:#fff
+    style PurchAPI fill:#0173B2,stroke:#000,color:#fff
+    style PG fill:#CA9161,stroke:#000,color:#fff
+    style EventBus fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Liveness vs. readiness**: Two distinct health endpoints with different failure behaviors
+- **Readiness checks DB connectivity**: An instance without a DB connection is not ready for traffic
+- **Kafka lag alerting**: Consumer lag is a health signal for event-driven containers
+
+**Design Rationale**: Health check design at Container level ensures all deployment platforms (Kubernetes, ECS) use consistent liveness and readiness semantics. Inconsistent health checks cause false-positive restarts that disrupt payment runs.
+
+**Key Takeaway**: Define liveness and readiness health check behavior in container labels. The distinction between "still running" (liveness) and "ready to serve traffic" (readiness) is critical for zero-downtime deployment.
+
+**Why It Matters**: payments-worker restarts during an active payment run can leave payments in an ambiguous state — initiated at the bank but not confirmed in postgres. Correct readiness checks prevent the load balancer from routing new work to a restarting worker.
+
+---
+
+## Component Diagrams — Inside purchasing-api (Examples 47–60)
+
+### Example 47: Component Overview — purchasing-api Layer Structure
+
+purchasing-api is organized in four horizontal layers. The Component diagram zooms inside the container and reveals these layers.
+
+```mermaid
+graph TD
+    subgraph PurchAPI["purchasing-api Container"]
+        HTTP["[Component]<br/>HTTP Layer<br/>HttpController + request DTOs<br/>Express routers"]
+        AppSvc["[Component]<br/>Application Services<br/>SubmitRequisitionHandler<br/>ApprovePOHandler"]
+        Domain["[Component]<br/>Domain Layer<br/>PurchaseRequisition aggregate<br/>PurchaseOrder aggregate"]
+        Infra["[Component]<br/>Infrastructure Adapters<br/>PgPurchaseOrderRepository<br/>OutboxEventPublisher"]
+    end
+
+    HTTP -->|"Invokes use case handlers"| AppSvc
+    AppSvc -->|"Calls aggregate methods"| Domain
+    AppSvc -->|"Persists via repository port"| Infra
+    Domain -->|"Emits domain events"| AppSvc
+
+    style HTTP fill:#0173B2,stroke:#000,color:#fff
+    style AppSvc fill:#DE8F05,stroke:#000,color:#fff
+    style Domain fill:#029E73,stroke:#000,color:#fff
+    style Infra fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Four layers**: HTTP → Application Services → Domain → Infrastructure — classic hexagonal structure
+- **Domain emits events up**: Domain events bubble up to Application Services for publishing
+- **Infrastructure at bottom**: Adapters depend on domain interfaces, not the reverse
+
+**Design Rationale**: The four-layer component structure enforces the dependency rule: outer layers depend on inner layers, never the reverse. The Domain layer has zero dependencies on infrastructure.
+
+**Key Takeaway**: Component diagrams for API containers should show the dependency direction explicitly. Domain → Infrastructure arrows that point inward (infrastructure depends on domain) signal correct hexagonal structure; outward arrows signal an architecture violation.
+
+**Why It Matters**: Applications where domain logic depends on infrastructure (e.g., importing a database ORM directly into aggregate methods) cannot be unit-tested without a running database. Correct layer dependency enables fast, deterministic unit tests for the P2P business rules.
+
+---
+
+### Example 48: HTTP Layer Components — Controllers and DTOs
+
+The HTTP layer contains controllers that translate HTTP requests into use case commands.
+
+```mermaid
+graph TD
+    Client["[Person / Container]<br/>web-ui or API consumer"]
+
+    subgraph HTTPLayer["HTTP Layer — purchasing-api"]
+        Router["[Component]<br/>Express Router<br/>Route definitions and middleware<br/>Auth, validation, error handling"]
+        ReqCtrl["[Component]<br/>RequisitionController<br/>POST /requisitions<br/>GET /requisitions/:id"]
+        POCtrl["[Component]<br/>PurchaseOrderController<br/>POST /purchase-orders<br/>PATCH /purchase-orders/:id/approve"]
+        ReqDTO["[Component]<br/>Request DTOs<br/>SubmitRequisitionRequest<br/>ApprovePORequest — Zod validated"]
+    end
+
+    AppSvc["[Component]<br/>Application Services"]
+
+    Client -->|"HTTPS requests"| Router
+    Router -->|"Routes to controller"| ReqCtrl
+    Router -->|"Routes to controller"| POCtrl
+    ReqCtrl -->|"Validates and maps to command"| ReqDTO
+    POCtrl -->|"Validates and maps to command"| ReqDTO
+    ReqCtrl -->|"Invokes SubmitRequisitionHandler"| AppSvc
+    POCtrl -->|"Invokes ApprovePOHandler"| AppSvc
+
+    style Client fill:#029E73,stroke:#000,color:#fff
+    style Router fill:#0173B2,stroke:#000,color:#fff
+    style ReqCtrl fill:#DE8F05,stroke:#000,color:#fff
+    style POCtrl fill:#DE8F05,stroke:#000,color:#fff
+    style ReqDTO fill:#CA9161,stroke:#000,color:#fff
+    style AppSvc fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Two controllers**: RequisitionController and PurchaseOrderController — aligned to domain aggregates
+- **Request DTOs with Zod**: Validation at the HTTP boundary before any business logic runs
+- **Router as dispatcher**: Express Router handles authentication and routes — not the controllers
+- **Controllers call Application Services**: Controllers do not contain business logic
+
+**Design Rationale**: Separating router (authentication/routing) from controllers (use case invocation) and DTOs (validation) gives each component a single responsibility. Adding a new endpoint requires touching only the router, controller, and DTO — not the domain.
+
+**Key Takeaway**: HTTP layer components should be thin: route, validate, translate to command, delegate. Business logic that appears in controllers is an architecture violation that should be flagged in code review.
+
+**Why It Matters**: Controllers that contain business logic cannot be reused when adding a new interface (e.g., a CLI or a Kafka consumer). Thin controllers with DTO validation enforce the boundary that makes business logic independently testable and reusable.
+
+---
+
+### Example 49: Application Services — Use Case Handlers
+
+Application services orchestrate the business use case: load aggregate, call method, persist, publish events.
+
+```mermaid
+graph TD
+    HTTP["[Component]<br/>HTTP Layer"]
+
+    subgraph AppServices["Application Services — purchasing-api"]
+        SubmitHandler["[Component]<br/>SubmitRequisitionHandler<br/>Orchestrates: load supplier →<br/>create requisition → persist → publish"]
+        ApproveHandler["[Component]<br/>ApprovePOHandler<br/>Orchestrates: load PO →<br/>call approve() → persist → publish"]
+        IssuePOHandler["[Component]<br/>IssuePOHandler<br/>Orchestrates: load PO →<br/>call issue() → notify supplier"]
+    end
+
+    Domain["[Component]<br/>Domain Layer"]
+    Infra["[Component]<br/>Infrastructure Adapters"]
+
+    HTTP -->|"Invokes with validated command"| SubmitHandler
+    HTTP -->|"Invokes with validated command"| ApproveHandler
+    HTTP -->|"Invokes with validated command"| IssuePOHandler
+    SubmitHandler -->|"Creates PurchaseRequisition"| Domain
+    ApproveHandler -->|"Calls PurchaseOrder.approve()"| Domain
+    IssuePOHandler -->|"Calls PurchaseOrder.issue()"| Domain
+    SubmitHandler -->|"Persists via RequisitionRepository"| Infra
+    ApproveHandler -->|"Persists via PurchaseOrderRepository"| Infra
+    IssuePOHandler -->|"Publishes PurchaseOrderIssued"| Infra
+
+    style HTTP fill:#0173B2,stroke:#000,color:#fff
+    style SubmitHandler fill:#DE8F05,stroke:#000,color:#fff
+    style ApproveHandler fill:#DE8F05,stroke:#000,color:#fff
+    style IssuePOHandler fill:#DE8F05,stroke:#000,color:#fff
+    style Domain fill:#029E73,stroke:#000,color:#fff
+    style Infra fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **One handler per use case**: SubmitRequisition, ApprovePO, IssuePO — single responsibility per handler
+- **Handler orchestrates but does not decide**: Business rules live in Domain, not in handlers
+- **Handler description as comment**: Each label includes the orchestration steps as documentation
+
+**Design Rationale**: Application Services follow the "thin orchestrator" pattern: load aggregate from repository, call aggregate method, save aggregate, publish events. No business logic belongs in the handler.
+
+**Key Takeaway**: Name each Application Service handler after its use case (SubmitRequisitionHandler, not GenericHandler). The handler name is the first piece of documentation a new developer reads.
+
+**Why It Matters**: Use case handlers that contain business logic (validating approval thresholds in the handler instead of in the aggregate) distribute business rules across layers, making them impossible to test in isolation and easy to miss when rules change.
+
+---
+
+### Example 50: Domain Layer — Aggregate Components
+
+The Domain layer contains the aggregates, value objects, and domain events that implement the P2P business rules.
+
+```mermaid
+graph TD
+    AppSvc["[Component]<br/>Application Services"]
+
+    subgraph DomainLayer["Domain Layer — purchasing-api"]
+        PRAggregate["[Component]<br/>PurchaseRequisition aggregate<br/>States: Draft → Submitted →<br/>ManagerReview → Approved → ConvertedToPO"]
+        POAggregate["[Component]<br/>PurchaseOrder aggregate<br/>States: Draft → AwaitingApproval →<br/>Approved → Issued → ... → Paid"]
+        VOs["[Component]<br/>Value Objects<br/>Money, PurchaseOrderId,<br/>RequisitionId, SupplierId,<br/>ApprovalLevel, SkuCode"]
+        Events["[Component]<br/>Domain Events<br/>RequisitionSubmitted,<br/>PurchaseOrderIssued,<br/>PurchaseOrderAcknowledged"]
+        Ports["[Component]<br/>Repository Ports (interfaces)<br/>PurchaseOrderRepository,<br/>RequisitionRepository"]
+    end
+
+    AppSvc -->|"Calls aggregate methods"| PRAggregate
+    AppSvc -->|"Calls aggregate methods"| POAggregate
+    PRAggregate -->|"Uses"| VOs
+    POAggregate -->|"Uses"| VOs
+    PRAggregate -->|"Emits"| Events
+    POAggregate -->|"Emits"| Events
+    AppSvc -->|"Calls via port interface"| Ports
+
+    style AppSvc fill:#808080,stroke:#000,color:#fff
+    style PRAggregate fill:#029E73,stroke:#000,color:#fff
+    style POAggregate fill:#029E73,stroke:#000,color:#fff
+    style VOs fill:#CC78BC,stroke:#000,color:#fff
+    style Events fill:#0173B2,stroke:#000,color:#fff
+    style Ports fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Two aggregate roots**: PurchaseRequisition and PurchaseOrder — each with state machine labels
+- **Value Objects shared**: Money, IDs, ApprovalLevel used by both aggregates
+- **Repository ports as interfaces**: Application Services call the port interface; adapters implement it
+- **Events emitted by aggregates**: Domain events come from aggregate methods, not from services
+
+**Design Rationale**: Repository ports (interfaces) in the domain layer enforce the dependency inversion principle. The domain defines the interface shape; infrastructure provides the implementation. This makes the domain layer testable with in-memory adapters.
+
+**Key Takeaway**: Domain layer components should contain no import from infrastructure. If a domain aggregate imports a database ORM or a Kafka client, the dependency direction is inverted and the layer is corrupted.
+
+**Why It Matters**: Domain layers contaminated with infrastructure imports require a running database to unit test approval threshold logic. Pure domain layers with interface-only repository ports run their full business rule test suite in milliseconds without any external dependencies.
+
+---
+
+### Example 51: Infrastructure Adapters — Repository Implementations
+
+Infrastructure adapters implement the domain ports. Each adapter maps between domain objects and persistence technology.
+
+```mermaid
+graph TD
+    Ports["[Component]<br/>Repository Ports (interfaces)<br/>Domain layer — purchasing-api"]
+
+    subgraph InfraLayer["Infrastructure Adapters — purchasing-api"]
+        PgPORepo["[Component]<br/>PgPurchaseOrderRepository<br/>Implements PurchaseOrderRepository<br/>Maps PO aggregate to pg rows"]
+        PgReqRepo["[Component]<br/>PgRequisitionRepository<br/>Implements RequisitionRepository<br/>Maps Requisition to pg rows"]
+        OutboxPublisher["[Component]<br/>OutboxEventPublisher<br/>Implements EventPublisher<br/>Writes events to outbox table"]
+        KafkaRelay["[Component]<br/>KafkaRelayJob<br/>Reads outbox → publishes to Kafka<br/>Deletes on ACK"]
+    end
+
+    PG["[Container: Database]<br/>postgres"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+
+    Ports -->|"Implemented by"| PgPORepo
+    Ports -->|"Implemented by"| PgReqRepo
+    Ports -->|"Implemented by"| OutboxPublisher
+    PgPORepo -->|"SQL queries [TCP/5432]"| PG
+    PgReqRepo -->|"SQL queries [TCP/5432]"| PG
+    OutboxPublisher -->|"INSERT into outbox table [TCP/5432]"| PG
+    KafkaRelay -->|"SELECT from outbox [TCP/5432]"| PG
+    KafkaRelay -->|"Publish events [Kafka]"| EventBus
+
+    style Ports fill:#808080,stroke:#000,color:#fff
+    style PgPORepo fill:#CA9161,stroke:#000,color:#fff
+    style PgReqRepo fill:#CA9161,stroke:#000,color:#fff
+    style OutboxPublisher fill:#CA9161,stroke:#000,color:#fff
+    style KafkaRelay fill:#CA9161,stroke:#000,color:#fff
+    style PG fill:#808080,stroke:#000,color:#fff
+    style EventBus fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Adapter naming**: `Pg` prefix signals PostgreSQL implementation — easy to swap for in-memory adapter
+- **Outbox pattern**: Events written to postgres first, relayed to Kafka by a separate job
+- **KafkaRelayJob**: Background component that ensures at-least-once delivery even if Kafka is down
+
+**Design Rationale**: The outbox pattern ensures that state changes and event publications are atomic — both succeed or neither does. Without it, a crash between postgres commit and Kafka publish loses events permanently.
+
+**Key Takeaway**: Show the outbox pattern as two distinct infrastructure components: OutboxEventPublisher (writes to DB) and KafkaRelayJob (reads from DB, publishes to Kafka). The two-step pattern makes atomicity explicit.
+
+**Why It Matters**: Lost domain events cause P2P state machine desynchronization between bounded contexts. A receiving-api that never gets `PurchaseOrderIssued` cannot open a GRN expectation, blocking the entire receiving flow.
+
+---
+
+### Example 52: Component Diagram — SubmitRequisitionHandler Flow
+
+Tracing one use case through all four layers shows how components collaborate for a single business operation.
+
+```mermaid
+graph TD
+    Client["[Person / Container]<br/>web-ui"]
+    ReqCtrl["[Component]<br/>RequisitionController<br/>HTTP Layer"]
+    ReqDTO["[Component]<br/>SubmitRequisitionRequest DTO<br/>Zod validated"]
+    SubmitHandler["[Component]<br/>SubmitRequisitionHandler<br/>Application Services"]
+    PRAggregate["[Component]<br/>PurchaseRequisition<br/>Domain Layer"]
+    PgReqRepo["[Component]<br/>PgRequisitionRepository<br/>Infrastructure"]
+    OutboxPub["[Component]<br/>OutboxEventPublisher<br/>Infrastructure"]
+
+    Client -->|"POST /requisitions [HTTPS]"| ReqCtrl
+    ReqCtrl -->|"Validates body"| ReqDTO
+    ReqDTO -->|"Returns SubmitRequisitionCommand"| SubmitHandler
+    SubmitHandler -->|"Creates PurchaseRequisition.createDraft()"| PRAggregate
+    PRAggregate -->|"Returns RequisitionSubmitted event"| SubmitHandler
+    SubmitHandler -->|"Saves requisition"| PgReqRepo
+    SubmitHandler -->|"Publishes RequisitionSubmitted"| OutboxPub
+    OutboxPub -->|"Inserts into outbox table"| PgReqRepo
+
+    style Client fill:#029E73,stroke:#000,color:#fff
+    style ReqCtrl fill:#0173B2,stroke:#000,color:#fff
+    style ReqDTO fill:#0173B2,stroke:#000,color:#fff
+    style SubmitHandler fill:#DE8F05,stroke:#000,color:#fff
+    style PRAggregate fill:#029E73,stroke:#000,color:#fff
+    style PgReqRepo fill:#CA9161,stroke:#000,color:#fff
+    style OutboxPub fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Seven-step flow**: One business operation touches seven components across four layers
+- **Aggregate returns event**: The aggregate's `createDraft()` method returns the domain event — not a side effect
+- **Outbox writes to same repo**: The event publisher uses the same postgres connection as the repo — atomic transaction
+
+**Design Rationale**: Tracing a single use case through all components is the most effective way to validate that the component structure is correct. If a step requires crossing an unexpected layer boundary, the architecture has a gap.
+
+**Key Takeaway**: Draw use-case-specific Component flows in addition to structural Component diagrams. Structural diagrams show what exists; flow diagrams show whether the structure actually enables the use case.
+
+**Why It Matters**: Use case flows that cross unexpected layer boundaries reveal architecture violations before they are coded. A handler that calls a repository directly without going through the domain aggregate bypasses business rule enforcement — a gap that only a flow diagram makes visible.
+
+---
+
+### Example 53: Component Diagram — ApprovePOHandler with FSM Guard
+
+The approval use case demonstrates how the domain aggregate enforces FSM transition guards at the component level.
+
+```mermaid
+graph TD
+    POCtrl["[Component]<br/>PurchaseOrderController<br/>HTTP Layer"]
+    ApproveHandler["[Component]<br/>ApprovePOHandler<br/>Application Services"]
+    POAggregate["[Component]<br/>PurchaseOrder aggregate<br/>Domain Layer — FSM guard:<br/>must be in AwaitingApproval state"]
+    ApprovalLevelVO["[Component]<br/>ApprovalLevel value object<br/>L1 ≤ $1k / L2 ≤ $10k / L3 > $10k"]
+    PgPORepo["[Component]<br/>PgPurchaseOrderRepository<br/>Infrastructure"]
+    OutboxPub["[Component]<br/>OutboxEventPublisher<br/>Infrastructure"]
+
+    POCtrl -->|"PATCH /purchase-orders/:id/approve"| ApproveHandler
+    ApproveHandler -->|"Loads PO by id"| PgPORepo
+    PgPORepo -->|"Returns PurchaseOrder aggregate"| ApproveHandler
+    ApproveHandler -->|"Calls PurchaseOrder.approve(approverId)"| POAggregate
+    POAggregate -->|"Validates ApprovalLevel for PO total"| ApprovalLevelVO
+    POAggregate -->|"Throws if not AwaitingApproval state"| ApproveHandler
+    POAggregate -->|"Returns PurchaseOrderApproved event on success"| ApproveHandler
+    ApproveHandler -->|"Saves updated PO"| PgPORepo
+    ApproveHandler -->|"Publishes event"| OutboxPub
+
+    style POCtrl fill:#0173B2,stroke:#000,color:#fff
+    style ApproveHandler fill:#DE8F05,stroke:#000,color:#fff
+    style POAggregate fill:#029E73,stroke:#000,color:#fff
+    style ApprovalLevelVO fill:#CC78BC,stroke:#000,color:#fff
+    style PgPORepo fill:#CA9161,stroke:#000,color:#fff
+    style OutboxPub fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **FSM guard in aggregate label**: `must be in AwaitingApproval state` — constraint visible at component level
+- **ApprovalLevel value object**: Encapsulates L1/L2/L3 logic — not in the handler
+- **Error path shown**: Aggregate throws if state guard fails — handler propagates as 409 Conflict
+
+**Design Rationale**: Showing the FSM guard in the aggregate component label signals that state validation is the aggregate's responsibility. If a reviewer sees FSM guard logic in the handler, it is an architecture violation.
+
+**Key Takeaway**: Annotate FSM state guards in Domain layer component labels. Guards that live outside the aggregate are guards that can be bypassed by callers.
+
+**Why It Matters**: A PO that can be approved when it is not in `AwaitingApproval` state creates phantom approvals that corrupt the P2P audit trail. FSM guards enforced in the aggregate are the last line of defense against state machine violations.
+
+---
+
+### Example 54: Component Diagram — Infrastructure Adapter Swapping
+
+The port/adapter pattern enables swapping infrastructure adapters without touching the domain. This example shows the in-memory adapter used in tests.
+
+```mermaid
+graph TD
+    AppSvc["[Component]<br/>ApprovePOHandler<br/>Application Services"]
+
+    subgraph ProdAdapters["Production Adapters"]
+        PgRepo["[Component]<br/>PgPurchaseOrderRepository<br/>Implements PurchaseOrderRepository<br/>Writes to PostgreSQL"]
+        KafkaPub["[Component]<br/>OutboxEventPublisher<br/>Implements EventPublisher<br/>Writes to postgres outbox"]
+    end
+
+    subgraph TestAdapters["Test Adapters"]
+        MemRepo["[Component]<br/>InMemoryPurchaseOrderRepository<br/>Implements PurchaseOrderRepository<br/>Stores in Map — no DB needed"]
+        FakePub["[Component]<br/>FakeEventPublisher<br/>Implements EventPublisher<br/>Captures events for assertions"]
+    end
+
+    Port["[Component]<br/>PurchaseOrderRepository (interface)<br/>Domain Port"]
+
+    AppSvc -->|"Calls interface methods"| Port
+    Port -->|"Production: implemented by"| PgRepo
+    Port -->|"Test: implemented by"| MemRepo
+    AppSvc -->|"Calls EventPublisher interface"| KafkaPub
+    AppSvc -->|"Test: uses"| FakePub
+
+    style AppSvc fill:#DE8F05,stroke:#000,color:#fff
+    style PgRepo fill:#CA9161,stroke:#000,color:#fff
+    style KafkaPub fill:#CA9161,stroke:#000,color:#fff
+    style MemRepo fill:#029E73,stroke:#000,color:#fff
+    style FakePub fill:#029E73,stroke:#000,color:#fff
+    style Port fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Two adapter sets**: Production (postgres, outbox) and Test (in-memory, fake publisher)
+- **Interface as pivot**: Application services depend only on the interface — adapters are interchangeable
+- **Test adapters enable unit tests**: FakeEventPublisher captures events for assertions without Kafka
+
+**Design Rationale**: Drawing both production and test adapters in the Component diagram makes the testability architecture explicit. Teams that see only production adapters assume testing requires a running database.
+
+**Key Takeaway**: Show test adapters alongside production adapters in Component diagrams. The presence of in-memory adapters is an architectural feature — it enables a fast unit test suite for the business rules.
+
+**Why It Matters**: A P2P business rule test suite that requires PostgreSQL takes minutes to run. The same tests with in-memory adapters run in seconds. Over the lifetime of a project, this difference determines whether developers run tests before every commit or only in CI.
+
+---
+
+### Example 55: Component Diagram — Receiving-api Internal Structure
+
+receiving-api has its own component structure mirroring purchasing-api but optimized for GRN entry workflows.
+
+```mermaid
+graph TD
+    subgraph RecvAPI["receiving-api Container"]
+        GRNCtrl["[Component]<br/>GoodsReceiptController<br/>POST /grn<br/>Entry point for GRN data"]
+        GRNHandler["[Component]<br/>RecordGoodsReceiptHandler<br/>Validates GRN against open PO<br/>Checks quantity tolerances"]
+        GRNAggregate["[Component]<br/>GoodsReceiptNote aggregate<br/>States: Draft → Verified → Submitted<br/>Tolerance: ≤ 10% quantity variance"]
+        GRNRepo["[Component]<br/>PgGoodsReceiptRepository<br/>Stores GRN records"]
+        GRNEventPub["[Component]<br/>GoodsReceivedEventPublisher<br/>Publishes GoodsReceived event"]
+        POConsumer["[Component]<br/>PurchaseOrderEventConsumer<br/>Subscribes to po-events Kafka topic<br/>Opens GRN expectation on PO Issued"]
+    end
+
+    PG["[Container: Database]<br/>postgres<br/>receiving schema"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+
+    POConsumer -->|"Consumes PurchaseOrderIssued"| EventBus
+    GRNCtrl -->|"Invokes handler"| GRNHandler
+    GRNHandler -->|"Creates GRN aggregate"| GRNAggregate
+    GRNHandler -->|"Saves GRN"| GRNRepo
+    GRNHandler -->|"Publishes GoodsReceived"| GRNEventPub
+    GRNRepo -->|"SQL [TCP/5432]"| PG
+    GRNEventPub -->|"Publishes to grn-events topic"| EventBus
+
+    style GRNCtrl fill:#0173B2,stroke:#000,color:#fff
+    style GRNHandler fill:#DE8F05,stroke:#000,color:#fff
+    style GRNAggregate fill:#029E73,stroke:#000,color:#fff
+    style GRNRepo fill:#CA9161,stroke:#000,color:#fff
+    style GRNEventPub fill:#CA9161,stroke:#000,color:#fff
+    style POConsumer fill:#CC78BC,stroke:#000,color:#fff
+    style PG fill:#808080,stroke:#000,color:#fff
+    style EventBus fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **Kafka consumer as component**: POConsumer subscribes to po-events — receiving-api is both HTTP server and event consumer
+- **GRN aggregate with tolerance**: 10% quantity variance tolerance is a domain rule in the aggregate label
+- **Separate event schema**: receiving-api publishes to `grn-events`, not to `po-events`
+
+**Design Rationale**: receiving-api has a dual interface: HTTP for warehouse operator input, Kafka consumer for PO-issued event. Both interfaces trigger the same GRN aggregate. Showing both in the Component diagram prevents treating them as separate systems.
+
+**Key Takeaway**: Model Kafka consumer components alongside HTTP controllers in receiving containers. Event-driven entry points deserve the same architectural clarity as HTTP entry points.
+
+**Why It Matters**: receiving-api implementations that do not model the Kafka consumer as a first-class component routinely skip GRN expectation tracking — the feature that prevents warehouse staff from receiving against non-existent POs, a source of ghost receipts and financial loss.
+
+---
+
+### Example 56: Component Diagram — invoicing-api Three-Way Match
+
+invoicing-api's core component implements three-way match logic: compare PO, GRN, and Invoice values within tolerance.
+
+```mermaid
+graph TD
+    subgraph InvAPI["invoicing-api Container"]
+        InvCtrl["[Component]<br/>InvoiceController<br/>POST /invoices<br/>Invoice registration endpoint"]
+        InvHandler["[Component]<br/>RegisterInvoiceHandler<br/>Orchestrates registration<br/>and match trigger"]
+        InvAggregate["[Component]<br/>Invoice aggregate<br/>States: Registered → Matching →<br/>Matched → Disputed"]
+        MatchSvc["[Component]<br/>ThreeWayMatchService<br/>Compares: PO unit price × GRN qty<br/>vs Invoice amount ± Tolerance 2%"]
+        InvRepo["[Component]<br/>PgInvoiceRepository"]
+        POConsumer["[Component]<br/>POEventConsumer<br/>Subscribes to po-events<br/>Caches PO data for matching"]
+        GRNConsumer["[Component]<br/>GRNEventConsumer<br/>Subscribes to grn-events<br/>Caches GRN data for matching"]
+    end
+
+    PG["[Container: Database]<br/>postgres<br/>invoicing schema"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+
+    POConsumer -->|"Consumes po-events"| EventBus
+    GRNConsumer -->|"Consumes grn-events"| EventBus
+    InvCtrl -->|"Invokes handler"| InvHandler
+    InvHandler -->|"Creates Invoice aggregate"| InvAggregate
+    InvHandler -->|"Triggers match"| MatchSvc
+    MatchSvc -->|"Reads cached PO and GRN data"| PG
+    InvHandler -->|"Saves invoice and match result"| InvRepo
+    InvRepo -->|"SQL [TCP/5432]"| PG
+
+    style InvCtrl fill:#0173B2,stroke:#000,color:#fff
+    style InvHandler fill:#DE8F05,stroke:#000,color:#fff
+    style InvAggregate fill:#029E73,stroke:#000,color:#fff
+    style MatchSvc fill:#CC78BC,stroke:#000,color:#fff
+    style InvRepo fill:#CA9161,stroke:#000,color:#fff
+    style POConsumer fill:#CA9161,stroke:#000,color:#fff
+    style GRNConsumer fill:#CA9161,stroke:#000,color:#fff
+    style PG fill:#808080,stroke:#000,color:#fff
+    style EventBus fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **ThreeWayMatchService**: Encapsulates the matching algorithm — not buried in the handler
+- **Two Kafka consumers**: invoicing-api caches PO and GRN data from upstream events
+- **2% tolerance**: Match tolerance is a business parameter visible in the component label
+
+**Design Rationale**: Extracting ThreeWayMatchService as a distinct component makes the matching algorithm independently testable. A service buried in the handler cannot be tested without the full HTTP request context.
+
+**Key Takeaway**: Extract complex business algorithms into named Application Service components. ThreeWayMatchService as a named component signals that the matching logic has defined inputs, outputs, and test cases.
+
+**Why It Matters**: Incorrect three-way matching results in overpayments or blocked invoices. A named, independently testable match service enables comprehensive edge-case testing (exact match, within tolerance, over tolerance, missing GRN) that protects against payment errors.
+
+---
+
+### Example 57: Component Diagram — payments-worker Internal Structure
+
+payments-worker's internal components show how a background worker is organized differently from a REST API.
+
+```mermaid
+graph TD
+    subgraph PayWorker["payments-worker Container"]
+        InvoiceConsumer["[Component]<br/>InvoiceMatchedConsumer<br/>Subscribes to invoice-events<br/>Triggers payment scheduling"]
+        PayScheduler["[Component]<br/>PaymentScheduler<br/>Groups invoices into payment runs<br/>Respects bank cut-off times"]
+        PayExecutor["[Component]<br/>PaymentExecutor<br/>Builds ISO 20022 pain.001 file<br/>Sends to bank, handles pain.002"]
+        PayRepo["[Component]<br/>PgPaymentRepository<br/>Saves payment state and checkpoints"]
+        BankAdapter["[Component]<br/>BankApiAdapter<br/>Implements BankingPort<br/>REST + retry + circuit breaker"]
+        IdempotencyChecker["[Component]<br/>IdempotencyChecker<br/>Prevents double-payment<br/>Checks payment_id uniqueness"]
+    end
+
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+    PG["[Container: Database]<br/>postgres<br/>payments schema"]
+    Bank["[External System]<br/>Bank"]
+
+    InvoiceConsumer -->|"Consumes InvoiceMatched"| EventBus
+    InvoiceConsumer -->|"Schedules payment"| PayScheduler
+    PayScheduler -->|"Persists payment schedule"| PayRepo
+    PayScheduler -->|"Checks idempotency"| IdempotencyChecker
+    IdempotencyChecker -->|"Queries payment_id"| PayRepo
+    PayScheduler -->|"Triggers executor"| PayExecutor
+    PayExecutor -->|"Sends pain.001 via adapter"| BankAdapter
+    BankAdapter -->|"HTTPS to bank API"| Bank
+    Bank -->|"Returns pain.002 status"| BankAdapter
+    BankAdapter -->|"Updates payment status"| PayRepo
+    PayRepo -->|"SQL [TCP/5432]"| PG
+
+    style InvoiceConsumer fill:#CC78BC,stroke:#000,color:#fff
+    style PayScheduler fill:#DE8F05,stroke:#000,color:#fff
+    style PayExecutor fill:#DE8F05,stroke:#000,color:#fff
+    style PayRepo fill:#CA9161,stroke:#000,color:#fff
+    style BankAdapter fill:#CA9161,stroke:#000,color:#fff
+    style IdempotencyChecker fill:#029E73,stroke:#000,color:#fff
+    style EventBus fill:#808080,stroke:#000,color:#fff
+    style PG fill:#808080,stroke:#000,color:#fff
+    style Bank fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **IdempotencyChecker**: A dedicated component for preventing double-payments — not an afterthought
+- **BankApiAdapter with retry and circuit breaker**: Resilience built into the adapter, not the caller
+- **PaymentScheduler respects cut-off times**: Business constraint (bank cut-off) in component label
+
+**Design Rationale**: IdempotencyChecker as a distinct component signals that idempotency is a first-class concern in the payment worker. Teams that skip this component routinely produce double-payment bugs when the worker retries after a crash.
+
+**Key Takeaway**: Name idempotency and circuit breaker components explicitly. Making them anonymous "utilities" inside another component hides a critical safety mechanism from reviewers.
+
+**Why It Matters**: Double-payments are irreversible in real-time banking systems. An explicit IdempotencyChecker component ensures that idempotency requirements are tested, monitored, and maintained separately from general payment logic.
+
+---
+
+### Example 58: Component Diagram — Approval Router Component
+
+The approval router component routes requisitions to the correct approval level based on PO total and organizational policy.
+
+```mermaid
+graph TD
+    SubmitHandler["[Component]<br/>SubmitRequisitionHandler<br/>Application Services"]
+
+    subgraph ApprovalComponents["Approval Routing — purchasing-api"]
+        ApprovalRouter["[Component]<br/>ApprovalRouterAdapter<br/>Implements ApprovalRouterPort<br/>Determines ApprovalLevel from PO total"]
+        NotifyAdapter["[Component]<br/>ApproverNotificationAdapter<br/>Sends approval request to manager<br/>via email or workflow engine"]
+        ApprovalLevelVO["[Component]<br/>ApprovalLevel value object<br/>L1: PO total ≤ $1,000<br/>L2: PO total ≤ $10,000<br/>L3: PO total > $10,000"]
+    end
+
+    Manager["[Person]<br/>Approving Manager"]
+    EmailSvc["[External System]<br/>Email Service"]
+
+    SubmitHandler -->|"Routes requisition via ApprovalRouterPort"| ApprovalRouter
+    ApprovalRouter -->|"Derives ApprovalLevel"| ApprovalLevelVO
+    ApprovalRouter -->|"Notifies correct approver"| NotifyAdapter
+    NotifyAdapter -->|"Sends approval request email [SMTP]"| EmailSvc
+    EmailSvc -->|"Delivers to manager inbox"| Manager
+
+    style SubmitHandler fill:#808080,stroke:#000,color:#fff
+    style ApprovalRouter fill:#CA9161,stroke:#000,color:#fff
+    style NotifyAdapter fill:#CA9161,stroke:#000,color:#fff
+    style ApprovalLevelVO fill:#CC78BC,stroke:#000,color:#fff
+    style Manager fill:#029E73,stroke:#000,color:#fff
+    style EmailSvc fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **ApprovalRouterPort implementation**: Adapter implements the domain port — approval routing is pluggable
+- **ApprovalLevel value object drives routing**: Dollar threshold logic lives in a value object
+- **NotifyAdapter wraps email delivery**: Direct SMTP coupling lives only in the adapter
+
+**Design Rationale**: Implementing approval routing as a port/adapter makes it replaceable. Organizations that switch from email to Slack or a workflow engine need to replace only the adapter, not the handler or the domain.
+
+**Key Takeaway**: Model approval routing as an infrastructure adapter that implements a domain port. Routing strategy changes are then configuration decisions, not refactoring tasks.
+
+**Why It Matters**: Approval workflow engines change as organizations grow (email → Slack → ServiceNow). Port/adapter routing isolation means these transitions are adapter swaps — one class replaced — not invasive refactors across multiple layers.
+
+---
+
+### Example 59: Component Diagram — Event Consumer Registration Pattern
+
+Kafka consumer components need explicit registration and offset management. This example shows the pattern inside purchasing-api.
+
+```mermaid
+graph TD
+    subgraph EventConsumers["Event Consumers — purchasing-api"]
+        PaymentConsumer["[Component]<br/>PaymentDisbursedConsumer<br/>Subscribes to payment-events topic<br/>Updates PO state to Paid"]
+        DisputeConsumer["[Component]<br/>InvoiceDisputedConsumer<br/>Subscribes to invoice-events topic<br/>Transitions PO to Disputed state"]
+        ConsumerRegistry["[Component]<br/>KafkaConsumerRegistry<br/>Manages consumer group offsets<br/>Handles rebalance events"]
+    end
+
+    POAggregate["[Component]<br/>PurchaseOrder aggregate<br/>Domain Layer"]
+    PgPORepo["[Component]<br/>PgPurchaseOrderRepository<br/>Infrastructure"]
+    EventBus["[Container: Message Broker]<br/>event-bus / Kafka"]
+
+    ConsumerRegistry -->|"Registers consumers on startup"| EventBus
+    EventBus -->|"Delivers PaymentDisbursed"| PaymentConsumer
+    EventBus -->|"Delivers InvoiceDisputed"| DisputeConsumer
+    PaymentConsumer -->|"Loads PO, calls pay()"| POAggregate
+    DisputeConsumer -->|"Loads PO, calls dispute()"| POAggregate
+    PaymentConsumer -->|"Saves updated PO"| PgPORepo
+    DisputeConsumer -->|"Saves updated PO"| PgPORepo
+
+    style PaymentConsumer fill:#CC78BC,stroke:#000,color:#fff
+    style DisputeConsumer fill:#CC78BC,stroke:#000,color:#fff
+    style ConsumerRegistry fill:#0173B2,stroke:#000,color:#fff
+    style POAggregate fill:#029E73,stroke:#000,color:#fff
+    style PgPORepo fill:#CA9161,stroke:#000,color:#fff
+    style EventBus fill:#808080,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **ConsumerRegistry**: Manages offset tracking and group rebalance — not buried in each consumer
+- **Two consumer components**: purchasing-api subscribes to events from downstream contexts
+- **Consumers call domain aggregate**: Event consumers follow the same handler pattern as HTTP controllers
+
+**Design Rationale**: Centralizing offset management in a ConsumerRegistry component prevents each consumer from re-implementing Kafka coordination logic. The registry is the single point for offset commit strategy and rebalance handling.
+
+**Key Takeaway**: Model a KafkaConsumerRegistry component when a container has multiple Kafka consumers. Shared offset management prevents duplicate processing and simplifies rebalance handling.
+
+**Why It Matters**: Kafka consumer groups that mismanage offsets reprocess events on restart, causing duplicate state transitions in PO aggregates. Explicit registry components with correct at-least-once semantics and idempotent aggregate methods prevent reprocessing errors.
+
+---
+
+### Example 60: Component Diagram — Anti-Corruption Layer Between Contexts
+
+When purchasing-api receives events from receiving-api, an Anti-Corruption Layer (ACL) translates the receiving context's domain model into purchasing's domain model.
+
+```mermaid
+graph TD
+    GRNConsumer["[Component]<br/>GoodsReceivedEventConsumer<br/>purchasing-api — subscribes to grn-events"]
+
+    subgraph ACL["Anti-Corruption Layer — purchasing-api"]
+        GRNTranslator["[Component]<br/>GoodsReceiptTranslator<br/>Maps GoodsReceived event (receiving context)<br/>to PurchaseOrderReceivedEvent (purchasing context)"]
+        ContextMapper["[Component]<br/>ReceivingContextMapper<br/>Translates SupplierId, Quantity, SkuCode<br/>to purchasing context value objects"]
+    end
+
+    POAggregate["[Component]<br/>PurchaseOrder aggregate<br/>purchasing context domain"]
+    Handler["[Component]<br/>RecordGoodsReceiptHandler<br/>Application Services — purchasing context"]
+
+    GRNConsumer -->|"Raw GoodsReceived event from receiving"| GRNTranslator
+    GRNTranslator -->|"Maps receiving types to purchasing types"| ContextMapper
+    ContextMapper -->|"Returns purchasing context command"| Handler
+    Handler -->|"Calls PO.partialReceive() or PO.fullReceive()"| POAggregate
+
+    style GRNConsumer fill:#CC78BC,stroke:#000,color:#fff
+    style GRNTranslator fill:#DE8F05,stroke:#000,color:#fff
+    style ContextMapper fill:#DE8F05,stroke:#000,color:#fff
+    style POAggregate fill:#029E73,stroke:#000,color:#fff
+    style Handler fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Key Elements**:
+
+- **GoodsReceiptTranslator**: Converts receiving context event to purchasing context language
+- **ContextMapper**: Translates value objects across context boundaries
+- **PO.partialReceive() or fullReceive()**: Receiving events drive PO state transitions in purchasing
+
+**Design Rationale**: The ACL prevents the receiving context's domain model from polluting the purchasing context. Without it, purchasing aggregates contain receiving-context terminology — a bounded context violation.
+
+**Key Takeaway**: Model Anti-Corruption Layers as distinct components at context boundaries. ACLs are the architectural mechanism that allows bounded contexts to evolve independently.
+
+**Why It Matters**: Bounded contexts without ACLs develop implicit coupling through shared domain terminology. When the receiving team renames `GRN` to `ReceivingRecord`, every consumer that imports receiving types without an ACL breaks — a change that should have had zero blast radius.

@@ -3,7 +3,7 @@ title: "Overview"
 weight: 10000002
 date: 2026-05-09T00:00:00+07:00
 draft: false
-description: "DDD Using OOP by example: 80 annotated examples in Java 21+, Kotlin, and C# 12+ covering tactical building blocks, integration patterns, and strategic design"
+description: "DDD Using OOP by example: 80 annotated examples in Java 21+, Kotlin, and C# 12+ using the procurement-platform-be P2P domain"
 tags: ["ddd", "domain-driven-design", "tutorial", "by-example", "oop", "java", "kotlin", "csharp"]
 ---
 
@@ -27,7 +27,7 @@ This tutorial is code-first. Each example leads with working, self-contained cod
 
 Read one language deeply if you want to build fluency in that language's DDD idioms. Scan all three languages on each example if you want cross-language insight into how the same DDD concept maps onto different type systems and idioms. Language contrasts are noted in examples where the difference matters to the DDD pattern.
 
-The running domain across all examples is **e-commerce order placement** — a system that accepts customer orders, validates them, applies pricing, and raises domain events when an order is placed. Using a single domain lets you see how individual DDD building blocks fit together into a coherent system.
+The running domain across all examples is the **`procurement-platform-be`** — the backend of a Procure-to-Pay (P2P) platform through which employees submit purchase requisitions, managers approve them, purchase orders are issued to suppliers, goods are received, invoices are matched against deliveries, and payments are disbursed. Using a single domain lets you see how individual DDD building blocks fit together into a coherent system.
 
 ## What This Tutorial Covers
 
@@ -70,6 +70,6 @@ Every example follows a consistent five-part format:
 
 ## Tutorial Structure
 
-- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/beginner) — Tactical building blocks: Value Objects, Entities, Aggregates, Repositories, Domain Services, Application Services, and Domain Events.
-- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/intermediate) — Integration and layering patterns: Specifications, Factories, CQRS, hexagonal architecture, domain exception hierarchies, and Bounded Context packaging.
-- [Advanced (Examples 56–80)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/advanced) — Strategic patterns and advanced tactical: Context Maps, Anti-Corruption Layers, event sourcing, sagas, temporal modelling, and common anti-patterns.
+- [Beginner (Examples 1–25)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/beginner) — Tactical building blocks: Value Objects, Entities, Aggregates, Repositories, Domain Services, Application Services, and Domain Events using the `purchasing` bounded context.
+- [Intermediate (Examples 26–55)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/intermediate) — Integration and layering patterns: Specifications, Factories, CQRS, hexagonal architecture, domain exception hierarchies, and Bounded Context packaging, adding the `supplier` context.
+- [Advanced (Examples 56–80)](/en/learn/software-engineering/architecture/domain-driven-design-ddd/oop-by-example/advanced) — Strategic patterns and advanced tactical: Context Maps, Anti-Corruption Layers, cross-context ACL, repositories with infra adapters, event sourcing, sagas, temporal modelling, and common anti-patterns, adding the `receiving` and `invoicing` contexts. The `murabaha-finance` context is optional and introduced only where Sharia-compliant financing patterns add pedagogical value.

@@ -3,59 +3,30 @@ title: "Overview"
 date: 2026-01-31T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Finite State Machines through practical code examples covering state transitions, guards, actions, and hierarchical state patterns"
+description: "Learn Finite State Machines through the Procure-to-Pay domain: PurchaseOrder, Invoice, Supplier, and Payment state machines with annotated TypeScript, Python, and Java examples"
 tags: ["fsm", "finite-state-machine", "tutorial", "by-example", "state-patterns", "state-management"]
 ---
 
-**Want to master Finite State Machines through practical examples?** This by-example guide teaches FSM through annotated code and diagram examples organized by complexity level.
+**Want to master Finite State Machines through practical examples?** This by-example guide teaches FSM through annotated code and diagram examples organized by complexity level, using a shared Procure-to-Pay (P2P) domain so every example builds on the same problem.
 
-## What Is FSM By-Example Learning?
+## Domain Context
 
-FSM by-example learning is a **code-first approach** where you learn through practical implementations of state machines rather than narrative explanations. Each example shows:
-
-- **State diagrams** - Visual representation of states and transitions
-- **Working code** - Runnable implementations showing FSM in practice
-- **State transitions** - How events trigger state changes
-- **Guards and actions** - Conditional logic and side effects
-
-This approach is **ideal for developers** who want to implement robust state management using finite state machine patterns.
+All examples model the `procurement-platform-be` backend. Employees request goods, managers approve, suppliers fulfill, and finance pays. This single domain thread — rather than a new toy problem per example — lets you compare FSM patterns across levels without re-learning the context.
 
 ## Learning Path
 
-The FSM by-example tutorial guides you through examples organized into three progressive levels, from simple state machines to complex hierarchical patterns.
+Three progressive levels, each adding a new aggregate:
 
-## Coverage Philosophy
-
-This by-example guide provides practical coverage of FSM through annotated examples. The focus is on **implementing state machines**, not just theory.
-
-### What's Covered
-
-- **Basic FSM** - States, transitions, events, initial and final states
-- **Guards and actions** - Conditional transitions, entry/exit actions
-- **Hierarchical states** - Nested states, state composition
-- **State patterns** - State pattern, strategy pattern integration
-- **Real-world applications** - Order processing, user authentication, workflow engines
-
-### What's NOT Covered
-
-- Formal automata theory (see by-concept tutorials for theoretical foundations)
-- Framework-specific implementations (XState, Statecharts libraries)
-- Complex statechart extensions (orthogonal regions, history states)
-
-## Prerequisites
-
-- Programming experience in any language
-- Understanding of control flow (if/else, switch)
-- Familiarity with object-oriented patterns
+- **Beginner** — `PurchaseOrder` state machine: states as sealed types, transitions as pure functions, guard conditions, invalid-transition rejection.
+- **Intermediate** — adds `Invoice` state machine: three-way match guards, state-entry/exit actions, XState-style library usage, FSM as protocol enforcement.
+- **Advanced** — adds `Supplier` lifecycle and `Payment` state machine: hierarchical states, parallel regions, history states, FSM persistence and event-sourcing intersection, statecharts.
 
 ## Structure of Each Example
 
-Every example follows a consistent format:
+Every example follows a five-part format:
 
-1. **Brief Explanation**: What FSM concept the example demonstrates
-2. **State Diagram**: Mermaid diagram showing states and transitions
-3. **Annotated Code**: Implementation with inline comments
-4. **Example Execution**: Sample input and state changes
-5. **Key Takeaway**: The core FSM principle to retain
-
-This structure provides visualization, implementation, and understanding all in one place.
+1. **Brief Explanation** — what FSM concept the example demonstrates (2-3 sentences)
+2. **State Diagram** — Mermaid `stateDiagram-v2` with accessible color palette
+3. **Annotated Code** — implementation with 1.0-2.25 comment lines per code line
+4. **Key Takeaway** — the core principle to retain (1-2 sentences)
+5. **Why It Matters** — design rationale and consequences (50-100 words)

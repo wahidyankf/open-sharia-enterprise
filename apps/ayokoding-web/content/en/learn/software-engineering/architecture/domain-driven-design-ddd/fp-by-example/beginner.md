@@ -3,7 +3,7 @@ title: "Beginner"
 date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 1-25: Types as the design — ubiquitous language, bounded contexts, record and union types, smart constructors, and order-taking domain value types in F#"
+description: "Examples 1-25: Types as the design — ubiquitous language, bounded contexts, record and union types, smart constructors, and purchasing-context value types in F# for a Procure-to-Pay platform"
 tags:
   [
     "ddd",
@@ -15,483 +15,471 @@ tags:
     "smart-constructors",
     "by-example",
     "beginner",
+    "software-architecture",
+    "tutorial",
   ]
 ---
 
-This beginner-level section introduces DDD through F# types. The central thesis of Wlaschin's book — that you should **encode business rules in the type system so illegal states are unrepresentable** — is established here through 25 progressive examples, all using the order-taking domain.
+This beginner-level section introduces DDD through F# types, using the `purchasing` bounded context of a Procure-to-Pay procurement platform. The central thesis — **encode business rules in the type system so illegal states are unrepresentable** — is established through 25 progressive examples built around `PurchaseRequisition`, `Money`, `SkuCode`, `Quantity`, and `RequisitionId`.
 
 ## Types as the Design (Examples 1–10)
 
 ### Example 1: Ubiquitous Language as F# Type Aliases
 
-Ubiquitous language means every term the business uses has an exact counterpart in the code. In F# the cheapest way to honour this is a type alias: `type OrderId = string` makes the intent explicit without adding runtime cost. The type alias lives in the same module as the rest of the domain model and is visible to both developers and domain experts reading the code.
+Ubiquitous language means every term the business uses has an exact counterpart in the code. In F# the cheapest way to honour this is a type alias: `type RequisitionId = string` makes the intent explicit without adding runtime cost. The type alias lives in the same module as the rest of the domain model and is visible to both developers and procurement domain experts reading the code.
 
 ```fsharp
-// ── file: Domain.fs ──────────────────────────────────────────────────────
-// Type aliases map domain vocabulary directly to F# identifiers.
+// ── file: PurchasingDomain.fs ─────────────────────────────────────────────
+// Type aliases map procurement vocabulary directly to F# identifiers.
 // The compiler treats these as the same underlying type but the names
-// document intent and form the shared dictionary of the domain.
+// document intent and form the shared dictionary of the purchasing context.
 
-// "An order is identified by an OrderId, not a raw string" — Wlaschin Ch 2
-type OrderId = string
-// => OrderId is an alias for string; no boxing, no overhead
+// "A requisition is identified by a RequisitionId, not a raw string"
+type RequisitionId = string
+// => RequisitionId is an alias for string; no boxing, no overhead
 
-type OrderLineId = string
+type PurchaseOrderId = string
 // => Distinct alias even though both are strings
 // => Prevents accidentally mixing up the two identifiers in function signatures
 
-type CustomerId = string
+type SupplierId = string
 // => Every important noun in the domain gets its own alias
 
-type ProductCode = string
+type SkuCode = string
+// => Stock-Keeping Unit code identifies what is being purchased
 // => Raw strings in a signature like (string -> string -> string -> unit)
-// => are unreadable; aliases (OrderId -> CustomerId -> ProductCode -> unit)
+// => are unreadable; aliases (RequisitionId -> SupplierId -> SkuCode -> unit)
 // => are self-documenting
 
 // Usage in a workflow function signature — pure documentation value
-type GetOrderById = OrderId -> string option
-// => Arrow type reads "given an OrderId, produce an optional string"
-// => Domain experts can read this as "look up an order by its id"
+type GetRequisitionById = RequisitionId -> string option
+// => Arrow type reads "given a RequisitionId, produce an optional string"
+// => Domain experts can read this as "look up a requisition by its id"
 
 printfn "Type aliases defined — zero runtime cost, maximum documentation value"
 // => Output: Type aliases defined — zero runtime cost, maximum documentation value
 ```
 
-**Key Takeaway**: Type aliases convert the ubiquitous language into F# identifiers for zero cost and maximum readability.
+**Key Takeaway**: Type aliases convert the ubiquitous language of procurement into F# identifiers at zero runtime cost and maximum readability.
 
-**Why It Matters**: When a new developer joins a project and reads `OrderId -> CustomerId -> ProductCode`, they immediately understand the function's purpose from the domain vocabulary. Without aliases, `string -> string -> string` forces them to read the implementation to understand what each argument represents. This is the simplest possible application of Wlaschin's core principle: make the domain model readable to domain experts. Even before writing any logic, type aliases establish the vocabulary that will permeate every function signature and module.
+**Why It Matters**: When a new developer joins the procurement platform team and reads `RequisitionId -> SupplierId -> SkuCode`, they immediately understand the function's purpose from the domain vocabulary. Without aliases, `string -> string -> string` forces them to read the implementation to understand what each argument represents. This is the simplest possible application of type-driven DDD: make the domain model readable to domain experts — a purchasing manager or procurement analyst should recognise every identifier. Even before writing any logic, type aliases establish the vocabulary that will permeate every function signature and module.
 
 ---
 
 ### Example 2: Domain Event Named in Past Tense
 
-Domain events represent facts that have already occurred in the domain. Wlaschin follows Evans' convention of naming events in the past tense, making them read as business facts. In F# a discriminated union case with a payload record is the idiomatic representation.
+Domain events represent facts that have already occurred in the domain. DDD convention names events in the past tense, making them read as business facts. In F# a discriminated union case with a payload record is the idiomatic representation.
 
 ```mermaid
 graph TD
-    OE["OrderEvent\n(OR type — past tense)"]
-    OP["OrderPlaced\nof OrderPlacedPayload"]
-    OC["OrderCancelled\nof OrderId: string"]
-    OS["OrderShipped\nof OrderId * ShippedAt"]
+    PE["ProcurementEvent\n(OR type — past tense)"]
+    RS["RequisitionSubmitted\nof RequisitionSubmittedPayload"]
+    RA["RequisitionApproved\nof RequisitionId * ApprovedAt"]
+    PI["PurchaseOrderIssued\nof PurchaseOrderIssuedPayload"]
 
-    OE --> OP
-    OE --> OC
-    OE --> OS
+    PE --> RS
+    PE --> RA
+    PE --> PI
 
-    style OE fill:#0173B2,stroke:#000,color:#fff
-    style OP fill:#029E73,stroke:#000,color:#fff
-    style OC fill:#CC78BC,stroke:#000,color:#000
-    style OS fill:#DE8F05,stroke:#000,color:#000
+    style PE fill:#0173B2,stroke:#000,color:#fff
+    style RS fill:#029E73,stroke:#000,color:#fff
+    style RA fill:#CC78BC,stroke:#000,color:#000
+    style PI fill:#DE8F05,stroke:#000,color:#000
 ```
 
 ```fsharp
 // Domain events are immutable facts — something that happened in the domain.
-// Past-tense naming is a DDD convention (Evans, Wlaschin Ch 2).
+// Past-tense naming is a DDD convention — event = something that already occurred.
 
 // The payload carries everything a downstream consumer needs to react
-type OrderPlacedPayload = {
+type RequisitionSubmittedPayload = {
     // => Record type groups related fields; all immutable by default
-    OrderId: string
-    // => The identifier of the placed order
-    CustomerId: string
-    // => Who placed it — downstream services may need to notify the customer
+    RequisitionId: string
+    // => The identifier of the submitted requisition
+    RequestedBy: string
+    // => Who submitted it — approval router needs this for routing logic
     TotalAmount: decimal
-    // => Pricing summary needed for financial ledger events
-    PlacedAt: System.DateTimeOffset
-    // => When it happened — audit trail and event ordering
+    // => Sum of all line items — determines the approval level (L1/L2/L3)
+    SubmittedAt: System.DateTimeOffset
+    // => Timestamp — used for SLA tracking and audit trail
 }
+// => RequisitionSubmittedPayload : record with four fields
 
-// The event itself as a discriminated union case
-// Using a DU allows multiple event types to be handled uniformly
-type OrderEvent =
-    // => Discriminated union — each case is a distinct event type
-    | OrderPlaced of OrderPlacedPayload
-    // => "OrderPlaced" — past tense, a business fact
-    | OrderCancelled of OrderId: string
-    // => Inline named field for simple events
-    | OrderShipped of OrderId: string * ShippedAt: System.DateTimeOffset
-    // => Tuple of named fields for medium-complexity events
+// The top-level event DU — each case IS a different event
+type ProcurementEvent =
+    | RequisitionSubmitted of RequisitionSubmittedPayload
+    // => Fired when an employee submits a purchase requisition
+    // => Consumer: approval-router routes to the correct manager
+    | RequisitionApproved  of requisitionId: string * approvedAt: System.DateTimeOffset
+    // => Fired when a manager approves the requisition
+    // => Consumer: purchasing context auto-converts to a PO Draft
+    | PurchaseOrderIssued  of purchaseOrderId: string * supplierId: string
+    // => Fired when an approved PO is formally sent to the supplier
+    // => Consumer: supplier-notifier, receiving context (opens GRN expectation)
 
-// Constructing an event
-let event =
-    OrderPlaced {
-        // => Creates a value of type OrderEvent, case OrderPlaced
-        // => The record expression inside the {} block constructs an OrderPlacedPayload
-        OrderId = "ORD-001"
-        // => Order identifier — will be carried by the event to downstream handlers
-        CustomerId = "CUST-42"
-        // => Customer identifier — identifies who is affected
-        TotalAmount = 49.95m
-        // => Financial amount — needed by ledger and reporting services
-        PlacedAt = System.DateTimeOffset.UtcNow
-        // => DateTimeOffset includes timezone — safer than DateTime
-    }
+// Constructing events
+let submitted = RequisitionSubmitted {
+    RequisitionId = "req_f4c2a1b7"
+    // => Canonical format: "req_" prefix + UUID v4 segment
+    RequestedBy   = "emp_00123"
+    // => Employee identifier — drives approval routing
+    TotalAmount   = 2500.00m
+    // => 2 500 USD — falls in L2 approval bracket (≤ $10 k)
+    SubmittedAt   = System.DateTimeOffset.UtcNow
+    // => Wall-clock timestamp captured at submission time
+}
+// => submitted : ProcurementEvent = RequisitionSubmitted { ... }
 
-printfn "Event created: %A" event
-// => event : OrderEvent = OrderPlaced { OrderId = "ORD-001"; CustomerId = "CUST-42"; ... }
-// => %A uses F# structural printer — shows DU case name followed by payload fields
-// => Output: Event created: OrderPlaced {OrderId = "ORD-001"; CustomerId = "CUST-42"; TotalAmount = 49.95M; PlacedAt = ...}
+printfn "Event created: %A" submitted
+// => Output: Event created: RequisitionSubmitted { RequisitionId = "req_f4c2a1b7"; ... }
 ```
 
-**Key Takeaway**: Past-tense naming and immutable record payloads make domain events self-documenting business facts that downstream handlers can react to without ambiguity.
+**Key Takeaway**: Past-tense named discriminated union cases model domain events as immutable facts, with payloads carrying everything downstream consumers need.
 
-**Why It Matters**: Events named `OrderPlaced` rather than `PlaceOrder` or `OrderCreated` signal that the fact is already true and immutable. This naming discipline, documented by both Evans and Wlaschin, cascades through the architecture: event handlers become reactive subscribers to facts rather than imperative command receivers. In event-driven systems and event sourcing, the past-tense convention ensures that projections, sagas, and audit logs all share the same clear semantics.
+**Why It Matters**: Naming events `RequisitionSubmitted` (not `SubmitRequisition`) enforces a crucial mindset shift: an event is a fact that already happened, not a command to do something. This distinction drives the entire event-driven architecture of the procurement platform — the approval router reacts to `RequisitionSubmitted`, the receiving context reacts to `PurchaseOrderIssued`, and the invoicing context reacts to `GoodsReceived`. Each consumer is decoupled from the source and needs only the event payload to perform its work.
 
 ---
 
 ### Example 3: Bounded Context as F# Module
 
-A bounded context defines the scope within which a particular model applies. In F# the natural boundary is a module. Types and functions inside the module belong to that context; types from another context must be translated at the boundary. Wlaschin uses explicit module namespaces for each bounded context (Ch 2).
-
-```mermaid
-graph LR
-    subgraph OT["OrderTaking Context"]
-        OT_Order["Order\n(customer intent + pricing)"]
-        OT_OrderId["OrderId"]
-    end
-    subgraph Ship["Shipping Context"]
-        Ship_Order["ShipmentOrder\n(destination + items)"]
-        Ship_Id["ShipmentOrderId"]
-    end
-    ACL["Anti-Corruption Layer\n(translation)"]
-
-    OT_Order -- "PlaceOrder event" --> ACL
-    ACL -- "ShipmentOrder" --> Ship_Order
-
-    style OT fill:#0173B2,stroke:#000,color:#fff
-    style Ship fill:#029E73,stroke:#000,color:#fff
-    style ACL fill:#DE8F05,stroke:#000,color:#000
-```
+A bounded context is an explicit boundary within which a particular domain model applies. In F#, modules provide that boundary cheaply: all types and functions for the `purchasing` context live inside `module Purchasing`, keeping them isolated from the `supplier`, `receiving`, and `invoicing` contexts.
 
 ```fsharp
-// Each bounded context is a self-contained module with its own type definitions.
-// Types with the same name in different contexts mean DIFFERENT things.
+// ── Each bounded context gets its own module (or namespace + module) ──────
+// Types defined inside one module are fully isolated from types in another.
+// This prevents the "God Model" anti-pattern where a single Order type
+// tries to serve every context and ends up serving none well.
 
-module OrderTaking =
-    // => Everything inside this module belongs to the OrderTaking bounded context
+module Purchasing =
+    // => Everything inside this module belongs to the purchasing bounded context
+    // => Only types meaningful to purchasing stakeholders live here
 
-    type OrderId = string
-    // => OrderId in the OrderTaking context means "a customer's purchase order"
-    // => In this context, an order is about customer intent and product selection
+    type RequisitionId = RequisitionId of string
+    // => RequisitionId is a purchasing-context concept
+    // => The supplier context has no use for this type
 
-    type Order = {
-        // => The Order concept as understood by the OrderTaking team
-        Id: OrderId
-        // => Identifier for this specific customer order
-        CustomerId: string
-        // => Who placed the order — the customer identity
-        Lines: string list
-        // => Simplified — real lines would be a list of OrderLine records
+    type RequisitionStatus =
+        | Draft
+        | Submitted
+        | ManagerReview
+        | Approved
+        | Rejected
+        | ConvertedToPO
+    // => Full lifecycle of a purchase requisition within the purchasing context
+    // => Other contexts don't care about this internal lifecycle
+
+    type PurchaseRequisition = {
+        // => The aggregate root of the purchasing context at the beginner level
+        Id:          RequisitionId
+        // => Identity of the requisition — required, drives all lookups
+        RequestedBy: string
+        // => Employee identifier — drives approval routing rules
+        Status:      RequisitionStatus
+        // => Current lifecycle state — only transitions allowed by the FSM are valid
+        Lines:       string list
+        // => Line items (simplified for this example — elaborated in later examples)
     }
+    // => PurchaseRequisition : record with four fields; all fields are required
 
-    let createOrder id customerId =
-        // => Factory function that lives inside the same bounded context
-        { Id = id; CustomerId = customerId; Lines = [] }
-        // => Returns an Order with no lines — valid initial state for a new order
+module Supplier =
+    // => Separate module — the supplier context has its own model of a "supplier"
+    // => These are NOT the same type as any supplier-related concept in Purchasing
 
-module Shipping =
-    // => Separate bounded context — Shipping thinks about orders differently
+    type SupplierId = SupplierId of string
+    // => The supplier context's identity type — different from RequisitionId
+    type SupplierStatus = Pending | Approved | Suspended | Blacklisted
+    // => Supplier lifecycle states — invisible to the purchasing context directly
+    // => Purchasing learns about supplier eligibility via domain events (SupplierApproved)
 
-    type ShipmentOrderId = string
-    // => Same "order" concept but re-typed for the Shipping context's needs
-    // => Using a distinct type name (ShipmentOrderId) makes the boundary explicit
-
-    type ShipmentOrder = {
-        // => Shipping only cares about destination and items — not pricing
-        Id: ShipmentOrderId
-        // => Shipping's own identifier for the shipment
-        DestinationAddress: string
-        // => Where to send the items — Shipping's primary concern
-        Items: string list
-        // => What to pack — no pricing information needed here
-    }
-
-// The two Order types are DIFFERENT — the compiler enforces this
-let orderTakingOrder = OrderTaking.createOrder "ORD-1" "CUST-1"
-// => orderTakingOrder : OrderTaking.Order = { Id = "ORD-1"; CustomerId = "CUST-1"; Lines = [] }
-
-// orderTakingOrder cannot be passed where Shipping.ShipmentOrder is expected
-// => Compiler error if you try — the boundary is enforced by the type system
-// => Even though both "order" types look similar, they are distinct module types
-
-printfn "Bounded contexts defined as modules: OrderTaking and Shipping"
-// => Output: Bounded contexts defined as modules: OrderTaking and Shipping
+// Modules keep contexts honest
+let req : Purchasing.PurchaseRequisition = {
+    Id          = Purchasing.RequisitionId "req_abc123"
+    // => Fully qualified type — unambiguous which context this belongs to
+    RequestedBy = "emp_00456"
+    Status      = Purchasing.Draft
+    // => Starts in Draft — cannot be submitted until at least one line is added
+    Lines       = []
+    // => No lines yet — requisition is in its initial empty state
+}
+// => req : Purchasing.PurchaseRequisition — purchasing context aggregate root
+printfn "Requisition: %A" req
+// => Output: Requisition: { Id = RequisitionId "req_abc123"; Status = Draft; ... }
 ```
 
-**Key Takeaway**: F# modules provide a zero-cost mechanism to enforce bounded context boundaries — types defined in different modules are distinct, even if they share field names.
+**Key Takeaway**: F# modules are the zero-cost mechanical translation of bounded contexts — they enforce the boundary between purchasing, supplier, receiving, and invoicing without any framework overhead.
 
-**Why It Matters**: One of the most common DDD mistakes is allowing a single `Order` type to accumulate every field that every context needs. This creates a "god object" that is hard to evolve. Separate modules force each team to own their model. An Anti-Corruption Layer (shown in Example 69) translates between contexts at the boundary, keeping each model clean and independently evolvable.
+**Why It Matters**: In a procurement platform, the word "supplier" means something different in the `supplier` context (vendor master data, approval state, risk score) than it does in the `purchasing` context (a reference ID on a PO line) or the `payments` context (a bank account to disburse to). Modules prevent these different meanings from merging into an ambiguous mega-object. Each context owns its model; cross-context communication happens via domain events and Anti-Corruption Layers.
 
 ---
 
-### Example 4: Workflow Expressed as a Function Type
+### Example 4: AND Type — Record
 
-In functional DDD, a workflow is a function from an input command to an output collection of events. The function signature is the contract — it documents inputs, outputs, and failure modes before any implementation exists. Wlaschin introduces this pattern in Ch 3.
+A record type is an AND type: a `PurchaseRequisitionLine` has a `SkuCode` AND a `Quantity` AND a `UnitPrice`. All fields are required and immutable by default. Records are the primary building block for aggregates and value objects in functional DDD.
 
 ```fsharp
-// Workflows are modelled as function TYPE ALIASES before implementation.
-// The signature is the specification — readable by domain experts.
+// Record types model AND relationships — all fields must be present.
+// In DDD terms, records are the natural representation of value objects
+// and entities where every field is a required part of the concept.
 
-// ── Types used in the workflow signature ─────────────────────────────────
-type UnvalidatedOrder = {
-    // => Raw data from the outside world; not yet trusted
-    OrderId: string
-    CustomerInfo: string
-    // => All strings — nothing has been validated yet
-    Lines: (string * int) list
-    // => List of (product code, quantity) tuples as raw input
+// A line item on a purchase requisition
+type PurchaseRequisitionLine = {
+    SkuCode:   string
+    // => Stock-Keeping Unit — identifies exactly what is being requested
+    // => Example: "OFF-0042" for office supplies item 42
+    Quantity:  int
+    // => How many units are requested — must be > 0 (enforced by smart constructor later)
+    UnitPrice: decimal
+    // => Price per unit in the configured currency — used to compute line total
 }
+// => PurchaseRequisitionLine : record with three required fields
 
-type OrderPlaced = {
-    // => Output event emitted when the workflow succeeds
-    OrderId: string
-    // => The ID of the placed order — correlates event to the command
-    TotalAmount: decimal
-    // => The total amount billed — needed for financial downstream contexts
-}
+// Records use with-expressions for "update" — original is unchanged
+let line1 = { SkuCode = "OFF-0042"; Quantity = 10; UnitPrice = 4.99m }
+// => line1 : PurchaseRequisitionLine = { SkuCode = "OFF-0042"; Quantity = 10; UnitPrice = 4.99 }
 
-type PlacingOrderError =
-    // => All the ways the workflow can fail — named, not generic exceptions
-    | ValidationError of string
-    // => Input data was invalid — user-correctable error
-    | PricingError of string
-    // => Pricing calculation failed — catalogue or configuration error
-    | AcknowledgmentError of string
-    // => Acknowledgment email failed — non-critical (order can still proceed)
+let correctedLine = { line1 with Quantity = 12 }
+// => with-expression creates a NEW record — line1 is still { Quantity = 10 }
+// => correctedLine : PurchaseRequisitionLine = { ...; Quantity = 12; ... }
+// => Immutability: correction produces a new value, never mutates in place
 
-// ── The workflow type alias ───────────────────────────────────────────────
-// This single line is the complete specification of the PlaceOrder workflow.
-// "Given an unvalidated order, produce either a list of events or a named error."
-type PlaceOrder =
-    // => Function type alias — not an interface, not a class
-    // => A type alias for a function makes the intent clear: this IS the workflow contract
-    UnvalidatedOrder -> Result<OrderPlaced list, PlacingOrderError>
-    // => Input: UnvalidatedOrder — raw, untrusted data from the outside world
-    // => Result<'Ok, 'Error> is the standard F# type for fallible computations
-    // => 'Ok = list of events raised (could be several per workflow)
-    // => 'Error = discriminated union of all possible failure modes
+let lineTotal = correctedLine.Quantity |> float |> (*) (float correctedLine.UnitPrice)
+// => Quantity 12 * UnitPrice 4.99 = 59.88
+// => lineTotal : float = 59.88 — used to compute requisition total for approval routing
 
-printfn "Workflow type defined — specification complete before any implementation"
-// => Output: Workflow type defined — specification complete before any implementation
+printfn "Line: %A"  line1
+// => Output: Line: { SkuCode = "OFF-0042"; Quantity = 10; UnitPrice = 4.99 }
+printfn "Corrected: %A" correctedLine
+// => Output: Corrected: { SkuCode = "OFF-0042"; Quantity = 12; UnitPrice = 4.99 }
+printfn "Line total: %.2f" lineTotal
+// => Output: Line total: 59.88
 ```
 
-**Key Takeaway**: A workflow type alias is an executable specification — it documents inputs, outputs, and error cases in a form that the compiler validates.
+**Key Takeaway**: Records model AND-types — all fields required, all immutable, with `with`-expressions providing safe "update" that creates a new value rather than mutating the existing one.
 
-**Why It Matters**: Teams routinely start implementing before agreeing on the contract. Writing the workflow type first forces that conversation. The `Result` return type makes error handling non-negotiable — a caller cannot ignore the failure case. Compared to throwing exceptions (which are invisible in OOP signatures), this approach makes every failure mode part of the public API, dramatically improving reliability in production systems.
+**Why It Matters**: Procurement line items have a strict invariant: every line must have a SKU code, a quantity, and a unit price — none can be absent. Records enforce this structurally. The `with`-expression pattern for updates means correction history is preserved naturally (the old value still exists), which matters in approval workflows where an auditor may need to see what was changed between requisition versions.
 
 ---
 
-### Example 5: AND Type — Record
+### Example 5: OR Type — Discriminated Union
 
-An AND type represents a concept that has multiple required parts simultaneously. In F# records are product types — every field must be present. This maps perfectly to DDD value objects and entities that require all their properties to be meaningful. Wlaschin explains AND vs OR types in Ch 4.
-
-```fsharp
-// A record is an AND type: it has a Name AND an Email AND an Address.
-// Every field is required — you cannot construct a partial record.
-
-// PersonalName is a value object: all fields required, no optional parts
-type PersonalName = {
-    // => AND type: FirstName AND LastName are both required
-    FirstName: string
-    // => Cannot have a PersonalName with only a first name
-    LastName: string
-    // => Immutable by default — value objects do not change identity
-}
-
-// CustomerInfo composes two AND types
-type CustomerInfo = {
-    // => CustomerInfo AND PersonalName AND EmailAddress
-    Name: PersonalName
-    // => Nested record — composition of AND types
-    EmailAddress: string
-    // => Still a raw string here; Example 14 wraps it properly
-}
-
-// Construction requires ALL fields — compiler enforces completeness
-let name: PersonalName = { FirstName = "Alice"; LastName = "Johnson" }
-// => name.FirstName = "Alice"
-// => name.LastName  = "Johnson"
-// => name is immutable — { name with FirstName = "Bob" } creates a new record
-// => name : PersonalName — both fields present, type annotation is satisfied
-
-let customerInfo: CustomerInfo = {
-    Name = name
-    // => Embeds the PersonalName record — name is already validated by type
-    EmailAddress = "alice@example.com"
-    // => EmailAddress provided — record is complete
-    // => Would use EmailAddress type in the full model (see Example 14)
-}
-// => customerInfo : CustomerInfo — both Name and EmailAddress are present
-
-printfn "Customer: %s %s <%s>" customerInfo.Name.FirstName customerInfo.Name.LastName customerInfo.EmailAddress
-// => customerInfo.Name.FirstName = "Alice"; .LastName = "Johnson"; .EmailAddress = "alice@example.com"
-// => Output: Customer: Alice Johnson <alice@example.com>
-```
-
-**Key Takeaway**: Records are AND types — every field is required, so partial or inconsistent states cannot be constructed, eliminating an entire class of null-reference bugs.
-
-**Why It Matters**: In object-oriented languages, constructors often accept optional parameters, leaving objects in partially-initialised states that require defensive null checks throughout the codebase. F# records eliminate this problem: if all fields are required, the compiler verifies completeness at every construction site. This directly implements Wlaschin's principle that the type system should make illegal states unrepresentable — a `PersonalName` without a first name is not just a runtime error; it is a compile-time impossibility.
-
----
-
-### Example 6: OR Type — Discriminated Union
-
-An OR type represents a concept that is one of several mutually exclusive alternatives. Discriminated unions are F#'s mechanism for OR types. They are the key to eliminating boolean flags, nullable fields, and unchecked casts that litter OOP domain models. Wlaschin covers OR types alongside AND types in Ch 4.
-
-```mermaid
-graph TD
-    CM["ContactMethod\n(OR type)"]
-    E["Email\nof address: string"]
-    P["Phone\nof number: string"]
-    PA["PostalAddress\nof street * city"]
-
-    CM --> E
-    CM --> P
-    CM --> PA
-
-    style CM fill:#0173B2,stroke:#000,color:#fff
-    style E fill:#029E73,stroke:#000,color:#fff
-    style P fill:#029E73,stroke:#000,color:#fff
-    style PA fill:#029E73,stroke:#000,color:#fff
-```
+A discriminated union (DU) is an OR type: an `ApprovalLevel` is either `L1` OR `L2` OR `L3`. Exactly one case applies at any given time. DUs are the F# mechanism for making mutually exclusive states explicit and compiler-checked.
 
 ```fsharp
-// A discriminated union (DU) is an OR type: exactly ONE case is active at a time.
-// The compiler tracks which case you are in and enforces exhaustive handling.
+// Discriminated unions model OR relationships — exactly one case is active.
+// In DDD, DUs represent states, variants, and sum types that have no
+// natural representation as records with boolean flags.
 
-// ContactMethod: either Email OR Phone — not both, not neither
-type ContactMethod =
-    // => OR type: one of these cases is the value
-    | Email of address: string
-    // => Email case carries an email address string
-    | Phone of number: string
-    // => Phone case carries a phone number string
-    | PostalAddress of street: string * city: string
-    // => PostalAddress carries a tuple of street and city
+// Approval level derived from the total value of a purchase order
+type ApprovalLevel =
+    | L1  // => Requisitions up to $1,000 — approved by direct manager
+    | L2  // => Requisitions $1,001–$10,000 — approved by department head
+    | L3  // => Requisitions above $10,000 — approved by CFO or finance committee
+// => Exactly one of these is active — never "L1 and L2 simultaneously"
 
-// OrderStatus lifecycle as a DU — each stage is a distinct case
-type OrderStatus =
-    | Pending
-    // => No payload — the status alone is the information
-    | Confirmed of confirmedAt: System.DateTime
-    // => Confirmed carries WHEN it was confirmed
-    | Shipped of trackingNumber: string
-    // => Shipped carries the tracking number
-    | Delivered
-    // => Terminal state — no additional data needed
+// Derive the approval level from the total amount — a pure domain rule
+let deriveApprovalLevel (totalAmount: decimal) : ApprovalLevel =
+    // => Pure function — no side effects, deterministic
+    if totalAmount <= 1000m then
+        L1
+        // => Under $1,000 — direct manager approval sufficient
+    elif totalAmount <= 10000m then
+        L2
+        // => $1,001–$10,000 — department head must approve
+    else
+        L3
+        // => Over $10,000 — CFO-level approval required
 
-// Creating values of each case
-let contactByEmail = Email "alice@example.com"
-// => contactByEmail : ContactMethod, case Email
+// Test cases
+let level1 = deriveApprovalLevel 500m
+// => 500 <= 1000 — level1 : ApprovalLevel = L1
+let level2 = deriveApprovalLevel 5000m
+// => 5000 > 1000 and <= 10000 — level2 : ApprovalLevel = L2
+let level3 = deriveApprovalLevel 50000m
+// => 50000 > 10000 — level3 : ApprovalLevel = L3
 
-let contactByPhone = Phone "+1-555-0100"
-// => contactByPhone : ContactMethod, case Phone
+// Consuming the union — pattern match is exhaustive
+let describeLevel (level: ApprovalLevel) : string =
+    match level with
+    | L1 -> "Direct manager approval (≤ $1,000)"
+    // => L1 branch: single manager can approve
+    | L2 -> "Department head approval ($1,001–$10,000)"
+    // => L2 branch: escalated to department leadership
+    | L3 -> "CFO approval (> $10,000)"
+    // => L3 branch: finance committee must sign off
 
-let status = Confirmed System.DateTime.UtcNow
-// => status : OrderStatus, case Confirmed
-
-printfn "Contact: %A" contactByEmail
-// => Output: Contact: Email "alice@example.com"
-// => %A uses F#'s structural pretty-printer — prints the DU case and payload
-printfn "Status: %A" status
-// => Output: Status: Confirmed 2026-05-09T...
-// => Confirmed carries the DateTime as its payload — visible in the output
+printfn "%s" (describeLevel level1)
+// => Output: Direct manager approval (≤ $1,000)
+printfn "%s" (describeLevel level2)
+// => Output: Department head approval ($1,001–$10,000)
+printfn "%s" (describeLevel level3)
+// => Output: CFO approval (> $10,000)
 ```
 
 **Key Takeaway**: Discriminated unions make mutually exclusive states explicit and exhaustively checkable — the compiler ensures you handle every case, eliminating silent bugs from unhandled states.
 
-**Why It Matters**: Boolean flags like `isShipped`, `isDelivered`, and `isPending` can all be true simultaneously if set incorrectly. A discriminated union makes it physically impossible: `OrderStatus` is exactly one case. This is Wlaschin's "make illegal states unrepresentable" principle in its purest form. When a new status is added (say `Returned`), the compiler immediately highlights every match expression that must be updated — you get a compile-time checklist of all affected code paths.
+**Why It Matters**: Boolean flags like `isL1`, `isL2`, and `isL3` can all be true simultaneously if set incorrectly. A discriminated union makes it physically impossible: `ApprovalLevel` is exactly one case. When a new level is added (say `L4` for board approval above $100k), the compiler immediately highlights every match expression that must be updated — you get a compile-time checklist of all affected approval-routing code paths.
+
+---
+
+### Example 6: Workflow Expressed as a Function Type
+
+A business workflow is modelled as a plain function type. The type signature is the contract: it names what goes in, what comes out, and what errors are possible. In the procurement platform, `SubmitRequisition` takes an unvalidated input and produces either a list of domain events or a procurement error.
+
+```fsharp
+// Workflows are function types — the signature IS the contract.
+// No classes, no interfaces, no abstract methods — just function types.
+// The signature documents the workflow for domain experts and developers alike.
+
+// The unvalidated input coming from the HTTP layer or CLI
+type UnvalidatedRequisition = {
+    RequestedBy: string
+    // => Raw employee ID string from the HTTP request body
+    Lines: (string * int * decimal) list
+    // => Raw list of (skuCode, quantity, unitPrice) tuples — not yet validated
+}
+// => UnvalidatedRequisition : DTO-shaped record — may contain invalid data
+
+// Possible errors the submission workflow can produce
+type SubmissionError =
+    | NoLinesProvided
+    // => A requisition with zero lines cannot be submitted
+    | InvalidSkuCode of sku: string
+    // => A line item references a SKU that does not match the required format
+    | NegativeQuantity of sku: string * qty: int
+    // => A quantity ≤ 0 violates the purchasing invariant
+    | RequestedByRequired
+    // => The employee identifier is blank — cannot route approval without it
+
+// The workflow type alias — the entire contract in one line
+type SubmitRequisition =
+    UnvalidatedRequisition -> Result<ProcurementEvent list, SubmissionError>
+// => Input:  UnvalidatedRequisition — the raw command from outside
+// => Output: Result — either Ok with a list of events, or Error with a named failure
+// => Result means callers cannot ignore the possibility of failure
+
+// A simplified implementation matching the signature
+let submitRequisition : SubmitRequisition =
+    fun (req: UnvalidatedRequisition) ->
+        // => Pattern: validate all inputs before producing events
+        if req.RequestedBy = "" then
+            Error RequestedByRequired
+            // => First guard: cannot route approval without an employee ID
+        elif req.Lines.IsEmpty then
+            Error NoLinesProvided
+            // => Second guard: a blank requisition has no business meaning
+        else
+            let event = RequisitionSubmitted {
+                // => All guards passed — produce the domain event
+                RequisitionId = "req_" + System.Guid.NewGuid().ToString("N").[..7]
+                // => Generate a short requisition ID for demonstration
+                RequestedBy   = req.RequestedBy
+                // => Carry the employee ID into the event payload
+                TotalAmount   = req.Lines |> List.sumBy (fun (_, qty, price) -> decimal qty * price)
+                // => Compute total for approval level routing
+                SubmittedAt   = System.DateTimeOffset.UtcNow
+                // => Capture submission timestamp
+            }
+            Ok [event]
+            // => Single event in the list — more events possible in richer workflows
+
+printfn "Workflow type defined — signature is the domain contract"
+// => Output: Workflow type defined — signature is the domain contract
+```
+
+**Key Takeaway**: Modelling workflows as function types makes the entire domain contract — inputs, outputs, and failure modes — visible at the type level before any implementation is written.
+
+**Why It Matters**: In a procurement platform, a workflow like "submit requisition" is not just an HTTP endpoint — it is a business operation with invariants, possible failure modes, and outputs in the form of domain events. Expressing it as a function type forces the team to agree on the contract upfront. The type alias `SubmitRequisition = UnvalidatedRequisition -> Result<ProcurementEvent list, SubmissionError>` can be written and reviewed in a domain modelling session before a single line of implementation exists.
 
 ---
 
 ### Example 7: Single-Case Discriminated Union Wrapper
 
-A single-case DU wraps a primitive type to give it a distinct identity. This prevents accidentally passing an `OrderId` where a `CustomerId` is expected, even though both are strings underneath. Wlaschin calls this "making the domain concept explicit" (Ch 5).
+A single-case DU wraps a primitive type to give it a distinct identity. This prevents accidentally passing a `RequisitionId` where a `PurchaseOrderId` is expected, even though both are strings underneath. Single-case wrappers are the cheapest form of domain type safety in F#.
 
 ```mermaid
 graph LR
-    Raw["string\n'ORD-001'\n'CUST-42'\n'W1234'"]
-    OI["OrderId\nof string"]
-    CI["CustomerId\nof string"]
-    PC["ProductCode\nof string"]
+    Raw["string\n'req_abc'\n'po_xyz'\n'sup_999'"]
+    RI["RequisitionId\nof string"]
+    PI["PurchaseOrderId\nof string"]
+    SI["SupplierId\nof string"]
 
-    Raw -- "OrderId.create" --> OI
-    Raw -- "CustomerId.create" --> CI
-    Raw -- "ProductCode.create" --> PC
+    Raw -- "RequisitionId.create" --> RI
+    Raw -- "PurchaseOrderId.create" --> PI
+    Raw -- "SupplierId.create" --> SI
 
-    Fn["printOrderId\n(OrderId id)"]
-    OI --> Fn
+    Fn["routeApproval\n(RequisitionId id)"]
+    RI --> Fn
 
-    note1["CustomerId cannot be\npassed to printOrderId\n(compile error)"]
-    CI -. "blocked by compiler" .-> Fn
+    note1["PurchaseOrderId cannot be\npassed to routeApproval\n(compile error)"]
+    PI -. "blocked by compiler" .-> Fn
 
-    style OI fill:#0173B2,stroke:#000,color:#fff
-    style CI fill:#029E73,stroke:#000,color:#fff
-    style PC fill:#DE8F05,stroke:#000,color:#000
+    style RI fill:#0173B2,stroke:#000,color:#fff
+    style PI fill:#029E73,stroke:#000,color:#fff
+    style SI fill:#DE8F05,stroke:#000,color:#000
     style note1 fill:#CA9161,stroke:#000,color:#000
 ```
 
 ```fsharp
 // Without wrappers, all IDs are interchangeable strings — a source of bugs.
-// With wrappers, the type system enforces correct usage.
+// With wrappers, the type system enforces correct usage at compile time.
 
 // Wrapper types — each is a distinct type despite sharing the string representation
-type OrderId    = OrderId    of string
-// => "OrderId of string" — the type name and the constructor name are the same
+type RequisitionId    = RequisitionId    of string
+// => "RequisitionId of string" — type name and constructor name are the same
 // => This is idiomatic F# for simple wrapper types
 
-type CustomerId = CustomerId of string
-// => Distinct from OrderId — cannot be accidentally substituted
+type PurchaseOrderId  = PurchaseOrderId  of string
+// => Distinct from RequisitionId — cannot be accidentally substituted
 
-type ProductCode = ProductCode of string
-// => Same pattern for every domain identifier
+type SupplierId       = SupplierId       of string
+// => Same pattern for every domain identifier in the procurement platform
 
-// A function that takes an OrderId cannot accidentally receive a CustomerId
-let printOrderId (OrderId id) =
+// A function that takes a RequisitionId cannot accidentally receive a PurchaseOrderId
+let routeApproval (RequisitionId id) (approverEmail: string) =
     // => Pattern-matching in the parameter list unwraps the value inline
-    printfn "Order: %s" id
-    // => id : string — the unwrapped value
+    printfn "Routing requisition %s to approver %s" id approverEmail
+    // => id : string — the unwrapped value, safe to use here
 
 // Construction
-let orderId    = OrderId    "ORD-001"
-// => orderId : OrderId
-let customerId = CustomerId "CUST-42"
-// => customerId : CustomerId — different type, same underlying string
+let reqId = RequisitionId "req_f4c2a1b7"
+// => reqId : RequisitionId
+let poId  = PurchaseOrderId "po_e3d1f8a0"
+// => poId : PurchaseOrderId — different type, same underlying string shape
 
-printOrderId orderId
-// => Output: Order: ORD-001
+routeApproval reqId "manager@procurement.example.com"
+// => Output: Routing requisition req_f4c2a1b7 to approver manager@procurement.example.com
 
-// printOrderId customerId  ← compile error: expected OrderId, got CustomerId
+// routeApproval poId "..."  ← compile error: expected RequisitionId, got PurchaseOrderId
 // => The type system prevents this mistake at compile time — zero runtime cost
 
 printfn "Type wrappers prevent ID confusion at compile time"
 // => Output: Type wrappers prevent ID confusion at compile time
 ```
 
-**Key Takeaway**: Single-case discriminated unions create nominally distinct types from primitives, so the compiler prevents the common bug of confusing two IDs that happen to share the same representation.
+**Key Takeaway**: Single-case discriminated unions create nominally distinct types from primitives, so the compiler prevents the common bug of confusing two IDs that happen to share the same string representation.
 
-**Why It Matters**: In a large system with dozens of ID types (OrderId, CustomerId, ProductId, ShipmentId, InvoiceId...), mixing them up is a common and costly bug. It is invisible in tests that use hardcoded string values, and only surfaces in production with real IDs. Single-case wrappers cost nothing at runtime and eliminate this entire category of mistake at compile time. Wlaschin specifically recommends this pattern in Ch 5 as the cheapest form of domain type safety.
+**Why It Matters**: In a procurement platform with dozens of ID types (RequisitionId, PurchaseOrderId, SupplierId, InvoiceId, PaymentId...), mixing them up is a common and costly bug. It is invisible in tests that use hardcoded string values, and only surfaces in production when a payment is dispatched to the wrong entity. Single-case wrappers cost nothing at runtime and eliminate this entire category of mistake at compile time.
 
 ---
 
 ### Example 8: Smart Constructor Returning Result
 
-A smart constructor validates its input and returns `Result<'T, 'Error>` rather than throwing an exception. This keeps validation in the type system and forces callers to handle the failure case. Wlaschin introduces smart constructors as the primary integrity mechanism in Ch 6.
+A smart constructor validates its input and returns `Result<'T, 'Error>` rather than throwing an exception. This keeps validation in the type system and forces callers to handle the failure case. Smart constructors are the primary integrity mechanism for value objects in the procurement domain.
 
 ```mermaid
 graph LR
     Raw["raw: string\n(untrusted input)"]
     Check1{"IsNullOrWhiteSpace?"}
-    Check2{"Length > 50?"}
-    Ok["Ok (OrderId raw)\n(valid wrapper)"]
-    Err1["Error\n'OrderId cannot be blank'"]
-    Err2["Error\n'exceeds 50-char limit'"]
+    Check2{"Matches req_ prefix?"}
+    Ok["Ok (RequisitionId raw)\n(valid wrapper)"]
+    Err1["Error\n'RequisitionId cannot be blank'"]
+    Err2["Error\n'must start with req_'"]
 
     Raw --> Check1
     Check1 -- "yes" --> Err1
     Check1 -- "no" --> Check2
-    Check2 -- "yes" --> Err2
-    Check2 -- "no" --> Ok
+    Check2 -- "no" --> Err2
+    Check2 -- "yes" --> Ok
 
     style Ok fill:#029E73,stroke:#000,color:#fff
     style Err1 fill:#CC78BC,stroke:#000,color:#000
@@ -502,167 +490,183 @@ graph LR
 // Smart constructors validate invariants and return Result, not throw exceptions.
 // Callers cannot ignore the possibility of failure — it is in the return type.
 
-type OrderId = private OrderId of string
+type RequisitionId = private RequisitionId of string
 // => "private" makes the constructor inaccessible outside this module
-// => The ONLY way to get an OrderId is through the smart constructor below
+// => The ONLY way to get a RequisitionId is through the smart constructor below
 
-module OrderId =
+module RequisitionId =
     // => Convention: module with same name as the type holds the smart constructor
 
-    let create (raw: string) : Result<OrderId, string> =
-        // => Input: raw string from outside (DTO, HTTP, config)
-        // => Output: Ok with a validated OrderId, or Error with a message
+    let create (raw: string) : Result<RequisitionId, string> =
+        // => Input: raw string from outside (DTO, HTTP body, config)
+        // => Output: Ok with a validated RequisitionId, or Error with a message
         if System.String.IsNullOrWhiteSpace(raw) then
-            // => Guard: empty or whitespace IDs are not valid in this domain
-            Error "OrderId cannot be blank"
+            // => Guard 1: empty or whitespace IDs are not valid in this domain
+            Error "RequisitionId cannot be blank"
             // => Returns Error case — caller must handle this
-        elif raw.Length > 50 then
-            // => Business rule: IDs longer than 50 characters are not allowed
-            Error (sprintf "OrderId '%s' exceeds 50-character limit" raw)
-            // => Descriptive error message for logging and display
+        elif not (raw.StartsWith("req_")) then
+            // => Guard 2: canonical format requires the "req_" prefix
+            Error (sprintf "RequisitionId '%s' must start with 'req_'" raw)
+            // => Descriptive error message for logging and API error responses
         else
-            Ok (OrderId raw)
+            Ok (RequisitionId raw)
             // => Validation passed — wrap in the private constructor
-            // => Caller receives an OrderId they know is valid
+            // => Caller receives a RequisitionId they know is valid
 
-    let value (OrderId id) = id
+    let value (RequisitionId id) = id
     // => Accessor: safely unwrap the string when needed (e.g., for persistence)
 
 // Usage
-let result1 = OrderId.create "ORD-001"
-// => result1 : Result<OrderId, string> = Ok (OrderId "ORD-001")
+let result1 = RequisitionId.create "req_f4c2a1b7"
+// => result1 : Result<RequisitionId, string> = Ok (RequisitionId "req_f4c2a1b7")
 
-let result2 = OrderId.create ""
-// => result2 : Result<OrderId, string> = Error "OrderId cannot be blank"
+let result2 = RequisitionId.create ""
+// => result2 : Result<RequisitionId, string> = Error "RequisitionId cannot be blank"
+
+let result3 = RequisitionId.create "12345"
+// => result3 : Result<RequisitionId, string> = Error "RequisitionId '12345' must start with 'req_'"
 
 match result1 with
-| Ok id    -> printfn "Valid: %s" (OrderId.value id)
-| Error e  -> printfn "Invalid: %s" e
-// => Output: Valid: ORD-001
+| Ok id   -> printfn "Valid: %s" (RequisitionId.value id)
+| Error e -> printfn "Invalid: %s" e
+// => Output: Valid: req_f4c2a1b7
 ```
 
 **Key Takeaway**: Smart constructors with `Result` return types make validation mandatory — the compiler requires every call site to handle the failure case, preventing invalid domain objects from ever existing.
 
-**Why It Matters**: Exception-throwing constructors are an implicit contract: callers often forget to catch them, leading to unhandled exceptions in production. A `Result`-returning smart constructor makes the contract explicit and checked. It also composes naturally with Railway-Oriented Programming (covered in Examples 31–33): the `Ok` branch flows forward through the pipeline, and the `Error` branch short-circuits cleanly without try/catch blocks scattered throughout the code.
+**Why It Matters**: Exception-throwing constructors are an implicit contract: callers often forget to catch them, leading to unhandled exceptions in production procurement workflows. A `Result`-returning smart constructor makes the contract explicit and checked. It also composes naturally with Railway-Oriented Programming (covered in Examples 31–33): the `Ok` branch flows forward through the pipeline, and the `Error` branch short-circuits cleanly without try/catch blocks scattered throughout the approval workflow.
 
 ---
 
 ### Example 9: Pattern Matching on a Discriminated Union
 
-Pattern matching is the primary tool for consuming discriminated union values. It forces you to decide what happens in every case. Combined with the exhaustive match checking of the F# compiler, it eliminates entire classes of "forgot to handle this case" bugs. Wlaschin uses pattern matching throughout the book.
+Pattern matching is the primary tool for consuming discriminated union values. It forces you to decide what happens in every case. Combined with the exhaustive match checking of the F# compiler, it eliminates entire classes of "forgot to handle this case" bugs.
 
 ```fsharp
 // Pattern matching on a DU — the compiler verifies exhaustiveness.
 
-type ContactMethod =
-    | Email   of address: string
-    | Phone   of number: string
-    | PostalAddress of street: string * city: string
+type RequisitionStatus =
+    | Draft
+    | Submitted
+    | ManagerReview
+    | Approved
+    | Rejected
+    | ConvertedToPO
+// => Six mutually exclusive states in the PurchaseRequisition lifecycle
 
-// A function that handles all contact methods
-let describeContact (contact: ContactMethod) : string =
+// A function that handles all requisition statuses
+let describeStatus (status: RequisitionStatus) : string =
     // => match expression — must cover every DU case
-    match contact with
-    | Email address ->
-        // => Binds 'address' to the string payload of the Email case
-        sprintf "Send email to %s" address
-        // => Returns a descriptive string for this case
-    | Phone number ->
-        // => Binds 'number' to the Phone case payload
-        sprintf "Call %s" number
-        // => Returns "Call +1-555-0100" for Phone "+1-555-0100"
-    | PostalAddress (street, city) ->
-        // => Destructures the tuple — binds both components
-        sprintf "Post to %s, %s" street city
-        // => Returns "Post to 10 Main St, Springfield" for the tuple case
+    match status with
+    | Draft ->
+        // => Initial state — requisition not yet submitted
+        "Draft: employee is building the line items"
+    | Submitted ->
+        // => Employee has submitted — awaiting manager routing
+        "Submitted: awaiting approval routing"
+    | ManagerReview ->
+        // => Routed to the appropriate approver based on amount
+        "Under review by approving manager"
+    | Approved ->
+        // => Manager has approved — can be converted to a PO
+        "Approved: ready for PO creation"
+    | Rejected ->
+        // => Manager rejected — employee notified via email
+        "Rejected: employee notified"
+    | ConvertedToPO ->
+        // => Successfully converted — downstream PO lifecycle begins
+        "Converted to Purchase Order"
 
 // Test each case
-let contact1 = Email "alice@example.com"
-// => contact1 : ContactMethod, case Email with address = "alice@example.com"
-let contact2 = Phone "+1-555-0100"
-// => contact2 : ContactMethod, case Phone with number = "+1-555-0100"
-let contact3 = PostalAddress ("10 Main St", "Springfield")
-// => contact3 : ContactMethod, case PostalAddress with street and city tuple
+let s1 = Draft
+// => s1 : RequisitionStatus = Draft
+let s2 = ManagerReview
+// => s2 : RequisitionStatus = ManagerReview
+let s3 = Approved
+// => s3 : RequisitionStatus = Approved
 
-printfn "%s" (describeContact contact1)
-// => Matches Email case; address = "alice@example.com"
-// => Output: Send email to alice@example.com
+printfn "%s" (describeStatus s1)
+// => Matches Draft case
+// => Output: Draft: employee is building the line items
+printfn "%s" (describeStatus s2)
+// => Matches ManagerReview case
+// => Output: Under review by approving manager
+printfn "%s" (describeStatus s3)
+// => Matches Approved case
+// => Output: Approved: ready for PO creation
 
-printfn "%s" (describeContact contact2)
-// => Matches Phone case; number = "+1-555-0100"
-// => Output: Call +1-555-0100
-
-printfn "%s" (describeContact contact3)
-// => Matches PostalAddress case; destructures ("10 Main St", "Springfield")
-// => Output: Post to 10 Main St, Springfield
-
-// If you add a new case (e.g. | Fax of string) to ContactMethod
-// the compiler immediately warns here: "Incomplete pattern matches on this expression"
-// => Every call site becomes a compile-time checklist item
-// => The warning lists the missing case — no manual searching needed
+// If you add a new state (e.g. | OnHold) to RequisitionStatus,
+// the compiler immediately warns on describeStatus — every match must be updated
+// => Compile-time checklist of all code paths that need updating
 ```
 
-**Key Takeaway**: Pattern matching on discriminated unions is exhaustive by default — adding a new case to the union produces a compiler warning at every match expression that does not handle it, giving you a compile-time to-do list.
+**Key Takeaway**: Pattern matching on discriminated unions is exhaustive by default — adding a new state to the type immediately surfaces every match expression that must handle it.
 
-**Why It Matters**: In OOP, handling a new subtype requires finding every `if obj is Foo` and `switch` statement manually — easy to miss. F# match expressions are compile-time exhaustive: the compiler tells you exactly which expressions need updating. This makes evolving the domain model safe: you can add a new `OrderStatus` case and immediately see the full blast radius of the change before running a single test.
+**Why It Matters**: In a procurement approval workflow, adding a new requisition state such as `OnHold` (pending budget confirmation) requires updating every piece of code that inspects requisition status. The compiler's exhaustive match checking turns this from a risky manual search into a compile-time checklist. No test required to find the gaps — the build fails until every match is updated, preventing production incidents from unhandled states.
 
 ---
 
 ### Example 10: Exhaustive Match — Compiler-Enforced
 
-The F# compiler warns (and can be configured to error) when a match expression does not cover all cases of a discriminated union. This section demonstrates deliberately showing the warning and then fixing it, emphasising the safety guarantee. Wlaschin calls this "compile-time domain safety" in Ch 4.
+The F# compiler issues a warning — treated as an error in strict builds — when a match expression does not cover all cases of a discriminated union. This example shows how to see the warning, how to fix it, and why it is one of the most valuable correctness tools in functional DDD.
 
 ```fsharp
-// Compiler-enforced exhaustiveness — missing a case is a compile-time warning/error.
+// The compiler enforces exhaustive pattern matching.
+// Incomplete matches are a warning (FS0025) — treated as error with <TreatWarningsAsErrors>.
 
-type OrderStatus =
-    | Pending
-    | Confirmed
-    | Shipped
-    | Delivered
+type PurchaseOrderStatus =
+    | Draft
+    | AwaitingApproval
+    | Approved
+    | Issued
     | Cancelled
+// => Five PurchaseOrder states (simplified subset of the full state machine)
 
-// CORRECT: exhaustive match — all five cases handled
-let describeStatus (status: OrderStatus) : string =
+// INCOMPLETE match — compiler warning FS0025:
+// let approvalRequired (status: PurchaseOrderStatus) : bool =
+//     match status with
+//     | Draft           -> false
+//     | AwaitingApproval -> true
+//     | Approved        -> false
+//     // => MISSING: Issued, Cancelled — compiler warns here
+
+// COMPLETE match — all cases handled
+let approvalRequired (status: PurchaseOrderStatus) : bool =
     match status with
-    | Pending   -> "Awaiting confirmation"
-    // => Covers Pending case
-    | Confirmed -> "Confirmed by warehouse"
-    // => Covers Confirmed case
-    | Shipped   -> "On its way"
-    // => Covers Shipped case
-    | Delivered -> "Delivered to customer"
-    // => Covers Delivered case
-    | Cancelled -> "Order was cancelled"
-    // => Covers Cancelled case — all five cases covered, no warning
+    | Draft            -> false
+    // => Draft POs have not yet been submitted for approval
+    | AwaitingApproval -> true
+    // => This is the exactly the state requiring approval action
+    | Approved         -> false
+    // => Already approved — approval is no longer required
+    | Issued           -> false
+    // => Issued to supplier — past the approval gate
+    | Cancelled        -> false
+    // => Cancelled — approval is moot; the PO is no longer active
+// => All five cases covered — compiler is satisfied; no FS0025 warning
 
-// INCOMPLETE (compile-time warning): adding a new case exposes the gap
-// If you add "| Returned" to OrderStatus, the match above produces:
-//   warning FS0025: Incomplete pattern matches on this expression.
-//   The value 'Returned' may indicate a case not covered by the pattern(s).
-//
-// => The compiler acts as a "find all usages" that you CANNOT ignore
-// => Every match expression that needs updating is flagged
+// Test
+let statuses = [Draft; AwaitingApproval; Approved; Issued; Cancelled]
+// => List of all five PurchaseOrderStatus values for verification
 
-let statusList = [ Pending; Confirmed; Shipped; Delivered; Cancelled ]
-// => statusList : OrderStatus list — all five cases
-// => List.iter applies describeStatus to each element in order
+let results = statuses |> List.map (fun s -> s, approvalRequired s)
+// => Maps each status to its (status, bool) pair
+// => results : (PurchaseOrderStatus * bool) list
 
-statusList |> List.iter (fun s -> printfn "%s" (describeStatus s))
-// => Applies describeStatus to each OrderStatus in the list
-// => Output: Awaiting confirmation
-// => Output: Confirmed by warehouse
-// => Output: On its way
-// => Output: Delivered to customer
-// => Output: Order was cancelled
-
-printfn "All status cases handled — no wildcard, no silent gaps"
-// => Output: All status cases handled — no wildcard, no silent gaps
+results |> List.iter (fun (s, r) ->
+    printfn "%A -> approvalRequired: %b" s r
+    // => Output for each pair: e.g. "Draft -> approvalRequired: false"
+)
+// => Output: Draft -> approvalRequired: false
+// => Output: AwaitingApproval -> approvalRequired: true
+// => Output: Approved -> approvalRequired: false
+// => Output: Issued -> approvalRequired: false
+// => Output: Cancelled -> approvalRequired: false
 ```
 
-**Key Takeaway**: Avoiding wildcard `_` patterns in match expressions turns the compiler into a maintenance assistant — every future case addition surfaces all the code that must be updated.
+**Key Takeaway**: The F# compiler's exhaustive match warning is a compile-time correctness guarantee — it ensures every state of a discriminated union is handled, preventing silent bugs from newly added cases.
 
-**Why It Matters**: Wildcard patterns (`| _ -> ...`) suppress exhaustiveness warnings and re-introduce the silent "default case" problem that discriminated unions were supposed to eliminate. Disciplined use of exhaustive matches means that when a business rule changes — say, a new `Returned` order status is added — the compiler immediately enumerates every function that needs updating. This is especially valuable in large codebases where a developer cannot know every consumer of a domain type.
+**Why It Matters**: In a live procurement system, adding a new `PurchaseOrderStatus` case such as `Disputed` should immediately surface all the places in the codebase that need updating. The compiler's match exhaustiveness check is a zero-cost, zero-test-required audit. It is more reliable than code search because it catches even indirect usages via type aliases and intermediate let-bindings, making it one of the highest-value features of F# for DDD practitioners.
 
 ---
 
@@ -670,219 +674,568 @@ printfn "All status cases handled — no wildcard, no silent gaps"
 
 ### Example 11: Option Type Replacing Null
 
-F# has no null reference for its own types. The `Option<'T>` type represents an optional value explicitly: either `Some value` or `None`. This eliminates null-reference exceptions for optional domain concepts. Wlaschin discusses `Option` as the functional replacement for null throughout the book.
+`Option<'T>` models the presence or absence of a value without using null. In F#, null is not a valid value for most types. `Option` is the explicit, type-safe alternative that forces callers to handle the "not present" case — something nullable references never enforce.
 
 ```fsharp
-// Option<'T> = Some of 'T | None — null does not exist for F# types.
-// Every optional field in the domain model is an Option, not a nullable reference.
+// Option<'T> replaces null — the compiler requires handling both cases.
+// In the procurement domain, optional fields are common:
+// secondary address lines, notes, preferred supplier hints.
 
-type Address = {
-    Street: string
-    // => Required — every address must have a street
-    City: string
-    // => Required — city is always needed for delivery
-    PostalCode: string
-    // => Required — postal code required for routing
-    // => All required — every address must have these three
+// An address record with an optional secondary line
+type SupplierAddress = {
+    Street:        string
+    // => Required: every supplier address must have a street
+    City:          string
+    // => Required: city is always known
+    PostalCode:    string
+    // => Required: needed for logistics and tax calculations
     SecondaryLine: string option
-    // => Optional — not all addresses have a suite/apartment number
-    // => string option = Some "Suite 400" when present, or None when absent
+    // => Optional: not all addresses have suite/floor/building info
+    // => string option = Some "Suite 400" or None — never null
 }
 
-// Construction with and without the optional field
+// Address with secondary line present
 let addressWithSuite = {
-    Street = "10 Main St"
-    // => Street is a required field — always present in a valid address
-    City = "Springfield"
-    // => City is required
-    PostalCode = "12345"
-    // => Postal code is required
-    SecondaryLine = Some "Suite 400"
+    Street        = "Jl. Sudirman No. 1"
+    City          = "Jakarta"
+    PostalCode    = "10220"
+    SecondaryLine = Some "Lantai 12"
     // => Some wraps the value — explicitly present
     // => The suite number is available; we can display it
 }
-// => addressWithSuite.SecondaryLine : string option = Some "Suite 400"
+// => addressWithSuite.SecondaryLine : string option = Some "Lantai 12"
 
+// Address without secondary line
 let simpleAddress = {
-    Street = "42 Oak Ave"
-    // => Required street field
-    City = "Shelbyville"
-    // => Required city field
-    PostalCode = "67890"
-    // => Required postal code
+    Street        = "Jl. Gatot Subroto 45"
+    City          = "Jakarta"
+    PostalCode    = "12930"
     SecondaryLine = None
     // => None — explicitly absent, not null, not empty string
-    // => The suite/apartment field is absent — no secondary line for this address
+    // => The secondary line is absent — no suite/floor for this address
 }
 // => simpleAddress.SecondaryLine : string option = None
 
 // Consuming the optional value with pattern matching
-let formatAddress (addr: Address) =
+let formatAddress (addr: SupplierAddress) =
     let line2 =
         match addr.SecondaryLine with
         | Some s -> "\n" + s
         // => Unwraps the string if present; prepend newline for formatting
         | None   -> ""
         // => Produces empty string if absent — no NullReferenceException possible
-    sprintf "%s%s\n%s, %s" addr.Street line2 addr.City addr.PostalCode
+    sprintf "%s%s\n%s %s" addr.Street line2 addr.City addr.PostalCode
     // => Formats the address with or without the secondary line
 
 printfn "%s" (formatAddress addressWithSuite)
-// => Output: 10 Main St
-// =>         Suite 400
-// =>         Springfield, 12345
+// => Output: Jl. Sudirman No. 1
+// =>         Lantai 12
+// =>         Jakarta 10220
 
 printfn "%s" (formatAddress simpleAddress)
-// => Output: 42 Oak Ave
-// =>         Shelbyville, 67890
+// => Output: Jl. Gatot Subroto 45
+// =>         Jakarta 12930
 ```
 
 **Key Takeaway**: `Option<'T>` makes optionality explicit in the type system — you must handle both `Some` and `None`, eliminating null-reference exceptions by construction.
 
-**Why It Matters**: Null-reference exceptions are Tony Hoare's "billion-dollar mistake." In F#, the type system forces you to explicitly acknowledge that a value might be absent. Every `match` on an `Option` is a reminder that the optional path must be handled. In the order-taking domain, optional fields like secondary address lines, promo codes, and special instructions are all naturally modelled as `Option` types, making the domain model self-documenting about what is and is not required.
+**Why It Matters**: Null-reference exceptions are one of the most common causes of production procurement system failures. In F#, the type system forces you to explicitly acknowledge that a value might be absent. Every `match` on an `Option` is a reminder that the optional path must be handled. Supplier addresses, requisition notes, and preferred-supplier hints are all naturally modelled as `Option` types, making the domain model self-documenting about what is and is not required.
 
 ---
 
-### Example 12: Constrained String — String50
+### Example 12: Constrained String — SkuCode
 
-A constrained string type enforces length or format invariants at the boundary. Once inside the type, the value is guaranteed to meet the constraint. Wlaschin introduces `String50` in Ch 6 as the canonical example of constrained primitive types.
+A constrained `SkuCode` type enforces format invariants at the boundary. The P2P spec mandates the pattern `^[A-Z]{3}-\d{4,8}$` — for example `OFF-0042` or `ELE-12345`. Once inside the type, the value is guaranteed to satisfy the pattern.
 
 ```fsharp
-// String50 is a string guaranteed to be non-empty and at most 50 characters.
+// SkuCode is a string guaranteed to match ^[A-Z]{3}-\d{4,8}$.
 // The private constructor ensures the invariant is always met.
-// This is the canonical Wlaschin Ch 6 constrained type pattern.
+// External code cannot call SkuCode "hello" directly — must go through create.
 
-type String50 = private String50 of string
+open System.Text.RegularExpressions
+
+type SkuCode = private SkuCode of string
 // => Single-case DU with private constructor
 // => "private" hides the raw constructor — only the module below can create values
-// => External code cannot call String50 "hello" directly — must go through create
 
-module String50 =
+module SkuCode =
     // => Module has the same name as the type — idiomatic F# convention
-    let create (fieldName: string) (raw: string) : Result<String50, string> =
-        // => fieldName: used in error messages to identify which field failed
+    let private skuPattern = Regex(@"^[A-Z]{3}-\d{4,8}$")
+    // => Pre-compiled regex for performance — compiled once at module load time
+    // => Pattern: three uppercase letters, hyphen, 4–8 digits (e.g. OFF-0042)
+
+    let create (raw: string) : Result<SkuCode, string> =
         // => raw: the input string to validate (untrusted — comes from outside)
-        // => Return type Result<String50, string>: Ok = valid wrapper, Error = message
+        // => Return type Result<SkuCode, string>: Ok = valid wrapper, Error = message
         if System.String.IsNullOrWhiteSpace(raw) then
-            // => Guard 1: blank or whitespace strings are not meaningful names
-            Error (sprintf "%s must not be blank" fieldName)
-            // => Explicit error naming the field — helpful for UI form validation
-        elif raw.Length > 50 then
-            // => Guard 2: strings longer than 50 characters violate the constraint
-            Error (sprintf "%s must be 50 characters or fewer (got %d)" fieldName raw.Length)
-            // => Includes the actual length — useful for debugging
+            // => Guard 1: blank or whitespace strings are not valid SKU codes
+            Error "SkuCode must not be blank"
+            // => Explicit error — helpful for requisition line validation feedback
+        elif not (skuPattern.IsMatch(raw)) then
+            // => Guard 2: string does not match the canonical SKU pattern
+            Error (sprintf "SkuCode '%s' must match ^[A-Z]{3}-\\d{4,8}$ (e.g. OFF-0042)" raw)
+            // => Includes the actual value and expected pattern — useful for debugging
         else
-            Ok (String50 raw.Trim())
-            // => Both guards passed — wrap the trimmed string in the private constructor
-            // => Trim whitespace before storing — consistent normalisation at creation time
+            Ok (SkuCode raw)
+            // => Both guards passed — wrap the validated string in the private constructor
+            // => The invariant is now baked into the type — no downstream re-checking needed
 
-    let value (String50 s) = s
+    let value (SkuCode s) = s
     // => Accessor: pattern-matches the DU to extract the raw string
-    // => Needed when writing to the database, sending to an API, or displaying
+    // => Needed when writing to the database or sending to supplier EDI systems
 
-// Building a String50 from valid input
-let firstNameResult = String50.create "FirstName" "Alice"
-// => create is called with the field name "FirstName" and the value "Alice"
-// => firstNameResult : Result<String50, string> = Ok (String50 "Alice")
+// Building a SkuCode from valid input
+let validSku = SkuCode.create "OFF-0042"
+// => "OFF-0042" matches ^[A-Z]{3}-\d{4,8}$ — three uppercase letters + 4 digits
+// => validSku : Result<SkuCode, string> = Ok (SkuCode "OFF-0042")
 
-// Attempting to build a String50 from an invalid (too long) input
-let tooLongResult = String50.create "LastName" (System.String.replicate 60 "x")
-// => 60 'x' characters — exceeds the 50-character limit
-// => tooLongResult : Result<String50, string>
-//    = Error "LastName must be 50 characters or fewer (got 60)"
+// Invalid inputs
+let badFormat = SkuCode.create "off-0042"
+// => "off-0042" has lowercase letters — does not match [A-Z]{3}
+// => badFormat : Result<SkuCode, string> = Error "SkuCode 'off-0042' must match ..."
 
-match firstNameResult with
-| Ok name -> printfn "First name: %s" (String50.value name)
-// => String50.value unwraps the validated string
+let tooShort = SkuCode.create "OF-42"
+// => "OF-42" has only 2 letters and 2 digits — pattern requires 3 letters and 4+ digits
+// => tooShort : Result<SkuCode, string> = Error "..."
+
+match validSku with
+| Ok sku  -> printfn "SKU: %s" (SkuCode.value sku)
 | Error e -> printfn "Error: %s" e
-// => Output: First name: Alice
+// => Output: SKU: OFF-0042
 
-match tooLongResult with
+match badFormat with
 | Ok _    -> printfn "Should not reach here"
-// => This branch is unreachable — the 60-char string was rejected
 | Error e -> printfn "Validation error: %s" e
-// => Output: Validation error: LastName must be 50 characters or fewer (got 60)
+// => Output: Validation error: SkuCode 'off-0042' must match ...
 ```
 
-**Key Takeaway**: Constrained string types wrap raw strings with validated invariants, so any value that exists is guaranteed valid — no defensive checks needed downstream.
+**Key Takeaway**: Constrained string types wrap raw strings with validated invariants, so any value that exists is guaranteed valid — no defensive checks needed downstream in the procurement pipeline.
 
-**Why It Matters**: When validation happens only at the API boundary (e.g., controller layer), a string might travel deep into domain logic before a length violation is caught. Constrained types like `String50` validate at creation time and guarantee validity everywhere the type appears. Wlaschin devotes Ch 6 to this pattern because it is the most direct way to honour the principle that domain types should represent only valid states.
+**Why It Matters**: When a requisition line item contains a malformed SKU code, the error should be caught at the boundary (HTTP layer or CSV import), not deep inside the pricing engine. Constrained types like `SkuCode` validate at creation time and guarantee validity everywhere the type appears. A pricing function that accepts `SkuCode` can trust the format without an inline regex check, reducing cognitive load and the risk of inconsistent validation logic scattered across multiple services.
 
 ---
 
-### Example 13: PositiveInteger Smart-Constructed Value
+### Example 13: Quantity as a Smart-Constructed Value Object
 
-A `PositiveInteger` wraps an `int` and guarantees it is greater than zero. This models domain constraints like order quantities that must be at least one. Following the same pattern as `String50`, the constructor returns `Result`.
+`Quantity` wraps an integer and a unit of measure, guaranteeing the integer is strictly positive and the unit is one of the allowed domain values. Domain invariant: a purchase line item must request at least one unit.
 
 ```fsharp
-// PositiveInteger: an integer guaranteed to be > 0.
-// Models order quantities, item counts, and similar domain constraints.
+// Quantity: a positive integer paired with a unit of measure.
+// Models the "how many" and "of what kind" for a requisition line item.
 
-type PositiveInteger = private PositiveInteger of int
-// => private constructor: only the module below can create values
+// UnitOfMeasure is a closed enum — new values require a code change
+type UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR
+// => EACH: individual items (chairs, laptops)
+// => BOX: boxes of supplies (pens, paper)
+// => KG: weight-based goods (raw materials)
+// => LITRE: liquid goods (cleaning supplies)
+// => HOUR: services measured in time (consulting, maintenance)
 
-module PositiveInteger =
-    let create (fieldName: string) (n: int) : Result<PositiveInteger, string> =
-        // => Validate that n satisfies the "positive" invariant
-        if n <= 0 then
-            Error (sprintf "%s must be a positive integer (got %d)" fieldName n)
-            // => n=0 and negatives are rejected — domain rule: quantity must be at least 1
+// Quantity wraps value + unit together as a value object
+type Quantity = private Quantity of value: int * unit: UnitOfMeasure
+// => Both components are private — must go through the smart constructor
+
+module Quantity =
+    let create (value: int) (unit: UnitOfMeasure) : Result<Quantity, string> =
+        // => Validate: value must be strictly positive (> 0)
+        // => Domain rule: you cannot requisition zero or negative units
+        if value <= 0 then
+            Error (sprintf "Quantity must be > 0, got %d" value)
+            // => Returns a descriptive error — API layer uses this in 400 response
         else
-            Ok (PositiveInteger n)
-            // => Wraps the validated int — invariant is now documented in the type
+            Ok (Quantity (value, unit))
+            // => Invariant satisfied — the Quantity is safe to use in any domain function
 
-    let value (PositiveInteger n) = n
+    let value (Quantity (v, _)) = v
+    // => Extracts the integer component (e.g., 12)
+
+    let unit (Quantity (_, u)) = u
+    // => Extracts the UnitOfMeasure component (e.g., BOX)
+
+    let describe (Quantity (v, u)) =
+        sprintf "%d %A" v u
+        // => Produces human-readable string like "12 BOX" or "3 EACH"
+
+// Creating quantities for a procurement requisition
+let laptopQty    = Quantity.create 3 EACH
+// => 3 > 0 and EACH is a valid unit — Ok (Quantity (3, EACH))
+let paperBoxQty  = Quantity.create 20 BOX
+// => 20 > 0 and BOX is a valid unit — Ok (Quantity (20, BOX))
+let invalidQty   = Quantity.create 0 KG
+// => 0 <= 0 — Error "Quantity must be > 0, got 0"
+
+match laptopQty with
+| Ok q  -> printfn "Laptop quantity: %s" (Quantity.describe q)
+| Error e -> printfn "Error: %s" e
+// => Output: Laptop quantity: 3 EACH
+
+match paperBoxQty with
+| Ok q  -> printfn "Paper quantity: %s" (Quantity.describe q)
+| Error e -> printfn "Error: %s" e
+// => Output: Paper quantity: 20 BOX
+
+match invalidQty with
+| Ok _  -> printfn "Should not reach here"
+| Error e -> printfn "Validation error: %s" e
+// => Output: Validation error: Quantity must be > 0, got 0
+```
+
+**Key Takeaway**: Wrapping a primitive pair in a constrained value object prevents invalid quantities from ever entering procurement logic — a function accepting `Quantity` cannot accidentally receive zero or a negative count.
+
+**Why It Matters**: Order quantities and counts all have minimum values that business rules enforce. Encoding `Quantity` as a constrained type rather than a plain `int` means domain functions can be written without defensive `if qty <= 0 then failwith ...` guards — the type already guarantees validity. This reduces both boilerplate and the risk of forgetting a guard somewhere in a complex approval or pricing pipeline.
+
+---
+
+### Example 14: Money Record with Currency
+
+`Money` is a value object combining a non-negative decimal amount with an ISO 4217 currency code. It is one of the most important value objects in the procurement domain — every line item price, PO total, and invoice amount is expressed as `Money`.
+
+```fsharp
+// Money: amount + currency, where amount >= 0 and currency is a valid ISO 4217 code.
+// Money is a value object — equality is by value, not by reference.
+
+open System.Text.RegularExpressions
+
+type Money = private Money of amount: decimal * currency: string
+// => Private constructor — only the module below can create valid Money values
+// => Both fields are private components of the single-case DU
+
+module Money =
+    let private isoPattern = Regex(@"^[A-Z]{3}$")
+    // => ISO 4217 format: exactly three uppercase letters (USD, IDR, EUR, GBP)
+
+    let create (amount: decimal) (currency: string) : Result<Money, string> =
+        // => Validate both components before constructing
+        if amount < 0m then
+            Error (sprintf "Money amount must be >= 0, got %M" amount)
+            // => Negative money is not meaningful in the procurement domain
+        elif not (isoPattern.IsMatch(currency)) then
+            Error (sprintf "Currency '%s' is not a valid ISO 4217 code" currency)
+            // => Currency must be a three-letter ISO code — not a symbol, not a name
+        else
+            Ok (Money (amount, currency))
+            // => Both invariants satisfied — valid Money value object
+
+    let amount   (Money (a, _)) = a
+    // => Extracts the decimal amount (e.g., 2500.00)
+    let currency (Money (_, c)) = c
+    // => Extracts the ISO currency code (e.g., "USD")
+
+    let add (Money (a1, c1)) (Money (a2, c2)) : Result<Money, string> =
+        // => Addition only makes sense when currencies match
+        if c1 <> c2 then
+            Error (sprintf "Cannot add %s and %s — currency mismatch" c1 c2)
+            // => Cross-currency addition requires an exchange rate — out of scope here
+        else
+            Ok (Money (a1 + a2, c1))
+            // => Same currency — simply sum the amounts
+
+    let format (Money (a, c)) =
+        sprintf "%s %.2f" c a
+        // => "USD 2500.00" — currency first, amount to 2 decimal places
+
+// Building Money for requisition line items
+let unitPrice = Money.create 499.99m "USD"
+// => 499.99 >= 0 and "USD" matches [A-Z]{3} — Ok (Money (499.99, "USD"))
+let qty       = 5
+let lineTotal = unitPrice |> Result.map (fun m -> Money (decimal qty * Money.amount m, Money.currency m))
+// => Multiply unit price by quantity to get line total — 5 × 499.99 = 2499.95
+// => lineTotal : Result<Money, string>
+
+let badCurrency = Money.create 100m "dollars"
+// => "dollars" does not match [A-Z]{3} — Error "Currency 'dollars' is not a valid ISO 4217 code"
+
+match unitPrice with
+| Ok m  -> printfn "Unit price: %s" (Money.format m)
+| Error e -> printfn "Error: %s" e
+// => Output: Unit price: USD 499.99
+```
+
+**Key Takeaway**: The `Money` value object encapsulates both amount and currency, with invariant checking ensuring non-negative amounts and valid ISO currency codes — preventing the common Falsehoods Programmers Believe About Money.
+
+**Why It Matters**: Money handling is one of the most error-prone areas in any financial system. Storing amounts without currency (implicitly assuming a single currency) is a latent bug waiting for the first multinational supplier. The `Money` value object makes currency explicit at every point it matters: line items, PO totals, invoice amounts, and payment disbursements all carry the currency as part of the value, making cross-currency errors visible at the type level.
+
+---
+
+### Example 15: Lifecycle States as a Discriminated Union
+
+The full `PurchaseRequisition` lifecycle has six states: `Draft`, `Submitted`, `ManagerReview`, `Approved`, `Rejected`, and `ConvertedToPO`. Modelling these as a discriminated union, rather than a status string, makes illegal state transitions detectable at compile time.
+
+```fsharp
+// The full PurchaseRequisition lifecycle as a DU.
+// Each state can carry different payload — the type encodes what data
+// is available in each state, not just what the state is called.
+
+type RequisitionId = RequisitionId of string
+// => Wrapper for the requisition identifier — used in all states
+
+// Each state carries only the data that is meaningful in that state
+type PurchaseRequisition =
+    | Draft of draftLines: string list
+    // => Draft: just the line items being built — no submission metadata yet
+    | Submitted of requisitionId: RequisitionId * requestedBy: string * submittedAt: System.DateTimeOffset
+    // => Submitted: requisitionId assigned, who submitted, when submitted
+    // => Line items are baked into the event at submission — not re-carried in state
+    | ManagerReview of requisitionId: RequisitionId * approverEmail: string
+    // => Under review: know which approver is responsible
+    | Approved of requisitionId: RequisitionId * approvedAt: System.DateTimeOffset
+    // => Approved: timestamp of approval captured for audit trail
+    | Rejected of requisitionId: RequisitionId * reason: string
+    // => Rejected: rejection reason mandatory — employee needs feedback
+    | ConvertedToPO of requisitionId: RequisitionId * purchaseOrderId: string
+    // => Converted: linked to the resulting PO — bidirectional traceability
+
+// State transition — submit a Draft requisition
+let submitRequisition (Draft lines) (requestedBy: string) : PurchaseRequisition =
+    // => Pattern match in parameter destructs the Draft case directly
+    // => If called with any other case, compile error — not a Draft
+    let id = RequisitionId ("req_" + System.Guid.NewGuid().ToString("N").[..7])
+    // => Generate a requisition ID at submission time — not before
+    Submitted (id, requestedBy, System.DateTimeOffset.UtcNow)
+    // => Produces Submitted state — Draft data is consumed, new state has its own payload
+
+// Create a draft requisition
+let myReq = Draft ["OFF-0042"; "ELE-1001"]
+// => myReq : PurchaseRequisition = Draft ["OFF-0042"; "ELE-1001"]
+// => Two line items on the draft requisition
+
+let submitted = submitRequisition myReq "emp_00456"
+// => submitRequisition transitions Draft → Submitted
+// => submitted : PurchaseRequisition = Submitted (RequisitionId "req_...", "emp_00456", ...)
+
+printfn "Initial state: %A" myReq
+// => Output: Initial state: Draft ["OFF-0042"; "ELE-1001"]
+printfn "After submit: %A" submitted
+// => Output: After submit: Submitted (RequisitionId "req_...", "emp_00456", ...)
+```
+
+**Key Takeaway**: Modelling lifecycle states as a discriminated union where each case carries its own payload makes illegal states and premature data access impossible — you cannot access the `approverEmail` of a `Draft` requisition because `Draft` does not have that field.
+
+**Why It Matters**: In a string-based status model, code can access `ApproverEmail` when the requisition is still in `Draft` (it will just be null). The DU model makes this physically impossible — the `Draft` case has no `approverEmail` field. This removes an entire class of defensive null checks from the codebase and ensures each state carries exactly the data it needs, no more and no less.
+
+---
+
+### Example 16: State Machine Encoded Purely by Type Transitions
+
+State transitions in the procurement domain are pure functions from one state to the next. A `submitRequisition` function accepts a `Draft` state and returns a `Submitted` state. Calling it with any other state is a compile error.
+
+```fsharp
+// State transitions as typed functions — illegal transitions are compile errors.
+// The type system encodes what transitions are allowed, not just which states exist.
+
+type RequisitionId = RequisitionId of string
+// => Wrapped requisition identifier
+
+// States as separate types (alternative to a single DU — different trade-offs)
+type DraftRequisition    = { Lines: string list; RequestedBy: string }
+// => Draft state: only knows its lines and the submitter
+type SubmittedRequisition = {
+    Id:          RequisitionId
+    RequestedBy: string
+    SubmittedAt: System.DateTimeOffset
+    Lines:       string list
+}
+// => Submitted state: has an ID and a timestamp — assigned at submission
+
+type ApprovedRequisition  = { Id: RequisitionId; ApprovedAt: System.DateTimeOffset }
+// => Approved state: knows when approval happened
+type RejectedRequisition  = { Id: RequisitionId; Reason: string }
+// => Rejected state: knows why it was rejected — mandatory feedback
+
+// Transition functions — each takes exactly the right input state
+let submit (draft: DraftRequisition) : SubmittedRequisition =
+    // => submit : DraftRequisition -> SubmittedRequisition
+    // => Cannot accidentally call submit on an ApprovedRequisition — different type
+    { Id          = RequisitionId ("req_" + System.Guid.NewGuid().ToString("N").[..7])
+      // => ID generated at submission time
+      RequestedBy = draft.RequestedBy
+      // => Carry the employee identifier forward
+      SubmittedAt = System.DateTimeOffset.UtcNow
+      // => Record the submission timestamp
+      Lines       = draft.Lines
+      // => Carry the line items forward for the approval review
+    }
+
+let approve (submitted: SubmittedRequisition) : ApprovedRequisition =
+    // => approve : SubmittedRequisition -> ApprovedRequisition
+    // => Cannot approve a DraftRequisition or RejectedRequisition — compiler blocks it
+    { Id         = submitted.Id
+      // => Preserve the requisition identity through the approval transition
+      ApprovedAt = System.DateTimeOffset.UtcNow
+      // => Record the approval timestamp for audit trail
+    }
+
+// Usage
+let draft  = { Lines = ["OFF-0042"]; RequestedBy = "emp_00123" }
+// => draft : DraftRequisition
+let subm   = submit draft
+// => subm : SubmittedRequisition — submit transitions Draft → Submitted
+let approv = approve subm
+// => approv : ApprovedRequisition — approve transitions Submitted → Approved
+
+// approve draft  ← compile error: expected SubmittedRequisition, got DraftRequisition
+// => The type system prevents transitioning from Draft directly to Approved
+
+printfn "Approved requisition: %A" approv
+// => Output: Approved requisition: { Id = RequisitionId "req_..."; ApprovedAt = ... }
+```
+
+**Key Takeaway**: Encoding state transitions as functions with typed inputs and outputs makes illegal transitions (Draft → Approved without going through Submitted) literal compile errors rather than runtime bugs caught only in testing.
+
+**Why It Matters**: In approval workflows, skipping states (a requisition going straight from Draft to Approved without manager review) is a serious compliance risk. When state transitions are typed functions, bypassing the `submit` step is not possible without changing the type — the compiler enforces the workflow sequence. This is more reliable than any runtime guard because it operates before the code ever runs.
+
+---
+
+### Example 17: Domain Primitive Wrapping Decimal — Unit Price
+
+`UnitPrice` wraps a `decimal` and guarantees it is strictly positive. A zero-price item is likely a data entry error; a negative price is impossible in the procurement context. The wrapper makes this invariant permanent.
+
+```fsharp
+// UnitPrice: a decimal guaranteed to be > 0.
+// Models the per-unit cost of a line item on a purchase requisition or PO.
+
+type UnitPrice = private UnitPrice of decimal
+// => private constructor — only the module below can create values
+
+module UnitPrice =
+    let create (fieldName: string) (value: decimal) : Result<UnitPrice, string> =
+        // => Validate that value satisfies the "positive price" invariant
+        // => fieldName: used in error messages to identify which price field failed
+        if value <= 0m then
+            Error (sprintf "%s must be > 0, got %M" fieldName value)
+            // => Zero and negative prices violate the procurement domain invariant
+            // => Error message names the field for structured API error responses
+        else
+            Ok (UnitPrice value)
+            // => Wraps the validated decimal — invariant is now documented in the type
+
+    let value (UnitPrice v) = v
     // => Unwrap for arithmetic, persistence, or display
 
-// Usage in the order-taking domain
-let qtyResult = PositiveInteger.create "Quantity" 3
-// => 3 > 0 — passes the positive-integer guard
-// => qtyResult : Result<PositiveInteger, string> = Ok (PositiveInteger 3)
+// Usage in the purchasing context
+let priceResult  = UnitPrice.create "UnitPrice" 4.99m
+// => 4.99 > 0 — passes the positive-price guard
+// => priceResult : Result<UnitPrice, string> = Ok (UnitPrice 4.99)
 
-let zeroResult = PositiveInteger.create "Quantity" 0
+let zeroResult   = UnitPrice.create "UnitPrice" 0m
 // => 0 <= 0 — fails the guard
-// => zeroResult : Result<PositiveInteger, string>
-//    = Error "Quantity must be a positive integer (got 0)"
+// => zeroResult : Result<UnitPrice, string> = Error "UnitPrice must be > 0, got 0"
 
-let negResult = PositiveInteger.create "Quantity" (-5)
-// => -5 <= 0 — fails the guard
-// => negResult : Result<PositiveInteger, string>
-//    = Error "Quantity must be a positive integer (got -5)"
+let negResult    = UnitPrice.create "UnitPrice" (-10m)
+// => -10 <= 0 — fails the guard
+// => negResult : Result<UnitPrice, string> = Error "UnitPrice must be > 0, got -10"
 
-match qtyResult with
-| Ok qty -> printfn "Order quantity: %d" (PositiveInteger.value qty)
-// => qty : PositiveInteger = PositiveInteger 3
-// => PositiveInteger.value unwraps to the int 3 for use in printfn
-| Error e -> printfn "Error: %s" e
-// => qtyResult was Ok, so the Ok branch runs
-// => Output: Order quantity: 3
-// => zeroResult and negResult would reach the Error branch with their messages
+match priceResult with
+| Ok price -> printfn "Unit price: %M" (UnitPrice.value price)
+// => UnitPrice.value unwraps to the decimal 4.99 for use in printfn
+| Error e  -> printfn "Error: %s" e
+// => priceResult was Ok — Ok branch runs
+// => Output: Unit price: 4.9900
+
+// Compute a line total using validated types
+let computeLineTotal (price: UnitPrice) (qty: int) : decimal =
+    // => Both arguments are validated — no defensive checks needed here
+    UnitPrice.value price * decimal qty
+    // => Pure arithmetic — no validation, no guards, no exceptions
+
+let lineTotal = priceResult |> Result.map (fun p -> computeLineTotal p 10)
+// => lineTotal : Result<decimal, string>
+// => If price is Ok, compute 4.99 × 10 = 49.90
+printfn "Line total: %A" lineTotal
+// => Output: Line total: Ok 49.9000M
 ```
 
-**Key Takeaway**: Wrapping primitives in constrained types prevents invalid values from ever entering domain logic — a function that accepts `PositiveInteger` cannot accidentally receive zero or a negative number.
+**Key Takeaway**: Wrapping decimal prices in constrained types prevents invalid values from ever entering procurement logic — a function that accepts `UnitPrice` cannot accidentally receive zero or a negative number.
 
-**Why It Matters**: Order quantities, prices, and counts all have minimum values that business rules enforce. Encoding these as constrained types rather than plain `int` or `decimal` means domain functions can be written without defensive `if qty <= 0 then failwith ...` guards — the type already guarantees validity. This reduces both boilerplate and the risk of forgetting a guard somewhere in a complex pipeline.
+**Why It Matters**: Pricing errors in procurement are costly: a zero-price line item could generate a PO with no obligation to pay, while a negative price could trigger a refund flow in the accounting integration. Encoding positivity as a type constraint catches these errors at the data entry boundary, long before they propagate through approval workflows, ERP integrations, or supplier EDI messages.
 
 ---
 
-### Example 14: Email Value via Active Pattern / Regex Check
+### Example 18: Units of Measure
 
-An email address is a constrained string with format requirements beyond length. Active patterns let you embed validation logic directly into pattern-matching syntax, making validation readable and composable. Wlaschin uses this technique in Ch 6.
+F# has first-class support for units of measure — a compile-time mechanism that prevents mixing amounts in different units. In the procurement context, this means you cannot accidentally add a quantity in `KG` to a quantity in `EACH` without explicit conversion.
 
 ```fsharp
-// EmailAddress: a string verified to match a minimal email format.
+// F# units of measure: compile-time dimension tracking.
+// Prevents quantity calculation errors at the type level.
+
+// Define units of measure used in the procurement domain
+[<Measure>] type each
+// => Discrete items — laptops, chairs, monitors
+[<Measure>] type box
+// => Packaged quantities — boxes of pens, reams of paper
+[<Measure>] type kg
+// => Weight-based goods — raw materials, chemicals
+[<Measure>] type litre
+// => Volume-based goods — cleaning supplies, lubricants
+[<Measure>] type usd
+// => Currency unit — prevents mixing money amounts with quantity amounts
+
+// Typed quantities
+let laptopCount   = 3<each>
+// => laptopCount : int<each> = 3 — three individual laptops
+let paperBoxCount = 20<box>
+// => paperBoxCount : int<box> = 20 — twenty boxes of paper
+let steelWeight   = 150<kg>
+// => steelWeight : int<kg> = 150 — 150 kilograms of steel
+
+// Typed prices
+let laptopUnitPrice = 899.99m<usd/each>
+// => Price per laptop in USD — type: decimal<usd/each>
+let paperBoxPrice   = 8.50m<usd/box>
+// => Price per paper box in USD — type: decimal<usd/box>
+
+// Computing line totals — units cancel correctly
+let laptopTotal = decimal laptopCount * laptopUnitPrice
+// => int<each> × decimal<usd/each> = decimal<usd> — units cancel to USD amount
+// => laptopTotal : decimal<usd> = 2699.97<usd>
+
+let paperTotal = decimal paperBoxCount * paperBoxPrice
+// => int<box> × decimal<usd/box> = decimal<usd> — units cancel to USD amount
+// => paperTotal : decimal<usd> = 170.00<usd>
+
+// Adding totals — both are in USD, so addition is type-safe
+let requisitionTotal = laptopTotal + paperTotal
+// => decimal<usd> + decimal<usd> = decimal<usd>
+// => requisitionTotal : decimal<usd> = 2869.97<usd>
+
+// This would be a compile error:
+// let invalid = laptopCount + paperBoxCount
+// => int<each> + int<box> — units don't match — compiler rejects the expression
+
+printfn "Laptop total: %M USD" (decimal laptopTotal)
+// => Output: Laptop total: 2699.9700 USD
+printfn "Paper total: %M USD" (decimal paperTotal)
+// => Output: Paper total: 170.0000 USD
+printfn "Requisition total: %M USD" (decimal requisitionTotal)
+// => Output: Requisition total: 2869.9700 USD
+```
+
+**Key Takeaway**: F# units of measure provide compile-time dimensional analysis — mixing quantities in different units (KG vs EACH) or adding money to quantity is a compile error, not a runtime bug.
+
+**Why It Matters**: Unit mismatch errors in procurement (ordering 100 KG when the spec said 100 EACH, or adding a weight to a price) can be catastrophically expensive. Units of measure bring the same compile-time safety that physical dimension analysis provides in engineering domains. While not all codebases use this feature, it is uniquely powerful for procurement systems where multiple measurement dimensions (weight, volume, count, currency) interact in complex line-item calculations.
+
+---
+
+### Example 19: Email Value via Regex Validation
+
+An email address on a supplier or employee record is a constrained string with format requirements. Active patterns let you embed validation logic directly into pattern-matching syntax, making validation readable and composable.
+
+```fsharp
+// Email: a string verified to match a minimal email format.
 // Active patterns provide reusable validation logic in match syntax.
 
 open System.Text.RegularExpressions
 
-type EmailAddress = private EmailAddress of string
+type Email = private Email of string
 // => Private constructor — only valid emails can be constructed
 
-// Active pattern for email validation — reusable across the codebase
+// Active pattern for email validation — reusable across the procurement codebase
 let (|ValidEmail|InvalidEmail|) (s: string) =
     // => Active pattern: returns either ValidEmail or InvalidEmail
     let pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$"
     // => Minimal regex: something @ something . something — sufficient for a domain check
+    // => Full RFC 5322 compliance is complex; this covers 99% of real addresses
     if Regex.IsMatch(s, pattern) then
         ValidEmail s
         // => Valid pattern matched — carries the original string
@@ -890,899 +1243,572 @@ let (|ValidEmail|InvalidEmail|) (s: string) =
         InvalidEmail
         // => Pattern did not match — no payload
 
-module EmailAddress =
-    let create (raw: string) : Result<EmailAddress, string> =
+module Email =
+    let create (raw: string) : Result<Email, string> =
         match raw with
         // => Use the active pattern in the match expression
-        // => The active pattern encapsulates the regex — keeps create() clean
-        // => match re-uses the active pattern defined above — no inline regex here
-        | ValidEmail s -> Ok (EmailAddress (s.ToLowerInvariant()))
-        // => s = the original matched string; ToLowerInvariant normalises "Alice" → "alice"
-        // => Normalise to lowercase — consistent storage and comparison
+        | ValidEmail s -> Ok (Email (s.ToLowerInvariant()))
+        // => Normalise to lowercase — consistent storage in the supplier master
         | InvalidEmail -> Error (sprintf "'%s' is not a valid email address" raw)
-        // => Descriptive error for the user — includes the invalid input for diagnosis
+        // => Active pattern makes the validation readable as prose
 
-    let value (EmailAddress e) = e
-    // => Unwrap when needed for display or persistence
+    let value (Email e) = e
+    // => Unwrap when sending notifications or writing to supplier records
 
-// Tests
-let valid   = EmailAddress.create "Alice@Example.COM"
-// => "Alice@Example.COM" matches the regex (has @ and .) → normalised to lowercase
-// => valid : Result<EmailAddress, string> = Ok (EmailAddress "alice@example.com")
+// Creating emails for procurement contacts
+let supplierEmail = Email.create "purchasing@acme-supplies.com"
+// => Matches ValidEmail — normalised to lowercase
+// => supplierEmail : Result<Email, string> = Ok (Email "purchasing@acme-supplies.com")
 
-let invalid = EmailAddress.create "not-an-email"
-// => "not-an-email" does not match the regex (no @) → validation fails
-// => invalid : Result<EmailAddress, string> = Error "'not-an-email' is not a valid email address"
+let approverEmail = Email.create "manager.finance@company.com"
+// => Valid format — Ok (Email "manager.finance@company.com")
 
-match valid with
-| Ok e  -> printfn "Email: %s" (EmailAddress.value e)
-// => e : EmailAddress = EmailAddress "alice@example.com" (normalised to lowercase)
-// => EmailAddress.value unwraps to the raw string "alice@example.com"
+let badEmail = Email.create "not-an-email"
+// => "not-an-email" has no @ — matches InvalidEmail
+// => badEmail : Result<Email, string> = Error "'not-an-email' is not a valid email address"
+
+match supplierEmail with
+| Ok e  -> printfn "Supplier contact: %s" (Email.value e)
 | Error err -> printfn "Error: %s" err
-// => Output: Email: alice@example.com
+// => Output: Supplier contact: purchasing@acme-supplies.com
+
+match badEmail with
+| Ok _  -> printfn "Should not reach here"
+| Error err -> printfn "Validation error: %s" err
+// => Output: Validation error: 'not-an-email' is not a valid email address
 ```
 
-**Key Takeaway**: Active patterns encapsulate validation predicates in a form that integrates seamlessly with F#'s match expressions, making complex validation readable and reusable.
+**Key Takeaway**: Active patterns embed validation logic into match expressions, making smart constructors readable as domain rules rather than imperative if/else chains.
 
-**Why It Matters**: Validation logic scattered across multiple services tends to diverge — one service accepts "user@host" while another requires a TLD. Centralising email validation in a constrained type with an active pattern ensures the rule is applied consistently everywhere. It also makes the validation logic testable in isolation, which is important when the rule is non-trivial (e.g., checking against an allowlist of domains for a B2B system).
+**Why It Matters**: In a procurement system, supplier notification emails and approver routing emails are critical: a malformed email address means a supplier never receives the PO or an approver never gets the approval request. Validating at construction time and using the `Email` type throughout means any code path that sends notifications can trust the address is well-formed. Active patterns make the validation composable — reuse `ValidEmail` anywhere an email check is needed.
 
 ---
 
-### Example 15: ProductCode as a Union of Two Subtypes
+### Example 20: ProductCode as a Union of Two Subtypes
 
-A `ProductCode` can be either a `WidgetCode` (W followed by four digits) or a `GizmoCode` (G followed by three digits). Modelling this as a discriminated union captures the domain rule that different products have different code formats. Wlaschin uses exactly this example in Ch 5.
-
-```mermaid
-graph TD
-    PC["ProductCode\n(OR type)"]
-    W["Widget\nof WidgetCode\nPattern: W + 4 digits"]
-    G["Gizmo\nof GizmoCode\nPattern: G + 3 digits"]
-
-    PC --> W
-    PC --> G
-
-    WC["WidgetCode.create 'W1234'\n→ Ok (WidgetCode 'W1234')"]
-    GC["GizmoCode.create 'G456'\n→ Ok (GizmoCode 'G456')"]
-
-    W --> WC
-    G --> GC
-
-    style PC fill:#0173B2,stroke:#000,color:#fff
-    style W fill:#DE8F05,stroke:#000,color:#000
-    style G fill:#029E73,stroke:#000,color:#fff
-    style WC fill:#CA9161,stroke:#000,color:#000
-    style GC fill:#CA9161,stroke:#000,color:#000
-```
+Some domain concepts have multiple valid forms. A `ProductCode` in the procurement domain can be either a standard `SkuCode` (format `OFF-0042`) or a `ServiceCode` (format `SVC-YYYYMMDD-NNN` for contracted services). The union type captures both forms without collapsing them into a single string.
 
 ```fsharp
-// ProductCode has two valid formats depending on the product category.
-// A discriminated union captures the OR without boolean flags.
+// ProductCode is a union of SkuCode and ServiceCode — two valid forms of product identity.
+// Using a union type preserves the distinction rather than collapsing to a single string.
 
-type WidgetCode = private WidgetCode of string
-// => WidgetCode: "W" followed by exactly 4 digits (e.g. "W1234")
-// => Private constructor — only strings matching the regex can be wrapped
+open System.Text.RegularExpressions
 
-type GizmoCode  = private GizmoCode  of string
-// => GizmoCode:  "G" followed by exactly 3 digits (e.g. "G456")
-// => Private constructor — only strings matching the regex can be wrapped
+// Two formats, two types
+type SkuCode     = private SkuCode     of string
+// => Goods: format ^[A-Z]{3}-\d{4,8}$ e.g. OFF-0042
+type ServiceCode = private ServiceCode of string
+// => Services: format SVC-YYYYMMDD-NNN e.g. SVC-20260101-001
 
+// The union type — a ProductCode is one OR the other
 type ProductCode =
-    // => OR type: a ProductCode is EITHER a Widget OR a Gizmo — no third option
-    | Widget of WidgetCode
-    // => Case 1: wraps a validated WidgetCode value
-    | Gizmo  of GizmoCode
-    // => Case 2: wraps a validated GizmoCode value
+    | Sku     of SkuCode
+    // => Physical goods with a stock-keeping unit identifier
+    | Service of ServiceCode
+    // => Contracted services (consulting, maintenance, cleaning)
 
-module WidgetCode =
-    let create (raw: string) : Result<WidgetCode, string> =
-        // => Validates that raw matches the WidgetCode format: W + 4 digits
-        if System.Text.RegularExpressions.Regex.IsMatch(raw, @"^W\d{4}$") then
-            Ok (WidgetCode raw)
-            // => Pattern matched — valid WidgetCode, wrap in private constructor
-        else
-            Error (sprintf "'%s' is not a valid WidgetCode (expected W followed by 4 digits)" raw)
-            // => Pattern did not match — return descriptive error
+module SkuCode =
+    let private p = Regex(@"^[A-Z]{3}-\d{4,8}$")
+    let create (s: string) =
+        if p.IsMatch(s) then Ok (SkuCode s)
+        else Error (sprintf "Invalid SKU: %s" s)
+    let value (SkuCode s) = s
+    // => Accessor for the raw string
 
-module GizmoCode =
-    let create (raw: string) : Result<GizmoCode, string> =
-        // => Validates that raw matches the GizmoCode format: G + 3 digits
-        if System.Text.RegularExpressions.Regex.IsMatch(raw, @"^G\d{3}$") then
-            Ok (GizmoCode raw)
-            // => Pattern matched — valid GizmoCode, wrap in private constructor
-            // => e.g. "G456" matches ^G\d{3}$ → GizmoCode "G456"
-        else
-            Error (sprintf "'%s' is not a valid GizmoCode (expected G followed by 3 digits)" raw)
-            // => Pattern did not match — return descriptive error
-            // => e.g. "G4567" (4 digits) would fail this check
+module ServiceCode =
+    let private p = Regex(@"^SVC-\d{8}-\d{3}$")
+    // => Format: SVC- + 8 digit date + hyphen + 3 digit sequence
+    let create (s: string) =
+        if p.IsMatch(s) then Ok (ServiceCode s)
+        else Error (sprintf "Invalid ServiceCode: %s" s)
+    let value (ServiceCode s) = s
+    // => Accessor for the raw string
 
-// Creating ProductCode values
-let widget = WidgetCode.create "W1234" |> Result.map Widget
-// => WidgetCode.create "W1234" = Ok (WidgetCode "W1234")
-// => Result.map Widget lifts Widget into the Ok case
-// => widget : Result<ProductCode, string> = Ok (Widget (WidgetCode "W1234"))
+module ProductCode =
+    let describeLineType (code: ProductCode) : string =
+        match code with
+        | Sku     (SkuCode s)     -> sprintf "Physical goods: %s" s
+        // => Sku branch: standard goods with warehouse inventory
+        | Service (ServiceCode s) -> sprintf "Contracted service: %s" s
+        // => Service branch: no inventory, billed by service agreement
 
-let gizmo  = GizmoCode.create  "G456"  |> Result.map Gizmo
-// => GizmoCode.create "G456" = Ok (GizmoCode "G456")
-// => Result.map Gizmo lifts Gizmo into the Ok case
-// => gizmo : Result<ProductCode, string> = Ok (Gizmo (GizmoCode "G456"))
+// Building product codes
+let laptop  = SkuCode.create "ELE-0099" |> Result.map Sku
+// => "ELE-0099" matches ^[A-Z]{3}-\d{4,8}$ — Ok (Sku (SkuCode "ELE-0099"))
+let cleaning = ServiceCode.create "SVC-20260601-003" |> Result.map Service
+// => "SVC-20260601-003" matches ^SVC-\d{8}-\d{3}$ — Ok (Service (ServiceCode "SVC-20260601-003"))
 
-// Pattern matching on the union enforces handling both product types
-let describeCode (code: ProductCode) =
-    // => The compiler enforces exhaustive handling of Widget and Gizmo
-    match code with
-    | Widget (WidgetCode w) -> sprintf "Widget: %s" w
-    // => Destructures nested wrapper in one step — w is the raw string "W1234"
-    | Gizmo  (GizmoCode g)  -> sprintf "Gizmo: %s"  g
-    // => g is the raw string "G456"
-
-match widget with
-| Ok code -> printfn "%s" (describeCode code)
-// => Unwraps the Ok and calls describeCode — matched the Widget case
+match laptop with
+| Ok code -> printfn "%s" (ProductCode.describeLineType code)
 | Error e -> printfn "Error: %s" e
-// => Output: Widget: W1234
-```
+// => Output: Physical goods: ELE-0099
 
-**Key Takeaway**: Modelling a concept that has variant forms as a discriminated union prevents treating both forms identically when their handling differs, and adds a compile-time reminder to handle both cases everywhere they appear.
-
-**Why It Matters**: Without a union type, `ProductCode` would be a plain string, and the difference between widget and gizmo handling would be hidden inside `if code.StartsWith("W")` branches scattered throughout the code. With a union type, the compiler ensures that every function operating on a `ProductCode` handles both forms. Adding a new product category (e.g., `Doohickey`) immediately surfaces every function that needs a new case.
-
----
-
-### Example 16: Lifecycle States as a Discriminated Union
-
-The order lifecycle has three distinct states: `Unvalidated`, `Validated`, and `Priced`. Each state carries only the data that is known at that point. Representing them as separate DU cases prevents passing a `PricedOrder` where an `UnvalidatedOrder` is expected, enforcing the workflow sequence in the type system. Wlaschin introduces this in Ch 7.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Unvalidated : receive command
-    Unvalidated --> Validated : validateOrder (lines + customerId)
-    Validated --> Priced : priceOrder (lines + customerId + totalPrice)
-    Priced --> [*] : acknowledge + emit events
-
-    note right of Unvalidated
-        Only raw lines
-    end note
-    note right of Validated
-        Checked lines + customer
-    end note
-    note right of Priced
-        All lines priced + total
-    end note
-```
-
-```fsharp
-// Each lifecycle state carries only the data available at that stage.
-// A discriminated union ensures you cannot skip stages.
-
-type UnvalidatedOrderLine = { ProductCode: string; Quantity: int }
-// => Raw, unverified input from the user
-
-type ValidatedOrderLine  = { ProductCode: string; Quantity: int }
-// => Same shape here but would carry validated types in the full model
-
-type PricedOrderLine      = { ProductCode: string; Quantity: int; LinePrice: decimal }
-// => Priced state adds the calculated price — not available earlier
-
-// The order itself as a lifecycle DU
-type Order =
-    // => OR type: exactly one lifecycle state active at a time
-    | Unvalidated of lines: UnvalidatedOrderLine list
-    // => Only raw lines — no customer info validated yet
-    | Validated   of lines: ValidatedOrderLine  list * customerId: string
-    // => Validated: lines checked + customer confirmed
-    | Priced      of lines: PricedOrderLine     list * customerId: string * totalPrice: decimal
-    // => Priced: all lines have prices and the total is known
-
-// Functions accept the SPECIFIC state they need — not the generic Order
-let validateOrder (lines: UnvalidatedOrderLine list) customerId : Order =
-    // => Takes unvalidated lines, returns a Validated order
-    let validatedLines = lines |> List.map (fun l -> { ProductCode = l.ProductCode; Quantity = l.Quantity })
-    Validated (validatedLines, customerId)
-    // => Advances state from Unvalidated to Validated
-
-let unvalidated = Unvalidated [{ ProductCode = "W1234"; Quantity = 2 }]
-// => unvalidated : Order = Unvalidated [{ ProductCode = "W1234"; Quantity = 2 }]
-// => The Unvalidated case wraps a list of raw lines — no customer info yet
-
-let validated = validateOrder [{ ProductCode = "W1234"; Quantity = 2 }] "CUST-42"
-// => validateOrder maps raw lines to ValidatedOrderLine and wraps in Validated
-// => validated : Order = Validated ([{ ProductCode = "W1234"; Quantity = 2 }], "CUST-42")
-
-printfn "Lifecycle states: %A then %A" unvalidated validated
-// => Output: Lifecycle states: Unvalidated [...] then Validated (...)
-// => The two Order values are in different DU cases — type system records the state transition
-```
-
-**Key Takeaway**: Encoding lifecycle stages as discriminated union cases ensures that downstream functions receive orders in the correct state — passing an `Unvalidated` order to a pricing function is a compile-time error.
-
-**Why It Matters**: In OOP codebases, order state is often tracked with a combination of nullable fields and status enums, leading to defensive checks like `if order.ValidatedAt != null`. Using distinct DU cases, each carrying only the data available at that stage, eliminates these checks. The type signature `PricedOrder list * string * decimal` for the `Priced` case tells you exactly what has been computed — and functions that only accept `Priced` orders cannot accidentally receive un-priced ones.
-
----
-
-### Example 17: State Machine Encoded Purely by Type Transitions
-
-A state machine is a sequence of type transformations: each transition function takes one state type and returns a different state type. This models the order workflow as a chain of functions where the compiler enforces that transitions happen in the correct order. Wlaschin calls this "type-driven workflow design" in Ch 7.
-
-```mermaid
-graph LR
-    A["UnvalidatedOrder\n{ OrderId, CustomerName, Quantity }"]
-    B["ValidatedOrder\n{ OrderId, CustomerName, Quantity }"]
-    C["PricedOrder\n{ OrderId, CustomerName, Quantity, TotalPrice }"]
-
-    A -- "validateOrder\nUnvalidatedOrder → ValidatedOrder" --> B
-    B -- "priceOrder\nValidatedOrder → PricedOrder" --> C
-
-    style A fill:#DE8F05,stroke:#000,color:#000
-    style B fill:#0173B2,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-```
-
-```fsharp
-// Each workflow step is a function from one state type to the next.
-// The types enforce the sequence — you cannot call PriceOrder before ValidateOrder.
-
-// State types — each is a separate record type (not cases of a DU)
-type UnvalidatedOrder = { OrderId: string; CustomerName: string; Quantity: int }
-// => Raw input from the command/HTTP layer
-
-type ValidatedOrder   = { OrderId: string; CustomerName: string; Quantity: int }
-// => Validated: same shape here, but in a real system fields would use constrained types
-
-type PricedOrder      = { OrderId: string; CustomerName: string; Quantity: int; TotalPrice: decimal }
-// => Extended with pricing — only available after the PriceOrder step
-
-// Workflow step functions
-let validateOrder (input: UnvalidatedOrder) : ValidatedOrder =
-    // => Accepts UnvalidatedOrder, returns ValidatedOrder
-    // => Validation logic would go here; simplified for clarity
-    { OrderId = input.OrderId; CustomerName = input.CustomerName; Quantity = input.Quantity }
-    // => Returns a value of the NEW type — the state has advanced
-
-let priceOrder (validated: ValidatedOrder) : PricedOrder =
-    // => Accepts ValidatedOrder only — cannot receive UnvalidatedOrder here
-    let price = decimal validated.Quantity * 9.99m
-    // => Simplified pricing: quantity × unit price
-    { OrderId = validated.OrderId; CustomerName = validated.CustomerName
-      Quantity = validated.Quantity; TotalPrice = price }
-    // => Returns PricedOrder with the calculated total
-
-// Composing the pipeline
-let rawInput = { OrderId = "ORD-001"; CustomerName = "Alice"; Quantity = 3 }
-// => rawInput : UnvalidatedOrder
-
-let priced = rawInput |> validateOrder |> priceOrder
-// => Pipe through validate then price — each step advances the type
-// => priced : PricedOrder = { ...; TotalPrice = 29.97M }
-
-printfn "Priced order total: £%.2f" priced.TotalPrice
-// => Output: Priced order total: £29.97
-```
-
-**Key Takeaway**: Using distinct types for each lifecycle stage, with transition functions between them, lets the compiler enforce the workflow sequence — you cannot price an order that has not been validated.
-
-**Why It Matters**: Workflow ordering errors (pricing before validation, shipping before payment) are among the most serious domain bugs. They are invisible to the compiler in OOP systems that use a single mutable `Order` class with a status field. With distinct state types, the wrong sequence produces a type error before the code compiles. This is Wlaschin's core architectural insight: the type system is a cheap, always-on correctness proof for your workflow sequence.
-
----
-
-### Example 18: Domain Primitive Wrapping Decimal — Price
-
-Prices are not raw decimals. They have constraints (non-negative), semantic meaning (they are prices, not areas or weights), and operations that should be defined on the type (multiply by quantity, sum a list). Wrapping `decimal` in a `Price` type encodes all of this. Wlaschin covers money and price types in Ch 5 and 6.
-
-```fsharp
-// Price wraps decimal with: non-negativity guarantee, semantic name, and domain operations.
-
-type Price = private Price of decimal
-// => Private constructor — only valid prices (>= 0) can be constructed
-
-module Price =
-    let create (amount: decimal) : Result<Price, string> =
-        if amount < 0m then
-            Error (sprintf "Price cannot be negative (got %M)" amount)
-            // => Domain rule: prices are always zero or positive
-        else
-            Ok (Price (System.Math.Round(amount, 2)))
-            // => Round to 2 decimal places — monetary convention
-
-    let zero = Price 0m
-    // => Convenience: the zero price, used as an accumulator start
-
-    let value (Price p) = p
-    // => Unwrap for arithmetic, formatting, or persistence
-
-    let multiply (Price p) (qty: int) : Price =
-        // => Domain operation: price × quantity = line total
-        Price (System.Math.Round(p * decimal qty, 2))
-        // => Returns a new Price — immutability preserved
-
-    let add (Price a) (Price b) : Price =
-        // => Sum two prices — used for order total calculation
-        // => Pattern-matches both prices to extract raw decimals a and b
-        Price (System.Math.Round(a + b, 2))
-        // => Returns a new Price with rounded sum — monetary rounding applied
-
-// Usage
-let unitPrice = Price.create 9.99m
-// => Price.create validates 9.99 >= 0 and rounds to 2 decimal places
-// => unitPrice : Result<Price, string> = Ok (Price 9.99M)
-
-let lineTotal =
-    unitPrice
-    // => unitPrice : Result<Price, string> = Ok (Price 9.99M)
-    |> Result.map (fun p -> Price.multiply p 3)
-    // => Result.map applies the function only if unitPrice is Ok
-    // => Price.multiply (Price 9.99) 3 = Price 29.97 (9.99 × 3, rounded)
-    // => Applies multiply inside the Result functor
-// => lineTotal : Result<Price, string> = Ok (Price 29.97M)
-
-match lineTotal with
-| Ok t  -> printfn "Line total: £%.2f" (Price.value t)
-// => t : Price = Price 29.97M; Price.value unwraps to 29.97M
+match cleaning with
+| Ok code -> printfn "%s" (ProductCode.describeLineType code)
 | Error e -> printfn "Error: %s" e
-// => unitPrice was Ok so this branch runs
-// => Output: Line total: £29.97
+// => Output: Contracted service: SVC-20260601-003
 ```
 
-**Key Takeaway**: Wrapping `decimal` in a `Price` type encodes the non-negativity invariant, prevents accidental mixing with other decimal quantities (weights, areas), and groups domain operations on prices in one place.
+**Key Takeaway**: A union type for `ProductCode` preserves the semantic distinction between physical goods and contracted services, enabling different handling rules to be enforced at compile time rather than at runtime via string prefix checks.
 
-**Why It Matters**: "Primitive obsession" — using `decimal` everywhere for any numeric value — is a pervasive smell in DDD codebases. When prices, weights, taxes, and percentages are all plain decimals, it is easy to multiply a price by a price (nonsensical) or add a price to a weight (disastrous). Distinct types prevent these errors. Domain operations like `Price.multiply` and `Price.add` ensure that rounding and monetary conventions are applied consistently, rather than being reimplemented (inconsistently) at each call site.
-
----
-
-### Example 19: Units of Measure
-
-F# units of measure attach a compile-time label to numeric types, preventing you from adding kilograms to units or computing price as weight × weight. They have zero runtime overhead and are erased after compilation. Wlaschin mentions them in Ch 5 as a complement to wrapper types.
-
-```fsharp
-// Units of measure: compile-time labels on floats/decimals — zero runtime cost.
-// Prevent dimensionally incorrect arithmetic (e.g. weight + quantity).
-
-[<Measure>] type kg
-// => Defines the "kilogram" measure — a compile-time annotation
-
-[<Measure>] type unit_
-// => "unit_" = count of discrete items (using unit_ to avoid conflict with F# keyword)
-
-[<Measure>] type USD
-// => US dollar measure
-
-// Typed quantities in the order domain
-let widgetWeight: float<kg>     = 0.5<kg>
-// => widgetWeight has type float<kg> — a weight in kilograms
-
-let orderQuantity: float<unit_> = 3.0<unit_>
-// => orderQuantity has type float<unit_> — a count
-
-let unitPrice: decimal<USD> = 9.99m<USD>
-// => unitPrice has type decimal<USD>
-
-// Correct: weight × quantity = total weight
-let totalWeight: float<kg> = widgetWeight * orderQuantity
-// => 0.5<kg> * 3.0<unit_> = 1.5<kg*unit_>
-// => NOTE: F# gives this type float<kg*unit_> — define a specific measure for practical use
-// => For teaching purposes, notice the type-safety: cannot add kg to USD
-
-// Compiler prevents dimensionally incorrect arithmetic:
-// let wrong = widgetWeight + unitPrice  ← compile error: float<kg> + decimal<USD>
-// => This is caught at compile time — zero runtime overhead
-
-printfn "Total weight: %.2f kg" (float totalWeight)
-// => Output: Total weight: 1.50 kg
-
-printfn "Unit price: $%.2f" (float unitPrice)
-// => Output: Unit price: $9.99
-
-printfn "Units of measure enforce dimensional correctness at compile time"
-// => Output: Units of measure enforce dimensional correctness at compile time
-```
-
-**Key Takeaway**: F# units of measure provide compile-time dimensional analysis at zero runtime cost, preventing errors like adding a price to a weight or comparing kilograms to unit counts.
-
-**Why It Matters**: Dimensional bugs — computing a total as price × price rather than price × quantity — are silent runtime errors that pass unit tests if the test data happens to use 1.0 for both values. Units of measure elevate these to compile-time errors. In supply chains, where a single order might involve kilograms, litres, units, and multiple currencies, this compile-time safety layer is extremely valuable.
-
----
-
-### Example 20: Money Record with Currency
-
-A monetary amount consists of an amount and a currency. Mixing different currencies in arithmetic produces incorrect totals. A `Money` record that carries both fields makes the currency explicit and enables currency-aware operations.
-
-```fsharp
-// Money = amount + currency. Arithmetic on Money requires currency agreement.
-
-type Currency =
-    // => Discriminated union of supported currencies — exhaustive by design
-    | USD | GBP | EUR | IDR
-    // => Adding a new currency triggers compiler warnings at all match expressions
-    // => All four cases: US Dollar, British Pound, Euro, Indonesian Rupiah
-
-type Money = {
-    // => AND type: both Amount AND Currency are required
-    Amount: decimal
-    // => The raw decimal amount — always ≥0 (enforced by Money.create)
-    Currency: Currency
-    // => Which currency the amount is in — prevents silent cross-currency addition
-    // => Carrying the currency with the amount prevents silent cross-currency addition
-}
-
-module Money =
-    let create currency amount : Result<Money, string> =
-        // => Validates non-negativity and wraps in a Money record
-        if amount < 0m then
-            Error (sprintf "Monetary amount cannot be negative (got %M)" amount)
-            // => Money shares the non-negativity constraint with Price
-        else
-            Ok { Amount = System.Math.Round(amount, 2); Currency = currency }
-            // => Round to 2 decimal places for monetary values
-            // => Returns Ok Money — amount and currency bundled together
-
-    let add (a: Money) (b: Money) : Result<Money, string> =
-        // => Validates currency agreement before adding — returns Result
-        if a.Currency <> b.Currency then
-            Error (sprintf "Cannot add %A and %A — currency mismatch" a.Currency b.Currency)
-            // => Domain rule: cross-currency addition is not allowed without conversion
-        else
-            Ok { Amount = a.Amount + b.Amount; Currency = a.Currency }
-            // => Same currency: straightforward addition
-            // => Uses a.Currency (could also use b.Currency — they're equal at this point)
-
-let total =
-    result {
-        // => result CE: each let! validates and short-circuits on Error
-        let! a = Money.create USD 29.97m
-        // => Money.create USD 29.97m: 29.97 ≥ 0 → Ok { Amount = 29.97M; Currency = USD }
-        // => a : Money = { Amount = 29.97M; Currency = USD }
-        let! b = Money.create USD 5.00m
-        // => Money.create USD 5.00m: 5.00 ≥ 0 → Ok { Amount = 5.00M; Currency = USD }
-        // => b : Money = { Amount = 5.00M; Currency = USD }
-        return! Money.add a b
-        // => Money.add a b: a.Currency = b.Currency = USD → Ok { Amount = 34.97M; Currency = USD }
-        // => Returns Ok { Amount = 34.97M; Currency = USD }
-    }
-// => total : Result<Money, string> = Ok { Amount = 34.97M; Currency = USD }
-
-match total with
-| Ok m  -> printfn "Total: %.2f %A" m.Amount m.Currency
-// => m.Amount = 34.97M; m.Currency = USD
-// => Both USD amounts added successfully — same currency, no error
-| Error e -> printfn "Error: %s" e
-// => Would print if currencies differed (e.g. USD + GBP)
-// => Output: Total: 34.97 USD
-```
-
-**Key Takeaway**: A `Money` type that carries the currency prevents silent cross-currency arithmetic errors and makes the monetary domain concept explicit rather than a bare decimal.
-
-**Why It Matters**: In international supply chains and e-commerce, currency mix-ups are financially disastrous. Treating all monetary values as plain `decimal` makes it easy to sum amounts in different currencies without realising it. A `Money` record makes the currency part of the type contract. The `add` function's `Result` return type forces callers to handle the currency-mismatch case, preventing silent data corruption.
+**Why It Matters**: Physical goods and contracted services have fundamentally different procurement paths: goods generate goods receipt notes and three-way matching, while services generate a service acceptance form. Collapsing both into a single `string productCode` means the distinction must be re-inferred at runtime via string prefix inspection — a fragile pattern prone to omission errors. The union type makes the distinction permanent and exploits the compiler's exhaustive match to enforce different handling rules.
 
 ---
 
 ## Domain Records and DTO Types (Examples 21–25)
 
-### Example 21: Address Record
+### Example 21: PurchaseRequisitionLine Record — Composing Value Objects
 
-An `Address` is a value object: its identity is defined by its values, not by a database ID. All fields required for a meaningful address are present. In the order-taking domain, addresses are used for both billing and shipping.
+A `PurchaseRequisitionLine` composes the validated value objects from the previous examples into a single record. Every field is a domain type, not a primitive — the record itself becomes valid by construction if all its fields were validated.
 
 ```fsharp
-// Address is a value object — identity defined by field values, not by ID.
-// Two Address records with identical fields are considered equal.
+// PurchaseRequisitionLine: a record that composes validated value objects.
+// Each field is a domain type — the record inherits their guarantees.
 
-type AddressLine = private AddressLine of string
-// => Constrained string for address lines — reuses the String50 pattern but allows 100 chars
+// For this example, we use simple wrappers to keep the code self-contained
+type SkuCode   = SkuCode   of string
+type UnitPrice = UnitPrice of decimal
+type UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR
 
-module AddressLine =
-    let create (raw: string) : Result<AddressLine, string> =
-        // => Validates the address line and wraps it if valid
-        if System.String.IsNullOrWhiteSpace(raw) then Error "Address line must not be blank"
-        // => Guard 1: blank or whitespace — not a valid address line
-        elif raw.Length > 100 then Error "Address line must be 100 characters or fewer"
-        // => Guard 2: addresses longer than 100 chars exceed post office limits
-        else Ok (AddressLine raw.Trim())
-        // => Both guards passed — trim and wrap in the private constructor
-        // => Max 100 characters — longer than String50 because addresses can be verbose
+type Quantity = { Value: int; Unit: UnitOfMeasure }
+// => Simplified Quantity record for composition example
 
-    let value (AddressLine s) = s
-    // => Unwrap accessor — used when formatting addresses for display or persistence
-
-// Address value object — all required fields, no nullable references
-type Address = {
-    AddressLine1: AddressLine
-    // => Required first address line — house number and street name
-    AddressLine2: AddressLine option
-    // => Optional second line — flat/suite number or building name
-    AddressLine3: AddressLine option
-    // => Optional third line — used in some countries for area/district
-    AddressLine4: AddressLine option
-    // => Optional fourth line — used in verbose international address formats
-    City: AddressLine
-    // => Required city — validated non-blank and ≤100 chars
-    ZipCode: string
-    // => Simplified: a real implementation would use a ZipCode constrained type
-    State: string option
-    // => Optional — not all countries use state/province (e.g., UK and Japan don't)
-    Country: string
-    // => Required country — would use an ISO 3166 code type in the full model
+// The composed line record — all fields are domain types
+type PurchaseRequisitionLine = {
+    LineNumber: int
+    // => 1-based position within the requisition — for display ordering
+    SkuCode:    SkuCode
+    // => Validated SKU — not a raw string, not null
+    Quantity:   Quantity
+    // => Validated quantity — value > 0, unit is a closed enum
+    UnitPrice:  UnitPrice
+    // => Validated price — > 0 decimal
 }
+// => All fields are domain types — if they exist, they are valid
 
-// Constructing a minimal address
-let buildAddress () =
-    result {
-        // => result CE: let! unwraps Ok or short-circuits on Error
-        let! line1 = AddressLine.create "10 Main Street"
-        // => line1 : AddressLine = AddressLine "10 Main Street" — validated and trimmed
-        // => Validates and wraps the first address line
-        let! city  = AddressLine.create "Springfield"
-        // => city : AddressLine = AddressLine "Springfield" — validated and trimmed
-        // => Validates city
-        return {
-            AddressLine1 = line1
-            // => Validated first address line
-            AddressLine2 = None; AddressLine3 = None; AddressLine4 = None
-            // => Optional lines all absent for this minimal address
-            City = city
-            // => Validated city name
-            ZipCode = "12345"
-            // => Raw string — would use ZipCode type in the full model
-            State = Some "IL"
-            // => Illinois — present because US addresses include state
-            Country = "US"
-            // => Required country code
-        }
-        // => Returns Result<Address, string> = Ok { ... }
-    }
+// A helper to compute the line total
+let lineTotal (line: PurchaseRequisitionLine) : decimal =
+    let (UnitPrice price) = line.UnitPrice
+    // => Destructure UnitPrice to access the decimal
+    decimal line.Quantity.Value * price
+    // => Multiply quantity by unit price — both are validated, no guards needed
 
-match buildAddress () with
-| Ok addr -> printfn "Address: %s, %s" (AddressLine.value addr.AddressLine1) (AddressLine.value addr.City)
-// => addr : Address — all validated fields; no null checks needed anywhere downstream
-// => AddressLine.value addr.AddressLine1 = "10 Main Street" (raw string)
-// => AddressLine.value addr.City = "Springfield" (raw string)
-// => addr.ZipCode = "12345"; addr.State = Some "IL"; addr.Country = "US"
-| Error e -> printfn "Error: %s" e
-// => Not reached — both "10 Main Street" and "Springfield" are non-blank and ≤100 chars
-// => Output: Address: 10 Main Street, Springfield
+// Constructing a line — all field values are validated types
+let line1 = {
+    LineNumber = 1
+    // => First line item on the requisition
+    SkuCode    = SkuCode "OFF-0042"
+    // => Using the SkuCode wrapper — not a raw string
+    Quantity   = { Value = 10; Unit = BOX }
+    // => 10 boxes — Value > 0, Unit is a valid enum case
+    UnitPrice  = UnitPrice 8.50m
+    // => $8.50 per box — positive price
+}
+// => line1 : PurchaseRequisitionLine — valid by construction
+
+let line2 = {
+    LineNumber = 2
+    SkuCode    = SkuCode "ELE-0099"
+    // => Electronics SKU
+    Quantity   = { Value = 3; Unit = EACH }
+    // => 3 individual laptops
+    UnitPrice  = UnitPrice 899.99m
+    // => $899.99 per laptop
+}
+// => line2 : PurchaseRequisitionLine
+
+printfn "Line 1 total: %M" (lineTotal line1)
+// => 10 × 8.50 = 85.00
+// => Output: Line 1 total: 85.0000M
+
+printfn "Line 2 total: %M" (lineTotal line2)
+// => 3 × 899.99 = 2699.97
+// => Output: Line 2 total: 2699.9700M
 ```
 
-**Key Takeaway**: Value object records with constrained field types ensure that every address stored in the system meets minimum validity requirements, eliminating the null-check ceremony from every function that works with addresses.
+**Key Takeaway**: Composing validated value objects into a record creates a record that is valid by construction — no downstream function needs to re-validate individual fields because the types already guarantee their invariants.
 
-**Why It Matters**: Address validation is often deferred to "when we need it", leading to invalid addresses surfacing at shipping time rather than at order entry. Using constrained `AddressLine` types, the validation happens at construction time. If an `Address` value exists, its lines are non-blank and within length limits. This is a direct application of Wlaschin's principle: if a value can exist, it is valid.
+**Why It Matters**: The composition principle is the key to scalable domain modelling. Each value object (`SkuCode`, `Quantity`, `UnitPrice`) enforces its own invariant. When composed into a `PurchaseRequisitionLine`, the composed type automatically inherits all those guarantees. A pricing function that accepts `PurchaseRequisitionLine` can focus entirely on the business logic of computing a total, not on defensive input checking.
 
 ---
 
-### Example 22: CustomerInfo Record — Composing PersonalName and Email
+### Example 22: PurchaseRequisition Aggregate Record
 
-`CustomerInfo` composes a `PersonalName` and an `EmailAddress` into a single record that captures everything needed to identify and contact a customer. This demonstrates how constrained types from earlier examples compose naturally into larger domain concepts.
+The `PurchaseRequisition` is the aggregate root of the purchasing context at the beginner level. It groups an identity, a status, a list of validated line items, and metadata about who requested it. The aggregate record is the primary domain object passed through the approval workflow.
 
 ```fsharp
-// CustomerInfo composes PersonalName and EmailAddress.
-// The composition is safe because each component is already validated.
+// PurchaseRequisition: the aggregate root of the purchasing context.
+// Groups identity, status, lines, and metadata into a single cohesive record.
 
-// Reusing types from earlier examples (simplified inline here)
-type String50 = private String50 of string
-// => Private constructor: only values ≤50 chars that are non-blank exist
-module String50 =
-    // => Module with the same name as the type — idiomatic F# pattern
-    let create field (raw: string) =
-        // => field: the field name for diagnostic error messages
-        // => raw: the untrusted input string to validate
-        if System.String.IsNullOrWhiteSpace(raw) then Error (field + " must not be blank")
-        // => Guard 1: blank or whitespace strings are not valid String50 values
-        elif raw.Length > 50 then Error (field + " must be 50 chars or fewer")
-        // => Guard 2: strings over 50 chars violate the constraint
-        else Ok (String50 raw.Trim())
-        // => Both guards passed — trim whitespace and wrap in the private constructor
-        // => Returns Result<String50, string>: Ok if valid, Error with field name if not
-    let value (String50 s) = s
-    // => Unwrap accessor: extracts the raw string when needed for display or persistence
-    // => Pattern-matches the DU to get the inner string value
+type RequisitionId     = RequisitionId     of string
+type RequisitionStatus = Draft | Submitted | ManagerReview | Approved | Rejected | ConvertedToPO
+type SkuCode   = SkuCode   of string
+type UnitPrice = UnitPrice of decimal
+type UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR
+type Quantity  = { Value: int; Unit: UnitOfMeasure }
 
-type EmailAddress = private EmailAddress of string
-// => Private constructor: only strings that passed the regex check exist
-module EmailAddress =
-    // => Module with the same name — contains create and value
-    let create (raw: string) =
-        // => Validates that raw matches the minimal email format
-        if System.Text.RegularExpressions.Regex.IsMatch(raw, @"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-        then Ok (EmailAddress (raw.ToLowerInvariant()))
-        // => Valid: normalise to lowercase and wrap in private constructor
-        // => ToLowerInvariant ensures "Alice@EXAMPLE.COM" == "alice@example.com"
-        else Error (sprintf "'%s' is not a valid email" raw)
-        // => Invalid: return descriptive error message
-    let value (EmailAddress e) = e
-    // => Unwrap accessor: extracts the normalised lowercase email string
-
-// PersonalName: first and last are required, middle is optional
-type PersonalName = {
-    FirstName: String50
-    // => Required — cannot have a nameless customer
-    // => String50 ensures it's non-blank and ≤50 chars
-    MiddleName: String50 option
-    // => Optional — not everyone has a middle name
-    LastName: String50
-    // => Required — family name must always be present
-    // => Both FirstName and LastName are String50 — validated consistently
+type PurchaseRequisitionLine = {
+    LineNumber: int
+    SkuCode:    SkuCode
+    Quantity:   Quantity
+    UnitPrice:  UnitPrice
 }
+// => Line item type reused from Example 21
 
-// CustomerInfo: the composition
-type CustomerInfo = {
-    Name: PersonalName
-    // => Embedding the validated PersonalName — both FirstName and LastName are guaranteed
-    // => If CustomerInfo exists, Name.FirstName and Name.LastName are non-blank String50 values
-    EmailAddress: EmailAddress
-    // => Embedding the validated EmailAddress — guaranteed to be a valid email format
+// The aggregate root
+type PurchaseRequisition = {
+    Id:          RequisitionId
+    // => Unique identity — drives all lookups and event references
+    RequestedBy: string
+    // => Employee identifier — used for approval routing and audit trail
+    Status:      RequisitionStatus
+    // => Current lifecycle state — only legal transitions permitted
+    Lines:       PurchaseRequisitionLine list
+    // => Line items — at least one required before submission
+    CreatedAt:   System.DateTimeOffset
+    // => When the requisition was first saved — for SLA tracking
+    UpdatedAt:   System.DateTimeOffset
+    // => When the requisition was last modified — for concurrency detection
 }
+// => PurchaseRequisition : aggregate root with identity, status, lines, metadata
 
-// Building CustomerInfo through the Result monad
-let buildCustomer () =
-    result {
-        let! first = String50.create "FirstName" "Alice"
-        // => first : String50 = String50 "Alice" — validated and trimmed
-        let! last  = String50.create "LastName"  "Johnson"
-        // => last : String50 = String50 "Johnson" — validated and trimmed
-        // => Both name components validated
-        let! email = EmailAddress.create "alice@example.com"
-        // => email : EmailAddress = EmailAddress "alice@example.com" — lowercase, validated
-        // => Email validated
-        let name = { FirstName = first; MiddleName = None; LastName = last }
-        // => name : PersonalName — composed from validated String50 values
-        // => PersonalName composed from validated parts
-        return { Name = name; EmailAddress = email }
-        // => CustomerInfo composed from validated PersonalName and EmailAddress
-        // => return wraps the value in Ok — the computation expression unwrapped each let!
-    }
+// Helper: compute the total value of the requisition
+let requisitionTotal (req: PurchaseRequisition) : decimal =
+    req.Lines |> List.sumBy (fun line ->
+        let (UnitPrice p) = line.UnitPrice
+        // => Destructure UnitPrice for arithmetic
+        decimal line.Quantity.Value * p
+        // => Line total = quantity × unit price
+    )
+    // => Sum all line totals to get the requisition total
 
-match buildCustomer () with
-| Ok c ->
-    printfn "Customer: %s %s <%s>"
-        (String50.value c.Name.FirstName)
-        // => String50.value unwraps the validated first name string
-        (String50.value c.Name.LastName)
-        // => String50.value unwraps the validated last name string
-        (EmailAddress.value c.EmailAddress)
-        // => EmailAddress.value unwraps the normalised email string
-| Error e -> printfn "Error: %s" e
-// => Output: Customer: Alice Johnson <alice@example.com>
+// Build a sample requisition
+let sampleReq = {
+    Id          = RequisitionId "req_f4c2a1b7"
+    // => Formatted requisition ID — "req_" prefix + UUID segment
+    RequestedBy = "emp_00456"
+    // => Employee who is requesting the goods
+    Status      = Draft
+    // => Starts in Draft — cannot submit until validated
+    Lines       = [
+        { LineNumber = 1; SkuCode = SkuCode "OFF-0042"; Quantity = { Value = 10; Unit = BOX }; UnitPrice = UnitPrice 8.50m }
+        // => 10 boxes of office supplies at $8.50 each = $85.00
+        { LineNumber = 2; SkuCode = SkuCode "ELE-0099"; Quantity = { Value = 3; Unit = EACH }; UnitPrice = UnitPrice 899.99m }
+        // => 3 laptops at $899.99 each = $2,699.97
+    ]
+    CreatedAt   = System.DateTimeOffset.UtcNow
+    // => Timestamp at creation
+    UpdatedAt   = System.DateTimeOffset.UtcNow
+    // => Starts equal to CreatedAt — updated on each state transition
+}
+// => sampleReq : PurchaseRequisition = Draft requisition with two lines
+
+printfn "Requisition %A" sampleReq.Id
+// => Output: Requisition RequisitionId "req_f4c2a1b7"
+printfn "Total: %M" (requisitionTotal sampleReq)
+// => 85.00 + 2699.97 = 2784.97
+// => Output: Total: 2784.9700M
+printfn "Status: %A" sampleReq.Status
+// => Output: Status: Draft
 ```
 
-**Key Takeaway**: Composing constrained types into larger records produces composite types that are valid by construction — if a `CustomerInfo` exists, all its components have already been validated.
+**Key Takeaway**: The aggregate root record groups identity, status, line items, and metadata into a single cohesive type that the entire approval workflow passes through as a unit.
 
-**Why It Matters**: Validation at composition time means the deep layers of the domain model never need to ask "is this email address valid?" — the type guarantees it. This compositional approach, where small constrained types build up into larger validated aggregates, is one of the most powerful patterns in Wlaschin's book. It produces code that is easier to test (validate each component independently) and easier to reason about (the type tells you what is guaranteed).
+**Why It Matters**: The aggregate root is the unit of consistency in DDD. All changes to a `PurchaseRequisition` are made as a whole — the `Status` transitions atomically with the update of `UpdatedAt`, and the `Lines` are only mutable in the `Draft` state (enforced by workflow functions, explored in intermediate examples). Grouping everything into one record makes the aggregate boundary explicit and prevents partial updates that leave the aggregate in an inconsistent state.
 
 ---
 
-### Example 23: Order Line Item Record
+### Example 23: UnvalidatedRequisition DTO-Shaped Record
 
-An order line item ties together a product code and a quantity. It is the basic unit of an order. In the unvalidated form it uses raw strings; in the validated form it uses constrained types. This example shows the unvalidated form as used in the input DTO.
-
-```fsharp
-// OrderLine: product code + quantity. The DTO form uses raw strings.
-// The validated form uses constrained types (shown in Example 39).
-
-// Raw (DTO) order line — directly from HTTP or file input
-type UnvalidatedOrderLine = {
-    // => All fields are raw strings — nothing validated yet
-    OrderLineId: string
-    // => Line identifier — may be client-generated or absent
-    ProductCode: string
-    // => Raw product code string — could be widget, gizmo, or invalid
-    Quantity: decimal
-    // => Raw quantity — decimal to handle both unit and weight-based products
-}
-
-// Minimal module to create and inspect an order line
-module UnvalidatedOrderLine =
-    let create lineId code qty =
-        // => Factory function — no validation at this stage
-        { OrderLineId = lineId; ProductCode = code; Quantity = qty }
-        // => Returns the DTO as-is — validation happens in the workflow step
-
-    let describe (line: UnvalidatedOrderLine) =
-        sprintf "Line %s: %s × %.2f" line.OrderLineId line.ProductCode line.Quantity
-        // => Human-readable description for logging
-        // => e.g. "Line LINE-1: W1234 × 2.00" — formatted for console or log output
-
-// Building a sample order with two lines
-let lines = [
-    UnvalidatedOrderLine.create "LINE-1" "W1234" 2.0m
-    // => Widget W1234, quantity 2 units
-    UnvalidatedOrderLine.create "LINE-2" "G456"  0.5m
-    // => Gizmo G456, quantity 0.5 kg
-]
-// => lines : UnvalidatedOrderLine list — two items
-
-lines |> List.iter (fun l -> printfn "%s" (UnvalidatedOrderLine.describe l))
-// => List.iter applies describe to each element — calls printfn for each line
-// => Output: Line LINE-1: W1234 × 2.00
-// => Output: Line LINE-2: G456 × 0.50
-
-printfn "Total lines: %d" (List.length lines)
-// => List.length returns the number of elements — 2 in this case
-// => Output: Total lines: 2
-```
-
-**Key Takeaway**: Modelling input data as unvalidated DTOs with raw fields separates the "what we received" concern from "what we accept", making the validation step explicit and auditable.
-
-**Why It Matters**: Mixing input parsing and domain validation in the same type obscures where invalid data enters the system. A dedicated `UnvalidatedOrderLine` type makes the boundary explicit. When a validation error occurs, the team knows the fault is in the translation from `Unvalidated` to `Validated` — not somewhere deep in the pricing engine. This clean separation is a prerequisite for the Railway-Oriented Programming pipeline in Examples 31–33.
-
----
-
-### Example 24: UnvalidatedOrder DTO-Shaped Record
-
-The `UnvalidatedOrder` record is the full DTO that enters the `PlaceOrder` workflow. It groups the customer and line information exactly as received from the outside world. Wlaschin introduces this as the "input to the workflow" in Ch 7.
+The `UnvalidatedRequisition` is the DTO that arrives from the HTTP layer. It uses only primitives — strings, ints, decimals — because JSON deserialisation produces raw values. The workflow's first step is to validate this DTO into the domain aggregate.
 
 ```fsharp
-// UnvalidatedOrder: the raw input record for the PlaceOrder workflow.
-// Every field is a primitive — nothing has been validated.
+// UnvalidatedRequisition: the DTO arriving from the HTTP layer.
+// Uses only primitives — JSON deserialisation produces raw strings, ints, decimals.
+// The workflow validates this into a domain PurchaseRequisition.
 
-type UnvalidatedAddress = {
-    // => Raw address from the HTTP request body or CSV row
-    // => No constraints: any value, including blank, can be stored here
-    AddressLine1: string
-    // => Required first address line — may be blank (will be caught during validation)
-    AddressLine2: string option
-    // => Optional second address line — flat/suite/apartment number
-    City: string
-    // => Required city name — may be blank or invalid (caught during validation)
-    ZipCode: string
-    // => Raw postal code — not yet validated for format
-    Country: string
-    // => Country code or name — not yet validated against an allowed list
+// Raw line item from the HTTP request body
+type UnvalidatedLine = {
+    SkuCode:   string
+    // => Raw string — may be empty, wrong format, or null
+    Quantity:  int
+    // => Raw int — may be zero or negative
+    UnitPrice: decimal
+    // => Raw decimal — may be zero or negative
+    Unit:      string
+    // => Raw string representation of the unit — may not match a valid UnitOfMeasure
 }
+// => UnvalidatedLine : primitive-only DTO — no domain type guarantees
 
-type UnvalidatedCustomerInfo = {
-    // => Raw customer fields from the input
-    FirstName: string
-    // => May be blank — the validator will enforce non-blank
-    LastName: string
-    // => May be blank — the validator will enforce non-blank
-    EmailAddress: string
-    // => May be invalid format — the validator will check with a regex
+// Raw requisition from the HTTP request body
+type UnvalidatedRequisition = {
+    RequestedBy: string
+    // => Raw employee ID — may be empty or not exist in the employee directory
+    Lines:       UnvalidatedLine list
+    // => List of unvalidated line items — may be empty, may have invalid items
 }
+// => UnvalidatedRequisition : DTO-shaped aggregate — purely for deserialization
 
-type UnvalidatedOrderLine = {
-    // => Reusing the pattern from Example 23
-    OrderLineId: string
-    // => Line identifier — may be blank or duplicate (caught during validation)
-    ProductCode: string
-    // => Raw product code — may be "W1234", "G456", or an invalid value
-    Quantity: decimal
-    // => Raw quantity — may be zero or negative (caught during validation)
-}
+// The validated domain types (simplified for this example)
+type SkuCode = SkuCode of string
+type UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR
+type Quantity = { Value: int; Unit: UnitOfMeasure }
+type UnitPrice = UnitPrice of decimal
+type PurchaseRequisitionLine = { LineNumber: int; SkuCode: SkuCode; Quantity: Quantity; UnitPrice: UnitPrice }
 
-// The root DTO for the entire PlaceOrder command
-type UnvalidatedOrder = {
-    // => This is what the workflow receives — all raw, all unverified
-    // => The ValidateOrder step will transform this into a ValidatedOrder
-    OrderId: string
-    // => Client-generated or server-assigned ID — must be validated non-blank
-    // => Could be empty ("") or too long — validation will reject these
-    CustomerInfo: UnvalidatedCustomerInfo
-    // => Raw customer data block — all fields are untrusted strings
-    // => The validator will check each field (FirstName, LastName, EmailAddress)
-    ShippingAddress: UnvalidatedAddress
-    // => Where to ship — address fields are raw, not yet validated
-    // => The validator calls an address verification service on this field
-    BillingAddress: UnvalidatedAddress
-    // => Where to bill (may differ from shipping)
-    // => Validated separately from ShippingAddress — same structure, different purpose
-    OrderLines: UnvalidatedOrderLine list
-    // => List of line items — may be empty (invalid) or contain invalid codes
-    // => The validator checks non-empty and validates each line's ProductCode and Quantity
-}
+// Validate a raw unit string to a UnitOfMeasure
+let parseUnit (s: string) : Result<UnitOfMeasure, string> =
+    match s.ToUpperInvariant() with
+    | "EACH"  -> Ok EACH
+    | "BOX"   -> Ok BOX
+    | "KG"    -> Ok KG
+    | "LITRE" -> Ok LITRE
+    | "HOUR"  -> Ok HOUR
+    | other   -> Error (sprintf "Unknown unit: '%s' — expected EACH, BOX, KG, LITRE, or HOUR" other)
+    // => Pattern match on the normalised string — rejects unknown units
 
-// Building a sample unvalidated order
-let sampleInput: UnvalidatedOrder = {
-    OrderId = "ORD-001"
-    // => A non-blank OrderId — will pass the non-blank validation check
-    CustomerInfo = { FirstName = "Alice"; LastName = "Johnson"; EmailAddress = "alice@example.com" }
-    // => All three fields populated — will pass validation
-    ShippingAddress = { AddressLine1 = "10 Main St"; AddressLine2 = None; City = "Springfield"; ZipCode = "12345"; Country = "US" }
-    // => Valid address — Line2 is None (optional field absent)
-    BillingAddress  = { AddressLine1 = "10 Main St"; AddressLine2 = None; City = "Springfield"; ZipCode = "12345"; Country = "US" }
-    // => Same address for billing and shipping — allowed
-    OrderLines = [
-        { OrderLineId = "LINE-1"; ProductCode = "W1234"; Quantity = 2.0m }
-        // => Widget W1234, qty 2.0 — will pass validation
-        { OrderLineId = "LINE-2"; ProductCode = "G456";  Quantity = 0.5m }
-        // => Gizmo G456, qty 0.5 kg — will pass validation
+// Validate a single unvalidated line
+let validateLine (n: int) (raw: UnvalidatedLine) : Result<PurchaseRequisitionLine, string> =
+    // => Sequentially validate each field — short-circuit on first error (use Result.bind)
+    if System.String.IsNullOrWhiteSpace(raw.SkuCode) then Error "SkuCode required"
+    // => Guard 1: blank SKU
+    elif raw.Quantity <= 0 then Error (sprintf "Quantity must be > 0, got %d" raw.Quantity)
+    // => Guard 2: invalid quantity
+    elif raw.UnitPrice <= 0m then Error (sprintf "UnitPrice must be > 0, got %M" raw.UnitPrice)
+    // => Guard 3: non-positive price
+    else
+        parseUnit raw.Unit |> Result.map (fun u ->
+            { LineNumber = n
+              SkuCode    = SkuCode raw.SkuCode
+              // => Wrap in SkuCode after basic checks
+              Quantity   = { Value = raw.Quantity; Unit = u }
+              // => Combine validated int with validated unit
+              UnitPrice  = UnitPrice raw.UnitPrice
+              // => Wrap in UnitPrice after positivity check
+            }
+        )
+
+// Test with sample DTO input
+let rawReq = {
+    RequestedBy = "emp_00456"
+    Lines = [
+        { SkuCode = "OFF-0042"; Quantity = 10; UnitPrice = 8.50m; Unit = "BOX" }
+        { SkuCode = "ELE-0099"; Quantity = 3; UnitPrice = 899.99m; Unit = "EACH" }
     ]
 }
-// => sampleInput : UnvalidatedOrder — ready to be fed into the PlaceOrder workflow
+// => rawReq : UnvalidatedRequisition — from HTTP body / JSON deserialization
 
-printfn "Order %s has %d lines for customer %s %s"
-    sampleInput.OrderId
-    // => sampleInput.OrderId = "ORD-001"
-    (List.length sampleInput.OrderLines)
-    // => List.length sampleInput.OrderLines = 2
-    sampleInput.CustomerInfo.FirstName
-    // => sampleInput.CustomerInfo.FirstName = "Alice"
-    sampleInput.CustomerInfo.LastName
-    // => sampleInput.CustomerInfo.LastName = "Johnson"
-// => Output: Order ORD-001 has 2 lines for customer Alice Johnson
+let validatedLine1 = validateLine 1 rawReq.Lines.[0]
+// => "OFF-0042" non-blank, 10 > 0, 8.50 > 0, "BOX" matches — Ok (PurchaseRequisitionLine ...)
+
+match validatedLine1 with
+| Ok line -> printfn "Line 1 validated: %A" line.SkuCode
+| Error e -> printfn "Error: %s" e
+// => Output: Line 1 validated: SkuCode "OFF-0042"
 ```
 
-**Key Takeaway**: A dedicated unvalidated input DTO makes the validation boundary explicit — all raw data is in one record type, and the workflow is responsible for transforming it into validated domain types.
+**Key Takeaway**: A separate DTO type for unvalidated input makes the boundary between "outside the domain" and "inside the domain" explicit — the type system prevents raw DTO fields from being used where validated domain types are expected.
 
-**Why It Matters**: Without a dedicated input type, validation logic tends to be embedded in entity constructors, service methods, or even UI controllers, making it hard to find and test. A single `UnvalidatedOrder` type collected at the workflow entry point establishes the anti-corruption layer between the outside world and the domain. It is also the natural starting point for generating API contracts, form schemas, and input documentation.
+**Why It Matters**: The DTO boundary is where all domain invariants are enforced. Everything to the left of the boundary (HTTP, JSON, user input) is untrusted; everything to the right (domain logic, approval workflow, event generation) is trusted. A separate `UnvalidatedRequisition` type makes this boundary visible and architectural — it is impossible to accidentally pass an `UnvalidatedLine` to a function that expects a `PurchaseRequisitionLine` because they are different types.
 
 ---
 
-### Example 25: Workflow Type Alias — Full PlaceOrder Signature
+### Example 24: Approval Level Derived from Requisition Total
 
-The `PlaceOrder` workflow type alias unifies everything introduced in examples 1–24: it references the `UnvalidatedOrder` input type, the `OrderPlaced` event output, and the `PlacingOrderError` error union. This single line is the executable specification of the workflow. Wlaschin presents the full workflow signature at the end of Ch 7 as the culmination of type-driven design.
-
-```mermaid
-graph LR
-    Input["UnvalidatedOrder\n(raw HTTP data)"]
-    WF["PlaceOrder workflow\ntype alias = function"]
-    OkPath["Result Ok:\nOrderPlaced list"]
-    ErrPath["Result Error:\nPlacingOrderError"]
-
-    Input --> WF
-    WF -- "success" --> OkPath
-    WF -- "failure" --> ErrPath
-
-    style Input fill:#DE8F05,stroke:#000,color:#000
-    style WF fill:#0173B2,stroke:#000,color:#fff
-    style OkPath fill:#029E73,stroke:#000,color:#fff
-    style ErrPath fill:#CC78BC,stroke:#000,color:#000
-```
+The `ApprovalLevel` of a purchase requisition is a domain rule derived from its total value. This derivation is a pure function — no side effects, fully deterministic — and the result is a constrained type that drives the approval routing workflow.
 
 ```fsharp
-// The PlaceOrder workflow type alias: the complete contract in one line.
-// References all types from the domain model built up so far.
+// Deriving ApprovalLevel from a requisition total is a pure domain rule.
+// It is the decision point that determines which manager must approve.
 
-// ── Domain types (abbreviated versions from previous examples) ────────────
-type UnvalidatedOrder = { OrderId: string; CustomerName: string }
-// => Simplified for clarity — full version in Example 24
+type ApprovalLevel = L1 | L2 | L3
+// => L1: direct manager (≤ $1,000)
+// => L2: department head ($1,001–$10,000)
+// => L3: CFO / finance committee (> $10,000)
 
-type OrderPlaced = { OrderId: string; Amount: decimal }
-// => Domain event emitted on success
+type UnitPrice = UnitPrice of decimal
+type UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR
+type Quantity = { Value: int; Unit: UnitOfMeasure }
+type PurchaseRequisitionLine = {
+    LineNumber: int
+    UnitPrice:  UnitPrice
+    Quantity:   Quantity
+}
+// => Line type with the fields needed for total calculation
 
-type PlacingOrderError =
-    // => Every named failure mode — no generic exceptions
-    | ValidationError    of string
-    // => Input data failed validation
-    | ProductNotFound    of productCode: string
-    // => Referenced product does not exist in the catalogue
-    | PricingError       of string
-    // => Pricing calculation failed
-    | RemoteServiceError of service: string * message: string
-    // => Downstream service call failed
+// Pure domain functions
+let lineTotal (line: PurchaseRequisitionLine) : decimal =
+    let (UnitPrice p) = line.UnitPrice
+    // => Destructure UnitPrice to access the decimal
+    decimal line.Quantity.Value * p
+    // => Line total = quantity × unit price
 
-// ── The workflow type — the complete specification ────────────────────────
-// Reads: "PlaceOrder transforms an UnvalidatedOrder into either a list of
-// OrderPlaced events (success) or a PlacingOrderError (failure)"
-type PlaceOrder =
-    UnvalidatedOrder -> Result<OrderPlaced list, PlacingOrderError>
-    // => Return type is a list because one command can raise multiple events
-    // => Result forces callers to handle both success and failure
+let requisitionTotal (lines: PurchaseRequisitionLine list) : decimal =
+    lines |> List.sumBy lineTotal
+    // => Sum all line totals — pure, no side effects
 
-// A stub implementation satisfying the type
-let placeOrder : PlaceOrder =
-    // => The type annotation ensures this function satisfies the PlaceOrder contract
-    // => Any function body that does not match PlaceOrder's signature will fail to compile
-    fun input ->
-        if System.String.IsNullOrWhiteSpace(input.OrderId) then
-            Error (ValidationError "OrderId must not be blank")
-            // => Short-circuit with a named error — compiler knows this is PlacingOrderError
-        else
-            Ok [ { OrderId = input.OrderId; Amount = 99.00m } ]
-            // => Success: returns a list with one OrderPlaced event
-            // => List because a command can raise multiple events (e.g. OrderPlaced + AcknowledgmentSent)
+let deriveApprovalLevel (total: decimal) : ApprovalLevel =
+    // => Pure derivation — same input always produces same output
+    if total <= 1000m then L1
+    // => Under $1,000 — direct manager approval
+    elif total <= 10000m then L2
+    // => $1,001–$10,000 — department head
+    else L3
+    // => Over $10,000 — CFO-level required
 
-// Test the stub
-let result = placeOrder { OrderId = "ORD-001"; CustomerName = "Alice" }
-// => OrderId is non-blank — the Ok branch runs
-// => result : Result<OrderPlaced list, PlacingOrderError> = Ok [{ OrderId = "ORD-001"; Amount = 99.00M }]
+// Describe what the approval level means in the routing workflow
+let describeApprovalRouting (level: ApprovalLevel) : string =
+    match level with
+    | L1 -> "Route to direct manager — SLA: 2 business days"
+    // => L1 is the simplest approval path — fastest SLA
+    | L2 -> "Route to department head — SLA: 5 business days"
+    // => L2 requires escalation — longer SLA reflects the more complex review
+    | L3 -> "Route to CFO approval committee — SLA: 10 business days"
+    // => L3 is the most scrutinised — longest SLA, most stakeholders involved
 
-match result with
-| Ok events  -> printfn "Events raised: %d" (List.length events)
-// => events : OrderPlaced list — 1 element in this stub
-| Error err  -> printfn "Error: %A" err
-// => Not reached — OrderId was valid
-// => Output: Events raised: 1
+// Test with sample line items
+let lines = [
+    { LineNumber = 1; UnitPrice = UnitPrice 899.99m; Quantity = { Value = 3; Unit = EACH } }
+    // => 3 × $899.99 = $2,699.97
+    { LineNumber = 2; UnitPrice = UnitPrice 8.50m;   Quantity = { Value = 20; Unit = BOX } }
+    // => 20 × $8.50 = $170.00
+]
 
-printfn "PlaceOrder type alias: the specification is complete before the implementation"
-// => Output: PlaceOrder type alias: the specification is complete before the implementation
+let total = requisitionTotal lines
+// => 2699.97 + 170.00 = 2869.97
+// => total : decimal = 2869.97
+
+let level = deriveApprovalLevel total
+// => 2869.97 > 1000 and <= 10000 — L2
+// => level : ApprovalLevel = L2
+
+printfn "Total: %M" total
+// => Output: Total: 2869.9700M
+printfn "Approval level: %A" level
+// => Output: Approval level: L2
+printfn "Routing: %s" (describeApprovalRouting level)
+// => Output: Routing: Route to department head — SLA: 5 business days
 ```
 
-**Key Takeaway**: Writing the workflow type alias before any implementation creates a compiler-checked specification that every future implementation must satisfy — it is the functional equivalent of an interface, but expressed in a single readable line.
+**Key Takeaway**: Deriving `ApprovalLevel` as a pure function from the requisition total keeps the approval routing rule in the domain layer, independently testable and free of infrastructure dependencies.
 
-**Why It Matters**: Wlaschin's central insight in Ch 7 is that the type alias `type PlaceOrder = UnvalidatedOrder -> Result<OrderPlaced list, PlacingOrderError>` is a complete, unambiguous specification. Any function that does not satisfy it will fail to compile. This "types first, implementation second" discipline catches misaligned assumptions between domain experts and developers before a line of business logic is written. It is the highest-leverage application of the book's type-driven design principle.
+**Why It Matters**: Approval thresholds are one of the most frequently audited business rules in a procurement system. Keeping the derivation as a pure function (`decimal -> ApprovalLevel`) means it can be unit tested exhaustively — including boundary cases at exactly $1,000 and $10,000 — without spinning up a database, a workflow engine, or a notification service. This is the functional core / imperative shell principle applied to compliance-critical logic.
+
+---
+
+### Example 25: Workflow Type Alias — Full SubmitRequisition Signature
+
+The complete `SubmitRequisition` workflow signature ties together all the types from this beginner section. The type alias is the domain contract — a self-documenting specification that makes the workflow's purpose, inputs, outputs, and failure modes visible without reading the implementation.
+
+```fsharp
+// The complete SubmitRequisition workflow signature — ties all beginner types together.
+// This is the boundary between the "outside" (HTTP, JSON, user input)
+// and the "inside" (domain logic, events, state transitions).
+
+// Domain types (simplified for composition demonstration)
+type RequisitionId     = RequisitionId of string
+type ApprovalLevel     = L1 | L2 | L3
+type RequisitionStatus = Draft | Submitted | ManagerReview | Approved | Rejected | ConvertedToPO
+type SkuCode           = SkuCode of string
+type UnitOfMeasure     = EACH | BOX | KG | LITRE | HOUR
+type Quantity          = { Value: int; Unit: UnitOfMeasure }
+type UnitPrice         = UnitPrice of decimal
+type PurchaseRequisitionLine = { LineNumber: int; SkuCode: SkuCode; Quantity: Quantity; UnitPrice: UnitPrice }
+
+// The unvalidated DTO arriving from the HTTP layer
+type UnvalidatedRequisition = {
+    RequestedBy: string
+    // => Raw employee ID — not validated
+    RawLines:    (string * int * decimal * string) list
+    // => Raw tuples: (skuCode, quantity, unitPrice, unit) — not validated
+}
+// => UnvalidatedRequisition : DTO-shaped input — purely for deserialisation
+
+// Domain events produced by a successful submission
+type RequisitionSubmittedPayload = {
+    RequisitionId:  RequisitionId
+    // => Newly assigned ID
+    ApprovalLevel:  ApprovalLevel
+    // => L1/L2/L3 — drives the approval router
+    RequestedBy:    string
+    // => Employee identifier — for notification
+    TotalAmount:    decimal
+    // => Requisition total — for finance ledger event
+    SubmittedAt:    System.DateTimeOffset
+    // => Submission timestamp — for SLA tracking
+}
+// => RequisitionSubmittedPayload : event payload carrying everything consumers need
+
+type RequisitionEvent =
+    | RequisitionSubmitted of RequisitionSubmittedPayload
+    // => The event emitted on successful submission
+
+// Possible errors from the submission workflow
+type SubmissionError =
+    | RequestedByRequired
+    // => Cannot route approval without an employee ID
+    | NoLinesProvided
+    // => A blank requisition has no business meaning
+    | InvalidSkuCode     of sku: string
+    // => A line item references a malformed SKU
+    | InvalidQuantity    of sku: string * qty: int
+    // => A quantity ≤ 0 on a line item
+    | InvalidUnitPrice   of sku: string * price: decimal
+    // => A price ≤ 0 on a line item
+    | UnknownUnit        of unit: string
+    // => A line item references an unknown unit of measure
+
+// The workflow type alias — the entire domain contract
+type SubmitRequisition =
+    UnvalidatedRequisition -> Result<RequisitionEvent list, SubmissionError>
+// => Arrow type reads: "given an unvalidated requisition, produce either a list of
+//    domain events (success) or a named submission error (failure)"
+// => Result forces callers to handle both cases — no unchecked exceptions
+
+// A stub implementation matching the signature
+let submitRequisition : SubmitRequisition =
+    fun (req: UnvalidatedRequisition) ->
+        // => First validate the inputs
+        if req.RequestedBy = "" then Error RequestedByRequired
+        // => Guard 1: employee ID required for approval routing
+        elif req.RawLines.IsEmpty then Error NoLinesProvided
+        // => Guard 2: at least one line item required
+        else
+            let id     = RequisitionId ("req_" + System.Guid.NewGuid().ToString("N").[..7])
+            // => Assign the requisition ID at submission time
+            let total  = req.RawLines |> List.sumBy (fun (_, qty, price, _) -> decimal qty * price)
+            // => Compute total for approval level derivation
+            let level  = if total <= 1000m then L1 elif total <= 10000m then L2 else L3
+            // => Derive approval level from total — pure domain rule
+            let payload = { RequisitionId = id; ApprovalLevel = level; RequestedBy = req.RequestedBy
+                            TotalAmount = total; SubmittedAt = System.DateTimeOffset.UtcNow }
+            // => Assemble the event payload with all required fields
+            Ok [RequisitionSubmitted payload]
+            // => Return the single domain event — downstream consumers react to it
+
+// Test the complete workflow
+let testReq = {
+    RequestedBy = "emp_00456"
+    // => Valid employee ID
+    RawLines    = [("OFF-0042", 10, 8.50m, "BOX"); ("ELE-0099", 3, 899.99m, "EACH")]
+    // => Two valid raw line items
+}
+
+let result = submitRequisition testReq
+// => Validates inputs, assigns ID, derives approval level, emits event
+// => result : Result<RequisitionEvent list, SubmissionError>
+
+match result with
+| Ok events ->
+    printfn "Submission successful — %d event(s) produced" events.Length
+    // => Output: Submission successful — 1 event(s) produced
+    events |> List.iter (fun e -> printfn "Event: %A" e)
+    // => Output: Event: RequisitionSubmitted { RequisitionId = ...; ApprovalLevel = L2; ... }
+| Error e ->
+    printfn "Submission failed: %A" e
+    // => Would output the specific error if validation failed
+```
+
+**Key Takeaway**: A workflow type alias is the domain contract — it names the inputs, outputs, and failure modes of an entire business workflow in a single line that domain experts and developers can read and review together.
+
+**Why It Matters**: The `SubmitRequisition` type alias is the capstone of the beginner section — it shows how ubiquitous language (Example 1), domain events (Example 2), bounded contexts (Example 3), record types (Example 4), discriminated unions (Examples 5–6), wrapper types (Example 7), smart constructors (Example 8), and value objects (Examples 12–20) all compose into a coherent workflow signature. This is the central promise of type-driven DDD: the type system becomes the domain model, and the domain model becomes the specification.

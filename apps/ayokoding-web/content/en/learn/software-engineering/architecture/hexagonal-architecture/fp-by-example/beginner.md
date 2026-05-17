@@ -3,7 +3,7 @@ title: "Beginner"
 date: 2026-05-15T00:00:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 1-25: The three zones, ports as function types, adapters as function modules, the dependency rule, and the full flow from HTTP to domain to repository in F#"
+description: "Examples 1-25: The three zones, ports as function types, adapters as function modules, the dependency rule, and the full flow from HTTP to domain to repository — using procurement-platform-be as the running domain in F#"
 tags:
   [
     "hexagonal-architecture",
@@ -16,7 +16,7 @@ tags:
   ]
 ---
 
-This beginner-level section introduces Hexagonal Architecture (Ports and Adapters) through F# code. The central thesis — that the **domain must be isolated from all infrastructure concerns** via a clean dependency rule — is established here through 25 progressive examples. All examples use the order-taking domain introduced in Wlaschin's _Domain Modeling Made Functional_: `UnvalidatedOrder → ValidateOrder → PriceOrder → OrderPlaced`.
+This beginner-level section introduces Hexagonal Architecture (Ports and Adapters) through F# code. The central thesis — that the **domain must be isolated from all infrastructure concerns** via a clean dependency rule — is established here through 25 progressive examples. All examples use the `purchasing` bounded context of `procurement-platform-be`: employees draft `PurchaseOrder` records, submit them for approval, and receive confirmations when orders are issued to suppliers.
 
 ## The Three Zones (Examples 1–7)
 
@@ -31,8 +31,8 @@ graph TD
         DB["PostgresAdapter\nopen Npgsql"]
     end
     subgraph Application["Application Zone (middle)"]
-        SVC["OrderService\nopen Domain only"]
-        PORT["Ports (function types)"]
+        SVC["PurchaseOrderService\nopen Domain only"]
+        PORT["Ports (function type aliases)"]
     end
     subgraph Domain["Domain Zone (inner)"]
         DOM["Domain.fs\nno external imports"]
@@ -54,35 +54,39 @@ graph TD
 // No Npgsql, no ASP.NET, no JSON serialiser — only F# standard library.
 // This is the innermost zone: pure business logic, always testable in isolation.
 
-module OrderTaking.Domain
+module ProcurementPlatform.Domain
 
 // All types here reference only F# primitives and other domain types.
-type OrderId = string
+type PurchaseOrderId = string
 // => Simple alias — zero runtime cost, maximum documentation value
 
-type CustomerId = string
-// => Distinct from OrderId — documents the domain vocabulary
+type SupplierId = string
+// => Distinct from PurchaseOrderId — documents the domain vocabulary
 
-type UnvalidatedOrder = {
-    // => Raw input arriving from the outside world; nothing validated yet
-    OrderId: string
-    // => Raw string — may be blank, may be invalid
-    CustomerId: string
-    // => Raw customer identifier — not yet verified
+type PurchaseOrder = {
+    // => The aggregate root of the purchasing context
+    Id: PurchaseOrderId
+    // => Unique identifier in format po_<uuid>
+    SupplierId: SupplierId
+    // => Identifies the supplier this PO is addressed to
+    TotalAmount: decimal
+    // => Sum of all line item values; drives approval-level routing
+    Status: string
+    // => Current state in the PO lifecycle: Draft, AwaitingApproval, Approved, etc.
 }
 
 // ── file: Application.fs ─────────────────────────────────────────────────
 // Application zone imports only the Domain module — no infrastructure.
 
-module OrderTaking.Application
-// open OrderTaking.Domain   ← only this open statement is permitted here
+module ProcurementPlatform.Application
+// open ProcurementPlatform.Domain   ← only this open statement is permitted here
 
 // ── file: Adapters/PostgresAdapter.fs ────────────────────────────────────
 // Adapters zone imports Application zone plus infrastructure libraries.
 
-module OrderTaking.Adapters.PostgresAdapter
-// open OrderTaking.Application   ← permitted: adapters depend on application
-// open Npgsql                    ← permitted: adapters can open infra libraries
+module ProcurementPlatform.Adapters.PostgresAdapter
+// open ProcurementPlatform.Application   ← permitted: adapters depend on application
+// open Npgsql                            ← permitted: adapters can open infra libraries
 
 // ── ANTI-PATTERN: what NOT to do ─────────────────────────────────────────
 // open Npgsql  ← inside Domain.fs — THIS IS WRONG
@@ -109,57 +113,61 @@ A pure domain function accepts only domain types and returns a `Result`. It has 
 // Zero open statements for any library — only F# language constructs.
 // This function can be tested by calling it directly with no setup.
 
-type UnvalidatedOrder = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => All fields are raw primitives — not yet validated
+type PurchaseOrderId = string
+// => Single-field alias — distinguishes PO identity from other strings
 
-type ValidatedOrder   = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Same shape, but its existence signals that validation has passed
+type Money = { Amount: decimal; Currency: string }
+// => Value object: amount must be >= 0, currency must be 3-letter ISO code
+
+type DraftPurchaseOrder = {
+    // => Raw input arriving from the outside world; nothing validated yet
+    Id: string
+    // => Raw string — may be blank, may not follow po_<uuid> format
+    SupplierId: string
+    // => Raw supplier identifier — not yet verified
+    TotalAmount: decimal
+    // => Raw amount — may be negative or zero
+}
 
 type DomainError =
     // => Named errors — not generic exceptions
     | BlankOrderId
-    // => The order ID was empty or whitespace
-    | BlankCustomerId
-    // => The customer ID was empty or whitespace
-    | NonPositiveQuantity of decimal
-    // => Quantity was zero or negative — domain rule violation
+    // => The PO ID was empty or whitespace
+    | BlankSupplierId
+    // => The supplier ID was empty or whitespace
+    | NonPositiveAmount of decimal
+    // => Total amount was zero or negative — domain rule violation
 
-let validateOrder (input: UnvalidatedOrder) : Result<ValidatedOrder, DomainError> =
+let validateDraftPO (input: DraftPurchaseOrder) : Result<DraftPurchaseOrder, DomainError> =
     // => Input: raw DTO from the outside world
-    // => Output: Ok ValidatedOrder if all rules pass, Error DomainError if any fail
-    if System.String.IsNullOrWhiteSpace(input.OrderId) then
-        // => Guard 1: the order ID must be non-blank
+    // => Output: Ok DraftPurchaseOrder if all rules pass, Error DomainError if any fail
+    if System.String.IsNullOrWhiteSpace(input.Id) then
+        // => Guard 1: the PO ID must be non-blank
         Error BlankOrderId
         // => Returns named error — the caller knows exactly what went wrong
-    elif System.String.IsNullOrWhiteSpace(input.CustomerId) then
-        // => Guard 2: the customer ID must be non-blank
-        Error BlankCustomerId
-        // => Named error for blank customer ID
-    elif input.Quantity <= 0m then
-        // => Guard 3: quantities must be positive — domain rule
-        Error (NonPositiveQuantity input.Quantity)
+    elif System.String.IsNullOrWhiteSpace(input.SupplierId) then
+        // => Guard 2: the supplier ID must be non-blank
+        Error BlankSupplierId
+        // => Named error for blank supplier ID
+    elif input.TotalAmount <= 0m then
+        // => Guard 3: total amount must be positive — domain rule
+        Error (NonPositiveAmount input.TotalAmount)
         // => Carries the actual invalid value for diagnostics
     else
-        Ok { OrderId = input.OrderId; CustomerId = input.CustomerId; Quantity = input.Quantity }
-        // => All guards passed — returns the validated order
-
-// ── ANTI-PATTERN ─────────────────────────────────────────────────────────
-// let validateOrderWrong (input: UnvalidatedOrder) (conn: NpgsqlConnection) =
-//     open Npgsql                          ← WRONG: infrastructure import in domain
-//     let exists = queryDatabase conn ...  ← WRONG: side effect inside domain function
-//     if not exists then failwith "not found" ← WRONG: exception instead of Result
+        Ok input
+        // => All guards passed — returns the validated draft PO
 
 // Testing the pure function — no database, no HTTP, no setup
-let result = validateOrder { OrderId = "ORD-001"; CustomerId = "CUST-42"; Quantity = 2m }
-// => All three guards pass; Quantity 2m > 0
-// => result : Result<ValidatedOrder, DomainError> = Ok { OrderId = "ORD-001"; ... }
+let result = validateDraftPO { Id = "po_abc-123"; SupplierId = "sup_xyz-456"; TotalAmount = 500m }
+// => All three guards pass; TotalAmount 500m > 0
+// => result : Result<DraftPurchaseOrder, DomainError> = Ok { Id = "po_abc-123"; ... }
 
 match result with
-| Ok order  -> printfn "Validated: %s" order.OrderId
-// => order.OrderId = "ORD-001" — unwrapped from Ok
-| Error err -> printfn "Error: %A" err
+| Ok po   -> printfn "Valid PO: %s" po.Id
+// => po.Id = "po_abc-123" — unwrapped from Ok
+| Error e -> printfn "Error: %A" e
 // => Not reached — input was valid
-// => Output: Validated: ORD-001
+// => Output: Valid PO: po_abc-123
 ```
 
 **Key Takeaway**: A pure domain function with no infrastructure imports is the most testable unit of code in the system — calling it requires nothing but the F# runtime and domain types.
@@ -170,15 +178,15 @@ match result with
 
 ### Example 3: Input Port as a Function Type Alias
 
-An **input port** is the entry point into the application. Any adapter (HTTP handler, CLI parser, message consumer) that wants to trigger the `PlaceOrder` workflow calls through this port. In F#, the input port is a function type alias — no interface, no abstract class, no inheritance.
+An **input port** is the entry point into the application. Any adapter (HTTP handler, CLI parser, message consumer) that wants to trigger the `SubmitPurchaseOrder` workflow calls through this port. In F#, the input port is a function type alias — no interface, no abstract class, no inheritance.
 
 ```mermaid
 graph LR
-    HTTP["HTTP Adapter\nPOST /orders"]
-    CLI["CLI Adapter\n./place-order"]
+    HTTP["HTTP Adapter\nPOST /purchase-orders"]
+    CLI["CLI Adapter\n./submit-po"]
     TEST["Test\nxUnit / Expecto"]
-    PORT["PlaceOrderUseCase\nfunction type alias"]
-    SVC["placeOrder\n(implementation)"]
+    PORT["SubmitPurchaseOrderUseCase\nfunction type alias"]
+    SVC["submitPurchaseOrder\n(implementation)"]
 
     HTTP -- "calls port" --> PORT
     CLI  -- "calls port" --> PORT
@@ -193,2069 +201,1778 @@ graph LR
 ```
 
 ```fsharp
-// Input port: the complete contract for placing an order.
+// Input port: the complete contract for submitting a purchase order.
 // A type alias for a function — not an interface, not a class hierarchy.
 
-type UnvalidatedOrder = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Raw data entering the system from any delivery mechanism
+type DraftPurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal }
+// => Raw input from any delivery mechanism — nothing validated yet
 
-type OrderPlaced = { OrderId: string; TotalAmount: decimal }
-// => Domain event raised when the workflow completes successfully
+type SubmittedPurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Represents a PO in AwaitingApproval state — validated and persisted
 
-type PlacingOrderError =
-    // => All named failure modes — the caller must handle each
-    | ValidationError  of string
-    // => Input data violated a domain rule
-    | ProductNotFound  of string
-    // => The referenced product does not exist
-    | PricingError     of string
-    // => Price calculation failed (catalogue unavailable, etc.)
-
-// ── The input port ────────────────────────────────────────────────────────
-// This is the complete specification of what the PlaceOrder workflow does.
-// Any function with this signature satisfies the port — duck typing by type alias.
-type PlaceOrderUseCase =
-    // => F# type alias for a function type
-    UnvalidatedOrder -> Async<Result<OrderPlaced list, PlacingOrderError>>
-    // => Input: raw, unvalidated order from any delivery mechanism
-    // => Async: the implementation will call async ports (database, email)
-    // => Result: distinguishes success (Ok) from domain failure (Error)
-    // => OrderPlaced list: one command can raise multiple events
-
-// Any function that matches the type satisfies the port
-let stubPlaceOrder : PlaceOrderUseCase =
-    // => Type annotation enforces the contract at compile time
-    fun input ->
-        async {
-            // => async { } computation expression — returns Async<Result<...>>
-            return Ok [ { OrderId = input.OrderId; TotalAmount = 99.00m } ]
-            // => Stub: always succeeds with a hardcoded amount
-        }
-
-// The HTTP adapter, CLI adapter, and test all call the same type
-let callPort (useCase: PlaceOrderUseCase) orderId =
-    // => Takes the port as a parameter — whichever function satisfies the type works
-    let input = { OrderId = orderId; CustomerId = "CUST-1"; Quantity = 1m }
-    // => Constructs the unvalidated input from the adapter's data
-    useCase input
-    // => Calls the port — does not care which concrete function is used
-
-printfn "Input port defined — any matching function satisfies it"
-// => Output: Input port defined — any matching function satisfies it
-```
-
-**Key Takeaway**: An input port is a function type alias — any function with the correct signature satisfies it, enabling the HTTP adapter, CLI adapter, and tests to all drive the same application logic through the same type.
-
-**Why It Matters**: Traditional OOP ports require callers to reference an interface type and implementations to declare `implements`. F# function type aliases achieve the same isolation with less ceremony. The critical benefit is that test code calling the `PlaceOrderUseCase` port exercises the exact same contract as the HTTP handler — there is no test-only interface or mock class that silently diverges from the production code path.
-
----
-
-### Example 4: Output Port as a Function Type Alias
-
-An **output port** is how the application reaches outward — to a database, an email service, a message queue. The application defines the port as a function type alias; the adapter provides the concrete implementation. The domain and application modules never import the adapter's infrastructure library.
-
-```mermaid
-graph LR
-    SVC["Application Service\nplaceOrder"]
-    PORT["FindOrder\noutput port type"]
-    PG["PostgresAdapter\nfindOrder = Npgsql query"]
-    MEM["InMemoryAdapter\nfindOrder = Dictionary lookup"]
-    TEST["Test\nfindOrder = stub fn"]
-
-    SVC -- "calls port type" --> PORT
-    PORT -- "satisfied by (production)" --> PG
-    PORT -- "satisfied by (test)" --> MEM
-    PORT -- "satisfied by (stub)" --> TEST
-
-    style SVC fill:#0173B2,stroke:#000,color:#fff
-    style PORT fill:#029E73,stroke:#000,color:#fff
-    style PG fill:#DE8F05,stroke:#000,color:#000
-    style MEM fill:#CA9161,stroke:#000,color:#000
-    style TEST fill:#CC78BC,stroke:#000,color:#000
-```
-
-```fsharp
-// Output ports: function type aliases defining what the application needs
-// from the outside world — without specifying HOW it is provided.
-
-type OrderId = string
-// => Domain identifier — used as the key for lookups
-
-type Order = { OrderId: OrderId; CustomerId: string; TotalAmount: decimal }
-// => The stored order record — what the repository holds and returns
-
-type RepositoryError =
-    // => Named failures from the output port — not raw exceptions
-    | NotFound of OrderId
-    // => No order exists with the given ID
-    | DatabaseError of string
-    // => Infrastructure failure (connection lost, timeout, etc.)
-
-// ── Output port: find a single order by ID ────────────────────────────────
-// The application calls this type; the adapter provides the concrete function.
-type FindOrder = OrderId -> Async<Result<Order option, RepositoryError>>
-// => Input: the ID to look up
-// => Async: database I/O is inherently async
-// => Result: distinguishes infrastructure failure from successful absence
-// => Order option: Some order if found, None if it does not exist
-
-// ── Output port: persist an order ────────────────────────────────────────
-type SaveOrder = Order -> Async<Result<unit, RepositoryError>>
-// => Input: the order to persist
-// => Result<unit, ...>: unit means "no useful return value on success"
-// => Only the error case carries information
-
-// Application code references only the port types — not any concrete adapter
-let lookupAndLog (findOrder: FindOrder) (orderId: OrderId) =
-    // => Takes the port as a function parameter — dependency injected via partial application
-    // => Could be a Postgres function, an in-memory function, or a stub — does not matter
-    async {
-        let! result = findOrder orderId
-        // => Calls the port — awaits the Async result
-        match result with
-        | Ok (Some order) ->
-            // => Order found — print it
-            printfn "Found order: %s for customer %s" order.OrderId order.CustomerId
-        | Ok None ->
-            // => No order with this ID — absence is not an error
-            printfn "Order %s not found" orderId
-        | Error (DatabaseError msg) ->
-            // => Infrastructure failure — log and surface
-            printfn "DB error: %s" msg
-        | Error (NotFound id) ->
-            // => Explicit not-found from the port
-            printfn "Repository says not found: %s" id
-    }
-
-printfn "Output port types defined — application depends only on function types"
-// => Output: Output port types defined — application depends only on function types
-```
-
-**Key Takeaway**: Output ports are function type aliases that describe what the application needs from the outside world — the application service calls the type, and any function satisfying that type can serve as the implementation.
-
-**Why It Matters**: Defining output ports as function types rather than interface types removes the need for a DI container. The production PostgreSQL function and the in-memory test function are both just functions of the right type. Swapping them requires no reflection, no XML configuration, no container registration — just passing a different function when partially applying the application service. This is the simplest possible form of the Dependency Inversion Principle.
-
----
-
-### Example 5: Multiple Output Ports as a Record of Functions
-
-When an application service needs several output ports (save order, send email, look up price), grouping them in a single record makes the dependency bundle explicit. Passing a different record swaps the entire adapter layer without touching the application service.
-
-```fsharp
-// OrderPorts: a record grouping all output ports the application service needs.
-// Different records = different adapter sets = different environments.
-
-type OrderId    = string
-// => Domain identifier used across all port signatures
-type CustomerId = string
-// => Customer identifier — needed by the notification port
-
-type Order = { OrderId: OrderId; CustomerId: CustomerId; TotalAmount: decimal }
-// => The entity the ports operate on
-
-type RepositoryError = DatabaseError of string | NotFound of OrderId
-// => Shared error type for all repository output ports
-
-type NotificationError = SmtpFailure of string | InvalidAddress of string
-// => Errors the notification port can return
-
-// ── Individual port type aliases ──────────────────────────────────────────
-type FindOrder         = OrderId   -> Async<Result<Order option, RepositoryError>>
-// => Look up a single order — used to check for duplicates before saving
-
-type SaveOrder         = Order     -> Async<Result<unit, RepositoryError>>
-// => Persist an order — called after validation and pricing succeed
-
-type SendAcknowledgment = CustomerId -> string -> Async<Result<unit, NotificationError>>
-// => Notify the customer — CustomerId identifies the recipient, string is the message body
-
-// ── The dependency bundle ─────────────────────────────────────────────────
-// A record of functions — one per output port the application service requires.
-// This is the "dependency record" pattern: no DI container, no service locator.
-type OrderPorts = {
-    // => Groups all output ports into a single passable value
-    FindOrder: FindOrder
-    // => The repository read port — injected at startup
-    SaveOrder: SaveOrder
-    // => The repository write port — injected at startup
-    SendAcknowledgment: SendAcknowledgment
-    // => The notification port — injected at startup
-}
-
-// Application service: takes the port record as its first parameter
-let placeOrder (ports: OrderPorts) (input: Order) =
-    // => ports carries all adapters the service will call
-    // => Swapping ports = swapping adapters — zero code changes to the service body
-    async {
-        let! existing = ports.FindOrder input.OrderId
-        // => Calls the FindOrder port — could be Postgres, in-memory, or stub
-        match existing with
-        | Ok (Some _) -> return Error (DatabaseError "Duplicate order ID")
-        // => Order already exists — short-circuit with an error
-        | _ ->
-            let! saved = ports.SaveOrder input
-            // => Calls the SaveOrder port — persists the order
-            match saved with
-            | Error e -> return Error e
-            // => Persistence failed — surface the error
-            | Ok () ->
-                let! _ = ports.SendAcknowledgment input.CustomerId "Order placed"
-                // => Calls the notification port — non-critical, result ignored in this stub
-                return Ok ()
-                // => Workflow succeeded
-    }
-
-printfn "OrderPorts record bundles all output ports — pass different record = different adapters"
-// => Output: OrderPorts record bundles all output ports — pass different record = different adapters
-```
-
-**Key Takeaway**: A record of function-typed fields is the functional equivalent of a dependency injection container — passing a different record to the application service substitutes the entire adapter layer.
-
-**Why It Matters**: DI containers in OOP frameworks are complex runtime machinery that resolves dependencies via reflection, configuration files, and lifetime management. A record of functions achieves the same substitutability with zero runtime overhead and full compile-time type checking. The test record contains in-memory functions; the production record contains database functions. The application service cannot tell the difference — and that is the entire point.
-
----
-
-### Example 6: Domain Types That Reference No Infrastructure
-
-Every type in the domain module is defined using only F# primitives and other domain types. No JSON attributes, no ORM annotations, no HTTP framework types contaminate the domain model. This keeps domain types readable to domain experts and independent of any framework version.
-
-```fsharp
-// ── CORRECT: domain types with zero external dependencies ────────────────
-// The domain module's only imports are F# standard library types.
-// No [<JsonPropertyName>], no [<Column>], no DTO base classes.
-
-type OrderId    = private OrderId    of string
-// => Wrapper type — prevents mixing order IDs with customer IDs at compile time
-
-type CustomerId = private CustomerId of string
-// => Wrapper for customer identifiers — same pattern, distinct type
-
-type ProductCode =
-    // => Products come in two formats; the DU captures this OR relationship
-    | Widget of widgetCode: string
-    // => Widget codes: "W" followed by four digits
-    | Gizmo  of gizmoCode: string
-    // => Gizmo codes: "G" followed by three digits
-
-type UnvalidatedOrder = {
-    // => Raw input arriving from any delivery mechanism; all primitives
-    OrderId: string
-    // => Not yet wrapped — validation will create an OrderId wrapper
-    CustomerId: string
-    // => Not yet wrapped — validation will create a CustomerId wrapper
-    Lines: (string * decimal) list
-    // => List of (product code string, quantity) pairs — still raw
-}
-
-type ValidatedOrder = {
-    // => All fields use domain wrapper types — validation has happened
-    OrderId: OrderId
-    // => Wrapped and validated — cannot be blank
-    CustomerId: CustomerId
-    // => Wrapped and validated — cannot be blank
-    Lines: (ProductCode * decimal) list
-    // => ProductCode DU — only valid product codes exist here
-}
-
-type OrderPlaced = {
-    // => Domain event — emitted when the workflow completes successfully
-    OrderId: OrderId
-    // => The ID of the placed order — correlates the event to the command
-    CustomerId: CustomerId
-    // => Who placed it — downstream contexts may need to notify the customer
-    TotalAmount: decimal
-    // => The billed total — needed by the financial ledger context
-}
-
-// ── ANTI-PATTERN ─────────────────────────────────────────────────────────
-// type OrderPlacedWrong = {
-//     [<JsonPropertyName("order_id")>]   ← WRONG: JSON attribute in domain type
-//     OrderId: string
-//     [<Column("customer_id")>]          ← WRONG: ORM annotation in domain type
-//     CustomerId: string
-// }
-// => Framework attributes tie the domain to specific library versions.
-// => DTO translation (handled in the adapter layer) removes this coupling.
-
-printfn "Domain types defined — zero external dependencies"
-// => Output: Domain types defined — zero external dependencies
-```
-
-**Key Takeaway**: Domain types that contain no framework annotations or external references are free to evolve independently of serialisation formats, database schemas, or HTTP conventions.
-
-**Why It Matters**: When domain types carry JSON attributes or ORM annotations, a framework upgrade can force domain model changes. Conversely, a domain model change requires coordinated updates to serialisation mappings. Keeping domain types clean of these concerns lets the domain evolve at its own pace. DTO translation, handled in the adapter layer (Examples 13 and 14), is the necessary cost — but it buys complete independence between the domain model and every framework the system touches.
-
----
-
-### Example 7: The Dependency Rule Visualised in F# Module Structure
-
-The dependency rule is simple: inner zones can never import outer zones. Domain cannot import Application or Adapters. Application cannot import Adapters. Only Adapters import everything. This rule is enforced by which `open` statements appear (or are absent) in each file.
-
-```fsharp
-// ── Domain.fs — innermost zone ───────────────────────────────────────────
-// NO open statements for any external library.
-// Only F# language constructs and types defined in this module.
-
-module OrderTaking.Domain
-
-type OrderId    = string
-// => Domain primitive — string alias for documentation value
-type CustomerId = string
-// => Customer identifier alias
-
-type DomainError = ValidationFailed of string | ProductNotFound of string
-// => Domain errors — not tied to HTTP status codes or database error codes
-
-let validateOrderId (raw: string) : Result<OrderId, DomainError> =
-    // => Pure domain function — no infrastructure, no Async, no effects
-    if System.String.IsNullOrWhiteSpace(raw) then Error (ValidationFailed "OrderId blank")
-    // => Guard: blank IDs are a domain rule violation
-    else Ok raw
-    // => Non-blank string passes — returns the validated alias
-
-// ── Application.fs — middle zone ─────────────────────────────────────────
-// open OrderTaking.Domain   ← ONLY this open — application imports domain only
-
-module OrderTaking.Application
-// All port types and application service functions go here.
-// No Npgsql, no Microsoft.AspNetCore, no System.Net.Http imports.
-
-type FindOrder = OrderId -> Async<Result<string option, string>>
-// => Output port type alias — defined in application, satisfied by adapters
-
-// ── Adapters/PostgresAdapter.fs — outer zone ─────────────────────────────
-// open OrderTaking.Application   ← imports application (and transitively domain)
-// open Npgsql                    ← infrastructure library — ONLY in adapters
-
-module OrderTaking.Adapters.Postgres
-// The PostgreSQL adapter satisfies the FindOrder output port using Npgsql.
-// Domain.fs and Application.fs remain unchanged when this adapter is replaced.
-
-// ── Adapters/HttpAdapter.fs — outer zone ─────────────────────────────────
-// open OrderTaking.Application          ← imports application
-// open Microsoft.AspNetCore.Http        ← HTTP types — ONLY in adapters
-
-module OrderTaking.Adapters.Http
-// The HTTP adapter translates HTTP requests to PlaceOrderUseCase calls.
-// Domain.fs and Application.fs do not know this adapter exists.
-
-printfn "Dependency rule: Domain ← Application ← Adapters"
-// => Arrow means 'is imported by'
-// => Output: Dependency rule: Domain ← Application ← Adapters
-```
-
-**Key Takeaway**: The dependency rule is simply a convention on `open` statements — domain files have none pointing outward, adapter files have all the external ones.
-
-**Why It Matters**: In many codebases the dependency direction is discovered by accident through import chain analysis. Making it an explicit file-level convention means any violation is immediately visible during code review. A `open Npgsql` inside `Domain.fs` is a one-line code smell that any reviewer can catch without understanding the business logic. This convention is cheap to establish and extremely valuable to maintain as the system grows.
-
----
-
-## Ports and Adapters (Examples 8–16)
-
-### Example 8: In-Memory Adapter — Satisfying an Output Port with a Mutable Dictionary
-
-An in-memory adapter provides a concrete implementation of the `FindOrder` and `SaveOrder` output ports using a `Dictionary`. It satisfies the exact port type aliases defined in the application zone. It is used in tests — no database required, no network, deterministic results every time.
-
-```fsharp
-// In-memory adapter: satisfies output port types using a Dictionary.
-// Used in tests — replaces the PostgreSQL adapter without any code changes
-// to the application service.
-
-open System.Collections.Generic
-
-type OrderId = string
-// => The key type for our in-memory store
-
-type Order = { OrderId: OrderId; CustomerId: string; TotalAmount: decimal }
-// => The entity stored and retrieved by the adapter
-
-type RepositoryError = DatabaseError of string | NotFound of OrderId
-// => Same error type the output ports require
-
-// ── Output port type aliases (from Application zone) ──────────────────────
-type FindOrder = OrderId -> Async<Result<Order option, RepositoryError>>
-// => The port contract — the adapter must satisfy this exact type
-type SaveOrder = Order   -> Async<Result<unit,         RepositoryError>>
-// => The save port contract — same pattern
-
-// ── In-memory adapter implementation ─────────────────────────────────────
-// A module that closes over a Dictionary and exposes functions matching the ports.
-let createInMemoryOrderStore () =
-    // => Factory function — creates a fresh store for each test
-    // => Returns the two port functions as a tuple
-    let store = Dictionary<string, Order>()
-    // => Mutable dictionary keyed by OrderId string
-    // => Each call to the factory creates an isolated store — no shared state between tests
-
-    let findOrder : FindOrder =
-        // => Type annotation enforces the port contract — compiler checks signature
-        fun orderId ->
-            async {
-                // => async { } required because the port type is Async
-                match store.TryGetValue(orderId) with
-                | true,  order -> return Ok (Some order)
-                // => Found: returns Some with the order
-                | false, _     -> return Ok None
-                // => Not found: returns None (not an error — absence is valid)
-            }
-
-    let saveOrder : SaveOrder =
-        // => Satisfies the SaveOrder port contract
-        fun order ->
-            async {
-                store.[order.OrderId] <- order
-                // => Mutable write to the dictionary — acceptable in the adapter layer
-                // => The domain and application layers remain pure
-                return Ok ()
-                // => Always succeeds — in-memory ops don't have connection failures
-            }
-
-    findOrder, saveOrder
-    // => Returns both port functions — caller wires them into the OrderPorts record
-
-// Demonstrating in a test-style scenario
-let find, save = createInMemoryOrderStore ()
-// => find : FindOrder, save : SaveOrder — both satisfy their port types
-
-let saved = save { OrderId = "ORD-001"; CustomerId = "CUST-42"; TotalAmount = 29.97m } |> Async.RunSynchronously
-// => Async.RunSynchronously used only in examples — use Async.AwaitTask in real tests
-// => saved : Result<unit, RepositoryError> = Ok ()
-
-let found = find "ORD-001" |> Async.RunSynchronously
-// => found : Result<Order option, RepositoryError> = Ok (Some { OrderId = "ORD-001"; ... })
-
-printfn "In-memory adapter satisfies port types: %A" found
-// => Output: In-memory adapter satisfies port types: Ok (Some {OrderId = "ORD-001"; ...})
-```
-
-**Key Takeaway**: An in-memory adapter satisfies output port types using a `Dictionary`, enabling fast, deterministic tests without any database infrastructure.
-
-**Why It Matters**: Integration tests requiring a real database are slow (seconds per test), fragile (fail when the database is unavailable), and hard to parallelize (shared state causes ordering dependencies). An in-memory adapter that satisfies the same output port types makes every test instant, isolated, and runnable on any developer machine. The application service cannot tell the difference — it only sees the port types.
-
----
-
-### Example 9: PostgreSQL Adapter Stub — Satisfying the Same Output Port
-
-The PostgreSQL adapter satisfies the same `FindOrder` and `SaveOrder` port types as the in-memory adapter. The domain and application modules are completely unchanged. Only the adapter module differs. Swapping adapters means passing a different function when constructing the `OrderPorts` record.
-
-```fsharp
-// PostgreSQL adapter: satisfies the same port types as the in-memory adapter.
-// The ONLY difference from Example 8 is the implementation body.
-// Application.fs and Domain.fs are unchanged.
-
-// Simulating Npgsql-style imports (shown as comments — not runnable without Npgsql)
-// open Npgsql   ← this open appears ONLY in the adapter module, never in Domain or Application
-
-type OrderId = string
-// => Domain identifier — same as in the in-memory adapter
-
-type Order = { OrderId: OrderId; CustomerId: string; TotalAmount: decimal }
-// => Same domain entity type — adapters share domain types
-
-type RepositoryError = DatabaseError of string | NotFound of OrderId
-// => Same error type — the port contract requires this specific union
-
-type FindOrder = OrderId -> Async<Result<Order option, RepositoryError>>
-// => The port type to satisfy — identical to what the in-memory adapter satisfied
-
-type SaveOrder = Order -> Async<Result<unit, RepositoryError>>
-// => The save port type — same contract, different implementation body
-
-// ── Simulated PostgreSQL adapter functions ────────────────────────────────
-// In production, these functions open a Npgsql connection and query the database.
-// The signatures are IDENTICAL to the in-memory adapter — only the body differs.
-
-let postgresFind (connectionString: string) : FindOrder =
-    // => Partial application: bakes the connection string in, returns a FindOrder function
-    // => connectionString is injected at startup — not a global mutable
-    fun orderId ->
-        async {
-            // => Would execute: SELECT * FROM orders WHERE order_id = @orderId
-            // => Npgsql call omitted — focus is on the structural pattern
-            printfn "[Postgres] SELECT order_id=%s" orderId
-            // => Simulates the async database query
-            // => In production: use NpgsqlCommand with parameterised query
-            return Ok None
-            // => Stub returns None — real impl would return Ok (Some order) if found
-        }
-
-let postgresSave (connectionString: string) : SaveOrder =
-    // => Partial application: bakes the connection string in, returns a SaveOrder function
-    fun order ->
-        async {
-            // => Would execute: INSERT INTO orders VALUES (@orderId, @customerId, @total)
-            printfn "[Postgres] INSERT order_id=%s total=%.2f" order.OrderId order.TotalAmount
-            // => Simulates the async insert — real impl uses NpgsqlCommand.ExecuteNonQueryAsync
-            return Ok ()
-            // => Success — real impl checks affected rows and returns Error on zero
-        }
-
-// The application service receives the same port types regardless of adapter
-let productionFind = postgresFind "Host=localhost;Database=orders"
-// => productionFind : FindOrder — satisfies the output port type
-// => Same type as the in-memory adapter — the application service cannot tell the difference
-
-printfn "Postgres adapter satisfies the same port types — zero changes to domain or application"
-// => Output: Postgres adapter satisfies the same port types — zero changes to domain or application
-```
-
-**Key Takeaway**: The PostgreSQL adapter and the in-memory adapter satisfy identical port types — the application service is genuinely oblivious to which concrete implementation it uses.
-
-**Why It Matters**: "We can't swap the database" is a common excuse for inflexible systems. Hexagonal Architecture removes this excuse structurally. Because the application service only knows about function type aliases, the concrete adapter is irrelevant to the application logic. This enables: (1) testing with in-memory adapters, (2) migrating from PostgreSQL to another database by writing a new adapter, (3) running read-only integration tests against a different store. The architecture makes these substitutions mechanical rather than heroic.
-
----
-
-### Example 10: HTTP Adapter — Translating an HTTP Request to an Input Port Call
-
-The HTTP adapter is a thin layer that parses an HTTP request body, calls the `PlaceOrderUseCase` input port, and maps the `Result` to an HTTP status code. Every `open` for HTTP framework types is in the adapter module. The application service has no knowledge of HTTP.
-
-```mermaid
-graph LR
-    REQ["HTTP POST /orders\nJSON body"]
-    PARSE["Parse DTO\nHttpOrderDto"]
-    CONV["to UnvalidatedOrder\n(adapter translation)"]
-    PORT["PlaceOrderUseCase\n(input port)"]
-    MAP["Map Result\nto HTTP response"]
-    RESP["HTTP 200 / 422 / 500"]
-
-    REQ --> PARSE --> CONV --> PORT --> MAP --> RESP
-
-    style REQ fill:#DE8F05,stroke:#000,color:#000
-    style PARSE fill:#CA9161,stroke:#000,color:#000
-    style CONV fill:#CC78BC,stroke:#000,color:#000
-    style PORT fill:#0173B2,stroke:#000,color:#fff
-    style MAP fill:#029E73,stroke:#000,color:#fff
-    style RESP fill:#808080,stroke:#000,color:#fff
-```
-
-```fsharp
-// HTTP adapter: translates HTTP requests to input port calls.
-// The application service (PlaceOrderUseCase) is called with domain types.
-// HTTP-specific imports appear ONLY in this module.
-
-// Simulating ASP.NET Core types inline for a self-contained example
-type HttpStatusCode = OK | BadRequest | UnprocessableEntity | InternalServerError
-// => Simplified status code type — real adapter uses Microsoft.AspNetCore.Http
-
-type HttpResponse = { StatusCode: HttpStatusCode; Body: string }
-// => Simplified response — real adapter uses IActionResult or HttpContext
-
-// ── DTO (defined in adapter layer) ────────────────────────────────────────
-type HttpOrderDto = {
-    // => Mirrors the JSON request body exactly — field names match JSON keys
-    order_id: string
-    // => Snake_case matches the JSON convention — domain uses PascalCase
-    customer_id: string
-    // => Raw string from JSON — not yet validated
-    quantity: decimal
-    // => Raw decimal from JSON body — may be zero or negative
-}
-
-// Domain types (from Application zone)
-type UnvalidatedOrder = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => The domain input type the application service expects
-
-type OrderPlaced = { OrderId: string; TotalAmount: decimal }
-// => Domain event type
-
-type PlacingOrderError = ValidationError of string | PricingError of string
-// => Domain error union
-
-type PlaceOrderUseCase = UnvalidatedOrder -> Async<Result<OrderPlaced list, PlacingOrderError>>
-// => The input port — the adapter calls this, not the application service directly
-
-// ── HTTP adapter handler function ─────────────────────────────────────────
-let handlePlaceOrder (useCase: PlaceOrderUseCase) (dto: HttpOrderDto) : Async<HttpResponse> =
-    // => useCase: the input port injected via partial application at startup
-    // => dto: the parsed JSON body — already deserialized by the framework
-    async {
-        let input = { OrderId = dto.order_id; CustomerId = dto.customer_id; Quantity = dto.quantity }
-        // => Translate DTO to domain input type — adapter responsibility
-        // => Field names are mapped: snake_case JSON → PascalCase domain
-
-        let! result = useCase input
-        // => Call the input port — Async.Await the result
-        // => The adapter does not know or care what happens inside the application service
-
-        return
-            match result with
-            | Ok events ->
-                // => Success: format events as JSON response
-                { StatusCode = OK; Body = sprintf """{"events":%d}""" (List.length events) }
-                // => HTTP 200 with event count — real adapter would serialize events to JSON
-            | Error (ValidationError msg) ->
-                // => Domain validation failure → HTTP 422 Unprocessable Entity
-                { StatusCode = UnprocessableEntity; Body = sprintf """{"error":"%s"}""" msg }
-            | Error (PricingError msg) ->
-                // => Pricing failure → HTTP 500 Internal Server Error
-                { StatusCode = InternalServerError; Body = sprintf """{"error":"%s"}""" msg }
-    }
-
-// Test the adapter with a stub use case
-let stubUseCase : PlaceOrderUseCase =
-    fun input -> async { return Ok [ { OrderId = input.OrderId; TotalAmount = 99.00m } ] }
-// => Stub satisfies the PlaceOrderUseCase type — used only to demonstrate the adapter
-
-let response =
-    handlePlaceOrder stubUseCase { order_id = "ORD-001"; customer_id = "CUST-1"; quantity = 2m }
-    |> Async.RunSynchronously
-// => Runs the async handler synchronously — only for demonstration
-
-printfn "HTTP response: %A %s" response.StatusCode response.Body
-// => Output: HTTP response: OK {"events":1}
-```
-
-**Key Takeaway**: The HTTP adapter is a pure translation layer — it maps HTTP vocabulary (JSON bodies, status codes) to domain vocabulary (input port types, Result values) without containing any business logic.
-
-**Why It Matters**: When business logic leaks into HTTP handlers, the logic becomes untestable without an HTTP server and impossible to reuse from a CLI or message queue. Keeping adapters thin ensures that all business logic resides in the application service and domain, where it can be tested directly with domain types. The HTTP adapter is then trivially correct by inspection — it does nothing but translate and delegate.
-
----
-
-### Example 11: CLI Adapter — Second Input Adapter for the Same Port
-
-A CLI adapter reads an order from command-line arguments or stdin, calls the same `PlaceOrderUseCase` input port, and prints the result. The application service function is identical to what the HTTP adapter calls. This demonstrates that one port supports multiple delivery mechanisms.
-
-```fsharp
-// CLI adapter: a second input adapter for the same PlaceOrderUseCase port.
-// The application service is unchanged — only the delivery mechanism differs.
-
-type UnvalidatedOrder = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Same domain input type — the CLI adapter produces the same type as the HTTP adapter
-
-type OrderPlaced = { OrderId: string; TotalAmount: decimal }
-// => Same event type — the CLI adapter receives the same output as the HTTP adapter
-
-type PlacingOrderError = ValidationError of string | PricingError of string
-// => Same error union — the CLI adapter handles the same failures
-
-type PlaceOrderUseCase = UnvalidatedOrder -> Async<Result<OrderPlaced list, PlacingOrderError>>
-// => THE SAME input port type — CLI and HTTP adapters call the same type
-
-// ── CLI adapter ───────────────────────────────────────────────────────────
-// Reads from argv or stdin, calls the port, prints the result.
-let handleCliPlaceOrder (useCase: PlaceOrderUseCase) (args: string array) : Async<int> =
-    // => useCase: the same port function injected from composition root
-    // => args: command-line arguments from System.Environment or test stubs
-    // => Returns Async<int>: exit code (0 = success, 1 = failure)
-    async {
-        if args.Length < 3 then
-            // => Guard: require exactly three arguments
-            eprintfn "Usage: place-order <order-id> <customer-id> <quantity>"
-            // => eprintf writes to stderr — convention for CLI error output
-            return 1
-            // => Non-zero exit code signals failure to the shell
-        else
-            let orderId    = args.[0]
-            // => First argument is the order ID
-            let customerId = args.[1]
-            // => Second argument is the customer ID
-            let quantity   = decimal args.[2]
-            // => Third argument parsed as decimal — real adapter handles parse failure
-
-            let input = { OrderId = orderId; CustomerId = customerId; Quantity = quantity }
-            // => Build the domain input type from CLI arguments
-            // => Same UnvalidatedOrder type the HTTP adapter builds from JSON DTO
-
-            let! result = useCase input
-            // => Call the SAME input port — application service is shared
-
-            match result with
-            | Ok events ->
-                printfn "Order placed: %d event(s) raised" (List.length events)
-                // => Print success to stdout — CLI convention
-                return 0
-                // => Exit code 0: success
-            | Error (ValidationError msg) ->
-                eprintfn "Validation error: %s" msg
-                // => Print error to stderr
-                return 1
-                // => Exit code 1: validation failure
-            | Error (PricingError msg) ->
-                eprintfn "Pricing error: %s" msg
-                // => Print to stderr — pricing failures are system errors
-                return 2
-                // => Exit code 2: pricing failure (distinct from validation failure)
-    }
-
-// Demonstrating both adapters calling the same use case stub
-let sharedUseCase : PlaceOrderUseCase =
-    // => Stub returns a single OrderPlaced event — no domain logic needed here
-    fun input -> async { return Ok [ { OrderId = input.OrderId; TotalAmount = 49.95m } ] }
-// => Shared stub — in production this is the real application service
-
-let exitCode =
-    handleCliPlaceOrder sharedUseCase [| "ORD-002"; "CUST-7"; "1" |]
-    |> Async.RunSynchronously
-// => Calls the CLI adapter with simulated argv — same use case as HTTP adapter
-
-printfn "CLI exit code: %d" exitCode
-// => Output: Order placed: 1 event(s) raised
-// => Output: CLI exit code: 0
-```
-
-**Key Takeaway**: Multiple adapters (HTTP, CLI, message queue) can drive the same `PlaceOrderUseCase` port without any changes to the application service — the port is the stable interface across all delivery mechanisms.
-
-**Why It Matters**: Organisations often build separate codebases for web, CLI, and batch processing versions of the same business logic, leading to divergence bugs where the CLI version handles edge cases differently from the API. With hexagonal architecture, the application service is the single authoritative implementation. Any new delivery mechanism is a new adapter — thin, testable, and guaranteed to use the same logic as every other adapter.
-
----
-
-### Example 12: Anti-Pattern — Domain Function Importing a Database Library
-
-This example shows the **wrong** approach: a domain function that directly imports a database library and queries the database. It then shows the corrected version using an output port, demonstrating the structural difference.
-
-```fsharp
-// ── ANTI-PATTERN: domain importing infrastructure ─────────────────────────
-// This is what hexagonal architecture is designed to prevent.
-// A domain function that queries the database directly violates the dependency rule.
-
-// WRONG: domain function with database dependency
-// open Npgsql   ← infrastructure import inside domain module — VIOLATION
-
-// type FindOrderWrong = unit -> NpgsqlConnection -> string -> Order option
-// let getOrderWrong (conn: NpgsqlConnection) (orderId: string) : Order option =
-//     // => NpgsqlConnection parameter: the domain now DEPENDS on the database
-//     // => Cannot be tested without a real database
-//     // => Cannot be reused with a different database technology
-//     let cmd = new NpgsqlCommand("SELECT ...", conn)
-//     // => SQL string embedded in the domain — schema changes break domain logic
-//     let reader = cmd.ExecuteReader()
-//     // => Synchronous blocking I/O in the domain — cannot be made async
-//     if reader.Read() then Some { OrderId = reader.GetString(0); ... }
-//     // => Domain knows about NpgsqlDataReader — tied to Npgsql's API
-//     else None
-
-// Problems with the anti-pattern:
-// 1. Domain cannot be unit tested — requires a live database
-// => Every test that exercises getOrderWrong needs a running PostgreSQL instance
-// 2. Domain is tied to PostgreSQL — switching databases requires rewriting domain code
-// => Changing to MongoDB or a REST API means touching the domain itself
-// 3. Domain cannot be run without a connection string at startup
-// => The domain is no longer self-contained — it has a runtime infrastructure dependency
-
-// ── CORRECT: domain function using an output port ─────────────────────────
-// The domain defines what it needs (a FindOrder port), not how it is provided.
-
-type Order = { OrderId: string; CustomerId: string; TotalAmount: decimal }
-// => Domain entity — no database types in sight
-
-type RepositoryError = NotFound of string | DatabaseError of string
-// => Domain-defined error — not Npgsql.PostgresException or SqlException
-
-type FindOrder = string -> Async<Result<Order option, RepositoryError>>
-// => Output port type alias: the domain defines the SHAPE it needs
-// => No Npgsql types anywhere in this type signature
-
-let processOrder (findOrder: FindOrder) (orderId: string) =
-    // => findOrder is injected — the domain does not know or care about the concrete adapter
-    // => Could be Postgres, MySQL, MongoDB, an HTTP API, or an in-memory dictionary
-    async {
-        let! result = findOrder orderId
-        // => Calls the output port — infrastructure concern handled by the adapter
-        match result with
-        | Ok (Some order) ->
-            printfn "Processing order %s (total: %.2f)" order.OrderId order.TotalAmount
-            // => Domain logic proceeds with the found order
-        | Ok None ->
-            printfn "Order %s not found" orderId
-            // => Absence is a valid domain outcome — not an infrastructure error
-        | Error (DatabaseError msg) ->
-            printfn "Infrastructure failure: %s" msg
-            // => Infrastructure failure surfaces as a domain error type
-        | Error (NotFound id) ->
-            printfn "Not found error for: %s" id
-            // => Explicit not-found from the port layer
-    }
-
-// Testing with no database: pass an in-memory stub
-let stubFind : FindOrder =
-    fun orderId -> async { return Ok (Some { OrderId = orderId; CustomerId = "CUST-1"; TotalAmount = 29.97m }) }
-// => Pure function — no database, no network, fully deterministic
-
-processOrder stubFind "ORD-001" |> Async.RunSynchronously
-// => Output: Processing order ORD-001 (total: 29.97)
-```
-
-**Key Takeaway**: Domain functions that depend on database libraries cannot be tested without infrastructure — replacing the direct dependency with an output port type makes the domain pure and instantly testable.
-
-**Why It Matters**: The anti-pattern is extremely common in codebases that started small: a domain function calls a repository directly because "it's just one query". Over time, domain functions accumulate infrastructure dependencies until the domain module cannot be loaded without a database connection. Recognising this smell early — an infrastructure `open` statement inside a domain module — and applying the output port fix prevents years of accumulated technical debt.
-
----
-
-### Example 13: Adapter Maps DTO to Domain (Inbound Translation)
-
-The adapter layer is responsible for translating between the outside world's representation (DTOs, HTTP bodies, CSV rows) and domain types. The domain type `UnvalidatedOrder` never knows about `HttpOrderDto`. Translation happens entirely in the adapter module.
-
-```fsharp
-// Inbound translation: adapter converts the external DTO to the domain input type.
-// Domain types never reference DTO types or serialisation frameworks.
-
-// ── DTO (adapter layer) ───────────────────────────────────────────────────
-// Defined in the adapter module — mirrors the JSON/CSV/message shape exactly.
-type HttpOrderLineDto = {
-    // => Mirrors the JSON array element — snake_case JSON field names
-    product_code: string
-    // => Raw product code string from JSON — may be invalid
-    quantity: float
-    // => JSON numbers deserialise to float — will be converted to decimal in domain
-}
-
-type HttpOrderDto = {
-    // => Mirrors the JSON request body — defined in the adapter, not the domain
-    order_id: string
-    // => Snake_case: JSON convention. Domain uses OrderId (PascalCase).
-    customer_id: string
-    // => Raw customer identifier from JSON body
-    lines: HttpOrderLineDto list
-    // => Array of line items — each will be translated to a domain line
-}
-
-// ── Domain types (application zone) ──────────────────────────────────────
-type UnvalidatedOrderLine = { ProductCode: string; Quantity: decimal }
-// => Domain input type — no snake_case, no float, no JSON attribute
-type UnvalidatedOrder     = { OrderId: string; CustomerId: string; Lines: UnvalidatedOrderLine list }
-// => Domain input type — uses domain field names and types
-
-// ── Inbound translation function (adapter layer) ─────────────────────────
-// Lives in the adapter module — translates the DTO to the domain input type.
-let toDomainOrder (dto: HttpOrderDto) : UnvalidatedOrder =
-    // => Input: HttpOrderDto (external shape with snake_case and float)
-    // => Output: UnvalidatedOrder (domain shape with PascalCase and decimal)
-    let lines =
-        dto.lines
-        // => dto.lines : HttpOrderLineDto list — raw from JSON
-        |> List.map (fun lineDto ->
-            { ProductCode = lineDto.product_code
-              // => Map snake_case product_code → PascalCase ProductCode
-              Quantity = decimal lineDto.quantity
-              // => Convert float → decimal — domain uses decimal for monetary precision
-            })
-        // => Each HttpOrderLineDto becomes an UnvalidatedOrderLine
-    { OrderId    = dto.order_id
-      // => Map order_id → OrderId — same value, aligned field name
-      CustomerId = dto.customer_id
-      // => Map customer_id → CustomerId
-      Lines      = lines
-      // => Mapped lines list — float quantities converted to decimal
-    }
-    // => Returns UnvalidatedOrder — domain type ready to enter the workflow
-
-// ── Demonstration ─────────────────────────────────────────────────────────
-let incomingDto = {
-    order_id    = "ORD-001"
-    customer_id = "CUST-42"
-    lines       = [ { product_code = "W1234"; quantity = 2.0 }
-                    { product_code = "G456";  quantity = 0.5 } ]
-}
-// => incomingDto : HttpOrderDto — as received from JSON deserialisation
-
-let domainInput = toDomainOrder incomingDto
-// => domainInput : UnvalidatedOrder — translated, ready for the application service
-
-printfn "Translated: %s, %d lines" domainInput.OrderId (List.length domainInput.Lines)
-// => Output: Translated: ORD-001, 2 lines
-```
-
-**Key Takeaway**: Inbound DTO translation in the adapter layer keeps domain types free of JSON field name conventions, serialisation attributes, and external type dependencies.
-
-**Why It Matters**: DTOs change when the API contract evolves. Domain types change when business rules evolve. These two change rhythms are independent. By keeping translation in the adapter layer, a change to the JSON field names (e.g., renaming `order_id` to `orderId`) only affects the adapter's translation function — the domain type is untouched. Conversely, a domain type restructure does not affect the JSON API shape. Each concern evolves at its own pace.
-
----
-
-### Example 14: Adapter Maps Domain to DTO (Outbound Translation)
-
-Outbound translation converts domain events (produced by the application service) to the DTO shape that the HTTP response or message queue expects. Domain event types are defined in the domain zone. DTO types are defined in the adapter zone. The translation function lives in the adapter zone.
-
-```fsharp
-// Outbound translation: adapter converts domain events to response DTOs.
-// Domain event types never reference DTO types or serialisation concerns.
-
-// ── Domain event (domain zone) ────────────────────────────────────────────
-// Defined in Domain.fs — no knowledge of HTTP or JSON.
-type OrderId = string
-// => Domain identifier alias
-
-type OrderPlaced = {
-    // => Domain event: a fact that the order-taking workflow has completed
-    OrderId: OrderId
-    // => The ID of the placed order — correlates to the original command
-    CustomerId: string
-    // => Who placed the order — may be used by downstream contexts
-    TotalAmount: decimal
-    // => Total billed — in decimal for precision (monetary amounts)
-    PlacedAt: System.DateTimeOffset
-    // => When it happened — includes timezone (safer than DateTime)
-}
-
-// ── Response DTO (adapter zone) ───────────────────────────────────────────
-// Defined in the adapter module — mirrors the JSON response shape.
-type OrderPlacedResponseDto = {
-    // => JSON response body shape — snake_case for REST API convention
-    order_id: string
-    // => Mapped from domain OrderId
-    customer_id: string
-    // => Mapped from domain CustomerId
-    total_amount: float
-    // => float for JSON serialisation — decimal is not natively JSON-friendly
-    placed_at: string
-    // => ISO 8601 string — human-readable in the API response
-}
-
-// ── Outbound translation function (adapter layer) ─────────────────────────
-let toResponseDto (event: OrderPlaced) : OrderPlacedResponseDto =
-    // => Input: OrderPlaced (domain event — decimal amounts, DateTimeOffset)
-    // => Output: OrderPlacedResponseDto (API shape — float, ISO string)
-    { order_id    = event.OrderId
-      // => Direct field mapping: OrderId → order_id (name alignment)
-      customer_id = event.CustomerId
-      // => Direct mapping: CustomerId → customer_id
-      total_amount = float event.TotalAmount
-      // => decimal → float: JSON does not have a decimal type
-      // => Precision loss is acceptable for display; ledger uses the domain decimal
-      placed_at   = event.PlacedAt.ToString("o")
-      // => DateTimeOffset.ToString("o") produces ISO 8601 format: "2026-05-15T10:30:00+07:00"
-      // => "o" = round-trip format specifier — preserves timezone offset
-    }
-
-// ── Demonstration ─────────────────────────────────────────────────────────
-let domainEvent = {
-    OrderId     = "ORD-001"
-    CustomerId  = "CUST-42"
-    TotalAmount = 29.97m
-    // => Decimal in the domain — precise monetary value
-    PlacedAt    = System.DateTimeOffset(2026, 5, 15, 10, 30, 0, System.TimeSpan.FromHours(7.0))
-    // => DateTimeOffset with +07:00 timezone — represents WIB (Western Indonesian Time)
-}
-// => domainEvent : OrderPlaced — raised by the application service
-
-let responseDto = toResponseDto domainEvent
-// => responseDto : OrderPlacedResponseDto — ready to be serialised to JSON
-
-printfn "Response DTO: order_id=%s total_amount=%.2f" responseDto.order_id responseDto.total_amount
-// => Output: Response DTO: order_id=ORD-001 total_amount=29.97
-```
-
-**Key Takeaway**: Outbound translation functions in the adapter layer convert domain event types to response DTOs, keeping domain types free of serialisation concerns and response format conventions.
-
-**Why It Matters**: REST API conventions evolve: field naming changes (camelCase vs snake_case), field types change (decimal to string for currency), and new fields are added for client convenience. If domain event types carry these conventions directly, every API change forces a domain change. Adapter-layer translation absorbs API evolution without touching the domain, protecting the core business model from external churn.
-
----
-
-### Example 15: Application Service as Orchestrator — Calling Domain and Ports
-
-The application service is the conductor: it calls pure domain functions for business logic and calls output port functions for effects (saving, sending, reading). It never contains business logic itself — that belongs in the domain. It never imports infrastructure libraries — that belongs in adapters.
-
-```mermaid
-graph TD
-    SVC["placeOrder\nApplication Service"]
-    V["validateOrder\ndomain fn — pure"]
-    P["priceOrder\ndomain fn — pure"]
-    S["saveOrder\noutput port — effectful"]
-    N["sendAcknowledgment\noutput port — effectful"]
-    EV["OrderPlaced list\n(return value)"]
-
-    SVC --> V
-    V -->|"Ok ValidatedOrder"| P
-    P -->|"Ok PricedOrder"| S
-    S -->|"Ok ()"| N
-    N -->|"Ok ()"| EV
-
-    style SVC fill:#0173B2,stroke:#000,color:#fff
-    style V fill:#029E73,stroke:#000,color:#fff
-    style P fill:#029E73,stroke:#000,color:#fff
-    style S fill:#DE8F05,stroke:#000,color:#000
-    style N fill:#DE8F05,stroke:#000,color:#000
-    style EV fill:#CC78BC,stroke:#000,color:#000
-```
-
-```fsharp
-// Application service: orchestrates domain functions (pure) and port calls (effectful).
-// Contains no business logic of its own — only sequencing.
-
-type UnvalidatedOrder = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Raw input from any adapter
-
-type ValidatedOrder   = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Post-validation state
-
-type PricedOrder      = { OrderId: string; CustomerId: string; Quantity: decimal; TotalAmount: decimal }
-// => Post-pricing state — carries the calculated total
-
-type OrderPlaced      = { OrderId: string; TotalAmount: decimal }
-// => Domain event emitted on success
-
-type PlacingOrderError =
+type SubmissionError =
     | ValidationError of string
-    // => Raised when input data violates a domain rule
-    | PricingError    of string
-    // => Raised when the pricing step cannot complete
+    // => Domain rule violated — caller should fix the request
     | RepositoryError of string
-    // => Raised when persistence fails
-    | NotificationError of string
-    // => All named failure modes — exhaustively matched in the adapter layer
+    // => Infrastructure failure — caller may retry
 
-// ── Domain functions (pure — no Async, no Result from infrastructure) ──────
-let validateOrder (input: UnvalidatedOrder) : Result<ValidatedOrder, PlacingOrderError> =
-    // => Pure: takes data, returns data. No I/O. Instantly testable.
-    if System.String.IsNullOrWhiteSpace(input.OrderId) then Error (ValidationError "OrderId blank")
-    // => Domain rule: blank order IDs are rejected
-    else Ok { OrderId = input.OrderId; CustomerId = input.CustomerId; Quantity = input.Quantity }
-    // => Validation passed — advance to ValidatedOrder state
+// Input port type alias — the complete contract in one line
+type SubmitPurchaseOrderUseCase =
+    DraftPurchaseOrder -> Async<Result<SubmittedPurchaseOrder, SubmissionError>>
+// => Input:  raw, unvalidated PO DTO from any delivery mechanism
+// => Output: Ok SubmittedPurchaseOrder on success, or SubmissionError on failure
+// => The async wrapper acknowledges that persistence is effectful
 
-let priceOrder (validated: ValidatedOrder) : Result<PricedOrder, PlacingOrderError> =
-    // => Pure pricing function — no I/O, no async, no external calls
-    // => In a real system this might look up prices from a catalogue passed as a parameter
-    if validated.Quantity <= 0m then Error (PricingError "Quantity must be positive")
-    // => Domain rule enforced in the pricing step too — belt and braces
-    else Ok { OrderId = validated.OrderId; CustomerId = validated.CustomerId
-              Quantity = validated.Quantity; TotalAmount = validated.Quantity * 9.99m }
-    // => Simplified pricing: quantity × unit price — real impl calls catalogue lookup port
-
-// ── Output port types ──────────────────────────────────────────────────────
-type SaveOrder            = PricedOrder -> Async<Result<unit, PlacingOrderError>>
-// => Persistence port — writes the priced order to the store
-type SendAcknowledgment   = string -> Async<Result<unit, PlacingOrderError>>
-// => Notification port — sends confirmation to the customer
-
-// ── Application service: the orchestrator ─────────────────────────────────
-let placeOrder
-    (saveOrder: SaveOrder)
-    (sendAcknowledgment: SendAcknowledgment)
-    (input: UnvalidatedOrder)
-    : Async<Result<OrderPlaced list, PlacingOrderError>> =
-    // => saveOrder and sendAcknowledgment are injected — swappable at startup
-    // => Returns Async because the port calls are async
-    async {
-        // Step 1: call pure domain function — no I/O
-        let validatedResult = validateOrder input
-        // => validateOrder is pure — result is immediate, no async needed
-        match validatedResult with
-        | Error e -> return Error e
-        // => Validation failed — short-circuit, no further processing
-        | Ok validated ->
-        // => validated : ValidatedOrder — passes to the pricing step
-
-        // Step 2: call pure pricing function — no I/O
-        let pricedResult = priceOrder validated
-        // => priceOrder is pure — result is immediate
-        match pricedResult with
-        | Error e -> return Error e
-        // => Pricing failed — short-circuit
-        | Ok priced ->
-        // => priced : PricedOrder — carries the calculated TotalAmount
-
-        // Step 3: call output port (effectful) — save to repository
-        let! saveResult = saveOrder priced
-        // => let! awaits the Async; saveOrder calls the adapter
-        match saveResult with
-        | Error e -> return Error e
-        // => Persistence failed — surface the error
-        | Ok () ->
-
-        // Step 4: call output port (effectful) — send acknowledgment
-        let! _ = sendAcknowledgment priced.CustomerId
-        // => Non-critical: acknowledge failure is ignored in this simplified version
-
-        // Step 5: return the domain event
-        return Ok [ { OrderId = priced.OrderId; TotalAmount = priced.TotalAmount } ]
-        // => Success: returns list with one OrderPlaced event
-    }
-
-printfn "Application service defined — pure domain calls and effectful port calls"
-// => Output: Application service defined — pure domain calls and effectful port calls
-```
-
-**Key Takeaway**: The application service is an orchestrator that calls pure domain functions for logic and output port functions for effects — it contains no business rules and imports no infrastructure libraries.
-
-**Why It Matters**: When application services contain business logic alongside orchestration, both concerns become harder to test independently. The orchestration must be tested through integration tests (because it involves async ports), but the business logic should be tested through fast unit tests. Separating them — pure domain functions for logic, output ports for effects, application service for sequencing — lets each layer be tested at the appropriate level: domain logic in milliseconds, integration in seconds.
-
----
-
-### Example 16: Partial Application Injects Adapters into Application Service
-
-Partial application bakes concrete adapter functions into an application service function, producing a fully-wired use case function. The result satisfies the `PlaceOrderUseCase` input port type. No DI container, no service locator, no reflection.
-
-```fsharp
-// Partial application: inject adapters into the application service at startup.
-// The result is a function that satisfies the PlaceOrderUseCase input port type.
-
-open System.Collections.Generic
-
-type UnvalidatedOrder  = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Raw input type — the input port signature starts here
-
-type PricedOrder       = { OrderId: string; CustomerId: string; Quantity: decimal; TotalAmount: decimal }
-// => Post-pricing state — the repository stores this
-
-type OrderPlaced       = { OrderId: string; TotalAmount: decimal }
-// => Domain event — the use case returns a list of these
-
-type PlacingOrderError = ValidationError of string | PricingError of string | RepositoryError of string
-// => All failure modes
-
-// ── Port types ────────────────────────────────────────────────────────────
-type SaveOrder = PricedOrder -> Async<Result<unit, PlacingOrderError>>
-// => Output port for persistence
-
-type PlaceOrderUseCase = UnvalidatedOrder -> Async<Result<OrderPlaced list, PlacingOrderError>>
-// => Input port — the type that HTTP and CLI adapters call
-
-// ── Application service (takes port parameters first) ─────────────────────
-let buildPlaceOrder (saveOrder: SaveOrder) : PlaceOrderUseCase =
-    // => buildPlaceOrder takes the output ports as parameters
-    // => Returns a PlaceOrderUseCase function — the ports are baked in
-    // => This is partial application: fix the ports, return the remaining function
-    fun input ->
+// Any function with this signature satisfies the port — no inheritance needed
+let submitPurchaseOrder : SubmitPurchaseOrderUseCase =
+    // => This is ONE implementation of the port — tests can supply a different one
+    fun draft ->
         async {
-            if System.String.IsNullOrWhiteSpace(input.OrderId) then
-                return Error (ValidationError "OrderId must not be blank")
-            // => Domain rule: OrderId cannot be blank
+            // Simplified: validation + stubbed persistence
+            if System.String.IsNullOrWhiteSpace(draft.Id) then
+                return Error (ValidationError "PO Id must not be blank")
+            // => Domain rule enforced before any I/O
             else
-                let priced = { OrderId = input.OrderId; CustomerId = input.CustomerId
-                               Quantity = input.Quantity; TotalAmount = input.Quantity * 9.99m }
-                // => Simplified pricing inline — real version calls priceOrder domain fn
-                let! saveResult = saveOrder priced
-                // => Calls the injected adapter — adapter baked in via partial application
-                match saveResult with
-                | Error e -> return Error e
-                // => Persistence failed — propagate the error to the caller
-                | Ok ()   -> return Ok [ { OrderId = priced.OrderId; TotalAmount = priced.TotalAmount } ]
-                // => Returns the OrderPlaced event on success
+                let submitted = { Id = draft.Id; SupplierId = draft.SupplierId
+                                  TotalAmount = draft.TotalAmount; Status = "AwaitingApproval" }
+                // => State transition: Draft -> AwaitingApproval
+                return Ok submitted
+                // => Happy path — PO is now awaiting manager approval
         }
 
-// ── Wiring for PRODUCTION ─────────────────────────────────────────────────
-let postgresStore = Dictionary<string, PricedOrder>()
-// => Simulated postgres store — real version uses NpgsqlConnection
-
-let productionSave : SaveOrder =
-    fun order -> async { postgresStore.[order.OrderId] <- order; return Ok () }
-// => Production adapter: saves to (simulated) postgres
-
-let productionUseCase : PlaceOrderUseCase = buildPlaceOrder productionSave
-// => Partial application: bake the postgres adapter in
-// => productionUseCase : PlaceOrderUseCase — ready to pass to the HTTP adapter
-
-// ── Wiring for TESTS ──────────────────────────────────────────────────────
-let memoryStore = Dictionary<string, PricedOrder>()
-// => In-memory store for tests — isolated from production data
-
-let testSave : SaveOrder =
-    fun order -> async { memoryStore.[order.OrderId] <- order; return Ok () }
-// => Test adapter: saves to in-memory dictionary — fast, deterministic
-
-let testUseCase : PlaceOrderUseCase = buildPlaceOrder testSave
-// => Test use case: same application service logic, different adapter
-// => testUseCase : PlaceOrderUseCase — pass to test code instead of HTTP adapter
-
-// Both use cases satisfy the same PlaceOrderUseCase type
-let testResult =
-    testUseCase { OrderId = "ORD-001"; CustomerId = "CUST-1"; Quantity = 3m }
-    |> Async.RunSynchronously
-// => Uses the test adapter — no postgres, no network
-// => testResult : Result<OrderPlaced list, PlacingOrderError>
-
-printfn "Test result: %A" testResult
-// => Output: Test result: Ok [{OrderId = "ORD-001"; TotalAmount = 29.97M}]
+// The HTTP adapter holds the injected port — it never names the implementation
+// let handler (useCase: SubmitPurchaseOrderUseCase) (dto: HttpDto) = ...
+// => useCase is the port; the implementation is wired at the composition root
 ```
 
-**Key Takeaway**: Partial application replaces a DI container — by baking concrete adapter functions into the application service at startup, the result is a fully-wired use case function that satisfies the input port type.
+**Key Takeaway**: An input port expressed as a function type alias gives every adapter (HTTP, CLI, test) a single, compiler-checked contract without requiring a base class or interface hierarchy.
 
-**Why It Matters**: DI containers add a runtime layer that can fail with cryptic errors (`Could not resolve IOrderRepository`), require framework-specific attributes, and make dependency graphs opaque. Partial application wires dependencies at compile time with full type checking. If a dependency is missing, the code does not compile. The production wiring and the test wiring are both plain F# expressions, readable without framework knowledge.
+**Why It Matters**: Traditional layered architectures expose the `OrderService` class directly to controllers, creating invisible coupling between the HTTP layer and the service implementation. A function type alias breaks this coupling: the HTTP adapter depends on the type `SubmitPurchaseOrderUseCase`, not on any specific module. Swapping the implementation (for testing, A/B deployment, or a complete rewrite) requires changing exactly one line in the composition root. No mocking framework, no DI container — just pass a different function.
 
 ---
 
-## Full Flow and Testing (Examples 17–25)
+### Example 4: Output Port as a Record Type — `PurchaseOrderRepository`
 
-### Example 17: Bootstrapping — Wiring Ports to Adapters at Startup
-
-The composition root is the single place in the codebase where adapters are wired to ports. It creates concrete adapter functions, builds the `OrderPorts` record, partially applies the application service, and passes the resulting use case to the HTTP adapter. All other modules remain decoupled.
-
-```mermaid
-graph TD
-    CR["Composition Root\n(Program.fs / Startup.fs)"]
-    PA["PostgresAdapter\nfindOrder, saveOrder"]
-    NA["NotificationAdapter\nsendAcknowledgment"]
-    PORTS["OrderPorts record\n{FindOrder, SaveOrder, SendAcknowledgment}"]
-    SVC["placeOrder\n(partially applied)"]
-    UC["PlaceOrderUseCase\n(fully wired)"]
-    HTTP["HttpAdapter\nhandlePlaceOrder"]
-
-    CR --> PA
-    CR --> NA
-    PA --> PORTS
-    NA --> PORTS
-    PORTS --> SVC
-    SVC --> UC
-    UC --> HTTP
-
-    style CR fill:#0173B2,stroke:#000,color:#fff
-    style PORTS fill:#029E73,stroke:#000,color:#fff
-    style UC fill:#DE8F05,stroke:#000,color:#000
-    style HTTP fill:#CC78BC,stroke:#000,color:#000
-```
+An **output port** is a record of functions that the application layer calls but never implements. The record type is the contract; record literals in the adapters zone are the implementations. The `PurchaseOrderRepository` port appears identically in every example that uses it.
 
 ```fsharp
-// Composition root: the ONLY place adapters and application services connect.
-// Every other module is decoupled — only this file knows about both sides.
+// ── Domain types ──────────────────────────────────────────────────────────
+type PurchaseOrderId = string
+// => Alias for the PO primary key — format po_<uuid>
 
-open System.Collections.Generic
-
-// ── Domain and port types ─────────────────────────────────────────────────
-type UnvalidatedOrder  = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Raw input from any adapter — fields not yet validated
-type PricedOrder       = { OrderId: string; CustomerId: string; Quantity: decimal; TotalAmount: decimal }
-// => Post-pricing state — TotalAmount is a computed field
-type OrderPlaced       = { OrderId: string; TotalAmount: decimal }
-// => Domain event emitted on successful order placement
-type PlacingOrderError = ValidationError of string | RepositoryError of string
-// => Named failure modes — adapters translate these to protocol-specific errors
-
-type FindOrder       = string    -> Async<Result<PricedOrder option, PlacingOrderError>>
-type SaveOrder       = PricedOrder -> Async<Result<unit, PlacingOrderError>>
-type NotifyCustomer  = string    -> Async<Result<unit, PlacingOrderError>>
-// => Output port type aliases — each is a function type
-
-type OrderPorts = { FindOrder: FindOrder; SaveOrder: SaveOrder; NotifyCustomer: NotifyCustomer }
-// => Dependency bundle — one record per environment
-
-// ── Application service ───────────────────────────────────────────────────
-let placeOrderService (ports: OrderPorts) (input: UnvalidatedOrder)
-    : Async<Result<OrderPlaced list, PlacingOrderError>> =
-    // => Takes the port bundle and the input — pure orchestration
-    async {
-        let! existing = ports.FindOrder input.OrderId
-        // => Check for duplicate via the FindOrder port
-        // => existing : Result<PricedOrder option, PlacingOrderError>
-        match existing with
-        | Ok (Some _) -> return Error (ValidationError "Duplicate order")
-        // => Order already exists — reject
-        | _ ->
-        let priced = { OrderId = input.OrderId; CustomerId = input.CustomerId
-                       Quantity = input.Quantity; TotalAmount = input.Quantity * 9.99m }
-        // => Simplified pricing inline
-        // => priced : PricedOrder — ready to persist
-        let! _ = ports.SaveOrder priced
-        // => Persist via the SaveOrder port
-        let! _ = ports.NotifyCustomer priced.CustomerId
-        // => Notify via the NotifyCustomer port
-        return Ok [ { OrderId = priced.OrderId; TotalAmount = priced.TotalAmount } ]
-        // => Return the domain event
-    }
-
-// ── Composition root (Program.fs / Startup.fs) ────────────────────────────
-// Step 1: create concrete adapter functions (using simulated infrastructure)
-let store = Dictionary<string, PricedOrder>()
-// => store : Dictionary<string, PricedOrder> — keyed by OrderId
-// => Simulated database store — in production this would be an NpgsqlConnection
-
-let postgresFind : FindOrder =
-    // => Satisfies FindOrder port — wraps Dictionary lookup in Async<Result<>>
-    fun orderId -> async {
-        // => orderId : string — key to look up in the in-memory store
-        match store.TryGetValue(orderId) with
-        | true, order -> return Ok (Some order)
-        // => Found: returns Some with the stored PricedOrder
-        | _ -> return Ok None
-        // => Not found: returns None (not an error — absence is a valid state)
-    }
-// => Production adapter: queries the database (simulated here with Dictionary)
-
-let postgresSave : SaveOrder =
-    // => Satisfies SaveOrder port — Dictionary write simulates SQL INSERT/UPDATE
-    fun order -> async { store.[order.OrderId] <- order; return Ok () }
-// => Production adapter: inserts or updates the order
-
-let smtpNotify : NotifyCustomer =
-    // => Satisfies NotifyCustomer port — real impl would call an SMTP client
-    fun customerId -> async {
-        printfn "[SMTP] Sending acknowledgment to customer %s" customerId
-        // => Simulates sending an email — real impl calls an SMTP client
-        return Ok ()
-    }
-// => Production adapter: sends acknowledgment email
-
-// Step 2: create the production port record
-let productionPorts = { FindOrder = postgresFind; SaveOrder = postgresSave; NotifyCustomer = smtpNotify }
-// => productionPorts : OrderPorts — bundles all production adapters
-
-// Step 3: partially apply the application service with production ports
-let productionUseCase = placeOrderService productionPorts
-// => productionUseCase : UnvalidatedOrder -> Async<Result<OrderPlaced list, PlacingOrderError>>
-// => This is the PlaceOrderUseCase — fully wired, ready to pass to the HTTP adapter
-
-// Step 4: pass to HTTP adapter (simulated here with a direct call)
-let result =
-    productionUseCase { OrderId = "ORD-001"; CustomerId = "CUST-42"; Quantity = 2m }
-    |> Async.RunSynchronously
-// => Full production flow: find (miss) → save → notify → return event
-
-printfn "Production use case result: %A" result
-// => Output: [SMTP] Sending acknowledgment to customer CUST-42
-// => Output: Production use case result: Ok [{OrderId = "ORD-001"; TotalAmount = 19.98M}]
-```
-
-**Key Takeaway**: The composition root is the single wiring point where adapters meet application services — every other module is blissfully unaware of how its dependencies are provided.
-
-**Why It Matters**: In systems without a composition root discipline, wiring logic spreads through constructors, service classes, and global state, making it impossible to swap adapters for testing or to understand the full dependency graph. A single `Program.fs` or `Startup.fs` that wires everything makes the dependency graph explicit and readable. Adding a new adapter is three steps: create the function, add it to the port record, partially apply the service. Nothing else changes.
-
----
-
-### Example 18: Test Wiring — Replacing Adapters with Stubs
-
-A test wires the application service with in-memory adapter stubs, calls the use case directly, and asserts on the `Result` value. No HTTP server, no database, no mocking framework. Fast, deterministic, readable.
-
-```fsharp
-// Test wiring: in-memory adapters + direct use case call + Result assertion.
-// Zero mocking framework. Zero infrastructure. Runs in milliseconds.
-
-open System.Collections.Generic
-
-type UnvalidatedOrder  = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Raw input type — fields not yet validated
-type PricedOrder       = { OrderId: string; CustomerId: string; Quantity: decimal; TotalAmount: decimal }
-// => Post-pricing state — TotalAmount computed at pricing step
-type OrderPlaced       = { OrderId: string; TotalAmount: decimal }
-// => Domain event emitted on success
-type PlacingOrderError = ValidationError of string | RepositoryError of string
-// => Named failure modes — translate at the adapter boundary only
-
-type FindOrder      = string      -> Async<Result<PricedOrder option, PlacingOrderError>>
-// => Lookup port — returns None (not found) or Some (duplicate detected)
-type SaveOrder      = PricedOrder -> Async<Result<unit,              PlacingOrderError>>
-// => Persistence port — writes the priced order to the store
-type NotifyCustomer = string      -> Async<Result<unit,              PlacingOrderError>>
-// => Notification port — delivers acknowledgment to the customer
-
-type OrderPorts = { FindOrder: FindOrder; SaveOrder: SaveOrder; NotifyCustomer: NotifyCustomer }
-// => Dependency bundle — different records for production vs test
-
-// ── Application service (same as Example 17 — unchanged for tests) ────────
-let placeOrderService (ports: OrderPorts) (input: UnvalidatedOrder)
-    : Async<Result<OrderPlaced list, PlacingOrderError>> =
-    // => Return type: async workflow wrapping Result — same function signature as production
-    async {
-        let! existing = ports.FindOrder input.OrderId
-        // => Calls whichever FindOrder function is in the ports record
-        // => existing : Result<PricedOrder option, PlacingOrderError>
-        match existing with
-        // => Dispatch on the lookup result — three branches: error, found, not found
-        | Ok (Some _) -> return Error (ValidationError "Duplicate order")
-        // => Duplicate detected — reject without saving
-        | _ ->
-        // => No duplicate — proceed with pricing and saving
-        let priced = { OrderId = input.OrderId; CustomerId = input.CustomerId
-                       Quantity = input.Quantity; TotalAmount = input.Quantity * 9.99m }
-        // => priced : PricedOrder — TotalAmount = Quantity × 9.99
-        let! _ = ports.SaveOrder priced
-        // => Persist via injected adapter — Dictionary in tests, Postgres in production
-        let! _ = ports.NotifyCustomer priced.CustomerId
-        // => Notify via injected adapter — no-op stub in tests
-        return Ok [ { OrderId = priced.OrderId; TotalAmount = priced.TotalAmount } ]
-        // => One OrderPlaced event per successful order
-    }
-// => Application service body is IDENTICAL to production — same logic, different ports
-
-// ── Test wiring ───────────────────────────────────────────────────────────
-let testStore = Dictionary<string, PricedOrder>()
-// => testStore : Dictionary<string, PricedOrder> — keyed by OrderId
-// => Fresh in-memory store for this test — no shared state with other tests
-
-let testPorts = {
-    FindOrder = fun orderId ->
-        // => Looks up orderId in testStore — same signature as the production port
-        async {
-            match testStore.TryGetValue(orderId) with
-            | true, order -> return Ok (Some order)
-            // => Returns Some if previously saved
-            | _ -> return Ok None
-            // => Returns None (not an error) for unknown IDs
-        }
-    // => In-memory FindOrder — Dictionary lookup, no database
-    SaveOrder = fun order ->
-        // => Writes to testStore — no SQL, no connection string
-        async { testStore.[order.OrderId] <- order; return Ok () }
-    // => In-memory SaveOrder — Dictionary write, always succeeds
-    NotifyCustomer = fun _ ->
-        // => No-op stub — notification is irrelevant to the logic under test
-        async { return Ok () }
-    // => Stub notification — does nothing, always succeeds
-    // => No SMTP server, no email sent — test only cares about the Result
+type PurchaseOrder = {
+    // => Aggregate root of the purchasing context
+    Id         : PurchaseOrderId
+    SupplierId : string
+    TotalAmount: decimal
+    Status     : string
 }
-// => testPorts : OrderPorts — satisfies the same type as the production port record
 
-// ── Test: new order is placed successfully ────────────────────────────────
-let newOrderInput = { OrderId = "ORD-TEST-1"; CustomerId = "CUST-99"; Quantity = 3m }
-// => Input: a new order that has never been seen
-// => newOrderInput : UnvalidatedOrder — passed to the application service
+// ── Output port: the canonical PurchaseOrderRepository definition ─────────
+// This record type is THE port contract. Every adapter must provide a value
+// of this type. No adapter name, no SQL, no Npgsql — just function signatures.
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    // => Persist a PO — upsert semantics recommended
+    // => Async because disk/network I/O is involved
+    // => Result because the database can fail
+    load: PurchaseOrderId -> Async<Result<PurchaseOrder option, string>>
+    // => Load a PO by its ID
+    // => Returns None when the PO does not exist (not an error)
+    // => Returns Error string on infrastructure failure
+}
+// => This exact record type signature is used in every example that touches the repository port
 
-let newOrderResult =
-    placeOrderService testPorts newOrderInput
-    |> Async.RunSynchronously
-// => Direct call to the application service — no HTTP, no routing
-// => newOrderResult : Result<OrderPlaced list, PlacingOrderError>
+// ── Demonstration: the port is just a type ───────────────────────────────
+// The application service accepts this record — it never names an implementation.
+let exampleService (repo: PurchaseOrderRepository) (id: PurchaseOrderId) =
+    // => repo is the injected port — could be Postgres, in-memory, or a spy
+    async {
+        let! result = repo.load id
+        // => Calls the port — no knowledge of what is behind the boundary
+        return result
+        // => Propagates the Result to the caller unchanged
+    }
 
-match newOrderResult with
-| Ok events ->
-    // => events : OrderPlaced list — one event per successful order
-    printfn "Test PASS: %d event(s) raised, total = %.2f" (List.length events) events.[0].TotalAmount
-    // => events.[0].TotalAmount = 3m * 9.99m = 29.97m
-| Error e ->
-    // => Unexpected failure — service or adapter returned an error
-    printfn "Test FAIL: %A" e
-// => Output: Test PASS: 1 event(s) raised, total = 29.97
-
-// ── Test: duplicate order is rejected ────────────────────────────────────
-let duplicateResult =
-    placeOrderService testPorts newOrderInput
-    |> Async.RunSynchronously
-// => Second call with the same OrderId — should be rejected as duplicate
-// => duplicateResult : Result<OrderPlaced list, PlacingOrderError>
-
-match duplicateResult with
-| Error (ValidationError msg) -> printfn "Test PASS: duplicate rejected — %s" msg
-// => testStore still has "ORD-TEST-1" from the first call
-// => FindOrder returns Ok (Some _) — triggers the duplicate rejection path
-| _ -> printfn "Test FAIL: expected duplicate rejection"
-// => Output: Test PASS: duplicate rejected — Duplicate order
+printfn "PurchaseOrderRepository port defined — zero adapter knowledge in application layer"
+// => Output: PurchaseOrderRepository port defined — zero adapter knowledge in application layer
 ```
 
-**Key Takeaway**: Replacing the production port record with an in-memory test record exercises the exact same application service logic without any infrastructure setup — tests run in milliseconds with deterministic results.
+**Key Takeaway**: The `PurchaseOrderRepository` record type is the complete port contract — any record literal that provides matching `save` and `load` functions satisfies it, regardless of the underlying storage mechanism.
 
-**Why It Matters**: Test suites that require databases are slow (minutes to run), fragile (fail when docker is unavailable), and often skipped in development. Test suites using in-memory adapters run in seconds, work offline, and are never skipped. The same application service logic is exercised both ways. The hexagonal architecture makes this not just possible but the natural default — the test wiring is simpler than the production wiring.
+**Why It Matters**: When application services depend on a record-of-functions type rather than a concrete module, the adapter can be swapped without modifying a single line of application or domain code. The same `exampleService` function runs correctly against a PostgreSQL adapter in production, a Dictionary adapter in unit tests, and a WireMock adapter in integration tests. The port boundary is the wall that keeps business logic testable and infrastructure replaceable.
 
 ---
 
-### Example 19: Anti-Pattern — Fat Adapter Doing Domain Logic
+### Example 5: The `Clock` Output Port — Injecting Time
 
-A **fat adapter** embeds business logic (validation, pricing, saving) directly inside the HTTP handler. This logic cannot be reused by the CLI adapter, cannot be tested without HTTP infrastructure, and duplicates rules that should live in the domain.
+The `Clock` port makes the current timestamp injectable. Without it, `System.DateTimeOffset.UtcNow` would be hard-coded in application services, making time-dependent domain rules (approval deadlines, order expiry) non-deterministic in tests.
 
 ```fsharp
-// ── ANTI-PATTERN: fat HTTP adapter ───────────────────────────────────────
-// All business logic embedded in the HTTP handler.
-// Cannot be reused by CLI. Cannot be tested without HTTP.
+// ── Clock port ────────────────────────────────────────────────────────────
+// A synchronous function — reading the clock has no failure mode.
+// No async wrapper, no Result — clocks do not throw recoverable errors.
+type Clock = unit -> System.DateTimeOffset
+// => Returns the current timestamp as seen by the application layer
+// => Synchronous: no await, no async { } block required at call site
 
-// WRONG — do NOT write adapters like this:
-// let handlePlaceOrderWrong (dto: HttpOrderDto) =
-//     // Validation in the adapter — should be in domain
-//     if String.IsNullOrWhiteSpace(dto.order_id) then
-//         Error "order_id blank"     ← domain rule, not adapter concern
-//     else
-//     // Pricing in the adapter — should be in domain
-//     let total = dto.quantity * 9.99   ← domain logic, not adapter concern
-//     // Direct database call in adapter — should be an output port
-//     use conn = new NpgsqlConnection(connectionString)
-//     conn.Open()                   ← infrastructure in adapter — problematic
-//     use cmd = new NpgsqlCommand("INSERT INTO orders ...", conn)
-//     cmd.ExecuteNonQuery() |> ignore  ← domain+infra mixed — untestable
-//     Ok { order_id = dto.order_id; total = total }
+// ── Domain type that depends on time ─────────────────────────────────────
+type PurchaseOrder = {
+    Id         : string
+    TotalAmount: decimal
+    SubmittedAt: System.DateTimeOffset
+    // => Timestamp is part of the domain aggregate — used for approval SLA tracking
+}
 
-// Problems with the fat adapter:
-// 1. The CLI adapter must duplicate all the logic
-// => Any change to validation must be applied in TWO places — divergence risk
-// 2. Cannot be tested without an HTTP server AND a database
-// => No unit test path exists — only slow integration tests
-// 3. Business rule changes (pricing formula) require modifying the HTTP adapter
-// => The HTTP adapter should be ignorant of pricing rules
+// ── Application service using the Clock port ──────────────────────────────
+// The service is parameterised by the clock — never calls UtcNow directly.
+let submitPO (clock: Clock) (id: string) (amount: decimal) : PurchaseOrder =
+    // => clock is the injected Clock port — synchronous, pure from caller's view
+    let now = clock ()
+    // => Delegates timestamp resolution to the injected adapter
+    { Id = id; TotalAmount = amount; SubmittedAt = now }
+    // => PO timestamp is now deterministic in tests
 
-// ── CORRECT: thin adapter + application service + domain ──────────────────
-type UnvalidatedOrder  = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => Domain input type — produced by the thin adapter, consumed by the service
-type PricedOrder       = { OrderId: string; TotalAmount: decimal }
-// => Domain output type — produced by the service, formatted by the adapter
-type PlacingOrderError = ValidationError of string | RepositoryError of string
-// => Domain errors — translated to HTTP status codes only in the adapter
+// ── System clock adapter (production) ────────────────────────────────────
+let systemClock : Clock = fun () -> System.DateTimeOffset.UtcNow
+// => Production adapter: reads the real wall-clock
+// => Non-deterministic — different call, different timestamp
 
-type PlaceOrderUseCase = UnvalidatedOrder -> Async<Result<PricedOrder list, PlacingOrderError>>
-// => The input port — the thin adapter calls this and nothing else
+// ── Fixed clock adapter (tests) ───────────────────────────────────────────
+let fixedClock : Clock =
+    // => Test adapter: always returns the same timestamp
+    // => Every test assertion can use this literal value
+    fun () -> System.DateTimeOffset(2026, 1, 15, 9, 0, 0, System.TimeSpan.Zero)
 
-// Thin HTTP adapter — contains ONLY translation and delegation
-let handlePlaceOrderCorrect (useCase: PlaceOrderUseCase) (orderId: string) (customerId: string) (qty: decimal) =
-    // => Three responsibilities: parse input, call port, format output
-    // => NO business logic: no validation rules, no pricing, no direct DB calls
+// ── Demonstration ─────────────────────────────────────────────────────────
+let testPO = submitPO fixedClock "po_test-001" 2500m
+// => Uses fixed clock — deterministic
+printfn "Submitted at: %A" testPO.SubmittedAt
+// => Output: Submitted at: 2026-01-15 09:00:00 +00:00  (exact, always the same)
+
+let prodPO = submitPO systemClock "po_prod-001" 2500m
+// => Uses system clock — non-deterministic (different run = different value)
+printfn "Submitted at: %A" prodPO.SubmittedAt
+// => Output: Submitted at: <current UTC time>  (varies by run)
+```
+
+**Key Takeaway**: A `Clock` port that returns a `DateTimeOffset` makes time a dependency like any other — injectable, swappable, and deterministic in tests.
+
+**Why It Matters**: Time-dependent business rules are among the hardest to test without a clock port. Approval SLAs, order expiry windows, and payment scheduling deadlines all require specific timestamps to trigger. Without an injectable clock, tests either manipulate system time globally (fragile, OS-dependent) or skip the time-sensitive paths entirely. The `Clock` port costs one function type alias and one record field; the payoff is complete determinism for any time-sensitive domain rule.
+
+---
+
+### Example 6: The Dependency Rule — Direction of Imports
+
+The dependency rule states that the direction of source-code imports must always point inward: adapters import the application zone, the application zone imports the domain zone, and the domain zone imports nothing outside itself. Violating this rule is the single most common hexagonal architecture mistake.
+
+```fsharp
+// ── CORRECT dependency directions ────────────────────────────────────────
+
+// Domain.fs — zero external imports
+module ProcurementPlatform.Domain
+
+type PurchaseOrder = { Id: string; TotalAmount: decimal; Status: string }
+// => Domain type — defined without knowledge of any infrastructure
+type DomainError = InvalidAmount of decimal | BlankId
+// => Named errors — no exception types, no HTTP status codes here
+
+// Application.fs — imports Domain only
+module ProcurementPlatform.Application
+// open ProcurementPlatform.Domain  ← CORRECT: imports inner zone
+
+type PurchaseOrderRepository = {
+    // => Port defined in Application — depends on Domain types only
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+}
+// => Application knows Domain; Application does NOT know Adapters
+
+// Adapters/PostgresAdapter.fs — imports Application (and transitively Domain)
+module ProcurementPlatform.Adapters.PostgresAdapter
+// open ProcurementPlatform.Application  ← CORRECT: imports middle zone
+// open Npgsql                           ← CORRECT: adapters may import infrastructure
+
+// ── WRONG dependency directions ───────────────────────────────────────────
+// These are the mistakes the dependency rule prevents.
+
+// MISTAKE 1: Domain importing infrastructure
+// module ProcurementPlatform.Domain
+// open Npgsql  ← WRONG: domain cannot import Npgsql
+// => Effect: domain is now untestable without a real Postgres connection
+
+// MISTAKE 2: Application importing an adapter
+// module ProcurementPlatform.Application
+// open ProcurementPlatform.Adapters.PostgresAdapter  ← WRONG
+// => Effect: swapping the adapter requires changing the application layer
+
+// MISTAKE 3: Domain importing application
+// module ProcurementPlatform.Domain
+// open ProcurementPlatform.Application  ← WRONG
+// => Effect: circular dependency; domain becomes aware of ports it should not know about
+
+printfn "Dependency rule: Domain ← Application ← Adapters (arrows = allowed imports)"
+// => Output: Dependency rule: Domain ← Application ← Adapters (arrows = allowed imports)
+```
+
+**Key Takeaway**: The dependency rule — imports only point inward — is enforced by F# module ordering; a module cannot open a module defined later in the compilation order.
+
+**Why It Matters**: The dependency rule is not a guideline — it is the architectural invariant that makes the whole pattern work. When it is violated, the domain becomes coupled to infrastructure (untestable), adapters become coupled to each other (unswappable), and the application service becomes coupled to specific adapter implementations (fragile). F#'s compilation order makes many violations visible at compile time: if `Domain.fs` tries to `open` a type from `Adapters.fs`, the compiler rejects it. This is the strongest enforcement mechanism available in a compiled language.
+
+---
+
+### Example 7: Zone Boundaries as File Organisation
+
+Hexagonal Architecture's zone boundaries should be visible in the file system. The module namespace convention maps directly to folder structure, making zone violations easy to detect in a code review without reading any code.
+
+```fsharp
+// ── File system layout ────────────────────────────────────────────────────
+// ProcurementPlatform/
+// ├── Domain/
+// │   └── PurchaseOrder.fs          ← inner zone: no external dependencies
+// ├── Application/
+// │   ├── Ports.fs                  ← port type aliases: PurchaseOrderRepository, Clock
+// │   └── PurchaseOrderService.fs   ← orchestration: calls domain + ports
+// └── Adapters/
+//     ├── PostgresPurchaseOrderRepository.fs  ← output port implementation
+//     ├── InMemoryPurchaseOrderRepository.fs  ← test adapter
+//     ├── HttpController.fs                   ← primary (driving) adapter
+//     └── Composition.fs                      ← wires adapters to ports
+
+// ── Domain/PurchaseOrder.fs ───────────────────────────────────────────────
+module ProcurementPlatform.Domain.PurchaseOrder
+
+type PurchaseOrderId = string
+// => Thin alias — prevents mixing PO IDs with other string identifiers
+
+type PurchaseOrder = {
+    // => Aggregate root of the purchasing context — lives only in this module
+    Id         : PurchaseOrderId
+    SupplierId : string
+    TotalAmount: decimal
+    Status     : string
+}
+
+// ── Application/Ports.fs ─────────────────────────────────────────────────
+module ProcurementPlatform.Application.Ports
+
+// open ProcurementPlatform.Domain.PurchaseOrder  ← only domain types imported
+
+type PurchaseOrderRepository = {
+    // => Port definition — ONLY in the application zone
+    save : PurchaseOrder -> Async<Result<unit, string>>
+    load : PurchaseOrderId -> Async<Result<PurchaseOrder option, string>>
+}
+// => Adapters implement this; the application service consumes it
+
+type Clock = unit -> System.DateTimeOffset
+// => Time port — all ports live alongside each other in Ports.fs
+
+// ── Adapters/Composition.fs ───────────────────────────────────────────────
+// The composition root is the ONLY file that knows about all adapters.
+// module ProcurementPlatform.Adapters.Composition
+// open ProcurementPlatform.Application.Ports
+// open ProcurementPlatform.Adapters.PostgresPurchaseOrderRepository
+// open ProcurementPlatform.Adapters.HttpController
+
+printfn "File layout enforces zone boundaries — violations are visible at a glance"
+// => Output: File layout enforces zone boundaries — violations are visible at a glance
+```
+
+**Key Takeaway**: Mapping the three zones directly to three top-level folders makes every dependency rule violation visible as a misplaced file, before any code is read.
+
+**Why It Matters**: Architecture rules enforced only in developers' heads erode under deadline pressure. A folder structure that mirrors the zone model gives every contributor an immediate visual signal when something is misplaced. In code reviews, a file in `Domain/` that imports `Npgsql` is caught by the reviewer before the diff is even read. This is the power of making architecture visible through file organisation: enforcement shifts from human discipline to spatial recognition.
+
+---
+
+## Ports as Function Types (Examples 8–14)
+
+### Example 8: Output Port — The `PurchaseOrderRepository` Record Type
+
+The `PurchaseOrderRepository` port is the canonical output port for the `purchasing` context. It appears identically in every beginner example that persists or retrieves a `PurchaseOrder`. Here the focus is on understanding WHY the record-of-functions shape is the right abstraction.
+
+```fsharp
+// ── The canonical PurchaseOrderRepository port ────────────────────────────
+// This definition is IDENTICAL in every example that uses this port.
+// Never rename fields, never change signatures — the contract is the port.
+type PurchaseOrderId = string
+// => PO primary key — format po_<uuid>; alias prevents stringly-typed confusion
+
+type PurchaseOrder = {
+    // => Aggregate root — the only type the repository cares about
+    Id         : PurchaseOrderId
+    SupplierId : string
+    TotalAmount: decimal
+    Status     : string
+}
+
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Infrastructure errors — named so callers can respond appropriately
+// => DatabaseError carries the message; ConnectionTimeout signals a retry opportunity
+
+type PurchaseOrderRepository = {
+    // => The complete output port — two operations, two function signatures
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
+    // => save: persist the aggregate; returns unit on success (the PO is the input)
+    // => Async because disk write is I/O-bound
+    // => Result because the database can fail (constraint, connection, timeout)
+    load: PurchaseOrderId -> Async<Result<PurchaseOrder option, RepoError>>
+    // => load: retrieve by identity; returns None when not found (not an error)
+    // => option distinguishes "not found" from "infrastructure failure"
+}
+// => Any record literal with these two fields satisfies the PurchaseOrderRepository type
+
+// ── How the application service depends on the port ───────────────────────
+let loadAndInspect (repo: PurchaseOrderRepository) (id: PurchaseOrderId) =
+    // => repo is the port — injected by the composition root
     async {
-        let input = { OrderId = orderId; CustomerId = customerId; Quantity = qty }
-        // => Translate HTTP parameters to domain type — pure mapping
-        let! result = useCase input
-        // => Delegate entirely to the application service — thin adapter does NOT orchestrate
+        let! result = repo.load id
+        // => Delegates to whichever adapter was injected — no SQL in this function
         return
             match result with
-            | Ok orders ->
-                sprintf "200 OK: %d orders processed" (List.length orders)
-                // => Map Ok result to HTTP 200 — formatting only
+            | Ok (Some po) -> sprintf "Found PO %s in status %s" po.Id po.Status
+            // => PO found — return a summary string
+            | Ok None      -> sprintf "PO %s not found" id
+            // => Not found — explicit, not an error
+            | Error (DatabaseError msg)  -> sprintf "DB error: %s" msg
+            // => Infrastructure failure — propagate with context
+            | Error ConnectionTimeout    -> "Timeout — retry later"
+            // => Timeout — signal to the caller that a retry is safe
+    }
+
+printfn "PurchaseOrderRepository port declared — adapters implement; application layer consumes"
+// => Output: PurchaseOrderRepository port declared — adapters implement; application layer consumes
+```
+
+**Key Takeaway**: The `PurchaseOrderRepository` record type makes the port contract explicit and compiler-checked — any record with matching `save` and `load` signatures satisfies it, regardless of the storage backend.
+
+**Why It Matters**: Record-of-functions ports give F# codebases the same substitutability that OOP languages get from interfaces, without inheritance or virtual dispatch. The compiler verifies that every adapter provides exactly the fields the port requires. Adding a new operation to the port is a one-line addition to the record type, and the compiler immediately flags every adapter that needs updating. This makes the port the single source of truth for the boundary contract.
+
+---
+
+### Example 9: Output Port — Minimal vs Full Signatures
+
+Port signatures should be minimal: only the parameters the application service needs. Extra parameters are adapter concerns. This example shows the difference between a minimal port and an over-specified one.
+
+```fsharp
+// ── OVER-SPECIFIED port (wrong) ───────────────────────────────────────────
+// The save function carries database-specific parameters.
+// The application service must now know connection strings and transaction handles.
+type OverSpecifiedRepository = {
+    save: string -> System.Data.IDbTransaction -> PurchaseOrder -> Async<Result<unit, string>>
+    // => WRONG: connectionString and IDbTransaction are adapter concerns
+    // => Application layer now knows about databases — zone violation
+}
+// => The application layer is now coupled to SQL-specific infrastructure
+
+// ── MINIMAL port (correct) ────────────────────────────────────────────────
+// Connection management is the adapter's responsibility — not visible here.
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Domain type — no infrastructure fields
+
+type PurchaseOrderRepository = {
+    // => Minimal: the application service needs exactly these two operations
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    // => CORRECT: no connection string, no transaction — adapter manages those internally
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+    // => CORRECT: only the identity is needed — the adapter knows where to look
+}
+// => The connection string is a constructor parameter of the adapter, not a port parameter
+
+// ── Adapter: the connection string is captured at construction time ────────
+let buildPostgresRepo (connectionString: string) : PurchaseOrderRepository = {
+    // => connectionString is closed over — not visible to the application layer
+    save = fun po -> async {
+        // open Npgsql — this is where infrastructure lives
+        printfn "[PG] INSERT INTO purchase_orders VALUES (%s, %.2f)" po.Id po.TotalAmount
+        // => Real: execute INSERT with Npgsql — connectionString is in scope via closure
+        return Ok ()
+        // => Returns unit on success — the PO identity is already in the input
+    }
+    load = fun id -> async {
+        printfn "[PG] SELECT * FROM purchase_orders WHERE id = %s" id
+        // => Real: execute SELECT with Npgsql; return None if no rows
+        return Ok None
+        // => Simplified: always returns None; real adapter queries Postgres
+    }
+}
+
+printfn "Minimal port: connection management is the adapter's responsibility, not the port's"
+// => Output: Minimal port: connection management is the adapter's responsibility, not the port's
+```
+
+**Key Takeaway**: Port signatures must contain only the domain concepts the application service needs — infrastructure parameters like connection strings belong inside the adapter, captured in a closure.
+
+**Why It Matters**: Over-specified ports are a subtle but costly mistake. Once connection management parameters appear in the port signature, every test must supply them, and every application service must thread them through its logic. The port is no longer an abstraction — it is a thin wrapper around the infrastructure. Closures solve this cleanly in F#: the adapter captures the connection string at construction time, and the port signature remains infrastructure-free forever.
+
+---
+
+### Example 10: Output Port — Async vs Sync Signatures
+
+Ports that perform I/O use `Async<Result<_,_>>`. Ports that are logically instantaneous (clock, ID generation) use synchronous signatures. Mixing these up leads to unnecessary async overhead or missed error-handling.
+
+```fsharp
+// ── Rule: I/O-bound ports return Async<Result<_,_>> ──────────────────────
+// The database can fail and the call is I/O-bound — both reasons for async+Result.
+type PurchaseOrder = { Id: string; TotalAmount: decimal; Status: string }
+// => Domain aggregate — same type referenced by both ports below
+
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    // => CORRECT: async because disk write; Result because write can fail
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+    // => CORRECT: async because network read; Result because read can fail
+}
+
+// ── Rule: logically-instantaneous ports return the value directly ──────────
+// The clock never fails and the call is CPU-bound — neither reason for async+Result.
+type Clock = unit -> System.DateTimeOffset
+// => CORRECT: no async (no I/O); no Result (no failure mode for reading time)
+// => Simplifies every call site: let now = clock ()  — no let!, no match
+
+type IdGenerator = unit -> string
+// => CORRECT: generating a UUID is synchronous and infallible
+// => Wrapping it in Async<Result<_,_>> would be purely ceremonial overhead
+
+// ── WRONG: over-wrapping the clock ───────────────────────────────────────
+// type BadClock = unit -> Async<Result<System.DateTimeOffset, string>>
+// => This forces every call site to do: let! now = clock ()
+// => and then: match now with Ok t -> ... | Error _ -> ...
+// => Both are meaningless ceremony — the clock cannot fail
+
+// ── Demonstration: call-site simplicity ──────────────────────────────────
+let buildPO (clock: Clock) (gen: IdGenerator) (supplierId: string) (amount: decimal) =
+    // => Both synchronous ports: no async, no Result at call site
+    let id  = gen ()
+    // => id : string — immediate UUID, no await needed
+    let now = clock ()
+    // => now : DateTimeOffset — immediate timestamp, no await needed
+    { Id = sprintf "po_%s" id; TotalAmount = amount; Status = "Draft" }
+    // => PO constructed synchronously — supplierId and timestamp available instantly
+
+printfn "Sync ports for instantaneous operations; Async<Result<_,_>> for I/O-bound ports"
+// => Output: Sync ports for instantaneous operations; Async<Result<_,_>> for I/O-bound ports
+```
+
+**Key Takeaway**: Match the port signature to the failure and timing characteristics of the operation — synchronous for infallible in-process operations, `Async<Result<_,_>>` for I/O-bound fallible operations.
+
+**Why It Matters**: Unnecessary `Async<Result<_,_>>` wrappers on synchronous ports add cognitive overhead at every call site and spread `let!` / `match` noise through application services. The reverse mistake — a synchronous signature on a database port — blocks the thread pool and kills throughput. The discipline of choosing the correct signature type at port definition time pays dividends every time the port is called in application services and tests.
+
+---
+
+### Example 11: Output Port — Error Type Design
+
+The error type in a port's `Result` should be a discriminated union specific to that port, not a generic `exn` or `string`. Named error cases allow the application service to respond to different failures differently.
+
+```fsharp
+// ── GENERIC error (wrong) ─────────────────────────────────────────────────
+// type BadRepository = { save: PurchaseOrder -> Async<Result<unit, exn>> }
+// => exn leaks exception semantics into the functional type system
+// => The caller cannot distinguish a timeout from a constraint violation
+
+// ── STRING error (also wrong) ─────────────────────────────────────────────
+// type BadRepository = { save: PurchaseOrder -> Async<Result<unit, string>> }
+// => Better than exn, but still untyped — the caller must parse the string to branch
+// => A typo in the error string is a runtime bug, not a compile error
+
+// ── NAMED DU error (correct) ──────────────────────────────────────────────
+// Domain error: named cases the application layer can match on exhaustively.
+type PurchaseOrder = { Id: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — used in the port signatures below
+
+type RepoError =
+    // => Discriminated union: each case is a distinct failure mode
+    | DuplicateKey of string
+    // => PO with this ID already exists — caller should not retry with same ID
+    | ConnectionTimeout
+    // => Database unreachable — caller may retry after a delay
+    | ConstraintViolation of string
+    // => Schema constraint failed — caller should inspect the PO for data errors
+    | UnexpectedError of string
+    // => Catch-all for unexpected failures — carry message for diagnostics
+
+type PurchaseOrderRepository = {
+    // => Port with named error type — exhaustive matching at application layer
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
+    load: string        -> Async<Result<PurchaseOrder option, RepoError>>
+}
+
+// ── Application service: branch on error case ────────────────────────────
+let handleSaveError (repo: PurchaseOrderRepository) (po: PurchaseOrder) =
+    async {
+        let! result = repo.save po
+        // => Delegates to the injected adapter
+        return
+            match result with
+            | Ok ()                          -> "Saved successfully"
+            // => Happy path
+            | Error (DuplicateKey id)        -> sprintf "PO %s already exists" id
+            // => Idempotency: PO already saved — not necessarily an error
+            | Error ConnectionTimeout        -> "Retry after delay — DB unreachable"
+            // => Transient failure: safe to retry
+            | Error (ConstraintViolation msg)-> sprintf "Data error: %s" msg
+            // => Permanent failure: the PO data has a problem
+            | Error (UnexpectedError msg)    -> sprintf "Unexpected: %s" msg
+            // => Catch-all: surface for diagnostics
+    }
+
+printfn "Named RepoError DU: exhaustive matching; no string parsing; compile-time completeness"
+// => Output: Named RepoError DU: exhaustive matching; no string parsing; compile-time completeness
+```
+
+**Key Takeaway**: Using a discriminated union as the port's error type makes all failure modes explicit at the type level, enabling the application service to respond differently to transient vs permanent failures.
+
+**Why It Matters**: Generic `exn` or `string` error types force callers to parse error messages or catch exception types by name — fragile, untestable, and undiscoverable. A named DU makes every error case a compiler-verified contract: add a new error case, and the compiler immediately identifies every call site that needs to handle it. For a `PurchaseOrderRepository`, the distinction between `ConnectionTimeout` (retry) and `DuplicateKey` (idempotency check) directly affects business behaviour and must be expressed at the type level.
+
+---
+
+### Example 12: Input Port — Receiving from HTTP vs CLI vs Message Bus
+
+The same input port type alias is satisfied by three different adapters: an HTTP handler, a CLI parser, and an event consumer. Each adapter translates its delivery-mechanism-specific input into the domain type, then calls the same port.
+
+```fsharp
+// ── Shared domain and port types ──────────────────────────────────────────
+type DraftPurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal }
+// => Raw input from any delivery mechanism
+type SubmittedPO = { Id: string; Status: string }
+// => Simplified output confirming submission
+
+type SubmissionError = ValidationError of string | RepositoryError of string
+// => Named errors — each delivery mechanism maps these to its own response format
+
+type SubmitPurchaseOrderUseCase =
+    DraftPurchaseOrder -> Async<Result<SubmittedPO, SubmissionError>>
+// => Input port: identical for all three adapters below
+
+// ── Adapter 1: HTTP ───────────────────────────────────────────────────────
+// The HTTP adapter receives a JSON body, maps it to the domain type, calls the port.
+type HttpPoDto = { po_id: string; supplier_id: string; total_amount: float }
+// => JSON shape — snake_case, float amounts (JSON limitation)
+
+let httpAdapter (useCase: SubmitPurchaseOrderUseCase) (dto: HttpPoDto) =
+    // => dto: parsed from JSON request body by the framework (ASP.NET / Giraffe)
+    async {
+        let draft = { Id = dto.po_id; SupplierId = dto.supplier_id
+                      TotalAmount = decimal dto.total_amount }
+        // => Translate: HTTP DTO → domain input type (float → decimal, snake_case → PascalCase)
+        let! result = useCase draft
+        // => Delegate to the port — the adapter does no business logic
+        return
+            match result with
+            | Ok po                       -> sprintf "201 Created: %s" po.Id
+            | Error (ValidationError msg) -> sprintf "422: %s" msg
+            | Error (RepositoryError msg) -> sprintf "503: %s" msg
+    }
+
+// ── Adapter 2: CLI ────────────────────────────────────────────────────────
+// The CLI adapter parses command-line arguments, maps to domain type, calls the port.
+let cliAdapter (useCase: SubmitPurchaseOrderUseCase) (args: string array) =
+    // => args: command-line arguments ["--id"; "po_001"; "--supplier"; "sup_001"; "--amount"; "1000"]
+    async {
+        // Simplified arg parsing — real adapter uses Argu or CommandLineParser
+        let draft = { Id = args.[1]; SupplierId = args.[3]; TotalAmount = decimal args.[5] }
+        // => Translate: argv → domain input type
+        let! result = useCase draft
+        // => Same port call — CLI and HTTP are interchangeable from the use case's view
+        return
+            match result with
+            | Ok po                       -> printfn "PO submitted: %s" po.Id
+            | Error (ValidationError msg) -> printfn "Validation error: %s" msg
+            | Error (RepositoryError msg) -> printfn "Repository error: %s" msg
+    }
+
+// ── Adapter 3: Event consumer ─────────────────────────────────────────────
+// The event consumer receives a Kafka message body, maps to domain type, calls the port.
+type KafkaMessage = { Key: string; Payload: string }
+// => Raw Kafka message — key is the PO ID, payload is a JSON string
+
+let eventConsumerAdapter (useCase: SubmitPurchaseOrderUseCase) (msg: KafkaMessage) =
+    // => msg: deserialized Kafka message from the consumer loop
+    async {
+        // Simplified: real adapter deserialises JSON payload with System.Text.Json
+        let draft = { Id = msg.Key; SupplierId = "sup_from_payload"; TotalAmount = 750m }
+        // => Translate: Kafka message → domain input type
+        let! result = useCase draft
+        // => Same port call — the use case is delivery-mechanism-agnostic
+        return
+            match result with
+            | Ok _  -> printfn "PO consumed from Kafka: %s" msg.Key
+            | Error e -> printfn "Consumer error: %A" e
+    }
+
+printfn "One input port type — three adapters, zero changes to the application service"
+// => Output: One input port type — three adapters, zero changes to the application service
+```
+
+**Key Takeaway**: The input port type alias decouples the application service from its delivery mechanism — HTTP, CLI, and Kafka consumers all call the same function type without the service knowing which adapter is in use.
+
+**Why It Matters**: When delivery mechanisms (REST → gRPC migration, CLI → event-driven) evolve, only the adapter changes. The application service, domain functions, and repository adapters remain untouched. This is the primary reason hexagonal architecture is sometimes called "delivery-mechanism agnostic" — the input port is the insulating layer that makes delivery mechanism changes non-events.
+
+---
+
+### Example 13: Composing Multiple Output Ports
+
+An application service often needs more than one output port. Composing them as separate parameters (or as fields in a ports record) keeps each port independently testable and swappable.
+
+```fsharp
+open System
+
+// ── Port types ─────────────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — used across multiple ports
+
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+}
+// => Persistence port — same canonical definition
+
+type Clock = unit -> DateTimeOffset
+// => Time port — synchronous, infallible
+
+// ── Application service with two output ports ─────────────────────────────
+// Parameters: ports first, then domain inputs — idiomatic partial application
+let submitPurchaseOrder
+    (repo  : PurchaseOrderRepository)
+    // => First output port: persistence
+    (clock : Clock)
+    // => Second output port: time
+    (draft : { Id: string; SupplierId: string; TotalAmount: decimal }) =
+    // => Domain input: the draft PO from the adapter
+    async {
+        // Validation — pure, no ports used
+        if String.IsNullOrWhiteSpace(draft.Id) then
+            return Error "PO Id must not be blank"
+        // => Domain rule enforced before any I/O
+        else
+
+        // Clock port — synchronous call
+        let submittedAt = clock ()
+        // => Timestamp from the injected clock — deterministic in tests
+
+        // Build the persisted PO
+        let po = { Id = draft.Id; SupplierId = draft.SupplierId
+                   TotalAmount = draft.TotalAmount; Status = "AwaitingApproval" }
+        // => State: Draft → AwaitingApproval after valid submission
+
+        // Repository port — async I/O call
+        let! saveResult = repo.save po
+        // => Persist the PO — Postgres in production, Dictionary in tests
+        match saveResult with
+        | Error msg -> return Error (sprintf "Save failed: %s" msg)
+        // => Propagate infrastructure failure to the caller
+        | Ok () ->
+        printfn "[%A] PO %s submitted for approval" submittedAt po.Id
+        // => Log: real adapter would use Serilog or OpenTelemetry
+        return Ok po
+        // => Return the submitted PO to the HTTP adapter
+    }
+
+printfn "Two output ports — independently swappable — compose in application service parameters"
+// => Output: Two output ports — independently swappable — compose in application service parameters
+```
+
+**Key Takeaway**: Multiple output ports are composed as separate function parameters or record fields — each independently injectable and independently testable.
+
+**Why It Matters**: When all output ports are composed in one function signature, each port can be independently stubbed in tests. Replacing `repo` with an in-memory stub tests persistence logic; replacing `clock` with a fixed time tests time-sensitive business rules; replacing neither tests the full production wiring. This granular control is unavailable when ports are grouped into a god-record without thinking about which service actually needs which port.
+
+---
+
+### Example 14: Port as a Named Record vs Curried Parameters
+
+Two syntactic styles for injecting ports: a named record (`Ports` record) vs individual curried parameters. Each has trade-offs. Both are valid; the record style scales better to many ports.
+
+```fsharp
+open System
+
+// ── Shared types ──────────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; TotalAmount: decimal; Status: string }
+// => Aggregate root shared by both port styles
+
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+}
+// => Canonical repository port — same signature in both styles
+
+type Clock = unit -> DateTimeOffset
+// => Time port — synchronous
+
+// ── Style A: curried parameters ────────────────────────────────────────────
+// Individual port parameters — readable for services with 1-3 ports.
+let submitPO_Curried (repo: PurchaseOrderRepository) (clock: Clock) (id: string) (amount: decimal) =
+    // => Each port is a separate parameter — explicit at every call site
+    async {
+        let now = clock ()
+        // => Clock port called with no argument
+        let po  = { Id = id; TotalAmount = amount; Status = "AwaitingApproval" }
+        // => Draft PO constructed before persistence
+        let! _  = repo.save po
+        // => Repository port called; result ignored for brevity
+        return sprintf "Submitted at %A" now
+        // => Returns confirmation with timestamp
+    }
+
+// Partial application: bake ports in, expose domain parameters
+let productionSubmit = submitPO_Curried postgresRepo systemClock
+// => productionSubmit : string -> decimal -> Async<string>
+// => "ports baked in" — callers only see the domain parameters
+
+// ── Style B: ports record ─────────────────────────────────────────────────
+// Bundle ports into a named record — preferred for services with 4+ ports.
+type PurchasingPorts = {
+    Repo  : PurchaseOrderRepository
+    // => Repository port field
+    Clock : Clock
+    // => Clock port field
+}
+// => Adding a new port: add one field here, one parameter in the application service
+
+let submitPO_Record (ports: PurchasingPorts) (id: string) (amount: decimal) =
+    // => Single ports record — all dependencies in one value
+    async {
+        let now = ports.Clock ()
+        // => Access clock via record field — named, self-documenting
+        let po  = { Id = id; TotalAmount = amount; Status = "AwaitingApproval" }
+        // => Construct the PO before persisting
+        let! _  = ports.Repo.save po
+        // => Access repository via record field
+        return sprintf "Submitted at %A" now
+        // => Returns confirmation with timestamp
+    }
+
+// In tests: replace any field independently
+// let testPorts = { Repo = inMemRepo; Clock = fixedClock }
+// => Replace Repo with an in-memory stub; keep Clock as fixed time
+
+and postgresRepo : PurchaseOrderRepository = {
+    save = fun po -> async { printfn "[PG] Saving %s" po.Id; return Ok () }
+    // => Stub standing in for a real Postgres adapter
+    load = fun id -> async { return Ok None }
+    // => Stub: always returns None
+}
+and systemClock : Clock = fun () -> DateTimeOffset.UtcNow
+// => Production clock: non-deterministic system time
+
+printfn "Both styles valid — curried for few ports, record for many ports"
+// => Output: Both styles valid — curried for few ports, record for many ports
+```
+
+**Key Takeaway**: Curried parameters work well for 1–3 ports; a named ports record scales better when the application service depends on 4 or more ports.
+
+**Why It Matters**: Curried parameters are explicit at call sites, making dependencies visible. But when services grow to 6-8 ports, 8-parameter function signatures become unwieldy and hard to partially apply. A ports record solves this: one parameter, all ports, each addressable by name. The choice is a local style decision — the important invariant is that adapters remain injectable regardless of the syntax used.
+
+---
+
+## Adapters as Function Implementations (Examples 15–20)
+
+### Example 15: In-Memory Adapter — Satisfying `PurchaseOrderRepository`
+
+The in-memory adapter is the simplest possible implementation of `PurchaseOrderRepository`. It stores `PurchaseOrder` values in a `Dictionary`, returns them on `load`, and is the default test adapter for all unit and integration tests.
+
+```fsharp
+open System.Collections.Generic
+
+// ── Shared types ──────────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — the type the repository stores and retrieves
+
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error cases — in-memory adapter never produces ConnectionTimeout
+// => but must satisfy the same error type as the Postgres adapter
+
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
+    load: string        -> Async<Result<PurchaseOrder option, RepoError>>
+}
+// => Canonical port — the in-memory adapter satisfies this type exactly
+
+// ── In-memory adapter ─────────────────────────────────────────────────────
+// buildInMemoryRepo: factory function; each call creates an isolated store.
+// Isolation matters: two tests sharing a store would pollute each other's state.
+let buildInMemoryRepo () : PurchaseOrderRepository =
+    // => Returns a new PurchaseOrderRepository record on each call
+    let store = Dictionary<string, PurchaseOrder>()
+    // => The Dictionary is closed over — visible only inside this record literal
+    {
+        save = fun po ->
+            // => po : PurchaseOrder — the aggregate to persist
+            async {
+                store.[po.Id] <- po
+                // => Dictionary write — no SQL, no network, no disk
+                return Ok ()
+                // => Always succeeds — in-memory never produces ConnectionTimeout
+            }
+        load = fun id ->
+            // => id : string — the PO ID to look up
+            async {
+                match store.TryGetValue(id) with
+                | true,  po -> return Ok (Some po)
+                // => Found: return the PurchaseOrder wrapped in Some
+                | false, _  -> return Ok None
+                // => Not found: return None — not an error, just absence
+            }
+    }
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+let repo1 = buildInMemoryRepo ()
+// => repo1 : PurchaseOrderRepository — empty store; independent of repo2
+let repo2 = buildInMemoryRepo ()
+// => repo2 : PurchaseOrderRepository — separate empty store
+
+let testPO = { Id = "po_test-001"; SupplierId = "sup_acme-1"; TotalAmount = 1500m; Status = "Draft" }
+// => A sample PurchaseOrder for demonstration
+
+let saveResult = repo1.save testPO |> Async.RunSynchronously
+// => saveResult : Result<unit, RepoError> = Ok ()
+printfn "Save: %A" saveResult
+// => Output: Save: Ok ()
+
+let loadResult = repo1.load "po_test-001" |> Async.RunSynchronously
+// => loadResult : Result<PurchaseOrder option, RepoError> = Ok (Some { Id = "po_test-001"; ... })
+printfn "Load: %A" loadResult
+// => Output: Load: Ok (Some { Id = "po_test-001"; SupplierId = "sup_acme-1"; TotalAmount = 1500M; Status = "Draft" })
+
+let missResult = repo2.load "po_test-001" |> Async.RunSynchronously
+// => missResult : Result<PurchaseOrder option, RepoError> = Ok None
+// => repo2 is a separate store — the save to repo1 did not affect it
+printfn "Load (different store): %A" missResult
+// => Output: Load (different store): Ok None
+```
+
+**Key Takeaway**: The in-memory adapter satisfies `PurchaseOrderRepository` exactly — same type, same error cases, isolated store per test — making unit tests fast, deterministic, and infrastructure-free.
+
+**Why It Matters**: A well-designed in-memory adapter enables tests that run in milliseconds with zero infrastructure dependencies. Every application service test uses the in-memory adapter by default; only adapter tests (verifying SQL correctness) use real Postgres. The factory function pattern (`buildInMemoryRepo ()`) ensures store isolation between tests, eliminating state pollution between test cases. This is the foundational pattern that makes hexagonal architecture's testing benefits concrete.
+
+---
+
+### Example 16: Primary Adapter — HTTP Handler as a Function
+
+The HTTP handler is the primary (driving) adapter. It receives an HTTP request, translates it to a domain input type, calls the input port, and maps the result to an HTTP response. It contains zero business logic.
+
+```fsharp
+// ── Domain and port types ──────────────────────────────────────────────────
+type DraftPurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal }
+// => Domain input type — validated by the application service
+
+type SubmittedPO = { Id: string; Status: string }
+// => Domain output type — returned by the application service on success
+
+type SubmissionError = ValidationError of string | RepositoryError of string
+// => Named errors — each maps to a different HTTP status code
+
+type SubmitPurchaseOrderUseCase =
+    DraftPurchaseOrder -> Async<Result<SubmittedPO, SubmissionError>>
+// => Input port — the HTTP adapter calls this; never implements it
+
+// ── HTTP DTO (adapter zone only) ──────────────────────────────────────────
+type HttpSubmitPoRequest  = { po_id: string; supplier_id: string; total_amount: float }
+// => JSON request body shape — snake_case per REST convention, float per JSON spec
+type HttpSubmitPoResponse = { po_id: string; status: string }
+// => JSON response body — minimal confirmation
+
+// ── Inbound translation: HTTP DTO → domain input ─────────────────────────
+let toDomainInput (req: HttpSubmitPoRequest) : DraftPurchaseOrder =
+    // => Pure mapping: JSON DTO → domain type; no validation logic here
+    { Id          = req.po_id
+      SupplierId  = req.supplier_id
+      TotalAmount = decimal req.total_amount }
+// => float → decimal conversion; naming convention alignment
+
+// ── Outbound translation: domain output → HTTP response ──────────────────
+let toHttpResponse (submitted: SubmittedPO) : HttpSubmitPoResponse =
+    // => Pure mapping: domain type → JSON DTO; no business logic here
+    { po_id = submitted.Id; status = submitted.Status }
+// => PascalCase domain → snake_case JSON
+
+// ── HTTP handler — the primary adapter ────────────────────────────────────
+let httpHandler (useCase: SubmitPurchaseOrderUseCase) (req: HttpSubmitPoRequest) =
+    // => useCase: injected input port — the handler never names the implementation
+    // => req: JSON body parsed by the framework (Giraffe / ASP.NET minimal API)
+    async {
+        let domainInput = toDomainInput req
+        // => Translate: HTTP DTO → domain input type (adapter responsibility)
+        let! result = useCase domainInput
+        // => Call the input port — all business logic lives here, not in the handler
+        return
+            match result with
+            | Ok submitted ->
+                let response = toHttpResponse submitted
+                // => Translate: domain output → JSON response DTO
+                sprintf "201 Created: %A" response
+                // => Real Giraffe: json response |> setStatusCode 201
             | Error (ValidationError msg) ->
                 sprintf "422 Unprocessable: %s" msg
-                // => Map domain error to HTTP 422 — status code mapping only
+                // => Domain validation error → HTTP 422
             | Error (RepositoryError msg) ->
-                sprintf "500 Internal: %s" msg
-                // => Map infrastructure error to HTTP 500 — status code mapping only
+                sprintf "503 Service Unavailable: %s" msg
+                // => Infrastructure failure → HTTP 503
     }
 
-// The thin adapter: 3 lines of real logic (translate, call, map)
-// The fat adapter: 20+ lines mixing domain rules, SQL, and HTTP concerns
-let stubUseCase : PlaceOrderUseCase =
-    fun input -> async { return Ok [ { OrderId = input.OrderId; TotalAmount = 29.97m } ] }
-// => Stub use case — no infrastructure needed for adapter test
+// ── Demonstration ──────────────────────────────────────────────────────────
+let stubUseCase : SubmitPurchaseOrderUseCase =
+    // => Stub implementation — satisfies the port type alias for demonstration
+    fun draft -> async { return Ok { Id = draft.Id; Status = "AwaitingApproval" } }
 
-let response =
-    handlePlaceOrderCorrect stubUseCase "ORD-001" "CUST-42" 3m
-    |> Async.RunSynchronously
-// => Demonstrates the thin adapter calling the stub use case
+let request = { po_id = "po_001"; supplier_id = "sup_001"; total_amount = 2000.0 }
+// => Sample HTTP request body
 
-printfn "Thin adapter result: %s" response
-// => Output: Thin adapter result: 200 OK: 1 orders processed
+let response = httpHandler stubUseCase request |> Async.RunSynchronously
+// => response : string = "201 Created: { po_id = \"po_001\"; status = \"AwaitingApproval\" }"
+printfn "%s" response
+// => Output: 201 Created: { po_id = "po_001"; status = "AwaitingApproval" }
 ```
 
-**Key Takeaway**: Fat adapters that contain business logic cannot be tested without infrastructure and cannot share logic with other adapters — thin adapters that only translate and delegate are both simpler and more reusable.
+**Key Takeaway**: The HTTP handler is a thin translation layer — it maps HTTP DTOs to domain types and back, delegates all logic to the input port, and never contains business rules.
 
-**Why It Matters**: Fat adapters are one of the most common architectural failures in web application development. A well-intentioned "quick fix" adds one business rule to an HTTP handler; over time, the handler accumulates dozens of rules, becomes untestable, and diverges from the CLI and batch versions of the same logic. Hexagonal Architecture's thin-adapter principle enforces the correct structure: if you find yourself writing an `if` condition in a handler for a business reason, that `if` belongs in the domain or application service.
+**Why It Matters**: HTTP handlers that contain business logic are untestable without an HTTP server, slow to run in CI, and resist change when the business logic evolves. A handler that does only translation and delegation is testable by passing a stub use case, runs in microseconds, and is unaffected by changes to domain logic. The pattern is the same for all primary adapters: translate, delegate, translate back.
 
 ---
 
-### Example 20: Error Translation at Adapter Boundaries
+### Example 17: The Composition Root — Wiring Adapters to Ports
 
-Domain errors (`PlacingOrderError`) are exhaustively matched at adapter boundaries to produce infrastructure-appropriate responses: HTTP status codes, CLI exit codes, or message queue headers. Adding a new domain error case triggers a compiler warning at every adapter's match expression.
-
-```fsharp
-// Error translation: domain error union mapped to HTTP status codes at the adapter boundary.
-// Exhaustive matching ensures new error cases are never silently ignored.
-
-type PlacingOrderError =
-    // => Domain error union — all named failure modes in one type
-    | ValidationError   of string
-    // => Input data violated a domain rule — user-correctable
-    | ProductNotFound   of productCode: string
-    // => The product code does not exist in the catalogue
-    | PricingError      of string
-    // => Price calculation failed — catalogue unavailable or misconfigured
-    | RemoteServiceError of service: string * message: string
-    // => Downstream service call failed — external dependency unavailable
-
-// Simulated HTTP status codes
-type HttpStatus = HTTP200 | HTTP404 | HTTP422 | HTTP500 | HTTP503
-// => Simplified enumeration — real adapter uses Microsoft.AspNetCore.Http.StatusCodes
-
-type HttpResponse = { Status: HttpStatus; Body: string }
-// => Simplified response type
-
-// ── Adapter error translation ──────────────────────────────────────────────
-// This function lives in the HTTP adapter — translates domain errors to HTTP.
-let toHttpResponse (result: Result<string, PlacingOrderError>) : HttpResponse =
-    // => Input: domain Result — Ok carries the success body, Error carries a domain error
-    match result with
-    | Ok body ->
-        { Status = HTTP200; Body = body }
-        // => Success: HTTP 200 with the response body
-    | Error (ValidationError msg) ->
-        // => User-correctable error → HTTP 422 Unprocessable Entity
-        // => The client sent invalid data — they should fix it and retry
-        { Status = HTTP422; Body = sprintf """{"error":"validation","detail":"%s"}""" msg }
-    | Error (ProductNotFound code) ->
-        // => Referenced product does not exist → HTTP 404 Not Found
-        // => The product code in the request body does not match any catalogue entry
-        { Status = HTTP404; Body = sprintf """{"error":"not_found","product":"%s"}""" code }
-    | Error (PricingError msg) ->
-        // => Pricing calculation failed → HTTP 500 Internal Server Error
-        // => The server could not compute a price — not the client's fault
-        { Status = HTTP500; Body = sprintf """{"error":"pricing","detail":"%s"}""" msg }
-    | Error (RemoteServiceError (service, message)) ->
-        // => Downstream dependency unavailable → HTTP 503 Service Unavailable
-        // => The server is temporarily unable to fulfil the request
-        { Status = HTTP503; Body = sprintf """{"error":"upstream","service":"%s","detail":"%s"}""" service message }
-    // => Exhaustive match: every PlacingOrderError case is handled
-    // => Adding a new case to PlacingOrderError triggers:
-    //    warning FS0025: Incomplete pattern matches — this match needs updating
-    // => The compiler gives you a compile-time checklist of adapter updates required
-
-// Test each case
-let cases = [
-    Ok """{"orderId":"ORD-001"}"""
-    Error (ValidationError "OrderId must not be blank")
-    Error (ProductNotFound "X9999")
-    Error (PricingError "Catalogue service timeout")
-    Error (RemoteServiceError ("PaymentGateway", "Connection refused"))
-]
-// => Five cases: one success and four named domain errors
-
-cases |> List.iter (fun c ->
-    let response = toHttpResponse c
-    // => toHttpResponse translates each Result to an HttpResponse
-    printfn "%A → %A" response.Status response.Body)
-// => Output: HTTP200 → {"orderId":"ORD-001"}
-// => Output: HTTP422 → {"error":"validation","detail":"OrderId must not be blank"}
-// => Output: HTTP404 → {"error":"not_found","product":"X9999"}
-// => Output: HTTP500 → {"error":"pricing","detail":"Catalogue service timeout"}
-// => Output: HTTP503 → {"error":"upstream","service":"PaymentGateway","detail":"Connection refused"}
-```
-
-**Key Takeaway**: Exhaustively matching domain error unions at adapter boundaries ensures that every domain failure mode has a corresponding infrastructure response, and adding a new error case surfaces all adapters that need updating at compile time.
-
-**Why It Matters**: HTTP status code mappings are often decided ad hoc: some errors return 400, others 500, some 200 with an error body. When the mapping is an exhaustive pattern match on a typed domain error union, the mapping is explicit, auditable, and complete. A new domain error case does not silently default to a 500 — the compiler requires a conscious decision about the appropriate HTTP status. This prevents the "all errors become 500" failure mode that makes APIs hard to use.
-
----
-
-### Example 21: Port Versioning — Evolving a Port Without Breaking Adapters
-
-When a port needs to evolve (new parameter, new return type), the safest approach is to add a new port type alias alongside the existing one. Existing adapters continue to satisfy the old port type and continue compiling. Only adapters that need the new capability are updated.
+The composition root is the single place where adapters are named and connected to ports. Every other module sees only the port type — only the composition root sees the adapter implementations.
 
 ```fsharp
-// Port versioning: add new port type alias alongside existing one.
-// Existing adapters are unchanged — they still satisfy the original port type.
+open System
+open System.Collections.Generic
 
-type OrderId    = string
-// => Domain identifier — unchanged across versions
-type OrderStatus = Pending | Confirmed | Shipped | Delivered
-// => Order lifecycle states — used by the new port version
+// ── All shared types ───────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — used across domain, application, and adapters
 
-type Order = { OrderId: OrderId; CustomerId: string; TotalAmount: decimal; Status: OrderStatus }
-// => Extended domain entity — now includes status
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error DU — the port's failure vocabulary
 
-type RepositoryError = NotFound of OrderId | DatabaseError of string
-// => Unchanged error type
-
-// ── Version 1: original port ──────────────────────────────────────────────
-// This port has been in production for months. All adapters implement it.
-type FindOrder = OrderId -> Async<Result<Order option, RepositoryError>>
-// => Original port: find by ID only. All existing adapters satisfy this type.
-// => Do NOT change this type — it would break all existing adapter implementations.
-
-// ── Version 2: new port alongside the original ────────────────────────────
-// The application service needs to filter orders by status.
-// Add a NEW port type alias — do not modify FindOrder.
-type FindOrdersByStatus = OrderStatus -> Async<Result<Order list, RepositoryError>>
-// => New port: find by status. New adapters will implement this.
-// => Existing adapters are unaffected — they do not see this type unless they opt in.
-
-// ── Updated dependency record ─────────────────────────────────────────────
-// Add the new port to the record alongside the existing one.
-type OrderPorts = {
-    FindOrder: FindOrder
-    // => Existing port — unchanged; all existing adapters still compile
-    FindOrdersByStatus: FindOrdersByStatus
-    // => New port — only adapters that support status filtering need to implement this
+type PurchaseOrderRepository = {
+    // => Canonical port — same definition throughout all examples
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
+    load: string        -> Async<Result<PurchaseOrder option, RepoError>>
 }
-// => OrderPorts v2: backward compatible — all existing port implementations still work
 
-// ── Existing adapter: updated to add the new port, old port unchanged ──────
-let existingFindOrder : FindOrder =
-    // => Original implementation — UNCHANGED from before the port versioning
-    fun orderId ->
-        async {
-            // => Simulated lookup — real impl queries the database
-            return Ok (Some { OrderId = orderId; CustomerId = "CUST-1"; TotalAmount = 29.97m; Status = Confirmed })
-        }
+type Clock = unit -> DateTimeOffset
+// => Time port — synchronous, infallible
 
-let newFindByStatus : FindOrdersByStatus =
-    // => New implementation — only adapters that need status filtering implement this
-    fun status ->
-        async {
-            // => Simulated filter — real impl adds a WHERE status = @status clause
-            printfn "Finding orders with status: %A" status
-            // => Returns empty list for the stub — real impl returns matching orders
-            return Ok []
-        }
+type DraftPurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal }
+// => Raw input from the HTTP layer — not yet validated
 
-let v2Ports = { FindOrder = existingFindOrder; FindOrdersByStatus = newFindByStatus }
-// => v2Ports : OrderPorts — includes both the original and new ports
-// => The application service uses both ports without either adapter being replaced
-
-printfn "Port versioning: added FindOrdersByStatus without breaking FindOrder"
-// => Output: Port versioning: added FindOrdersByStatus without breaking FindOrder
-```
-
-**Key Takeaway**: Adding a new port type alias alongside the existing one allows the application service to gain new capabilities without breaking any existing adapter — backward compatibility through addition, not modification.
-
-**Why It Matters**: Port evolution is a common source of breaking changes in microservice architectures. If every capability change modifies an existing port type, every adapter must be updated simultaneously — a coordination nightmare. Adding new port type aliases instead follows the Open-Closed Principle: the existing port is closed to modification, the new capability is added through a new type. Teams can migrate adapters incrementally without service interruption.
-
----
-
-### Example 22: Configuration Port — Externally Driven Settings
-
-`GetConfig` is an output port for reading configuration values. The domain never calls `System.Environment.GetEnvironmentVariable` directly. An environment-variable adapter, a hardcoded test adapter, and a file-based adapter all satisfy the same port type.
-
-```fsharp
-// Configuration port: output port for reading configuration values.
-// The application never calls System.Environment directly — only the adapter does.
-
-type ConfigError =
-    // => Named failures from the configuration port
-    | ConfigKeyNotFound of key: string
-    // => The requested key does not exist in the configuration source
-    | ConfigReadError   of message: string
-    // => The configuration source is unavailable or malformed
-
-// ── Configuration output port ─────────────────────────────────────────────
-// The application calls this type — the adapter provides the concrete function.
-type GetConfig = string -> Result<string, ConfigError>
-// => Input: the configuration key name (e.g., "DatabaseConnectionString")
-// => Result<string, ConfigError>: Ok string if found, Error if absent or unreadable
-// => Synchronous: configuration is typically read at startup, not during request handling
-
-// ── Environment-variable adapter (production) ─────────────────────────────
-let envVarAdapter : GetConfig =
-    // => Production adapter: reads from process environment variables
-    fun key ->
-        let value = System.Environment.GetEnvironmentVariable(key)
-        // => System.Environment.GetEnvironmentVariable: returns null if absent
-        if value = null then
-            Error (ConfigKeyNotFound key)
-            // => Absent environment variable → typed ConfigError, not null reference
+// ── Application service (application zone) ────────────────────────────────
+// The application service knows only about port types — not adapter names.
+let submitPurchaseOrder (repo: PurchaseOrderRepository) (clock: Clock) (draft: DraftPurchaseOrder) =
+    // => Parameterised by ports — injected at the composition root
+    async {
+        if String.IsNullOrWhiteSpace(draft.Id) then
+            return Error "PO Id must not be blank"
+        // => Domain rule: invalid ID rejected before any I/O
         else
-            Ok value
-            // => Environment variable found — return the string value
+        let now = clock ()
+        // => Timestamp from the injected Clock port
+        let po = { Id = draft.Id; SupplierId = draft.SupplierId
+                   TotalAmount = draft.TotalAmount; Status = "AwaitingApproval" }
+        // => State: Draft → AwaitingApproval
+        let! saveResult = repo.save po
+        // => Port call: persist via injected adapter
+        return
+            match saveResult with
+            | Ok ()    -> Ok po
+            | Error e  -> Error (sprintf "Save failed: %A" e)
+    }
 
-// ── Hardcoded test adapter ─────────────────────────────────────────────────
-let testConfigAdapter (config: Map<string, string>) : GetConfig =
-    // => Test adapter: reads from an in-memory Map built in the test setup
-    // => config: Map<string, string> baked in via partial application
-    fun key ->
-        match Map.tryFind key config with
-        | Some value -> Ok value
-        // => Key found in the test map — return it
-        | None       -> Error (ConfigKeyNotFound key)
-        // => Key absent in the test map — same error type as the env-var adapter
+// ── Adapter implementations (adapters zone) ───────────────────────────────
+// In-memory adapter — used in tests
+let buildInMemoryRepo () : PurchaseOrderRepository =
+    let store = Dictionary<string, PurchaseOrder>()
+    // => Isolated dictionary per call — each test gets its own store
+    { save = fun po -> async { store.[po.Id] <- po; return Ok () }
+      load = fun id -> async {
+          match store.TryGetValue(id) with
+          | true, po -> return Ok (Some po)
+          | _        -> return Ok None } }
 
-// ── Application service using the configuration port ──────────────────────
-let initializeService (getConfig: GetConfig) =
-    // => getConfig is injected — could be env-var adapter, file adapter, or test adapter
-    let dbConnResult = getConfig "DATABASE_URL"
-    // => Reads the database connection string — domain does not know the source
-    let featureFlagResult = getConfig "FEATURE_NEW_PRICING"
-    // => Reads a feature flag — same port, different key
-    match dbConnResult, featureFlagResult with
-    | Ok dbConn, Ok flag ->
-        printfn "Initialised: db=%s flag=%s" dbConn flag
-        // => Both config values found — proceed with initialisation
-    | Error (ConfigKeyNotFound k), _ ->
-        printfn "Missing required config key: %s" k
-        // => Required config missing — fail fast at startup
-    | Error (ConfigReadError msg), _ ->
-        printfn "Config read error: %s" msg
-        // => Configuration source unavailable — fail fast at startup
-    | _, Error e ->
-        printfn "Feature flag error: %A" e
-        // => Feature flag unavailable — log and use default
+// System clock adapter — used in production
+let systemClock : Clock = fun () -> DateTimeOffset.UtcNow
+// => Reads the real wall clock — non-deterministic
 
-// Test wiring: inject test config
-let testConfig = Map.ofList [ "DATABASE_URL", "postgres://localhost/test"
-                               "FEATURE_NEW_PRICING", "true" ]
-// => testConfig : Map<string, string> — two key-value pairs for the test
+// Fixed clock adapter — used in tests
+let fixedClock : Clock = fun () -> DateTimeOffset(2026, 1, 15, 9, 0, 0, TimeSpan.Zero)
+// => Always returns the same timestamp — deterministic
 
-initializeService (testConfigAdapter testConfig)
-// => Uses the test adapter — no environment variables, no files, fully deterministic
-// => Output: Initialised: db=postgres://localhost/test flag=true
+// ── Composition root — the ONLY place that names adapters ─────────────────
+// Production wiring:
+let productionSubmit = submitPurchaseOrder (buildInMemoryRepo ()) systemClock
+// => productionSubmit : DraftPurchaseOrder -> Async<Result<PurchaseOrder, string>>
+// => In real code: replace buildInMemoryRepo() with buildPostgresRepo connectionString
+
+// Test wiring:
+let testSubmit = submitPurchaseOrder (buildInMemoryRepo ()) fixedClock
+// => testSubmit : DraftPurchaseOrder -> Async<Result<PurchaseOrder, string>>
+// => Identical type; only the injected adapters differ
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+let draft = { Id = "po_001"; SupplierId = "sup_acme-1"; TotalAmount = 5000m }
+// => Sample draft PO from the HTTP adapter
+
+let result = testSubmit draft |> Async.RunSynchronously
+// => Uses in-memory adapter and fixed clock — fully deterministic
+printfn "Test result: %A" result
+// => Output: Test result: Ok { Id = "po_001"; SupplierId = "sup_acme-1"; TotalAmount = 5000M; Status = "AwaitingApproval" }
 ```
 
-**Key Takeaway**: A `GetConfig` output port lets the application read configuration through a typed interface — the concrete source (environment variables, files, secrets manager) is the adapter's concern, not the application's.
+**Key Takeaway**: The composition root is the single file that knows adapter names — every other module sees only port types, making adapter swaps a one-line change in one file.
 
-**Why It Matters**: Configuration reading scattered across domain and application code makes testing fragile (tests must set environment variables) and deployment unpredictable (missing variables cause runtime panics). A configuration port makes the dependency explicit, testable, and replaceable. Tests inject a hardcoded map; production injects the environment-variable adapter. The application service is indifferent to the source.
+**Why It Matters**: When adapter names are scattered across application services (via `open PostgresAdapter` statements), swapping an adapter requires finding and modifying every file that imports it. The composition root pattern centralises this knowledge: one file, one change. In production F# services, the composition root is typically the `Program.fs` startup module — it wires all adapters at startup and passes them through the call chain via partial application.
 
 ---
 
-### Example 23: Clock Port — Testable Time
+### Example 18: Spy Adapter — Verifying Port Calls in Tests
 
-`GetCurrentTime` is an output port for reading the current time. The application service never calls `DateTimeOffset.UtcNow` directly. A production adapter returns the real clock; a test adapter returns a fixed instant. This makes time-dependent logic deterministic in tests.
+A spy adapter records the calls made to it, enabling tests to assert not only the return value but also the exact sequence and arguments of port calls.
 
 ```fsharp
-// Clock port: output port for the current time.
-// The application service never calls DateTimeOffset.UtcNow directly.
-// Tests inject a fixed time — deterministic, repeatable, no flakiness.
+open System.Collections.Generic
 
-// ── Clock output port ─────────────────────────────────────────────────────
-type GetCurrentTime = unit -> DateTimeOffset
-// => Returns the current time — unit input (no parameters needed)
-// => Synchronous: time reading is always immediate
-// => No Result: time reading cannot fail (unlike I/O operations)
+// ── Port types ─────────────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — the type saved and loaded via the port
 
-// ── Production clock adapter ──────────────────────────────────────────────
-let realClock : GetCurrentTime =
-    // => Production adapter: returns the actual current UTC time
-    fun () -> DateTimeOffset.UtcNow
-    // => DateTimeOffset.UtcNow: includes UTC timezone offset — safer than DateTime.Now
-    // => UtcNow is thread-safe and monotonic — suitable for production use
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+}
+// => Canonical port — spy adapter must satisfy this exact type
 
-// ── Test clock adapter ────────────────────────────────────────────────────
-let fixedClock (fixedTime: DateTimeOffset) : GetCurrentTime =
-    // => Test adapter: always returns the same fixed time
-    // => fixedTime: baked in via partial application
-    fun () -> fixedTime
-    // => Deterministic: every call returns exactly the same value
-    // => Tests that assert on timestamps become stable and repeatable
+// ── Spy adapter ────────────────────────────────────────────────────────────
+// The spy records every call for test assertions.
+type RepositorySpy = {
+    Repo      : PurchaseOrderRepository
+    // => The spy exposes the port — application service receives this field
+    SavedPos  : ResizeArray<PurchaseOrder>
+    // => Accumulates every PO passed to save — assert on this in tests
+    LoadedIds : ResizeArray<string>
+    // => Accumulates every ID passed to load — assert call order
+}
 
-// ── Application service using the clock port ──────────────────────────────
-type OrderId    = string
-type CustomerId = string
-type OrderPlaced = { OrderId: OrderId; CustomerId: CustomerId; PlacedAt: DateTimeOffset }
-// => PlacedAt comes from the clock port — not from System.DateTime.Now in the domain
+let buildRepositorySpy () : RepositorySpy =
+    // => Factory: each call creates an isolated spy with empty call records
+    let savedPos  = ResizeArray<PurchaseOrder>()
+    let loadedIds = ResizeArray<string>()
+    // => Closed over by the functions below — visible only in this scope
+    { Repo = {
+          save = fun po ->
+              async {
+                  savedPos.Add(po)
+                  // => Record the call argument BEFORE returning
+                  return Ok ()
+                  // => Always succeeds — spy never simulates failure unless needed
+              }
+          load = fun id ->
+              async {
+                  loadedIds.Add(id)
+                  // => Record the ID looked up
+                  return Ok None
+                  // => Returns None by default — override in specific tests
+              }
+      }
+      SavedPos  = savedPos
+      LoadedIds = loadedIds }
 
-let createOrderEvent (getClock: GetCurrentTime) (orderId: OrderId) (customerId: CustomerId) : OrderPlaced =
-    // => getClock is injected — production uses realClock, tests use fixedClock
-    let now = getClock ()
-    // => Calls the clock port — does not know or care which adapter provides the time
-    { OrderId = orderId; CustomerId = customerId; PlacedAt = now }
-    // => PlacedAt is the value from the clock port — testable and deterministic
+// ── Application service under test ────────────────────────────────────────
+let submitAndSave (repo: PurchaseOrderRepository) (id: string) (supplierId: string) (amount: decimal) =
+    // => Application service: validates, builds PO, calls save
+    async {
+        if System.String.IsNullOrWhiteSpace(id) then return Error "blank id"
+        // => Validation before any I/O
+        else
+        let po = { Id = id; SupplierId = supplierId; TotalAmount = amount; Status = "AwaitingApproval" }
+        // => Build the PO aggregate
+        let! saveResult = repo.save po
+        // => Port call — spy records this
+        return saveResult |> Result.map (fun () -> po)
+        // => Return the PO on success
+    }
 
-// ── Production use ─────────────────────────────────────────────────────────
-let productionEvent = createOrderEvent realClock "ORD-001" "CUST-42"
-// => PlacedAt = DateTimeOffset.UtcNow at the moment this line runs
+// ── Test assertions using the spy ─────────────────────────────────────────
+let spy = buildRepositorySpy ()
+// => Fresh spy — empty call records
 
-// ── Test use ───────────────────────────────────────────────────────────────
-let fixedTime = DateTimeOffset(2026, 5, 15, 10, 0, 0, System.TimeSpan.FromHours(7.0))
-// => A specific instant in WIB (UTC+7) — completely deterministic
-let testClock = fixedClock fixedTime
-// => testClock : GetCurrentTime — always returns 2026-05-15T10:00:00+07:00
+let result = submitAndSave spy.Repo "po_spy-001" "sup_001" 800m |> Async.RunSynchronously
+// => Runs the application service with the spy adapter
 
-let testEvent = createOrderEvent testClock "ORD-001" "CUST-42"
-// => testEvent.PlacedAt = fixedTime — exactly the expected value
+printfn "Result: %A" result
+// => Output: Result: Ok { Id = "po_spy-001"; SupplierId = "sup_001"; TotalAmount = 800M; Status = "AwaitingApproval" }
 
-printfn "Production placed at: %s" (productionEvent.PlacedAt.ToString("o"))
-// => Output: Production placed at: 2026-05-15T... (current real time)
-
-printfn "Test placed at: %s" (testEvent.PlacedAt.ToString("o"))
-// => Output: Test placed at: 2026-05-15T10:00:00.0000000+07:00
-// => Fully deterministic — the same every time the test runs
+printfn "save called %d time(s)" spy.SavedPos.Count
+// => Output: save called 1 time(s)
+printfn "Saved PO id: %s" spy.SavedPos.[0].Id
+// => Output: Saved PO id: po_spy-001
+printfn "load called %d time(s)" spy.LoadedIds.Count
+// => Output: load called 0 time(s)  (submitAndSave does not call load)
 ```
 
-**Key Takeaway**: A `GetCurrentTime` port makes time a dependency that can be injected — tests use a fixed clock for deterministic assertions, and the application service is ignorant of the concrete time source.
+**Key Takeaway**: A spy adapter records port calls for test assertions, enabling verification that the application service invokes ports with the correct arguments in the correct order.
 
-**Why It Matters**: Tests that call `DateTime.Now` directly are time-dependent: they fail on midnight boundaries, behave differently depending on timezone, and make it impossible to assert on exact timestamp values. A clock port eliminates all these issues. This pattern extends to any non-deterministic dependency (random number generators, UUID generators, external clocks) — make it a port, inject it, control it in tests.
+**Why It Matters**: Return-value-only assertions miss a class of bugs where the application service skips a port call entirely (for example, saving without notifying, or notifying without saving). Spy adapters make call-sequence verification as easy as reading a list. In procurement workflows where the sequence of side effects (save → notify → publish) determines business correctness, spy adapters are the primary tool for verifying that the sequence contract is honoured.
 
 ---
 
-### Example 24: Anti-Corruption in the Adapter Layer — Protecting the Domain from an External API
+### Example 19: Failing Adapter — Testing Error Paths
 
-An external payment API returns a `PaymentApiResponse` with fields the domain does not care about (HTTP metadata, retry information, vendor codes). An adapter function translates the response to domain types (`PaymentConfirmed` or `PaymentError`), ensuring the domain never imports the payment API library.
+A failing adapter always returns `Error`, enabling tests to verify that the application service handles infrastructure failures correctly and propagates errors to the caller.
 
 ```fsharp
-// Anti-corruption layer: adapter translates external API response to domain types.
-// The domain never sees PaymentApiResponse or imports the payment API library.
+// ── Port types ─────────────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root
 
-// ── External API response type (adapter layer) ────────────────────────────
-// This type mirrors the payment gateway's JSON response shape.
-// It is defined in the adapter module — not in the domain.
-type PaymentApiResponse = {
-    // => External API shape — includes many fields the domain does not need
-    status: string
-    // => "APPROVED", "DECLINED", "PENDING", "GATEWAY_ERROR" — vendor-specific strings
-    transaction_id: string
-    // => Vendor's internal transaction reference — not our OrderId
-    amount_charged: float
-    // => Amount actually charged — may differ from requested amount
-    error_code: string option
-    // => Vendor error code: "INSUFFICIENT_FUNDS", "CARD_EXPIRED", etc.
-    retry_after_ms: int option
-    // => Milliseconds to wait before retrying — retry logic in the adapter, not domain
-    raw_gateway_response: string
-    // => Full JSON from the upstream gateway — for logging, never passed to domain
+type RepoError = DatabaseError of string | ConnectionTimeout
+// => Named error cases the application service must handle
+
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, RepoError>>
+    load: string        -> Async<Result<PurchaseOrder option, RepoError>>
+}
+// => Canonical port — same definition throughout all examples
+
+// ── Failing adapter — always returns Error ────────────────────────────────
+let alwaysFailRepo (errorCase: RepoError) : PurchaseOrderRepository = {
+    // => Parameterised by the error to return — different tests use different errors
+    save = fun _po ->
+        async { return Error errorCase }
+        // => Always fails — never persists anything
+    load = fun _id ->
+        async { return Error errorCase }
+        // => Always fails — never returns data
+}
+
+// ── Application service under test ────────────────────────────────────────
+let submitPOWithErrorHandling (repo: PurchaseOrderRepository) (id: string) (amount: decimal) =
+    // => Application service: must gracefully handle repository failure
+    async {
+        if System.String.IsNullOrWhiteSpace(id) then
+            return Error "Validation: blank PO Id"
+        // => Validation runs before any I/O — no port call on invalid input
+        else
+        let po = { Id = id; SupplierId = "sup_001"; TotalAmount = amount; Status = "AwaitingApproval" }
+        // => PO ready for persistence
+        let! saveResult = repo.save po
+        // => Port call — failing adapter returns Error here
+        return
+            match saveResult with
+            | Ok ()                          -> Ok (sprintf "Saved: %s" po.Id)
+            // => Happy path — not reached with failing adapter
+            | Error (DatabaseError msg)      -> Error (sprintf "DB error: %s" msg)
+            // => Permanent failure: surface for the HTTP adapter to return 500
+            | Error ConnectionTimeout        -> Error "Timeout: retry later"
+            // => Transient failure: surface for the HTTP adapter to return 503
+    }
+
+// ── Test: database error path ──────────────────────────────────────────────
+let dbErrorRepo = alwaysFailRepo (DatabaseError "constraint violation on purchase_orders")
+// => Adapter that always returns a DatabaseError
+let dbErrorResult = submitPOWithErrorHandling dbErrorRepo "po_001" 1000m |> Async.RunSynchronously
+// => Application service receives Error (DatabaseError ...)
+printfn "DB error result: %A" dbErrorResult
+// => Output: DB error result: Error "DB error: constraint violation on purchase_orders"
+
+// ── Test: timeout path ────────────────────────────────────────────────────
+let timeoutRepo = alwaysFailRepo ConnectionTimeout
+// => Adapter that always returns a ConnectionTimeout
+let timeoutResult = submitPOWithErrorHandling timeoutRepo "po_002" 500m |> Async.RunSynchronously
+// => Application service receives Error ConnectionTimeout
+printfn "Timeout result: %A" timeoutResult
+// => Output: Timeout result: Error "Timeout: retry later"
+```
+
+**Key Takeaway**: Failing adapters enable targeted testing of every error branch in the application service without modifying any production code or spinning up infrastructure.
+
+**Why It Matters**: Error paths in application services are the most under-tested code in most systems. Spinning up a real Postgres instance and manually inducing failures is fragile and slow. A failing adapter is a two-line record literal that produces a specific error case on demand. Every named error case in `RepoError` should have a corresponding failing adapter test, verifying that the application service handles it correctly. This discipline ensures that infrastructure failures produce the correct HTTP status codes and user-facing messages.
+
+---
+
+### Example 20: Partial Application as Dependency Injection
+
+Partial application is F#'s native mechanism for baking dependencies into a function. It eliminates the need for DI containers, reflection, and registration boilerplate while producing the same substitutability.
+
+```fsharp
+open System
+
+// ── Port types ─────────────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — used across all adapter and application types
+
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+}
+// => Canonical port — satisfied by any record with matching save/load fields
+
+type Clock = unit -> DateTimeOffset
+// => Time port — synchronous
+
+// ── Application service: ports as first parameters ────────────────────────
+// Convention: ports come before domain inputs — enables partial application.
+let submitPurchaseOrder
+    (repo  : PurchaseOrderRepository)
+    // => Repo port: first parameter → can be baked in
+    (clock : Clock)
+    // => Clock port: second parameter → can be baked in
+    (id    : string)
+    // => Domain input: PO identifier — provided at runtime by the HTTP adapter
+    (amount: decimal) =
+    // => Domain input: amount — provided at runtime
+    async {
+        let now = clock ()
+        // => Timestamp from the baked-in clock adapter
+        let po = { Id = id; SupplierId = "sup_001"; TotalAmount = amount
+                   Status = "AwaitingApproval" }
+        // => Build PO aggregate with the runtime domain inputs
+        let! _ = repo.save po
+        // => Persist via the baked-in repository adapter
+        return Ok (sprintf "PO %s submitted at %A" id now)
+        // => Return confirmation to the HTTP adapter
+    }
+
+// ── In-memory adapters for demonstration ──────────────────────────────────
+let inMemRepo : PurchaseOrderRepository = {
+    save = fun po -> async { printfn "[MemDB] Saving %s" po.Id; return Ok () }
+    // => In-memory: prints to demonstrate the call without real infrastructure
+    load = fun id -> async { return Ok None }
+    // => In-memory: always returns None for this demonstration
+}
+let fixedClock : Clock = fun () -> DateTimeOffset(2026, 1, 15, 9, 0, 0, TimeSpan.Zero)
+// => Fixed time — deterministic in tests
+
+// ── Partial application: bake in the ports ────────────────────────────────
+let submitWithTestPorts = submitPurchaseOrder inMemRepo fixedClock
+// => submitWithTestPorts : string -> decimal -> Async<Result<string, exn>>
+// => The port parameters are baked in; only domain inputs remain
+// => This is DI without a container — just function application
+
+// ── Call site: only domain inputs needed ──────────────────────────────────
+let result = submitWithTestPorts "po_001" 3500m |> Async.RunSynchronously
+// => Calls submitPurchaseOrder with inMemRepo, fixedClock, "po_001", 3500m
+// => submitWithTestPorts is a first-class function — passable, storable, composable
+printfn "Result: %A" result
+// => Output: [MemDB] Saving po_001
+// => Output: Result: Ok "PO po_001 submitted at 2026-01-15 09:00:00 +00:00"
+
+// ── Swap to production ports — one line change ────────────────────────────
+// let submitWithProductionPorts = submitPurchaseOrder postgresRepo systemClock
+// => One-line swap: different adapters, same application service function
+// => No DI container to configure, no XML or attributes to update
+```
+
+**Key Takeaway**: Partial application bakes port adapters into application service functions, producing a DI-injected use case function without a container, reflection, or registration boilerplate.
+
+**Why It Matters**: DI containers in OOP languages require registration, reflection, and sometimes XML configuration to achieve what F# partial application does in one line. Partially applied functions are first-class values: they can be passed as arguments, stored in records, composed with other functions, and tested by passing different adapters. The composition root becomes a sequence of partial application expressions — readable, refactorable, and checked by the compiler at every step.
+
+---
+
+## The Full Hexagonal Flow (Examples 21–25)
+
+### Example 21: Domain Function vs Application Service vs Adapter — Three Responsibilities
+
+Three distinct responsibilities live in three distinct code zones. Domain functions are pure; application services orchestrate ports; adapters translate between delivery mechanisms and domain types.
+
+```fsharp
+open System
+
+// ── ZONE 1: Domain — pure functions, no I/O ────────────────────────────────
+module Domain =
+    type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+    // => Domain type: defined without knowledge of any infrastructure
+    type ApprovalLevel = L1 | L2 | L3
+    // => Derived from PO total — L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+    let determineApprovalLevel (total: decimal) : ApprovalLevel =
+        // => Pure function: no I/O, no side effects, always deterministic
+        if total <= 1000m then L1
+        // => L1: low-value POs — immediate manager approval
+        elif total <= 10000m then L2
+        // => L2: mid-value POs — department head approval
+        else L3
+        // => L3: high-value POs — CFO or executive approval
+
+    let validate (id: string) (supplierId: string) (amount: decimal) =
+        // => Pure validation: domain rules only, no infrastructure
+        if String.IsNullOrWhiteSpace(id)         then Error "Blank PO Id"
+        elif String.IsNullOrWhiteSpace(supplierId) then Error "Blank SupplierId"
+        elif amount <= 0m                          then Error "Amount must be positive"
+        else Ok { Id = id; SupplierId = supplierId; TotalAmount = amount; Status = "Draft" }
+        // => Returns validated PO or named error — no async, no I/O
+
+// ── ZONE 2: Application — orchestration only ──────────────────────────────
+module Application =
+    open Domain
+    type PurchaseOrderRepository = {
+        save: PurchaseOrder -> Async<Result<unit, string>>
+        load: string        -> Async<Result<PurchaseOrder option, string>>
+    }
+    // => Output port: application layer defines, adapters implement
+
+    let submitPO (repo: PurchaseOrderRepository) (id: string) (supplierId: string) (amount: decimal) =
+        // => Application service: calls domain functions + output ports; no HTTP knowledge
+        async {
+            match validate id supplierId amount with
+            | Error msg -> return Error msg
+            // => Domain validation failed — short-circuit before I/O
+            | Ok po ->
+            let level = determineApprovalLevel po.TotalAmount
+            // => Pure domain function: determines which manager must approve
+            let awaitingPO = { po with Status = sprintf "AwaitingApproval-%A" level }
+            // => State transition: Draft → AwaitingApproval-L1/L2/L3
+            let! saveResult = repo.save awaitingPO
+            // => Output port call: persist the PO
+            return saveResult |> Result.map (fun () -> awaitingPO)
+            // => Return the saved PO or infrastructure error
+        }
+
+// ── ZONE 3: Adapters — translation only ───────────────────────────────────
+module Adapters =
+    open Application
+    type HttpDto = { po_id: string; supplier_id: string; total_amount: float }
+    // => JSON request body shape — adapter zone only; never leaks into domain
+
+    let inMemRepo : PurchaseOrderRepository = {
+        // => In-memory adapter satisfying the output port
+        save = fun po -> async { printfn "[Mem] Saved %s as %s" po.Id po.Status; return Ok () }
+        load = fun id -> async { return Ok None }
+    }
+
+    let handleHttpRequest (submit: string -> string -> decimal -> Async<Result<Domain.PurchaseOrder, string>>)
+                          (dto: HttpDto) =
+        // => Thin HTTP handler: translate, delegate, respond
+        async {
+            let! result = submit dto.po_id dto.supplier_id (decimal dto.total_amount)
+            // => Delegate to the injected application service (partially applied)
+            return
+                match result with
+                | Ok po   -> sprintf "201 Created: %s in %s" po.Id po.Status
+                | Error e -> sprintf "422 Unprocessable: %s" e
+        }
+
+// ── Composition root: wire everything together ────────────────────────────
+let submitService = Application.submitPO Adapters.inMemRepo
+// => submitService : string -> string -> decimal -> Async<Result<PurchaseOrder, string>>
+// => Port baked in — domain inputs remain
+
+let request = { Adapters.po_id = "po_001"; supplier_id = "sup_acme"; total_amount = 5500.0 }
+// => Sample HTTP request body
+let response = Adapters.handleHttpRequest submitService request |> Async.RunSynchronously
+// => Runs the full flow: HTTP → Application → Domain → In-memory adapter → HTTP
+printfn "%s" response
+// => Output: [Mem] Saved po_001 as AwaitingApproval-L2
+// => Output: 201 Created: po_001 in AwaitingApproval-L2
+```
+
+**Key Takeaway**: Domain functions are pure, application services orchestrate ports, and adapters translate — three distinct responsibilities in three distinct zones, each independently testable.
+
+**Why It Matters**: Mixing these three responsibilities is the most common cause of untestable code. A domain function that calls `repo.save` inside a pricing calculation cannot be tested without infrastructure. An HTTP handler that contains approval-level logic cannot be tested without an HTTP server. The zone model enforces separation: each responsibility lives in exactly one zone, and each zone is independently testable at its natural boundary.
+
+---
+
+### Example 22: Testing the Domain Without Infrastructure
+
+Pure domain functions can be tested without any ports, adapters, or infrastructure. This is the fastest and most reliable test tier.
+
+```fsharp
+// ── Domain types and pure functions ────────────────────────────────────────
+type ApprovalLevel = L1 | L2 | L3
+// => Derived from PO total threshold — L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — domain type with no infrastructure dependencies
+
+type ValidationError = BlankId | BlankSupplierId | NonPositiveAmount of decimal
+// => Named domain errors — not strings, not exceptions
+
+let determineApprovalLevel (total: decimal) : ApprovalLevel =
+    // => Pure function: receives decimal, returns named DU case
+    // => No I/O, no async — can be called billions of times with zero infrastructure
+    if total <= 1000m then L1
+    elif total <= 10000m then L2
+    else L3
+
+let validatePO (id: string) (supplierId: string) (amount: decimal) : Result<PurchaseOrder, ValidationError> =
+    // => Pure validation: checks domain rules, returns Result
+    if System.String.IsNullOrWhiteSpace(id)          then Error BlankId
+    elif System.String.IsNullOrWhiteSpace(supplierId) then Error BlankSupplierId
+    elif amount <= 0m                                 then Error (NonPositiveAmount amount)
+    else Ok { Id = id; SupplierId = supplierId; TotalAmount = amount; Status = "Draft" }
+
+// ── Domain tests — zero infrastructure ────────────────────────────────────
+// These are the fastest tests in the system: no async, no setup, no teardown.
+
+// Test 1: L1 approval for low-value PO
+let level1 = determineApprovalLevel 999m
+// => level1 : ApprovalLevel = L1  (999m ≤ 1000m threshold)
+printfn "999m → %A (expected L1)" level1
+// => Output: 999m → L1 (expected L1)
+
+// Test 2: boundary — exactly at L2 threshold
+let level2 = determineApprovalLevel 1000m
+// => level2 : ApprovalLevel = L1  (1000m ≤ 1000m: at boundary, still L1)
+printfn "1000m → %A (expected L1 at boundary)" level2
+// => Output: 1000m → L1 (expected L1 at boundary)
+
+// Test 3: just over L1 threshold
+let level2b = determineApprovalLevel 1001m
+// => level2b : ApprovalLevel = L2  (1001m > 1000m)
+printfn "1001m → %A (expected L2)" level2b
+// => Output: 1001m → L2 (expected L2)
+
+// Test 4: L3 for high-value PO
+let level3 = determineApprovalLevel 15000m
+// => level3 : ApprovalLevel = L3  (15000m > 10000m)
+printfn "15000m → %A (expected L3)" level3
+// => Output: 15000m → L3 (expected L3)
+
+// Test 5: validation — blank PO ID
+let blankId = validatePO "" "sup_001" 500m
+// => blankId : Result<PurchaseOrder, ValidationError> = Error BlankId
+printfn "Blank id: %A" blankId
+// => Output: Blank id: Error BlankId
+
+// Test 6: validation — non-positive amount
+let zeroAmount = validatePO "po_001" "sup_001" 0m
+// => zeroAmount : Result<PurchaseOrder, ValidationError> = Error (NonPositiveAmount 0M)
+printfn "Zero amount: %A" zeroAmount
+// => Output: Zero amount: Error (NonPositiveAmount 0M)
+
+// Test 7: valid PO passes all guards
+let valid = validatePO "po_001" "sup_001" 7500m
+// => valid : Result<PurchaseOrder, ValidationError> = Ok { Id = "po_001"; ... }
+printfn "Valid PO: %A" valid
+// => Output: Valid PO: Ok { Id = "po_001"; SupplierId = "sup_001"; TotalAmount = 7500M; Status = "Draft" }
+```
+
+**Key Takeaway**: Pure domain functions are tested by direct invocation with no setup — the fastest and most reliable test tier, covering all boundary conditions and error cases without infrastructure.
+
+**Why It Matters**: Domain tests run in nanoseconds and have zero flakiness. They can cover every boundary condition (at threshold, above threshold, below threshold) without spinning up a database, without managing transactions, and without worrying about test data isolation. The approval-level function alone has at least six boundary conditions worth testing. If each required a real database, the test suite would be orders of magnitude slower. Pure domain functions make boundary-condition testing the cheapest investment in the codebase.
+
+---
+
+### Example 23: Testing the Application Service with In-Memory Adapters
+
+Application service tests inject in-memory adapters to verify orchestration without infrastructure. They run in milliseconds and can run in parallel with zero contention.
+
+```fsharp
+open System
+open System.Collections.Generic
+
+// ── Shared types ───────────────────────────────────────────────────────────
+type PurchaseOrder = { Id: string; SupplierId: string; TotalAmount: decimal; Status: string }
+// => Aggregate root — same type across domain, application, and adapter layers
+
+type PurchaseOrderRepository = {
+    save: PurchaseOrder -> Async<Result<unit, string>>
+    load: string        -> Async<Result<PurchaseOrder option, string>>
+}
+// => Canonical port — in-memory adapter satisfies this type
+
+type Clock = unit -> DateTimeOffset
+// => Time port — fixed in tests for deterministic assertions
+
+// ── Application service under test ────────────────────────────────────────
+let submitPO (repo: PurchaseOrderRepository) (clock: Clock)
+             (id: string) (supplierId: string) (amount: decimal) =
+    // => Application service: parameterised by ports — injectable in all environments
+    async {
+        if String.IsNullOrWhiteSpace(id)          then return Error "Blank PO Id"
+        elif String.IsNullOrWhiteSpace(supplierId) then return Error "Blank SupplierId"
+        elif amount <= 0m                          then return Error "Non-positive amount"
+        else
+        let level = if amount <= 1000m then "L1" elif amount <= 10000m then "L2" else "L3"
+        // => Pure domain logic: approval level derived from amount
+        let submittedAt = clock ()
+        // => Timestamp from injected Clock port — fixed in tests
+        let po = { Id = id; SupplierId = supplierId; TotalAmount = amount
+                   Status = sprintf "AwaitingApproval-%s" level }
+        // => State: Draft → AwaitingApproval-{level}
+        let! saveResult = repo.save po
+        // => Output port call: persist via injected adapter
+        return saveResult |> Result.map (fun () -> (po, submittedAt))
+        // => Return the saved PO and timestamp for caller inspection
+    }
+
+// ── In-memory adapters ─────────────────────────────────────────────────────
+let buildTestRepo () =
+    // => Isolated spy: records saves, returns expected data on load
+    let saved = ResizeArray<PurchaseOrder>()
+    let repo : PurchaseOrderRepository = {
+        save = fun po -> async { saved.Add(po); return Ok () }
+        // => Record the saved PO for assertion
+        load = fun id -> async { return Ok (saved |> Seq.tryFind (fun po -> po.Id = id)) }
+        // => Find in the accumulated saves — simulates SELECT query
+    }
+    repo, saved
+    // => Returns both the port and the spy list for assertions
+
+let fixedClock : Clock = fun () -> DateTimeOffset(2026, 1, 15, 9, 0, 0, TimeSpan.Zero)
+// => Always returns the same timestamp — assert on this literal value in tests
+
+// ── Test 1: valid L2 PO ────────────────────────────────────────────────────
+let repo1, saved1 = buildTestRepo ()
+// => Fresh isolated repo — not shared with Test 2
+let result1 = submitPO repo1 fixedClock "po_001" "sup_001" 5000m |> Async.RunSynchronously
+// => 5000m → L2 approval level
+printfn "Test 1 result: %A" result1
+// => Output: Test 1 result: Ok ({ Id = "po_001"; ...; Status = "AwaitingApproval-L2" }, 2026-01-15 ...)
+printfn "Test 1 saved count: %d" saved1.Count
+// => Output: Test 1 saved count: 1
+printfn "Test 1 saved status: %s" saved1.[0].Status
+// => Output: Test 1 saved status: AwaitingApproval-L2
+
+// ── Test 2: validation failure — no save ──────────────────────────────────
+let repo2, saved2 = buildTestRepo ()
+// => Fresh isolated repo — Test 1 state not visible here
+let result2 = submitPO repo2 fixedClock "" "sup_001" 500m |> Async.RunSynchronously
+// => Blank PO Id — validation fails before any port call
+printfn "Test 2 result: %A" result2
+// => Output: Test 2 result: Error "Blank PO Id"
+printfn "Test 2 saved count: %d" saved2.Count
+// => Output: Test 2 saved count: 0  (validation failed before repo.save was called)
+```
+
+**Key Takeaway**: Application service tests use in-memory adapters to verify orchestration — which ports are called, with which arguments, in which order — without spinning up any infrastructure.
+
+**Why It Matters**: Application service tests occupy the middle tier: faster than E2E tests, more comprehensive than domain tests. They verify that validation gates work before port calls, that domain logic computes the correct approval level, and that the result is correctly propagated. In-memory adapters with recording (spy pattern) enable assertions on the exact side effects: the test asserts not only the return value but also that exactly one PO was saved with the correct status. This tier is usually the highest-value testing investment in a hexagonal architecture codebase.
+
+---
+
+### Example 24: The Anti-Corruption Layer — Translating External DTOs
+
+The anti-corruption layer (ACL) is a translation function in the adapter zone that converts external API responses into domain types. It prevents vendor-specific naming, types, and error codes from leaking into the domain.
+
+```fsharp
+// ── External supplier API response (adapter zone only) ────────────────────
+// This type models EXACTLY what a hypothetical external supplier portal returns.
+// It uses their naming conventions and types — not the domain's.
+type SupplierAcknowledgementApiResponse = {
+    // => External API shape — fields named by the supplier's engineering team
+    reference_no   : string
+    // => Their name for what we call PurchaseOrderId
+    acknowledged_at: string
+    // => ISO8601 string — not DateTimeOffset
+    status_code    : int
+    // => 200 = acknowledged, 404 = unknown PO, 500 = system error
+    error_message  : string option
+    // => Non-None on failure — sometimes "" even on success
 }
 
 // ── Domain types (domain zone) ────────────────────────────────────────────
-// Clean domain types — no knowledge of vendor error codes or HTTP metadata.
-type PaymentConfirmed = {
-    // => Domain event: payment was successfully charged
-    TransactionRef: string
-    // => Our reference to the vendor transaction — for ledger reconciliation
-    AmountCharged: decimal
-    // => The actual charged amount — domain uses decimal, not float
-}
+type PurchaseOrderId = string
+// => Our identifier — format po_<uuid>
+type AcknowledgementResult =
+    | Acknowledged of { PoId: PurchaseOrderId; AcknowledgedAt: System.DateTimeOffset }
+    // => Supplier confirmed receipt of the PO
+    | UnknownPO of PurchaseOrderId
+    // => Supplier has no record of this PO
+    | SupplierSystemError of string
+    // => Supplier's system is unavailable — caller may retry
 
-type PaymentError =
-    // => Domain-defined payment failures — named in domain terms, not vendor terms
-    | InsufficientFunds
-    // => The customer's account had insufficient funds
-    | CardExpired
-    // => The payment card has passed its expiry date
-    | PaymentGatewayUnavailable
-    // => The payment gateway could not be reached — transient failure
+// ── Anti-corruption layer: translate external response → domain type ───────
+// Lives in the adapter zone — never in the application or domain zones.
+let toAcknowledgementResult
+    (poId: PurchaseOrderId)
+    (resp: SupplierAcknowledgementApiResponse)
+    : AcknowledgementResult =
+    // => Translates the external API shape into domain vocabulary
+    match resp.status_code with
+    | 200 ->
+        let acknowledgedAt =
+            match System.DateTimeOffset.TryParse(resp.acknowledged_at) with
+            | true, dt -> dt
+            // => Parse succeeded — use the supplier's timestamp
+            | false, _ -> System.DateTimeOffset.UtcNow
+            // => Parse failed (malformed timestamp) — fall back to current time
+        Acknowledged { PoId = poId; AcknowledgedAt = acknowledgedAt }
+        // => Map 200 + timestamp → domain Acknowledged case
+    | 404 ->
+        UnknownPO poId
+        // => Map 404 → domain UnknownPO case; suppress vendor error_message
+    | code ->
+        let msg = resp.error_message |> Option.defaultValue (sprintf "HTTP %d" code)
+        // => Extract message or construct a generic one from the status code
+        SupplierSystemError msg
+        // => Map all other codes → domain SupplierSystemError case
 
-// ── Anti-corruption translation function (adapter layer) ──────────────────
-// Translates the external response to domain types.
-// Lives in the adapter module — imports the payment API library, not the domain.
-let toPaymentResult (apiResponse: PaymentApiResponse) : Result<PaymentConfirmed, PaymentError> =
-    // => Input: external API response with vendor-specific fields
-    // => Output: domain Result — Ok PaymentConfirmed or Error PaymentError
-    match apiResponse.status with
-    | "APPROVED" ->
-        // => Vendor "APPROVED" maps to domain PaymentConfirmed
-        Ok { TransactionRef = apiResponse.transaction_id
-             AmountCharged   = decimal apiResponse.amount_charged }
-        // => Translate float → decimal for monetary precision in the domain
-    | "DECLINED" ->
-        // => Vendor "DECLINED": inspect the error_code to determine the domain error
-        match apiResponse.error_code with
-        | Some "INSUFFICIENT_FUNDS" -> Error InsufficientFunds
-        // => Domain error: named in domain terms, not vendor terms
-        | Some "CARD_EXPIRED"       -> Error CardExpired
-        // => Domain error: card expiry is a domain concept
-        | _                         -> Error InsufficientFunds
-        // => Unknown decline reason: default to InsufficientFunds for domain handling
-    | "GATEWAY_ERROR" ->
-        // => Vendor infrastructure failure → transient domain error
-        Error PaymentGatewayUnavailable
-        // => Domain does not know about retry_after_ms — retry logic stays in the adapter
-    | unknownStatus ->
-        // => Unexpected status: treat as gateway unavailable — defensive fallback
-        printfn "[WARN] Unknown payment status: %s" unknownStatus
-        // => Log the unexpected value for investigation
-        Error PaymentGatewayUnavailable
-        // => Safe default — do not expose vendor internals to the domain
+// ── Demonstration ──────────────────────────────────────────────────────────
+let successResp = { reference_no = "po_001"; acknowledged_at = "2026-01-15T09:00:00Z"
+                    status_code = 200; error_message = None }
+// => Simulates a successful supplier acknowledgement response
 
-// ── Demonstration ─────────────────────────────────────────────────────────
-let approvedResponse = { status = "APPROVED"; transaction_id = "TXN-9876"; amount_charged = 29.97
-                         error_code = None; retry_after_ms = None; raw_gateway_response = "{}" }
-// => Simulates a successful payment API response
+let successDomain = toAcknowledgementResult "po_001" successResp
+// => successDomain : AcknowledgementResult = Acknowledged { PoId = "po_001"; AcknowledgedAt = ... }
+printfn "Success: %A" successDomain
+// => Output: Success: Acknowledged { PoId = "po_001"; AcknowledgedAt = 2026-01-15 09:00:00 +00:00 }
 
-let domainResult = toPaymentResult approvedResponse
-// => domainResult : Result<PaymentConfirmed, PaymentError> = Ok { TransactionRef = "TXN-9876"; AmountCharged = 29.97M }
-
-match domainResult with
-| Ok confirmed -> printfn "Payment confirmed: %s, charged %.2f" confirmed.TransactionRef confirmed.AmountCharged
-// => Output: Payment confirmed: TXN-9876, charged 29.97
-| Error e      -> printfn "Payment error: %A" e
-// => Not reached — response was APPROVED
+let unknownResp = { reference_no = "po_999"; acknowledged_at = ""
+                    status_code = 404; error_message = Some "Not found" }
+// => Simulates a 404 response for an unknown PO
+let unknownDomain = toAcknowledgementResult "po_999" unknownResp
+// => unknownDomain : AcknowledgementResult = UnknownPO "po_999"
+printfn "Unknown: %A" unknownDomain
+// => Output: Unknown: UnknownPO "po_999"
 ```
 
-**Key Takeaway**: The anti-corruption layer in the adapter translates vendor-specific API responses to clean domain types, shielding the domain from external naming conventions, type mismatches, and irrelevant fields.
+**Key Takeaway**: The anti-corruption layer translates external API responses into clean domain types inside the adapter, shielding the domain from vendor naming conventions and error codes.
 
-**Why It Matters**: Payment gateways, shipping providers, and tax services all use their own naming conventions, error codes, and data types. Without an anti-corruption layer, these vendor concepts leak into the domain model, creating tight coupling to specific vendors. When the vendor changes their API (new error codes, renamed fields, response schema changes), only the adapter translation function needs updating — the domain model is unchanged. This is the direct value of the anti-corruption pattern in hexagonal architecture.
+**Why It Matters**: Without an ACL, external API quirks (integer status codes, string timestamps, mixed naming conventions) leak into domain types. When the supplier changes their API (new status codes, renamed fields), the change propagates through the entire codebase. With an ACL, the change is isolated to the translation function in the adapter. The domain and application service are unaffected. In procurement systems that integrate with multiple supplier portals — each with different API conventions — the ACL pattern is not optional; it is the only way to keep the domain model coherent.
 
 ---
 
 ### Example 25: Full Hexagonal Flow — HTTP to Domain to Repository to Response
 
-This example combines all concepts into one end-to-end flow: HTTP adapter receives a request, calls the `PlaceOrderUseCase` input port, the application service calls pure domain functions and output ports, and the result flows back to an HTTP response.
+This example combines all concepts into one end-to-end flow within the `purchasing` bounded context: HTTP adapter receives a request, calls the `SubmitPurchaseOrderUseCase` input port, the application service calls pure domain functions and output ports, and the result flows back to an HTTP response.
 
 ```mermaid
 graph TD
-    REQ["HTTP POST /orders\nHttpOrderDto"]
-    PARSE["HTTP Adapter\ntoDomainOrder"]
-    UC["PlaceOrderUseCase\n(input port)"]
-    VAL["validateOrder\ndomain fn — pure"]
-    PRICE["priceOrder\ndomain fn — pure"]
-    SAVE["saveOrder\noutput port"]
-    NOTIFY["sendAck\noutput port"]
+    REQ["HTTP POST /purchase-orders\nHttpPoDto"]
+    PARSE["HTTP Adapter\ntoDomainInput"]
+    UC["SubmitPurchaseOrderUseCase\n(input port)"]
+    VAL["validatePO\ndomain fn — pure"]
+    LVL["determineApprovalLevel\ndomain fn — pure"]
+    SAVE["PurchaseOrderRepository.save\noutput port"]
+    CLK["Clock\noutput port"]
     MAP["HTTP Adapter\ntoHttpResponse"]
-    RESP["HTTP 200\nOrderPlacedDto"]
+    RESP["HTTP 201\nHttpPoResponse"]
 
     REQ --> PARSE
-    PARSE -->|"UnvalidatedOrder"| UC
+    PARSE -->|"DraftPurchaseOrder"| UC
     UC --> VAL
-    VAL -->|"ValidatedOrder"| PRICE
-    PRICE -->|"PricedOrder"| SAVE
-    SAVE -->|"Ok ()"| NOTIFY
-    NOTIFY -->|"Ok ()"| MAP
+    VAL -->|"ValidatedPO"| LVL
+    LVL -->|"ApprovalLevel"| SAVE
+    CLK -->|"DateTimeOffset"| SAVE
+    SAVE -->|"Ok ()"| MAP
     MAP --> RESP
 
     style REQ fill:#DE8F05,stroke:#000,color:#000
     style PARSE fill:#CA9161,stroke:#000,color:#000
     style UC fill:#0173B2,stroke:#000,color:#fff
     style VAL fill:#029E73,stroke:#000,color:#fff
-    style PRICE fill:#029E73,stroke:#000,color:#fff
+    style LVL fill:#029E73,stroke:#000,color:#fff
     style SAVE fill:#CC78BC,stroke:#000,color:#000
-    style NOTIFY fill:#CC78BC,stroke:#000,color:#000
+    style CLK fill:#CC78BC,stroke:#000,color:#000
     style MAP fill:#CA9161,stroke:#000,color:#000
     style RESP fill:#808080,stroke:#000,color:#fff
 ```
 
 ```fsharp
-// ── Zone: Domain (innermost — no external imports) ────────────────────────
+open System
+open System.Collections.Generic
+
+// ── ZONE 1: Domain (innermost — no external imports) ──────────────────────
 // Domain types and pure functions. No Npgsql, no ASP.NET, no JSON.
 module Domain
 
-type UnvalidatedOrder = { OrderId: string; CustomerId: string; Quantity: decimal }
+type PurchaseOrderId = string
+// => PO primary key — format po_<uuid>
+
+type DraftPurchaseOrder = { Id: PurchaseOrderId; SupplierId: string; TotalAmount: decimal }
 // => Raw input from any delivery mechanism — nothing validated yet
 
-type ValidatedOrder   = { OrderId: string; CustomerId: string; Quantity: decimal }
-// => State after validation — exists only if all domain rules passed
+type PurchaseOrder = { Id: PurchaseOrderId; SupplierId: string
+                       TotalAmount: decimal; Status: string }
+// => Aggregate after validation — carries the approval-level status
 
-type PricedOrder      = { OrderId: string; CustomerId: string; Quantity: decimal; TotalAmount: decimal }
-// => State after pricing — carries the calculated total amount
+type ApprovalLevel = L1 | L2 | L3
+// => Derived from PO total: L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
 
-type OrderPlaced      = { OrderId: string; TotalAmount: decimal }
-// => Domain event — emitted by the application service on success
-
-type PlacingOrderError = ValidationError of string | PricingError of string | RepositoryError of string
+type SubmissionError = ValidationError of string | RepositoryError of string
 // => All named failure modes — exhaustively matched at adapter boundaries
 
 // Pure domain functions — no async, no I/O, no effects
-let validateOrder (input: UnvalidatedOrder) : Result<ValidatedOrder, PlacingOrderError> =
-    if System.String.IsNullOrWhiteSpace(input.OrderId) then Error (ValidationError "OrderId blank")
-    // => Domain rule: blank order ID is not permitted
-    elif input.Quantity <= 0m then Error (ValidationError "Quantity must be positive")
-    // => Domain rule: quantity must be at least 0.01
-    else Ok { OrderId = input.OrderId; CustomerId = input.CustomerId; Quantity = input.Quantity }
-    // => Both rules passed — return the validated state
+let determineApprovalLevel (total: decimal) =
+    if total <= 1000m then L1
+    // => L1: manager approval threshold
+    elif total <= 10000m then L2
+    // => L2: department head approval threshold
+    else L3
+    // => L3: CFO / executive approval threshold — required for high-value POs
 
-let priceOrder (validated: ValidatedOrder) : Result<PricedOrder, PlacingOrderError> =
-    // => Pure pricing function — could accept a price catalogue parameter in a real system
-    Ok { OrderId = validated.OrderId; CustomerId = validated.CustomerId
-         Quantity = validated.Quantity; TotalAmount = validated.Quantity * 9.99m }
-    // => Simplified: unit price 9.99 × quantity = total amount
+let validateDraft (input: DraftPurchaseOrder) : Result<DraftPurchaseOrder, SubmissionError> =
+    if String.IsNullOrWhiteSpace(input.Id)          then Error (ValidationError "PO Id blank")
+    // => Domain rule: blank PO ID is not permitted
+    elif String.IsNullOrWhiteSpace(input.SupplierId) then Error (ValidationError "SupplierId blank")
+    // => Domain rule: supplier must be specified
+    elif input.TotalAmount <= 0m then Error (ValidationError "TotalAmount must be positive")
+    // => Domain rule: PO must have positive value
+    else Ok input
+    // => All rules passed — return the validated draft
+```
 
-// ── Zone: Application (middle — imports Domain only) ──────────────────────
+```fsharp
+// ── ZONE 2: Application (middle — imports Domain only) ────────────────────
 // Port type aliases and application service orchestration.
 // open Domain   ← the only open statement in this zone
 
-type SaveOrder            = PricedOrder -> Async<Result<unit, PlacingOrderError>>
-// => Output port: persist the priced order to storage
-type SendAcknowledgment   = string      -> Async<Result<unit, PlacingOrderError>>
-// => Output port: notify the customer by email or push notification
-type PlaceOrderUseCase    = UnvalidatedOrder -> Async<Result<OrderPlaced list, PlacingOrderError>>
-// => Input port: the complete contract for the PlaceOrder workflow
+type PurchaseOrderRepository = {
+    // => Canonical output port — identical signature across all examples
+    save: PurchaseOrder -> Async<Result<unit, SubmissionError>>
+    load: PurchaseOrderId -> Async<Result<PurchaseOrder option, SubmissionError>>
+}
+// => Adapters implement this; the application service calls it
+
+type Clock = unit -> DateTimeOffset
+// => Time port — synchronous, infallible
+
+type SubmitPurchaseOrderUseCase =
+    DraftPurchaseOrder -> Async<Result<PurchaseOrder, SubmissionError>>
+// => Input port: the complete contract for the SubmitPurchaseOrder workflow
 
 // Application service: orchestrates domain calls and port calls
-let buildPlaceOrder (saveOrder: SaveOrder) (sendAck: SendAcknowledgment) : PlaceOrderUseCase =
+let buildSubmitPO (repo: PurchaseOrderRepository) (clock: Clock) : SubmitPurchaseOrderUseCase =
     // => Partial application: bake the output ports in, return the input port function
     fun input ->
-        // => input : UnvalidatedOrder — the single entry point for the PlaceOrder workflow
+        // => input : DraftPurchaseOrder — the single entry point for the workflow
         async {
             // Step 1: pure domain validation — no I/O
-            match validateOrder input with
+            match validateDraft input with
             | Error e -> return Error e
-            // => Validation failed — short-circuit
-            | Ok validated ->
-            // Step 2: pure domain pricing — no I/O
-            match priceOrder validated with
-            | Error e -> return Error e
-            // => Pricing failed — short-circuit
-            | Ok priced ->
+            // => Validation failed — short-circuit before any port calls
+            | Ok draft ->
+            // Step 2: pure domain logic — approval level
+            let level = determineApprovalLevel draft.TotalAmount
+            // => Approval level derived from total — pure, instant, no I/O
+            let now = clock ()
+            // => Timestamp from the Clock port — deterministic in tests
+            let po = { Id = draft.Id; SupplierId = draft.SupplierId
+                       TotalAmount = draft.TotalAmount
+                       Status = sprintf "AwaitingApproval-%A" level }
+            // => State transition: Draft → AwaitingApproval-{L1|L2|L3}
             // Step 3: output port — save to repository (effectful)
-            let! saveResult = saveOrder priced
+            let! saveResult = repo.save po
             // => Calls the injected adapter — could be Postgres or in-memory
-            match saveResult with
-            | Error e -> return Error e
-            // => Save failed — surface the error
-            | Ok () ->
-            // Step 4: output port — send acknowledgment (effectful, non-critical)
-            let! _ = sendAck priced.CustomerId
-            // => Notification failure is not surfaced — order is already saved
-            return Ok [ { OrderId = priced.OrderId; TotalAmount = priced.TotalAmount } ]
-            // => Success: one OrderPlaced event per order
+            return saveResult |> Result.map (fun () -> po)
+            // => Return the saved PO or the infrastructure error
         }
+```
 
-// ── Zone: Adapters (outer — imports Application and infrastructure libs) ───
-// HTTP adapter, repository adapter, notification adapter.
+```fsharp
+// ── ZONE 3: Adapters (outer — imports Application and infrastructure libs) ─
+// HTTP adapter, repository adapter — all in the adapters zone.
 // open Application; open Npgsql; open Microsoft.AspNetCore.Http
 
-// DTO type (adapter zone — JSON shape)
-type HttpOrderDto   = { order_id: string; customer_id: string; quantity: float }
-// => Mirrors the JSON request body — snake_case, float quantities
-
-type OrderResponseDto = { order_id: string; total_amount: float }
-// => JSON response shape — mirrors the OrderPlaced event adapted for HTTP
+// ── DTO types (adapter zone — JSON shape) ─────────────────────────────────
+type HttpPoDto     = { po_id: string; supplier_id: string; total_amount: float }
+// => Mirrors the JSON request body — snake_case, float amounts (JSON spec)
+type HttpPoResponse = { po_id: string; status: string }
+// => JSON response shape — confirms the submitted PO and its approval status
 
 // Inbound translation: DTO → domain input type
-let toDomainInput (dto: HttpOrderDto) : UnvalidatedOrder =
-    { OrderId = dto.order_id; CustomerId = dto.customer_id; Quantity = decimal dto.quantity }
+let toDomainInput (dto: HttpPoDto) : DraftPurchaseOrder =
+    { Id = dto.po_id; SupplierId = dto.supplier_id; TotalAmount = decimal dto.total_amount }
 // => Field name alignment + float → decimal type conversion
-// => toDomainInput : HttpOrderDto -> UnvalidatedOrder — pure mapping, no side effects
+// => toDomainInput : HttpPoDto -> DraftPurchaseOrder — pure mapping, no side effects
 
-// Outbound translation: domain event → response DTO
-let toResponseDto (event: OrderPlaced) : OrderResponseDto =
-    { order_id = event.OrderId; total_amount = float event.TotalAmount }
-// => PascalCase domain → snake_case JSON; decimal → float for JSON serialisation
-// => toResponseDto : OrderPlaced -> OrderResponseDto — adapter responsibility only
+// Outbound translation: domain PO → response DTO
+let toHttpResponse (po: PurchaseOrder) : HttpPoResponse =
+    { po_id = po.Id; status = po.Status }
+// => PascalCase domain → snake_case JSON; decimal → float already done for JSON
 
 // HTTP handler: thin adapter — translate, delegate, map
-let httpHandler (useCase: PlaceOrderUseCase) (dto: HttpOrderDto) : Async<string> =
+let httpHandler (useCase: SubmitPurchaseOrderUseCase) (dto: HttpPoDto) =
     // => useCase: the input port injected from the composition root
     // => dto: the parsed JSON body (deserialization is the framework's job)
     async {
@@ -2265,54 +1982,58 @@ let httpHandler (useCase: PlaceOrderUseCase) (dto: HttpOrderDto) : Async<string>
         // => Call the input port — application service handles all logic
         return
             match result with
-            | Ok events ->
-                let dtos = events |> List.map toResponseDto
-                // => Translate each domain event to a response DTO
-                sprintf "200 OK: %A" dtos
-                // => Real adapter would serialize dtos to JSON and return IActionResult
+            | Ok po ->
+                let response = toHttpResponse po
+                // => Translate each domain PO to a response DTO
+                sprintf "201 Created: %A" response
+                // => Real adapter would serialize to JSON and return IActionResult 201
             | Error (ValidationError msg) ->
                 sprintf "422 Unprocessable: %s" msg
-            // => Domain validation error → HTTP 422
-            | Error (PricingError msg) ->
-                sprintf "500 Internal: %s" msg
-            // => Pricing failure → HTTP 500
+                // => Domain validation error → HTTP 422
             | Error (RepositoryError msg) ->
-                sprintf "503 Unavailable: %s" msg
-            // => Repository failure → HTTP 503
+                sprintf "503 Service Unavailable: %s" msg
+                // => Repository failure → HTTP 503
+
     }
 
 // ── Composition root: wire adapters to ports ──────────────────────────────
-open System.Collections.Generic
-let store = Dictionary<string, PricedOrder>()
+let store = Dictionary<string, PurchaseOrder>()
 // => In-memory store (simulates Postgres for this demonstration)
 
-let inMemSave : SaveOrder =
-    // => Satisfies SaveOrder port — Dictionary write simulates SQL persistence
-    fun order -> async { store.[order.OrderId] <- order; return Ok () }
-// => Repository adapter: writes to the Dictionary store
+let inMemRepo : PurchaseOrderRepository = {
+    // => Satisfies PurchaseOrderRepository port — Dictionary operations simulate SQL
+    save = fun po ->
+        async { store.[po.Id] <- po; return Ok () }
+    // => Repository adapter: writes to the Dictionary store
+    load = fun id ->
+        async {
+            match store.TryGetValue(id) with
+            | true, po -> return Ok (Some po)
+            | _        -> return Ok None }
+    // => Repository adapter: reads from the Dictionary store
+}
+let fixedClock : Clock = fun () -> DateTimeOffset(2026, 1, 15, 9, 0, 0, TimeSpan.Zero)
+// => Fixed clock adapter: deterministic timestamp for this demonstration
 
-let stubNotify : SendAcknowledgment =
-    // => Satisfies SendAcknowledgment port — printfn simulates SMTP
-    fun customerId -> async { printfn "[Notify] Customer %s acknowledged" customerId; return Ok () }
-// => Notification adapter: prints to console (simulates email)
+let productionUseCase : SubmitPurchaseOrderUseCase = buildSubmitPO inMemRepo fixedClock
+// => Input port function: ports baked in via partial application
 
-let productionUseCase : PlaceOrderUseCase = buildPlaceOrder inMemSave stubNotify
-// => productionUseCase : PlaceOrderUseCase — fully wired via partial application
+// ── Full flow demonstration ────────────────────────────────────────────────
+let request = { po_id = "po_full-001"; supplier_id = "sup_acme-1"; total_amount = 7500.0 }
+// => Sample HTTP request body — $7,500 PO → L2 approval required
 
-// ── Full end-to-end call ───────────────────────────────────────────────────
-let incomingRequest = { order_id = "ORD-001"; customer_id = "CUST-42"; quantity = 3.0 }
-// => Simulates the JSON body parsed from the HTTP POST /orders request
+let response = httpHandler productionUseCase request |> Async.RunSynchronously
+// => Runs the full hexagonal flow: HTTP → Application → Domain → Repository → HTTP
+printfn "%s" response
+// => Output: 201 Created: { po_id = "po_full-001"; status = "AwaitingApproval-L2" }
 
-let httpResponse =
-    httpHandler productionUseCase incomingRequest
-    |> Async.RunSynchronously
-// => Full flow: HTTP adapter → use case → domain fns → repo port → notify port → HTTP adapter
-
-printfn "Full hexagonal flow result: %s" httpResponse
-// => Output: [Notify] Customer CUST-42 acknowledged
-// => Output: Full hexagonal flow result: 200 OK: [{order_id = "ORD-001"; total_amount = 29.97}]
+// Verify the PO was persisted in the in-memory store
+printfn "Stored POs: %d" store.Count
+// => Output: Stored POs: 1
+printfn "Stored status: %s" store.["po_full-001"].Status
+// => Output: Stored status: AwaitingApproval-L2
 ```
 
-**Key Takeaway**: The complete hexagonal flow keeps HTTP concerns in the HTTP adapter, business logic in the domain, orchestration in the application service, and infrastructure in the adapters — each zone ignorant of the others except through typed port contracts.
+**Key Takeaway**: The full hexagonal flow — HTTP adapter → input port → application service → domain functions → output port → repository adapter → response — demonstrates that each zone's responsibilities are cleanly separated and independently swappable.
 
-**Why It Matters**: The hexagonal flow demonstrated here is the structural backbone that makes large systems maintainable. Each zone can be tested independently at the appropriate level: domain functions in milliseconds with pure inputs, application service with in-memory ports in seconds, HTTP adapter with stub use cases instantly. When the system needs to add a new delivery mechanism (CLI, gRPC, message queue), a new adapter is written without touching the domain or application zones. When the database changes, only the repository adapter changes. This is the compounding return on the initial investment in zone discipline.
+**Why It Matters**: This end-to-end example is the template for every feature in the procurement platform. A new workflow (approve PO, issue PO, cancel PO) follows the identical structure: define domain functions, define port type aliases, implement the application service via partial application, write an HTTP adapter, and wire everything in the composition root. The pattern scales uniformly: the first feature and the hundredth feature have the same structure, making the codebase predictable and navigable for any developer who understands one workflow.

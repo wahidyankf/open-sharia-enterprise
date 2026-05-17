@@ -3,7 +3,7 @@ title: "DDD + Hexagonal in Practice — Java in the Field"
 weight: 10000010
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Production wiring guides showing how DDD aggregates flow through a Java / Spring Boot 4 hexagonal codebase — running against a hypothetical Conference Talk Submission Platform"
+description: "Production wiring guides showing how DDD aggregates flow through a Java / Spring Boot 4 hexagonal codebase — running against a hypothetical Procure-to-Pay procurement platform"
 tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "in-the-field"]
 ---
 
