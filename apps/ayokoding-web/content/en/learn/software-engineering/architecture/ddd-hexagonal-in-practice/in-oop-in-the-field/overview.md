@@ -76,14 +76,14 @@ Guides are numbered monotonically across all difficulty tiers (1, 2, 3 … 27). 
 
 ## Learning Path
 
-- [Beginner (Guides 1–7)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/beginner) — One context = one hexagon, per-context package layout, domain types without framework annotations, application service signatures, output port as Java interface, Spring `@RestController` as primary adapter, Spring `@Configuration` as composition root.
-- [Intermediate (Guides 8–15)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/intermediate) — Spring Data JDBC adapter behind the repository port, in-memory test adapter, domain event publisher port, outbox event adapter, full `@RestController` pipeline, contract codegen, cross-context ACL, composition root `@Configuration`.
-- [Advanced (Guides 16–27)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/advanced) — Testcontainers harness, Flyway migration adapter, banking port and Spring `RestClient` adapter, Resilience4j retry / circuit-breaker, Micrometer tracing observability adapter, end-to-end domain event flow, hexagonal anti-patterns, Kubernetes deployment topology, Micrometer + OTLP + Prometheus observability stack, failure-mode `HealthIndicator` wiring, Flyway at deploy time, configuration adapter (Secret to typed `@ConfigurationProperties`).
+- [Beginner (Guides 1–7)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field/beginner) — One context = one hexagon, per-context package layout, domain types without framework annotations, application service signatures, output port as Java interface, Spring `@RestController` as primary adapter, Spring `@Configuration` as composition root.
+- [Intermediate (Guides 8–15)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field/intermediate) — Spring Data JDBC adapter behind the repository port, in-memory test adapter, domain event publisher port, outbox event adapter, full `@RestController` pipeline, contract codegen, cross-context ACL, composition root `@Configuration`.
+- [Advanced (Guides 16–27)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field/advanced) — Testcontainers harness, Flyway migration adapter, banking port and Spring `RestClient` adapter, Resilience4j retry / circuit-breaker, Micrometer tracing observability adapter, end-to-end domain event flow, hexagonal anti-patterns, Kubernetes deployment topology, Micrometer + OTLP + Prometheus observability stack, failure-mode `HealthIndicator` wiring, Flyway at deploy time, configuration adapter (Secret to typed `@ConfigurationProperties`).
 
 ## Sibling Tutorial
 
 The functional programming parallel of this tutorial uses F# / Giraffe / Npgsql against the same hypothetical Procure-to-Pay procurement platform:
 
-- [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/overview)
+- [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-fp-in-the-field/overview)
 
 Both tracks teach the same wiring concerns against the same domain; comparing the two side-by-side is the fastest way to see what changes when you swap object-oriented Java wiring for functional F# wiring.

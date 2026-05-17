@@ -384,8 +384,8 @@ DDD typically uses layered architecture to separate concerns:
 
 Once the by-example tracks above are clear, the in-the-field tutorials show DDD aggregates flowing through real production code with hexagonal isolation:
 
-- Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field) — pairs with the FP by-example track.
-- Next step (production wiring): [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field) — pairs with the OOP by-example track.
+- Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-fp-in-the-field) — pairs with the FP by-example track.
+- Next step (production wiring): [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field) — pairs with the OOP by-example track.
 
 ## 📚 Further Reading
 

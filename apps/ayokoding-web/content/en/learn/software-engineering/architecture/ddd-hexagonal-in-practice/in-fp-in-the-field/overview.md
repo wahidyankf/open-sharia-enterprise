@@ -65,14 +65,14 @@ Guides are numbered monotonically across all difficulty tiers (1, 2, 3 … 27). 
 
 ## Learning Path
 
-- [Beginner (Guides 1–6)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/beginner) — One context = one hexagon, per-context folder layout, domain types without framework imports, application service signatures, output port as F# function type alias, Giraffe handler as primary adapter.
-- [Intermediate (Guides 7–14)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/intermediate) — Npgsql adapter behind the repository port, in-memory test adapter, domain event publisher port, outbox adapter, full Giraffe pipeline, contract codegen, cross-context ACL, composition root in `Program.fs`.
-- [Advanced (Guides 15–27)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field/advanced) — docker-compose integration harness, DbUp migrations, banking port and payment adapter, retry and circuit-breaker, end-to-end domain event flow, OpenTelemetry observability adapter, murabaha-finance optional context, hexagonal anti-patterns, Kubernetes deployment topology, OpenTelemetry deployment wiring, failure-mode degraded adapters, configuration adapter at the deploy seam, background job adapter.
+- [Beginner (Guides 1–6)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-fp-in-the-field/beginner) — One context = one hexagon, per-context folder layout, domain types without framework imports, application service signatures, output port as F# function type alias, Giraffe handler as primary adapter.
+- [Intermediate (Guides 7–14)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-fp-in-the-field/intermediate) — Npgsql adapter behind the repository port, in-memory test adapter, domain event publisher port, outbox adapter, full Giraffe pipeline, contract codegen, cross-context ACL, composition root in `Program.fs`.
+- [Advanced (Guides 15–27)](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-fp-in-the-field/advanced) — docker-compose integration harness, DbUp migrations, banking port and payment adapter, retry and circuit-breaker, end-to-end domain event flow, OpenTelemetry observability adapter, murabaha-finance optional context, hexagonal anti-patterns, Kubernetes deployment topology, OpenTelemetry deployment wiring, failure-mode degraded adapters, configuration adapter at the deploy seam, background job adapter.
 
 ## Sibling Tutorial
 
 The object-oriented parallel of this tutorial uses Java 25 / Spring Boot 4 against the same hypothetical procurement platform:
 
-- [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field/overview)
+- [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field/overview)
 
 Both tracks teach the same wiring concerns against the same domain; comparing the two side-by-side is the fastest way to see what changes when you swap functional F# wiring for object-oriented Java wiring.

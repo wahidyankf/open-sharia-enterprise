@@ -84,8 +84,8 @@ Each architecture pattern section covers:
 
 After the by-example tutorials for DDD and Hexagonal Architecture, the in-the-field tracks show how the two patterns combine in real production code:
 
-- Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field)
-- Next step (production wiring): [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field)
+- Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-fp-in-the-field)
+- Next step (production wiring): [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field)
 
 ## 🚀 Getting Started
 

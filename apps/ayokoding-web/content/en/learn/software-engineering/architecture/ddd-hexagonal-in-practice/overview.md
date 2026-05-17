@@ -13,8 +13,8 @@ tags: ["ddd", "hexagonal-architecture", "in-the-field", "production-wiring", "fp
 
 Two production-wiring tracks, both running against the hypothetical `procurement-platform-be` service (Purchase Requisitions → POs → Goods Receipt → Three-Way Matching → Payment):
 
-- [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field) — F# / Giraffe / Npgsql, 27 guides
-- [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field) — Java 25 / Spring Boot 4, 27 guides
+- [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-fp-in-the-field) — F# / Giraffe / Npgsql, 27 guides
+- [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/in-oop-in-the-field) — Java 25 / Spring Boot 4, 27 guides
 
 Both tracks share the same 27-guide numbering (beginner 1–6/7, intermediate 8–14/15, advanced 15/16–22, production 23–27) so cross-track comparison is trivial: Guide 5's F# port definition versus Guide 5's Java interface definition is a single side-by-side read.
 
