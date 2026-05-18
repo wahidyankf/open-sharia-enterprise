@@ -3,7 +3,7 @@ title: "Overview"
 date: 2026-05-15T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Overview of Hexagonal Architecture using Functional Programming in F# — ports as function types, adapters as implementations, and dependency injection via partial application, illustrated through procurement-platform-be"
+description: "Overview of Hexagonal Architecture using Functional Programming — ports as function types, adapters as implementations, and dependency injection via partial application, shown in F# (canonical), Clojure, and TypeScript through procurement-platform-be"
 tags:
   [
     "hexagonal-architecture",
@@ -12,20 +12,22 @@ tags:
     "ports-and-adapters",
     "railway-oriented-programming",
     "by-example",
+    "clojure",
+    "typescript",
   ]
 ---
 
-**Want to build systems where business logic is a pure function that cannot touch a database even if it tries?** This tutorial teaches Hexagonal Architecture through a functional programming lens, using F# as the implementation language. The central observation is that functional programming and hexagonal architecture solve the same problem from different angles: both insist that the domain core is pure and that all effects live at the edges.
+**Want to build systems where business logic is a pure function that cannot touch a database even if it tries?** This tutorial teaches Hexagonal Architecture through a functional programming lens, using three languages — F# (canonical), Clojure, and TypeScript. Each example presents all three as parallel tabs; F# carries the deepest annotations and the framing prose, while Clojure and TypeScript are first-class variants. The central observation is that functional programming and hexagonal architecture solve the same problem from different angles: both insist that the domain core is pure and that all effects live at the edges — and this insight holds equally in all three languages.
 
 ## What This Tutorial Covers
 
-Hexagonal Architecture in F# rests on three interlocking ideas that make the structural boundaries impossible to violate accidentally:
+Hexagonal Architecture in functional languages rests on three interlocking ideas that make the structural boundaries impossible to violate accidentally. Each idea is expressed differently across F#, Clojure, and TypeScript, but the constraint is identical in all three:
 
-**Ports as function type aliases** — An output port is not an interface with methods; it is a function type alias. `type PurchaseOrderRepository = { save: PurchaseOrder -> Async<Result<unit, RepoError>>; load: PurchaseOrderId -> Async<Result<PurchaseOrder, RepoError>> }` is the complete contract. Any record with these fields satisfies the port. The compiler enforces substitutability without a single interface declaration.
+**Ports as function contracts** — In F#, a port is a record type alias with named function fields. In Clojure, a port is a protocol or a plain map of functions. In TypeScript, a port is an interface or an object type with function properties. In all three, the compiler (or runtime) enforces substitutability without inheritance.
 
-**Adapters as function implementations** — An adapter is a record literal satisfying a port type alias. A PostgreSQL adapter is a record with `save` and `load` functions. An in-memory test adapter is a different record. Same type, different implementation. Swap adapters by passing different records at startup.
+**Adapters as function implementations** — An adapter satisfies a port contract: a PostgreSQL adapter and an in-memory test adapter satisfy the same port. Swap adapters by passing different records / maps / objects at startup — no DI container or reflection needed in any of the three languages.
 
-**Dependency injection via partial application** — Application services take their output port records as parameters. Partial application bakes the production adapters in for production, and simple record literals for tests. No DI container, no interface registration, no reflection — just function application.
+**Dependency injection via function application** — Application services take their port implementations as parameters. In F#, partial application bakes in the production adapters. In Clojure, higher-order functions or component systems do the same. In TypeScript, constructor injection or closure-based factories achieve the equivalent result.
 
 ## The Functional Core / Imperative Shell Connection
 
@@ -55,13 +57,16 @@ Employee submits PurchaseOrder draft
   → Paid (banking port disburses funds)
 ```
 
-This is the same domain used in the [DDD FP tutorial](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview). The two tutorials complement each other: the DDD tutorial teaches how to model the domain; this tutorial teaches how to isolate it from infrastructure.
+This is the same domain used in the [DDD By Example in FP](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview) tutorial, and the same domain shown in F#, Clojure, and TypeScript tabs throughout both tutorials. The two tutorials complement each other: the DDD tutorial teaches how to model the domain; this tutorial teaches how to isolate it from infrastructure.
 
 ## Prerequisites
 
-- **F# basics**: comfortable with `let` bindings, function definitions, modules, discriminated unions, and record types.
-- **Result and Async**: familiar with `Result<'a, 'e>` and `Async<'a>` from the standard library. Several examples use `asyncResult { }` computation expressions from [FsToolkit.ErrorHandling](https://github.com/demystifyfp/FsToolkit.ErrorHandling) — a widely-used community library; add the NuGet package `FsToolkit.ErrorHandling` to follow along.
-- **DDD FP tutorial helpful but not required**: if you have read the DDD by-example tutorial first, you will recognise the domain types and smart constructors used here.
+Follow whichever language tab matches the stack you ship. For each language you plan to read:
+
+- **F# (canonical tab)**: comfortable with `let` bindings, function definitions, modules, discriminated unions, and record types. `Result<'a, 'e>` and `Async<'a>` familiarity required; several examples use `asyncResult { }` from [FsToolkit.ErrorHandling](https://github.com/demystifyfp/FsToolkit.ErrorHandling).
+- **Clojure tab**: comfortable with namespaces, maps, protocols, and `->` / `->>` threading macros. Familiarity with `clojure.spec` or `malli` is helpful for the type-grounding examples.
+- **TypeScript tab**: comfortable with interfaces, generics, `async/await`, and a basic `Result` type (e.g., `neverthrow`). Familiarity with Zod for runtime validation is helpful.
+- **DDD FP tutorial helpful but not required**: if you have read the [DDD By Example in FP](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview) tutorial first, you will recognise the domain types and smart constructors used here across all three language tabs.
 
 ## Structure of Each Example
 
@@ -69,7 +74,7 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation**: What hexagonal concept the example demonstrates (2–3 sentences).
 2. **Optional Diagram**: A Mermaid diagram when concept relationships involve zones, port/adapter boundaries, or flow across layers. Skipped for straightforward type or function definitions.
-3. **Heavily Annotated F# Code**: A single, self-contained code block. Annotations use `// =>` notation to show values, types, zones, and flow at each step, targeting 1.0–2.25 comment lines per code line.
+3. **Heavily Annotated Code**: Parallel tabs showing F# (canonical), Clojure, and TypeScript. Each tab is a single, self-contained code block. Annotations use `// =>` notation to show values, types, zones, and flow at each step, targeting 1.0–2.25 comment lines per code line per tab.
 4. **Key Takeaway**: The single most important principle from this example (1–2 sentences).
 5. **Why It Matters**: Real-world context — why this structural boundary matters in production systems (50–100 words).
 

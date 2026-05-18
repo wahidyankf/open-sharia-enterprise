@@ -4,7 +4,18 @@ date: 2026-05-15T00:00:00+07:00
 draft: false
 weight: 10000000
 description: "Hexagonal Architecture (Ports and Adapters) — domain isolation, port contracts, adapter implementations, and testable system design"
-tags: ["hexagonal-architecture", "ports-and-adapters", "clean-architecture", "domain-isolation", "testability"]
+tags:
+  [
+    "hexagonal-architecture",
+    "ports-and-adapters",
+    "clean-architecture",
+    "domain-isolation",
+    "testability",
+    "clojure",
+    "typescript",
+    "kotlin",
+    "csharp",
+  ]
 ---
 
 **Want to build systems where the business logic never knows whether it is talking to a database, an HTTP client, or a test stub?** Hexagonal Architecture — also called Ports and Adapters — is the structural answer. Conceived by Alistair Cockburn in the mid-1990s and formally published in 2005, it organises an application into three zones so that the domain core is completely isolated from every delivery mechanism and infrastructure detail.
@@ -91,13 +102,13 @@ The key discipline: **the domain and application layers define ports but never i
 
 Both tutorials use the same shared **procurement-platform-be Procure-to-Pay domain** — a backend service where employees request goods/services, managers approve, suppliers fulfill, and finance pays. This running domain is consistent with the [DDD tutorials](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd) so the two architectural styles can be studied together.
 
-- **[Hexagonal Architecture By Example in FP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview)**: 75 examples showing how functional programming maps naturally to hexagonal architecture. Ports become function type aliases. Adapters become function implementations. Dependency injection happens through partial application. The functional core/imperative shell pattern and hexagonal architecture are the same idea in different vocabularies.
+- **[Hexagonal Architecture By Example in FP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview)**: 75 examples showing how functional programming maps naturally to hexagonal architecture across F# (canonical), Clojure, and TypeScript. Ports become function type aliases or protocols. Adapters become function implementations. Dependency injection happens through partial application. The functional core/imperative shell pattern and hexagonal architecture are the same idea in different vocabularies.
 
-- **[Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview)**: 75 examples primarily in Java 21+. Ports become interfaces. Adapters become classes implementing those interfaces. Application services orchestrate domain objects through ports. Dependency injection wires adapters into application services at startup.
+- **[Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview)**: 75 examples across Java (canonical, 21+), Kotlin, C#, and TypeScript. Ports become interfaces. Adapters become classes implementing those interfaces. Application services orchestrate domain objects through ports. Dependency injection wires adapters into application services at startup.
 
 ## Production Wiring
 
 Once the by-example tracks above are clear, the cases tutorials show ports and adapters wired around real DDD aggregates in production code:
 
-- Next step (production wiring): [In FP — F# / Giraffe / Npgsql](/en/learn/software-engineering/software-architecture/cases/in-fp) — pairs with the FP by-example track.
-- Next step (production wiring): [In OOP — Java / Spring Boot](/en/learn/software-engineering/software-architecture/cases/in-oop) — pairs with the OOP by-example track.
+- Next step (production wiring): [In FP — F# / Giraffe / Npgsql, Clojure / Ring / next.jdbc, TypeScript / Hono / node-postgres](/en/learn/software-engineering/software-architecture/cases/in-fp) — pairs with the FP by-example track.
+- Next step (production wiring): [In OOP — Java / Spring Boot 4, Kotlin / Spring Boot 4, C# / ASP.NET Core, TypeScript / NestJS](/en/learn/software-engineering/software-architecture/cases/in-oop) — pairs with the OOP by-example track.

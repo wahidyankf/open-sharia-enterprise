@@ -3,11 +3,24 @@ title: "Overview"
 date: 2026-01-31T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Finite State Machines through the Procure-to-Pay domain: PurchaseOrder, Invoice, Supplier, and Payment state machines with annotated TypeScript, Python, and Java examples"
-tags: ["fsm", "finite-state-machine", "tutorial", "by-example", "state-patterns", "state-management"]
+description: "Learn Finite State Machines through the Procure-to-Pay domain: PurchaseOrder, Invoice, Supplier, and Payment state machines with annotated Java, Kotlin, C#, and TypeScript examples"
+tags:
+  [
+    "fsm",
+    "finite-state-machine",
+    "tutorial",
+    "by-example",
+    "state-patterns",
+    "state-management",
+    "oop",
+    "java",
+    "kotlin",
+    "csharp",
+    "typescript",
+  ]
 ---
 
-**Want to master Finite State Machines through practical examples?** This by-example guide teaches FSM through annotated code and diagram examples organized by complexity level, using a shared Procure-to-Pay (P2P) domain so every example builds on the same problem.
+**Want to master Finite State Machines through practical examples?** This by-example guide teaches FSM through annotated code and diagram examples in Java, Kotlin, C#, and TypeScript, organized by complexity level and using a shared Procure-to-Pay (P2P) domain so every example builds on the same problem.
 
 ## Domain Context
 
@@ -15,11 +28,11 @@ All examples model the `procurement-platform-be` backend. Employees request good
 
 ## Learning Path
 
-Three progressive levels, each adding a new aggregate:
+Three progressive levels, each adding a new aggregate. Java is the canonical implementation; Kotlin, C#, and TypeScript variants appear throughout to show how the same FSM patterns map onto different type systems:
 
-- **Beginner** — `PurchaseOrder` state machine: states as sealed types, transitions as pure functions, guard conditions, invalid-transition rejection.
-- **Intermediate** — adds `Invoice` state machine: three-way match guards, state-entry/exit actions, XState-style library usage, FSM as protocol enforcement.
-- **Advanced** — adds `Supplier` lifecycle and `Payment` state machine: hierarchical states, parallel regions, history states, FSM persistence and event-sourcing intersection, statecharts.
+- **Beginner** — `PurchaseOrder` state machine: states as sealed types / discriminated unions, transitions as pure functions, guard conditions, invalid-transition rejection — in Java, Kotlin, C#, and TypeScript.
+- **Intermediate** — adds `Invoice` state machine: three-way match guards, state-entry/exit actions, XState-style library usage (TypeScript), FSM as protocol enforcement — all four languages.
+- **Advanced** — adds `Supplier` lifecycle and `Payment` state machine: hierarchical states, parallel regions, history states, FSM persistence and event-sourcing intersection, statecharts — all four languages.
 
 ## Examples by Level
 
@@ -113,6 +126,6 @@ Every example follows a five-part format:
 
 1. **Brief Explanation** — what FSM concept the example demonstrates (2-3 sentences)
 2. **State Diagram** — Mermaid `stateDiagram-v2` with accessible color palette
-3. **Annotated Code** — implementation with 1.0-2.25 comment lines per code line
+3. **Annotated Code** — Java (canonical), Kotlin, C#, and TypeScript implementations with 1.0-2.25 comment lines per code line; language tabs appear where the idiom differs meaningfully
 4. **Key Takeaway** — the core principle to retain (1-2 sentences)
 5. **Why It Matters** — design rationale and consequences (50-100 words)

@@ -375,6 +375,13 @@ fsm.Event("confirm") // Transition to confirmed
 - [**Domain-Driven Design**](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd) - FSMs often model entity lifecycles in DDD
 - [**System Design Cases**](/en/learn/software-engineering/system-design/cases) - See FSMs in real-world system workflows
 
+## Production Wiring
+
+Once the by-example tracks are clear, the cases tutorials show FSM aggregate lifecycles wired into real production code across both paradigm families:
+
+- Next step (production wiring): [In FP — F# / Giraffe / Npgsql, Clojure / Ring / next.jdbc, TypeScript / Hono / node-postgres](/en/learn/software-engineering/software-architecture/cases/in-fp) — pairs with the FP by-example track.
+- Next step (production wiring): [In OOP — Java / Spring Boot 4, Kotlin / Spring Boot 4, C# / ASP.NET Core, TypeScript / NestJS](/en/learn/software-engineering/software-architecture/cases/in-oop) — pairs with the OOP by-example track.
+
 ## 📚 Further Reading
 
 **Books:**

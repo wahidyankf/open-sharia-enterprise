@@ -3,37 +3,52 @@ title: "Overview"
 weight: 10000011
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Overview of the In OOP case — how C4, DDD, Hexagonal Architecture, and Finite State Machines compose in a Java 25 / Spring Boot 4 codebase running the procurement-platform-be Procure-to-Pay domain"
-tags: ["cases", "in-oop", "c4-model", "ddd", "hexagonal-architecture", "finite-state-machine", "java", "spring-boot"]
+description: "Overview of the In OOP case — how C4, DDD, Hexagonal Architecture, and Finite State Machines compose in a Java / Kotlin / C# / TypeScript OOP codebase running the procurement-platform-be Procure-to-Pay domain"
+tags:
+  [
+    "cases",
+    "in-oop",
+    "c4-model",
+    "ddd",
+    "hexagonal-architecture",
+    "finite-state-machine",
+    "java",
+    "kotlin",
+    "csharp",
+    "typescript",
+    "spring-boot",
+    "nestjs",
+    "asp-net-core",
+  ]
 ---
 
-**You have finished the by-example tracks for C4, DDD, Hexagonal Architecture, and Finite State Machines. You know what an aggregate is. You know what a port is. You know how to draw a Container diagram. You know how to model a state machine. Now the question is: how do they all wire together in a real production Java codebase that ships?** This case answers that question using Java 25 / Spring Boot 4, running against a hypothetical Procure-to-Pay procurement platform backend.
+**You have finished the by-example tracks for C4, DDD, Hexagonal Architecture, and Finite State Machines. You know what an aggregate is. You know what a port is. You know how to draw a Container diagram. You know how to model a state machine. Now the question is: how do they all wire together in a real production OOP codebase that ships?** This case answers that question using Java 25 / Spring Boot 4 as the canonical implementation, with Kotlin, C#, and TypeScript variants, running against a hypothetical Procure-to-Pay procurement platform backend.
 
-Every guide in this series traces a single wiring seam: how a C4 Container decomposes into bounded-context components, how a Spring `@RestController` parses an HTTP request into a command record, how a domain aggregate processes that command through an explicit state machine, how an output port interface carries the result to a Spring-managed adapter, and how a unit test swaps that adapter for an in-memory stub. No toy examples. One coherent procurement-platform-be P2P domain — production-grade Spring wiring decisions — carried consistently across all twenty-seven guides.
+Every guide in this series traces a single wiring seam: how a C4 Container decomposes into bounded-context components, how a controller (Spring `@RestController` in Java/Kotlin, an ASP.NET Core controller in C#, or a NestJS controller in TypeScript) parses an HTTP request into a command record, how a domain aggregate processes that command through an explicit state machine, how an output port interface carries the result to a framework-managed adapter, and how a unit test swaps that adapter for an in-memory stub. No toy examples. One coherent procurement-platform-be P2P domain — production-grade wiring decisions across four OOP languages — carried consistently across all twenty-seven guides.
 
 ## Prerequisites
 
 **All four of the following by-example tracks are required reading before this case:**
 
 - [C4 By Example](/en/learn/software-engineering/software-architecture/c4-model/by-example/overview) — teaches the four C4 levels (Context, Container, Component, Code) used to draw the procurement platform's architecture.
-- [DDD By Example in OOP](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/overview) — teaches DDD tactical patterns (aggregates, value objects, domain events, factories, repositories) primarily in Java 21+ using the same shared procurement-platform-be P2P domain.
-- [Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview) — teaches ports-and-adapters structure (primary adapters, output port interfaces, adapter swapping, integration test seams) in Java and related OOP languages.
-- [FSM By Example in OOP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/overview) — teaches state-as-enum, transition methods on aggregates, and guard-condition encoding for aggregate lifecycles.
+- [DDD By Example in OOP](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/overview) — teaches DDD tactical patterns (aggregates, value objects, domain events, factories, repositories) in Java 21+, Kotlin, C#, and TypeScript using the same shared procurement-platform-be P2P domain.
+- [Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview) — teaches ports-and-adapters structure (primary adapters, output port interfaces, adapter swapping, integration test seams) in Java, Kotlin, C#, and TypeScript.
+- [FSM By Example in OOP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/overview) — teaches state-as-enum/sealed-type, transition methods on aggregates, and guard-condition encoding for aggregate lifecycles across Java, Kotlin, C#, and TypeScript.
 
 **This case does NOT re-teach C4, DDD, hexagonal, or FSM fundamentals.** Terms like _container_, _component_, _aggregate_, _port_, _adapter_, _bounded context_, _repository pattern_, and _state machine_ are used without definition. If any of those feel unfamiliar, complete the prerequisite tracks first. The guides here are about **wiring** — how the pieces connect in production — not about what the pieces are.
 
-## How the Four Families Compose in the Java Codebase
+## How the Four Families Compose in the OOP Codebase
 
-The four architecture pattern families slot together at different levels of the Java codebase:
+The four architecture pattern families slot together at different levels of the codebase. Java 25 / Spring Boot 4 is the canonical implementation; the structural mapping applies to Kotlin / Spring Boot 4, C# / ASP.NET Core, and TypeScript / NestJS as well:
 
-| Family  | Where It Lives in Java                                                                                           |
-| ------- | ---------------------------------------------------------------------------------------------------------------- |
-| **C4**  | Diagram artifacts checked in alongside source; bounded-context names match the C4 Component names                |
-| **DDD** | Top-level packages per bounded context (`com.procurement.platform.purchasing`, etc.); aggregates as Java classes |
-| **Hex** | `domain/` → `application/` (ports + use cases) → `infrastructure/` + `presentation/` → Spring `@Configuration`   |
-| **FSM** | Aggregate state as a `state` field with `enum` or sealed `State` interface; transitions as aggregate methods     |
+| Family  | Java / Kotlin (Spring Boot 4)                                                                                           | C# (ASP.NET Core)                                                  | TypeScript (NestJS)                                            |
+| ------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| **C4**  | Diagram artifacts checked in alongside source; bounded-context names match the C4 Component names                       | Same                                                               | Same                                                           |
+| **DDD** | Top-level packages per bounded context (`com.procurement.platform.purchasing`, etc.); aggregates as Java/Kotlin classes | Namespaces per context; aggregates as C# classes or records        | Modules per context; aggregates as TypeScript classes          |
+| **Hex** | `domain/` → `application/` (ports + use cases) → `infrastructure/` + `presentation/` → Spring `@Configuration`          | Similar layer split; `Program.cs` DI container as composition root | Similar layer split; NestJS `Module` as composition root       |
+| **FSM** | Aggregate state as a `state` field with `enum` or sealed `State` interface; transitions as aggregate methods            | `enum` or discriminated union via sealed classes; same pattern     | Discriminated union type aliases; transitions as class methods |
 
-The composition root assembles concrete Spring beans into the port slots in `@Configuration` classes, then Spring Boot takes over the request pipeline.
+The composition root assembles concrete framework beans or DI registrations into the port slots, then the framework (Spring Boot, ASP.NET Core, or NestJS) takes over the request pipeline.
 
 ## Running Domain — Procure-to-Pay Procurement Platform
 
@@ -50,14 +65,14 @@ The platform is organized around six bounded contexts, introduced progressively 
 | `payments`         | `Payment`                              | Payment run scheduling, bank disbursement, supplier remittance      |
 | `murabaha-finance` | `MurabahaContract`                     | (Optional Sharia angle) bank buys asset, resells to buyer at markup |
 
-The intended Java package layout for each context follows the hexagonal split:
+The intended package/namespace layout for each context follows the hexagonal split (shown in Java; Kotlin uses the same layout, C# uses namespaces, TypeScript uses NestJS modules):
 
 ```
-com.procurement.platform.<context>/
-  domain/         // aggregates, value objects, domain events, state machines (no Spring annotations)
+com.procurement.platform.<context>/   (Java / Kotlin)
+  domain/         // aggregates, value objects, domain events, state machines (no framework annotations)
   application/    // application services, output port interfaces
-  infrastructure/ // Spring-managed adapters (JdbcClient repos, RestClient, messaging)
-  presentation/   // Spring @RestController adapters (HTTP entry points)
+  infrastructure/ // framework-managed adapters (JdbcClient/EF Core/TypeORM repos, RestClient, messaging)
+  presentation/   // HTTP adapter (Spring @RestController / ASP.NET Core Controller / NestJS Controller)
 ```
 
 Cross-context domain events travel between contexts via the `EventPublisher` port. The most important events used across guides are summarized below; each event is reintroduced inline in the first guide that uses it.
@@ -77,13 +92,14 @@ Cross-context domain events travel between contexts via the `EventPublisher` por
 
 ## Code Grounding
 
-Every code block in this case is **production-grade hypothetical Java**. That means:
+Every tab block in this case shows **production-grade hypothetical code** in Java (canonical), Kotlin, C#, and TypeScript. That means:
 
 - **Production-grade**: full error handling, observability hooks where the seam being taught calls for them, no "simplified for clarity" omissions.
 - **Hypothetical**: no link to a real file. The snippets describe the wiring shape for the procurement platform. The shape is real; the specific file at any given commit of any real service is not the point.
 - **Cross-guide consistent**: a port interface defined in Guide 5 keeps the same method signature in Guide 12. A package layout introduced in Guide 2 stays consistent through Guide 22. A state machine introduced in Guide 3 is referenced unchanged in Guide 18.
+- **Java is canonical**: Java examples carry the deepest annotations and drive the narrative. Kotlin, C#, and TypeScript tabs show the same wiring seam with language-idiomatic adjustments noted inline.
 
-If you want to see real Java / Spring Boot codebases that use these patterns, look at any of the Java-track examples in the [Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview) prerequisite.
+If you want to see real codebases that use these patterns, look at the language-track examples in the [Hexagonal Architecture By Example in OOP](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview) prerequisite.
 
 ## Guide Numbering
 
@@ -97,8 +113,8 @@ Guides are numbered monotonically across all difficulty tiers (1, 2, 3 … 27). 
 
 ## Sibling Case
 
-The functional programming parallel of this case uses F# / Giraffe / Npgsql against the same hypothetical Procure-to-Pay procurement platform:
+The functional programming parallel of this case uses F# / Giraffe / Npgsql (canonical), Clojure / Ring / next.jdbc, and TypeScript / Hono against the same hypothetical Procure-to-Pay procurement platform:
 
-- [In FP — F# / Giraffe / Npgsql](/en/learn/software-engineering/software-architecture/cases/in-fp/overview)
+- [In FP](/en/learn/software-engineering/software-architecture/cases/in-fp/overview)
 
-Both cases teach the same wiring concerns against the same domain; comparing the two side-by-side is the fastest way to see what changes when you swap object-oriented Java wiring for functional F# wiring.
+Both cases teach the same wiring concerns against the same domain; comparing the two side-by-side is the fastest way to see what changes when you swap object-oriented Java / Kotlin / C# / TypeScript wiring for functional F# / Clojure / Hono wiring.

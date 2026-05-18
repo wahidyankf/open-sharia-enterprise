@@ -3,27 +3,40 @@ title: "Overview"
 weight: 10000002
 date: 2026-05-15T00:00:00+07:00
 draft: false
-description: "Hexagonal Architecture By Example in OOP: 75 annotated examples in Java 21+ using the procurement-platform-be domain — covering port interfaces, adapter implementations, application services, and strategic design"
-tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java"]
+description: "Hexagonal Architecture By Example in OOP: 75 annotated examples in Java 21+, Kotlin, C#, and TypeScript using the procurement-platform-be domain — covering port interfaces, adapter implementations, application services, and strategic design"
+tags:
+  [
+    "hexagonal-architecture",
+    "ports-and-adapters",
+    "tutorial",
+    "by-example",
+    "oop",
+    "java",
+    "kotlin",
+    "csharp",
+    "typescript",
+    "nestjs",
+    "asp-net-core",
+  ]
 ---
 
-**Want to apply Hexagonal Architecture with modern Java?** This tutorial teaches the Ports and Adapters pattern through 75 heavily annotated examples in Java 21+.
+**Want to apply Hexagonal Architecture with modern OOP languages?** This tutorial teaches the Ports and Adapters pattern through 75 heavily annotated examples in Java 21+, Kotlin, C#, and TypeScript.
 
 ## What This Tutorial Is
 
-This tutorial presents 75 examples showing hexagonal architecture concepts implemented in idiomatic Java 21+. Every example is self-contained, runnable, and annotated with `// =>` markers that show values, states, and effects at each step. Examples build progressively from three-zone structure through advanced multi-context patterns.
+This tutorial presents 75 examples showing hexagonal architecture concepts implemented in Java 21+, Kotlin, C#, and TypeScript. Every example is self-contained, runnable, and annotated with `// =>` markers that show values, states, and effects at each step. Java is the canonical language carrying the deepest annotations; Kotlin, C#, and TypeScript variants appear where language-idiomatic differences matter to the hexagonal pattern. Examples build progressively from three-zone structure through advanced multi-context patterns.
 
 Each example demonstrates a focused hexagonal concept. Examples build progressively: the three-zone structure and basic port/adapter separation appear first, application service orchestration and infrastructure adapters follow, and strategic multi-context patterns close the tutorial. Every example follows a consistent five-part structure (see below).
 
 ## Prerequisites
 
-- Comfortable with Java at an intermediate level
+- Comfortable with at least one of Java, Kotlin, C#, or TypeScript at an intermediate level (whichever language you ship with)
 - Familiar with OOP fundamentals: classes, interfaces, inheritance, and composition
 - Has read the paradigm-agnostic overview at [Hexagonal Architecture Overview](/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview)
 
 ## How to Read This Tutorial
 
-This tutorial is code-first. Each example leads with working, self-contained Java code annotated with `// =>` markers that show values, types, zones, and effects at each step.
+This tutorial is code-first. Each example leads with working, self-contained code annotated with `// =>` markers that show values, types, zones, and effects at each step. Java examples are canonical; Kotlin, C#, and TypeScript tabs appear alongside where the idiom differs meaningfully.
 
 The running domain across all examples is **procurement-platform-be** — a Procure-to-Pay (P2P) platform where employees request goods and services, managers approve, suppliers fulfill, and finance pays. The same domain is used in the [DDD OOP tutorial](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/overview), letting you see how hexagonal boundaries fit around DDD building blocks.
 
@@ -37,7 +50,7 @@ The running domain across all examples is **procurement-platform-be** — a Proc
 - Primary adapters — HTTP controllers, CLI handlers, message consumers
 - Secondary adapters — database repositories, email senders, external API clients
 - In-memory adapters — fast, deterministic implementations for tests
-- Dependency injection wiring — Spring `@Configuration` and manual constructor injection
+- Dependency injection wiring — Spring `@Configuration` (Java/Kotlin), `Program.cs` DI (C#), NestJS `Module` (TypeScript), and manual constructor injection
 
 **Intermediate patterns**:
 
@@ -59,7 +72,7 @@ The running domain across all examples is **procurement-platform-be** — a Proc
 
 ## What This Tutorial Does NOT Cover
 
-- Language tutorials: Java has its own by-example tutorial for language fundamentals
+- Language tutorials: Java, Kotlin, C#, and TypeScript each have their own by-example tutorials for language fundamentals
 - DDD tactical patterns in depth: read the [DDD OOP tutorial](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/overview) for entities, aggregates, value objects, and domain services
 - Framework setup and project bootstrapping (Spring Boot initialisation, Gradle/Maven configuration)
 - Kubernetes, Docker, or deployment infrastructure

@@ -3,7 +3,7 @@ title: "Overview"
 date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Overview of DDD using Functional Programming in F# — type-driven design, railway-oriented programming, and workflow pipelines for a Procure-to-Pay procurement platform"
+description: "Overview of DDD using Functional Programming — type-driven design, railway-oriented programming, and workflow pipelines for a Procure-to-Pay procurement platform, shown in F# (canonical), Clojure, and TypeScript"
 tags:
   [
     "ddd",
@@ -14,20 +14,22 @@ tags:
     "by-example",
     "software-architecture",
     "tutorial",
+    "clojure",
+    "typescript",
   ]
 ---
 
-**Want to model complex business domains so that illegal states are literally unrepresentable at compile time?** This tutorial teaches Domain-Driven Design through a functional programming lens, using F# as the implementation language and the backend of a Procure-to-Pay (P2P) procurement platform as the running domain.
+**Want to model complex business domains so that illegal states are literally unrepresentable at compile time?** This tutorial teaches Domain-Driven Design through a functional programming lens, using three languages — F# (canonical), Clojure, and TypeScript — and the backend of a Procure-to-Pay (P2P) procurement platform as the running domain. Each example presents all three languages as parallel tabs; F# carries the deepest annotations and the framing prose, while Clojure and TypeScript are first-class variants that show the same domain patterns in their respective idioms.
 
 ## What This Tutorial Covers
 
-This tutorial explores three interlocking ideas that make F# an unusually powerful DDD tool:
+This tutorial explores three interlocking ideas that make functional programming an unusually powerful DDD tool. Each idea is shown in F# (canonical), Clojure, and TypeScript:
 
-**Type-driven design** — F# discriminated unions and record types let you encode business rules directly in the type system. An `UnvalidatedRequisition` and a `ValidatedRequisition` are different types; the compiler prevents you from accidentally treating one as the other. The domain model documents itself.
+**Type-driven design** — F# discriminated unions and record types, Clojure spec-validated maps, and TypeScript union types + Zod schemas all let you encode business rules at the type/validation boundary. An `UnvalidatedRequisition` and a `ValidatedRequisition` are different types (or shapes); the language prevents you from accidentally treating one as the other. The domain model documents itself regardless of which language you use.
 
-**Railway-Oriented Programming (ROP)** — Error handling becomes a first-class design concern. Functions that can fail return `Result<'a, 'e>`. Multiple fallible steps compose cleanly into pipelines using `Result.bind`, and a single `result` computation expression reads like imperative code while remaining purely functional.
+**Railway-Oriented Programming (ROP)** — Error handling becomes a first-class design concern. F# uses `Result<'a, 'e>` with `Result.bind`; Clojure uses `either` monads or threading macros with tagged maps; TypeScript uses a `Result` type or `neverthrow`. Multiple fallible steps compose cleanly into pipelines in all three.
 
-**Workflow pipelines** — Business workflows are modelled as plain functions: `UnvalidatedRequisition -> Result<RequisitionSubmitted list, ProcurementError>`. Dependencies are injected via partial application, effects are pushed to the edges, and the domain core stays pure and easily testable.
+**Workflow pipelines** — Business workflows are modelled as plain functions. Dependencies are injected via partial application (F#), higher-order functions (Clojure), or constructor injection (TypeScript). Effects are pushed to the edges, and the domain core stays pure and easily testable in all three languages.
 
 ## Running Domain
 
@@ -48,7 +50,7 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation**: What concept the example demonstrates (2–3 sentences).
 2. **Optional Diagram**: A Mermaid diagram when concept relationships involve state transitions, pipelines, or bounded-context maps. Skipped for straightforward type or function definitions.
-3. **Heavily Annotated F# Code**: A single, self-contained code block that runs under `dotnet fsi` or as a minimal `dotnet run` project. Annotations use `// =>` notation to show values, types, states, and effects at each step, targeting 1.0–2.25 comment lines per code line.
+3. **Heavily Annotated Code**: Parallel tabs showing F# (canonical), Clojure, and TypeScript. Each tab is a single, self-contained code block. Annotations use `// =>` notation (or `;;` / `// =>` in Clojure) to show values, types, states, and effects at each step, targeting 1.0–2.25 comment lines per code line per tab.
 4. **Key Takeaway**: The single most important principle from this example (1–2 sentences).
 5. **Why It Matters**: Real-world context — why this pattern matters in production systems and how it connects to type-driven DDD (50–100 words).
 

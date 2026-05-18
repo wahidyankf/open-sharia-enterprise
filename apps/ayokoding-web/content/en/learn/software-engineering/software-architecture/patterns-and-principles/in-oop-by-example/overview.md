@@ -3,11 +3,25 @@ title: "Overview"
 weight: 10000000
 date: 2026-03-20T00:00:00+07:00
 draft: false
-description: "OOP variant — learn software architecture through 85+ annotated examples covering 95% of essential concepts, with code in Java, Kotlin, and C# (ideal for experienced developers)"
-tags: ["software-architecture", "tutorial", "by-example", "code-first", "design-patterns", "oop"]
+description: "OOP variant — learn software architecture through 85+ annotated examples covering 95% of essential concepts, with code in Java, Kotlin, C#, and TypeScript (ideal for experienced developers)"
+tags:
+  [
+    "software-architecture",
+    "tutorial",
+    "by-example",
+    "code-first",
+    "design-patterns",
+    "oop",
+    "java",
+    "kotlin",
+    "csharp",
+    "typescript",
+    "nestjs",
+    "asp-net-core",
+  ]
 ---
 
-This section provides a code-first approach to learning software architecture through heavily annotated examples.
+This section provides a code-first approach to learning software architecture through heavily annotated examples in Java, Kotlin, C#, and TypeScript.
 
 ## What You Will Learn
 
@@ -27,7 +41,7 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation** — what the pattern or principle addresses and why it matters (2-3 sentences)
 2. **Mermaid Diagram** — visual representation of component relationships, layers, or data flow (when appropriate)
-3. **Heavily Annotated Code** — implementation with `// =>` comments documenting architectural decisions and trade-offs
+3. **Heavily Annotated Code** — Java (canonical), Kotlin, C#, and TypeScript implementations with `// =>` comments documenting architectural decisions and trade-offs; language tabs appear where the idiom differs meaningfully
 4. **Key Takeaway** — the core insight to retain from the example (1-2 sentences)
 5. **Why It Matters** — production relevance and real-world impact (50-100 words)
 

@@ -4,7 +4,8 @@ date: 2026-05-18T00:00:00+07:00
 draft: false
 weight: 10000000
 description: "Software architecture patterns and principles — SOLID, GRASP, GoF patterns, architectural styles, trade-offs, and real-world decisions taught through 85 annotated examples across two paradigm tracks (OOP and FP)"
-tags: ["software-architecture", "patterns", "principles", "solid", "design-patterns", "tutorial"]
+tags:
+  ["software-architecture", "patterns", "principles", "solid", "design-patterns", "tutorial", "clojure", "typescript"]
 ---
 
 **You can read every chapter of the Gang of Four and still not know when to reach for a Strategy versus a sealed hierarchy, when SOLID becomes over-engineering, or how an Observer differs from a Domain Event in a production codebase.** This section answers those questions through 85 heavily annotated examples — the same 85 conceptual examples implemented twice, once in OOP and once in FP, so you can see exactly how each pattern and principle changes shape across paradigms.
@@ -13,8 +14,8 @@ tags: ["software-architecture", "patterns", "principles", "solid", "design-patte
 
 Two parallel paradigm tracks, each covering the same 85-example progression:
 
-- [Patterns and Principles in OOP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example) — Java, Kotlin, and C# examples emphasising classes, interfaces, sealed hierarchies, and pattern-matching
-- [Patterns and Principles in FP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example) — F# examples emphasising records, discriminated unions, function composition, and pipeline-shaped data flow
+- [Patterns and Principles in OOP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example) — Java, Kotlin, C#, and TypeScript examples emphasising classes, interfaces, sealed hierarchies, and pattern-matching
+- [Patterns and Principles in FP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example) — F#, Clojure, and TypeScript examples emphasising records, discriminated unions, function composition, and pipeline-shaped data flow
 
 Each FP example carries the same number and conceptual title as its OOP counterpart, enabling direct cross-paradigm comparison.
 
@@ -44,10 +45,10 @@ Pick the paradigm track that matches the language you write daily — but consid
 
 ## Why two parallel tracks
 
-A Strategy pattern in Java is an interface plus implementations plus a constructor injection. The same Strategy in F# is a function value passed as a parameter. The intent — swap algorithms without touching call sites — is identical; the syntax difference is paradigm-shaped, not principle-shaped. Reading both forms in parallel teaches the principle directly instead of memorising one syntactic costume of it.
+A Strategy pattern in Java is an interface plus implementations plus a constructor injection. The same Strategy in F# is a function value passed as a parameter; in Clojure it is a higher-order function; in TypeScript it can be either, depending on which paradigm track you follow. The intent — swap algorithms without touching call sites — is identical; the syntax difference is paradigm-shaped, not principle-shaped. Reading both forms in parallel teaches the principle directly instead of memorising one syntactic costume of it.
 
 ## What this section is not
 
-- **Not a language tutorial.** You should already be comfortable writing classes in Java/Kotlin/C# (for the OOP track) or functions and records in F# (for the FP track).
+- **Not a language tutorial.** You should already be comfortable writing classes in Java/Kotlin/C#/TypeScript (for the OOP track) or functions and records in F#/Clojure/TypeScript (for the FP track).
 - **Not a complete reference of every pattern in existence.** It covers the 85 examples that matter most in modern enterprise codebases. Specialised patterns (parser combinators, free monads, GoF Flyweight) are mentioned only when they illustrate a broader principle.
 - **Not framework-specific.** Examples lean on standard libraries and minimal framework usage so the architectural intent stays visible. Framework-specific wiring (Spring beans, ASP.NET DI containers, Giraffe pipelines) shows up only in the [Cases](/en/learn/software-engineering/software-architecture/cases) section.

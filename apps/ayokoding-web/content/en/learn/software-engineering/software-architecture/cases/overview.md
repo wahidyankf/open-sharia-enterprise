@@ -5,7 +5,20 @@ draft: false
 weight: 10000000
 description: "Integrated cases combining C4, DDD, Hexagonal Architecture, and Finite State Machines on the procurement-platform-be Procure-to-Pay domain — two parallel paradigm flavors (In FP and In OOP)"
 tags:
-  ["cases", "c4-model", "ddd", "hexagonal-architecture", "finite-state-machine", "in-fp", "in-oop", "production-wiring"]
+  [
+    "cases",
+    "c4-model",
+    "ddd",
+    "hexagonal-architecture",
+    "finite-state-machine",
+    "in-fp",
+    "in-oop",
+    "production-wiring",
+    "clojure",
+    "typescript",
+    "kotlin",
+    "csharp",
+  ]
 ---
 
 **You have finished the by-example tracks for C4, DDD, Hexagonal Architecture, and Finite State Machines. You know what an aggregate is. You know what a port is. You know how to draw a Container diagram. You know how to model a state machine. Now the question is: how do they all wire together in a real production codebase that ships?** This section answers that question through two parallel cases against the same shared Procure-to-Pay domain — so the only thing that changes between cases is the language and framework.
@@ -25,10 +38,10 @@ The cases here teach the **wiring decisions** — how these four families meet i
 
 Two production cases, both running against the hypothetical `procurement-platform-be` service (Purchase Requisitions → POs → Goods Receipt → Three-Way Matching → Payment):
 
-- [In FP — F# / Giraffe / Npgsql](/en/learn/software-engineering/software-architecture/cases/in-fp) — Functional-programming flavor; 27 guides
-- [In OOP — Java / Spring Boot](/en/learn/software-engineering/software-architecture/cases/in-oop) — Object-oriented flavor; 27 guides
+- [In FP — F# / Giraffe / Npgsql, Clojure / Ring / next.jdbc, TypeScript / Hono / node-postgres](/en/learn/software-engineering/software-architecture/cases/in-fp) — Functional-programming flavor; 27 guides (F# is the canonical annotated reference; Clojure and TypeScript show the same wiring in their respective idioms)
+- [In OOP — Java / Spring Boot 4, Kotlin / Spring Boot 4, C# / ASP.NET Core, TypeScript / NestJS](/en/learn/software-engineering/software-architecture/cases/in-oop) — Object-oriented flavor; 27 guides (Java is the canonical annotated reference; Kotlin, C#, and TypeScript show the same wiring in their respective idioms)
 
-Both cases share the same 27-guide numbering (beginner 1–6/7, intermediate 8–14/15, advanced 15/16–22, production 23–27) so cross-paradigm comparison is trivial: Guide 5's F# port definition versus Guide 5's Java interface definition is a single side-by-side read.
+Both cases share the same 27-guide numbering (beginner 1–6/7, intermediate 8–14/15, advanced 15/16–22, production 23–27) so cross-paradigm comparison is trivial: Guide 5's F# port definition versus Guide 5's Java interface definition is a single side-by-side read. Cross-language comparison within a paradigm is equally direct — Guide 5's F# type alias versus Guide 5's Clojure protocol or TypeScript function type surfaces how idiom shapes the same concept.
 
 ## Prerequisites
 
@@ -81,4 +94,4 @@ Same contexts, same aggregates, same domain events, same ports, same state machi
 
 ## Why Two Parallel Cases
 
-Comparing the F# wiring of Guide 5 (a port as a function type alias) against the Java wiring of Guide 5 (a port as an interface) against the same business problem is the fastest way to internalise the structural decisions that hexagonal architecture, DDD, and the C4/FSM frames demand — regardless of which paradigm you ultimately ship with.
+Comparing the F# wiring of Guide 5 (a port as a function type alias) against the Java wiring of Guide 5 (a port as an interface) against the same business problem is the fastest way to internalise the structural decisions that hexagonal architecture, DDD, and the C4/FSM frames demand — regardless of which paradigm you ultimately ship with. Within each paradigm, additional language implementations (Clojure and TypeScript on the FP side; Kotlin, C#, and TypeScript on the OOP side) show how the same structural decisions translate into different language idioms without changing the underlying wiring logic.

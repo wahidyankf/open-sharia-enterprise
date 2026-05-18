@@ -3,21 +3,34 @@ title: "Overview"
 weight: 10000002
 date: 2026-05-09T00:00:00+07:00
 draft: false
-description: "DDD By Example in OOP: 75 annotated examples in Java 21+ using the procurement-platform-be P2P domain"
-tags: ["ddd", "domain-driven-design", "tutorial", "by-example", "oop", "java", "kotlin", "csharp"]
+description: "DDD By Example in OOP: 75 annotated examples in Java 21+, Kotlin, C#, and TypeScript using the procurement-platform-be P2P domain"
+tags:
+  [
+    "ddd",
+    "domain-driven-design",
+    "tutorial",
+    "by-example",
+    "oop",
+    "java",
+    "kotlin",
+    "csharp",
+    "typescript",
+    "nestjs",
+    "asp-net-core",
+  ]
 ---
 
-**Want to apply DDD with modern OOP languages?** This tutorial teaches Domain-Driven Design tactical and strategic patterns through 75 heavily annotated examples in Java 21+.
+**Want to apply DDD with modern OOP languages?** This tutorial teaches Domain-Driven Design tactical and strategic patterns through 75 heavily annotated examples in Java 21+, Kotlin, C#, and TypeScript.
 
 ## What This Tutorial Is
 
-This tutorial presents 75 examples showing DDD concepts implemented in Java 21+ with heavily annotated code. Each example is self-contained, runnable, and annotated with `// =>` markers that show values, types, states, and effects at each step.
+This tutorial presents 75 examples showing DDD concepts implemented in Java 21+, Kotlin, C#, and TypeScript with heavily annotated code. Each example is self-contained, runnable, and annotated with `// =>` markers that show values, types, states, and effects at each step. Java is the canonical language carrying the deepest annotations; Kotlin, C#, and TypeScript variants appear where language-idiomatic differences matter to the DDD pattern.
 
 Each example demonstrates a focused DDD concept. Examples build progressively: tactical building blocks appear first, integration and layering patterns follow, and strategic patterns close the tutorial. Every example follows a consistent five-part structure (see below).
 
 ## Prerequisites
 
-- Comfortable with at least one of Java, Kotlin, or C# at an intermediate level
+- Comfortable with at least one of Java, Kotlin, C#, or TypeScript at an intermediate level (whichever language you ship with)
 - Familiar with OOP fundamentals: classes, interfaces, inheritance, and composition
 - Has read the paradigm-agnostic DDD overview at [DDD Overview](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview)
 
@@ -25,7 +38,7 @@ Each example demonstrates a focused DDD concept. Examples build progressively: t
 
 This tutorial is code-first. Each example leads with working, self-contained code annotated with `// =>` markers that show values, types, states, and effects at each step.
 
-Read one language deeply if you want to build fluency in that language's DDD idioms. Scan all three languages on each example if you want cross-language insight into how the same DDD concept maps onto different type systems and idioms. Language contrasts are noted in examples where the difference matters to the DDD pattern.
+Read one language deeply if you want to build fluency in that language's DDD idioms. Scan all four languages on each example if you want cross-language insight into how the same DDD concept maps onto different type systems and idioms. Language contrasts are noted in examples where the difference matters to the DDD pattern.
 
 The running domain across all examples is the **`procurement-platform-be`** — the backend of a Procure-to-Pay (P2P) platform through which employees submit purchase requisitions, managers approve them, purchase orders are issued to suppliers, goods are received, invoices are matched against deliveries, and payments are disbursed. Using a single domain lets you see how individual DDD building blocks fit together into a coherent system.
 
@@ -49,7 +62,7 @@ The running domain across all examples is the **`procurement-platform-be`** — 
 
 ## What This Tutorial Does NOT Cover
 
-- Language tutorials: Java, Kotlin, and C# each have their own by-example tutorials for language fundamentals
+- Language tutorials: Java, Kotlin, C#, and TypeScript each have their own by-example tutorials for language fundamentals
 - Deep DDD theory: read the [DDD Overview](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview) for conceptual grounding; Evans's _Domain-Driven Design_ (Addison-Wesley, 2003) for comprehensive theory
 - Event sourcing internals beyond the introductory example in the Advanced section
 - CQRS infrastructure (projections, read-model persistence) beyond the pattern itself
@@ -64,7 +77,7 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation**: What DDD concept the example demonstrates (2–3 sentences).
 2. **Optional Diagram**: A Mermaid diagram when concept relationships are complex enough to warrant visual representation. Skipped for straightforward code definitions.
-3. **Code Block(s)**: Primarily Java 21+ implementations with `// =>` annotations explaining values, states, and effects. A small number of examples sprinkle Kotlin variants to highlight idiom differences.
+3. **Code Block(s)**: Java 21+ implementations (canonical) with `// =>` annotations explaining values, states, and effects. Kotlin, C#, and TypeScript variants appear where language-idiomatic differences matter to the DDD pattern.
 4. **Key Takeaway**: The core DDD principle to retain (1–2 sentences).
 5. **Why It Matters**: Real-world business impact and production system context (50–100 words).
 
