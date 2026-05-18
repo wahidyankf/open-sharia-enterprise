@@ -8,6 +8,7 @@ layout: list
 description: "Learn software architecture through 85 heavily annotated examples covering patterns, principles, styles, trade-offs, and real-world architectural decisions (95% coverage), in paradigm-specific variants"
 ---
 
+- [Overview](/en/learn/software-engineering/software-architecture/patterns-and-principles/overview)
 - [Patterns and Principles in OOP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example)
   - [Overview](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/overview)
   - [Beginner](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner)

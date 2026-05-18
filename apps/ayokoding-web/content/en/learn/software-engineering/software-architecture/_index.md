@@ -7,6 +7,7 @@ draft: false
 
 - [Overview](/en/learn/software-engineering/software-architecture/overview)
 - [Patterns and Principles](/en/learn/software-engineering/software-architecture/patterns-and-principles)
+  - [Overview](/en/learn/software-engineering/software-architecture/patterns-and-principles/overview)
   - [Patterns and Principles in OOP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example)
   - [Patterns and Principles in FP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example)
 - [C4 Model](/en/learn/software-engineering/software-architecture/c4-model)

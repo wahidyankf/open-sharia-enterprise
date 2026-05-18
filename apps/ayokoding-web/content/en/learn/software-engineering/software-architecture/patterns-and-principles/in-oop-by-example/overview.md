@@ -5,8 +5,6 @@ date: 2026-03-20T00:00:00+07:00
 draft: false
 description: "OOP variant — learn software architecture through 85+ annotated examples covering 95% of essential concepts, with code in Java, Kotlin, and C# (ideal for experienced developers)"
 tags: ["software-architecture", "tutorial", "by-example", "code-first", "design-patterns", "oop"]
-aliases:
-  - /en/learn/software-engineering/software-architecture/patterns-and-principles/overview/
 ---
 
 This section provides a code-first approach to learning software architecture through heavily annotated examples.
