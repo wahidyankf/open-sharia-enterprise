@@ -25,16 +25,16 @@ created: 2026-02-09
 #### `Java`
 
 ```java
-public class ZakatAssessment {
-    private AssessmentId id;
-    private ZakatState currentState;  // FSM state
-    private StateMachine<ZakatState, ZakatEvent> stateMachine;
+public class PurchaseOrder {
+    private PurchaseOrderId id;
+    private PurchaseOrderState currentState;  // FSM state
+    private StateMachine<PurchaseOrderState, PurchaseOrderEvent> stateMachine;
 
     public void calculate() {
-        stateMachine.sendEvent(ZakatEvent.CALCULATE);
+        stateMachine.sendEvent(PurchaseOrderEvent.APPROVE);
         this.currentState = stateMachine.getState().getId();
         // Publish domain event
-        domainEvents.add(new ZakatCalculated(id, calculatedAmount));
+        domainEvents.add(new PurchaseOrderApproved(id, approvedAmount));
     }
 }
 ```
@@ -42,18 +42,18 @@ public class ZakatAssessment {
 #### `Kotlin`
 
 ```kotlin
-class ZakatAssessment(
-    val id: AssessmentId,
+class PurchaseOrder(
+    val id: PurchaseOrderId,
 ) {
-    var currentState: ZakatState = ZakatState.DRAFT
+    var currentState: PurchaseOrderState = PurchaseOrderState.DRAFT
         private set
 
     private val domainEvents = mutableListOf<DomainEvent>()
 
-    fun calculate(stateMachine: StateMachine<ZakatState, ZakatEvent>, calculatedAmount: Money) {
-        stateMachine.sendEvent(ZakatEvent.CALCULATE)
+    fun calculate(stateMachine: StateMachine<PurchaseOrderState, PurchaseOrderEvent>, approvedAmount: Money) {
+        stateMachine.sendEvent(PurchaseOrderEvent.APPROVE)
         currentState = stateMachine.state.id
-        domainEvents += ZakatCalculated(id, calculatedAmount)
+        domainEvents += PurchaseOrderApproved(id, approvedAmount)
     }
 
     fun pullEvents(): List<DomainEvent> = domainEvents.toList().also { domainEvents.clear() }
@@ -63,27 +63,27 @@ class ZakatAssessment(
 #### `C#`
 
 ```csharp
-namespace Zakat.Domain.Aggregates;
+namespace Purchasing.Domain.Aggregates;
 
-public sealed class ZakatAssessment
+public sealed class PurchaseOrder
 {
     private readonly List<IDomainEvent> _domainEvents = [];
-    private readonly StateMachine<ZakatState, ZakatEvent> _stateMachine;
+    private readonly StateMachine<PurchaseOrderState, PurchaseOrderEvent> _stateMachine;
 
-    public AssessmentId Id { get; }
-    public ZakatState CurrentState => _stateMachine.State;
+    public PurchaseOrderId Id { get; }
+    public PurchaseOrderState CurrentState => _stateMachine.State;
 
-    public ZakatAssessment(AssessmentId id)
+    public PurchaseOrder(PurchaseOrderId id)
     {
         Id = id;
-        _stateMachine = new StateMachine<ZakatState, ZakatEvent>(ZakatState.Draft);
+        _stateMachine = new StateMachine<PurchaseOrderState, PurchaseOrderEvent>(PurchaseOrderState.Draft);
         ConfigureTransitions();
     }
 
-    public void Calculate(Money calculatedAmount)
+    public void Calculate(Money approvedAmount)
     {
-        _stateMachine.Fire(ZakatEvent.Calculate);
-        _domainEvents.Add(new ZakatCalculated(Id, calculatedAmount));
+        _stateMachine.Fire(PurchaseOrderEvent.Approve);
+        _domainEvents.Add(new PurchaseOrderApproved(Id, approvedAmount));
     }
 
     public IReadOnlyList<IDomainEvent> PullEvents()
@@ -94,8 +94,8 @@ public sealed class ZakatAssessment
     }
 
     private void ConfigureTransitions() =>
-        _stateMachine.Configure(ZakatState.Draft)
-            .Permit(ZakatEvent.Calculate, ZakatState.Calculated);
+        _stateMachine.Configure(PurchaseOrderState.Draft)
+            .Permit(PurchaseOrderEvent.Approve, PurchaseOrderState.Approved);
 }
 ```
 
@@ -103,7 +103,7 @@ public sealed class ZakatAssessment
 
 **REQUIRED**: State transitions MUST publish domain events.
 
-**Event Naming**: `[Entity][StateReached]` (e.g., `ZakatCalculated`, `CampaignFunded`)
+**Event Naming**: `[Entity][StateReached]` (e.g., `PurchaseOrderApproved`, `CampaignFunded`)
 
 ## Audit Trail
 

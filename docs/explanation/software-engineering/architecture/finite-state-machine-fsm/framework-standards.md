@@ -35,8 +35,8 @@ created: 2026-02-09
 ```java
 @Configuration
 @EnableStateMachine
-public class ZakatStateMachineConfig extends StateMachineConfigurerAdapter<
-    ZakatState, ZakatEvent> {
+public class PurchaseOrderStateMachineConfig extends StateMachineConfigurerAdapter<
+    PurchaseOrderState, PurchaseOrderEvent> {
     // Configuration here
 }
 ```
@@ -46,7 +46,7 @@ public class ZakatStateMachineConfig extends StateMachineConfigurerAdapter<
 ```kotlin
 @Configuration
 @EnableStateMachine
-class ZakatStateMachineConfig : StateMachineConfigurerAdapter<ZakatState, ZakatEvent>() {
+class PurchaseOrderStateMachineConfig : StateMachineConfigurerAdapter<PurchaseOrderState, PurchaseOrderEvent>() {
     // Configuration here
 }
 ```
@@ -56,12 +56,12 @@ class ZakatStateMachineConfig : StateMachineConfigurerAdapter<ZakatState, ZakatE
 ```csharp
 // C# uses Stateless or custom FSM — no direct Spring State Machine equivalent.
 // Shown here with Stateless library (idiomatic C# FSM approach).
-namespace Zakat.Infrastructure.StateMachines;
+namespace Purchasing.Infrastructure.StateMachines;
 
-public sealed class ZakatStateMachineConfig
+public sealed class PurchaseOrderStateMachineConfig
 {
-    public StateMachine<ZakatState, ZakatEvent> Build() =>
-        new StateMachine<ZakatState, ZakatEvent>(ZakatState.Draft);
+    public StateMachine<PurchaseOrderState, PurchaseOrderEvent> Build() =>
+        new StateMachine<PurchaseOrderState, PurchaseOrderEvent>(PurchaseOrderState.Draft);
 }
 ```
 

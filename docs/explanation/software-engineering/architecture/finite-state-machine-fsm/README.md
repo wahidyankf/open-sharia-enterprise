@@ -58,7 +58,7 @@ OSE Platform FSM implementations MUST use the following frameworks:
 - **[Finite State Machine Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/overview.md)** - Core FSM concepts (States, Transitions, Events, Guards, Actions)
 - **[Finite State Machine By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/)** - Practical FSM implementation examples
 
-**What this documentation covers**: OSE Platform-specific FSM patterns, Islamic finance state machines (Zakat lifecycle, contract approval, donation campaigns), framework choices (Spring State Machine, XState), integration with DDD aggregates, repository-specific FSM conventions.
+**What this documentation covers**: OSE Platform-specific FSM patterns, Procure-to-Pay state machines (PurchaseOrder lifecycle, Invoice three-way matching, Supplier approval), framework choices (Spring State Machine, XState), integration with DDD aggregates, repository-specific FSM conventions.
 
 **What this documentation does NOT cover**: FSM fundamentals, basic state/transition concepts, generic FSM theory (those are in ayokoding-web).
 
@@ -78,7 +78,7 @@ FSM in OSE Platform enforces foundational software engineering principles:
 
 **MUST follow these mandatory standards for all FSM implementations in OSE Platform:**
 
-1. **[State Machine Standards](./state-machine-standards.md)** - When to use FSM, state design, Islamic finance state machines
+1. **[State Machine Standards](./state-machine-standards.md)** - When to use FSM, state design, Procure-to-Pay state machines
 2. **[Framework Standards](./framework-standards.md)** - Spring State Machine (Java), XState (TypeScript), framework selection
 3. **[Integration Standards](./integration-standards.md)** - DDD aggregate integration, domain event publishing
 
@@ -95,10 +95,10 @@ FSM in OSE Platform enforces foundational software engineering principles:
 
 **Examples in OSE Platform**:
 
-- **Zakat Assessment**: `DRAFT` → `CALCULATED` → `PAID`
-- **Donation Campaign**: `PLANNING` → `ACTIVE` → `FUNDED` → `COMPLETED`
-- **Contract Approval**: `NEGOTIATION` → `LEGAL_REVIEW` → `SHARIAH_REVIEW` → `APPROVED` → `ACTIVE`
-- **Beneficiary Status**: `APPLICATION` → `VERIFICATION` → `APPROVED` → `ACTIVE`
+- **Purchase Order**: `DRAFT` → `PENDING_APPROVAL` → `APPROVED` → `ISSUED` → `ACKNOWLEDGED`
+- **Invoice**: `REGISTERED` → `MATCHED` → `APPROVED` → `PAID`
+- **Supplier**: `PENDING_REVIEW` → `APPROVED` → `ACTIVE` → `SUSPENDED`
+- **Goods Receipt**: `EXPECTED` → `RECEIVED` → `VERIFIED` → `DISCREPANCY_FLAGGED`
 
 **PROHIBITED**: Using FSM for:
 
@@ -110,54 +110,61 @@ FSM in OSE Platform enforces foundational software engineering principles:
 
 ## OSE Platform State Machines
 
-### Zakat Assessment FSM
+### Purchase Order FSM
 
-**States**: `DRAFT`, `CALCULATED`, `BELOW_NISAB`, `PAID`, `EXPIRED`
-
-**Transitions**:
-
-- `DRAFT` → `CALCULATED` (calculate event)
-- `CALCULATED` → `PAID` (payment confirmation)
-- `CALCULATED` → `EXPIRED` (lunar year passes without payment)
-
-**Business Rules**:
-
-- Cannot transition to `PAID` if amount doesn't match calculation
-- Cannot recalculate after `PAID`
-- Must enforce Nisab threshold before `CALCULATED`
-
-### Campaign FSM
-
-**States**: `PLANNING`, `ACTIVE`, `FUNDED`, `COMPLETED`, `CANCELLED`
+**States**: `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `ISSUED`, `ACKNOWLEDGED`, `CANCELLED`
 
 **Transitions**:
 
-- `PLANNING` → `ACTIVE` (launch campaign)
-- `ACTIVE` → `FUNDED` (funding goal reached)
-- `FUNDED` → `COMPLETED` (funds disbursed)
-- `ACTIVE` → `CANCELLED` (campaign cancelled)
+- `DRAFT` → `PENDING_APPROVAL` (submit for approval)
+- `PENDING_APPROVAL` → `APPROVED` (approval-authority threshold met)
+- `APPROVED` → `ISSUED` (PO sent to supplier)
+- `ISSUED` → `ACKNOWLEDGED` (supplier acknowledges receipt)
+- `DRAFT`/`PENDING_APPROVAL`/`APPROVED`/`ISSUED` → `CANCELLED` (until acknowledged)
 
 **Business Rules**:
 
-- Cannot cancel after `FUNDED`
-- Cannot launch without Shariah compliance verification
-- Must track donation progress for `FUNDED` transition
+- Cannot transition to `APPROVED` without an approver meeting the authority threshold
+- Cannot transition to `ISSUED` without an active supplier
+- Cannot cancel after `ACKNOWLEDGED`
+- MUST emit `PurchaseOrderApproved` domain event on `APPROVED` transition
 
-### Contract Approval FSM
+### Invoice FSM
 
-**States**: `NEGOTIATION`, `LEGAL_REVIEW`, `SHARIAH_REVIEW`, `MANAGEMENT_APPROVAL`, `APPROVED`, `ACTIVE`, `SETTLED`
+**States**: `REGISTERED`, `MATCHED`, `DISPUTED`, `APPROVED`, `PAID`
 
 **Transitions**:
 
-- Multi-stage approval workflow
-- Each review stage can reject (back to `NEGOTIATION`)
-- Only `APPROVED` contracts can transition to `ACTIVE`
+- `REGISTERED` → `MATCHED` (three-way match PO ↔ GRN ↔ Invoice succeeds)
+- `REGISTERED` → `DISPUTED` (match fails or supplier disagreement)
+- `MATCHED` → `APPROVED` (final approval)
+- `APPROVED` → `PAID` (payment disbursed)
 
 **Business Rules**:
 
-- Shariah review is mandatory for all contracts
-- Cannot skip approval stages
-- Must log reviewer identity and timestamps
+- Cannot transition to `MATCHED` without matching PO and GRN
+- Cannot transition to `PAID` without an `APPROVED` state
+- `DISPUTED` MUST record reason and emit `InvoiceDisputed` domain event
+- Cannot revert from `PAID` to any earlier state
+
+### Supplier FSM
+
+**States**: `PENDING_REVIEW`, `APPROVED`, `ACTIVE`, `SUSPENDED`, `INACTIVE`
+
+**Transitions**:
+
+- `PENDING_REVIEW` → `APPROVED` (review passed)
+- `APPROVED` → `ACTIVE` (first PO issued, supplier transacting)
+- `ACTIVE` → `SUSPENDED` (compliance issue or quality concern)
+- `SUSPENDED` → `ACTIVE` (issue resolved)
+- `ACTIVE`/`SUSPENDED` → `INACTIVE` (offboarded)
+
+**Business Rules**:
+
+- Cannot skip `PENDING_REVIEW` — every supplier enters that state first
+- MUST log reviewer identity and timestamp on `APPROVED` transition
+- Cannot issue purchase orders to `SUSPENDED` or `INACTIVE` suppliers
+- `SUSPENDED` MUST record reason
 
 **See**: [State Machine Standards](./state-machine-standards.md#ose-platform-state-machines)
 
@@ -174,29 +181,29 @@ FSM in OSE Platform enforces foundational software engineering principles:
 ```java
 @Configuration
 @EnableStateMachine
-public class ZakatStateMachineConfig extends StateMachineConfigurerAdapter<
-    ZakatState, ZakatEvent> {
+public class PurchaseOrderStateMachineConfig extends StateMachineConfigurerAdapter<
+    PurchaseOrderState, PurchaseOrderEvent> {
 
     @Override
-    public void configure(StateMachineStateConfigurer<ZakatState, ZakatEvent> states)
+    public void configure(StateMachineStateConfigurer<PurchaseOrderState, PurchaseOrderEvent> states)
             throws Exception {
         states
             .withStates()
-                .initial(ZakatState.DRAFT)
-                .state(ZakatState.CALCULATED)
-                .end(ZakatState.PAID);
+                .initial(PurchaseOrderState.DRAFT)
+                .state(PurchaseOrderState.APPROVED)
+                .end(PurchaseOrderState.ISSUED);
     }
 
     @Override
-    public void configure(StateMachineTransitionConfigurer<ZakatState, ZakatEvent> transitions)
+    public void configure(StateMachineTransitionConfigurer<PurchaseOrderState, PurchaseOrderEvent> transitions)
             throws Exception {
         transitions
             .withExternal()
-                .source(ZakatState.DRAFT)
-                .target(ZakatState.CALCULATED)
-                .event(ZakatEvent.CALCULATE)
-                .guard(nisabThresholdGuard())
-                .action(publishZakatCalculatedEvent());
+                .source(PurchaseOrderState.DRAFT)
+                .target(PurchaseOrderState.APPROVED)
+                .event(PurchaseOrderEvent.APPROVE)
+                .guard(approvalAuthorityGuard())
+                .action(publishPurchaseOrderApprovedEvent());
     }
 }
 ```
@@ -206,24 +213,24 @@ public class ZakatStateMachineConfig extends StateMachineConfigurerAdapter<
 ```kotlin
 @Configuration
 @EnableStateMachine
-class ZakatStateMachineConfig : StateMachineConfigurerAdapter<ZakatState, ZakatEvent>() {
+class PurchaseOrderStateMachineConfig : StateMachineConfigurerAdapter<PurchaseOrderState, PurchaseOrderEvent>() {
 
-    override fun configure(states: StateMachineStateConfigurer<ZakatState, ZakatEvent>) {
+    override fun configure(states: StateMachineStateConfigurer<PurchaseOrderState, PurchaseOrderEvent>) {
         states
             .withStates()
-            .initial(ZakatState.DRAFT)
-            .state(ZakatState.CALCULATED)
-            .end(ZakatState.PAID)
+            .initial(PurchaseOrderState.DRAFT)
+            .state(PurchaseOrderState.APPROVED)
+            .end(PurchaseOrderState.ISSUED)
     }
 
-    override fun configure(transitions: StateMachineTransitionConfigurer<ZakatState, ZakatEvent>) {
+    override fun configure(transitions: StateMachineTransitionConfigurer<PurchaseOrderState, PurchaseOrderEvent>) {
         transitions
             .withExternal()
-            .source(ZakatState.DRAFT)
-            .target(ZakatState.CALCULATED)
-            .event(ZakatEvent.CALCULATE)
-            .guard(nisabThresholdGuard())
-            .action(publishZakatCalculatedEvent())
+            .source(PurchaseOrderState.DRAFT)
+            .target(PurchaseOrderState.APPROVED)
+            .event(PurchaseOrderEvent.APPROVE)
+            .guard(approvalAuthorityGuard())
+            .action(publishPurchaseOrderApprovedEvent())
     }
 }
 ```
@@ -231,28 +238,28 @@ class ZakatStateMachineConfig : StateMachineConfigurerAdapter<ZakatState, ZakatE
 #### `C#`
 
 ```csharp
-namespace Zakat.Infrastructure.StateMachines;
+namespace Purchasing.Infrastructure.StateMachines;
 
-public sealed class ZakatStateMachineConfig
+public sealed class PurchaseOrderStateMachineConfig
 {
-    public StateMachine<ZakatState, ZakatEvent> Build()
+    public StateMachine<PurchaseOrderState, PurchaseOrderEvent> Build()
     {
-        var machine = new StateMachine<ZakatState, ZakatEvent>(ZakatState.Draft);
+        var machine = new StateMachine<PurchaseOrderState, PurchaseOrderEvent>(PurchaseOrderState.Draft);
 
-        machine.Configure(ZakatState.Draft)
-            .Permit(ZakatEvent.Calculate, ZakatState.Calculated);
+        machine.Configure(PurchaseOrderState.Draft)
+            .Permit(PurchaseOrderEvent.Approve, PurchaseOrderState.Approved);
 
-        machine.Configure(ZakatState.Calculated)
-            .Permit(ZakatEvent.ConfirmPayment, ZakatState.Paid)
-            .OnEntry(PublishZakatCalculatedEvent);
+        machine.Configure(PurchaseOrderState.Approved)
+            .Permit(PurchaseOrderEvent.Issue, PurchaseOrderState.Issued)
+            .OnEntry(PublishPurchaseOrderApprovedEvent);
 
-        machine.Configure(ZakatState.Paid)
-            .IsSubstateOf(ZakatState.Calculated);
+        machine.Configure(PurchaseOrderState.Issued)
+            .IsSubstateOf(PurchaseOrderState.Approved);
 
         return machine;
     }
 
-    private void PublishZakatCalculatedEvent() { /* publish domain event */ }
+    private void PublishPurchaseOrderApprovedEvent() { /* publish domain event */ }
 }
 ```
 
@@ -267,26 +274,29 @@ public sealed class ZakatStateMachineConfig
 ```typescript
 import { createMachine } from "xstate";
 
-const campaignMachine = createMachine({
-  id: "campaign",
-  initial: "planning",
+const purchaseOrderMachine = createMachine({
+  id: "purchaseOrder",
+  initial: "draft",
   states: {
-    planning: {
-      on: { LAUNCH: "active" },
+    draft: {
+      on: { SUBMIT: "pendingApproval" },
     },
-    active: {
+    pendingApproval: {
       on: {
-        FUND: {
-          target: "funded",
-          guard: "goalReached",
+        APPROVE: {
+          target: "approved",
+          guard: "approvalAuthorityMet",
         },
         CANCEL: "cancelled",
       },
     },
-    funded: {
-      on: { COMPLETE: "completed" },
+    approved: {
+      on: { ISSUE: "issued" },
     },
-    completed: { type: "final" },
+    issued: {
+      on: { ACKNOWLEDGE: "acknowledged" },
+    },
+    acknowledged: { type: "final" },
     cancelled: { type: "final" },
   },
 });
@@ -303,16 +313,16 @@ const campaignMachine = createMachine({
 #### `Java`
 
 ```java
-public class ZakatAssessment {
-    private AssessmentId id;
-    private ZakatState currentState;  // FSM state
-    private StateMachine<ZakatState, ZakatEvent> stateMachine;
+public class PurchaseOrder {
+    private PurchaseOrderId id;
+    private PurchaseOrderState currentState;  // FSM state
+    private StateMachine<PurchaseOrderState, PurchaseOrderEvent> stateMachine;
 
     public void calculate() {
-        stateMachine.sendEvent(ZakatEvent.CALCULATE);
+        stateMachine.sendEvent(PurchaseOrderEvent.APPROVE);
         this.currentState = stateMachine.getState().getId();
         // Publish domain event
-        domainEvents.add(new ZakatCalculated(id, calculatedAmount));
+        domainEvents.add(new PurchaseOrderApproved(id, approvedAmount));
     }
 }
 ```
@@ -320,18 +330,18 @@ public class ZakatAssessment {
 #### `Kotlin`
 
 ```kotlin
-class ZakatAssessment(
-    val id: AssessmentId,
+class PurchaseOrder(
+    val id: PurchaseOrderId,
 ) {
-    var currentState: ZakatState = ZakatState.DRAFT
+    var currentState: PurchaseOrderState = PurchaseOrderState.DRAFT
         private set
 
     private val domainEvents = mutableListOf<DomainEvent>()
 
-    fun calculate(stateMachine: StateMachine<ZakatState, ZakatEvent>, calculatedAmount: Money) {
-        stateMachine.sendEvent(ZakatEvent.CALCULATE)
+    fun calculate(stateMachine: StateMachine<PurchaseOrderState, PurchaseOrderEvent>, approvedAmount: Money) {
+        stateMachine.sendEvent(PurchaseOrderEvent.APPROVE)
         currentState = stateMachine.state.id
-        domainEvents += ZakatCalculated(id, calculatedAmount)
+        domainEvents += PurchaseOrderApproved(id, approvedAmount)
     }
 
     fun pullEvents(): List<DomainEvent> = domainEvents.toList().also { domainEvents.clear() }
@@ -341,27 +351,27 @@ class ZakatAssessment(
 #### `C#`
 
 ```csharp
-namespace Zakat.Domain.Aggregates;
+namespace Purchasing.Domain.Aggregates;
 
-public sealed class ZakatAssessment
+public sealed class PurchaseOrder
 {
     private readonly List<IDomainEvent> _domainEvents = [];
-    private readonly StateMachine<ZakatState, ZakatEvent> _stateMachine;
+    private readonly StateMachine<PurchaseOrderState, PurchaseOrderEvent> _stateMachine;
 
-    public AssessmentId Id { get; }
-    public ZakatState CurrentState => _stateMachine.State;
+    public PurchaseOrderId Id { get; }
+    public PurchaseOrderState CurrentState => _stateMachine.State;
 
-    public ZakatAssessment(AssessmentId id)
+    public PurchaseOrder(PurchaseOrderId id)
     {
         Id = id;
-        _stateMachine = new StateMachine<ZakatState, ZakatEvent>(ZakatState.Draft);
+        _stateMachine = new StateMachine<PurchaseOrderState, PurchaseOrderEvent>(PurchaseOrderState.Draft);
         ConfigureTransitions();
     }
 
-    public void Calculate(Money calculatedAmount)
+    public void Calculate(Money approvedAmount)
     {
-        _stateMachine.Fire(ZakatEvent.Calculate);
-        _domainEvents.Add(new ZakatCalculated(Id, calculatedAmount));
+        _stateMachine.Fire(PurchaseOrderEvent.Approve);
+        _domainEvents.Add(new PurchaseOrderApproved(Id, approvedAmount));
     }
 
     public IReadOnlyList<IDomainEvent> PullEvents()
@@ -372,8 +382,8 @@ public sealed class ZakatAssessment
     }
 
     private void ConfigureTransitions() =>
-        _stateMachine.Configure(ZakatState.Draft)
-            .Permit(ZakatEvent.Calculate, ZakatState.Calculated);
+        _stateMachine.Configure(PurchaseOrderState.Draft)
+            .Permit(PurchaseOrderEvent.Approve, PurchaseOrderState.Approved);
 }
 ```
 

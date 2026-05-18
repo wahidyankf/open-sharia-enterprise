@@ -1,6 +1,6 @@
 ---
 title: "FSM State Machine Standards"
-description: When to use FSM, state design rules, OSE Platform Islamic finance state machines
+description: When to use FSM, state design rules, OSE Platform Procure-to-Pay state machines
 category: explanation
 subcategory: architecture
 tags:
@@ -22,7 +22,7 @@ created: 2026-02-09
 
 **REQUIRED**: Use FSM when entity has 3+ distinct lifecycle stages AND transitions have business meaning.
 
-**Examples**: Zakat Assessment (`DRAFT` → `CALCULATED` → `PAID`), Campaign (`PLANNING` → `ACTIVE` → `FUNDED`), Contract Approval (multi-stage review).
+**Examples**: Purchase Order (`DRAFT` → `PENDING_APPROVAL` → `APPROVED` → `ISSUED`), Invoice (`REGISTERED` → `MATCHED` → `APPROVED` → `PAID`), Supplier (`PENDING_REVIEW` → `APPROVED` → `ACTIVE`).
 
 **PROHIBITED**: Boolean toggles, pure validation, UI-only state.
 
@@ -30,36 +30,39 @@ created: 2026-02-09
 
 **Format**: `UPPER_SNAKE_CASE`
 
-**Examples**: `DRAFT`, `CALCULATED`, `PAID`, `LEGAL_REVIEW`, `SHARIAH_REVIEW`
+**Examples**: `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `ISSUED`, `MATCHED`, `DISPUTED`
 
 ## OSE Platform State Machines
 
-### Zakat Assessment
+### Purchase Order
 
-States: `DRAFT`, `CALCULATED`, `BELOW_NISAB`, `PAID`, `EXPIRED`
-
-Business Rules:
-
-- MUST enforce Nisab threshold before `CALCULATED`
-- Cannot transition to `PAID` if amount doesn't match
-- Cannot recalculate after `PAID`
-
-### Campaign
-
-States: `PLANNING`, `ACTIVE`, `FUNDED`, `COMPLETED`, `CANCELLED`
+States: `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `ISSUED`, `ACKNOWLEDGED`, `CANCELLED`
 
 Business Rules:
 
-- Cannot cancel after `FUNDED`
-- MUST verify Shariah compliance before `ACTIVE`
-- MUST track progress for `FUNDED` transition
+- MUST enforce approval-authority threshold before `APPROVED`
+- Cannot transition to `ISSUED` without an `APPROVED` state and an active supplier
+- Cannot cancel after `ACKNOWLEDGED`
+- MUST emit `PurchaseOrderApproved` domain event on `APPROVED` transition
 
-### Contract Approval
+### Invoice
 
-States: `NEGOTIATION`, `LEGAL_REVIEW`, `SHARIAH_REVIEW`, `MANAGEMENT_APPROVAL`, `APPROVED`, `ACTIVE`, `SETTLED`
+States: `REGISTERED`, `MATCHED`, `DISPUTED`, `APPROVED`, `PAID`
 
 Business Rules:
 
-- Shariah review is MANDATORY
-- Cannot skip approval stages
-- MUST log reviewer and timestamp
+- MUST complete three-way match (PO ↔ GRN ↔ Invoice) before `MATCHED`
+- Cannot transition to `PAID` without an `APPROVED` state
+- `DISPUTED` MUST record a reason and emit `InvoiceDisputed` domain event
+- Cannot revert from `PAID` to any earlier state
+
+### Supplier
+
+States: `PENDING_REVIEW`, `APPROVED`, `ACTIVE`, `SUSPENDED`, `INACTIVE`
+
+Business Rules:
+
+- MUST log reviewer and timestamp on `APPROVED` transition
+- Cannot issue purchase orders to a `SUSPENDED` or `INACTIVE` supplier
+- `SUSPENDED` MUST record a reason and is reversible to `ACTIVE`
+- Cannot skip `PENDING_REVIEW` — every supplier enters that state first

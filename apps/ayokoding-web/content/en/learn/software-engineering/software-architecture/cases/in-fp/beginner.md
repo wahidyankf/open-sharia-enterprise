@@ -17,7 +17,7 @@ A bounded context is not just a namespace — it is an isolation unit. Every tim
 
 F# modules are the only tool the standard library gives you for grouping related declarations. A module is a namespace, not a boundary enforcer — nothing stops `Supplier.fs` from opening `Purchasing.fs` and reading its types directly. The standard library delivers cohesion, not isolation.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -62,6 +62,26 @@ let scoreSupplier (po: PurchaseOrder) = // hypothetical type from Purchasing
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library approach: ES modules group code but enforce no boundary
+// src/procurement-platform/domain/supplier.ts
+// [F#: module ProcurementPlatform.Domain.Supplier — file-path-based namespace; TS uses ES module resolution]
+import type { PurchaseOrder } from "../purchasing/value-objects";
+// => ES module import — direct cross-context type reference
+// => The TS compiler permits this — no boundary enforcement at the module level
+// => Any future change to PurchaseOrder shape ripples into this file silently
+
+export const scoreSupplier = (po: PurchaseOrder): void => {
+  // => Takes a Purchasing type directly — boundary exists only in developer discipline
+  // [F#: () unit return type; TS uses void]
+  // => The domain boundary is a code-review convention, not a language invariant
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: modules permit cross-context imports with no enforcement. As the codebase grows, accidental coupling accumulates. The compiler cannot help you find boundary violations.
@@ -96,7 +116,7 @@ flowchart LR
 
 Each bounded context gets its own layers:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -170,6 +190,39 @@ type UnitOfMeasure =
 ;; => :uom/litre — volume-based line items
 ;; => :uom/hour — service or time-based line items
 ;; => Namespaced keywords prevent collision with UoM values from other contexts
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Per-context layout — purchasing context domain layer
+// src/procurement-platform/contexts/purchasing/domain/value-objects.ts
+// [F#: module ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects — file-path namespace]
+
+// Strongly-typed purchase order ID via branded type
+// [F#: single-case DU PurchaseOrderId of Guid — compile-time distinct type; TS uses branded primitive]
+export type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+// => Branded type: `string` at runtime, distinct from other ID types at compile-time
+// => Cannot pass a SupplierId where a PurchaseOrderId is expected — TS structural check fails
+// => Constructor function below is the only sanctioned way to build one
+
+export const PurchaseOrderId = (raw: string): PurchaseOrderId => raw as PurchaseOrderId;
+// => Smart constructor — validation could be added here
+
+// Approval level as a closed string-literal union — pure domain type
+// [F#: discriminated union — compiler-enforced exhaustiveness; TS uses literal unions + exhaustive switch]
+export type ApprovalLevel = "L1" | "L2" | "L3";
+// => "L1" — total <= $1,000
+// => "L2" — total <= $10,000
+// => "L3" — total > $10,000
+// => No framework decorator, no DTO annotation — compiles standalone
+
+// Unit of measure as a closed string-literal union
+export type UnitOfMeasure = "Each" | "Box" | "Kg" | "Litre" | "Hour";
+// => Closed enum-like: TS pattern-match (switch with never) yields exhaustiveness
+// => Adding a new unit requires updating every consumer's switch
 ```
 
 {{< /tab >}}
