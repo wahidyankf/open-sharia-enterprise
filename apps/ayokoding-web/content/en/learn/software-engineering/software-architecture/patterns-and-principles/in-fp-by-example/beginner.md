@@ -17,7 +17,7 @@ Separation of concerns means grouping code by responsibility so each function ha
 
 **Tightly coupled approach (no separation):**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -81,13 +81,45 @@ printfn "%s" (getUserDiscountMessage 1)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: single function with three embedded concerns — TypeScript mirrors the same structural problem]
+// => This function mixes data access, business logic, and presentation in one body.
+
+// => userDb simulates a database — data access concern embedded here
+const userDb = new Map<number, readonly [string, number]>([
+  [1, ["Alice", 12]],
+  // => key 1 maps to [name, purchaseCount] tuple
+]);
+
+const getUserDiscountMessage = (userId: number): string => {
+  const user = userDb.get(userId);
+  // => Map.get returns value or undefined — like F# Map.tryFind returning None
+  if (user === undefined) return "User not found";
+  // => undefined branch: guard for missing user
+  const [name, purchases] = user;
+  // => destructure tuple: name is string, purchases is number
+  const discount = purchases > 10 ? 0.15 : 0.05;
+  // => business rule embedded inline — 15% for loyal, 5% default
+  // => presentation formatted inline — impossible to reuse discount rule elsewhere
+  return `Hello ${name}, your discount is ${Math.round(discount * 100)}%`;
+  // => Output: "Hello Alice, your discount is 15%"
+};
+
+console.log(getUserDiscountMessage(1));
+// => Output: Hello Alice, your discount is 15%
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 Mixing all three responsibilities means any change — a new discount rule, a different greeting format, or a different data source — requires editing the same function.
 
 **Separated approach (three distinct pure functions):**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -181,6 +213,47 @@ printfn "%s" (getUserDiscountMessageSeparated 1)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: three focused modules — TypeScript uses focused pure functions]
+// => DATA ACCESS — only knows how to retrieve users
+const userDb2 = new Map<number, readonly [string, number]>([
+  [1, ["Alice", 12]],
+  // => key 1 maps to [name, purchaseCount] — read-only map
+]);
+
+const findUser = (userId: number): readonly [string, number] | undefined => userDb2.get(userId);
+// => returns [name, purchases] or undefined — no formatting, no rules
+
+// => BUSINESS LOGIC — only knows discount rules, not storage or display
+const calculateDiscount = (purchases: number): number => (purchases > 10 ? 0.15 : 0.05);
+// => pure function: same input always produces same output
+// => 15% for loyal customers (>10 purchases), 5% default
+
+// => PRESENTATION — only knows how to format, not compute or fetch
+const formatDiscountMessage = (name: string, discount: number): string =>
+  `Hello ${name}, your discount is ${Math.round(discount * 100)}%`;
+// => Output: "Hello Alice, your discount is 15%"
+
+// => ORCHESTRATION — thin coordinator that pipelines the three functions
+const getUserDiscountMessageSeparated = (userId: number): string => {
+  const user = findUser(userId);
+  // => delegates data access — result is [name, purchases] or undefined
+  if (user === undefined) return "User not found";
+  const [name, purchases] = user;
+  const discount = calculateDiscount(purchases);
+  // => delegates business rule — discount: number
+  return formatDiscountMessage(name, discount);
+  // => delegates formatting — returns final string
+};
+
+console.log(getUserDiscountMessageSeparated(1));
+// => Output: Hello Alice, your discount is 15%
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 Each function now has one reason to change: swap the data source without touching the discount rule; change the discount formula without touching the message format.
@@ -197,7 +270,7 @@ The Single Responsibility Principle (SRP) states that a module or function shoul
 
 **Violating SRP — one module does too much:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -279,11 +352,47 @@ module UserManagerBad =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: module with mutable private state — TypeScript uses a Map for managed state]
+// => A single module handles user storage, email, AND password — three reasons to change.
+
+const usersDb = new Map<number, { name: string; email: string }>();
+// => mutable Map: any function can add/read entries directly
+
+const addUser = (id: number, name: string, email: string): void => {
+  usersDb.set(id, { name, email });
+  // => stores user under id key — side-effecting mutation
+};
+
+// => EMAIL CONCERN embedded alongside user storage — mixing responsibilities
+const sendWelcomeEmail = (userId: number): void => {
+  const user = usersDb.get(userId);
+  // => couples this function to the user store's internal structure
+  if (user === undefined) return;
+  console.log(`Sending email to ${user.email}: Welcome, ${user.name}!`);
+  // => Output: Sending email to alice@example.com: Welcome, Alice!
+};
+
+// => PASSWORD CONCERN also embedded — a third responsibility in one module
+const resetPassword = (userId: number): string => {
+  const newPassword = `pass_${userId}_reset`;
+  // => deterministic fake password for this example
+  console.log(`Password reset for user ${userId}: ${newPassword}`);
+  // => Output: Password reset for user 1: pass_1_reset
+  return newPassword;
+  // => returns the new password string
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Applying SRP — one module, one responsibility:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -385,6 +494,54 @@ EmailService.sendWelcome "Alice" "alice@example.com"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: three focused modules — TypeScript uses focused pure functions]
+
+// => RESPONSIBILITY 1: User data management only
+type UserRecord = Readonly<{ name: string; email: string }>;
+type UserStore = ReadonlyMap<number, UserRecord>;
+
+const addUserToStore = (id: number, name: string, email: string, store: UserStore): UserStore => {
+  const next = new Map(store);
+  // => copy-on-write: create a new Map from existing entries
+  next.set(id, Object.freeze({ name, email }));
+  // => add the new user — original store is unchanged
+  return next;
+  // => returns a NEW store with the user added
+};
+
+const getUserFromStore = (id: number, store: UserStore): UserRecord | undefined => store.get(id);
+// => returns { name, email } or undefined — safe lookup
+
+// => RESPONSIBILITY 2: Email notifications only
+const sendWelcomeSrp = (name: string, email: string): void => {
+  console.log(`Sending email to ${email}: Welcome, ${name}!`);
+  // => Output: Sending email to alice@example.com: Welcome, Alice!
+  // => This function changes only when email format or provider changes
+};
+
+// => RESPONSIBILITY 3: Password management only
+const resetPasswordSrp = (userId: number): string => {
+  const newPassword = `pass_${userId}_reset`;
+  // => deterministic for this example; use crypto.randomUUID() in production
+  console.log(`Password reset for user ${userId}: ${newPassword}`);
+  // => Output: Password reset for user 1: pass_1_reset
+  return newPassword;
+  // => returns generated password string
+};
+
+const store0: UserStore = new Map();
+// => empty Map is our initial state — no users yet
+const store1 = addUserToStore(1, "Alice", "alice@example.com", store0);
+// => store1: Map with one user entry — store0 unchanged
+sendWelcomeSrp("Alice", "alice@example.com");
+// => Output: Sending email to alice@example.com: Welcome, Alice!
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each module should have exactly one reason to change. When you update email templates, only `EmailService` changes. When you change password policy, only `PasswordService` changes.
@@ -415,7 +572,7 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -569,6 +726,68 @@ printfn "%s" (display 99) // => Error: Product not found
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: three modules with downward-only calls — TypeScript uses tagged unions and pure functions]
+
+// ── DATA ACCESS LAYER — only knows about storage ──────────────────────────────
+type ProductData = Readonly<{ name: string; price: number; stock: number }>;
+const products = new Map<number, ProductData>([
+  [1, { name: "Laptop", price: 1200.0, stock: 5 }],
+  // => stock 5: available
+  [2, { name: "Mouse", price: 25.0, stock: 0 }],
+  // => stock 0: out of stock
+]);
+
+const findById = (productId: number): ProductData | undefined => products.get(productId);
+// => returns the product or undefined — caller decides what to do with absence
+
+// ── BUSINESS LOGIC LAYER — only knows about rules ─────────────────────────────
+type ProductResult =
+  | { tag: "Available"; name: string; price: number }
+  | { tag: "OutOfStock"; name: string }
+  | { tag: "NotFound" };
+// => tagged union mirrors F# discriminated union ProductResult
+
+const checkAvailability = (productId: number): ProductResult => {
+  const p = findById(productId);
+  // => delegates data retrieval to the data access layer
+  if (p === undefined) return { tag: "NotFound" };
+  // => no product record — return NotFound case
+  if (p.stock === 0) return { tag: "OutOfStock", name: p.name };
+  // => business rule: zero stock means unavailable
+  return { tag: "Available", name: p.name, price: p.price };
+  // => product in stock — return name and price
+};
+
+// ── PRESENTATION LAYER — only knows about formatting responses ────────────────
+const formatResult = (result: ProductResult): string => {
+  switch (result.tag) {
+    // => exhaustive switch on the tag — mirrors F# pattern match
+    case "Available":
+      return `Available: ${result.name} at $${result.price.toFixed(2)}`;
+    // => Output (id=1): "Available: Laptop at $1200.00"
+    case "OutOfStock":
+      return `Error: '${result.name}' is out of stock`;
+    // => Output (id=2): "Error: 'Mouse' is out of stock"
+    case "NotFound":
+      return "Error: Product not found";
+    // => Output (id=99): "Error: Product not found"
+  }
+};
+
+// Wire and run
+const display = (productId: number): string => formatResult(checkAvailability(productId));
+// => pipes id through business layer then presentation layer
+
+console.log(display(1)); // => Available: Laptop at $1200.00
+console.log(display(2)); // => Error: 'Mouse' is out of stock
+console.log(display(99)); // => Error: Product not found
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each layer communicates only with the layer directly below it. Presentation never touches the database; data access never formats strings for users. In FP, the `|>` pipeline operator makes this layered data flow explicit and readable.
@@ -581,7 +800,7 @@ printfn "%s" (display 99) // => Error: Product not found
 
 The presentation layer should translate raw input into domain calls and translate domain results into output format. It should contain no business logic and no data access code. In F#, keeping the presentation layer thin means it only pipes values through domain functions and formats results.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -682,6 +901,48 @@ printfn "%s" (handleCancelRequest 999) // => Order 999 not found
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: three focused pure functions — TypeScript uses readonly maps and pure functions]
+
+// => DATA LAYER — retrieves raw records (pure function, no side effects)
+const orderDb = new Map<number, Readonly<{ total: number; status: string }>>([
+  [101, { total: 299.99, status: "shipped" }],
+  // => shipped: not eligible for cancellation
+  [102, { total: 49.0, status: "pending" }],
+  // => pending with low total: eligible for cancellation
+]);
+
+const findOrder = (orderId: number) => orderDb.get(orderId);
+// => returns the order or undefined — pure lookup
+
+// => BUSINESS LAYER — applies domain rules (pure function)
+const isEligibleForCancellation = (total: number, status: string): boolean => status === "pending" && total < 500.0;
+// => cancellation rule: pending AND total below $500 threshold
+// => changing this rule affects only this function
+
+// => PRESENTATION LAYER — translates, never decides
+const handleCancelRequest = (orderId: number): string => {
+  const order = findOrder(orderId);
+  // => fetches from data layer — presentation never queries the map directly
+  if (order === undefined) return `Order ${orderId} not found`;
+  // => undefined branch: transforms absence into a user-facing message
+  const eligible = isEligibleForCancellation(order.total, order.status);
+  // => business logic evaluated in business layer, result consumed here
+  if (eligible) return `Order ${orderId} cancelled successfully`;
+  // => Output (id=102): "Order 102 cancelled successfully"
+  return `Order ${orderId} cannot be cancelled (status: ${order.status})`;
+  // => Output (id=101): "Order 101 cannot be cancelled (status: shipped)"
+};
+
+console.log(handleCancelRequest(101)); // => Order 101 cannot be cancelled (status: shipped)
+console.log(handleCancelRequest(102)); // => Order 102 cancelled successfully
+console.log(handleCancelRequest(999)); // => Order 999 not found
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The presentation layer transforms but never decides. All decisions live in pure business functions where they can be tested without a UI or HTTP context.
@@ -715,7 +976,7 @@ graph LR
     style V fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -929,6 +1190,95 @@ printfn "%s" (TodoController.listAll s3)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: three modules with pure state threading — TypeScript uses readonly types and pure functions]
+
+// ── MODEL — data type + pure rule functions ───────────────────────────────────
+type Todo = Readonly<{ id: number; title: string; done: boolean }>;
+type Store = Readonly<{ items: readonly Todo[]; nextId: number }>;
+// => immutable types mirror F# record types
+
+const emptyStore: Store = { items: [], nextId: 1 };
+// => initial state with no items
+
+const modelAdd = (title: string, store: Store): readonly [Todo, Store] => {
+  const item: Todo = { id: store.nextId, title, done: false };
+  // => new item with auto-incremented id
+  const newStore: Store = {
+    items: [...store.items, item],
+    // => spread creates a new array with item appended
+    nextId: store.nextId + 1,
+    // => nextId incremented for next call
+  };
+  return [item, newStore] as const;
+  // => returns the created item AND the updated store
+};
+
+const modelComplete = (itemId: number, store: Store): readonly [boolean, Store] => {
+  const updated = store.items.map(
+    (t) => (t.id === itemId ? { ...t, done: true } : t),
+    // => matching id: spread creates new Todo with done=true
+  );
+  const found = updated.some((t) => t.id === itemId);
+  // => found: boolean — true if any item matched
+  return [found, { ...store, items: updated }] as const;
+  // => returns [success flag, updated store]
+};
+
+// ── VIEW — formats data for display, no logic ──────────────────────────────────
+const renderList = (items: readonly Todo[]): string => {
+  if (items.length === 0) return "No todos yet.";
+  // => empty array: short message
+  return (
+    items
+      .map((item) => `[${item.done ? "✓" : "○"}] ${item.id}. ${item.title}`)
+      // => each item formatted as "[○] 1. Buy milk"
+      .join("\n")
+  );
+  // => joined with newlines
+};
+
+const renderCreated = (item: Todo): string => `Created todo #${item.id}: ${item.title}`;
+// => Output: "Created todo #1: Buy milk"
+
+// ── CONTROLLER — coordinates model and view ────────────────────────────────────
+const ctrlCreate = (title: string, store: Store): readonly [string, Store] => {
+  const [item, newStore] = modelAdd(title, store);
+  // => delegates creation to model
+  return [renderCreated(item), newStore] as const;
+  // => delegates formatting to view
+};
+
+const ctrlListAll = (store: Store): string => renderList(store.items);
+// => fetches items from store, delegates rendering to view
+
+const ctrlMarkDone = (itemId: number, store: Store): readonly [string, Store] => {
+  const [found, newStore] = modelComplete(itemId, store);
+  // => delegates completion to model
+  const msg = found ? `Todo #${itemId} marked as done` : `Todo #${itemId} not found`;
+  return [msg, newStore] as const;
+};
+
+// Wire the MVC triad together — pure state threading
+const [msg1, s1] = ctrlCreate("Buy milk", emptyStore);
+// => msg1 = "Created todo #1: Buy milk", s1 has one item
+const [msg2, s2] = ctrlCreate("Write tests", s1);
+// => msg2 = "Created todo #2: Write tests", s2 has two items
+const [msg3, s3] = ctrlMarkDone(1, s2);
+// => msg3 = "Todo #1 marked as done", s3 has item 1 with done = true
+
+console.log(msg1); // => Created todo #1: Buy milk
+console.log(msg2); // => Created todo #2: Write tests
+console.log(msg3); // => Todo #1 marked as done
+console.log(ctrlListAll(s3));
+// => [✓] 1. Buy milk
+// => [○] 2. Write tests
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The Controller handles input and coordinates. The Model owns data types and rules. The View formats output. In F#, state flows explicitly from function to function rather than being mutated in place, making the data flow visible and testable.
@@ -941,7 +1291,7 @@ printfn "%s" (TodoController.listAll s3)
 
 The Model is responsible for enforcing its own invariants. In F#, a module with a private constructor (or smart constructor) ensures that invalid data can never be constructed — the type system enforces the rule, not runtime guards scattered across callers.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1078,6 +1428,63 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: module with private constructor and Result<T,E> — TypeScript uses branded type + Result]
+type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
+// => Result DU mirrors F# Result<T,E> — Ok wraps a valid value, Err wraps failure
+
+// => POOR APPROACH: plain object with no invariant enforcement
+// => Nothing prevents: { balance: -9999, _brand: "BankAccount" }
+type BankAccount = Readonly<{ balance: number; _brand: "BankAccount" }>;
+// => _brand makes BankAccount structurally distinct — callers cannot create it without helper
+
+const createAccount = (initialBalance: number): Result<BankAccount, string> => {
+  if (initialBalance < 0) return { ok: false, error: "Initial balance cannot be negative" };
+  // => enforced at construction time — invalid state never enters the system
+  return { ok: true, value: { balance: initialBalance, _brand: "BankAccount" } };
+  // => Ok wraps the valid account — callers must handle the Result
+};
+
+const deposit = (amount: number, account: BankAccount): Result<BankAccount, string> => {
+  if (amount <= 0) return { ok: false, error: "Deposit amount must be positive" };
+  // => model rejects invalid inputs without caller involvement
+  return { ok: true, value: { ...account, balance: account.balance + amount } };
+  // => returns a NEW account with updated balance — immutable update
+};
+
+const withdraw = (amount: number, account: BankAccount): Result<BankAccount, string> => {
+  if (amount <= 0) return { ok: false, error: "Withdrawal amount must be positive" };
+  if (account.balance - amount < 0)
+    return { ok: false, error: `Insufficient funds: balance is ${account.balance.toFixed(2)}` };
+  // => business rule enforced here — callers cannot bypass
+  return { ok: true, value: { ...account, balance: account.balance - amount } };
+  // => returns new account with reduced balance
+};
+
+const getBalance = (account: BankAccount): number => account.balance;
+// => read-only accessor
+
+// => USAGE: chain Result values with a bind helper
+const bindResult = <T, U, E>(r: Result<T, E>, fn: (v: T) => Result<U, E>): Result<U, E> => (r.ok ? fn(r.value) : r);
+// => if Ok apply fn; if Err propagate the error unchanged
+
+const result = bindResult(
+  bindResult(createAccount(100.0), (acc) => withdraw(50.0, acc)),
+  (acc) => withdraw(200.0, acc),
+);
+// => createAccount(100) -> Ok {balance:100}
+// => withdraw(50) -> Ok {balance:50}
+// => withdraw(200) -> Err "Insufficient funds: balance is 50.00"
+
+if (result.ok) console.log(`Balance: $${getBalance(result.value).toFixed(2)}`);
+else console.log(`Error: ${result.error}`);
+// => Output: Error: Insufficient funds: balance is 50.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Use a module with a private constructor and a smart `create` function to enforce invariants at the type level. A successfully constructed value is always valid — no external guard required.
@@ -1109,7 +1516,7 @@ graph TD
 
 **Without dependency injection (hard-coded dependency):**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1148,11 +1555,32 @@ let greetUserHardcoded (userId: int) : string =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: greetUserHardcoded with embedded dependency — TypeScript version]
+// => Hard-coded dependency: greetUser always queries this specific Map
+// => Cannot be tested without the real data store
+const greetUserHardcoded = (userId: number): string => {
+  const db = new Map([
+    [1, "Alice"],
+    [2, "Bob"],
+  ]);
+  // => dependency created inside function — impossible to substitute in tests
+  const name = db.get(userId);
+  // => Map.get returns value or undefined — like F# Map.tryFind returning None
+  return name !== undefined ? `Hello, ${name}!` : `User ${userId} not found`;
+  // => Output: "Hello, Alice!"
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **With dependency injection (easy to test with any backend):**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1239,6 +1667,45 @@ printfn "%s" (greetUser fakeUserFetcher 1)  // => Hello, TestUser!
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: UserFetcher type alias + injected function — TypeScript uses a function type]
+
+// => TYPE ALIAS for the dependency — any function matching this signature works
+type UserFetcher = (userId: number) => string | undefined;
+// => (number) => string | undefined: given an id, produce an optional name
+
+// => REAL implementation for production
+const realUserFetcher: UserFetcher = (() => {
+  const data = new Map([
+    [1, "Alice"],
+    [2, "Bob"],
+  ]);
+  // => captures the data map in a closure — simulates a real DB
+  return (userId: number) => data.get(userId);
+  // => returns "Alice" or undefined — delegates to map lookup
+})();
+
+// => FAKE implementation for tests — no DB required
+const fakeUserFetcher: UserFetcher = (_userId) => "TestUser";
+// => always returns "TestUser" regardless of id — predictable in tests
+
+// => SERVICE: accepts any UserFetcher — decoupled from specific implementation
+const greetUser = (fetchUser: UserFetcher, userId: number): string => {
+  const name = fetchUser(userId);
+  // => delegates lookup to whatever fetcher was injected
+  return name !== undefined ? `Hello, ${name}!` : `User ${userId} not found`;
+  // => Output: "Hello, Alice!"
+};
+
+console.log(greetUser(realUserFetcher, 1)); // => Hello, Alice!
+console.log(greetUser(realUserFetcher, 99)); // => User 99 not found
+console.log(greetUser(fakeUserFetcher, 1)); // => Hello, TestUser!
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Inject dependencies as function parameters rather than hard-coding them. The function only knows the signature it needs, not which implementation provides it.
@@ -1251,7 +1718,7 @@ printfn "%s" (greetUser fakeUserFetcher 1)  // => Hello, TestUser!
 
 There are two common styles of dependency injection: constructor injection (dependencies fixed when an object is built) and method injection (dependencies passed per-call). In F#, both patterns appear as partial application (fixing some arguments upfront) versus full parameter threading (passing on every call). In Clojure, the same split maps to closing over dependencies in a factory function versus threading the dependency as a final argument on every call.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1345,6 +1812,47 @@ logMessage "File export" (fun msg -> printfn ">> %s" msg)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: partial application / method injection — TypeScript uses closures and parameter passing]
+
+// => PARTIAL APPLICATION AS "CONSTRUCTOR" INJECTION
+// => Use when: dependency is always required and does not change per call
+const makeOrderProcessor =
+  (charge: (amount: number) => boolean) =>
+  (orderId: number, amount: number): string => {
+    // => charge is fixed at "construction" time via closure
+    const success = charge(amount);
+    // => uses the injected charge function — no knowledge of which gateway
+    return success ? `Order ${orderId} paid ($${Math.round(amount)})` : `Order ${orderId} payment failed`;
+    // => Output (success): "Order 1 paid ($500)"
+  };
+
+// => METHOD INJECTION (per-call dependency passing)
+// => Use when: dependency varies per request (e.g., per-user logger)
+const logMessage = (message: string, output: (s: string) => void): void => {
+  output(`[AUDIT] ${message}`);
+  // => output is passed per call — can be console, file, test spy, etc.
+};
+
+// => USAGE: wire concrete implementations at the composition root
+const fakeCharge = (amount: number): boolean => amount < 1000.0;
+// => fakeCharge returns true for amounts < 1000 (simulates approval limit)
+const processOrder = makeOrderProcessor(fakeCharge);
+// => processOrder: (orderId, amount) => string with charge baked in
+
+console.log(processOrder(1, 500.0)); // => Order 1 paid ($500)
+console.log(processOrder(2, 1500.0)); // => Order 2 payment failed
+
+logMessage("User login", (msg) => console.log(msg));
+// => Output: [AUDIT] User login
+logMessage("File export", (msg) => console.log(`>> ${msg}`));
+// => Output: >> [AUDIT] File export
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Use partial application (F#) or factory closures (Clojure) to fix stable dependencies at "construction" time. Use full parameter threading when the dependency varies per invocation.
@@ -1361,7 +1869,7 @@ The Interface Segregation Principle says that modules should not depend on opera
 
 **Fat dependency record — forces consumers to carry functions they do not use:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1426,11 +1934,44 @@ let contractorOps : EmployeeOperations = {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: fat record-of-functions — TypeScript uses a fat interface with all methods required]
+
+// => FAT interface: all consumers must provide ALL four methods
+interface EmployeeOperations {
+  calculateSalary: () => number;
+  // => relevant for paid employees
+  clockIn: () => void;
+  // => relevant for hourly workers
+  generateReport: () => string;
+  // => relevant for managers
+  requestLeave: (days: number) => void;
+  // => relevant for all employees
+}
+
+// => CONTRACTOR only needs salary calculation
+// => yet must provide all four — clockIn and generateReport are forced stubs
+const contractorOps: EmployeeOperations = {
+  calculateSalary: () => 500.0,
+  // => useful: contractor's daily rate
+  clockIn: () => {},
+  // => forced but meaningless for a contractor
+  generateReport: () => "",
+  // => forced but meaningless for a contractor
+  requestLeave: (_days) => {},
+  // => forced but meaningless — contractors don't accrue leave
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Segregated dependency types — each consumer picks only what applies:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1534,6 +2075,56 @@ printfn "FT salary: %.0f" (ftPayable.CalculateSalary ())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: focused record types — TypeScript uses focused interfaces]
+
+// => FOCUSED interfaces: each covers one capability
+interface Payable {
+  calculateSalary: () => number;
+}
+interface Trackable {
+  clockIn: () => void;
+}
+interface Reportable {
+  generateReport: () => string;
+}
+// => each interface has exactly one method — no forced stubs
+
+// => CONTRACTOR: only salary matters, no forced stubs
+const segContractor: Payable = { calculateSalary: () => 500.0 };
+// => flat daily rate — object has exactly one method
+
+// => FULL-TIME EMPLOYEE: salary + time tracking (separate objects)
+let hoursWorked = 0;
+// => mutable local for this demonstration
+
+const ftPayable: Payable = { calculateSalary: () => hoursWorked * 25.0 };
+// => $25/hour — only salary concern
+const ftTrackable: Trackable = {
+  clockIn: () => {
+    hoursWorked += 8;
+  },
+};
+// => adds one full work day per clock-in — only tracking concern
+
+// => MANAGER: salary + reporting
+const mgPayable: Payable = { calculateSalary: () => 8000.0 };
+// => fixed monthly salary
+const mgReportable: Reportable = { generateReport: () => "Team performance: on track" };
+// => manager-specific report — only reporting concern
+
+console.log(`Contractor salary: ${Math.round(segContractor.calculateSalary())}`);
+// => Output: Contractor salary: 500
+ftTrackable.clockIn();
+// => hoursWorked is now 8
+console.log(`FT salary: ${Math.round(ftPayable.calculateSalary())}`);
+// => Output: FT salary: 200  (8 hours * $25)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Split dependency records (F#) or protocols (Clojure) by cohesive capability, not by the most complex consumer. Each consumer receives only the functions it genuinely uses.
@@ -1570,7 +2161,7 @@ graph TD
 
 **Closed approach — requires modifying existing code for every new discount:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1609,11 +2200,28 @@ let calculateDiscountBad (price: float) (discountType: string) : float =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: string-dispatch match — TypeScript version with same anti-pattern]
+// => VIOLATION: adding a new discount type requires editing this function
+const calculateDiscountBad = (price: number, discountType: string): number => {
+  if (discountType === "regular") return price * 0.1;
+  // => 10% off — must edit here to add "seasonal"
+  if (discountType === "loyalty") return price * 0.2;
+  // => 20% off for loyal customers
+  return 0.0;
+  // => default: no discount — "seasonal" forces editing this function
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Open/Closed approach — extend by adding new functions, never editing existing ones:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1714,6 +2322,46 @@ printfn "%.1f" (finalPrice (combinedDiscount [regularDiscount; loyaltyDiscount])
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: DiscountStrategy type alias + composable functions — TypeScript uses function types]
+
+// => STRATEGY TYPE: any (price: number) => number function qualifies
+type DiscountStrategy = (price: number) => number;
+// => Takes a price, returns the discount amount — simple and composable
+
+// => CONCRETE STRATEGIES — add new ones without touching existing code
+const regularDiscount: DiscountStrategy = (price) => price * 0.1;
+// => 10% discount
+
+const loyaltyDiscount: DiscountStrategy = (price) => price * 0.2;
+// => 20% discount for loyal customers
+
+// => EXTENSION: new discount type — existing strategies are UNTOUCHED
+const seasonalDiscount: DiscountStrategy = (price) => price * 0.3;
+// => 30% seasonal sale discount — added without modifying regularDiscount or loyaltyDiscount
+
+// => CLIENT: accepts any DiscountStrategy — closed to modification, open to extension
+const finalPrice = (strategy: DiscountStrategy, price: number): number => price - strategy(price);
+// => delegates discount computation to injected strategy
+
+console.log(finalPrice(regularDiscount, 100.0).toFixed(1)); // => 90.0
+console.log(finalPrice(seasonalDiscount, 100.0).toFixed(1)); // => 70.0
+
+// => COMPOSING strategies: combine two strategies (e.g., loyalty + seasonal)
+const combinedDiscount =
+  (strategies: readonly DiscountStrategy[]): DiscountStrategy =>
+  (price) =>
+    strategies.reduce((sum, s) => sum + s(price), 0);
+// => sums all discounts — extensible: add more strategies to the array
+
+console.log(finalPrice(combinedDiscount([regularDiscount, loyaltyDiscount]), 100.0).toFixed(1));
+// => 100 - (10 + 20) = 70.0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Depend on function types (F#) or function values (Clojure) and inject concrete strategies from outside. Adding new behavior means writing a new function, not modifying existing ones.
@@ -1730,7 +2378,7 @@ The Liskov Substitution Principle (LSP) says that any value of a subtype must be
 
 **LSP violation modeled — subtype breaks the contract:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1803,11 +2451,44 @@ printfn "Expected area 15.0, got: %.1f" (squareLike.Width * squareLike.Height)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: mutable record violation — TypeScript uses mutable object fields for the demo]
+// => Simulating the OOP Rectangle/Square LSP violation with mutable objects
+
+type MutableRect = { width: number; height: number };
+
+// => "Base type" contract: each setter changes only one dimension
+const setWidth = (r: MutableRect, w: number): void => {
+  r.width = w;
+};
+// => intended: only width changes
+const setHeight = (r: MutableRect, h: number): void => {
+  r.height = h;
+};
+// => intended: only height changes
+
+// => "Square" variant VIOLATES the contract by coupling width and height
+const makeSquare = (side: number): MutableRect => ({ width: side, height: side });
+// => both dimensions equal — fine for a square, but…
+
+const squareLike = makeSquare(1.0);
+setWidth(squareLike, 5.0);
+// => changes width to 5.0, but height stays 1.0 in this representation
+// => a "true square" mutator would also set height = 5.0 — breaking the Rectangle contract
+setHeight(squareLike, 3.0);
+console.log(`Expected area 15.0, got: ${(squareLike.width * squareLike.height).toFixed(1)}`);
+// => Output: Expected area 15.0, got: 15.0 — coincidence; mutable contract is fragile
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **LSP-compliant design — use a discriminated union (F#) or multimethod (Clojure), not inheritance:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1889,6 +2570,52 @@ describeArea area [Rectangle (5.0, 3.0); Square 4.0; Rectangle (2.0, 6.0)]
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: discriminated union Shape — TypeScript uses tagged union + exhaustive switch]
+
+// => SHAPE tagged union: each case carries exactly the data it needs
+type Shape =
+  | { tag: "Rectangle"; width: number; height: number }
+  // => Rectangle case: independent width and height
+  | { tag: "Square"; side: number };
+// => Square case: single side length — no inherited dimension confusion
+
+// => AREA function: works for any Shape — LSP satisfied at the type level
+const area = (shape: Shape): number => {
+  switch (shape.tag) {
+    case "Rectangle":
+      return shape.width * shape.height;
+    // => width * height — independent dimensions
+    case "Square":
+      return shape.side * shape.side;
+    // => side * side — no ambiguity
+  }
+};
+
+console.log(`Area: ${area({ tag: "Rectangle", width: 5.0, height: 3.0 }).toFixed(1)}`);
+// => Output: Area: 15.0
+console.log(`Area: ${area({ tag: "Square", side: 4.0 }).toFixed(1)}`);
+// => Output: Area: 16.0
+
+// => SUBSTITUTABILITY via array: any Shape satisfies the area function
+const describeAreas = (shapes: readonly Shape[]): void =>
+  shapes.forEach((s) => console.log(`Area: ${area(s).toFixed(1)}`));
+// => any Shape satisfies the area function — tagged union enforces LSP
+
+describeAreas([
+  { tag: "Rectangle", width: 5.0, height: 3.0 },
+  { tag: "Square", side: 4.0 },
+  { tag: "Rectangle", width: 2.0, height: 6.0 },
+]);
+// => Area: 15.0
+// => Area: 16.0
+// => Area: 12.0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Prefer discriminated unions (F#) or multimethods on tagged maps (Clojure) over inheritance hierarchies. When every case carries exactly the data it needs, no case can break the contract expected by a consumer.
@@ -1905,7 +2632,7 @@ DRY (Don't Repeat Yourself) means every piece of knowledge should have a single 
 
 **Violation — business rule duplicated in three places:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1956,11 +2683,35 @@ let allowPurchase (active: bool) (age: int) : bool =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: duplicated inline conditions — TypeScript version with same anti-pattern]
+// => VIOLATION: the "eligible user" rule is duplicated in every function
+// => If the rule changes (e.g., add emailVerified check), all three must be updated
+
+const sendNotification = (name: string, active: boolean, age: number): void => {
+  if (active && age >= 18)
+    // => rule duplicated here
+    console.log(`Notifying ${name}`); // => Output: Notifying Alice
+};
+
+const generateReport = (name: string, active: boolean, age: number): void => {
+  if (active && age >= 18)
+    // => same rule repeated
+    console.log(`Report for ${name}`);
+};
+
+const allowPurchase = (active: boolean, age: number): boolean => active && age >= 18; // => rule duplicated a third time
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **DRY — single authoritative location for the rule:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2035,6 +2786,38 @@ printfn "%b" (allowPurchaseDry false 25)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: single named function for the rule — TypeScript version]
+
+// => SINGLE SOURCE OF TRUTH: rule defined once as a named function
+const isEligibleUser = (active: boolean, age: number): boolean => active && age >= 18;
+// => returns true only if active AND adult
+// => changing this function updates all three callers automatically
+
+const sendNotificationDry = (name: string, active: boolean, age: number): void => {
+  if (isEligibleUser(active, age))
+    // => delegates to single rule
+    console.log(`Notifying ${name}`); // => Output: Notifying Alice
+};
+
+const generateReportDry = (name: string, active: boolean, age: number): void => {
+  if (isEligibleUser(active, age))
+    // => same single rule
+    console.log(`Report for ${name}`);
+};
+
+const allowPurchaseDry = (active: boolean, age: number): boolean => isEligibleUser(active, age); // => single rule, no duplication
+
+sendNotificationDry("Alice", true, 25);
+// => Output: Notifying Alice
+console.log(allowPurchaseDry(true, 25)); // => true
+console.log(allowPurchaseDry(false, 25)); // => false
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Extract repeated decisions into named functions. Code duplication is a symptom of knowledge duplication — fix the knowledge location, not just the syntax.
@@ -2049,7 +2832,7 @@ KISS means preferring the simplest design that satisfies the requirements. Compl
 
 **Over-engineered — excessive type machinery for a simple task:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2115,11 +2898,47 @@ printfn "%s" (greetFromConfig cfg "Alice")
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: DU + factory + record — TypeScript over-engineered version with interface hierarchy]
+// => OVER-ENGINEERED: interface + classes + factory for a simple greeting
+
+interface GreetingStrategy {
+  getPrefix(): string;
+}
+// => interface adds no value when there is only one consumer
+
+class FormalGreeting implements GreetingStrategy {
+  getPrefix() {
+    return "Good day";
+  }
+  // => implements interface — one class per style
+}
+
+class CasualGreeting implements GreetingStrategy {
+  getPrefix() {
+    return "Hey";
+  }
+  // => another class — growing ceremony for one use case
+}
+
+const greetFromStrategy = (strategy: GreetingStrategy, name: string): string => `${strategy.getPrefix()}, ${name}.`;
+// => delegates to interface method — two layers of indirection
+
+// => Usage: 1 interface + 2 classes + 1 function to print "Good day, Alice."
+console.log(greetFromStrategy(new FormalGreeting(), "Alice"));
+// => Good day, Alice.
+// => Four declarations to do what one function does
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **KISS — simplest solution that works:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2154,6 +2973,21 @@ printfn "%s" (greet "Alice")
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: single let greet fn — TypeScript version with one pure function]
+// => SIMPLE: one function, zero ceremony, achieves the same result
+const greet = (name: string): string => `Good day, ${name}.`;
+// => Output: Good day, Alice.
+// => If greeting styles are needed later, add them then (YAGNI)
+
+console.log(greet("Alice"));
+// => Good day, Alice.
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Add abstractions only when complexity is demonstrated, not anticipated. The simple solution is easier to read, debug, test, extend, and hand off.
@@ -2166,7 +3000,7 @@ printfn "%s" (greet "Alice")
 
 YAGNI means do not add functionality until it is actually needed. Speculative features add code complexity without delivering current value, and they are often built for a requirement that never arrives in the form anticipated. In Clojure, speculative keys in a map namespace add invisible surface area — every function that reads the map must mentally filter out keys it does not need.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2268,6 +3102,41 @@ printfn "%s" (displayName user)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: speculative record fields vs. minimal record — TypeScript version]
+
+// => YAGNI VIOLATION: speculative fields not required by any current use case
+interface SpeculativeUserProfile {
+  name: string; // => required today
+  email: string; // => required today
+  theme: string; // => "might need dark mode someday"
+  preferredLanguage: string; // => "maybe we'll go international"
+  newsletterFrequency: string; // => "for a newsletter we haven't built"
+  aiRecommendations: boolean; // => "for an AI feature in the roadmap"
+}
+// => speculative fields force every constructor and test to supply values
+// => that have no business meaning yet — pure noise in the codebase
+
+// ============================================================
+
+// => YAGNI COMPLIANT: only what the application actually needs right now
+type SimpleUserProfile = Readonly<{ name: string; email: string }>;
+// => No speculative fields — add when a feature actually needs them
+
+const displayName = (profile: SimpleUserProfile): string => profile.name;
+// => required today for display — Output: "Alice"
+// => Add exportToXml when an export feature is actually built
+
+const user: SimpleUserProfile = { name: "Alice", email: "alice@example.com" };
+// => construction is trivial — no speculative fields to supply
+console.log(displayName(user));
+// => Output: Alice
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Ship only what the current requirement demands. Code that is never executed in production still costs maintenance, testing, and cognitive load.
@@ -2282,7 +3151,7 @@ printfn "%s" (displayName user)
 
 Coupling measures how much one module depends on the internals of another. High coupling means a change in one module forces changes in others, making the system brittle and hard to evolve. In F#, high coupling appears when one function directly accesses or mutates the internal fields of records owned by another module.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2373,6 +3242,50 @@ printfn "%s" (tightlyCoupledPlaceOrder customer inventory "Laptop" 1200.0)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: mutable record fields with direct internal access — TypeScript version]
+// => HIGH COUPLING: placeOrder reads the internals of both customer and inventory objects
+
+type Customer15 = {
+  name: string;
+  creditLimit: number; // => exposed field — callers depend on this name
+  outstandingBalance: number; // => mutable state — callers depend on this structure
+};
+
+type Inventory15 = {
+  items: Map<string, number>; // => exposed mutable Map — callers manipulate stock directly
+};
+
+// => placeOrder KNOWS about Customer's fields AND Inventory's internals
+const tightlyCoupledPlaceOrder = (
+  customer: Customer15,
+  inventory: Inventory15,
+  item: string,
+  price: number,
+): string => {
+  // => directly reads customer's internal fields — tight coupling
+  if (customer.outstandingBalance + price > customer.creditLimit) return "Credit limit exceeded";
+  // => directly reads inventory's internal Map — tight coupling
+  if ((inventory.items.get(item) ?? 0) <= 0) return `${item} is out of stock`;
+  // => directly mutates customer's internal field
+  customer.outstandingBalance += price;
+  // => directly mutates inventory's internal Map
+  inventory.items.set(item, (inventory.items.get(item) ?? 0) - 1);
+  return `Order placed: ${item} for ${customer.name}`;
+  // => Output: "Order placed: Laptop for Alice"
+};
+
+const c15 = { name: "Alice", creditLimit: 2000.0, outstandingBalance: 0.0 };
+const i15 = { items: new Map([["Laptop", 5]]) };
+console.log(tightlyCoupledPlaceOrder(c15, i15, "Laptop", 1200.0));
+// => Order placed: Laptop for Alice
+// => If Customer renames creditLimit to availableCredit, placeOrder breaks
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** When one function directly reads or mutates another module's internal fields, every internal change cascades as a breaking change throughout the codebase.
@@ -2401,7 +3314,7 @@ graph LR
     style I fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2554,6 +3467,89 @@ printfn "%s" msg
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: modules with private types — TypeScript uses branded types + smart constructors]
+
+// => ENCAPSULATED Customer — hides internals behind stable functions
+type CustomerT = Readonly<{
+  name: string;
+  creditLimit: number;
+  balance: number;
+  _brand: "Customer";
+}>;
+
+const createCustomer = (name: string, creditLimit: number): CustomerT => ({
+  name,
+  creditLimit,
+  balance: 0.0,
+  _brand: "Customer",
+  // => smart constructor: enforces valid initial state
+});
+
+const customerName = (c: CustomerT): string => c.name;
+// => read-only accessor — callers cannot reach the name field directly
+
+const canAcceptCharge = (amount: number, c: CustomerT): boolean => c.balance + amount <= c.creditLimit;
+// => hides the credit logic — callers don't know the formula
+
+const recordCharge = (amount: number, c: CustomerT): CustomerT => ({
+  ...c,
+  balance: c.balance + amount,
+  // => returns a NEW customer with updated balance — immutable update
+});
+
+// => ENCAPSULATED Inventory — hides the backing data structure
+type InventoryT = Readonly<{ stock: ReadonlyMap<string, number>; _brand: "Inventory" }>;
+
+const createInventory = (items: readonly [string, number][]): InventoryT => ({
+  stock: new Map(items),
+  _brand: "Inventory",
+  // => smart constructor: builds inventory from [item, qty] pairs
+});
+
+const isAvailable = (item: string, inv: InventoryT): boolean => (inv.stock.get(item) ?? 0) > 0;
+// => hides how stock is stored — could be a database call
+
+const decrementStock = (item: string, inv: InventoryT): InventoryT => {
+  const qty = inv.stock.get(item) ?? 0;
+  if (qty <= 0) return inv;
+  // => no-op if item is missing or at zero
+  const next = new Map(inv.stock);
+  next.set(item, qty - 1);
+  return { ...inv, stock: next };
+  // => returns new inventory with decremented count
+};
+
+// => LOOSELY COUPLED placeOrder — talks to module interfaces only
+const placeOrder = (
+  customer: CustomerT,
+  inv: InventoryT,
+  item: string,
+  price: number,
+): readonly [string, CustomerT, InventoryT] => {
+  if (!canAcceptCharge(price, customer)) return ["Credit limit exceeded", customer, inv];
+  // => no internal field access — delegates to Customer functions
+  if (!isAvailable(item, inv)) return [`${item} is out of stock`, customer, inv];
+  return [
+    `Order placed: ${item} for ${customerName(customer)}`,
+    recordCharge(price, customer),
+    decrementStock(item, inv),
+  ] as const;
+  // => Output: "Order placed: Laptop for Alice"
+};
+
+const c16 = createCustomer("Alice", 2000.0);
+const i16 = createInventory([["Laptop", 5]]);
+const [msg16] = placeOrder(c16, i16, "Laptop", 1200.0);
+console.log(msg16);
+// => Order placed: Laptop for Alice
+// => Renaming creditLimit to availableCredit has ZERO impact on placeOrder
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Define stable module functions that express what a concept can do, not what it contains. Callers depend on behavior, not representation.
@@ -2566,7 +3562,7 @@ printfn "%s" msg
 
 Cohesion measures how related the responsibilities within a module are. High cohesion means everything in a module belongs together; low cohesion means the module mixes unrelated concerns.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2719,6 +3715,54 @@ printfn "%.1f" (TaxCalculator.calculate 0.1 200.0)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: mixed module vs. focused modules — TypeScript uses namespaced const objects]
+
+// => LOW COHESION: mixedUtils handles three completely unrelated domains
+const mixedUtils = {
+  formatTitle: (title: string): string => title.toUpperCase(),
+  // => "hello" -> "HELLO" — string manipulation concern
+  calculateTax: (price: number, rate: number): number => price * rate,
+  // => 100 * 0.1 = 10.0 — financial calculation, unrelated to strings
+  isWeekend: (date: Date): boolean => [0, 6].includes(date.getDay()),
+  // => date logic — unrelated to both of the above
+};
+
+// => HIGH COHESION: each namespace groups only related behavior
+// => REASON: when formatTitle changes, it does not affect tax or date logic
+
+const stringFormatter = {
+  formatTitle: (title: string): string => title.toUpperCase(),
+  // => "hello world" -> "HELLO WORLD"
+  truncate: (maxLength: number, text: string): string =>
+    text.length > maxLength ? text.slice(0, maxLength) + "…" : text,
+  // => "Hello World" with maxLength=5 -> "Hello…"
+};
+
+const taxCalculator = {
+  calculate: (rate: number, price: number): number => price * rate,
+  // => 200 * 0.1 = 20.0
+  calculateWithCap: (rate: number, cap: number, price: number): number => Math.min(price * rate, cap),
+  // => min(tax, cap) — capped at maximum
+};
+
+const dateHelper = {
+  isWeekend: (date: Date): boolean => [0, 6].includes(date.getDay()),
+  // => true on Saturday (6) or Sunday (0)
+  dayName: (date: Date): string => date.toLocaleDateString("en-US", { weekday: "long" }),
+  // => "Monday", "Tuesday", etc.
+};
+
+console.log(stringFormatter.formatTitle("hello world"));
+// => HELLO WORLD
+console.log(taxCalculator.calculate(0.1, 200.0).toFixed(1));
+// => 20.0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Group functions by what they do, not by convenience. A module with high cohesion has one clear job, making it easy to name, test, and locate.
@@ -2733,7 +3777,7 @@ printfn "%.1f" (TaxCalculator.calculate 0.1 200.0)
 
 Encapsulation means controlling access to internal state so that external code cannot put the system into an inconsistent state. In F#, encapsulation is achieved through modules with private types and smart constructors, combined with immutable records that derive computed values on demand rather than caching them in parallel fields.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2866,6 +3910,57 @@ match Temperature.create -300.0 with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: private backing field + Result return — TypeScript uses branded type + Result]
+type Result2<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => POOR ENCAPSULATION: raw object with parallel fields that can drift out of sync
+const poor = { celsius: 100.0, fahrenheit: 212.0 };
+// => initially consistent
+const poorDrifted = { ...poor, celsius: 50.0 };
+// => celsius changed but fahrenheit is now stale!
+console.log(poorDrifted.fahrenheit.toFixed(1));
+// => Output: 212.0 (wrong! should be 122.0)
+
+// ── ENCAPSULATED temperature — single source of truth ─────────────────────────
+type TemperatureT = Readonly<{ celsius: number; _brand: "Temperature" }>;
+
+const createTemperature = (celsius: number): Result2<TemperatureT, string> => {
+  if (celsius < -273.15) return { ok: false, error: `Temperature below absolute zero: ${celsius.toFixed(2)}` };
+  // => physics constraint enforced at construction time
+  return { ok: true, value: { celsius, _brand: "Temperature" } };
+  // => Ok wraps valid temperature — callers must handle Result
+};
+
+const getCelsius = (t: TemperatureT): number => t.celsius;
+// => read-only accessor
+
+const getFahrenheit = (t: TemperatureT): number => (t.celsius * 9) / 5 + 32;
+// => always computed from celsius — never stale
+// => celsius=100 -> fahrenheit=212.0
+
+const getKelvin = (t: TemperatureT): number => t.celsius + 273.15;
+// => always derived from single source of truth
+
+const r1 = createTemperature(100.0);
+if (r1.ok) {
+  console.log(`Celsius:    ${getCelsius(r1.value).toFixed(1)}`);
+  // => Output: Celsius:    100.0
+  console.log(`Fahrenheit: ${getFahrenheit(r1.value).toFixed(1)}`);
+  // => Output: Fahrenheit: 212.0
+  console.log(`Kelvin:     ${getKelvin(r1.value).toFixed(2)}`);
+  // => Output: Kelvin:     373.15
+}
+
+const r2 = createTemperature(-300.0);
+if (!r2.ok) console.log(`Error: ${r2.error}`);
+// => Output: Error: Temperature below absolute zero: -300.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Use a module with private types and `create` to enforce invariants. Derived values should always be computed from a single source of truth rather than cached in parallel fields.
@@ -2904,7 +3999,7 @@ graph TD
 
 **Function composition approach — flexible assembly of behaviors:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2998,6 +4093,42 @@ printfn "%s" (penguin.Swim ())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: record of behavior functions — TypeScript uses readonly objects with function fields]
+
+// => BEHAVIOR FUNCTIONS — small, focused, reusable
+const canFly = (): string => "Flapping wings";
+// => standard flying behavior — any bird that flies uses this
+
+const cannotFly = (): string => "Cannot fly";
+// => used by non-flying birds — honest about capability
+
+const canSwim = (): string => "Swimming";
+// => used by aquatic birds — any bird that swims uses this
+
+// => BIRD OBJECTS — compose only the behaviors each bird actually has
+type Eagle = Readonly<{ fly: () => string }>;
+type Duck = Readonly<{ fly: () => string; swim: () => string }>;
+type Penguin = Readonly<{ fly: () => string; swim: () => string }>;
+
+const eagle: Eagle = { fly: canFly };
+// => eagle.fly = canFly — flying is the only capability
+const duck: Duck = { fly: canFly, swim: canSwim };
+// => duck.fly = canFly, duck.swim = canSwim — both capabilities
+const penguin: Penguin = { fly: cannotFly, swim: canSwim };
+// => penguin.fly = cannotFly — cannot fly; uses honest behavior
+
+console.log(eagle.fly()); // => Output: Flapping wings
+console.log(duck.fly()); // => Output: Flapping wings
+console.log(duck.swim()); // => Output: Swimming
+console.log(penguin.fly()); // => Output: Cannot fly (no exception — contract honored)
+console.log(penguin.swim()); // => Output: Swimming
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Model capabilities with composable behavior functions. Compose a type from only the behaviors it actually has — no unused fields, no exceptions thrown from "inherited" operations.
@@ -3012,7 +4143,7 @@ Mixins add behavior to a type without deep inheritance. In F#, mixin-like behavi
 
 **Module-function approach (F# equivalent of mixins) — reuses capability without inheritance:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3165,6 +4296,71 @@ printfn "%s" (toJson order)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: module-function mixin + explicit record-of-functions — TypeScript mirrors both patterns]
+
+// ── MODULE-FUNCTION APPROACH (mixin equivalent) ────────────────────────────────
+// => Works on any data via structural typing — no inheritance needed
+const toJson = (fields: readonly [string, string][]): string => {
+  const pairs = fields.map(([k, v]) => `"${k}": "${v}"`);
+  // => each field formatted as "key": "value"
+  return `{ ${pairs.join(", ")} }`;
+  // => wrapped in braces
+  // => Output: { "name": "Laptop", "price": "1200.0" }
+};
+
+const laptop = { name: "Laptop", price: 1200.0 };
+console.log(
+  toJson([
+    ["name", laptop.name],
+    ["price", String(laptop.price)],
+  ]),
+);
+// => Output: { "name": "Laptop", "price": "1200.0" }
+
+// ── EXPLICIT COMPOSITION — behaviors are injected as object fields ─────────────
+// => [F#: record-of-functions Serializer and Clock types]
+type Serializer = { serialize: (fields: readonly [string, string][]) => string };
+type Clock = { now: () => Date };
+
+type Order = Readonly<{
+  id: number;
+  amount: number;
+  createdAt: Date;
+  serializer: Serializer;
+  // => injected Serializer — can be swapped for a test double
+}>;
+
+const makeOrder = (id: number, amount: number, clock: Clock, ser: Serializer): Order => ({
+  id,
+  amount,
+  createdAt: clock.now(),
+  // => creation time captured via injected clock — deterministic in tests
+  serializer: ser,
+});
+
+const orderToJson = (order: Order): string =>
+  order.serializer.serialize([
+    ["id", String(order.id)],
+    ["amount", String(order.amount)],
+    ["createdAt", order.createdAt.toISOString()],
+    // => ISO 8601 timestamp
+  ]);
+// => delegates to injected Serializer
+
+const realClock: Clock = { now: () => new Date() };
+const realSer: Serializer = { serialize: toJson };
+
+const order = makeOrder(1, 99.9, realClock, realSer);
+console.log(orderToJson(order));
+// => Output: { "id": "1", "amount": "99.9", "createdAt": "2026-05-17T..." }
+// => In tests: inject { now: () => new Date("2024-01-01") } — fully deterministic
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Use module functions for optional, non-configurable capabilities shared across types. Use explicit record-of-functions composition when the behavior needs to be swapped, tested, or configured independently.
@@ -3196,7 +4392,7 @@ graph LR
     style ImplB fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3315,6 +4511,64 @@ printfn "%A" (getProduct repo 99)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: record of functions ProductRepository — TypeScript uses an interface + factory]
+
+type Product21 = Readonly<{ id: number; name: string; price: number }>;
+
+// => REPOSITORY INTERFACE as a record-of-functions type
+interface ProductRepository {
+  findById: (id: number) => Product21 | undefined;
+  // => given an id, returns the product or undefined
+  save: (product: Product21) => void;
+  // => persists a product — void return means side effect only
+  findAll: () => readonly Product21[];
+  // => returns all products in the store
+}
+
+// => IN-MEMORY IMPLEMENTATION — for tests and fast prototyping
+const makeInMemoryRepo = (): ProductRepository => {
+  const store = new Map<number, Product21>();
+  // => mutable Map as the backing store — isolated per call
+  return {
+    findById: (id) => store.get(id),
+    // => returns product or undefined — safe lookup
+    save: (product) => {
+      store.set(product.id, product);
+    },
+    // => upsert: add or overwrite by id
+    findAll: () => [...store.values()],
+    // => snapshot of all values as a readonly array
+  };
+};
+
+// => SERVICE — accepts any ProductRepository — decoupled from specific implementation
+const addProduct = (repo: ProductRepository, id: number, name: string, price: number): Product21 => {
+  const product: Product21 = { id, name, price };
+  repo.save(product);
+  // => delegates persistence to repository
+  return product;
+  // => returns the created product
+};
+
+const getProduct = (repo: ProductRepository, id: number): Product21 | undefined => repo.findById(id);
+// => delegates retrieval to repository — business layer never knows about storage
+
+// => USAGE: inject the in-memory repo for this demo
+const repo21 = makeInMemoryRepo();
+const p21 = addProduct(repo21, 1, "Laptop", 1200.0);
+console.log(JSON.stringify(p21));
+// => Output: {"id":1,"name":"Laptop","price":1200}
+console.log(JSON.stringify(getProduct(repo21, 1)));
+// => Output: {"id":1,"name":"Laptop","price":1200}
+console.log(getProduct(repo21, 99));
+// => Output: undefined
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Define a record of functions for persistence and inject the implementation. The business layer never imports a database driver.
@@ -3327,7 +4581,7 @@ printfn "%A" (getProduct repo 99)
 
 Real repositories go beyond simple CRUD. They expose domain-meaningful query functions that express business questions as named fields rather than raw queries embedded in business logic. In F#, these are simply additional function fields on the repository record. In Clojure, the repository is a plain map of keyword-to-function entries — the same data-orientation philosophy, no type definition required.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3443,6 +4697,53 @@ printfn "Pending above 500:  %d" (repo.FindPendingAbove 500.0 |> List.length)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: OrderRepository record type with domain-named query fields — TypeScript version]
+
+type Order22 = Readonly<{ id: number; customerId: number; total: number; status: string }>;
+
+// => DOMAIN-SPECIFIC REPOSITORY — queries named for business intent
+interface OrderRepository {
+  save: (order: Order22) => void;
+  findById: (id: number) => Order22 | undefined;
+  findByCustomerId: (customerId: number) => readonly Order22[];
+  // => named for business question: "which orders belong to this customer?"
+  findPendingAbove: (threshold: number) => readonly Order22[];
+  // => named for business question: "which pending orders exceed this threshold?"
+}
+
+// => IN-MEMORY IMPLEMENTATION — satisfies all query functions
+const makeInMemoryOrderRepo = (): OrderRepository => {
+  const store = new Map<number, Order22>();
+  return {
+    save: (order) => {
+      store.set(order.id, order);
+    },
+    // => upsert by id
+    findById: (id) => store.get(id),
+    findByCustomerId: (customerId) => [...store.values()].filter((o) => o.customerId === customerId),
+    // => filters all orders where customerId matches
+    findPendingAbove: (threshold) => [...store.values()].filter((o) => o.status === "pending" && o.total > threshold),
+    // => keeps only pending orders with total above threshold
+  };
+};
+
+// => USAGE: business service uses named queries — reads like a business document
+const repo22 = makeInMemoryOrderRepo();
+repo22.save({ id: 1, customerId: 10, total: 150.0, status: "pending" });
+repo22.save({ id: 2, customerId: 10, total: 800.0, status: "pending" });
+repo22.save({ id: 3, customerId: 20, total: 200.0, status: "shipped" });
+
+console.log(`Customer 10 orders: ${repo22.findByCustomerId(10).length}`);
+// => Output: Customer 10 orders: 2  (orders 1 and 2)
+console.log(`Pending above 500:  ${repo22.findPendingAbove(500.0).length}`);
+// => Output: Pending above 500:  1  (only order 2: 800 > 500)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Repository function fields should read as business questions. Every query field should have a domain-meaningful name.
@@ -3457,7 +4758,7 @@ printfn "Pending above 500:  %d" (repo.FindPendingAbove 500.0 |> List.length)
 
 The Service Layer pattern centralizes application use cases in dedicated functions. A use case (like "place an order") typically involves multiple domain types and repositories. In F#, the service layer is a module of pure functions that coordinate domain logic and repository calls. In Clojure, use-case functions operate on plain maps and return tagged result maps, coordinating pure helper functions in the same way.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3616,6 +4917,73 @@ print (placeOrder customers.[1] products.[11])
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: PlaceOrderResult discriminated union + pure service functions — TypeScript version]
+
+type Customer23 = Readonly<{ id: number; credit: number }>;
+type Product23 = Readonly<{ id: number; name: string; price: number; stock: number }>;
+
+// => PURE DOMAIN RULES
+const canAfford = (amount: number, customer: Customer23): boolean => customer.credit >= amount;
+const isAvail = (product: Product23): boolean => product.stock > 0;
+const deductCredit = (amount: number, customer: Customer23): Customer23 => ({
+  ...customer,
+  credit: customer.credit - amount,
+});
+// => returns new customer with reduced credit — immutable update
+const reserveStock = (product: Product23): Product23 => ({ ...product, stock: product.stock - 1 });
+// => returns new product with decremented stock — immutable update
+
+// => SERVICE LAYER — orchestrates the "place order" use case
+type PlaceOrderResult =
+  | { tag: "Success"; message: string; customer: Customer23; product: Product23 }
+  // => carries updated entities alongside the message
+  | { tag: "Failure"; reason: string };
+// => carries the reason for failure
+
+const placeOrder = (customer: Customer23, product: Product23): PlaceOrderResult => {
+  // => STEP 1: apply business rules via pure domain functions
+  if (!isAvail(product)) return { tag: "Failure", reason: `'${product.name}' is out of stock` };
+  if (!canAfford(product.price, customer))
+    return { tag: "Failure", reason: `Insufficient credit for '${product.name}' ($${product.price.toFixed(2)})` };
+  // => STEP 2: compute state changes — immutable updates, no mutation
+  const updatedCustomer = deductCredit(product.price, customer);
+  const updatedProduct = reserveStock(product);
+  return {
+    tag: "Success",
+    message: `Order placed: ${product.name} for customer ${customer.id}`,
+    customer: updatedCustomer,
+    product: updatedProduct,
+    // => Output: "Order placed: Laptop for customer 1"
+  };
+};
+
+const customers23 = new Map([
+  [1, { id: 1, credit: 2000.0 }],
+  [2, { id: 2, credit: 100.0 }],
+]);
+const products23 = new Map([
+  [10, { id: 10, name: "Laptop", price: 1200.0, stock: 2 }],
+  [11, { id: 11, name: "Headphones", price: 150.0, stock: 0 }],
+]);
+
+const printResult23 = (r: PlaceOrderResult): void => {
+  if (r.tag === "Success") console.log(r.message);
+  else console.log(`Failed: ${r.reason}`);
+};
+
+printResult23(placeOrder(customers23.get(1)!, products23.get(10)!));
+// => Order placed: Laptop for customer 1
+printResult23(placeOrder(customers23.get(2)!, products23.get(10)!));
+// => Failed: Insufficient credit for 'Laptop' ($1200.00)
+printResult23(placeOrder(customers23.get(1)!, products23.get(11)!));
+// => Failed: 'Headphones' is out of stock
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The service layer owns the sequence of steps for a use case. Domain functions own their own rules. In F#, the service layer is a composition of pure functions — no class required.
@@ -3628,7 +4996,7 @@ print (placeOrder customers.[1] products.[11])
 
 A mature service layer handles errors explicitly, returning structured result values rather than leaking exceptions to the presentation layer. In F#, `Result<'T, 'E>` is a first-class built-in type that makes every failure mode visible in the function signature. In Clojure, the idiomatic equivalent is a tagged result map with a `:status` key — the same data-orientation approach seen in Example 23.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3736,6 +5104,52 @@ printfn "%s" (handleReserve "Unknown" 1)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: Result<T,E> return type — TypeScript uses a tagged Result union]
+type Result3<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+let inventory24 = new Map<string, number>([
+  ["Widget", 10],
+  ["Gadget", 0],
+]);
+// => mutable for demonstration; in production use repository pattern
+
+// => SERVICE with explicit Result return type
+const reserve = (item: string, quantity: number): Result3<{ item: string; reserved: number }, string> => {
+  const stock = inventory24.get(item);
+  if (stock === undefined) return { ok: false, error: `Item '${item}' does not exist` };
+  // => explicit failure: item not in catalog
+  if (stock < quantity)
+    return { ok: false, error: `Insufficient stock for '${item}': have ${stock}, requested ${quantity}` };
+  // => explicit failure: not enough stock
+  inventory24 = new Map(inventory24);
+  inventory24.set(item, stock - quantity);
+  // => decrements stock — side effect in this demo
+  return { ok: true, value: { item, reserved: quantity } };
+  // => explicit success with payload
+};
+
+// => HANDLER: switch on ok — error path is always visible
+const handleReserve = (item: string, quantity: number): string => {
+  const result = reserve(item, quantity);
+  if (result.ok) return `Reserved ${result.value.reserved}x ${result.value.item}`;
+  // => Output: "Reserved 3x Widget"
+  return `Reservation failed: ${result.error}`;
+  // => Output: "Reservation failed: Insufficient stock for 'Gadget': have 0, requested 1"
+};
+
+console.log(handleReserve("Widget", 3));
+// => Reserved 3x Widget
+console.log(handleReserve("Gadget", 1));
+// => Reservation failed: Insufficient stock for 'Gadget': have 0, requested 1
+console.log(handleReserve("Unknown", 1));
+// => Reservation failed: Item 'Unknown' does not exist
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Returning `Result` types forces callers to handle both success and failure paths. Unhandled errors become a compile-time concern rather than a production incident.
@@ -3771,7 +5185,7 @@ graph LR
     style RespDTO fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3884,6 +5298,65 @@ printfn "%A" response
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: distinct record types CreateUserRequest / UserResponse — TypeScript uses distinct interfaces]
+
+// => REQUEST DTO — represents data coming IN from the external world
+interface CreateUserRequest {
+  name: string; // => raw string from HTTP request body
+  email: string; // => raw string from HTTP request body
+  // => no domain logic: just carries data across the boundary
+}
+
+// => RESPONSE DTO — represents data going OUT to the external world
+interface UserResponse {
+  userId: number; // => safe to expose externally
+  name: string;
+  email: string;
+  // => notably MISSING: passwordHash, isAdmin — DTOs shape what clients can see
+}
+
+// => DOMAIN RECORD — internal representation with full context
+type User25 = Readonly<{
+  userId: number;
+  name: string;
+  email: string;
+  passwordHash: string; // => internal only — never in DTO
+  isAdmin: boolean; // => internal only — never in DTO
+}>;
+
+// => SERVICE FUNCTIONS — map between DTOs and domain records
+let users25 = new Map<number, User25>();
+let nextId25 = 1;
+
+const createUser25 = (request: CreateUserRequest): UserResponse => {
+  // => MAP: DTO → Domain Record
+  const user: User25 = {
+    userId: nextId25,
+    name: request.name, // => copied from DTO
+    email: request.email, // => copied from DTO
+    passwordHash: "hashed_secret", // => generated internally, NOT in DTO
+    isAdmin: false, // => internal default, NOT in DTO
+  };
+  users25 = new Map(users25);
+  users25.set(nextId25, user);
+  nextId25++;
+
+  // => MAP: Domain Record → Response DTO
+  return { userId: user.userId, name: user.name, email: user.email };
+  // => passwordHash and isAdmin intentionally EXCLUDED from response
+};
+
+const response25 = createUser25({ name: "Alice", email: "alice@example.com" });
+console.log(JSON.stringify(response25));
+// => Output: {"userId":1,"name":"Alice","email":"alice@example.com"}
+// => passwordHash is NOT in the response — protected by DTO boundary
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** DTOs are the shape of data at a boundary — they protect internal domain structure from external exposure and decouple serialization from business logic.
@@ -3896,7 +5369,7 @@ printfn "%A" response
 
 DTOs are the right place to validate external input before it enters the domain layer. In F#, validation is expressed as a smart constructor that returns `Result<DTO, errors>`, ensuring a successfully constructed DTO is always valid. In Clojure, the idiomatic equivalent collects errors into a sequence and returns a tagged result map — the same accumulate-all-errors philosophy without the type-system guarantees.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4034,6 +5507,69 @@ printfn "%s" (createProduct "Widget" -5.0 100)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: ValidationError DU + Result<T, errors list> — TypeScript uses tagged Result + error array]
+type Result4<T, E> = { ok: true; value: T } | { ok: false; errors: E[] };
+
+// => VALIDATION ERROR union mirrors F# discriminated union ValidationError
+type ValidationError =
+  | { tag: "EmptyName" }
+  | { tag: "NegativePrice"; given: number }
+  | { tag: "NegativeStock"; given: number };
+
+// => REQUEST DTO with smart constructor
+type CreateProductRequest = Readonly<{ name: string; price: number; stock: number }>;
+
+const createProductRequest = (
+  rawName: string,
+  rawPrice: number,
+  rawStock: number,
+): Result4<CreateProductRequest, ValidationError> => {
+  // => Collect ALL errors rather than failing on the first
+  const errors: ValidationError[] = [];
+  if (rawName.trim() === "") errors.push({ tag: "EmptyName" });
+  // => invalid name rejected at DTO boundary
+  if (rawPrice <= 0) errors.push({ tag: "NegativePrice", given: rawPrice });
+  // => negative price rejected at DTO boundary
+  if (rawStock < 0) errors.push({ tag: "NegativeStock", given: rawStock });
+  // => negative stock rejected at DTO boundary
+  if (errors.length > 0) return { ok: false, errors };
+  // => Error carries the full list of validation failures
+  return { ok: true, value: { name: rawName.trim(), price: rawPrice, stock: rawStock } };
+  // => ok wraps valid DTO — all fields guaranteed clean
+};
+
+// => SERVICE receives only validated DTOs — no re-validation needed
+const createProduct25 = (rawName: string, rawPrice: number, rawStock: number): string => {
+  const req = createProductRequest(rawName, rawPrice, rawStock);
+  if (req.ok) return `Product created: ${req.value.name} at $${req.value.price.toFixed(2)} (stock: ${req.value.stock})`;
+  // => Output: "Product created: Widget at $9.99 (stock: 100)"
+  const messages = req.errors.map((e) => {
+    switch (e.tag) {
+      case "EmptyName":
+        return "name must be non-empty";
+      case "NegativePrice":
+        return `price must be positive, got ${e.given.toFixed(2)}`;
+      case "NegativeStock":
+        return `stock must be non-negative, got ${e.given}`;
+    }
+  });
+  return `Validation failed: ${messages.join("; ")}`;
+  // => Output: "Validation failed: name must be non-empty"
+};
+
+console.log(createProduct25("Widget", 9.99, 100));
+// => Product created: Widget at $9.99 (stock: 100)
+console.log(createProduct25("", 9.99, 100));
+// => Validation failed: name must be non-empty
+console.log(createProduct25("Widget", -5.0, 100));
+// => Validation failed: price must be positive, got -5.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Validate external input in the DTO smart constructor so that a successfully constructed DTO is guaranteed valid. Business logic should never need to re-validate the same fields.
@@ -4048,7 +5584,7 @@ printfn "%s" (createProduct "Widget" -5.0 100)
 
 This example combines the patterns introduced in Examples 1-26 into a minimal but realistic layered application: a product catalog with separation of concerns, repository, service, and DTO layers all working together. F# uses records, modules, and the `|>` pipeline operator. Clojure uses plain maps, atoms, and threading macros — the same four-layer structure without a type definition in sight.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4231,6 +5767,101 @@ listAll repo
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: four-layer structure with records, modules, |> pipeline — TypeScript version]
+
+// ── DTOs — data shapes at the boundary ───────────────────────────────────────
+interface AddProductRequest {
+  name: string;
+  price: number;
+}
+// => input DTO: carries data from caller to service
+
+interface ProductSummary {
+  productId: number;
+  name: string;
+  price: number;
+}
+// => output DTO: carries safe data from service to caller
+
+// ── DOMAIN — internal representation ─────────────────────────────────────────
+type Product27 = Readonly<{
+  productId: number;
+  name: string;
+  price: number;
+  isFeatured: boolean; // => internal flag — intentionally absent from ProductSummary
+}>;
+
+// ── REPOSITORY — data access abstraction ──────────────────────────────────────
+interface ProductRepo27 {
+  save: (p: Product27) => void;
+  findAll: () => readonly Product27[];
+  nextId: () => number;
+}
+
+const makeRepo27 = (): ProductRepo27 => {
+  const store = new Map<number, Product27>();
+  let counter = 1;
+  return {
+    save: (p) => {
+      store.set(p.productId, p);
+    },
+    // => upsert by productId
+    findAll: () => [...store.values()],
+    // => returns all products as a readonly array
+    nextId: () => counter++,
+    // => returns current counter then increments — auto-increment pattern
+  };
+};
+
+// ── SERVICE — coordinates use cases ───────────────────────────────────────────
+type Result5<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+const addProduct27 = (repo: ProductRepo27, req: AddProductRequest): Result5<ProductSummary, string> => {
+  if (req.price <= 0) return { ok: false, error: "Price must be positive" };
+  // => business rule: no free or negative-priced products
+  const product: Product27 = {
+    productId: repo.nextId(),
+    name: req.name,
+    price: req.price,
+    isFeatured: false,
+    // => defaults; caller cannot set this via DTO
+  };
+  repo.save(product);
+  // => delegates persistence to repo
+  return { ok: true, value: { productId: product.productId, name: product.name, price: product.price } };
+  // => maps domain → output DTO; isFeatured excluded
+};
+
+const listAll27 = (repo: ProductRepo27): readonly ProductSummary[] =>
+  repo.findAll().map((p) => ({ productId: p.productId, name: p.name, price: p.price }));
+// => maps each domain record to output DTO; isFeatured excluded
+
+// ── PRESENTATION — wires and calls ────────────────────────────────────────────
+const repo27 = makeRepo27();
+
+const printResult27 = (label: string, result: Result5<ProductSummary, string>): void => {
+  if (result.ok)
+    console.log(`${label} OK: ${result.value.productId}. ${result.value.name} $${result.value.price.toFixed(2)}`);
+  else console.log(`${label} Error: ${result.error}`);
+};
+
+printResult27("Add Laptop", addProduct27(repo27, { name: "Laptop", price: 1200.0 }));
+// => Add Laptop OK: 1. Laptop $1200.00
+printResult27("Add Mouse", addProduct27(repo27, { name: "Mouse", price: 25.0 }));
+// => Add Mouse  OK: 2. Mouse $25.00
+printResult27("Add Bad", addProduct27(repo27, { name: "Free", price: 0.0 }));
+// => Add Bad    Error: Price must be positive
+
+listAll27(repo27).forEach((s) => console.log(`  ${s.productId}. ${s.name}: $${s.price.toFixed(2)}`));
+// => 1. Laptop: $1200.00
+// => 2. Mouse: $25.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each layer has a clear job: DTOs carry data at boundaries, the domain holds types and rules, the repository manages storage, and the service coordinates use cases. The presentation layer does nothing but wire and call.
@@ -4265,7 +5896,7 @@ graph TD
 
 **Smell 1: God Module — one namespace knows everything:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4312,11 +5943,33 @@ module ApplicationManagerBad =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: module ApplicationManagerBad — TypeScript version with same anti-pattern]
+// => GOD OBJECT: one module handles users, orders, payments, and reports
+// => Signs: object has methods across unrelated domains
+const applicationManagerBad = {
+  createUser: (name: string): void => {},
+  // => user concern
+  placeOrder: (userId: number): void => {},
+  // => order concern
+  chargeCard: (amount: number): void => {},
+  // => payment concern — unrelated to users and orders
+  generateReport: (): string => "",
+  // => reporting concern — unrelated to the other three
+  // => Every new feature goes here — object grows without bound
+  // => Fix: split into UserModule, OrderModule, PaymentModule, ReportModule
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Smell 2: Layer leakage — data access in the handler:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4353,11 +6006,32 @@ let handleGetUserBad (userId: int) : string =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: HTTP handler with embedded DB call — TypeScript version]
+// => LAYER LEAK: HTTP handler directly queries a data source
+// => Handler should never see Map lookups or database drivers
+const handleGetUserBad = (userId: number): string => {
+  const fakeDb = new Map([
+    [1, "Alice"],
+    [2, "Bob"],
+  ]);
+  // => simulates a direct DB call inside a handler — wrong layer
+  const name = fakeDb.get(userId);
+  // => data access logic belongs in the repository layer
+  return name !== undefined ? `User: ${name}` : "Not found";
+  // => Fix: extract to userRepository.findById and call from service layer
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Smell 3: Anemic domain — domain types with no behavior:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4403,11 +6077,31 @@ let canCancelOrder (order: RichOrder) : bool =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: AnemicOrder type vs. RichOrder with co-located function — TypeScript version]
+
+// => ANEMIC DOMAIN: Order is just a data bag — all logic is in the service
+type AnemicOrder = { id: number; total: number; status: string };
+// => No functions, no rules — just fields
+// => All business logic forced into service functions, making them god functions
+
+// => FIX: move behavior INTO the domain by co-locating types with functions
+type RichOrder = Readonly<{ id: number; total: number; status: string }>;
+
+const canCancelOrder = (order: RichOrder): boolean => order.status === "pending";
+// => business rule lives next to the type — service calls canCancelOrder, not repeating the rule
+// => co-location is the TypeScript FP equivalent of co-locating behavior with data
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Smell 4: Implicit coupling via global mutable state:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4455,6 +6149,30 @@ let loginPure (name: string) : string = name
   name)
   ;; => no atom, no side effect; concurrent calls are safe — pure function
 ;; => pass the user as a parameter through the call chain instead of reading a global
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// [F#: let mutable currentUser — TypeScript version with module-level mutable]
+// => GLOBAL STATE: any function can read or write this — invisible coupling
+let currentUser: string | undefined = undefined;
+// => module-level mutable — execution order now matters everywhere
+
+const login = (name: string): void => {
+  currentUser = name;
+  // => mutates shared global — any concurrent call corrupts state
+};
+
+const getCurrentUser = (): string | undefined => currentUser;
+// => any function can read this anytime — invisible dependency
+
+// => Fix: pass user as a parameter or return it from the login function
+const loginPure = (name: string): string => name;
+// => returns the logged-in user instead of mutating global state
+// => callers thread the user explicitly — no hidden state, no concurrency hazard
 ```
 
 {{< /tab >}}

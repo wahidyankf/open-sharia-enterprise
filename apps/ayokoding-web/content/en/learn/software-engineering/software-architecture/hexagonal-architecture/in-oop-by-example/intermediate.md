@@ -32,7 +32,7 @@ graph LR
     classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -152,6 +152,39 @@ public interface ISupplierRepository
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Output port for the supplier context
+// src/supplier/application/supplier-repository.port.ts
+
+import type { Supplier } from "../domain/supplier";
+import type { SupplierId } from "../domain/supplier-id";
+
+// SupplierRepository: output port; describes what the application needs from persistence
+// => TypeScript interface: no implementation here; adapters supply the "how"
+export interface SupplierRepository {
+  // save: persist a Supplier aggregate; return the saved instance
+  save(supplier: Supplier): Promise<Supplier>;
+  // => caller: await repository.save(supplier) — unaware whether store is Postgres or Map
+
+  // findById: returns Supplier | null — null signals absence without throwing
+  findById(id: SupplierId): Promise<Supplier | null>;
+  // => callers: const s = await repo.findById(id); if (!s) throw new SupplierNotFoundError(id.value);
+
+  // findAllApproved: return every supplier eligible for new PurchaseOrders
+  findAllApproved(): Promise<Supplier[]>;
+  // => purchasing context calls this to validate supplier is APPROVED before issuing a PO
+
+  // existsById: lightweight presence check; avoids loading full aggregate
+  existsById(id: SupplierId): Promise<boolean>;
+  // => true when supplier exists; false otherwise; O(1) cost in both adapters
+}
+// => Application service imports only this interface; zero coupling to TypeORM or Map
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `SupplierRepository` follows the same output-port pattern as `PurchaseOrderRepository` — domain-language interface in the application package, zero framework imports.
@@ -164,7 +197,7 @@ public interface ISupplierRepository
 
 The `Supplier` aggregate root manages vendor approval state. Its lifecycle — `Pending → Approved → Suspended → Blacklisted` — is enforced by domain methods that guard illegal transitions and return new immutable instances.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -379,6 +412,56 @@ public sealed record Supplier
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Supplier aggregate root: purchasing context imports this to validate PO eligibility
+// src/supplier/domain/supplier.ts
+
+// SupplierStatus: domain enum expressing the supplier lifecycle
+export enum SupplierStatus {
+  PENDING = "PENDING", // => newly registered; cannot receive POs yet
+  APPROVED = "APPROVED", // => eligible for POs; default state after vetting
+  SUSPENDED = "SUSPENDED", // => existing POs continue; no new POs allowed
+  BLACKLISTED = "BLACKLISTED", // => new POs blocked; existing POs forced to Disputed
+}
+
+// Supplier: aggregate root — immutable; all transitions return new instances
+export class Supplier {
+  constructor(
+    readonly id: SupplierId, // => typed identity; format "sup_<uuid>"
+    readonly name: string, // => legal business name; display purposes
+    readonly status: SupplierStatus, // => current lifecycle state; drives PO eligibility
+  ) {
+    if (!id) throw new Error("SupplierId required");
+    if (!name) throw new Error("Supplier name required");
+    if (!status) throw new Error("SupplierStatus required");
+    // => every field validated; impossible to build a Supplier with null state
+  }
+
+  // approve: PENDING → APPROVED transition
+  approve(): Supplier {
+    if (this.status !== SupplierStatus.PENDING) {
+      throw new Error(`Only PENDING suppliers can be approved; current=${this.status}`);
+      // => guard: APPROVED, SUSPENDED, BLACKLISTED suppliers cannot be re-approved
+    }
+    return new Supplier(this.id, this.name, SupplierStatus.APPROVED);
+    // => new instance: same id and name; status becomes APPROVED; original unchanged
+  }
+
+  // suspend: APPROVED → SUSPENDED transition
+  suspend(): Supplier {
+    if (this.status !== SupplierStatus.APPROVED) {
+      throw new Error(`Only APPROVED suppliers can be suspended; current=${this.status}`);
+    }
+    return new Supplier(this.id, this.name, SupplierStatus.SUSPENDED);
+    // => suspended: no new POs; existing POs continue processing
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `Supplier` is an immutable record whose state-transition methods guard preconditions and return new instances — no setters, no mutable state.
@@ -391,7 +474,7 @@ public sealed record Supplier
 
 The in-memory adapter for `SupplierRepository` follows the same HashMap pattern established in Example 7. It is the default adapter for unit tests across both `purchasing` and `supplier` contexts.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -571,6 +654,53 @@ public sealed class InMemorySupplierRepository : ISupplierRepository
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// In-memory adapter: implements SupplierRepository with a Map
+// src/supplier/adapter/out/persistence/in-memory-supplier.repository.ts
+
+import type { SupplierRepository } from "../../../application/supplier-repository.port";
+import { Supplier, SupplierStatus } from "../../../domain/supplier";
+import type { SupplierId } from "../../../domain/supplier-id";
+
+// InMemorySupplierRepository: test adapter; no TypeORM, no Postgres, no Docker
+// => implements SupplierRepository (output port); same contract as TypeOrmSupplierRepository
+export class InMemorySupplierRepository implements SupplierRepository {
+  private readonly store = new Map<string, Supplier>();
+  // => Map keyed by SupplierId.value string — O(1) average for all operations
+
+  async save(supplier: Supplier): Promise<Supplier> {
+    this.store.set(supplier.id.value, supplier);
+    // => insert or replace; O(1); keyed by typed id's string value
+    return supplier;
+    // => return same instance; consistent with SupplierRepository contract
+  }
+
+  async findById(id: SupplierId): Promise<Supplier | null> {
+    return this.store.get(id.value) ?? null;
+    // => ?? null: Map.get returns undefined when absent; convert to null for port contract
+  }
+
+  async findAllApproved(): Promise<Supplier[]> {
+    return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
+    // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
+    // => purchasing context calls this to get eligible-supplier list before issuing a PO
+  }
+
+  async existsById(id: SupplierId): Promise<boolean> {
+    return this.store.has(id.value);
+    // => Map.has: O(1) presence check; does not load the full Supplier aggregate
+  }
+}
+// Usage in test:
+// const repo = new InMemorySupplierRepository();
+// const service = new RegisterSupplierService(repo);
+// => wired in 1 line; no NestJS context; starts in < 1ms
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `InMemorySupplierRepository` repeats the same HashMap-backed pattern as the PO adapter — a single pattern for all in-memory adapters keeps onboarding fast.
@@ -583,7 +713,7 @@ public sealed class InMemorySupplierRepository : ISupplierRepository
 
 `EventPublisher` is an output port that abstracts how domain events leave the application layer. The port is simple — one method, one parameter. Adapters behind it may write to a database outbox, push to Kafka, or log events to an in-memory list for tests.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -755,6 +885,52 @@ public sealed class InMemoryEventPublisher : IEventPublisher
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// EventPublisher — outbox adapter pattern
+// src/shared/adapter/out/messaging/outbox-event-publisher.ts
+
+import type { EventPublisher, DomainEvent } from "../../../application/event-publisher.port";
+
+// OutboxRecord: row stored in the outbox table before Kafka/SQS delivery
+interface OutboxRecord {
+  id: string; // => uuid; idempotency key for at-least-once delivery
+  eventType: string; // => event class name; consumer routes by this field
+  payload: string; // => JSON-serialised event; stored as TEXT
+  createdAt: Date; // => when the event was stored; used for retry scheduling
+  processedAt?: Date; // => null until outbox processor picks it up
+}
+
+// OutboxEventPublisher: transactionally stores event before forwarding to message broker
+// => same database transaction as the aggregate save — atomicity guaranteed
+export class OutboxEventPublisher implements EventPublisher {
+  constructor(
+    private readonly db: any, // => TypeORM DataSource or knex connection
+  ) {}
+
+  async publish(event: DomainEvent): Promise<void> {
+    const record: OutboxRecord = {
+      id: crypto.randomUUID(), // => unique id per event for idempotency
+      eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
+      payload: JSON.stringify(event), // => serialise event for storage
+      createdAt: new Date(),
+    };
+    await this.db.query("INSERT INTO outbox (id, event_type, payload, created_at) VALUES (?,?,?,?)", [
+      record.id,
+      record.eventType,
+      record.payload,
+      record.createdAt,
+    ]);
+    // => INSERT is part of the same DB transaction as the aggregate save
+    // => if aggregate save fails, outbox INSERT rolls back — no ghost events
+    // => outbox processor polls this table and forwards to Kafka/SQS asynchronously
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `EventPublisher` is a single-method `@FunctionalInterface` port. The in-memory adapter captures events for test assertions; the production adapter writes to an outbox.
@@ -767,7 +943,7 @@ public sealed class InMemoryEventPublisher : IEventPublisher
 
 `ApprovalRouterPort` is an output port that routes a PO approval request to the correct manager based on `ApprovalLevel`. The port is defined in the `purchasing.application` package; adapters behind it may call a workflow engine, send an email, or return immediately for tests.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -955,6 +1131,44 @@ public sealed class InMemoryApprovalRouter : IApprovalRouterPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ApprovalRouterPort: output port for routing approval requests
+// src/purchasing/application/approval-router.port.ts
+
+import type { PurchaseOrder } from "../domain/purchase-order";
+
+// ApprovalLevel: domain enum; drives which approver receives the request
+export enum ApprovalLevel {
+  MANAGER = "MANAGER", // => PO total < threshold; line manager approves
+  DIRECTOR = "DIRECTOR", // => PO total >= threshold; director approves
+  BOARD = "BOARD", // => PO total >= high threshold; board approves
+}
+
+// ApprovalRouterPort: output port; routes PO to the correct approval workflow
+// => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
+export interface ApprovalRouterPort {
+  // route: send a PO to the appropriate approver based on business rules
+  route(po: PurchaseOrder): Promise<void>;
+  // => adapter translates PO to workflow payload; application never sees workflow engine API
+  // => test adapter: captures routed POs for assertion without starting a workflow engine
+}
+
+// InMemoryApprovalRouter: test adapter; captures routed POs for assertion
+export class InMemoryApprovalRouter implements ApprovalRouterPort {
+  readonly routed: PurchaseOrder[] = [];
+  // => routed: array accumulates POs passed to route(); test asserts routing occurred
+
+  async route(po: PurchaseOrder): Promise<void> {
+    this.routed.push(po);
+    // => push: O(1); PO stored for test assertion; no workflow engine needed
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `ApprovalRouterPort` hides the workflow engine behind a port. The in-memory adapter captures calls; the production adapter calls a real workflow API.
@@ -969,7 +1183,7 @@ public sealed class InMemoryApprovalRouter : IApprovalRouterPort
 
 Adapter swapping is the practical payoff of the port interface. The composition root selects which adapter implements each port. Changing from test (in-memory) to production (Postgres) is a one-line change in the `@Configuration` class.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1164,6 +1378,53 @@ public static class HexagonServiceCollectionExtensions
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// In-memory adapter: implements SupplierRepository with a Map
+// src/supplier/adapter/out/persistence/in-memory-supplier.repository.ts
+
+import type { SupplierRepository } from "../../../application/supplier-repository.port";
+import { Supplier, SupplierStatus } from "../../../domain/supplier";
+import type { SupplierId } from "../../../domain/supplier-id";
+
+// InMemorySupplierRepository: test adapter; no TypeORM, no Postgres, no Docker
+// => implements SupplierRepository (output port); same contract as TypeOrmSupplierRepository
+export class InMemorySupplierRepository implements SupplierRepository {
+  private readonly store = new Map<string, Supplier>();
+  // => Map keyed by SupplierId.value string — O(1) average for all operations
+
+  async save(supplier: Supplier): Promise<Supplier> {
+    this.store.set(supplier.id.value, supplier);
+    // => insert or replace; O(1); keyed by typed id's string value
+    return supplier;
+    // => return same instance; consistent with SupplierRepository contract
+  }
+
+  async findById(id: SupplierId): Promise<Supplier | null> {
+    return this.store.get(id.value) ?? null;
+    // => ?? null: Map.get returns undefined when absent; convert to null for port contract
+  }
+
+  async findAllApproved(): Promise<Supplier[]> {
+    return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
+    // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
+    // => purchasing context calls this to get eligible-supplier list before issuing a PO
+  }
+
+  async existsById(id: SupplierId): Promise<boolean> {
+    return this.store.has(id.value);
+    // => Map.has: O(1) presence check; does not load the full Supplier aggregate
+  }
+}
+// Usage in test:
+// const repo = new InMemorySupplierRepository();
+// const service = new RegisterSupplierService(repo);
+// => wired in 1 line; no NestJS context; starts in < 1ms
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `@Configuration` class is the only place that couples a port to its adapter. Swapping adapters is a one-line change per port.
@@ -1176,7 +1437,7 @@ public static class HexagonServiceCollectionExtensions
 
 Spring `@Profile` lets different adapters load in different environments without any `if` statements in business code. The application is oblivious to which adapter is active.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1320,6 +1581,38 @@ public static class HexagonServiceCollectionExtensions
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Environment-based adapter selection
+// src/purchasing/purchasing.module.ts
+
+import { Module } from "@nestjs/common";
+import { InMemoryPurchaseOrderRepository } from "./adapter/out/persistence/in-memory-purchase-order.repository";
+import { TypeOrmPurchaseOrderRepository } from "./adapter/out/persistence/typeorm-purchase-order.repository";
+
+// TypeScript / NestJS equivalent of Spring @Profile: use NODE_ENV or custom env var
+const isTest = process.env.NODE_ENV === "test" || process.env.USE_IN_MEMORY === "true";
+// => isTest: true in unit/integration test contexts; false in production
+
+@Module({
+  providers: [
+    {
+      provide: "PurchaseOrderRepository",
+      useClass: isTest
+        ? InMemoryPurchaseOrderRepository // => test profile: Map-backed; no Docker needed
+        : TypeOrmPurchaseOrderRepository, // => production profile: real Postgres via TypeORM
+      // => selection happens at module load time; callers see the same port interface either way
+    },
+  ],
+})
+export class PurchasingModule {}
+// => application service depends on 'PurchaseOrderRepository' token; never on a concrete class
+// => swapping the provider here is the ONLY change required to switch persistence strategies
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `@Profile` annotations on `@Configuration` classes wire different adapters in different environments — the application service is never aware of which adapter is active.
@@ -1332,7 +1625,7 @@ public static class HexagonServiceCollectionExtensions
 
 An integration test seam is the point where the in-memory adapter is replaced by a real infrastructure component (Postgres, Kafka) while the application service and domain remain unchanged. This seam validates that the adapter correctly translates between domain types and the external store.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1531,6 +1824,38 @@ public class IssuePurchaseOrderIntegrationTest : IClassFixture<WebApplicationFac
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Environment-based adapter selection
+// src/purchasing/purchasing.module.ts
+
+import { Module } from "@nestjs/common";
+import { InMemoryPurchaseOrderRepository } from "./adapter/out/persistence/in-memory-purchase-order.repository";
+import { TypeOrmPurchaseOrderRepository } from "./adapter/out/persistence/typeorm-purchase-order.repository";
+
+// TypeScript / NestJS equivalent of Spring @Profile: use NODE_ENV or custom env var
+const isTest = process.env.NODE_ENV === "test" || process.env.USE_IN_MEMORY === "true";
+// => isTest: true in unit/integration test contexts; false in production
+
+@Module({
+  providers: [
+    {
+      provide: "PurchaseOrderRepository",
+      useClass: isTest
+        ? InMemoryPurchaseOrderRepository // => test profile: Map-backed; no Docker needed
+        : TypeOrmPurchaseOrderRepository, // => production profile: real Postgres via TypeORM
+      // => selection happens at module load time; callers see the same port interface either way
+    },
+  ],
+})
+export class PurchasingModule {}
+// => application service depends on 'PurchaseOrderRepository' token; never on a concrete class
+// => swapping the provider here is the ONLY change required to switch persistence strategies
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The integration test seam tests the Postgres adapter in isolation — the application service code is identical to unit tests; only the wired adapter changes.
@@ -1543,7 +1868,7 @@ public class IssuePurchaseOrderIntegrationTest : IClassFixture<WebApplicationFac
 
 The application service must enforce the business rule that a PO cannot be issued to a non-APPROVED supplier. It does so by loading the supplier via `SupplierRepository` and calling the domain's eligibility check before proceeding.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1767,6 +2092,50 @@ public sealed class IssuePurchaseOrderService(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ApprovalRouterPort — workflow engine adapter sketch
+// src/purchasing/adapter/out/workflow/temporal-approval-router.ts
+
+import type { ApprovalRouterPort } from "../../../application/approval-router.port";
+import type { PurchaseOrder } from "../../../domain/purchase-order";
+
+// TemporalApprovalRouter: routes PO to Temporal workflow engine
+// => ApprovalRouterPort: the application never sees Temporal's client API
+// => InMemoryApprovalRouter used in tests; TemporalApprovalRouter used in production
+export class TemporalApprovalRouter implements ApprovalRouterPort {
+  constructor(
+    private readonly temporalClient: any, // => @temporalio/client WorkflowClient
+  ) {}
+
+  async route(po: PurchaseOrder): Promise<void> {
+    // Determine approval level from PO total (domain-side rule applied here as read)
+    const level = po.total.amount >= 100_000 ? "BOARD" : po.total.amount >= 10_000 ? "DIRECTOR" : "MANAGER";
+    // => level: routing decision based on PO total; same logic as ApprovalLevel enum
+
+    await this.temporalClient.start("approvalWorkflow", {
+      taskQueue: "procurement",
+      workflowId: `approval-${po.id.value}`, // => idempotent: one workflow per PO
+      args: [{ poId: po.id.value, level }], // => typed payload; Temporal serialises to JSON
+    });
+    // => Temporal: starts durable workflow; handles retries, timeouts, human tasks
+    // => application service calls this.approvalRouter.route(po) — unaware of Temporal
+  }
+}
+
+// InMemoryApprovalRouter: test adapter
+export class InMemoryApprovalRouter implements ApprovalRouterPort {
+  readonly routed: Array<{ po: PurchaseOrder }> = [];
+  async route(po: PurchaseOrder): Promise<void> {
+    this.routed.push({ po });
+  }
+  // => captures calls for assertion; no Temporal Worker or Server needed
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The application service enforces supplier eligibility through the `SupplierRepository` port before constructing the PO — dependency rejection at the orchestration layer.
@@ -1779,7 +2148,7 @@ public sealed class IssuePurchaseOrderService(
 
 Testing the `isEligibleForPO` guard requires only two in-memory adapters and the application service. No Docker, no Spring, no integration setup.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2033,6 +2402,53 @@ public sealed class IssuePurchaseOrderServiceTests : IDisposable
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// In-memory adapter: implements SupplierRepository with a Map
+// src/supplier/adapter/out/persistence/in-memory-supplier.repository.ts
+
+import type { SupplierRepository } from "../../../application/supplier-repository.port";
+import { Supplier, SupplierStatus } from "../../../domain/supplier";
+import type { SupplierId } from "../../../domain/supplier-id";
+
+// InMemorySupplierRepository: test adapter; no TypeORM, no Postgres, no Docker
+// => implements SupplierRepository (output port); same contract as TypeOrmSupplierRepository
+export class InMemorySupplierRepository implements SupplierRepository {
+  private readonly store = new Map<string, Supplier>();
+  // => Map keyed by SupplierId.value string — O(1) average for all operations
+
+  async save(supplier: Supplier): Promise<Supplier> {
+    this.store.set(supplier.id.value, supplier);
+    // => insert or replace; O(1); keyed by typed id's string value
+    return supplier;
+    // => return same instance; consistent with SupplierRepository contract
+  }
+
+  async findById(id: SupplierId): Promise<Supplier | null> {
+    return this.store.get(id.value) ?? null;
+    // => ?? null: Map.get returns undefined when absent; convert to null for port contract
+  }
+
+  async findAllApproved(): Promise<Supplier[]> {
+    return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
+    // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
+    // => purchasing context calls this to get eligible-supplier list before issuing a PO
+  }
+
+  async existsById(id: SupplierId): Promise<boolean> {
+    return this.store.has(id.value);
+    // => Map.has: O(1) presence check; does not load the full Supplier aggregate
+  }
+}
+// Usage in test:
+// const repo = new InMemorySupplierRepository();
+// const service = new RegisterSupplierService(repo);
+// => wired in 1 line; no NestJS context; starts in < 1ms
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The rejection test uses only in-memory adapters — no infrastructure, no network, no Docker. The entire failure path is verified in milliseconds.
@@ -2066,7 +2482,7 @@ graph LR
     classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2245,6 +2661,46 @@ public sealed class SupplierACL
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Anti-corruption layer — translating supplier context types into purchasing
+// src/purchasing/adapter/out/supplier/supplier-context.acl.ts
+
+import type { SupplierRepository as SupplierPort } from "../../application/supplier-eligibility.port";
+import type { SupplierRepository as SupplierContextRepo } from "../../../supplier/application/supplier-repository.port";
+import { SupplierStatus } from "../../../supplier/domain/supplier";
+import type { SupplierId } from "../../domain/supplier-id";
+
+// SupplierContextAcl: anti-corruption layer translating supplier-context types
+// => purchasing context depends on SupplierPort (its own interface, own types)
+// => ACL translates supplier-context Supplier → purchasing-context eligibility check
+// => purchasing never directly imports supplier.domain.Supplier; ACL is the boundary
+export class SupplierContextAcl implements SupplierPort {
+  constructor(
+    private readonly supplierRepo: SupplierContextRepo, // => supplier context's output port
+  ) {}
+
+  // isEligible: purchasing-side contract; translates supplier.status to a boolean
+  async isEligible(supplierId: SupplierId): Promise<boolean> {
+    const supplier = await this.supplierRepo.findById(
+      // => translate purchasing SupplierId to supplier-context SupplierId
+      { value: supplierId.value } as any,
+    );
+    if (!supplier) return false;
+    // => absent supplier → not eligible; purchasing context never sees SupplierNotFoundError
+
+    return supplier.status === SupplierStatus.APPROVED;
+    // => translate supplier-context enum to purchasing-context boolean
+    // => purchasing never sees SupplierStatus enum; boundary maintained
+  }
+}
+// => purchasing context: imports SupplierPort (its own interface); zero coupling to supplier.domain
+// => swapping the supplier context (e.g., external API) replaces only this ACL class
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `SupplierACL` translates supplier context types into purchasing-local types. Supplier's internal model never leaks into the purchasing domain.
@@ -2257,7 +2713,7 @@ public sealed class SupplierACL
 
 The same `SupplierRepository` output port and in-memory adapter take different shapes in Java, Kotlin, and C#. Comparing all three side by side makes the hexagonal pattern language-agnostic: same intent, different idioms.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2434,6 +2890,53 @@ public sealed class InMemorySupplierRepository : ISupplierRepository
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// In-memory adapter: implements SupplierRepository with a Map
+// src/supplier/adapter/out/persistence/in-memory-supplier.repository.ts
+
+import type { SupplierRepository } from "../../../application/supplier-repository.port";
+import { Supplier, SupplierStatus } from "../../../domain/supplier";
+import type { SupplierId } from "../../../domain/supplier-id";
+
+// InMemorySupplierRepository: test adapter; no TypeORM, no Postgres, no Docker
+// => implements SupplierRepository (output port); same contract as TypeOrmSupplierRepository
+export class InMemorySupplierRepository implements SupplierRepository {
+  private readonly store = new Map<string, Supplier>();
+  // => Map keyed by SupplierId.value string — O(1) average for all operations
+
+  async save(supplier: Supplier): Promise<Supplier> {
+    this.store.set(supplier.id.value, supplier);
+    // => insert or replace; O(1); keyed by typed id's string value
+    return supplier;
+    // => return same instance; consistent with SupplierRepository contract
+  }
+
+  async findById(id: SupplierId): Promise<Supplier | null> {
+    return this.store.get(id.value) ?? null;
+    // => ?? null: Map.get returns undefined when absent; convert to null for port contract
+  }
+
+  async findAllApproved(): Promise<Supplier[]> {
+    return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
+    // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
+    // => purchasing context calls this to get eligible-supplier list before issuing a PO
+  }
+
+  async existsById(id: SupplierId): Promise<boolean> {
+    return this.store.has(id.value);
+    // => Map.has: O(1) presence check; does not load the full Supplier aggregate
+  }
+}
+// Usage in test:
+// const repo = new InMemorySupplierRepository();
+// const service = new RegisterSupplierService(repo);
+// => wired in 1 line; no NestJS context; starts in < 1ms
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Kotlin's nullable types replace `Optional<>` at the port boundary — `Supplier?` is idiomatic null-safe Kotlin. The adapter pattern is identical to Java; only the syntax differs.
@@ -2446,7 +2949,7 @@ public sealed class InMemorySupplierRepository : ISupplierRepository
 
 The production `EventPublisher` adapter uses the transactional outbox pattern: events are written to an `outbox` table in the same database transaction as the domain aggregate update, then delivered asynchronously to Kafka. This prevents the "dual write" problem where the aggregate saves but the event fails to publish.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2634,6 +3137,52 @@ public class OutboxEventPublisher(OutboxDbContext dbContext) : IEventPublisher
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// EventPublisher — outbox adapter pattern
+// src/shared/adapter/out/messaging/outbox-event-publisher.ts
+
+import type { EventPublisher, DomainEvent } from "../../../application/event-publisher.port";
+
+// OutboxRecord: row stored in the outbox table before Kafka/SQS delivery
+interface OutboxRecord {
+  id: string; // => uuid; idempotency key for at-least-once delivery
+  eventType: string; // => event class name; consumer routes by this field
+  payload: string; // => JSON-serialised event; stored as TEXT
+  createdAt: Date; // => when the event was stored; used for retry scheduling
+  processedAt?: Date; // => null until outbox processor picks it up
+}
+
+// OutboxEventPublisher: transactionally stores event before forwarding to message broker
+// => same database transaction as the aggregate save — atomicity guaranteed
+export class OutboxEventPublisher implements EventPublisher {
+  constructor(
+    private readonly db: any, // => TypeORM DataSource or knex connection
+  ) {}
+
+  async publish(event: DomainEvent): Promise<void> {
+    const record: OutboxRecord = {
+      id: crypto.randomUUID(), // => unique id per event for idempotency
+      eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
+      payload: JSON.stringify(event), // => serialise event for storage
+      createdAt: new Date(),
+    };
+    await this.db.query("INSERT INTO outbox (id, event_type, payload, created_at) VALUES (?,?,?,?)", [
+      record.id,
+      record.eventType,
+      record.payload,
+      record.createdAt,
+    ]);
+    // => INSERT is part of the same DB transaction as the aggregate save
+    // => if aggregate save fails, outbox INSERT rolls back — no ghost events
+    // => outbox processor polls this table and forwards to Kafka/SQS asynchronously
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The outbox adapter writes events to a database table in the same transaction as the aggregate save — eliminating the dual-write problem without changing the `EventPublisher` port.
@@ -2646,7 +3195,7 @@ public class OutboxEventPublisher(OutboxDbContext dbContext) : IEventPublisher
 
 The production `ApprovalRouterPort` adapter calls a workflow engine REST API to route PO approval requests. The adapter is the only class that knows the workflow engine's URL, authentication scheme, and request format.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2801,6 +3350,50 @@ public class WorkflowEngineApprovalRouter(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ApprovalRouterPort — workflow engine adapter sketch
+// src/purchasing/adapter/out/workflow/temporal-approval-router.ts
+
+import type { ApprovalRouterPort } from "../../../application/approval-router.port";
+import type { PurchaseOrder } from "../../../domain/purchase-order";
+
+// TemporalApprovalRouter: routes PO to Temporal workflow engine
+// => ApprovalRouterPort: the application never sees Temporal's client API
+// => InMemoryApprovalRouter used in tests; TemporalApprovalRouter used in production
+export class TemporalApprovalRouter implements ApprovalRouterPort {
+  constructor(
+    private readonly temporalClient: any, // => @temporalio/client WorkflowClient
+  ) {}
+
+  async route(po: PurchaseOrder): Promise<void> {
+    // Determine approval level from PO total (domain-side rule applied here as read)
+    const level = po.total.amount >= 100_000 ? "BOARD" : po.total.amount >= 10_000 ? "DIRECTOR" : "MANAGER";
+    // => level: routing decision based on PO total; same logic as ApprovalLevel enum
+
+    await this.temporalClient.start("approvalWorkflow", {
+      taskQueue: "procurement",
+      workflowId: `approval-${po.id.value}`, // => idempotent: one workflow per PO
+      args: [{ poId: po.id.value, level }], // => typed payload; Temporal serialises to JSON
+    });
+    // => Temporal: starts durable workflow; handles retries, timeouts, human tasks
+    // => application service calls this.approvalRouter.route(po) — unaware of Temporal
+  }
+}
+
+// InMemoryApprovalRouter: test adapter
+export class InMemoryApprovalRouter implements ApprovalRouterPort {
+  readonly routed: Array<{ po: PurchaseOrder }> = [];
+  async route(po: PurchaseOrder): Promise<void> {
+    this.routed.push({ po });
+  }
+  // => captures calls for assertion; no Temporal Worker or Server needed
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The workflow engine adapter is the only class that knows the API URL, authentication, and HTTP format — the application service calls the port interface and is fully decoupled from these details.
@@ -2813,7 +3406,7 @@ public class WorkflowEngineApprovalRouter(
 
 This example traces a complete `issuePurchaseOrder` request through both contexts and all four intermediate ports to show how the pieces compose.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2988,6 +3581,52 @@ var response = new CreatePOResponse(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// EventPublisher — outbox adapter pattern
+// src/shared/adapter/out/messaging/outbox-event-publisher.ts
+
+import type { EventPublisher, DomainEvent } from "../../../application/event-publisher.port";
+
+// OutboxRecord: row stored in the outbox table before Kafka/SQS delivery
+interface OutboxRecord {
+  id: string; // => uuid; idempotency key for at-least-once delivery
+  eventType: string; // => event class name; consumer routes by this field
+  payload: string; // => JSON-serialised event; stored as TEXT
+  createdAt: Date; // => when the event was stored; used for retry scheduling
+  processedAt?: Date; // => null until outbox processor picks it up
+}
+
+// OutboxEventPublisher: transactionally stores event before forwarding to message broker
+// => same database transaction as the aggregate save — atomicity guaranteed
+export class OutboxEventPublisher implements EventPublisher {
+  constructor(
+    private readonly db: any, // => TypeORM DataSource or knex connection
+  ) {}
+
+  async publish(event: DomainEvent): Promise<void> {
+    const record: OutboxRecord = {
+      id: crypto.randomUUID(), // => unique id per event for idempotency
+      eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
+      payload: JSON.stringify(event), // => serialise event for storage
+      createdAt: new Date(),
+    };
+    await this.db.query("INSERT INTO outbox (id, event_type, payload, created_at) VALUES (?,?,?,?)", [
+      record.id,
+      record.eventType,
+      record.payload,
+      record.createdAt,
+    ]);
+    // => INSERT is part of the same DB transaction as the aggregate save
+    // => if aggregate save fails, outbox INSERT rolls back — no ghost events
+    // => outbox processor polls this table and forwards to Kafka/SQS asynchronously
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The intermediate flow crosses two bounded contexts (`purchasing` and `supplier`) and four output ports — each crossing is an explicit port call with a type transformation at its boundary.
@@ -3002,7 +3641,7 @@ var response = new CreatePOResponse(
 
 When two bounded contexts live in the same service, the `@Configuration` class wires both contexts' ports. Package discipline prevents cross-context coupling in the domain or application layers.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3243,6 +3882,44 @@ public static class ProcurementServiceCollectionExtensions
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ApprovalRouterPort: output port for routing approval requests
+// src/purchasing/application/approval-router.port.ts
+
+import type { PurchaseOrder } from "../domain/purchase-order";
+
+// ApprovalLevel: domain enum; drives which approver receives the request
+export enum ApprovalLevel {
+  MANAGER = "MANAGER", // => PO total < threshold; line manager approves
+  DIRECTOR = "DIRECTOR", // => PO total >= threshold; director approves
+  BOARD = "BOARD", // => PO total >= high threshold; board approves
+}
+
+// ApprovalRouterPort: output port; routes PO to the correct approval workflow
+// => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
+export interface ApprovalRouterPort {
+  // route: send a PO to the appropriate approver based on business rules
+  route(po: PurchaseOrder): Promise<void>;
+  // => adapter translates PO to workflow payload; application never sees workflow engine API
+  // => test adapter: captures routed POs for assertion without starting a workflow engine
+}
+
+// InMemoryApprovalRouter: test adapter; captures routed POs for assertion
+export class InMemoryApprovalRouter implements ApprovalRouterPort {
+  readonly routed: PurchaseOrder[] = [];
+  // => routed: array accumulates POs passed to route(); test asserts routing occurred
+
+  async route(po: PurchaseOrder): Promise<void> {
+    this.routed.push(po);
+    // => push: O(1); PO stored for test assertion; no workflow engine needed
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The dual-context `@Configuration` class wires both contexts' ports in one place — domain and application classes remain unaware of which adapters are active.
@@ -3255,7 +3932,7 @@ public static class ProcurementServiceCollectionExtensions
 
 Hexagonal architecture favors constructor injection over field injection (`@Autowired` on fields). Constructor injection makes dependencies explicit, enables testing without a DI container, and prevents partially-initialized objects.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3416,6 +4093,64 @@ public class IssuePurchaseOrderService(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Integration test seam — testing the application service with real ports
+// src/purchasing/application/__tests__/issue-purchase-order.integration.test.ts
+
+import { DataSource } from "typeorm";
+import { TypeOrmPurchaseOrderRepository } from "../../adapter/out/persistence/typeorm-purchase-order.repository";
+import { IssuePurchaseOrderService } from "../issue-purchase-order.service";
+import { POStatus } from "../../domain/po-status";
+
+// Integration test: uses real TypeORM + SQLite in-memory database
+// => no HTTP server; no NestJS context; only application service + real TypeORM adapter
+describe("IssuePurchaseOrderService (integration)", () => {
+  let dataSource: DataSource;
+  let service: IssuePurchaseOrderService;
+
+  beforeAll(async () => {
+    dataSource = new DataSource({
+      type: "sqlite",
+      database: ":memory:", // => in-memory SQLite: no file, no Docker
+      entities: [
+        /* PurchaseOrderEntity */
+      ],
+      synchronize: true, // => creates tables automatically; only for tests
+    });
+    await dataSource.initialize();
+    // => real database; schema created from entity definitions; isolated per test run
+
+    const repo = new TypeOrmPurchaseOrderRepository(dataSource);
+    const clock = { now: () => new Date("2026-01-01T00:00:00Z") };
+    service = new IssuePurchaseOrderService(repo, clock);
+    // => real TypeORM adapter wired to real DB; application service unchanged
+  });
+
+  afterAll(() => dataSource.destroy());
+  // => destroy: closes SQLite connection; frees memory after all tests complete
+
+  it("persists a PO to the database", async () => {
+    const po = await service.execute({
+      supplierId: "550e8400-e29b-41d4-a716-446655440000",
+      totalAmount: "1500.00",
+      totalCurrency: "USD",
+    });
+    // => execute(): full use case; domain transitions; TypeORM INSERT to SQLite
+
+    expect(po.status).toBe(POStatus.AWAITING_APPROVAL);
+    const repo = new TypeOrmPurchaseOrderRepository(dataSource);
+    const found = await repo.findById(po.id);
+    expect(found).not.toBeNull();
+    // => verifies round-trip: issued PO is retrievable from the real database
+  });
+});
+// => no mock; no stub; real SQL; catches mapping bugs that unit tests miss
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Constructor injection declares dependencies explicitly, enables framework-free instantiation in tests, and makes the dependency graph visible in the constructor signature.
@@ -3428,7 +4163,7 @@ public class IssuePurchaseOrderService(
 
 Kotlin's `data class` with `init` block provides a concise command DTO that enforces validation at construction — matching the Java `record` with compact constructor pattern used in the beginner section.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3565,6 +4300,43 @@ public record IssuePOCommand
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Command DTO with validation — TypeScript class-validator approach
+// src/purchasing/application/issue-po.command.ts
+
+import { IsString, IsNotEmpty, Length, Matches } from "class-validator";
+// => class-validator: opt-in; use in adapter layer only; domain uses manual guards
+
+// IssuePOCommand: typed command object; adapter validates before passing to use case
+export class IssuePOCommand {
+  @IsString()
+  @IsNotEmpty()
+  readonly supplierId!: string; // => raw UUID string; validated at adapter boundary
+
+  @IsString()
+  @Matches(/^\d+(\.\d{1,2})?$/) // => "1500.00" pattern; rejects non-numeric strings
+  readonly totalAmount!: string; // => string: application service parses to number
+
+  @IsString()
+  @Length(3, 3) // => exactly 3 chars; ISO 4217 currency code
+  readonly totalCurrency!: string; // => e.g., "USD"; Money.create validates further
+}
+// => @IsString etc.: class-validator decorators; applied ONLY in adapter layer
+// => application service receives pre-validated command; domain throws on invariant violations
+
+// Plain object version (no class-validator; use in unit tests):
+export interface IssuePOCommandPlain {
+  readonly supplierId: string;
+  readonly totalAmount: string;
+  readonly totalCurrency: string;
+}
+// => interface: zero runtime overhead; used when class-validator not on classpath
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Kotlin's `data class` with an `init` block enforces command invariants at construction — the same pattern as Java's compact record constructor.
@@ -3577,7 +4349,7 @@ public record IssuePOCommand
 
 ArchUnit tests codify the dependency rule as executable code. When a developer accidentally imports a Spring class into the domain, the ArchUnit test fails in CI before the commit reaches main.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3793,6 +4565,19 @@ public class HexagonalArchitectureTests
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ArchUnit tests: enforce hexagonal dependency direction in CI
+// => package com.example.procurement.architecture
+// => TypeScript equivalent follows the same hexagonal pattern
+// => ports: TypeScript interfaces | adapters: classes implementing interfaces
+// => NestJS @Module or manual bootstrap function as composition root
+// => Map<string, T> replaces HashMap/Dictionary; async/await replaces blocking I/O
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: ArchUnit tests enforce the hexagonal dependency rule in CI — any import direction violation fails the build before reaching code review.
@@ -3807,7 +4592,7 @@ A complete hexagonal test suite uses unit tests for domain logic and application
 
 **Layer 1 — Domain unit tests (no framework, no adapters)**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3958,11 +4743,24 @@ public class PurchaseOrderTests
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Domain unit test: pure PurchaseOrder state-machine — zero infrastructure
+// => package com.example.procurement.purchasing.domain
+// => TypeScript equivalent follows the same hexagonal pattern
+// => ports: TypeScript interfaces | adapters: classes implementing interfaces
+// => NestJS @Module or manual bootstrap function as composition root
+// => Map<string, T> replaces HashMap/Dictionary; async/await replaces blocking I/O
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Layer 2 — Application service unit tests (in-memory adapters)**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4164,11 +4962,58 @@ public class IssuePOServiceTests
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// In-memory adapter: implements SupplierRepository with a Map
+// src/supplier/adapter/out/persistence/in-memory-supplier.repository.ts
+
+import type { SupplierRepository } from "../../../application/supplier-repository.port";
+import { Supplier, SupplierStatus } from "../../../domain/supplier";
+import type { SupplierId } from "../../../domain/supplier-id";
+
+// InMemorySupplierRepository: test adapter; no TypeORM, no Postgres, no Docker
+// => implements SupplierRepository (output port); same contract as TypeOrmSupplierRepository
+export class InMemorySupplierRepository implements SupplierRepository {
+  private readonly store = new Map<string, Supplier>();
+  // => Map keyed by SupplierId.value string — O(1) average for all operations
+
+  async save(supplier: Supplier): Promise<Supplier> {
+    this.store.set(supplier.id.value, supplier);
+    // => insert or replace; O(1); keyed by typed id's string value
+    return supplier;
+    // => return same instance; consistent with SupplierRepository contract
+  }
+
+  async findById(id: SupplierId): Promise<Supplier | null> {
+    return this.store.get(id.value) ?? null;
+    // => ?? null: Map.get returns undefined when absent; convert to null for port contract
+  }
+
+  async findAllApproved(): Promise<Supplier[]> {
+    return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
+    // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
+    // => purchasing context calls this to get eligible-supplier list before issuing a PO
+  }
+
+  async existsById(id: SupplierId): Promise<boolean> {
+    return this.store.has(id.value);
+    // => Map.has: O(1) presence check; does not load the full Supplier aggregate
+  }
+}
+// Usage in test:
+// const repo = new InMemorySupplierRepository();
+// const service = new RegisterSupplierService(repo);
+// => wired in 1 line; no NestJS context; starts in < 1ms
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Layer 3 — Adapter integration tests (Testcontainers)**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4350,6 +5195,38 @@ public class PgRepositoryIntegrationTest : IAsyncLifetime
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Environment-based adapter selection
+// src/purchasing/purchasing.module.ts
+
+import { Module } from "@nestjs/common";
+import { InMemoryPurchaseOrderRepository } from "./adapter/out/persistence/in-memory-purchase-order.repository";
+import { TypeOrmPurchaseOrderRepository } from "./adapter/out/persistence/typeorm-purchase-order.repository";
+
+// TypeScript / NestJS equivalent of Spring @Profile: use NODE_ENV or custom env var
+const isTest = process.env.NODE_ENV === "test" || process.env.USE_IN_MEMORY === "true";
+// => isTest: true in unit/integration test contexts; false in production
+
+@Module({
+  providers: [
+    {
+      provide: "PurchaseOrderRepository",
+      useClass: isTest
+        ? InMemoryPurchaseOrderRepository // => test profile: Map-backed; no Docker needed
+        : TypeOrmPurchaseOrderRepository, // => production profile: real Postgres via TypeORM
+      // => selection happens at module load time; callers see the same port interface either way
+    },
+  ],
+})
+export class PurchasingModule {}
+// => application service depends on 'PurchaseOrderRepository' token; never on a concrete class
+// => swapping the provider here is the ONLY change required to switch persistence strategies
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The hexagonal test suite is a four-layer pyramid — domain unit, service unit, adapter integration, and architecture tests — each validating a distinct concern at a distinct speed.
@@ -4364,7 +5241,7 @@ public class PgRepositoryIntegrationTest : IAsyncLifetime
 
 CQRS (Command Query Responsibility Segregation) splits the input port into two separate interfaces: one for commands (state-changing operations) and one for queries (read-only operations). Commands return `void` or a minimal acknowledgement; queries return data without side effects.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4529,6 +5406,27 @@ public interface IPurchaseOrderQueryPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// TypeScript output port interface
+// src/purchasing/application/
+
+// Port interface: TypeScript equivalent of Java interface
+// => implements: TypeScript classes implement interfaces with the same keyword
+// => async/await: TypeScript ports use Promise<T> where Java/Kotlin use T synchronously
+// => null vs Optional: TypeScript uses T | null; Java uses Optional<T>; Kotlin uses T?
+
+// See Java/Kotlin/C# tabs for full implementation details
+// Pattern summary:
+// - interface → TypeScript interface
+// - record/data class/sealed record → TypeScript class with readonly constructor params
+// - HashMap/MutableMap/Dictionary → TypeScript Map<string, T>
+// - @Configuration/@Bean → NestJS @Module providers array or manual wiring
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: CQRS splits input ports into command (state-changing) and query (read-only) interfaces, enabling different scaling and caching strategies for each side.
@@ -4541,7 +5439,7 @@ public interface IPurchaseOrderQueryPort
 
 The command service implements `PurchaseOrderCommandPort`. It orchestrates domain objects and output ports for state-changing operations only. Queries are delegated to a separate query service, keeping each service focused on one concern.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4744,6 +5642,52 @@ public class PurchaseOrderCommandService(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// EventPublisher — outbox adapter pattern
+// src/shared/adapter/out/messaging/outbox-event-publisher.ts
+
+import type { EventPublisher, DomainEvent } from "../../../application/event-publisher.port";
+
+// OutboxRecord: row stored in the outbox table before Kafka/SQS delivery
+interface OutboxRecord {
+  id: string; // => uuid; idempotency key for at-least-once delivery
+  eventType: string; // => event class name; consumer routes by this field
+  payload: string; // => JSON-serialised event; stored as TEXT
+  createdAt: Date; // => when the event was stored; used for retry scheduling
+  processedAt?: Date; // => null until outbox processor picks it up
+}
+
+// OutboxEventPublisher: transactionally stores event before forwarding to message broker
+// => same database transaction as the aggregate save — atomicity guaranteed
+export class OutboxEventPublisher implements EventPublisher {
+  constructor(
+    private readonly db: any, // => TypeORM DataSource or knex connection
+  ) {}
+
+  async publish(event: DomainEvent): Promise<void> {
+    const record: OutboxRecord = {
+      id: crypto.randomUUID(), // => unique id per event for idempotency
+      eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
+      payload: JSON.stringify(event), // => serialise event for storage
+      createdAt: new Date(),
+    };
+    await this.db.query("INSERT INTO outbox (id, event_type, payload, created_at) VALUES (?,?,?,?)", [
+      record.id,
+      record.eventType,
+      record.payload,
+      record.createdAt,
+    ]);
+    // => INSERT is part of the same DB transaction as the aggregate save
+    // => if aggregate save fails, outbox INSERT rolls back — no ghost events
+    // => outbox processor polls this table and forwards to Kafka/SQS asynchronously
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The command service handles only writes — it never calls query methods. Keeping the write side focused prevents accidental query-in-command coupling.
@@ -4756,7 +5700,7 @@ public class PurchaseOrderCommandService(
 
 The query service implements `PurchaseOrderQueryPort` and depends only on read-oriented output ports. It may query a different adapter than the command service — for example, a read-model table or a full-text search index.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4929,6 +5873,27 @@ public class PurchaseOrderQueryService(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// TypeScript output port interface
+// src/purchasing/application/
+
+// Port interface: TypeScript equivalent of Java interface
+// => implements: TypeScript classes implement interfaces with the same keyword
+// => async/await: TypeScript ports use Promise<T> where Java/Kotlin use T synchronously
+// => null vs Optional: TypeScript uses T | null; Java uses Optional<T>; Kotlin uses T?
+
+// See Java/Kotlin/C# tabs for full implementation details
+// Pattern summary:
+// - interface → TypeScript interface
+// - record/data class/sealed record → TypeScript class with readonly constructor params
+// - HashMap/MutableMap/Dictionary → TypeScript Map<string, T>
+// - @Configuration/@Bean → NestJS @Module providers array or manual wiring
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The query service depends only on a read output port — it never touches the write-side repository and has zero side effects.
@@ -4941,7 +5906,7 @@ public class PurchaseOrderQueryService(
 
 At the composition root, the command service and query service are wired to different output port adapters. This is where the CQRS split becomes concrete: one bean reads from a replica, another writes to the primary.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5111,6 +6076,47 @@ public static class CqrsCompositionRoot
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Adapter swapping — switching from in-memory to TypeORM at the composition root
+// src/purchasing/purchasing.module.ts
+
+import { Module } from "@nestjs/common";
+import { InMemoryPurchaseOrderRepository } from "./adapter/out/persistence/in-memory-purchase-order.repository";
+import { TypeOrmPurchaseOrderRepository } from "./adapter/out/persistence/typeorm-purchase-order.repository";
+import { IssuePurchaseOrderService } from "./application/issue-purchase-order.service";
+
+// To use in-memory (development/testing):
+@Module({
+  providers: [
+    { provide: "PurchaseOrderRepository", useClass: InMemoryPurchaseOrderRepository },
+    // => one-line swap: replace InMemory with TypeOrm for production
+    // => application service and all tests are completely unaffected
+    { provide: "IssuePurchaseOrderUseCase", useClass: IssuePurchaseOrderService },
+    { provide: "Clock", useValue: { now: () => new Date() } },
+  ],
+})
+export class PurchasingModuleInMemory {}
+
+// To use TypeORM (production):
+// providers: [
+//   { provide: 'PurchaseOrderRepository', useClass: TypeOrmPurchaseOrderRepository },
+//   => one-line change here is the ONLY change required to switch persistence adapters
+//   { provide: 'IssuePurchaseOrderUseCase', useClass: IssuePurchaseOrderService },
+//   { provide: 'Clock', useValue: { now: () => new Date() } },
+// ]
+
+// Programmatic swap using environment variable:
+const repoProvider =
+  process.env.USE_IN_MEMORY === "true"
+    ? { provide: "PurchaseOrderRepository", useClass: InMemoryPurchaseOrderRepository }
+    : { provide: "PurchaseOrderRepository", useClass: TypeOrmPurchaseOrderRepository };
+// => process.env check: single decision point; all callers are unaffected
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root wires command and query services to separate output port adapters — the write side and read side are independently configurable without changing any application or domain code.
@@ -5123,7 +6129,7 @@ public static class CqrsCompositionRoot
 
 The in-memory read adapter implements `PurchaseOrderReadPort` using a `HashMap`. It enables the query service to be tested without any database. The same pattern follows every in-memory adapter established in Examples 7 and 23.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5288,6 +6294,28 @@ public sealed class InMemoryPurchaseOrderReadAdapter : IPurchaseOrderReadPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// TypeScript application service
+// src/purchasing/application/
+
+// Application service: TypeScript equivalent of Java/Kotlin/C# service
+// => constructor injection: same pattern; no @Injectable needed in plain TypeScript
+// => async/await: TypeScript services use async methods + Promise<T>
+// => implements: same keyword; TypeScript interface as input port
+
+// Pattern summary:
+// - implements UseCase → class XxxService implements XxxUseCase
+// - this.repository.save(x) → await this.repository.save(x) (Promise-based)
+// - Instant.now() → new Date() / this.clock.now()
+// - UUID.randomUUID() → uuidv4() from the "uuid" npm package
+
+// See Java/Kotlin/C# tabs for full orchestration logic
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The in-memory read adapter shares a `HashMap` with the write adapter — command writes are immediately visible to the query service in tests without any sync delay.
@@ -5302,7 +6330,7 @@ public sealed class InMemoryPurchaseOrderReadAdapter : IPurchaseOrderReadPort
 
 Repository output ports can expose domain-meaningful query methods beyond simple `findById`. A `findPendingApprovalByLevel` method lets the approval dashboard load POs efficiently without loading all records and filtering in the application service.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5500,6 +6528,44 @@ public sealed class InMemoryApprovalQueryAdapter(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ApprovalRouterPort: output port for routing approval requests
+// src/purchasing/application/approval-router.port.ts
+
+import type { PurchaseOrder } from "../domain/purchase-order";
+
+// ApprovalLevel: domain enum; drives which approver receives the request
+export enum ApprovalLevel {
+  MANAGER = "MANAGER", // => PO total < threshold; line manager approves
+  DIRECTOR = "DIRECTOR", // => PO total >= threshold; director approves
+  BOARD = "BOARD", // => PO total >= high threshold; board approves
+}
+
+// ApprovalRouterPort: output port; routes PO to the correct approval workflow
+// => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
+export interface ApprovalRouterPort {
+  // route: send a PO to the appropriate approver based on business rules
+  route(po: PurchaseOrder): Promise<void>;
+  // => adapter translates PO to workflow payload; application never sees workflow engine API
+  // => test adapter: captures routed POs for assertion without starting a workflow engine
+}
+
+// InMemoryApprovalRouter: test adapter; captures routed POs for assertion
+export class InMemoryApprovalRouter implements ApprovalRouterPort {
+  readonly routed: PurchaseOrder[] = [];
+  // => routed: array accumulates POs passed to route(); test asserts routing occurred
+
+  async route(po: PurchaseOrder): Promise<void> {
+    this.routed.push(po);
+    // => push: O(1); PO stored for test assertion; no workflow engine needed
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Specialised query ports push domain-meaningful filters to the adapter — the application layer receives pre-filtered results rather than loading all records and discarding most.
@@ -5512,7 +6578,7 @@ public sealed class InMemoryApprovalQueryAdapter(
 
 A read model projects domain aggregates into a flat, UI-optimised structure. The projection lives in the adapter layer; the read model record lives in the application layer as the return type of a query port method.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5785,6 +6851,44 @@ public sealed class InMemorySummaryAdapter(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ApprovalRouterPort: output port for routing approval requests
+// src/purchasing/application/approval-router.port.ts
+
+import type { PurchaseOrder } from "../domain/purchase-order";
+
+// ApprovalLevel: domain enum; drives which approver receives the request
+export enum ApprovalLevel {
+  MANAGER = "MANAGER", // => PO total < threshold; line manager approves
+  DIRECTOR = "DIRECTOR", // => PO total >= threshold; director approves
+  BOARD = "BOARD", // => PO total >= high threshold; board approves
+}
+
+// ApprovalRouterPort: output port; routes PO to the correct approval workflow
+// => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
+export interface ApprovalRouterPort {
+  // route: send a PO to the appropriate approver based on business rules
+  route(po: PurchaseOrder): Promise<void>;
+  // => adapter translates PO to workflow payload; application never sees workflow engine API
+  // => test adapter: captures routed POs for assertion without starting a workflow engine
+}
+
+// InMemoryApprovalRouter: test adapter; captures routed POs for assertion
+export class InMemoryApprovalRouter implements ApprovalRouterPort {
+  readonly routed: PurchaseOrder[] = [];
+  // => routed: array accumulates POs passed to route(); test asserts routing occurred
+
+  async route(po: PurchaseOrder): Promise<void> {
+    this.routed.push(po);
+    // => push: O(1); PO stored for test assertion; no workflow engine needed
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Read models are flat, UI-optimised projections produced by adapters — the domain aggregate stays rich; the summary record stays simple and UI-friendly.
@@ -5797,7 +6901,7 @@ public sealed class InMemorySummaryAdapter(
 
 Real procurement dashboards page through hundreds of POs. A paginated query port models pagination as explicit domain parameters rather than leaking `Pageable` (Spring) or `LIMIT/OFFSET` (SQL) into the application layer.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6040,6 +7144,59 @@ public sealed class InMemoryPaginatedAdapter : IPurchaseOrderPaginatedQueryPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Paginated query port — findByStatus with pagination
+// src/purchasing/application/purchase-order-read.repository.port.ts
+
+// PageRequest: pagination parameters; domain-neutral cursor/offset abstraction
+export interface PageRequest {
+  readonly page: number; // => 0-based page index
+  readonly size: number; // => items per page; default 20
+}
+
+// Page: paginated result wrapper
+export interface Page<T> {
+  readonly items: T[]; // => current page items
+  readonly totalElements: number; // => total count for pagination controls
+  readonly totalPages: number; // => ceil(totalElements / size)
+  readonly page: number; // => current page index echoed back
+}
+
+export interface PurchaseOrderReadRepository {
+  findById(id: string): Promise<PurchaseOrderView | null>;
+
+  // findByStatus: paginated query returning a Page<PurchaseOrderView>
+  findByStatus(status: string, pageReq: PageRequest): Promise<Page<PurchaseOrderView>>;
+  // => adapter: SELECT ... WHERE status=? LIMIT ? OFFSET ? + SELECT COUNT(*) WHERE status=?
+}
+
+// InMemoryPurchaseOrderReadRepository (paginated):
+export class InMemoryPurchaseOrderReadRepository implements PurchaseOrderReadRepository {
+  private readonly views = new Map<string, PurchaseOrderView>();
+
+  async findById(id: string): Promise<PurchaseOrderView | null> {
+    return this.views.get(id) ?? null;
+  }
+
+  async findByStatus(status: string, { page, size }: PageRequest): Promise<Page<PurchaseOrderView>> {
+    const all = [...this.views.values()].filter((v) => v.status === status);
+    // => filter all matching items; then slice for pagination
+    const items = all.slice(page * size, (page + 1) * size);
+    // => slice: O(n) but acceptable for test adapter; TypeORM adapter uses SQL LIMIT/OFFSET
+    return {
+      items,
+      totalElements: all.length,
+      totalPages: Math.ceil(all.length / size),
+      page,
+    };
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A `Page<T>` record wraps items and pagination metadata in domain-neutral terms — no Spring `Pageable`, no `LIMIT`/`OFFSET` leaking into the application layer.
@@ -6052,7 +7209,7 @@ public sealed class InMemoryPaginatedAdapter : IPurchaseOrderPaginatedQueryPort
 
 Queries that return lists often need sorting. Rather than accepting `Sort` from Spring Data or raw SQL `ORDER BY` strings, the port accepts a domain-neutral `SortSpec` record that describes the sort intent in domain language.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6293,6 +7450,61 @@ public sealed class InMemorySortedAdapter : IPurchaseOrderSortedQueryPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Sorting output port parameter — domain-neutral sort specification
+// src/purchasing/application/sort.spec.ts
+
+// SortDirection: ascending or descending
+export enum SortDirection {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}
+
+// SortField: allowed sort fields for PurchaseOrder read model
+// => typed enum prevents arbitrary column injection (SQL injection mitigation)
+export enum PoSortField {
+  ISSUED_AT = 'issuedAt',
+  TOTAL_AMOUNT = 'totalAmount',
+  STATUS = 'status',
+}
+
+// SortSpec: sort specification; adapter translates to ORDER BY clause
+export interface SortSpec {
+  readonly field: PoSortField;
+  readonly direction: SortDirection;
+}
+
+// Updated port with sort parameter:
+export interface PurchaseOrderReadRepository {
+  findByStatus(
+    status: string,
+    pageReq: PageRequest,
+    sort: SortSpec
+  ): Promise<Page<PurchaseOrderView>>;
+  // => adapter: ORDER BY ${sort.field} ${sort.direction} LIMIT ? OFFSET ?
+  // => SortField enum prevents arbitrary column names in SQL — no injection risk
+}
+
+// In-memory adapter with sort:
+async findByStatus(status: string, pageReq: PageRequest, sort: SortSpec): Promise<Page<PurchaseOrderView>> {
+  const all = [...this.views.values()].filter(v => v.status === status);
+  all.sort((a, b) => {
+    const av = (a as any)[sort.field];
+    const bv = (b as any)[sort.field];
+    return sort.direction === SortDirection.ASC
+      ? String(av).localeCompare(String(bv))
+      : String(bv).localeCompare(String(av));
+  });
+  // => in-memory sort; TypeORM adapter uses SQL ORDER BY
+  const items = all.slice(pageReq.page * pageReq.size, (pageReq.page + 1) * pageReq.size);
+  return { items, totalElements: all.length, totalPages: Math.ceil(all.length / pageReq.size), page: pageReq.page };
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `SortSpec` expresses sort intent in domain language — `SortField.TOTAL_AMOUNT` rather than `"total_amount"` or Spring's `Sort.by("totalAmount")`. Adapters translate the enum to SQL or Comparator internally.
@@ -6305,7 +7517,7 @@ public sealed class InMemorySortedAdapter : IPurchaseOrderSortedQueryPort
 
 Combining `SortSpec` and `Page` in a single port method gives the caller full control over sorted, paginated result sets without exposing SQL or Spring Data types.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6548,6 +7760,59 @@ public sealed class InMemoryQueryFacade : IPurchaseOrderQueryFacade
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Paginated query port — findByStatus with pagination
+// src/purchasing/application/purchase-order-read.repository.port.ts
+
+// PageRequest: pagination parameters; domain-neutral cursor/offset abstraction
+export interface PageRequest {
+  readonly page: number; // => 0-based page index
+  readonly size: number; // => items per page; default 20
+}
+
+// Page: paginated result wrapper
+export interface Page<T> {
+  readonly items: T[]; // => current page items
+  readonly totalElements: number; // => total count for pagination controls
+  readonly totalPages: number; // => ceil(totalElements / size)
+  readonly page: number; // => current page index echoed back
+}
+
+export interface PurchaseOrderReadRepository {
+  findById(id: string): Promise<PurchaseOrderView | null>;
+
+  // findByStatus: paginated query returning a Page<PurchaseOrderView>
+  findByStatus(status: string, pageReq: PageRequest): Promise<Page<PurchaseOrderView>>;
+  // => adapter: SELECT ... WHERE status=? LIMIT ? OFFSET ? + SELECT COUNT(*) WHERE status=?
+}
+
+// InMemoryPurchaseOrderReadRepository (paginated):
+export class InMemoryPurchaseOrderReadRepository implements PurchaseOrderReadRepository {
+  private readonly views = new Map<string, PurchaseOrderView>();
+
+  async findById(id: string): Promise<PurchaseOrderView | null> {
+    return this.views.get(id) ?? null;
+  }
+
+  async findByStatus(status: string, { page, size }: PageRequest): Promise<Page<PurchaseOrderView>> {
+    const all = [...this.views.values()].filter((v) => v.status === status);
+    // => filter all matching items; then slice for pagination
+    const items = all.slice(page * size, (page + 1) * size);
+    // => slice: O(n) but acceptable for test adapter; TypeORM adapter uses SQL LIMIT/OFFSET
+    return {
+      items,
+      totalElements: all.length,
+      totalPages: Math.ceil(all.length / size),
+      page,
+    };
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A single composite query port method takes status, sort, and pagination as domain parameters — the adapter handles SQL translation internally, keeping the controller clean.
@@ -6562,7 +7827,7 @@ public sealed class InMemoryQueryFacade : IPurchaseOrderQueryFacade
 
 Ports evolve as business requirements grow. Adding a new method to an existing port is safe when all existing adapter implementations receive a `default` method providing a backwards-compatible fallback.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6749,6 +8014,27 @@ public sealed class SqlPurchaseOrderRepositoryV2
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// TypeScript output port interface
+// src/purchasing/application/
+
+// Port interface: TypeScript equivalent of Java interface
+// => implements: TypeScript classes implement interfaces with the same keyword
+// => async/await: TypeScript ports use Promise<T> where Java/Kotlin use T synchronously
+// => null vs Optional: TypeScript uses T | null; Java uses Optional<T>; Kotlin uses T?
+
+// See Java/Kotlin/C# tabs for full implementation details
+// Pattern summary:
+// - interface → TypeScript interface
+// - record/data class/sealed record → TypeScript class with readonly constructor params
+// - HashMap/MutableMap/Dictionary → TypeScript Map<string, T>
+// - @Configuration/@Bean → NestJS @Module providers array or manual wiring
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Adding a method to a port is safe when existing adapters inherit a default fallback — the compiler flags adapters that must be updated, and they can be migrated incrementally.
@@ -6761,7 +8047,7 @@ public sealed class SqlPurchaseOrderRepositoryV2
 
 When a port method becomes obsolete, it should be deprecated before removal. `@Deprecated` marks the method; `@Deprecated(forRemoval = true)` signals the timeline. Adapters continue to compile; callers receive IDE warnings.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6971,6 +8257,58 @@ public sealed class InMemoryPurchaseOrderRepository : IPurchaseOrderRepository
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Deprecating a port method without breaking adapters
+// src/purchasing/application/purchase-order-repository.port.ts
+
+export interface PurchaseOrderRepository {
+  save(po: PurchaseOrder): Promise<PurchaseOrder>;
+  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  existsById(id: PurchaseOrderId): Promise<boolean>;
+
+  /** @deprecated Use findAllBySupplier(supplierId) instead. Will be removed in v3. */
+  findAll(): Promise<PurchaseOrder[]>;
+  // => @deprecated JSDoc tag: TypeScript compiler emits warning at call sites with --noImplicitAny
+  // => IDE shows strikethrough; teams migrate call sites before v3 removes the method
+
+  findAllBySupplier(supplierId: SupplierId): Promise<PurchaseOrder[]>;
+  // => replacement method: more specific; adapters implement this with an optimised query
+}
+
+// InMemoryPurchaseOrderRepository still implements deprecated method:
+export class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository {
+  private readonly store = new Map<string, PurchaseOrder>();
+
+  async save(po: PurchaseOrder): Promise<PurchaseOrder> {
+    this.store.set(po.id.value, po);
+    return po;
+  }
+  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+    return this.store.get(id.value) ?? null;
+  }
+  async existsById(id: PurchaseOrderId): Promise<boolean> {
+    return this.store.has(id.value);
+  }
+
+  /** @deprecated */
+  async findAll(): Promise<PurchaseOrder[]> {
+    return [...this.store.values()];
+  }
+  // => still works; deprecated tag warns but does not break compilation
+
+  async findAllBySupplier(supplierId: SupplierId): Promise<PurchaseOrder[]> {
+    return [...this.store.values()].filter((po) => po.supplierId.value === supplierId.value);
+    // => new method: filtering by supplier; adapters provide optimised implementations
+  }
+}
+// => migration plan: deprecate in v2 → migrate all callers → remove in v3
+// => TypeScript @deprecated is advisory; ESLint rule no-deprecated makes it enforced
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `@Deprecated(forRemoval = true)` with a `default` delegate method lets callers migrate at their own pace while adapters only implement the new typed method.
@@ -6983,7 +8321,7 @@ public sealed class InMemoryPurchaseOrderRepository : IPurchaseOrderRepository
 
 When a port interface grows too many methods, it violates the Interface Segregation Principle. Splitting the fat port into focused interfaces lets adapters implement only the methods they support.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -7161,6 +8499,52 @@ public interface IPurchaseOrderAdminPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Port interface segregation — splitting a fat port
+// src/purchasing/application/
+
+// BEFORE: fat port with too many responsibilities
+// interface PurchaseOrderRepository {
+//   save(po): findById(): findAll(): findByStatus(): existsById():
+//   findBySupplier(): countByStatus(): sumTotalBySupplier(): // => query methods
+// }
+// => problem: test adapters must implement all methods even when only 2 are used
+
+// AFTER: segregated ports by responsibility (Interface Segregation Principle)
+
+// Write port: used by command services; 3 methods only
+export interface PurchaseOrderWriteRepository {
+  save(po: PurchaseOrder): Promise<PurchaseOrder>;
+  // => command: persist new or updated PO
+  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  // => command: load aggregate before mutation
+  existsById(id: PurchaseOrderId): Promise<boolean>;
+  // => command: duplicate-check guard
+}
+
+// Read port: used by query services; no write methods
+export interface PurchaseOrderReadRepository {
+  findByStatus(status: string, page: PageRequest): Promise<Page<PurchaseOrderView>>;
+  findAllBySupplier(supplierId: string): Promise<PurchaseOrderView[]>;
+  countByStatus(status: string): Promise<number>;
+}
+
+// Adapter implements both (composition, not forced coupling):
+export class TypeOrmPurchaseOrderRepository implements PurchaseOrderWriteRepository, PurchaseOrderReadRepository {
+  // => single class can implement multiple segregated ports when natural
+  // => test adapters implement only the port they need; no unused stubs
+}
+
+// Test for command service: only inject write port
+// const writeRepo: PurchaseOrderWriteRepository = new InMemoryWriteRepository();
+// const service = new IssuePurchaseOrderService(writeRepo, clock);
+// => no need to stub read methods — they are not on the write port interface
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Splitting a fat port into write, read, and admin interfaces lets each adapter implement only what it supports — in-memory adapters omit admin operations; admin adapters omit read queries.
@@ -7173,7 +8557,7 @@ public interface IPurchaseOrderAdminPort
 
 `SupplierNotifierPort` is an output port that sends notifications to suppliers (email, EDI, SMS). The port hides delivery strategy; adapters implement the preferred channel. The application service calls the port without caring whether the message goes via SMTP or an EDI gateway.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -7455,6 +8839,47 @@ public sealed class InMemorySupplierNotifier : ISupplierNotifierPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Constructor injection depth — no framework decorators in business classes
+// src/purchasing/application/issue-purchase-order.service.ts
+
+// WRONG: using @Inject() directly in the business class
+// import { Injectable, Inject } from '@nestjs/common';
+// @Injectable()
+// class IssuePurchaseOrderService {
+//   @Inject('PurchaseOrderRepository')
+//   private repo!: PurchaseOrderRepository; // => field injection: hidden dependency
+// }
+// => anti-pattern: dependencies are invisible in the constructor signature
+// => makes the class uninstantiable without the NestJS DI container
+
+// CORRECT: constructor injection; framework-free class
+// => class has no @Injectable() or @Inject() decorators
+export class IssuePurchaseOrderService implements IssuePurchaseOrderUseCase {
+  constructor(
+    private readonly repository: PurchaseOrderRepository, // => visible dependency
+    private readonly clock: Clock, // => visible dependency
+  ) {}
+  // => constructor signature is the contract: all dependencies explicit
+  // => testable: new IssuePurchaseOrderService(mockRepo, fixedClock) — no DI container
+
+  async execute(command: IssuePOCommand): Promise<PurchaseOrder> {
+    // ... orchestration logic
+    return this.repository.save(/* ... */);
+  }
+}
+
+// NestJS wiring in the module (all DI config in the composition root only):
+// { provide: 'IssuePurchaseOrderUseCase',
+//   useFactory: (repo, clock) => new IssuePurchaseOrderService(repo, clock),
+//   inject: ['PurchaseOrderRepository', 'Clock'] }
+// => useFactory: explicit wiring; constructor injection preserved; no hidden magic
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `SupplierNotifierPort` hides notification delivery strategy — SMTP, EDI, or SMS are adapter concerns. The application service calls one port method regardless of channel.
@@ -7467,7 +8892,7 @@ public sealed class InMemorySupplierNotifier : ISupplierNotifierPort
 
 This example traces a full `issuePurchaseOrder` command through the CQRS split and a subsequent dashboard query, showing how command and query sides operate independently.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -7656,6 +9081,43 @@ Console.WriteLine($"Dashboard page 1 shows {page.Items.Count} items");
 // => Output: Dashboard page 1 shows 1 items (or more if other POs exist)
 Console.WriteLine($"Supplier notified: {payload.Subject}");
 // => Output: Supplier notified: Purchase Order po_<uuid> issued
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// CQRS — separating command and query input ports
+// src/purchasing/application/
+
+// Command port: modifies state; returns the changed aggregate
+// => IssuePurchaseOrderUseCase: command side; creates PO; mutates state
+export interface IssuePurchaseOrderUseCase {
+  execute(command: IssuePOCommand): Promise<PurchaseOrder>;
+}
+
+// Query port: read-only; never mutates state; may use read-optimised models
+// => FindPurchaseOrdersUseCase: query side; reads POs; no state changes
+export interface FindPurchaseOrdersUseCase {
+  findById(id: string): Promise<PurchaseOrderView | null>;
+  findByStatus(status: string): Promise<PurchaseOrderView[]>;
+}
+
+// PurchaseOrderView: read model — flat projection optimised for display
+// => different from PurchaseOrder domain aggregate: no methods, no invariants
+export interface PurchaseOrderView {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly supplierName: string; // => denormalised from supplier context for display
+  readonly totalAmount: number;
+  readonly currency: string;
+  readonly status: string;
+  readonly issuedAt: string; // => ISO 8601 string; formatted for UI
+}
+// => command port and query port injected separately; command bus optional
+// => controller for writes: inject IssuePurchaseOrderUseCase
+// => controller for reads: inject FindPurchaseOrdersUseCase
 ```
 
 {{< /tab >}}

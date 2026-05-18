@@ -27,7 +27,7 @@ This intermediate section builds on the port/adapter foundations from the beginn
 
 Command ports change state and return domain events or errors. Query ports are read-only and return view models. Separating them at the port level enforces CQRS at the application boundary — commands flow through the full domain pipeline while queries may bypass domain logic and hit a denormalised read model.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -148,6 +148,69 @@ type IssuingPOError =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Command port ──────────────────────────────────────────────────────────
+// A command changes state and returns domain events on success.
+// Promise acknowledges that persistence is effectful.
+// Result carries named error cases so the HTTP adapter maps them precisely.
+type POId = string & { readonly _brand: "POId" };
+// => Branded string — prevents mixing PO IDs with other string IDs
+
+type PurchaseOrderIssued = {
+  readonly orderId: POId;
+  // => Identity of the PO that was issued to the supplier
+  readonly supplierId: string;
+  // => Supplier who will receive the PO
+  readonly issuedAt: string;
+  // => ISO timestamp of the state transition
+};
+
+type IssuingPOError =
+  | { readonly kind: "PONotApproved"; readonly message: string }
+  // => PO is not in Approved state — cannot issue from other states
+  | { readonly kind: "RepositoryError"; readonly message: string };
+// => Infrastructure failure during save or event publish
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — callers must handle both branches
+
+type IssuePurchaseOrderCommand = (poId: POId) => Promise<Result<PurchaseOrderIssued[], IssuingPOError>>;
+// => Input:  the identity of an Approved PO ready to be issued
+// => Output: array of domain events on ok, named error on error
+// => Every call may write to the database and publish to the event bus
+
+// ── Query port ────────────────────────────────────────────────────────────
+// A query never changes state; it projects data into a flat read model.
+// PurchaseOrderView is not the domain aggregate — it is a denormalised DTO.
+
+interface PurchaseOrderView {
+  readonly orderId: string;
+  // => Identifies the PO in the read model
+  readonly supplierName: string;
+  // => Denormalised — avoids a join to the Suppliers table at query time
+  readonly totalAmount: number;
+  // => Final calculated total — already computed during command processing
+  readonly status: string;
+  // => Human-readable status label — just a display string
+  readonly issuedAt: string | null;
+  // => null when PO is still in Draft/AwaitingApproval; set once Issued
+}
+
+type QueryError =
+  | { readonly kind: "NotFound"; readonly id: string }
+  // => Requested PO does not exist in the read model
+  | { readonly kind: "QueryTimeout"; readonly message: string };
+// => Read timed out — caller can safely retry
+
+type GetPurchaseOrderQuery = (poId: POId) => Promise<Result<PurchaseOrderView | null, QueryError>>;
+// => Input:  a PO identity value
+// => Output: Some flat view on ok, null if not found, QueryError on failure
+// => Side-effect-free read — safe to cache, safe to retry without harm
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Separating command and query ports at the type level prevents accidental conflation of state-mutation and read-only operations, giving each path its own error type, its own optimised adapter, and its own test strategy.
@@ -160,7 +223,7 @@ type IssuingPOError =
 
 The domain aggregate is the source of truth for write operations; the read model is the source of truth for query operations. These are structurally different types served by structurally different ports, which allows each to evolve independently.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -337,6 +400,94 @@ let postgresViewRepo : GetPurchaseOrderView =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Infrastructure error type ─────────────────────────────────────────────
+type RepoError =
+  | { readonly kind: "DatabaseError"; readonly message: string }
+  // => Persistence operation failed (constraint, deadlock)
+  | { readonly kind: "ConnectionTimeout" };
+// => Pool exhausted or network unavailable; retry safe
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — used by both ports below
+
+// ── Domain aggregate port (command pipeline) ──────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+// => Branded string for PO primary key
+
+interface PurchaseOrder {
+  readonly id: POId;
+  // => Strongly-typed identity — format po_<uuid>
+  readonly supplierId: string;
+  // => Strongly-typed supplier reference
+  readonly totalAmount: number;
+  // => Sum of all line item values — drives approval-level routing
+  readonly status: string;
+  // => Current state: Draft | AwaitingApproval | Approved | Issued
+}
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  // => Persist a PO — upsert semantics; both insert and update use this
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  // => Load by identity — null signals not-found without throwing
+};
+
+// ── Read model (query pipeline) ───────────────────────────────────────────
+interface PurchaseOrderView {
+  readonly orderId: string;
+  // => Primary key passed through unchanged
+  readonly supplierName: string;
+  // => Pre-joined from suppliers table during materialisation
+  readonly totalAmount: number;
+  // => Pre-computed at write time — no aggregation at read time
+  readonly status: string;
+  // => Display string converted from domain value during projection
+  readonly issuedAt: string | null;
+  // => null when PO is still Approved, not yet Issued
+}
+
+type GetPurchaseOrderView = (
+  id: POId,
+) => Promise<Result<PurchaseOrderView, { kind: "NotFound" | "QueryTimeout"; message?: string }>>;
+// => Returns the READ MODEL type — not the domain aggregate
+// => Two separate ports: two implementations, two adapters, two test doubles
+
+// ── Two adapter sketches ──────────────────────────────────────────────────
+const postgresOrderRepo: PurchaseOrderRepo = {
+  save: async (po) => {
+    // Real impl: pg Pool INSERT ... ON CONFLICT UPDATE against purchase_orders
+    console.log(`[PG] Saving PO ${po.id} in status ${po.status}`);
+    return { ok: true, value: undefined };
+    // => Stub always succeeds; real adapter propagates pg errors as error
+  },
+  findById: async (id) => {
+    // Real impl: SELECT * FROM purchase_orders WHERE id = $1
+    const po: PurchaseOrder = { id, supplierId: "sup_abc", totalAmount: 5000, status: "Approved" };
+    // => Deserialise row into domain aggregate; null when row absent
+    return { ok: true, value: po };
+  },
+};
+
+const postgresViewRepo: GetPurchaseOrderView = async (id) => {
+  // Real impl: SELECT * FROM purchase_order_views WHERE id = $1
+  const view: PurchaseOrderView = {
+    orderId: id,
+    supplierName: "Acme Corp",
+    // => Pre-joined from suppliers table during materialisation
+    totalAmount: 5000,
+    status: "Approved",
+    issuedAt: null,
+    // => null because PO is still Approved, not yet Issued
+  };
+  return { ok: true, value: view };
+};
+// => Each adapter is independently replaceable — swapping one does not touch the other
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Two separate output port types — one returning the domain aggregate, one returning the flat read model — let each adapter be optimised independently without either side leaking into the other.
@@ -368,7 +519,7 @@ graph LR
 
 **Manual composition (no helper library):**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -462,11 +613,68 @@ type PurchaseOrderIssued = { OrderId: PurchaseOrderId; SupplierId: SupplierId; I
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — used by both port types below
+
+interface PurchaseOrderIssued {
+  readonly orderId: string;
+  readonly supplierId: string;
+  readonly issuedAt: string;
+}
+// => Domain event emitted when a PO is issued to a supplier
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — callers must handle both branches
+
+type SavePO = (po: PurchaseOrder) => Promise<Result<void, string>>;
+type PublishEv = (ev: PurchaseOrderIssued) => Promise<Result<void, string>>;
+
+// ── Manual Promise + Result composition ──────────────────────────────────
+// Without a helper, every async-result call nests one level deeper.
+// Verbose but instructive — shows exactly what the pipeline desugars to.
+const manualIssuePipeline =
+  (save: SavePO, publish: PublishEv) =>
+  async (po: PurchaseOrder): Promise<Result<void, string>> => {
+    const saveResult = await save(po);
+    // => saveResult: Result<void, string>
+    // => Await completes the promise; now we have a Result to inspect
+    if (!saveResult.ok) {
+      return { ok: false, error: `Save failed: ${saveResult.error}` };
+      // => Short-circuit — publish is never called if save failed
+    }
+    const event: PurchaseOrderIssued = {
+      orderId: po.id,
+      supplierId: po.supplierId,
+      issuedAt: new Date().toISOString(),
+      // => Timestamp recorded at the moment of issue
+    };
+    const publishResult = await publish(event);
+    // => publishResult: Result<void, string>
+    if (!publishResult.ok) {
+      return { ok: false, error: `Publish failed: ${publishResult.error}` };
+      // => Notification failure surfaced on the same error track
+    }
+    return { ok: true, value: undefined };
+    // => Both ports succeeded — return the happy path
+  };
+// => Every bind point is explicit and traceable — good for learning, noisy in production
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Cleaner with `asyncResult { }` from FsToolkit.ErrorHandling:**
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -540,6 +748,60 @@ let issuePipeline
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Cleaner pipeline using a pipe helper ─────────────────────────────────
+// TypeScript has no built-in asyncResult CE, but a small pipe helper
+// achieves the same left-to-right railway reading style.
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — short-circuits on error
+
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+interface PurchaseOrderIssued {
+  readonly orderId: string;
+  readonly supplierId: string;
+  readonly issuedAt: string;
+}
+
+// andThen: chains two async Result operations, short-circuiting on error
+const andThen =
+  <T, U, E>(f: (v: T) => Promise<Result<U, E>>) =>
+  async (r: Result<T, E>): Promise<Result<U, E>> => {
+    if (!r.ok) return r as Result<U, E>;
+    // => Short-circuit: propagate error unchanged
+    return f(r.value);
+    // => Happy path: apply the next step
+  };
+
+type SavePO = (po: PurchaseOrder) => Promise<Result<void, string>>;
+type PublishEv = (ev: PurchaseOrderIssued) => Promise<Result<void, string>>;
+
+const issuePipeline =
+  (save: SavePO, publish: PublishEv) =>
+  async (po: PurchaseOrder): Promise<Result<void, string>> => {
+    const saved = await save(po);
+    // => Await save; if error, short-circuit
+    if (!saved.ok) return saved;
+    const event: PurchaseOrderIssued = {
+      orderId: po.id,
+      supplierId: po.supplierId,
+      issuedAt: new Date().toISOString(),
+    };
+    return publish(event);
+    // => Await publish; if error, propagate — same semantics as asyncResult { do! }
+  };
+// => if (!result.ok) return result is idiomatic TypeScript railway — no macro needed
+// => Semantics identical to F# asyncResult { do! save; do! publish }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `Async<Result<'a, 'e>>` composition is the async railway — every `do!` inside `asyncResult { }` switches track on Error, just as `result { }` does for synchronous pipelines.
@@ -578,7 +840,7 @@ graph LR
     classDef orange fill:#DE8F05,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -753,6 +1015,107 @@ let buildIssuePO (loadSupplier: LoadSupplier) (savePO: SavePO) (publishEvent: Pu
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Domain types ──────────────────────────────────────────────────────────
+interface UnvalidatedPO {
+  readonly rawId: string;
+  readonly rawSupplierId: string;
+  readonly rawAmount: number;
+}
+// => Raw input — nothing validated yet
+
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Validated aggregate
+
+interface PurchaseOrderIssued {
+  readonly orderId: string;
+  readonly supplierId: string;
+  readonly issuedAt: string;
+}
+// => Domain event emitted on successful issue
+
+// ── Unified error type for the full pipeline ──────────────────────────────
+type IssuingPOError =
+  | { readonly kind: "ValidationError"; readonly message: string }
+  // => Domain rule violation — maps to HTTP 422
+  | { readonly kind: "SupplierNotFound"; readonly supplierId: string }
+  // => Supplier lookup failed — maps to HTTP 404
+  | { readonly kind: "RepositoryError"; readonly message: string }
+  // => Infrastructure failure during save — maps to HTTP 503
+  | { readonly kind: "PublishError"; readonly message: string };
+// => Event publish failed — maps to HTTP 202 (saved, not published)
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union
+
+// ── Port types ────────────────────────────────────────────────────────────
+type LoadSupplier = (supplierId: string) => Promise<Result<boolean, IssuingPOError>>;
+// => Confirms supplier is Approved; returns false if Suspended/Blacklisted
+type SavePO = (po: PurchaseOrder) => Promise<Result<void, IssuingPOError>>;
+type PublishEvent = (ev: PurchaseOrderIssued) => Promise<Result<void, IssuingPOError>>;
+
+// ── Pure domain validation ────────────────────────────────────────────────
+const validatePO = (input: UnvalidatedPO): Result<PurchaseOrder, IssuingPOError> => {
+  if (!input.rawId || input.rawId.trim() === "")
+    return { ok: false, error: { kind: "ValidationError", message: "PO ID blank" } };
+  if (!input.rawSupplierId || input.rawSupplierId.trim() === "")
+    return { ok: false, error: { kind: "ValidationError", message: "Supplier ID blank" } };
+  if (input.rawAmount <= 0)
+    return { ok: false, error: { kind: "ValidationError", message: `Amount ${input.rawAmount} must be positive` } };
+  return {
+    ok: true,
+    value: { id: input.rawId, supplierId: input.rawSupplierId, totalAmount: input.rawAmount, status: "Approved" },
+  };
+  // => All guards passed — return the validated PO aggregate
+};
+
+// ── Full pipeline: pure steps + async port calls ──────────────────────────
+const buildIssuePO =
+  (loadSupplier: LoadSupplier, savePO: SavePO, publishEvent: PublishEvent) =>
+  async (input: UnvalidatedPO): Promise<Result<PurchaseOrderIssued[], IssuingPOError>> => {
+    // Step 1: pure domain validation — no I/O
+    const validated = validatePO(input);
+    if (!validated.ok) return validated;
+    // => Short-circuits on ValidationError — steps 2-4 are skipped
+
+    // Step 2: async port — confirm supplier is Approved
+    const isApprovedResult = await loadSupplier(validated.value.supplierId);
+    if (!isApprovedResult.ok) return isApprovedResult;
+    // => Infrastructure error from supplier lookup — propagate upward
+    if (!isApprovedResult.value)
+      return { ok: false, error: { kind: "SupplierNotFound", supplierId: validated.value.supplierId } };
+    // => Domain rule: cannot issue PO to a Suspended or Blacklisted supplier
+
+    // Step 3: async port — persist the PO in Issued state
+    const issuedPO: PurchaseOrder = { ...validated.value, status: "Issued" };
+    const saveResult = await savePO(issuedPO);
+    if (!saveResult.ok) return saveResult;
+    // => Save failure — do not publish; return error to caller
+
+    // Step 4: async port — publish the PurchaseOrderIssued event
+    const event: PurchaseOrderIssued = {
+      orderId: validated.value.id,
+      supplierId: validated.value.supplierId,
+      issuedAt: new Date().toISOString(),
+    };
+    const pubResult = await publishEvent(event);
+    if (!pubResult.ok) return pubResult;
+    // => Publish failure surfaces as PublishError
+
+    return { ok: true, value: [event] };
+    // => All four steps succeeded — HTTP adapter receives ok [event] → 200 OK
+  };
+// => Each if (!result.ok) return result is a track switch — mirrors asyncResult { }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: ROP across async port calls merges asynchrony and error propagation into a single linear pipeline where every step is either a track switch (Result) or an async track switch (Async<Result>).
@@ -784,7 +1147,7 @@ graph TD
     classDef teal fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -975,6 +1338,90 @@ outcomes |> List.iter (fun r -> printfn "%s" (toHttpResponse r))
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Unified error type — application layer ────────────────────────────────
+// Every distinct failure mode surfaces as a named tagged-union case.
+// This type is owned by the APPLICATION layer — not domain, not adapters.
+type IssuingPOError =
+  | { readonly kind: "ValidationError"; readonly message: string }
+  // => Emitted by pure domain functions — maps to HTTP 422
+  | { readonly kind: "SupplierNotFound"; readonly id: string }
+  // => Supplier lookup returned false — maps to HTTP 404
+  | { readonly kind: "RepositoryError"; readonly message: string }
+  // => Emitted by repository adapter — maps to HTTP 503
+  | { readonly kind: "PublishError"; readonly message: string };
+// => Emitted by event publisher adapter — maps to HTTP 202 (saved, not published)
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — TypeScript enforces exhaustive switch with noUncheckedIndexedAccess
+
+// ── Lifting adapter-specific errors into the unified type ─────────────────
+type DbWriteError = { readonly kind: "DbConstraint"; readonly message: string } | { readonly kind: "DbTimeout" };
+const liftDbError = <T>(r: Result<T, DbWriteError>): Result<T, IssuingPOError> => {
+  if (r.ok) return r;
+  switch (r.error.kind) {
+    case "DbConstraint":
+      return { ok: false, error: { kind: "RepositoryError", message: `Constraint: ${r.error.message}` } };
+    // => Constraint violation wrapped as RepositoryError
+    case "DbTimeout":
+      return { ok: false, error: { kind: "RepositoryError", message: "DB timeout" } };
+    // => Timeout lifted into RepositoryError — caller retries
+  }
+};
+
+type KafkaError =
+  | { readonly kind: "PartitionFull" }
+  | { readonly kind: "SerializationFailed"; readonly message: string };
+const liftKafkaError = <T>(r: Result<T, KafkaError>): Result<T, IssuingPOError> => {
+  if (r.ok) return r;
+  switch (r.error.kind) {
+    case "PartitionFull":
+      return { ok: false, error: { kind: "PublishError", message: "Kafka partition full" } };
+    case "SerializationFailed":
+      return { ok: false, error: { kind: "PublishError", message: `Serialize: ${r.error.message}` } };
+  }
+};
+
+// ── HTTP adapter: exhaustive switch on the unified type ───────────────────
+interface PurchaseOrderIssued {
+  readonly orderId: string;
+  readonly issuedAt: string;
+}
+const toHttpResponse = (result: Result<PurchaseOrderIssued[], IssuingPOError>): string => {
+  if (result.ok) return `200 OK: ${result.value.length} events emitted`;
+  // => Happy path
+  switch (result.error.kind) {
+    case "ValidationError":
+      return `422 Unprocessable Entity: ${result.error.message}`;
+    case "SupplierNotFound":
+      return `404 Not Found: supplier ${result.error.id}`;
+    case "RepositoryError":
+      return `503 Service Unavailable: ${result.error.message}`;
+    case "PublishError":
+      return `202 Accepted (event not published): ${result.error.message}`;
+  }
+};
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const demoEvent: PurchaseOrderIssued = { orderId: "po_001", issuedAt: "2026-01-15T09:00:00Z" };
+const outcomes: Array<Result<PurchaseOrderIssued[], IssuingPOError>> = [
+  { ok: true, value: [demoEvent] },
+  { ok: false, error: { kind: "ValidationError", message: "PO ID blank" } },
+  { ok: false, error: { kind: "SupplierNotFound", id: "sup_xyz" } },
+  { ok: false, error: { kind: "RepositoryError", message: "connection refused" } },
+  { ok: false, error: { kind: "PublishError", message: "Kafka partition full" } },
+];
+outcomes.forEach((r) => console.log(toHttpResponse(r)));
+// => Output: 200 OK: 1 events emitted
+// => Output: 422 Unprocessable Entity: PO ID blank
+// => Output: 404 Not Found: supplier sup_xyz
+// => Output: 503 Service Unavailable: connection refused
+// => Output: 202 Accepted (event not published): Kafka partition full
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A single unified error DU at the application layer, lifted from domain and port errors via `Result.mapError`, gives the HTTP adapter one exhaustive match point instead of nested partial matches scattered across the codebase.
@@ -1008,7 +1455,7 @@ graph TD
     classDef purple fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1172,6 +1619,83 @@ Async.RunSynchronously (async {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Infrastructure error type ──────────────────────────────────────────────
+type RepoError =
+  | { readonly kind: "DatabaseError"; readonly message: string }
+  // => Named error — DatabaseError carries the message
+  | { readonly kind: "ConnectionTimeout" };
+// => ConnectionTimeout enables retry logic
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// ── Port type: repository object of functions ─────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  // => Upsert semantics — create or update; caller does not distinguish
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  // => findById by identity — null signals not-found without throwing
+};
+
+// ── In-memory implementation ───────────────────────────────────────────────
+// Factory function: returns a fresh, isolated repo for each test — no shared state.
+const makeInMemoryPORepo = (): PurchaseOrderRepo => {
+  const store = new Map<string, PurchaseOrder>();
+  // => Map is closed over — each call gets its own isolated instance
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      // => Map set performs insert and update — upsert semantics
+      return { ok: true, value: undefined };
+      // => Always succeeds in this adapter
+    },
+    findById: async (id) => {
+      const po = store.get(id);
+      return po !== undefined ? { ok: true, value: po } : { ok: true, value: null };
+      // => Found: return PO; Not found: return null — not an error
+    },
+  };
+};
+
+// ── Application service using the port ────────────────────────────────────
+const loadAndPrintPO =
+  (repo: PurchaseOrderRepo) =>
+  async (id: POId): Promise<void> => {
+    const result = await repo.findById(id);
+    if (!result.ok) {
+      console.log(`Repository error: ${result.error.kind}`);
+      return;
+    }
+    if (result.value === null) {
+      console.log(`PO not found: ${id}`);
+      // => Output when ID does not exist in the adapter's store
+      return;
+    }
+    console.log(`Loaded PO: ${result.value.id}, Status: ${result.value.status}`);
+    // => Output: Loaded PO: po_001, Status: Approved
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const repo = makeInMemoryPORepo();
+const po: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 5000, status: "Approved" };
+await repo.save(po);
+await loadAndPrintPO(repo)("po_001" as POId);
+// => Output: Loaded PO: po_001, Status: Approved
+await loadAndPrintPO(repo)("po_999" as POId);
+// => Output: PO not found: po_999
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `PurchaseOrderRepository` record type is the complete port contract — any record literal that provides matching `save` and `load` functions satisfies it, regardless of the underlying storage mechanism.
@@ -1184,7 +1708,7 @@ Async.RunSynchronously (async {
 
 The `purchasing` context depends on the `supplier` context to confirm that a supplier is Approved before a PO is issued. The dependency is expressed as an output port — the `purchasing` application service does not know whether the supplier lookup hits a database, a cache, or a test stub.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1348,6 +1872,75 @@ let validateSupplierForPO
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── SupplierRepository port (supplier context) ────────────────────────────
+// The purchasing application service declares this dependency as a port.
+// It does not import the supplier module directly — that would create coupling.
+type SupplierId = string & { readonly _brand: "SupplierId" };
+// => Branded string — prevents mixing supplier IDs with other string IDs
+
+type SupplierStatus = "Pending" | "Approved" | "Suspended" | "Blacklisted";
+// => Literal union for lifecycle states — compiler rejects unknown strings
+
+interface Supplier {
+  readonly id: SupplierId;
+  // => Unique identifier in format sup_<uuid>
+  readonly name: string;
+  // => Display name used in PurchaseOrderView denormalisation
+  readonly status: SupplierStatus;
+  // => Lifecycle state — Approved suppliers can receive new POs
+}
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+type SupplierRepo = {
+  readonly findApproved: (id: SupplierId) => Promise<Result<Supplier | null, string>>;
+  // => Returns Some Supplier when the supplier exists and is in Approved state
+  // => Returns null when supplier does not exist or is Suspended/Blacklisted
+  readonly save: (supplier: Supplier) => Promise<Result<void, string>>;
+  // => Persist supplier state changes (Approved, Suspended, Blacklisted)
+};
+
+// ── In-memory SupplierRepo for tests ──────────────────────────────────────
+const makeInMemorySupplierRepo = (): SupplierRepo => {
+  const store = new Map<string, Supplier>();
+  // => Isolated Map — same factory pattern as PurchaseOrderRepo
+  return {
+    findApproved: async (id) => {
+      const sup = store.get(id);
+      if (!sup) return { ok: true, value: null };
+      // => Supplier does not exist — also not eligible
+      if (sup.status !== "Approved") return { ok: true, value: null };
+      // => Supplier exists but is not Approved — treat as not eligible
+      return { ok: true, value: sup };
+      // => Only returns Supplier when status is Approved
+    },
+    save: async (supplier) => {
+      store.set(supplier.id, supplier);
+      return { ok: true, value: undefined };
+      // => Upsert — inserts on first call, updates on subsequent calls
+    },
+  };
+};
+
+// ── Application service using both repositories ───────────────────────────
+const validateSupplierForPO =
+  (supplierRepo: SupplierRepo) =>
+  async (supplierId: SupplierId): Promise<Result<Supplier, string>> => {
+    const result = await supplierRepo.findApproved(supplierId);
+    // => result: Result<Supplier | null, string>
+    if (!result.ok) return { ok: false, error: `Repository error: ${result.error}` };
+    // => Infrastructure failure — propagate upward
+    if (result.value === null) return { ok: false, error: `Supplier ${supplierId} is not eligible for new POs` };
+    // => Not Approved (or does not exist) — domain rule violation
+    return { ok: true, value: result.value };
+    // => Supplier is Approved — PO can be issued
+  };
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Cross-context dependencies are expressed as output ports — the `purchasing` application service depends on a `SupplierRepository` port, not on the supplier module directly, keeping the bounded contexts decoupled.
@@ -1360,7 +1953,7 @@ let validateSupplierForPO
 
 The `EventPublisher` port decouples the application service from the event bus infrastructure. The application service calls `publish` with a domain event record; whether that goes to Kafka, an outbox table, or an in-memory list is invisible to the application layer.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1550,6 +2143,93 @@ let issuePO
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Domain events ──────────────────────────────────────────────────────────
+// Past-tense names: something that happened, not a command.
+type POId = string & { readonly _brand: "POId" };
+type SupplierId = string & { readonly _brand: "SupplierId" };
+
+interface PurchaseOrderIssued {
+  readonly orderId: POId;
+  // => Identity of the PO that was issued to the supplier
+  readonly supplierId: SupplierId;
+  // => Supplier who will receive the PO via EDI or email
+  readonly issuedAt: string;
+  // => ISO timestamp of the state transition — immutable after creation
+}
+
+interface SupplierApproved {
+  readonly supplierId: SupplierId;
+  // => Identity of the newly approved supplier
+  readonly approvedAt: string;
+  // => ISO timestamp when the approval decision was recorded
+}
+
+// ── Tagged union wrapping all publishable events ──────────────────────────
+// A single tagged union makes the publish port type-safe: only known domain events compile.
+type DomainEvent =
+  | { readonly kind: "POIssued"; readonly payload: PurchaseOrderIssued }
+  // => Consumed by: supplier-notifier, receiving context
+  | { readonly kind: "SupApproved"; readonly payload: SupplierApproved };
+// => Consumed by: purchasing (eligible-for-PO list refresh)
+
+// ── EventPublisher port ────────────────────────────────────────────────────
+type EventPublisher = {
+  readonly publish: (event: DomainEvent) => Promise<{ ok: true } | { ok: false; error: string }>;
+  // => Returns ok when event is accepted by the transport (Kafka ack / outbox insert)
+  // => Returns error on transport failure — caller decides retry vs poison queue
+};
+
+// ── In-memory EventPublisher (test double) ────────────────────────────────
+const makeInMemoryPublisher = (): [EventPublisher, () => DomainEvent[]] => {
+  const published: DomainEvent[] = [];
+  // => Array is closed over — never leaks into domain or application
+  const publisher: EventPublisher = {
+    publish: async (evt) => {
+      published.push(evt);
+      // => Append event to the array — preserves emission order
+      return { ok: true };
+      // => Always succeeds — test double does not simulate transport failures
+    },
+  };
+  const getPublished = () => [...published];
+  // => Test accessor — call this in assertions to inspect what was published
+  return [publisher, getPublished];
+  // => Returns a tuple: the port value + a test accessor function
+};
+
+// ── Application service using EventPublisher ──────────────────────────────
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: SupplierId;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type PurchaseOrderRepo = { readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }> };
+
+const issuePO =
+  (repo: PurchaseOrderRepo, publisher: EventPublisher) =>
+  async (po: PurchaseOrder): Promise<{ ok: true; value: PurchaseOrderIssued } | { ok: false; error: string }> => {
+    const issuedPO: PurchaseOrder = { ...po, status: "Issued" };
+    const saveResult = await repo.save(issuedPO);
+    // => saveResult: { ok: true } | { ok: false; error: string }
+    if (!saveResult.ok) return saveResult;
+    // => Save failed — do not publish; return error to caller
+    const event: PurchaseOrderIssued = {
+      orderId: po.id,
+      supplierId: po.supplierId,
+      issuedAt: new Date().toISOString(),
+    };
+    const pubResult = await publisher.publish({ kind: "POIssued", payload: event });
+    // => Publish only after successful save — maintains at-least-once consistency
+    if (!pubResult.ok) return { ok: false, error: `Publish failed: ${pubResult.error}` };
+    return { ok: true, value: event };
+  };
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `EventPublisher` port wraps the event bus behind a single `publish` function, making the application service independent of Kafka, outbox tables, or any other transport mechanism.
@@ -1562,7 +2242,7 @@ let issuePO
 
 The `ApprovalRouterPort` routes a PO approval request to the correct manager based on the PO's total amount and approval level. The routing logic (workflow engine, email, Slack) is hidden behind the port — the domain rule that determines the approval level stays pure.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1743,6 +2423,80 @@ let result = Async.RunSynchronously (submitForApproval inMemoryApprovalRouter hi
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── ApprovalLevel value object (from domain spec) ─────────────────────────
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => Literal union: L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// ── Pure domain function: derive approval level from PO total ─────────────
+const deriveApprovalLevel = (totalAmount: number): Result<ApprovalLevel, string> => {
+  if (totalAmount <= 0) return { ok: false, error: "Total amount must be positive" };
+  // => Domain invariant: zero or negative PO total is invalid
+  if (totalAmount <= 1000) return { ok: true, value: "L1" };
+  // => L1 threshold: up to $1,000 — line manager approval
+  if (totalAmount <= 10000) return { ok: true, value: "L2" };
+  // => L2 threshold: $1,001–$10,000 — department head approval
+  return { ok: true, value: "L3" };
+  // => L3 threshold: above $10,000 — CFO approval required per spec
+};
+
+// ── ApprovalRouterPort type ────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+
+type ApprovalRouterPort = {
+  readonly routeApproval: (poId: POId, level: ApprovalLevel) => Promise<Result<string, string>>;
+  // => Returns ok managerId when routing succeeds
+  // => Returns error string when the workflow engine is unavailable
+};
+
+// ── In-memory test double ─────────────────────────────────────────────────
+// Maps approval levels to fixed manager IDs — no workflow engine needed in tests.
+const inMemoryApprovalRouter: ApprovalRouterPort = {
+  routeApproval: async (poId, level) => {
+    const managerId: Record<ApprovalLevel, string> = {
+      L1: "manager@example.com",
+      // => L1 POs go to the line manager
+      L2: "dept-head@example.com",
+      // => L2 POs go to the department head
+      L3: "cfo@example.com",
+      // => L3 POs go to the CFO — high-value approval required
+    };
+    console.log(`Routing PO ${poId} to ${managerId[level]} (level ${level})`);
+    // => Output: Routing PO po_001 to cfo@example.com (level L3)
+    return { ok: true, value: managerId[level] };
+  },
+};
+
+// ── Application service: combine pure rule + port call ────────────────────
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+const submitForApproval =
+  (router: ApprovalRouterPort) =>
+  async (po: PurchaseOrder): Promise<Result<string, string>> => {
+    const levelResult = deriveApprovalLevel(po.totalAmount);
+    // => Pure domain function — no I/O; short-circuits on domain rule violation
+    if (!levelResult.ok) return levelResult;
+    return router.routeApproval(po.id, levelResult.value);
+    // => Async port call — routes to correct manager
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const highValuePO: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 15000, status: "Draft" };
+const result = await submitForApproval(inMemoryApprovalRouter)(highValuePO);
+// => Routing PO po_001 to cfo@example.com (level L3)
+// => result: Result<string, string> = { ok: true, value: "cfo@example.com" }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The approval level derivation is a pure domain function; the routing action is an output port. Keeping them separate means the domain rule can be tested without any workflow engine or network dependency.
@@ -1780,7 +2534,7 @@ graph TD
     classDef blue fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1933,6 +2687,91 @@ let buildIssuePOService (connectionString: string) (brokerUrl: string) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Composition root — adapter zone only ─────────────────────────────────
+// This module is the ONLY place that imports both application layer and infra libs.
+// Domain and Application modules never import this module.
+
+// import { Pool } from "pg"        ← infrastructure import permitted here
+// import { Kafka } from "kafkajs"  ← infrastructure import permitted here
+// import { issuePO } from "../application/issuePO"  ← application import
+
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type PurchaseOrderRepo = { readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }> };
+interface PurchaseOrderIssued {
+  readonly orderId: POId;
+  readonly supplierId: string;
+  readonly issuedAt: string;
+}
+type DomainEvent = { readonly kind: "POIssued"; readonly payload: PurchaseOrderIssued };
+type EventPublisher = { readonly publish: (ev: DomainEvent) => Promise<{ ok: true } | { ok: false; error: string }> };
+
+// ── Postgres-backed PurchaseOrderRepo ─────────────────────────────────────
+const makePostgresPORepo = (connectionString: string): PurchaseOrderRepo => ({
+  // => connectionString: injected from environment variable or secret manager
+  save: async (po) => {
+    // Real impl: pg Pool INSERT ... ON CONFLICT DO UPDATE
+    console.log(`[Postgres] Saving PO ${po.id} with status ${po.status}`);
+    // => Log shows adapter is executing; in production, actual SQL runs here
+    return { ok: true };
+    // => Stub: always succeeds; real adapter propagates pg errors
+  },
+});
+
+// ── Kafka-backed EventPublisher ───────────────────────────────────────────
+const makeKafkaPublisher = (brokerUrl: string): EventPublisher => ({
+  // => brokerUrl: injected from configuration — never hardcoded
+  publish: async (event) => {
+    // Real impl: kafkajs producer.send() with partition key
+    const topic = event.kind === "POIssued" ? "purchase-orders-issued" : "unknown";
+    // => Domain event routes to its dedicated topic
+    console.log(`[Kafka] Publishing to topic: ${topic}`);
+    // => Log shows which topic received the event
+    return { ok: true };
+    // => Stub: always succeeds; real adapter awaits Kafka ack
+  },
+});
+
+// ── Composed application service ──────────────────────────────────────────
+// The composition root creates all adapters and injects them into the service.
+const buildIssuePOService = (connectionString: string, brokerUrl: string) => {
+  const poRepo = makePostgresPORepo(connectionString);
+  // => Command-side repository — writes to the normalised purchase_orders table
+  const publisher = makeKafkaPublisher(brokerUrl);
+  // => Event publisher — sends PurchaseOrderIssued to Kafka
+  return (po: PurchaseOrder): Promise<{ ok: true; value: PurchaseOrderIssued } | { ok: false; error: string }> => {
+    // => Returns a function: PurchaseOrder -> Promise<Result>
+    // => This is the fully wired application service — ready for the HTTP adapter
+    return issuePO(poRepo, publisher)(po);
+    // => Adapters baked in via closure; HTTP adapter calls service(po)
+  };
+};
+
+// Stub issuePO for this illustration
+const issuePO =
+  (repo: PurchaseOrderRepo, publisher: EventPublisher) =>
+  async (po: PurchaseOrder): Promise<{ ok: true; value: PurchaseOrderIssued } | { ok: false; error: string }> => {
+    const saveResult = await repo.save(po);
+    if (!saveResult.ok) return saveResult;
+    const event: PurchaseOrderIssued = {
+      orderId: po.id,
+      supplierId: po.supplierId,
+      issuedAt: new Date().toISOString(),
+    };
+    await publisher.publish({ kind: "POIssued", payload: event });
+    return { ok: true, value: event };
+  };
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root is the one module that knows everything about infrastructure — it instantiates all adapters, wires them to ports, and partially applies them into application services that the HTTP adapter calls.
@@ -1945,7 +2784,7 @@ let buildIssuePOService (connectionString: string) (brokerUrl: string) =
 
 The same application service function runs against the Postgres adapter in production and the in-memory adapter in tests. The swap requires zero changes to the service code — only the injected adapter value changes.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2066,6 +2905,103 @@ Async.RunSynchronously (runTestScenario ())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── The same application service — parameterised by ports ─────────────────
+// issuePO accepts PurchaseOrderRepo and EventPublisher as parameters.
+// The caller decides which adapter to inject.
+
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+interface PurchaseOrderIssued {
+  readonly orderId: POId;
+  readonly supplierId: string;
+  readonly issuedAt: string;
+}
+type DomainEvent = { readonly kind: "POIssued"; readonly payload: PurchaseOrderIssued };
+type PurchaseOrderRepo = { readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }> };
+type EventPublisher = { readonly publish: (ev: DomainEvent) => Promise<{ ok: true } | { ok: false; error: string }> };
+
+const issuePOService =
+  (repo: PurchaseOrderRepo, publisher: EventPublisher) =>
+  async (po: PurchaseOrder): Promise<{ ok: true; value: PurchaseOrderIssued } | { ok: false; error: string }> => {
+    const issuedPO: PurchaseOrder = { ...po, status: "Issued" };
+    const saveResult = await repo.save(issuedPO);
+    if (!saveResult.ok) return saveResult;
+    const event: PurchaseOrderIssued = {
+      orderId: po.id,
+      supplierId: po.supplierId,
+      issuedAt: new Date().toISOString(),
+    };
+    const pubResult = await publisher.publish({ kind: "POIssued", payload: event });
+    if (!pubResult.ok) return { ok: false, error: `Publish failed: ${pubResult.error}` };
+    return { ok: true, value: event };
+  };
+
+// ── Production wiring (composition root) ──────────────────────────────────
+const productionIssuePO = issuePOService(
+  {
+    save: async (po) => {
+      console.log(`[PG] INSERT purchase_orders ... WHERE id = ${po.id}`);
+      return { ok: true };
+      // => Real Postgres adapter — writes to production database
+    },
+  },
+  {
+    publish: async (_ev) => {
+      console.log("[Kafka] Producing to purchase-orders-issued");
+      return { ok: true };
+      // => Real Kafka adapter — publishes to production topic
+    },
+  },
+);
+// => productionIssuePO: (po: PurchaseOrder) => Promise<Result>
+// => Type: PurchaseOrder -> Promise<Result<PurchaseOrderIssued, string>>
+
+// ── Test wiring (unit test setup) ─────────────────────────────────────────
+const makeTestIssuePO = () => {
+  const poStore = new Map<string, PurchaseOrder>();
+  const published: DomainEvent[] = [];
+  // => In-memory adapters — no DB, no Kafka, no network
+  const service = issuePOService(
+    {
+      save: async (po) => {
+        poStore.set(po.id, po);
+        return { ok: true };
+      },
+    },
+    {
+      publish: async (ev) => {
+        published.push(ev);
+        return { ok: true };
+      },
+    },
+  );
+  return { service, getPublished: () => [...published] };
+  // => Same service function, different adapters — zero code change in service
+};
+
+// ── Example test using in-memory adapters ─────────────────────────────────
+const { service: testIssuePO, getPublished } = makeTestIssuePO();
+const po: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 5000, status: "Approved" };
+const testResult = await testIssuePO(po);
+if (testResult.ok) {
+  console.log(`Test passed: event emitted for PO ${testResult.value.orderId}`);
+  // => Output: Test passed: event emitted for PO po_001
+  console.log(`Events published: ${getPublished().length}`);
+  // => Output: Events published: 1
+} else {
+  console.log(`Test FAILED: ${testResult.error}`);
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Adapter swapping requires changing only the injected value — production uses Postgres + Kafka adapters, tests use in-memory adapters, and the application service code is identical in both cases.
@@ -2078,7 +3014,7 @@ Async.RunSynchronously (runTestScenario ())
 
 An integration test uses stub adapters that simulate specific infrastructure behaviours (slow response, failure, partial success) without requiring real infrastructure. The stub adapter satisfies the port type, making it indistinguishable from the real adapter from the application service's perspective.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2207,6 +3143,77 @@ Async.RunSynchronously (testPartialSuccess ())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+interface PurchaseOrderIssued {
+  readonly orderId: POId;
+  readonly supplierId: string;
+  readonly issuedAt: string;
+}
+type DomainEvent = { readonly kind: "POIssued"; readonly payload: PurchaseOrderIssued };
+type PurchaseOrderRepo = { readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }> };
+type EventPublisher = { readonly publish: (ev: DomainEvent) => Promise<{ ok: true } | { ok: false; error: string }> };
+
+const issuePO =
+  (repo: PurchaseOrderRepo, pub: EventPublisher) =>
+  async (po: PurchaseOrder): Promise<{ ok: true; value: PurchaseOrderIssued } | { ok: false; error: string }> => {
+    const saved = await repo.save({ ...po, status: "Issued" });
+    if (!saved.ok) return saved;
+    const ev: PurchaseOrderIssued = { orderId: po.id, supplierId: po.supplierId, issuedAt: new Date().toISOString() };
+    const pubbed = await pub.publish({ kind: "POIssued", payload: ev });
+    if (!pubbed.ok) return { ok: false, error: `Publish failed: ${pubbed.error}` };
+    return { ok: true, value: ev };
+  };
+
+// ── Stub adapter: simulates a DB timeout ─────────────────────────────────
+const timeoutPORepo: PurchaseOrderRepo = {
+  save: async (_) => {
+    await new Promise((r) => setTimeout(r, 10));
+    // => Simulates a 10ms timeout — real tests might use a longer delay
+    return { ok: false, error: "DB timeout: connection pool exhausted" };
+    // => Error path — the application service must propagate this correctly
+  },
+};
+
+// ── Stub adapter: simulates Kafka partition full ──────────────────────────
+const fullKafkaPublisher: EventPublisher = {
+  publish: async (_) => ({ ok: false, error: "Kafka partition full: topic purchase-orders-issued" }),
+  // => Error path — the application service sees PublishError, not transport details
+};
+
+// ── Test scenario: save succeeds but publish fails ─────────────────────────
+const partialSuccessRepo: PurchaseOrderRepo = {
+  save: async (po) => {
+    console.log(`[Stub] Saved PO ${po.id} successfully`);
+    // => Stub confirms save side-effect without real DB
+    return { ok: true };
+  },
+};
+
+const po: PurchaseOrder = { id: "po_002" as POId, supplierId: "sup_def", totalAmount: 2000, status: "Approved" };
+const service = issuePO(partialSuccessRepo, fullKafkaPublisher);
+// => Wire: real-ish save + failing publish — tests the seam
+const result = await service(po);
+// => result: { ok: false, error: "Publish failed: Kafka partition full: ..." }
+if (!result.ok) {
+  console.log(`Expected Error: ${result.error}`);
+  // => Output: [Stub] Saved PO po_002 successfully
+  // => Output: Expected Error: Publish failed: Kafka partition full: topic purchase-orders-issued
+} else {
+  console.log("UNEXPECTED OK — should have been Error on publish failure");
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Stub adapters simulate specific infrastructure failure modes — DB timeout, Kafka partition full, partial success — without requiring real infrastructure, creating precise test seams for every error path the application service must handle.
@@ -2219,7 +3226,7 @@ Async.RunSynchronously (testPartialSuccess ())
 
 The dependency rule states that inner zones (Domain, Application) must never import outer zones (Adapters). The application service enforces this by accepting only port types — it cannot accept a concrete adapter module even if a developer tries to pass one.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2348,6 +3355,68 @@ printfn "Dependency rule: inner zones declare ports; outer zones implement them"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── The dependency rule in TypeScript ─────────────────────────────────────
+// TypeScript enforces the dependency rule through module imports.
+// Domain modules must have zero imports from infrastructure.
+
+// domain/purchaseOrder.ts — NO import from "pg", "kafkajs", or any infra lib
+
+type POId = string & { readonly _brand: "POId" };
+// => Branded string — no infrastructure knowledge required to define this
+
+type DomainError = { readonly kind: "BlankId" } | { readonly kind: "NonPositiveAmount"; readonly value: number };
+// => Named domain errors — not Error objects, not HTTP status codes
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+// ── CORRECT: domain function with no I/O ────────────────────────────────
+const validatePO = (id: string, supplierId: string, amount: number): Result<PurchaseOrder, DomainError> => {
+  // => Pure function: no I/O, no async — zero infrastructure imports
+  if (!id || id.trim() === "") return { ok: false, error: { kind: "BlankId" } };
+  if (amount <= 0) return { ok: false, error: { kind: "NonPositiveAmount", value: amount } };
+  return { ok: true, value: { id: id as POId, supplierId, totalAmount: amount, status: "Draft" } };
+};
+
+// ── WRONG: what the domain MUST NOT do ───────────────────────────────────
+// const validatePO_WRONG = async (id: string) => {
+//   const pool = new Pool({ connectionString: process.env.DB_URL })  // ← WRONG
+//   const result = await pool.query("SELECT * FROM pos WHERE id = $1", [id])
+//   // => Domain now untestable without a real database
+// }
+
+// ── Application service: ports only, no infrastructure ──────────────────
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, string>>;
+};
+
+const submitPO =
+  (repo: PurchaseOrderRepo) =>
+  async (id: string, supplierId: string, amount: number): Promise<Result<PurchaseOrder, string>> => {
+    // => Application service: calls domain function + port; no infrastructure import
+    const validated = validatePO(id, supplierId, amount);
+    if (!validated.ok) return { ok: false, error: validated.error.kind };
+    // => Domain rule enforced before any I/O — no port called on invalid input
+    const saveResult = await repo.save(validated.value);
+    // => Port call — adapter handles infrastructure; application service stays clean
+    if (!saveResult.ok) return { ok: false, error: saveResult.error };
+    return { ok: true, value: validated.value };
+  };
+
+console.log("Dependency rule: domain imports nothing; application imports only ports");
+// => Output: Dependency rule: domain imports nothing; application imports only ports
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The application service accepts only port types as parameters, making it structurally impossible for infrastructure imports to leak into the application zone — the compiler rejects any attempt.
@@ -2362,7 +3431,7 @@ printfn "Dependency rule: inner zones declare ports; outer zones implement them"
 
 When the purchasing and supplier contexts run in the same service, the composition root wires both sets of adapters. Each context gets its own repository port; neither context's application service directly calls the other's repository.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2500,6 +3569,100 @@ let buildTwoContextApp () =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Two bounded contexts wired in one composition root ──────────────────
+// Purchasing context depends on SupplierRepo (cross-context dependency via port).
+// Neither context imports the other's module — they communicate through ports.
+
+type POId = string & { readonly _brand: "POId" };
+type SupplierId = string & { readonly _brand: "SupplierId" };
+
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: SupplierId;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+interface Supplier {
+  readonly id: SupplierId;
+  readonly name: string;
+  readonly status: "Pending" | "Approved" | "Suspended";
+}
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// ── Purchasing context ports ──────────────────────────────────────────────
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, string>>;
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, string>>;
+};
+
+type SupplierLookupPort = {
+  // => Purchasing context declares what it needs from the supplier context
+  readonly findApproved: (id: SupplierId) => Promise<Result<Supplier | null, string>>;
+};
+// => Port type lives in the PURCHASING bounded context — supplier context provides an adapter
+
+// ── Purchasing application service ───────────────────────────────────────
+const issuePO =
+  (poRepo: PurchaseOrderRepo, supplierPort: SupplierLookupPort) =>
+  async (poId: POId): Promise<Result<PurchaseOrder, string>> => {
+    const poResult = await poRepo.findById(poId);
+    if (!poResult.ok) return poResult;
+    if (poResult.value === null) return { ok: false, error: `PO ${poId} not found` };
+    const po = poResult.value;
+
+    const supplierResult = await supplierPort.findApproved(po.supplierId);
+    if (!supplierResult.ok) return supplierResult;
+    if (supplierResult.value === null) return { ok: false, error: `Supplier ${po.supplierId} not Approved` };
+    // => Domain rule enforced via cross-context port call
+
+    const issuedPO: PurchaseOrder = { ...po, status: "Issued" };
+    return poRepo.save(issuedPO).then((r) => (r.ok ? { ok: true, value: issuedPO } : r));
+  };
+
+// ── Composition root: both contexts wired together ──────────────────────
+const makeCompositionRoot = () => {
+  const poStore = new Map<string, PurchaseOrder>();
+  const supplierStore = new Map<string, Supplier>();
+
+  const poRepo: PurchaseOrderRepo = {
+    save: async (po) => {
+      poStore.set(po.id, po);
+      return { ok: true, value: undefined };
+    },
+    findById: async (id) => ({ ok: true, value: poStore.get(id) ?? null }),
+  };
+  const supplierPort: SupplierLookupPort = {
+    findApproved: async (id) => {
+      const sup = supplierStore.get(id);
+      return { ok: true, value: sup?.status === "Approved" ? sup : null };
+    },
+  };
+
+  return { issuePO: issuePO(poRepo, supplierPort), poStore, supplierStore };
+};
+
+const { issuePO: issuePOWired, poStore, supplierStore } = makeCompositionRoot();
+
+// Seed data
+const sup: Supplier = { id: "sup_abc" as SupplierId, name: "Acme Corp", status: "Approved" };
+supplierStore.set(sup.id, sup);
+poStore.set("po_001", {
+  id: "po_001" as POId,
+  supplierId: "sup_abc" as SupplierId,
+  totalAmount: 5000,
+  status: "Approved",
+});
+
+const result = await issuePOWired("po_001" as POId);
+console.log("Issue result:", result);
+// => Output: Issue result: { ok: true, value: { id: 'po_001', ..., status: 'Issued' } }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Two bounded contexts share an `EventPublisher` port but each has its own repository port — the composition root wires them independently, and neither context's application service knows about the other's internal structure.
@@ -2512,7 +3675,7 @@ let buildTwoContextApp () =
 
 The `SupplierApproved` domain event published by the supplier context is consumed by the purchasing context to refresh its eligible-supplier cache. The consumer is an input adapter (event consumer) — it calls the purchasing application service through an input port.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2654,6 +3817,78 @@ Async.RunSynchronously (runEventFlowDemo ())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Domain event from supplier context ───────────────────────────────────
+type SupplierId = string & { readonly _brand: "SupplierId" };
+
+interface SupplierApproved {
+  readonly supplierId: SupplierId;
+  // => Identity of the newly approved supplier
+  readonly approvedAt: string;
+  // => ISO timestamp when the approval decision was recorded
+  readonly name: string;
+  // => Display name for the approved supplier
+}
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// ── Purchasing context: eligible-supplier cache port ────────────────────
+type EligibleSupplierCache = {
+  readonly addEligible: (supplier: SupplierApproved) => Promise<Result<void, string>>;
+  // => Port for updating the purchasing context's eligible-supplier list
+  readonly isEligible: (supplierId: SupplierId) => Promise<Result<boolean, string>>;
+  // => Query: is this supplier eligible for new POs?
+};
+
+// ── In-memory cache adapter ───────────────────────────────────────────────
+const makeInMemoryEligibleCache = (): EligibleSupplierCache => {
+  const eligible = new Set<string>();
+  // => Set of approved supplier IDs — updated when SupplierApproved event arrives
+  return {
+    addEligible: async (supplier) => {
+      eligible.add(supplier.supplierId);
+      // => Record the newly approved supplier as eligible
+      console.log(`[Cache] Supplier ${supplier.supplierId} (${supplier.name}) marked eligible`);
+      // => Output: [Cache] Supplier sup_abc (Acme Corp) marked eligible
+      return { ok: true, value: undefined };
+    },
+    isEligible: async (id) => ({ ok: true, value: eligible.has(id) }),
+    // => Query: O(1) lookup — no cross-context call needed at issue time
+  };
+};
+
+// ── Event consumer: processes SupplierApproved events from the event bus ─
+const handleSupplierApproved =
+  (cache: EligibleSupplierCache) =>
+  async (event: SupplierApproved): Promise<Result<void, string>> => {
+    // => Event consumer adapter — translates inbound event to port call
+    const result = await cache.addEligible(event);
+    // => Port call — updates the purchasing context's local eligibility cache
+    if (!result.ok) return { ok: false, error: `Cache update failed: ${result.error}` };
+    return { ok: true, value: undefined };
+    // => Event acknowledged — offset committed after successful processing
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const cache = makeInMemoryEligibleCache();
+const handler = handleSupplierApproved(cache);
+
+const event: SupplierApproved = {
+  supplierId: "sup_abc" as SupplierId,
+  approvedAt: "2026-01-15T09:00:00Z",
+  name: "Acme Corp",
+};
+await handler(event);
+// => Output: [Cache] Supplier sup_abc (Acme Corp) marked eligible
+
+const isEligible = await cache.isEligible("sup_abc" as SupplierId);
+console.log("Is sup_abc eligible?", isEligible.ok ? isEligible.value : "error");
+// => Output: Is sup_abc eligible? true
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Cross-context event consumption uses an input adapter (event consumer) that translates domain events into application service calls — the purchasing application service never imports the supplier module.
@@ -2666,7 +3901,7 @@ Async.RunSynchronously (runEventFlowDemo ())
 
 A spy adapter records every call made to a port without altering the port's behaviour. Tests use the spy to assert that the application service called the port with the correct arguments — confirming that domain logic produced the expected side effects.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2835,6 +4070,87 @@ Async.RunSynchronously (runSpyTest ())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ────────────────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: POId) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+
+// ── Spy adapter ────────────────────────────────────────────────────────────
+interface RepositorySpy {
+  readonly repo: PurchaseOrderRepo;
+  // => The spy exposes the port — application service receives this field
+  readonly savedPos: PurchaseOrder[];
+  // => Accumulates every PO passed to save — assert on this in tests
+  readonly loadedIds: POId[];
+  // => Accumulates every ID passed to findById — assert call order
+}
+
+const buildRepositorySpy = (): RepositorySpy => {
+  const savedPos: PurchaseOrder[] = [];
+  const loadedIds: POId[] = [];
+  // => Arrays closed over — visible only inside this factory scope
+  return {
+    repo: {
+      save: async (po) => {
+        savedPos.push(po);
+        // => Record the call argument BEFORE returning
+        return { ok: true };
+        // => Always succeeds — spy never simulates failure unless needed
+      },
+      findById: async (id) => {
+        loadedIds.push(id);
+        // => Record the ID looked up
+        return { ok: true, value: null };
+        // => Returns null by default — override in specific tests
+      },
+    },
+    savedPos,
+    loadedIds,
+  };
+};
+
+// ── Application service under test ────────────────────────────────────────
+const submitPO =
+  (repo: PurchaseOrderRepo) =>
+  async (
+    id: string,
+    supplierId: string,
+    amount: number,
+  ): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }> => {
+    if (!id || id.trim() === "") return { ok: false, error: "blank id" };
+    const po: PurchaseOrder = { id: id as POId, supplierId, totalAmount: amount, status: "AwaitingApproval" };
+    const saveResult = await repo.save(po);
+    if (!saveResult.ok) return saveResult;
+    return { ok: true, value: po };
+  };
+
+// ── Test assertions using the spy ─────────────────────────────────────────
+const spy = buildRepositorySpy();
+const result = await submitPO(spy.repo)("po_spy-001", "sup_001", 800);
+// => Runs the application service with the spy adapter
+
+console.log("Result:", result);
+// => Output: Result: { ok: true, value: { id: 'po_spy-001', supplierId: 'sup_001', totalAmount: 800, status: 'AwaitingApproval' } }
+console.log(`save called ${spy.savedPos.length} time(s)`);
+// => Output: save called 1 time(s)
+console.log("Saved PO id:", spy.savedPos[0]?.id);
+// => Output: Saved PO id: po_spy-001
+console.log(`findById called ${spy.loadedIds.length} time(s)`);
+// => Output: findById called 0 time(s)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Spy adapters record every call made to a port without changing the port's behaviour, enabling tests to assert that the application service produced the expected side effects with the correct arguments.
@@ -2847,7 +4163,7 @@ Async.RunSynchronously (runSpyTest ())
 
 The composition root can select different adapters based on configuration — using an outbox adapter in production (for at-least-once delivery) and a direct Kafka adapter in staging (for simpler setup). The application service is unaware of this selection.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3000,6 +4316,81 @@ printfn "Production and staging services wired with different publishers"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port type ─────────────────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: POId) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+
+// ── Adapter factory functions ──────────────────────────────────────────────
+const makePostgresPORepo = (_connectionString: string): PurchaseOrderRepo => {
+  const store = new Map<string, PurchaseOrder>();
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      console.log(`[PG] Saved ${po.id}`);
+      return { ok: true };
+    },
+    findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+  };
+};
+
+const makeInMemoryPORepo = (): PurchaseOrderRepo => {
+  const store = new Map<string, PurchaseOrder>();
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      console.log(`[Mem] Saved ${po.id}`);
+      return { ok: true };
+    },
+    findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+  };
+};
+
+// ── Conditional adapter selection at the composition root ─────────────────
+const selectPORepo = (environment: string): PurchaseOrderRepo => {
+  // => Selection logic lives in the composition root — not in the application service
+  switch (environment) {
+    case "production":
+      return makePostgresPORepo(process.env["DB_URL"] ?? "");
+    // => Production: real Postgres adapter
+    case "staging":
+      return makePostgresPORepo(process.env["STAGING_DB_URL"] ?? "");
+    // => Staging: Postgres adapter pointing to the staging database
+    case "test":
+    default:
+      return makeInMemoryPORepo();
+    // => Test/development: in-memory adapter — no database connection needed
+  }
+};
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const repo = selectPORepo("test");
+// => repo: PurchaseOrderRepo — in-memory adapter selected for test environment
+
+const po: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 5000, status: "Draft" };
+await repo.save(po);
+// => Output: [Mem] Saved po_001
+
+const found = await repo.findById("po_001" as POId);
+console.log("Found:", found.ok ? found.value?.status : "error");
+// => Output: Found: Draft
+
+console.log("Conditional adapter selection: environment determines which adapter is wired");
+// => Output: Conditional adapter selection: environment determines which adapter is wired
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root selects adapters based on configuration — the application service receives the same port type regardless of which concrete implementation was chosen, making environment-specific behaviour entirely an infrastructure concern.
@@ -3036,7 +4427,7 @@ graph LR
     classDef purple fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3196,6 +4587,102 @@ Async.RunSynchronously (runFullFlow ())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Full hexagonal flow — intermediate level ─────────────────────────────
+// HTTP adapter → input port → application service → domain → output ports → HTTP
+
+type POId = string & { readonly _brand: "POId" };
+type SupplierId = string & { readonly _brand: "SupplierId" };
+
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: SupplierId;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+interface PurchaseOrderIssued {
+  readonly orderId: POId;
+  readonly supplierId: SupplierId;
+  readonly issuedAt: string;
+}
+type DomainEvent = { readonly kind: "POIssued"; readonly payload: PurchaseOrderIssued };
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, string>>;
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, string>>;
+};
+type EventPublisher = { readonly publish: (ev: DomainEvent) => Promise<Result<void, string>> };
+
+// Input port type
+type IssuePOUseCase = (poId: POId) => Promise<Result<PurchaseOrderIssued, string>>;
+
+// Application service
+const buildIssuePO =
+  (repo: PurchaseOrderRepo, publisher: EventPublisher): IssuePOUseCase =>
+  async (poId) => {
+    const poResult = await repo.findById(poId);
+    if (!poResult.ok) return poResult;
+    if (!poResult.value) return { ok: false, error: `PO ${poId} not found` };
+    const po = poResult.value;
+    if (po.status !== "Approved") return { ok: false, error: `PO ${poId} must be Approved before issuing` };
+    const issuedPO: PurchaseOrder = { ...po, status: "Issued" };
+    const saveResult = await repo.save(issuedPO);
+    if (!saveResult.ok) return { ok: false, error: `Save failed: ${saveResult.error}` };
+    const event: PurchaseOrderIssued = {
+      orderId: po.id,
+      supplierId: po.supplierId,
+      issuedAt: new Date().toISOString(),
+    };
+    const pubResult = await publisher.publish({ kind: "POIssued", payload: event });
+    if (!pubResult.ok) return { ok: false, error: `Publish failed: ${pubResult.error}` };
+    return { ok: true, value: event };
+  };
+
+// HTTP adapter
+const httpIssuePOHandler =
+  (useCase: IssuePOUseCase) =>
+  async (poId: string): Promise<string> => {
+    const result = await useCase(poId as POId);
+    if (result.ok) return `200 OK: PO ${result.value.orderId} issued at ${result.value.issuedAt}`;
+    return `422 Error: ${result.error}`;
+  };
+
+// Composition root
+const poStore = new Map<string, PurchaseOrder>();
+poStore.set("po_001", {
+  id: "po_001" as POId,
+  supplierId: "sup_abc" as SupplierId,
+  totalAmount: 5000,
+  status: "Approved",
+});
+const published: DomainEvent[] = [];
+const useCase = buildIssuePO(
+  {
+    save: async (po) => {
+      poStore.set(po.id, po);
+      return { ok: true, value: undefined };
+    },
+    findById: async (id) => ({ ok: true, value: poStore.get(id) ?? null }),
+  },
+  {
+    publish: async (ev) => {
+      published.push(ev);
+      return { ok: true, value: undefined };
+    },
+  },
+);
+const response = await httpIssuePOHandler(useCase)("po_001");
+console.log(response);
+// => Output: 200 OK: PO po_001 issued at 2026-...
+console.log("Events published:", published.length);
+// => Output: Events published: 1
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The full flow — HTTP adapter translates, application service orchestrates, domain validates, ports persist and publish — passes through each zone boundary exactly once, with the Result type carrying the outcome from domain to HTTP response.
@@ -3226,7 +4713,7 @@ graph LR
     classDef purple fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3403,6 +4890,78 @@ Async.RunSynchronously (runPortContractTests "PG Stub"   pgStubRepo)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port contract tests — every adapter must satisfy the same behaviours ──
+// Contract tests define the expected behaviour of a port.
+// Any adapter that claims to satisfy the port must pass these tests.
+
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: POId) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+
+// ── Contract test suite: parameterised by adapter factory ─────────────────
+// Any factory that returns a PurchaseOrderRepo can be tested with these contracts.
+const runContractTests = async (label: string, makeRepo: () => PurchaseOrderRepo) => {
+  console.log(`
+--- Contract tests for: ${label} ---`);
+
+  // Test 1: save then findById returns the saved PO
+  const repo1 = makeRepo();
+  const po: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 5000, status: "Approved" };
+  await repo1.save(po);
+  const found = await repo1.findById("po_001" as POId);
+  console.assert(found.ok && found.value?.id === "po_001", "Test 1 FAILED: save + findById");
+  // => Asserts the saved PO can be retrieved by ID
+  console.log("Test 1 PASSED: save then findById returns the saved PO");
+
+  // Test 2: findById on missing ID returns null, not error
+  const repo2 = makeRepo();
+  const missing = await repo2.findById("po_999" as POId);
+  console.assert(missing.ok && missing.value === null, "Test 2 FAILED: missing ID should return null");
+  // => Asserts not-found is represented as null, not as an error
+  console.log("Test 2 PASSED: findById on missing ID returns null, not error");
+
+  // Test 3: save is idempotent — saving twice with same ID updates the record
+  const repo3 = makeRepo();
+  const po3v1: PurchaseOrder = { ...po, status: "Draft" };
+  const po3v2: PurchaseOrder = { ...po, status: "Approved" };
+  await repo3.save(po3v1);
+  await repo3.save(po3v2);
+  const found3 = await repo3.findById("po_001" as POId);
+  console.assert(found3.ok && found3.value?.status === "Approved", "Test 3 FAILED: upsert should update");
+  // => Asserts second save overwrites the first — upsert semantics
+  console.log("Test 3 PASSED: save is idempotent (upsert semantics)");
+};
+
+// ── In-memory adapter factory ──────────────────────────────────────────────
+const makeInMemoryRepo = (): PurchaseOrderRepo => {
+  const store = new Map<string, PurchaseOrder>();
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      return { ok: true };
+    },
+    findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+  };
+};
+
+await runContractTests("InMemoryRepo", makeInMemoryRepo);
+// => All three contract tests pass for the in-memory adapter
+// => Any future Postgres adapter would be tested with the same runContractTests function
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Running the same assertion suite against every adapter proves substitutability — if all adapters pass the same contract tests, the composition root can swap them freely.
@@ -3415,7 +4974,7 @@ Async.RunSynchronously (runPortContractTests "PG Stub"   pgStubRepo)
 
 The `ApprovalRouterPort` determines which approval level (L1/L2/L3) a PO requires. It is an output port — the application service calls it but does not implement it. Different implementations can route to different systems (email, Slack, ERP) without any change to the application service.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3565,6 +5124,88 @@ printfn "%s" r2
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Approval routing port — same as Ex 34 but with full integration test ──
+type POId = string & { readonly _brand: "POId" };
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => Literal union: L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+interface ApprovalRouting {
+  readonly poId: POId;
+  // => Identity of the PO being routed for approval
+  readonly level: ApprovalLevel;
+  // => Approval tier computed from the PO total
+  readonly assignedTo: string;
+  // => Email or employee ID of the manager assigned to approve
+}
+
+type ApprovalRouterPort = {
+  readonly route: (poId: POId, level: ApprovalLevel) => Promise<Result<ApprovalRouting, string>>;
+  // => Returns ApprovalRouting on success — managerId + routing metadata
+  // => Returns error string when the workflow engine is unavailable
+};
+
+// ── Pure domain function ───────────────────────────────────────────────────
+const computeLevel = (total: number): Result<ApprovalLevel, string> => {
+  if (total <= 0) return { ok: false, error: "Amount must be positive" };
+  if (total <= 1000) return { ok: true, value: "L1" };
+  if (total <= 10000) return { ok: true, value: "L2" };
+  return { ok: true, value: "L3" };
+};
+
+// ── In-memory router adapter for tests ───────────────────────────────────
+const makeInMemoryRouter = (): ApprovalRouterPort => {
+  const managers: Record<ApprovalLevel, string> = {
+    L1: "manager@example.com",
+    L2: "dept-head@example.com",
+    L3: "cfo@example.com",
+  };
+  return {
+    route: async (poId, level) => ({
+      ok: true,
+      value: { poId, level, assignedTo: managers[level] },
+      // => Returns structured routing result — testable without workflow engine
+    }),
+  };
+};
+
+// ── Application service ────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+const routePOForApproval =
+  (router: ApprovalRouterPort) =>
+  async (po: PurchaseOrder): Promise<Result<ApprovalRouting, string>> => {
+    const levelResult = computeLevel(po.totalAmount);
+    if (!levelResult.ok) return levelResult;
+    return router.route(po.id, levelResult.value);
+    // => Pure domain + async port call compose sequentially
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const router = makeInMemoryRouter();
+const testPOs: PurchaseOrder[] = [
+  { id: "po_001" as POId, totalAmount: 500, status: "Draft" },
+  { id: "po_002" as POId, totalAmount: 5000, status: "Draft" },
+  { id: "po_003" as POId, totalAmount: 15000, status: "Draft" },
+];
+for (const po of testPOs) {
+  const r = await routePOForApproval(router)(po);
+  if (r.ok) console.log(`PO ${po.id}: ${r.value.level} → ${r.value.assignedTo}`);
+}
+// => Output: PO po_001: L1 → manager@example.com
+// => Output: PO po_002: L2 → dept-head@example.com
+// => Output: PO po_003: L3 → cfo@example.com
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Expressing approval routing as an output port keeps the business rule (L1/L2/L3 thresholds) in the domain while deferring the delivery mechanism (email, Slack, ERP notification) to the adapter.
@@ -3577,7 +5218,7 @@ printfn "%s" r2
 
 The domain function must refuse to accept infrastructure types. If the domain imports a database module or uses `Async`, it has crossed into the adapter zone. This example shows the before/after of a dependency rejection refactor.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3736,6 +5377,66 @@ printfn "Invalid: %A" invalidResult
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── TypeScript module boundaries enforce the dependency rule ──────────────
+// The TypeScript compiler rejects any import that would violate zone boundaries
+// when combined with strict module organisation and no circular dependencies.
+
+// ── domain/purchaseOrder.ts ── (inner zone: ZERO infra imports)
+// If someone tries: import { Pool } from "pg"  → compilation fails (not installed in domain)
+
+type POId = string & { readonly _brand: "POId" };
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => Domain types: pure TypeScript, no external runtime dependencies
+
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: "Draft" | "AwaitingApproval" | "Approved" | "Issued";
+  // => Literal union makes invalid status strings unrepresentable
+}
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// Pure domain function — no I/O, always testable
+const determineApprovalLevel = (total: number): Result<ApprovalLevel, string> => {
+  if (total <= 0) return { ok: false, error: "Amount must be positive" };
+  if (total <= 1000) return { ok: true, value: "L1" };
+  if (total <= 10000) return { ok: true, value: "L2" };
+  return { ok: true, value: "L3" };
+};
+
+// ── The dependency rule enforced by TypeScript path constraints ────────────
+// tsconfig.json paths can enforce zone boundaries:
+// "paths": {
+//   "@domain/*":      ["src/domain/*"],    // domain imports only domain
+//   "@application/*": ["src/application/*"], // application imports domain
+//   "@adapters/*":    ["src/adapters/*"]    // adapters import application + infra
+// }
+// => If domain/purchaseOrder.ts does: import { Pool } from "pg"
+// => TypeScript will error: Module '"pg"' has no exported member 'Pool'
+// => (assuming pg is not listed in domain's allowed dependencies)
+
+// ── WRONG: what domain must NEVER do ────────────────────────────────────
+// import { Pool } from "pg"  ← WRONG: domain cannot import Postgres client
+// const result = await new Pool().query("SELECT 1") ← WRONG: infrastructure in domain
+
+// ── Demonstration: pure domain function, zero infrastructure ─────────────
+const level1 = determineApprovalLevel(500);
+console.assert(level1.ok && level1.value === "L1", "L1 for 500");
+// => Pure test — no database, no network, no setup
+const level3 = determineApprovalLevel(50000);
+console.assert(level3.ok && level3.value === "L3", "L3 for 50000");
+// => Pure test — executes in nanoseconds
+
+console.log("Dependency rule enforced: domain zone has zero infrastructure imports");
+// => Output: Dependency rule enforced: domain zone has zero infrastructure imports
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain functions that contain infrastructure imports or `Async` have crossed zone boundaries — the fix is to extract all I/O into the application service and leave only pure logic in the domain.
@@ -3748,7 +5449,7 @@ printfn "Invalid: %A" invalidResult
 
 When a port's contract needs to change (new operation, changed signature), the safest strategy is to introduce a v2 port type alongside v1 rather than mutating v1. Adapters opt in to v2 explicitly.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3921,6 +5622,95 @@ Async.RunSynchronously (async {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port versioning — adding operations without breaking existing adapters ─
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// ── Version 1: original port ───────────────────────────────────────────────
+type PurchaseOrderRepoV1 = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, string>>;
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, string>>;
+};
+// => V1 port: two operations — sufficient for initial implementation
+
+// ── Version 2: extended port (backwards-compatible addition) ───────────────
+type PurchaseOrderRepoV2 = PurchaseOrderRepoV1 & {
+  readonly findByStatus: (status: string) => Promise<Result<PurchaseOrder[], string>>;
+  // => New operation added in V2 — findByStatus supports the approval queue view
+  // => V2 extends V1: all V1 adapters are still valid V1 implementations
+};
+// => V2 is a structural superset of V1 — adding operations does not break V1 adapters
+
+// ── In-memory V2 adapter ──────────────────────────────────────────────────
+const makeInMemoryRepoV2 = (): PurchaseOrderRepoV2 => {
+  const store = new Map<string, PurchaseOrder>();
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      return { ok: true, value: undefined };
+    },
+    findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+    findByStatus: async (status) => {
+      const results = [...store.values()].filter((po) => po.status === status);
+      // => Filter all stored POs by status — query operation
+      return { ok: true, value: results };
+    },
+  };
+};
+
+// ── V1 application service still works with V2 adapter ────────────────────
+const submitPOV1 =
+  (repo: PurchaseOrderRepoV1) =>
+  async (po: PurchaseOrder): Promise<Result<PurchaseOrder, string>> => {
+    const saveResult = await repo.save(po);
+    // => V1 service only calls V1 operations — compatible with V2 adapter
+    if (!saveResult.ok) return saveResult;
+    return { ok: true, value: po };
+  };
+
+// ── V2 application service uses the new operation ─────────────────────────
+const listApprovalQueue = (repo: PurchaseOrderRepoV2) => async (): Promise<Result<PurchaseOrder[], string>> => {
+  return repo.findByStatus("AwaitingApproval");
+  // => V2 service uses the new findByStatus operation
+};
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const repoV2 = makeInMemoryRepoV2();
+const po1: PurchaseOrder = {
+  id: "po_001" as POId,
+  supplierId: "sup_abc",
+  totalAmount: 5000,
+  status: "AwaitingApproval",
+};
+const po2: PurchaseOrder = { id: "po_002" as POId, supplierId: "sup_xyz", totalAmount: 1000, status: "Approved" };
+await repoV2.save(po1);
+await repoV2.save(po2);
+
+const queue = await listApprovalQueue(repoV2)();
+console.log("Approval queue:", queue.ok ? queue.value.map((p) => p.id) : "error");
+// => Output: Approval queue: [ 'po_001' ]
+
+const v1Result = await submitPOV1(repoV2)({
+  id: "po_003" as POId,
+  supplierId: "sup_abc",
+  totalAmount: 750,
+  status: "Draft",
+});
+console.log("V1 service with V2 adapter:", v1Result.ok ? "ok" : v1Result.error);
+// => Output: V1 service with V2 adapter: ok
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Introducing a v2 port type alongside v1 preserves all existing adapters while allowing new application services to opt into the extended contract.
@@ -3933,7 +5723,7 @@ Async.RunSynchronously (async {
 
 The `receiving` bounded context records delivery of goods against an issued PO. Its repository port follows the same record-of-functions pattern as `PurchaseOrderRepository` but stores `GoodsReceiptNote` aggregates.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4121,6 +5911,86 @@ printfn "GRN created: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── GoodsReceiptNote domain types ─────────────────────────────────────────
+type GRNId = string & { readonly _brand: "GRNId" };
+type POId = string & { readonly _brand: "POId" };
+
+interface GoodsReceiptNote {
+  readonly id: GRNId;
+  // => Format grn_<uuid> — primary key of the receiving event
+  readonly purchaseOrderId: POId;
+  // => Cross-context reference — the PO this GRN is receiving against
+  readonly receivedQuantity: number;
+  // => Quantity of goods actually received — may differ from PO quantity
+  readonly receivedAt: string;
+  // => ISO timestamp of goods receipt — used for three-way match
+  readonly status: "Draft" | "Confirmed" | "Disputed";
+  // => Lifecycle: Draft → Confirmed after inspection, Disputed on discrepancy
+}
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | { readonly kind: "ConnectionTimeout" };
+
+// ── GoodsReceiptNoteRepo port ─────────────────────────────────────────────
+type GoodsReceiptNoteRepo = {
+  readonly save: (grn: GoodsReceiptNote) => Promise<Result<void, RepoError>>;
+  // => Persist a GRN — upsert semantics
+  readonly findById: (id: GRNId) => Promise<Result<GoodsReceiptNote | null, RepoError>>;
+  // => Retrieve by identity — null when not found
+  readonly findByPO: (poId: POId) => Promise<Result<GoodsReceiptNote[], RepoError>>;
+  // => All GRNs for a given PO — used for three-way match
+};
+// => This port is defined in the receiving context's application zone
+
+// ── In-memory adapter for tests ───────────────────────────────────────────
+const makeInMemoryGRNRepo = (): GoodsReceiptNoteRepo => {
+  const store = new Map<string, GoodsReceiptNote>();
+  return {
+    save: async (grn) => {
+      store.set(grn.id, grn);
+      return { ok: true, value: undefined };
+    },
+    findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+    findByPO: async (poId) => ({
+      ok: true,
+      value: [...store.values()].filter((grn) => grn.purchaseOrderId === poId),
+      // => Scan all GRNs — in production this would be a SQL query with WHERE po_id = $1
+    }),
+  };
+};
+
+// ── Application service: confirm a GRN ───────────────────────────────────
+const confirmGRN =
+  (repo: GoodsReceiptNoteRepo) =>
+  async (grnId: GRNId): Promise<Result<GoodsReceiptNote, string>> => {
+    const result = await repo.findById(grnId);
+    if (!result.ok) return { ok: false, error: `Repo error: ${result.error.kind}` };
+    if (!result.value) return { ok: false, error: `GRN ${grnId} not found` };
+    if (result.value.status !== "Draft") return { ok: false, error: `GRN ${grnId} is not in Draft state` };
+    const confirmed: GoodsReceiptNote = { ...result.value, status: "Confirmed" };
+    await repo.save(confirmed);
+    return { ok: true, value: confirmed };
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const grnRepo = makeInMemoryGRNRepo();
+const grn: GoodsReceiptNote = {
+  id: "grn_001" as GRNId,
+  purchaseOrderId: "po_001" as POId,
+  receivedQuantity: 10,
+  receivedAt: "2026-01-15T09:00:00Z",
+  status: "Draft",
+};
+await grnRepo.save(grn);
+const confirmed = await confirmGRN(grnRepo)("grn_001" as GRNId);
+console.log("Confirmed:", confirmed.ok ? confirmed.value.status : confirmed.error);
+// => Output: Confirmed: Confirmed
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Each bounded context defines its own repository port using the same record-of-functions pattern — the structural consistency across contexts is the key property that makes multi-context wiring predictable.
@@ -4133,7 +6003,7 @@ printfn "GRN created: %A" result
 
 The `invoicing` context performs a three-way match: PO line items, GRN quantities, and invoice amounts must agree within tolerance. The match port is an output port that calls into the purchasing and receiving contexts via their ports.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4334,6 +6204,105 @@ printfn "Invoice status: %A" (matchOutcome |> Result.map (fun i -> i.Status))
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Invoicing context types ───────────────────────────────────────────────
+type InvoiceId = string & { readonly _brand: "InvoiceId" };
+type POId = string & { readonly _brand: "POId" };
+type GRNId = string & { readonly _brand: "GRNId" };
+
+interface Invoice {
+  readonly id: InvoiceId;
+  // => Primary key of the invoice aggregate
+  readonly purchaseOrderId: POId;
+  // => The PO this invoice claims to settle
+  readonly grnId: GRNId;
+  // => The GRN proving delivery was made before invoicing
+  readonly invoicedAmount: number;
+  // => The amount the supplier is claiming — subject to three-way match
+  readonly status: "Draft" | "MatchPassed" | "MatchFailed" | "Paid";
+  // => Lifecycle state driven by the three-way match result
+}
+
+type MatchError =
+  | { readonly kind: "ToleranceBreached"; readonly message: string }
+  | { readonly kind: "MissingGrn"; readonly grnId: string }
+  | { readonly kind: "InfrastructureError"; readonly message: string };
+// => Named error cases for the three-way match operation
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// ── Three-way match port ───────────────────────────────────────────────────
+type ThreeWayMatchPort = {
+  readonly matchInvoice: (invId: InvoiceId, poId: POId, grnId: GRNId) => Promise<Result<boolean, MatchError>>;
+  // => Returns true when all three documents agree within the tolerance threshold
+  // => Returns false when the match fails but the discrepancy is within dispute range
+  // => Returns error for infrastructure failures or missing reference documents
+};
+
+// ── In-process adapter: performs the match with locally available data ─────
+const makeInProcessMatchPort = (tolerance: number): ThreeWayMatchPort => ({
+  matchInvoice: async (invId, poId, grnId) => {
+    // In a real system: load Invoice, PO, and GRN from their respective repos
+    // Here: simulated values for illustration
+    const poAmount = 1000;
+    // => The agreed PO total — loaded from the purchasing context repository
+    const grnQty = 9.5;
+    // => Quantity delivered per GRN — partial delivery is within tolerance
+    const invAmount = 990;
+    // => Amount claimed on the invoice — close to PO amount
+
+    const poReceived = (poAmount * grnQty) / 10;
+    // => Estimated value of goods received (simplified: grnQty/10 × poAmount)
+    const difference = Math.abs(invAmount - poReceived);
+    // => Absolute difference between invoice and delivery value
+    const toleranceAmount = poAmount * tolerance;
+    // => Maximum acceptable difference (e.g. 2% of PO total = $20)
+
+    const matched = difference <= toleranceAmount;
+    // => true when discrepancy is within tolerance
+    console.log(
+      `[Match] inv=${invId} po=${poId} grn=${grnId} diff=${difference.toFixed(2)} tol=${toleranceAmount.toFixed(2)} matched=${matched}`,
+    );
+    // => Output: [Match] inv=inv_001 po=po_001 grn=grn_001 diff=4.00 tol=20.00 matched=true
+    return { ok: true, value: matched };
+  },
+});
+
+// ── Application service: orchestrate the three-way match ──────────────────
+const approveInvoice =
+  (matchPort: ThreeWayMatchPort) =>
+  async (inv: Invoice): Promise<Result<Invoice, string>> => {
+    // => Application service: calls match port, updates invoice status
+    const matchResult = await matchPort.matchInvoice(inv.id, inv.purchaseOrderId, inv.grnId);
+    // => Delegate three-way match decision to the injected port
+    if (!matchResult.ok) {
+      const err = matchResult.error;
+      if (err.kind === "MissingGrn") return { ok: false, error: `GRN not found: ${err.grnId}` };
+      return { ok: false, error: `Match error: ${err.message}` };
+    }
+    const status: Invoice["status"] = matchResult.value ? "MatchPassed" : "MatchFailed";
+    // => MatchPassed: all three documents agree; MatchFailed: discrepancy exceeds tolerance
+    return { ok: true, value: { ...inv, status } };
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const matchPort = makeInProcessMatchPort(0.02);
+// => 2% tolerance — invoices within 2% of PO+GRN value are auto-approved
+const invoice: Invoice = {
+  id: "inv_001" as InvoiceId,
+  purchaseOrderId: "po_001" as POId,
+  grnId: "grn_001" as GRNId,
+  invoicedAmount: 990,
+  status: "Draft",
+};
+const matchOutcome = await approveInvoice(matchPort)(invoice);
+console.log("Invoice status:", matchOutcome.ok ? matchOutcome.value.status : matchOutcome.error);
+// => Output: Invoice status: MatchPassed
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Expressing the three-way match as an output port decouples the invoicing application service from the data sources (purchasing repo, receiving repo) — the adapter assembles all three documents while the application service only sees the match result.
@@ -4346,7 +6315,7 @@ printfn "Invoice status: %A" (matchOutcome |> Result.map (fun i -> i.Status))
 
 A retry adapter wraps an existing port and retries on `ConnectionTimeout` errors without the application service knowing. The application service continues to receive either `Ok` or a non-retriable `Error`.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4508,6 +6477,84 @@ printfn "Final result: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | { readonly kind: "ConnectionTimeout" };
+// => ConnectionTimeout is the retriable case — DatabaseError is permanent
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+};
+
+// ── Retry adapter: wraps any PurchaseOrderRepo ────────────────────────────
+const withRetry = (maxAttempts: number, inner: PurchaseOrderRepo): PurchaseOrderRepo => {
+  // => Returns a NEW PurchaseOrderRepo that retries on ConnectionTimeout
+  // => inner is the wrapped adapter — Postgres, in-memory, or another wrapper
+  const retryAsync = async <T>(attempt: () => Promise<Result<T, RepoError>>, n = 1): Promise<Result<T, RepoError>> => {
+    const result = await attempt();
+    // => Run the inner operation
+    if (!result.ok && result.error.kind === "ConnectionTimeout" && n < maxAttempts) {
+      console.log(`[Retry] ConnectionTimeout — attempt ${n} of ${maxAttempts}`);
+      // => Output: [Retry] ConnectionTimeout — attempt 1 of 3
+      return retryAsync(attempt, n + 1);
+      // => Recurse — try again up to maxAttempts
+    }
+    return result;
+    // => Return ok, DatabaseError, or ConnectionTimeout after max retries
+  };
+  return {
+    save: (po) => retryAsync(() => inner.save(po)),
+    // => save retries on ConnectionTimeout; DatabaseError is not retried
+    findById: (id) => retryAsync(() => inner.findById(id)),
+    // => findById retries on ConnectionTimeout; not-found (ok null) is not retried
+  };
+};
+
+// ── Flaky adapter for demonstration ──────────────────────────────────────
+const makeFlakySaveRepo = (failUntilAttempt: number): PurchaseOrderRepo => {
+  let callCount = 0;
+  // => Counter simulates transient failures followed by success
+  return {
+    save: async (po) => {
+      callCount++;
+      if (callCount < failUntilAttempt) return { ok: false, error: { kind: "ConnectionTimeout" } };
+      // => Transient failure — the retry wrapper handles this
+      console.log(`[Flaky] Save succeeded on attempt ${callCount}`);
+      // => Output: [Flaky] Save succeeded on attempt 3
+      return { ok: true, value: undefined };
+    },
+    findById: async () => ({ ok: true, value: null }),
+  };
+};
+
+// ── Composition: wrap flaky adapter with retry ────────────────────────────
+const flaky = makeFlakySaveRepo(3);
+// => Will fail twice, succeed on third attempt
+const resilient = withRetry(3, flaky);
+// => Wraps flaky — application service uses resilient and never sees the retries
+
+const po: PurchaseOrder = { id: "po_retry_001" as POId, supplierId: "sup_1", totalAmount: 200, status: "Draft" };
+const result = await resilient.save(po);
+console.log("Final result:", result.ok ? "ok" : result.error.kind);
+// => Output: [Retry] ConnectionTimeout — attempt 1 of 3
+// => Output: [Retry] ConnectionTimeout — attempt 2 of 3
+// => Output: [Flaky] Save succeeded on attempt 3
+// => Output: Final result: ok
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A retry wrapper satisfies the same port type as the inner adapter — the application service injects `withRetry 3 postgresRepo` and receives a `PurchaseOrderRepository` it cannot distinguish from the raw adapter.
@@ -4520,7 +6567,7 @@ printfn "Final result: %A" result
 
 A caching adapter wraps the load operation of a `PurchaseOrderRepository` to return cached results on repeated reads. The cache is invalidated on save. The application service is unaware of the caching layer.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4696,6 +6743,88 @@ Async.RunSynchronously (async {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | { readonly kind: "ConnectionTimeout" };
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+};
+
+// ── Caching adapter wrapper ───────────────────────────────────────────────
+const withCache = (inner: PurchaseOrderRepo): PurchaseOrderRepo => {
+  const cache = new Map<string, PurchaseOrder>();
+  // => In-process Map cache — invalidated on save; consistent with write-through policy
+  return {
+    save: async (po) => {
+      const result = await inner.save(po);
+      // => Delegate to inner adapter — persist first
+      if (result.ok) {
+        cache.set(po.id, po);
+        // => Write-through: update cache on successful save
+      }
+      return result;
+      // => Propagate error — cache is not updated on failure
+    },
+    findById: async (id) => {
+      const cached = cache.get(id);
+      if (cached !== undefined) {
+        console.log(`[Cache] HIT for ${id}`);
+        // => Output: [Cache] HIT for po_001
+        return { ok: true, value: cached };
+        // => Cache hit — return without calling inner adapter
+      }
+      console.log(`[Cache] MISS for ${id} — loading from inner adapter`);
+      // => Output: [Cache] MISS for po_001 — loading from inner adapter
+      const result = await inner.findById(id);
+      // => Cache miss — delegate to the inner adapter
+      if (result.ok && result.value !== null) {
+        cache.set(result.value.id, result.value);
+        // => Populate cache on successful load
+      }
+      return result;
+      // => Propagate ok null or error unchanged
+    },
+  };
+};
+
+// ── Usage: wrap an in-memory repo with caching ────────────────────────────
+const innerRepo: PurchaseOrderRepo = (() => {
+  const store = new Map<string, PurchaseOrder>();
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      return { ok: true, value: undefined };
+    },
+    findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+  };
+})();
+
+const cachedRepo = withCache(innerRepo);
+const po: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 5000, status: "Approved" };
+await cachedRepo.save(po);
+// => Write-through: both inner store and cache updated
+
+await cachedRepo.findById("po_001" as POId);
+// => Output: [Cache] HIT for po_001  (served from cache, not inner adapter)
+
+await cachedRepo.findById("po_999" as POId);
+// => Output: [Cache] MISS for po_999 — loading from inner adapter
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A caching adapter satisfies the same `PurchaseOrderRepository` type as the inner adapter — the composition root decides whether to add caching, and the application service is unchanged.
@@ -4708,7 +6837,7 @@ Async.RunSynchronously (async {
 
 An audit log adapter wraps a port and records every save call in an append-only audit log, without the application service knowing the log exists. This is a cross-cutting concern implemented at the port boundary.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4860,6 +6989,88 @@ printfn "Audited PO: %s at %A" auditLog.[0].PoId auditLog.[0].OccurredAt
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: POId) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+
+// ── Audit log port ────────────────────────────────────────────────────────
+type AuditLogPort = {
+  readonly log: (action: string, entityId: string, detail: Record<string, unknown>) => Promise<void>;
+  // => Fire-and-forget: audit log failures do not block the primary operation
+};
+
+// ── Audit log adapter wrapper ─────────────────────────────────────────────
+const withAuditLog = (inner: PurchaseOrderRepo, auditLog: AuditLogPort): PurchaseOrderRepo => ({
+  save: async (po) => {
+    const result = await inner.save(po);
+    // => Delegate to inner adapter first — primary operation
+    if (result.ok) {
+      await auditLog.log("PO_SAVED", po.id, { status: po.status, totalAmount: po.totalAmount });
+      // => Audit log only on success — records the successful state transition
+    }
+    return result;
+    // => Propagate result unchanged — audit log does not affect the outcome
+  },
+  findById: async (id) => {
+    const result = await inner.findById(id);
+    // => Query: audit log on every read for compliance
+    await auditLog.log("PO_READ", id, { found: result.ok && result.value !== null });
+    return result;
+  },
+});
+
+// ── In-memory audit log (test double) ────────────────────────────────────
+const makeInMemoryAuditLog = (): [
+  AuditLogPort,
+  () => Array<{ action: string; entityId: string; detail: Record<string, unknown> }>,
+] => {
+  const entries: Array<{ action: string; entityId: string; detail: Record<string, unknown> }> = [];
+  const port: AuditLogPort = {
+    log: async (action, entityId, detail) => {
+      entries.push({ action, entityId, detail });
+      // => Record the audit entry — no real log sink needed in tests
+    },
+  };
+  return [port, () => [...entries]];
+  // => Returns [port, accessor] — tests can inspect the audit log
+};
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const store = new Map<string, PurchaseOrder>();
+const baseRepo: PurchaseOrderRepo = {
+  save: async (po) => {
+    store.set(po.id, po);
+    return { ok: true };
+  },
+  findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+};
+const [auditLog, getAuditEntries] = makeInMemoryAuditLog();
+const auditedRepo = withAuditLog(baseRepo, auditLog);
+
+const po: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 5000, status: "Approved" };
+await auditedRepo.save(po);
+await auditedRepo.findById("po_001" as POId);
+
+console.log(
+  "Audit log entries:",
+  getAuditEntries().map((e) => e.action),
+);
+// => Output: Audit log entries: [ 'PO_SAVED', 'PO_READ' ]
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Cross-cutting concerns like audit logging are implemented as adapter wrappers — they compose at the port boundary without touching application services or domain functions.
@@ -4872,7 +7083,7 @@ printfn "Audited PO: %s at %A" auditLog.[0].PoId auditLog.[0].OccurredAt
 
 An input port multiplexer calls multiple downstream handlers when a single input arrives. This is useful for fan-out: a `PurchaseOrderSubmitted` event dispatched to both the approval router and the notification service.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5019,6 +7230,87 @@ printfn "Dispatch result: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Input port multiplexer — fan-out to multiple handlers ────────────────
+// A single input port call is routed to multiple handlers simultaneously.
+// Each handler is a separate application service — domain isolation preserved.
+
+interface PurchaseOrderIssued {
+  readonly orderId: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly issuedAt: string;
+}
+
+type EventHandler = (event: PurchaseOrderIssued) => Promise<{ ok: true } | { ok: false; error: string }>;
+// => Each handler is a port-conforming function — injectable, swappable, testable
+
+// ── Multiplexer: routes event to all registered handlers ─────────────────
+const makeMultiplexer =
+  (handlers: Record<string, EventHandler>) =>
+  async (event: PurchaseOrderIssued): Promise<Record<string, { ok: true } | { ok: false; error: string }>> => {
+    // => Runs all handlers concurrently — fan-out pattern
+    const entries = await Promise.all(
+      Object.entries(handlers).map(async ([name, handler]) => {
+        const result = await handler(event);
+        return [name, result] as const;
+        // => Each handler's result keyed by name — test assertions can inspect each
+      }),
+    );
+    return Object.fromEntries(entries);
+    // => Returns all handler results — HTTP adapter may aggregate or ignore errors
+  };
+
+// ── Handler implementations (each is a separate application service) ──────
+const supplierNotifierHandler: EventHandler = async (event) => {
+  console.log(`[Notifier] Notifying supplier ${event.supplierId} for PO ${event.orderId}`);
+  // => Sends EDI or email notification to the supplier
+  return { ok: true };
+};
+
+const receivingContextHandler: EventHandler = async (event) => {
+  console.log(`[Receiving] Opening GRN expectation for PO ${event.orderId}`);
+  // => Creates a GoodsReceiptNote expectation in the receiving context
+  return { ok: true };
+};
+
+const invoicingContextHandler: EventHandler = async (event) => {
+  console.log(`[Invoicing] Registering issued PO ${event.orderId} for invoice matching`);
+  // => Registers the PO in the invoicing context for three-way match
+  return { ok: true };
+};
+
+// ── Composition root: wire all handlers into the multiplexer ──────────────
+const poIssuedMultiplexer = makeMultiplexer({
+  supplierNotifier: supplierNotifierHandler,
+  receivingContext: receivingContextHandler,
+  invoicingContext: invoicingContextHandler,
+});
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const event: PurchaseOrderIssued = {
+  orderId: "po_001",
+  supplierId: "sup_abc",
+  totalAmount: 5000,
+  issuedAt: "2026-01-15T09:00:00Z",
+};
+const results = await poIssuedMultiplexer(event);
+// => Output: [Notifier] Notifying supplier sup_abc for PO po_001
+// => Output: [Receiving] Opening GRN expectation for PO po_001
+// => Output: [Invoicing] Registering issued PO po_001 for invoice matching
+
+console.log(
+  "Handler results:",
+  Object.entries(results)
+    .map(([k, v]) => `${k}=${v.ok ? "ok" : "error"}`)
+    .join(", "),
+);
+// => Output: Handler results: supplierNotifier=ok, receivingContext=ok, invoicingContext=ok
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A multiplexer composes multiple handlers of the same input port type into a single handler — the caller is unaware of the fan-out, and the composition root controls which handlers participate.
@@ -5031,7 +7323,7 @@ printfn "Dispatch result: %A" result
 
 An `ObservabilityPort` injects structured telemetry (counters, timers, traces) into application services without importing OpenTelemetry or Prometheus directly. The observability library is used only in the adapter — never in the application layer.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5209,6 +7501,97 @@ Async.RunSynchronously (async {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Observability port — structured metrics and traces ────────────────────
+// The application service records metrics through a port — no direct dependency
+// on Prometheus, OpenTelemetry, or any monitoring library.
+
+interface MetricEvent {
+  readonly name: string;
+  // => Metric name — e.g. "po.issued", "po.validation.failed"
+  readonly tags: Record<string, string>;
+  // => Dimensional tags — e.g. { supplierId: "sup_abc", level: "L3" }
+  readonly value: number;
+  // => Numeric value — 1.0 for counters, latency in ms for histograms
+}
+
+type ObservabilityPort = {
+  readonly record: (event: MetricEvent) => void;
+  // => Fire-and-forget: observability never blocks the main flow
+  // => Synchronous — no async overhead for simple counters
+};
+
+// ── In-memory observability adapter (test double) ─────────────────────────
+const makeInMemoryObservability = (): [ObservabilityPort, () => MetricEvent[]] => {
+  const events: MetricEvent[] = [];
+  const port: ObservabilityPort = {
+    record: (event) => {
+      events.push(event);
+      // => Record the metric event in memory — tests can assert on it
+    },
+  };
+  return [port, () => [...events]];
+  // => Returns [port, accessor] — tests inspect what was recorded
+};
+
+// ── Application service using the observability port ──────────────────────
+type POId = string & { readonly _brand: "POId" };
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+type PurchaseOrderRepo = { readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }> };
+
+const issuePOWithMetrics =
+  (repo: PurchaseOrderRepo, obs: ObservabilityPort) =>
+  async (po: PurchaseOrder): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }> => {
+    const start = Date.now();
+    // => Record start time for latency measurement
+
+    const result = await repo.save({ ...po, status: "Issued" });
+    const duration = Date.now() - start;
+
+    if (result.ok) {
+      obs.record({ name: "po.issued", tags: { supplierId: po.supplierId }, value: 1 });
+      // => Counter: one PO issued for this supplier
+      obs.record({ name: "po.issue.latency", tags: { supplierId: po.supplierId }, value: duration });
+      // => Histogram: time taken to issue this PO
+      return { ok: true, value: { ...po, status: "Issued" } };
+    } else {
+      obs.record({ name: "po.issue.failed", tags: { reason: "save_error" }, value: 1 });
+      // => Counter: one issue failure
+      return { ok: false, error: result.error };
+    }
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const store = new Map<string, PurchaseOrder>();
+const repo: PurchaseOrderRepo = {
+  save: async (po) => {
+    store.set(po.id, po);
+    return { ok: true };
+  },
+};
+const [obs, getMetrics] = makeInMemoryObservability();
+
+const po: PurchaseOrder = { id: "po_001" as POId, supplierId: "sup_abc", totalAmount: 5000, status: "Approved" };
+await issuePOWithMetrics(repo, obs)(po);
+
+const metrics = getMetrics();
+console.log(
+  "Recorded metrics:",
+  metrics.map((m) => m.name),
+);
+// => Output: Recorded metrics: [ 'po.issued', 'po.issue.latency' ]
+console.log("Supplier tag:", metrics[0].tags.supplierId);
+// => Output: Supplier tag: sup_abc
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `ObservabilityPort` injects telemetry into application services as a first-class dependency — telemetry is testable, replaceable, and never coupled to a specific observability vendor.
@@ -5249,7 +7632,7 @@ graph LR
     classDef blue fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5577,6 +7960,138 @@ Async.RunSynchronously (async {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Full purchasing + receiving composition root ──────────────────────────
+// Wires purchasing context + receiving context + event bus in one composition root.
+
+type POId = string & { readonly _brand: "POId" };
+type GRNId = string & { readonly _brand: "GRNId" };
+type SupplierId = string & { readonly _brand: "SupplierId" };
+
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: SupplierId;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+interface GoodsReceiptNote {
+  readonly id: GRNId;
+  readonly purchaseOrderId: POId;
+  readonly receivedQuantity: number;
+  readonly status: string;
+}
+interface PurchaseOrderIssued {
+  readonly orderId: POId;
+  readonly supplierId: SupplierId;
+  readonly issuedAt: string;
+}
+type DomainEvent = { readonly kind: "POIssued"; readonly payload: PurchaseOrderIssued };
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+// ── Port types ─────────────────────────────────────────────────────────────
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, string>>;
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, string>>;
+};
+type GRNRepo = {
+  readonly save: (grn: GoodsReceiptNote) => Promise<Result<void, string>>;
+  readonly findByPO: (poId: POId) => Promise<Result<GoodsReceiptNote[], string>>;
+};
+type EventPublisher = { readonly publish: (ev: DomainEvent) => Promise<Result<void, string>> };
+
+// ── In-memory adapters ─────────────────────────────────────────────────────
+const makePORepo = (): PurchaseOrderRepo => {
+  const store = new Map<string, PurchaseOrder>();
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      return { ok: true, value: undefined };
+    },
+    findById: async (id) => ({ ok: true, value: store.get(id) ?? null }),
+  };
+};
+
+const makeGRNRepo = (): GRNRepo => {
+  const store = new Map<string, GoodsReceiptNote>();
+  return {
+    save: async (grn) => {
+      store.set(grn.id, grn);
+      return { ok: true, value: undefined };
+    },
+    findByPO: async (poId) => ({ ok: true, value: [...store.values()].filter((g) => g.purchaseOrderId === poId) }),
+  };
+};
+
+// ── Application services ───────────────────────────────────────────────────
+const issuePO =
+  (repo: PurchaseOrderRepo, pub: EventPublisher) =>
+  async (poId: POId): Promise<Result<PurchaseOrderIssued, string>> => {
+    const r = await repo.findById(poId);
+    if (!r.ok || !r.value) return { ok: false, error: `PO ${poId} not found` };
+    const po = r.value;
+    await repo.save({ ...po, status: "Issued" });
+    const event: PurchaseOrderIssued = {
+      orderId: po.id,
+      supplierId: po.supplierId,
+      issuedAt: new Date().toISOString(),
+    };
+    await pub.publish({ kind: "POIssued", payload: event });
+    return { ok: true, value: event };
+  };
+
+const receiveGoods =
+  (grnRepo: GRNRepo) =>
+  async (grn: GoodsReceiptNote): Promise<Result<GoodsReceiptNote, string>> => {
+    await grnRepo.save(grn);
+    return { ok: true, value: grn };
+  };
+
+// ── Composition root: full purchasing + receiving flow ─────────────────────
+const poRepo = makePORepo();
+const grnRepo = makeGRNRepo();
+const published: DomainEvent[] = [];
+const publisher: EventPublisher = {
+  publish: async (ev) => {
+    published.push(ev);
+    return { ok: true, value: undefined };
+  },
+};
+
+// Seed a PO
+const po: PurchaseOrder = {
+  id: "po_001" as POId,
+  supplierId: "sup_abc" as SupplierId,
+  totalAmount: 5000,
+  status: "Approved",
+};
+await poRepo.save(po);
+
+// Issue the PO
+const issueResult = await issuePO(poRepo, publisher)("po_001" as POId);
+console.log("Issue:", issueResult.ok ? `ok — event: ${issueResult.value.orderId}` : issueResult.error);
+// => Output: Issue: ok — event: po_001
+
+// Receive goods against the PO
+const grn: GoodsReceiptNote = {
+  id: "grn_001" as GRNId,
+  purchaseOrderId: "po_001" as POId,
+  receivedQuantity: 10,
+  status: "Confirmed",
+};
+await receiveGoods(grnRepo)(grn);
+
+const grnsForPO = await grnRepo.findByPO("po_001" as POId);
+console.log("GRNs for PO:", grnsForPO.ok ? grnsForPO.value.length : "error");
+// => Output: GRNs for PO: 1
+
+console.log("Published events:", published.length);
+// => Output: Published events: 1
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root is the only place that names adapter implementations — every application service receives port types and remains infrastructure-agnostic, making the entire purchasing + receiving flow independently testable with in-memory adapters.

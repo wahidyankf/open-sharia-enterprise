@@ -15,7 +15,7 @@ Examples 1–25 walk through DDD tactical patterns using the `purchasing` bounde
 
 Every class name comes directly from the domain glossary that procurement specialists use. When code says `PurchaseRequisition`, `Money`, and `Quantity`, developers and business analysts share a single vocabulary with no silent translation layer.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -97,6 +97,88 @@ var req = new PurchaseRequisition(
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Ubiquitous Language: TypeScript classes use domain glossary names exactly
+// => "PurchaseRequisition" not "RequestForm"; private readonly constructors enforce VO semantics
+
+// Typed wrappers enforce domain vocabulary at compile time
+class RequisitionId {
+  // => private constructor: callers must use factory; no direct 'new RequisitionId("...")'
+  private constructor(readonly value: string) {}
+  static of(value: string): RequisitionId {
+    if (!value.startsWith("req_"))
+      // => format guard: req_ prefix required
+      throw new Error(`RequisitionId must start with 'req_', got: ${value}`);
+    return new RequisitionId(value);
+  }
+  toString(): string {
+    return this.value;
+  } // => "req_550e8400-..."
+}
+
+class SkuCode {
+  private constructor(readonly value: string) {} // => private constructor
+  static of(value: string): SkuCode {
+    if (!/^[A-Z]{3}-\d{4,8}$/.test(value))
+      // => regex guard; "invalid" throws
+      throw new Error(`SkuCode must match [A-Z]{3}-\d{4,8}, got: ${value}`);
+    return new SkuCode(value);
+  }
+}
+
+// Structural interface — carries UnitOfMeasure alongside count
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR"; // => closed union; no stray strings
+
+// readonly tuple-like object: quantity pairs count with unit — inseparable
+class Quantity {
+  private constructor(
+    readonly value: number,
+    readonly unit: UnitOfMeasure,
+  ) {}
+  // => private constructor: callers use Quantity.of factory
+  static of(value: number, unit: UnitOfMeasure): Quantity {
+    if (value <= 0) throw new Error(`Quantity.value must be > 0, got: ${value}`);
+    return new Quantity(value, unit);
+  }
+}
+
+// Money: amount + currency — neither can be stripped
+class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+  static of(amount: string, currency: string): Money {
+    const parsed = parseFloat(amount); // => parse string amount
+    if (isNaN(parsed) || parsed < 0)
+      // => NaN and negative rejected
+      throw new Error(`Money amount must be >= 0, got: ${amount}`);
+    if (currency.length !== 3)
+      // => ISO 4217 = 3 letters
+      throw new Error(`currency must be 3-letter ISO code, got: ${currency}`);
+    return new Money(parsed, currency.toUpperCase()); // => normalise; "usd" -> "USD"
+  }
+}
+
+// Anti-pattern: primitive obsession — all domain meaning is lost
+type AntiPattern = { id: string; sku: string; qty: number; amount: number };
+// => same primitive types; compiler cannot block wrong-order arguments
+
+// Ubiquitous Language version reads like a procurement requirement
+const req = {
+  id: RequisitionId.of("req_550e8400-e29b-41d4-a716-446655440000"),
+  // => typed; wrong-kind id is a runtime error (factory guards) and IDE type error
+  skuCode: SkuCode.of("OFF-001234"), // => validates regex at construction
+  quantity: Quantity.of(10, "BOX"), // => unit paired with count
+  estimatedCost: Money.of("250.00", "USD"), // => currency locked in
+};
+console.log(req.id.toString()); // => Output: req_550e8400-e29b-41d4-a716-446655440000
+console.log(req.skuCode.value); // => Output: OFF-001234
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Name every domain type using exact vocabulary from the purchasing glossary. When code reads like a procurement business requirement, specification drift surfaces in code review rather than in production.
@@ -127,7 +209,7 @@ graph LR
     classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -307,6 +389,73 @@ var grandTotal = total.Add(tax);             // => grandTotal = 262.50 USD
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Value Object: TypeScript class with private constructor enforces immutability
+// => No identity field; Money IS its amount + currency
+
+class Money {
+  // => private constructor: no direct 'new Money(...)'; all construction via Money.of()
+  private constructor(
+    readonly amount: number, // => stored as number (use Decimal.js in production)
+    readonly currency: string, // => ISO 4217 three-letter code, uppercase
+  ) {}
+
+  // => Factory method: validates before constructing; invalid Money never exists
+  static of(amount: string, currency: string): Money {
+    if (amount === null || amount === undefined)
+      // => null guard
+      throw new Error("amount is required");
+    const parsed = parseFloat(amount); // => parse from string to avoid float imprecision
+    if (isNaN(parsed))
+      // => non-numeric string rejected
+      throw new Error(`amount is not a valid number: ${amount}`);
+    if (parsed < 0)
+      // => domain invariant: amount >= 0
+      throw new Error("amount must be >= 0");
+    if (!currency || currency.length !== 3)
+      // => ISO 4217 = 3 uppercase letters
+      throw new Error("currency must be 3-letter ISO code");
+    return new Money(parsed, currency.toUpperCase()); // => normalised; "usd" -> "USD"
+  }
+
+  // Operations return NEW instances; originals are unchanged (immutability)
+  add(other: Money): Money {
+    if (this.currency !== other.currency)
+      // => domain rule: cannot add USD + IDR
+      throw new Error("Currency mismatch");
+    return Money.of(String(this.amount + other.amount), this.currency);
+    // => new Money; neither this nor other is mutated
+  }
+
+  multiply(factor: number): Money {
+    if (factor <= 0)
+      // => domain guard: factor must be positive
+      throw new Error("factor must be > 0");
+    return Money.of(String(this.amount * factor), this.currency);
+    // => new Money returned; this is unchanged
+  }
+
+  // => Structural equality: two Money instances are equal when amount and currency match
+  equals(other: Money): boolean {
+    return this.amount === other.amount && this.currency === other.currency;
+  }
+
+  toString(): string {
+    return `${this.amount} ${this.currency}`;
+  } // => "250.00 USD"
+}
+
+const unitPrice = Money.of("25.00", "USD"); // => unitPrice = 25.00 USD
+const total = unitPrice.multiply(10); // => total     = 250.00 USD (new object)
+// => unitPrice is still 25.00 USD — immutability guaranteed by private constructor + new returns
+const tax = Money.of("12.50", "USD"); // => tax = 12.50 USD
+const grandTotal = total.add(tax); // => grandTotal = 262.50 USD
+console.log(grandTotal.toString()); // => Output: 262.5 USD
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Value Objects are immutable and identity-free. All operations return new instances, making shared-state bugs structurally impossible.
@@ -319,7 +468,7 @@ var grandTotal = total.Add(tax);             // => grandTotal = 262.50 USD
 
 `SkuCode` wraps a plain string but enforces the procurement catalog format `^[A-Z]{3}-\d{4,8}$`. Once constructed, the code is guaranteed valid. Callers never need to re-validate.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -456,6 +605,60 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Value Object with format invariant: guarantees well-formed SKU throughout system
+// => Wrapping string in a class prevents passing arbitrary strings where SkuCode is expected
+
+class SkuCode {
+  // => Regex compiled as static constant; no re-compilation per call
+  private static readonly FORMAT = /^[A-Z]{3}-\d{4,8}$/;
+  readonly value: string; // => read-only; no setter
+
+  private constructor(value: string) {
+    // => private constructor; factory enforces invariant
+    this.value = value;
+  }
+
+  static of(value: string): SkuCode {
+    // => factory method (smart constructor)
+    if (!value || value.trim() === "")
+      // => null/blank guard first
+      throw new Error("SkuCode cannot be blank");
+    if (!SkuCode.FORMAT.test(value))
+      // => regex check against full string
+      throw new Error(
+        `SkuCode must match [A-Z]{3}-\d{4,8}, got: ${value}`, // => e.g. "invalid" or "AB-123" rejected
+      );
+    return new SkuCode(value); // => stored only after validation passes
+  }
+
+  // => Structural equality: two SkuCode instances with same value are equal
+  equals(other: SkuCode): boolean {
+    return this.value === other.value;
+  }
+  toString(): string {
+    return this.value;
+  } // => "OFF-001234"
+}
+
+// Valid usage
+const office = SkuCode.of("OFF-001234"); // => office.value = "OFF-001234"
+const tools = SkuCode.of("TLS-9999"); // => tools.value  = "TLS-9999"
+console.log(office.toString()); // => Output: OFF-001234
+
+// Invalid — throws at construction, not later
+try {
+  SkuCode.of("invalid"); // => regex fails; Error thrown
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: SkuCode must match [A-Z]{3}-\d{4,8}, got: invalid
+}
+// => bad was never created; invalid state structurally impossible
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Encode format invariants in the constructor so every `SkuCode` in the system is guaranteed valid. Downstream code never needs defensive checks.
@@ -468,7 +671,7 @@ catch (ArgumentException e)
 
 `Quantity` pairs a positive integer count with an immutable unit of measure. The enum `UnitOfMeasure` closes the set of valid units — no magic strings allowed.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -590,6 +793,51 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Closed union type: exactly these units exist in the procurement domain
+// => Adding "PALLET" requires a deliberate code change, not a stray string
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+// => TypeScript union acts as a closed enum; out-of-range value is a compile error
+
+// Value Object: count + unit form an inseparable pair
+// => private constructor enforces immutability and validation
+class Quantity {
+  private constructor(
+    readonly value: number, // => positive integer count; > 0 guaranteed
+    readonly unit: UnitOfMeasure, // => unit is part of the value
+  ) {}
+
+  static of(value: number, unit: UnitOfMeasure): Quantity {
+    if (!Number.isInteger(value) || value <= 0)
+      // => domain invariant: must be a positive integer
+      throw new Error(`Quantity.value must be > 0, got: ${value}`);
+    // => unit is enforced by TypeScript's union type at compile time; no runtime check needed
+    return new Quantity(value, unit);
+  }
+
+  toString(): string {
+    return `Quantity(${this.value}, ${this.unit})`;
+  }
+  // => "Quantity(500, EACH)"
+}
+
+const pens = Quantity.of(500, "EACH"); // => pens    = Quantity(500, EACH)
+const paper = Quantity.of(10, "BOX"); // => paper   = Quantity(10, BOX)
+const consult = Quantity.of(8, "HOUR"); // => consult = Quantity(8, HOUR)
+console.log(pens.toString()); // => Output: Quantity(500, EACH)
+console.log(paper.toString()); // => Output: Quantity(10, BOX)
+
+// Invalid — throws at construction
+try {
+  Quantity.of(-1, "KG"); // => value <= 0 triggers guard
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: Quantity.value must be > 0, got: -1
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `Quantity` as a record pairs count with unit, and the compact constructor enforces the positive-value invariant. The closed enum prevents unit drift from free-form strings.
@@ -602,7 +850,7 @@ catch (ArgumentException e)
 
 `RequisitionId` wraps a UUID string in the format `req_<uuid>`. Strong typing prevents accidentally using a `PurchaseOrderId` where a `RequisitionId` is expected — the compiler catches the mistake.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -720,6 +968,60 @@ var pid = new PurchaseOrderId("po_6ba7b810-9dad-11d1-80b4-00c04fd430c8");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Identity value object: typed wrapper prevents using wrong id type
+// => private constructor + factory pattern enforces prefix format
+
+class RequisitionId {
+  // => private constructor: only the factory can create valid instances
+  private constructor(readonly value: string) {}
+
+  static of(value: string): RequisitionId {
+    if (!value || value.trim() === "")
+      // => null/blank guard
+      throw new Error("RequisitionId cannot be blank");
+    if (!value.startsWith("req_"))
+      // => prefix format check
+      throw new Error(`RequisitionId must start with 'req_', got: ${value}`);
+    return new RequisitionId(value);
+  }
+
+  toString(): string {
+    return this.value;
+  } // => "req_550e8400-..."
+}
+
+// Separate class for PO ids — distinct type; TypeScript structural typing means we use
+// a brand tag to distinguish these nominally
+class PurchaseOrderId {
+  // => private brand field forces nominal distinction; TypeScript is structurally typed by default
+  private readonly _brand = "PurchaseOrderId" as const;
+  private constructor(readonly value: string) {}
+
+  static of(value: string): PurchaseOrderId {
+    if (!value || !value.startsWith("po_"))
+      // => prefix check
+      throw new Error("PurchaseOrderId must start with 'po_'");
+    return new PurchaseOrderId(value);
+  }
+}
+
+const rid = RequisitionId.of("req_550e8400-e29b-41d4-a716-446655440000");
+// => rid.value = "req_550e8400-e29b-41d4-a716-446655440000"
+
+const pid = PurchaseOrderId.of("po_6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+// => pid.value = "po_6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+
+// TypeScript: passing pid where RequisitionId expected is a compile-time type error
+// function approve(id: RequisitionId): void {}
+// approve(pid); // => COMPILE ERROR: Type 'PurchaseOrderId' is not assignable to type 'RequisitionId'
+console.log(rid.toString()); // => Output: req_550e8400-e29b-41d4-a716-446655440000
+console.log(pid.value); // => Output: po_6ba7b810-9dad-11d1-80b4-00c04fd430c8
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Wrapping each id category in its own record makes id-type mix-ups a compile error instead of a runtime bug traced through logs at 2 AM.
@@ -734,7 +1036,7 @@ var pid = new PurchaseOrderId("po_6ba7b810-9dad-11d1-80b4-00c04fd430c8");
 
 A smart constructor is a factory method or constructor body that rejects invalid inputs before they can reach field assignment. The object is either fully valid or it does not exist.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -899,6 +1201,68 @@ catch (ArgumentException e) { Console.WriteLine(e.Message); }
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Smart constructor: validation inside factory; no separate validate() step
+// => Pattern: check → throw → construct. Never construct then check.
+
+class Money {
+  readonly amount: number; // => stored after validation; read-only after construction
+  readonly currency: string; // => ISO 4217 three-letter code
+
+  private constructor(amount: number, currency: string) {
+    this.amount = amount;
+    this.currency = currency;
+  }
+
+  static of(rawAmount: string, rawCurrency: string): Money {
+    // => Step 1: null/undefined guards
+    if (rawAmount == null) throw new Error("amount is null");
+    if (rawCurrency == null) throw new Error("currency is null");
+
+    // => Step 2: parse — NaN surfaces malformed strings
+    const parsed = parseFloat(rawAmount);
+    if (isNaN(parsed))
+      // => "twenty" → NaN → rejected
+      throw new Error(`amount is not a valid number: ${rawAmount}`);
+
+    // => Step 3: domain invariants — non-negative amount, 3-letter ISO currency code
+    if (parsed < 0) throw new Error(`amount must be >= 0, got: ${rawAmount}`);
+    if (!/^[A-Z]{3}$/.test(rawCurrency.toUpperCase()))
+      throw new Error(`currency must be 3-letter uppercase ISO code, got: ${rawCurrency}`);
+
+    // => Step 4: construct ONLY after all guards pass; partial/invalid state impossible
+    return new Money(parsed, rawCurrency.toUpperCase()); // => normalise currency
+  }
+
+  toString(): string {
+    return `${this.amount} ${this.currency}`;
+  } // => "250.00 USD"
+}
+
+// Valid: passes all guards
+const m1 = Money.of("250.00", "USD"); // => m1.amount = 250, m1.currency = "USD"
+console.log(m1.toString()); // => Output: 250 USD
+
+// Invalid: negative amount — Step 3 guard fires
+try {
+  Money.of("-1.00", "USD");
+} catch (e: unknown) {
+  console.log((e as Error).message);
+}
+// => Output: amount must be >= 0, got: -1.00
+
+// Invalid: malformed decimal — Step 2 parse fails
+try {
+  Money.of("twenty", "USD");
+} catch (e: unknown) {
+  console.log((e as Error).message);
+}
+// => Output: amount is not a valid number: twenty
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The smart constructor validates in order (null → parse → domain invariant → assign), making invalid object states structurally impossible.
@@ -911,7 +1275,7 @@ catch (ArgumentException e) { Console.WriteLine(e.Message); }
 
 Java 21 records compact constructors express invariants concisely without boilerplate field assignment — the compiler inserts assignments after the constructor body. Kotlin and C# achieve the same guarantee through `init` blocks and primary constructor validation, respectively.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1038,6 +1402,58 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// TypeScript equivalent of Java 21 record compact constructor for Quantity
+// => Private constructor + factory static method delivers the same guarantee
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR"; // => closed union
+
+// Quantity class with private constructor enforcing the positive-count invariant
+class Quantity {
+  private constructor(
+    readonly value: number, // => positive count; invariant enforced by factory
+    readonly unit: UnitOfMeasure, // => unit is part of the value; TypeScript union prevents strays
+  ) {}
+
+  static of(value: number, unit: UnitOfMeasure): Quantity {
+    // => Invariant 1: purchasing domain requires a positive count
+    if (!Number.isInteger(value) || value <= 0) throw new Error(`Quantity.value must be > 0, got: ${value}`);
+    // => Invariant 2: unit is constrained by the union type at compile time
+    return new Quantity(value, unit);
+    // => Constructed ONLY after all checks pass; invalid Quantity cannot exist
+  }
+
+  equals(other: Quantity): boolean {
+    return this.value === other.value && this.unit === other.unit;
+    // => Structural equality: same count + unit = equal Quantity
+  }
+
+  toString(): string {
+    return `Quantity(${this.value}, ${this.unit})`;
+  }
+}
+
+const q = Quantity.of(10, "BOX"); // => q  = Quantity(10, BOX)
+const q2 = Quantity.of(10, "BOX"); // => q2 = Quantity(10, BOX) (separate instance)
+console.log(q.value); // => Output: 10
+console.log(q.unit); // => Output: BOX
+console.log(q.toString()); // => Output: Quantity(10, BOX)
+
+// Structural equality: both fields match
+console.log(q.equals(q2)); // => Output: true  (structural equality)
+console.log(q === q2); // => Output: false (different object references; irrelevant for VO)
+
+// Invalid — factory throws; q3 is never assigned
+try {
+  Quantity.of(0, "EACH"); // => value <= 0 triggers guard
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: Quantity.value must be > 0, got: 0
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Records with compact constructors deliver immutability, structural equality, and validation in minimal lines — they are the canonical Java 21 Value Object implementation. Kotlin `data class` with `init` and C# `record` with constructor guards achieve identical guarantees in their idioms.
@@ -1050,7 +1466,7 @@ catch (ArgumentException e)
 
 `ApprovalLevel` is a value object derived from the requisition's estimated cost. The derivation rule lives in a factory method rather than in the caller — one source of truth. Kotlin uses a companion object function; C# uses a static factory method on the enum-equivalent sealed class.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1182,6 +1598,47 @@ Console.WriteLine(ApprovalLevelFactory.From(boundary)); // => Output: L1 (1000m 
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ApprovalLevel: TypeScript const enum equivalent; factory function derives level from Money total
+// => Factory function as a module-level utility; single source of truth for thresholds
+
+// Closed union type for approval levels
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => L1 <= $1000, L2 <= $10000, L3 > $10000
+
+// Money stub for this example
+interface MoneyValue {
+  amount: number;
+  currency: string;
+}
+
+// Factory function: deriving level from Money keeps rule in one place, not in callers
+function approvalLevelFrom(total: MoneyValue): ApprovalLevel {
+  if (total == null)
+    // => null guard
+    throw new Error("total is required to derive ApprovalLevel");
+  const { amount } = total;
+
+  if (amount <= 1000) return "L1"; // => amount <= 1000 => L1
+  if (amount <= 10000) return "L2"; // => 1000 < amount <= 10000 => L2
+  return "L3"; // => amount > 10000 => L3
+}
+
+// Usage: level derived at need; no magic number scattered across services
+const small: MoneyValue = { amount: 500, currency: "USD" }; // => small  = 500 USD
+const medium: MoneyValue = { amount: 5000, currency: "USD" }; // => medium = 5000 USD
+const large: MoneyValue = { amount: 15000, currency: "USD" }; // => large  = 15000 USD
+const boundary: MoneyValue = { amount: 1000, currency: "USD" }; // => boundary = 1000 USD
+
+console.log(approvalLevelFrom(small)); // => Output: L1
+console.log(approvalLevelFrom(medium)); // => Output: L2
+console.log(approvalLevelFrom(large)); // => Output: L3
+console.log(approvalLevelFrom(boundary)); // => Output: L1 (1000 <= 1000 threshold)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Centralise derivation logic in a factory method on the enum. Callers never need to know threshold values — they call `ApprovalLevel.from(total)` and get a typed result.
@@ -1194,7 +1651,7 @@ Console.WriteLine(ApprovalLevelFactory.From(boundary)); // => Output: L1 (1000m 
 
 Kotlin's `data class` generates `copy()` and Java `record` and C# `record` generate `with`-expression support. All three enable creating modified instances without mutation — but each has a nuance around whether invariants re-run.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1352,6 +1809,67 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Value Object copy-and-modify: TypeScript uses Object.freeze + spread or withXxx method
+// => Private constructor + factory ensures invariants run on every construction
+
+class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+
+  static of(amount: number, currency: string): Money {
+    if (amount < 0) throw new Error("amount must be >= 0");
+    if (currency.length !== 3) throw new Error("currency must be 3-letter ISO code");
+    return new Money(amount, currency.toUpperCase());
+  }
+
+  add(other: Money): Money {
+    if (this.currency !== other.currency) throw new Error("Currency mismatch");
+    return Money.of(this.amount + other.amount, this.currency); // => new Money; this unchanged
+  }
+
+  multiply(factor: number): Money {
+    if (factor <= 0) throw new Error("factor must be > 0");
+    return Money.of(this.amount * factor, this.currency); // => new Money; this unchanged
+  }
+
+  // => withCurrency: immutable copy with new currency; factory validates the new value
+  withCurrency(newCurrency: string): Money {
+    return Money.of(this.amount, newCurrency); // => factory validates newCurrency; invariant re-runs
+  }
+
+  equals(other: Money): boolean {
+    return this.amount === other.amount && this.currency === other.currency;
+  }
+
+  toString(): string {
+    return `${this.amount} ${this.currency}`;
+  }
+}
+
+const unitPrice = Money.of(25.0, "USD"); // => unitPrice  = 25.00 USD
+const lineTotal = unitPrice.multiply(10); // => lineTotal  = 250.00 USD (new object; unitPrice unchanged)
+const tax = Money.of(12.5, "USD"); // => tax        = 12.50 USD
+const grandTotal = lineTotal.add(tax); // => grandTotal = 262.50 USD
+console.log(grandTotal.toString()); // => Output: 262.5 USD
+
+// Safe copy: withCurrency re-runs factory; "IDR" is validated
+const converted = grandTotal.withCurrency("IDR"); // => converted = 262.50 IDR
+console.log(converted.toString()); // => Output: 262.5 IDR
+
+// Guarded bad copy: factory catches the violation
+try {
+  grandTotal.withCurrency("XX"); // => currency length != 3; factory rejects
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: currency must be 3-letter ISO code
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Kotlin `data class` with `init` delivers Value Object guarantees in fewer lines than Java. `copy()` is useful but bypasses `init` in some Kotlin versions — verify invariants hold after copy in critical code. C# `with`-expressions route through the constructor and re-enforce all guards.
@@ -1364,7 +1882,7 @@ catch (ArgumentException e)
 
 Records and data classes in Java, Kotlin, and C# provide structural equality, immutable fields, and copy-construction. Each language has a distinct idiom for creating modified copies without mutation.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1515,6 +2033,63 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// SkuCode with copy-and-modify: TypeScript private constructor + withValue method
+// => Unlike Java, TypeScript has no built-in with-expression; explicit method achieves the same
+
+class SkuCode {
+  private static readonly FORMAT = /^[A-Z]{3}-\d{4,8}$/; // => compiled regex constant
+  readonly value: string;
+
+  private constructor(value: string) {
+    this.value = value;
+  }
+
+  static of(value: string): SkuCode {
+    if (!value || value.trim() === "")
+      // => null/blank guard
+      throw new Error("SkuCode cannot be blank");
+    if (!SkuCode.FORMAT.test(value))
+      // => regex check against full string
+      throw new Error(`SkuCode must match [A-Z]{3}-\d{4,8}, got: ${value}`);
+    return new SkuCode(value); // => stored only after validation passes
+  }
+
+  // => withValue: explicit copy method; re-runs factory → invariant is always enforced
+  withValue(newValue: string): SkuCode {
+    return SkuCode.of(newValue); // => factory validates newValue; invalid throws
+  }
+
+  equals(other: SkuCode): boolean {
+    return this.value === other.value;
+  }
+  toString(): string {
+    return this.value;
+  } // => "OFF-001234"
+}
+
+// Valid construction
+const office = SkuCode.of("OFF-001234"); // => office.value = "OFF-001234"
+const tools = SkuCode.of("TLS-9999"); // => tools.value  = "TLS-9999"
+console.log(office.equals(tools)); // => Output: false (different values)
+console.log(office.equals(SkuCode.of("OFF-001234"))); // => Output: true (structural equality)
+
+// Copy with new value — factory invariant enforced on the new value
+const renamed = office.withValue("TLS-0001"); // => renamed.value = "TLS-0001"; office unchanged
+console.log(renamed.toString()); // => Output: TLS-0001
+
+// Invalid — throws; SkuCode("invalid") never reaches assignment
+try {
+  SkuCode.of("invalid"); // => regex fails; Error thrown
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: SkuCode must match [A-Z]{3}-\d{4,8}, got: invalid
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Java records use explicit copy methods to re-run compact-constructor guards; Kotlin uses a `withValue` function that triggers the `init` block; C# `with`-expressions route through the regular constructor and re-enforce all validation.
@@ -1547,7 +2122,7 @@ graph LR
     classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1761,6 +2336,91 @@ Console.WriteLine(itemA.Equals(itemA2));          // => Output: True  (same Id =
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Entity vs Value Object: TypeScript class with id-based equality for entities
+
+// Typed id: private brand for nominal distinction in TypeScript's structural type system
+class LineItemId {
+  private readonly _brand = "LineItemId" as const; // => brand prevents structural confusion
+  private constructor(readonly value: string) {}
+  static of(value: string): LineItemId {
+    if (!value || value.trim() === "") throw new Error("LineItemId cannot be blank");
+    return new LineItemId(value);
+  }
+  toString(): string {
+    return this.value;
+  }
+}
+
+// Stub value objects for this example
+class SkuCode {
+  constructor(readonly value: string) {}
+}
+class Quantity {
+  constructor(
+    readonly value: number,
+    readonly unit: string,
+  ) {}
+}
+class Money {
+  constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+  multiply(factor: number): Money {
+    return new Money(this.amount * factor, this.currency); // => new Money; this unchanged
+  }
+}
+
+// Entity: equality based on id only — NOT on field values
+class LineItem {
+  constructor(
+    readonly id: LineItemId, // => identity; never changes after creation
+    readonly skuCode: SkuCode, // => what is being requisitioned
+    private _quantity: Quantity, // => mutable: quantity can be revised pre-approval
+    readonly unitPrice: Money, // => price locked at requisition time
+  ) {}
+
+  // => Domain method: revise quantity; named to express business intent
+  reviseQuantity(newQty: Quantity): void {
+    if (newQty == null) throw new Error("newQty required");
+    this._quantity = newQty; // => allowed before requisition is submitted
+  }
+
+  lineTotal(): Money {
+    return this.unitPrice.multiply(this._quantity.value);
+  }
+  get quantity(): Quantity {
+    return this._quantity;
+  }
+
+  // => Entity equality: ONLY id matters; two items with same sku are still different
+  equals(other: LineItem): boolean {
+    return this.id.value === other.id.value;
+  }
+  toString(): string {
+    return `LineItem[${this.id}, ${this.skuCode.value}, ${this._quantity.value}]`;
+  }
+}
+
+// Demonstrate identity-based equality
+const idA = LineItemId.of("li-001"); // => idA.value = "li-001"
+const idB = LineItemId.of("li-002"); // => idB.value = "li-002"
+const sku = new SkuCode("OFF-001234"); // => identical SkuCode for both items
+const qty = new Quantity(10, "BOX"); // => identical quantity for both items
+const prc = new Money(25.0, "USD"); // => identical unit price for both items
+
+const itemA = new LineItem(idA, sku, qty, prc); // => entity with id li-001
+const itemB = new LineItem(idB, sku, qty, prc); // => entity with id li-002; same fields, different id
+console.log(itemA.equals(itemB)); // => Output: false (different ids)
+
+const itemA2 = new LineItem(idA, sku, qty, prc); // => new instance; same id as itemA
+console.log(itemA.equals(itemA2)); // => Output: true (same id = same entity)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Entities carry identity; two entities are equal only if their ids match, regardless of field values. Value Objects are equal if all fields match, regardless of reference.
@@ -1773,7 +2433,7 @@ Console.WriteLine(itemA.Equals(itemA2));          // => Output: True  (same Id =
 
 `PurchaseRequisition` is the Aggregate Root of the `purchasing` bounded context. All state changes go through its methods — no external code modifies its internals directly.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2032,6 +2692,77 @@ catch (InvalidOperationException e) { Console.WriteLine(e.Message); }
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// PurchaseRequisition as Aggregate Root in TypeScript
+// => Private backing list + readonly public list view enforces encapsulation
+
+type RequisitionStatus = "DRAFT" | "SUBMITTED" | "MANAGER_REVIEW" | "APPROVED" | "REJECTED" | "CONVERTED_TO_PO";
+
+interface LineItem {
+  id: string;
+  skuCode: string;
+  quantity: number;
+  unitPrice: { amount: number; currency: string };
+  lineTotal(): { amount: number; currency: string };
+}
+
+// Aggregate Root: single entry point for all state changes
+class PurchaseRequisition {
+  readonly id: string; // => identity; immutable
+  readonly requesterId: string; // => who raised the requisition
+  private _status: RequisitionStatus = "DRAFT"; // => starts in DRAFT
+  private readonly _lineItems: LineItem[] = []; // => encapsulated; exposed read-only
+
+  constructor(id: string, requesterId: string) {
+    if (!id || !requesterId || requesterId.trim() === "") throw new Error("id and requesterId required");
+    this.id = id;
+    this.requesterId = requesterId;
+  }
+
+  get status(): RequisitionStatus {
+    return this._status;
+  }
+  get lineItems(): readonly LineItem[] {
+    return [...this._lineItems];
+  }
+  // => spread creates a shallow copy; caller cannot mutate aggregate's internal array
+
+  // => Domain method: add a line item; only allowed in DRAFT
+  addLine(line: LineItem): void {
+    if (this._status !== "DRAFT")
+      // => guard: cannot add lines after submission
+      throw new Error(`Lines can only be added in DRAFT, current: ${this._status}`);
+    if (line == null) throw new Error("line is required");
+    this._lineItems.push(line); // => protected by aggregate root; no direct array access
+  }
+
+  // => Domain method: submit for review; guards business rules
+  submit(): void {
+    if (this._status !== "DRAFT")
+      // => idempotency guard; cannot submit twice
+      throw new Error(`Can only submit from DRAFT, current: ${this._status}`);
+    if (this._lineItems.length === 0)
+      // => domain rule: no empty requisitions
+      throw new Error("Cannot submit a requisition with no line items");
+    this._status = "SUBMITTED"; // => state transition
+  }
+
+  // => Derived value: total computed from all lines; not stored to avoid sync issues
+  estimatedTotal(): { amount: number; currency: string } {
+    return this._lineItems.reduce(
+      (acc, item) => {
+        const lt = item.lineTotal();
+        return { amount: acc.amount + lt.amount, currency: acc.currency };
+      },
+      { amount: 0, currency: "USD" },
+    ); // => accumulate all line totals
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Aggregate Root is the sole entry point for all state changes. External code calls its methods; it protects internal consistency.
@@ -2044,7 +2775,7 @@ catch (InvalidOperationException e) { Console.WriteLine(e.Message); }
 
 Demonstrating the full lifecycle of a `PurchaseRequisition` from construction through total computation.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2346,6 +3077,111 @@ catch (InvalidOperationException e) { Console.WriteLine(e.Message); }
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Full lifecycle: PurchaseRequisition with line items and estimated total
+
+type RequisitionStatus = "DRAFT" | "SUBMITTED" | "MANAGER_REVIEW" | "APPROVED" | "REJECTED" | "CONVERTED_TO_PO";
+type ApprovalLevel = "L1" | "L2" | "L3";
+
+interface LineItemData {
+  id: string;
+  skuCode: string;
+  quantity: { value: number; unit: string };
+  unitPrice: { amount: number; currency: string };
+}
+
+function lineTotal(item: LineItemData): number {
+  return item.unitPrice.amount * item.quantity.value; // => unit price × quantity count
+}
+
+function approvalLevelFrom(totalAmount: number): ApprovalLevel {
+  if (totalAmount <= 1000) return "L1"; // => team lead approval
+  if (totalAmount <= 10000) return "L2"; // => department head
+  return "L3"; // => CFO/board
+}
+
+class PurchaseRequisition {
+  readonly id: string;
+  readonly requesterId: string;
+  private _status: RequisitionStatus = "DRAFT";
+  private readonly _lineItems: LineItemData[] = [];
+
+  constructor(id: string, requesterId: string) {
+    if (!id || !requesterId) throw new Error("id and requesterId required");
+    this.id = id;
+    this.requesterId = requesterId;
+  }
+
+  get status(): RequisitionStatus {
+    return this._status;
+  }
+  get lineItems(): readonly LineItemData[] {
+    return [...this._lineItems];
+  }
+
+  addLine(line: LineItemData): void {
+    if (this._status !== "DRAFT") throw new Error(`Lines can only be added in DRAFT, current: ${this._status}`);
+    this._lineItems.push(line);
+  }
+
+  submit(): void {
+    if (this._status !== "DRAFT") throw new Error(`Can only submit from DRAFT, current: ${this._status}`);
+    if (this._lineItems.length === 0) throw new Error("Cannot submit with no line items");
+    this._status = "SUBMITTED";
+  }
+
+  estimatedTotal(): number {
+    return this._lineItems.reduce((sum, item) => sum + lineTotal(item), 0);
+    // => reduce accumulates all line totals
+  }
+
+  requiredApprovalLevel(): ApprovalLevel {
+    return approvalLevelFrom(this.estimatedTotal()); // => delegates rule to factory
+  }
+}
+
+// Setup: typed value objects
+const req = new PurchaseRequisition("req_550e8400-e29b-41d4-a716-446655440000", "emp-42"); // => status=DRAFT; lineItems=[]
+
+// Build line items
+const item1: LineItemData = {
+  id: "li-001",
+  skuCode: "OFF-001234",
+  quantity: { value: 500, unit: "EACH" },
+  unitPrice: { amount: 0.5, currency: "USD" },
+}; // => li-001: 500 EACH × $0.50 = $250.00
+
+const item2: LineItemData = {
+  id: "li-002",
+  skuCode: "PPR-8500",
+  quantity: { value: 10, unit: "BOX" },
+  unitPrice: { amount: 25.0, currency: "USD" },
+}; // => li-002: 10 BOX × $25.00 = $250.00
+
+req.addLine(item1); // => lineItems = [li-001]
+req.addLine(item2); // => lineItems = [li-001, li-002]
+
+const total = req.estimatedTotal();
+// => total = 250.00 + 250.00 = 500.00 USD
+console.log(`Total: ${total} USD`); // => Output: Total: 500 USD
+
+console.log(`Level: ${req.requiredApprovalLevel()}`); // => Output: Level: L1
+
+req.submit(); // => status transitions DRAFT -> SUBMITTED
+console.log(`Status: ${req.status}`); // => Output: Status: SUBMITTED
+
+// Guard: cannot add lines after submission
+try {
+  req.addLine(item1);
+} catch (e: unknown) {
+  console.log((e as Error).message);
+}
+// => Output: Lines can only be added in DRAFT, current: SUBMITTED
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Aggregate Root's domain methods sequence validation, state change, and computation in a single cohesive unit. Callers never manage these steps manually.
@@ -2358,7 +3194,7 @@ catch (InvalidOperationException e) { Console.WriteLine(e.Message); }
 
 Java 21 records have no `with`-expression built-in (unlike C#), but a manual `withQuantity` builder method on a `LineItem` record delivers the same semantics.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2514,6 +3350,70 @@ Console.WriteLine(original.Id == revised.Id); // => Output: True (record structu
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Immutable copy-and-modify in TypeScript: withQuantity method returns new object
+
+interface QuantityVO {
+  value: number;
+  unit: string;
+}
+interface MoneyVO {
+  amount: number;
+  currency: string;
+}
+
+// LineItem: immutable object with domain-specific copy helper
+// => TypeScript interfaces + readonly properties provide immutability guarantees
+
+class LineItem {
+  private constructor(
+    readonly id: string, // => entity identity; never changes across revisions
+    readonly skuCode: string, // => what is being requisitioned
+    readonly quantity: QuantityVO, // => the one field domain revision changes
+    readonly unitPrice: MoneyVO, // => price locked at requisition time; never revised
+  ) {}
+
+  static of(id: string, skuCode: string, quantity: QuantityVO, unitPrice: MoneyVO): LineItem {
+    if (!id || !skuCode || !quantity || !unitPrice) throw new Error("All fields required");
+    return new LineItem(id, skuCode, quantity, unitPrice);
+  }
+
+  lineTotal(): number {
+    return this.unitPrice.amount * this.quantity.value;
+  }
+  // => computed on demand; no stored field to go stale
+
+  // => withQuantity: immutable copy; only quantity changes; returns new LineItem
+  withQuantity(newQuantity: QuantityVO): LineItem {
+    if (newQuantity.value <= 0) throw new Error("newQuantity.value must be > 0");
+    // => guard mirrors the Quantity invariant; invalid revision rejected here
+    return new LineItem(this.id, this.skuCode, newQuantity, this.unitPrice);
+    // => new LineItem; id, skuCode, unitPrice preserved unchanged
+  }
+}
+
+// Demonstrate immutable revision
+const original = LineItem.of(
+  "li-001",
+  "OFF-001234",
+  { value: 500, unit: "EACH" }, // => 500 pens
+  { amount: 0.5, currency: "USD" }, // => $0.50 per pen
+); // => original: 500 EACH × $0.50 = $250.00
+console.log(original.lineTotal()); // => Output: 250
+
+const revised = original.withQuantity({ value: 1000, unit: "EACH" });
+// => revised: 1000 EACH × $0.50 = $500.00; original instance is unchanged
+console.log(revised.lineTotal()); // => Output: 500
+console.log(original.lineTotal()); // => Output: 250 (original intact)
+
+// Identity preserved in revision
+console.log(original.id === revised.id); // => Output: true (same entity id)
+// => Same entity identity, different quantity snapshot — correct for audit-trail tracking
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Returning a new instance from copy-methods (`withQuantity`) preserves immutability while enabling domain-driven revision semantics. The original is never lost.
@@ -2526,7 +3426,7 @@ Console.WriteLine(original.Id == revised.Id); // => Output: True (record structu
 
 A static factory method encapsulates construction logic, provides a meaningful name, and can enforce creation-time invariants that go beyond a single constructor call.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2737,6 +3637,68 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Factory method: TypeScript static factory pattern with private constructor
+// => Named factory communicates intent; hides constructor; validates creation-time rules
+
+type RequisitionStatus = "DRAFT" | "SUBMITTED" | "MANAGER_REVIEW" | "APPROVED" | "REJECTED" | "CONVERTED_TO_PO";
+
+class PurchaseRequisition {
+  readonly id: string;
+  readonly requesterId: string;
+  private _status: RequisitionStatus = "DRAFT";
+  private readonly _lineItems: string[] = []; // => using string stub for brevity
+
+  // Private constructor: callers must use static factory
+  private constructor(id: string, requesterId: string) {
+    this.id = id;
+    this.requesterId = requesterId;
+  }
+
+  // Static factory method: validates, names intent, constructs
+  // => "create" communicates domain action; "new PurchaseRequisition(...)" expresses plumbing
+  static create(id: string, requesterId: string): PurchaseRequisition {
+    if (!id || id.trim() === "") throw new Error("RequisitionId required");
+    if (!requesterId || requesterId.trim() === "") throw new Error("requesterId required; cannot be anonymous");
+    // => Future: check requester exists in employee service (application layer concern)
+    return new PurchaseRequisition(id, requesterId); // => valid state guaranteed
+  }
+
+  get status(): RequisitionStatus {
+    return this._status;
+  }
+
+  addLine(line: string): void {
+    if (this._status !== "DRAFT") throw new Error(`Lines only in DRAFT, current: ${this._status}`);
+    this._lineItems.push(line);
+  }
+
+  submit(): void {
+    if (this._status !== "DRAFT") throw new Error("Only from DRAFT");
+    if (this._lineItems.length === 0) throw new Error("No line items");
+    this._status = "SUBMITTED";
+  }
+}
+
+// Usage: factory communicates intent; private constructor is inaccessible
+const req = PurchaseRequisition.create("req_550e8400-e29b-41d4-a716-446655440000", "emp-42"); // => req.status = DRAFT
+console.log(req.status); // => Output: DRAFT
+
+// Invalid requesterId rejected at factory — not deep inside business logic
+try {
+  PurchaseRequisition.create(
+    "req_550e8400-e29b-41d4-a716-446655440000",
+    "", // => blank requesterId; anonymous requisition rejected
+  );
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: requesterId required; cannot be anonymous
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Static factory methods name the creation intent, control the constructor's visibility, and validate creation-time business rules in a single discoverable location.
@@ -2764,7 +3726,7 @@ stateDiagram-v2
     ConvertedToPO --> [*]
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2977,6 +3939,85 @@ catch (InvalidOperationException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// State machine: TypeScript transition table makes invalid state changes a runtime error
+// => Explicit Map of allowed transitions; no ad-hoc if-else scattered across methods
+
+type Status = "DRAFT" | "SUBMITTED" | "MANAGER_REVIEW" | "APPROVED" | "REJECTED" | "CONVERTED_TO_PO";
+
+// Transition table: maps current status to set of allowed next statuses
+const TRANSITIONS = new Map<Status, Set<Status>>([
+  ["DRAFT", new Set<Status>(["SUBMITTED"])], // => DRAFT -> SUBMITTED only
+  ["SUBMITTED", new Set<Status>(["MANAGER_REVIEW"])], // => must escalate before approval
+  ["MANAGER_REVIEW", new Set<Status>(["APPROVED", "REJECTED"])], // => manager decides
+  ["APPROVED", new Set<Status>(["CONVERTED_TO_PO"])], // => approved -> PO
+  ["REJECTED", new Set<Status>()], // => terminal state
+  ["CONVERTED_TO_PO", new Set<Status>()], // => terminal state
+]);
+
+function transitionTo(current: Status, next: Status): Status {
+  const allowed = TRANSITIONS.get(current) ?? new Set<Status>();
+  if (!allowed.has(next))
+    // => check against table
+    throw new Error(`Invalid transition: ${current} -> ${next}`);
+  return next; // => returns validated next state
+}
+
+class PurchaseRequisition {
+  readonly id: string;
+  private _status: Status = "DRAFT";
+
+  constructor(id: string) {
+    if (!id) throw new Error("id required");
+    this.id = id;
+  }
+
+  get status(): Status {
+    return this._status;
+  }
+
+  private transition(next: Status): void {
+    this._status = transitionTo(this._status, next); // => guard in transitionTo; assigns if valid
+  }
+
+  submit(): void {
+    this.transition("SUBMITTED");
+  } // => DRAFT -> SUBMITTED
+  escalate(): void {
+    this.transition("MANAGER_REVIEW");
+  } // => SUBMITTED -> MANAGER_REVIEW
+  approve(): void {
+    this.transition("APPROVED");
+  } // => MANAGER_REVIEW -> APPROVED
+  reject(): void {
+    this.transition("REJECTED");
+  } // => MANAGER_REVIEW -> REJECTED
+  convertToPO(): void {
+    this.transition("CONVERTED_TO_PO");
+  } // => APPROVED -> CONVERTED_TO_PO
+}
+
+// Happy path
+const req = new PurchaseRequisition("req_550e8400-e29b-41d4-a716-446655440000");
+req.submit(); // => DRAFT -> SUBMITTED
+req.escalate(); // => SUBMITTED -> MANAGER_REVIEW
+req.approve(); // => MANAGER_REVIEW -> APPROVED
+req.convertToPO(); // => APPROVED -> CONVERTED_TO_PO
+console.log(req.status); // => Output: CONVERTED_TO_PO
+
+// Invalid transition
+const req2 = new PurchaseRequisition("req_550e8400-e29b-41d4-a716-000000000001");
+req2.submit();
+try {
+  req2.approve(); // => SUBMITTED -> APPROVED not in table; must go through MANAGER_REVIEW
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: Invalid transition: SUBMITTED -> APPROVED
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A transition table makes every legal state change explicit and enforces it at runtime, preventing silent invalid transitions.
@@ -2989,7 +4030,7 @@ catch (InvalidOperationException e)
 
 Guard predicates expose read-only queries about state eligibility, useful for UI enablement and pre-submission checks without triggering state changes.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3194,6 +4235,74 @@ Console.WriteLine(req.CanSubmit);  // => Output: False (state is now Submitted, 
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Guard predicates: TypeScript getter properties for read-only eligibility queries
+// => canSubmit, canApprove: pure queries; no side effects; safe to call any time
+
+type Status = "DRAFT" | "SUBMITTED" | "MANAGER_REVIEW" | "APPROVED" | "REJECTED" | "CONVERTED_TO_PO";
+
+class PurchaseRequisition {
+  readonly id: string;
+  private _status: Status = "DRAFT";
+  private readonly _lineItems: string[] = []; // => string stub; production uses LineItem entity
+
+  constructor(id: string) {
+    if (!id) throw new Error("id required");
+    this.id = id;
+  }
+
+  get status(): Status {
+    return this._status;
+  }
+
+  // => Pure getter: "can this req be submitted now?"
+  get canSubmit(): boolean {
+    return this._status === "DRAFT" && this._lineItems.length > 0;
+    // => Both conditions required: DRAFT state AND at least one line item
+  }
+
+  // => Pure getter: "is manager approval currently possible?"
+  get canApprove(): boolean {
+    return this._status === "MANAGER_REVIEW";
+    // => Only valid when escalated to manager review
+  }
+
+  addLine(line: string): void {
+    if (this._status !== "DRAFT") throw new Error("Only in DRAFT");
+    this._lineItems.push(line);
+  }
+
+  submit(): void {
+    if (!this.canSubmit)
+      // => reuse guard; single source of truth for submit eligibility
+      throw new Error(`Cannot submit: status=${this._status}, lineCount=${this._lineItems.length}`);
+    this._status = "SUBMITTED";
+  }
+
+  approve(): void {
+    if (!this.canApprove)
+      // => reuse guard
+      throw new Error(`Cannot approve: status=${this._status}`);
+    this._status = "APPROVED";
+  }
+}
+
+const req = new PurchaseRequisition("req_550e8400-e29b-41d4-a716-446655440000");
+
+console.log(req.canSubmit); // => Output: false (no line items yet)
+
+req.addLine("OFF-001234 x10 BOX @ 25.00 USD"); // => _lineItems = [one entry]
+
+console.log(req.canSubmit); // => Output: true (DRAFT + has lines)
+console.log(req.canApprove); // => Output: false (not in MANAGER_REVIEW)
+
+req.submit(); // => DRAFT -> SUBMITTED
+console.log(req.canSubmit); // => Output: false (status is now SUBMITTED, not DRAFT)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Guard predicates (`canSubmit`, `canApprove`) are pure queries that expose eligibility without side effects. Domain methods reuse them so eligibility logic has one source of truth.
@@ -3206,7 +4315,7 @@ Console.WriteLine(req.CanSubmit);  // => Output: False (state is now Submitted, 
 
 A domain event is an immutable record of a significant occurrence in the domain. `RequisitionSubmitted` is raised when `PurchaseRequisition.submit()` succeeds.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3450,6 +4559,86 @@ Console.WriteLine(events[0].RequiredLevel);      // => Output: L1
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Domain events: TypeScript readonly interface as immutable event record
+// => Aggregate collects events; application layer dispatches after transaction commit
+
+// Domain Event: readonly interface ensures immutability at the type level
+interface RequisitionSubmittedEvent {
+  readonly type: "RequisitionSubmitted"; // => discriminated union tag
+  readonly requisitionId: string; // => which requisition was submitted
+  readonly requesterId: string; // => who submitted it
+  readonly estimatedTotal: string; // => total snapshot at submission time
+  readonly requiredLevel: "L1" | "L2" | "L3"; // => approval level derived from total
+  readonly occurredAt: Date; // => when it happened; UTC Date
+}
+
+type Status = "DRAFT" | "SUBMITTED" | "MANAGER_REVIEW" | "APPROVED" | "REJECTED" | "CONVERTED_TO_PO";
+type ApprovalLevel = "L1" | "L2" | "L3";
+
+class PurchaseRequisition {
+  readonly id: string;
+  readonly requesterId: string;
+  private _status: Status = "DRAFT";
+  private readonly _lineItems: string[] = [];
+  private readonly _domainEvents: RequisitionSubmittedEvent[] = [];
+  // => events accumulated here; dispatched by application layer after commit
+
+  constructor(id: string, requesterId: string) {
+    if (!id || !requesterId) throw new Error("id and requesterId required");
+    this.id = id;
+    this.requesterId = requesterId;
+  }
+
+  get status(): Status {
+    return this._status;
+  }
+
+  addLine(line: string): void {
+    if (this._status !== "DRAFT") throw new Error("Only in DRAFT");
+    this._lineItems.push(line);
+  }
+
+  submit(): void {
+    if (this._status !== "DRAFT" || this._lineItems.length === 0) throw new Error("Cannot submit");
+    this._status = "SUBMITTED"; // => state change first
+
+    // => Stub total computation; production sums LineItem.lineTotal() values
+    const total = `${this._lineItems.length * 50}.00 USD`;
+
+    this._domainEvents.push({
+      // => record the fact
+      type: "RequisitionSubmitted",
+      requisitionId: this.id,
+      requesterId: this.requesterId,
+      estimatedTotal: total,
+      requiredLevel: "L1", // => stub; production: approvalLevelFrom(total)
+      occurredAt: new Date(), // => UTC timestamp at commit time
+    }); // => collected; application layer dispatches after commit — not here
+  }
+
+  // => pullEvents: snapshot then clear; one-shot delivery prevents re-dispatch
+  pullEvents(): readonly RequisitionSubmittedEvent[] {
+    const snapshot = [...this._domainEvents]; // => spread copy; immutable slice
+    this._domainEvents.length = 0; // => clear after pull; events are one-shot
+    return snapshot;
+  }
+}
+
+// Usage
+const req = new PurchaseRequisition("req_550e8400-e29b-41d4-a716-446655440000", "emp-42");
+req.addLine("OFF-001234 x500 EACH @ 0.50 USD"); // => lineItems = [one entry]
+req.submit(); // => raises RequisitionSubmitted internally
+
+const events = req.pullEvents(); // => [RequisitionSubmittedEvent{...}]
+console.log(events.length); // => Output: 1
+console.log(events[0].estimatedTotal); // => Output: 50.00 USD (stub)
+console.log(events[0].requiredLevel); // => Output: L1
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain events capture significant state transitions as immutable facts. The aggregate collects them; the application layer dispatches them after the transaction commits.
@@ -3462,7 +4651,7 @@ Console.WriteLine(events[0].RequiredLevel);      // => Output: L1
 
 `Optional<T>` (Java), nullable types (Kotlin), and nullable reference types (C#) all make absent domain values explicit. In domain code, `findById` either returns a `PurchaseRequisition` or signals "nothing found" — callers cannot ignore the absent case.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3618,6 +4807,52 @@ Console.WriteLine(result); // => never reached; exception raised above
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Optional domain values: TypeScript uses T | null or T | undefined to encode absence
+// => No Optional<T> wrapper needed; TypeScript type system encodes absence directly
+
+// Simple in-memory repository returning nullable type
+class InMemoryRequisitionRepository {
+  // => Map backed store; key is the raw id string
+  private readonly store = new Map<string, string>();
+
+  save(id: string, data: string): void {
+    this.store.set(id, data); // => upsert; Map.set overwrites existing
+  }
+
+  // => Returns string | null: TypeScript forces callers to handle both cases
+  findById(id: string): string | null {
+    if (!id) return null; // => null id => null; no exception
+    return this.store.get(id) ?? null; // => ?? null: undefined -> null for consistency
+    // => No Optional wrapper; TypeScript type system encodes absence directly
+  }
+}
+
+const repo = new InMemoryRequisitionRepository();
+const reqId = "req_550e8400-e29b-41d4-a716-446655440000";
+repo.save(reqId, "PurchaseRequisition(emp-42)"); // => stored
+
+// Found case: optional chaining on nullable value
+const found: string | null = repo.findById(reqId);
+// => found = "PurchaseRequisition(emp-42)"
+if (found !== null) {
+  console.log(`Found: ${found}`);
+  // => Output: Found: PurchaseRequisition(emp-42)
+}
+
+// Not found case: nullish coalescing throw pattern
+const missingId = "req_00000000-0000-0000-0000-000000000000";
+const result = repo.findById(missingId);
+if (result === null) {
+  throw new Error("Requisition not found");
+  // => throws Error; caller handles domain "not found" explicitly
+}
+console.log(result); // => never reached; exception raised above
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `Optional<T>` (Java), nullable types `T?` (Kotlin), and nullable reference types `T?` (C#) all make absent values explicit at the API boundary, forcing callers to handle both found and not-found cases rather than receiving a null and failing later.
@@ -3630,7 +4865,7 @@ Console.WriteLine(result); // => never reached; exception raised above
 
 A `LineItem` entity uses operator overloads on `Money` for readable arithmetic and overrides equality to use identity (id) rather than structural field comparison. The pattern is shown in all three languages.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3861,6 +5096,89 @@ Console.WriteLine(item.Equals(revised)); // => Output: True (same Id; entity equ
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// LineItem entity with id-based equality and Money multiplication in TypeScript
+// => Operator overloads don't exist in TypeScript; use named methods instead
+
+class Money {
+  constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {
+    if (amount < 0) throw new Error("amount >= 0 required");
+    if (currency.length !== 3) throw new Error("3-letter ISO currency required");
+  }
+
+  add(other: Money): Money {
+    // => add: returns new Money; this unchanged
+    if (this.currency !== other.currency) throw new Error("currency mismatch");
+    return new Money(this.amount + other.amount, this.currency);
+  }
+
+  multiply(factor: number): Money {
+    // => multiply: returns new Money; scaling
+    if (factor <= 0) throw new Error("factor > 0 required");
+    return new Money(this.amount * factor, this.currency);
+  }
+
+  toString(): string {
+    return `${this.amount} ${this.currency}`;
+  }
+}
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+
+class Quantity {
+  constructor(
+    readonly value: number,
+    readonly unit: UnitOfMeasure,
+  ) {
+    if (value <= 0) throw new Error("value > 0 required");
+  }
+}
+
+// LineItem entity: equality is id-only, NOT structural
+// => TypeScript class with overridden equals method for entity semantics
+class LineItem {
+  constructor(
+    readonly id: string, // => entity identity field
+    readonly skuCode: string, // => simplified; production uses SkuCode VO
+    readonly quantity: Quantity,
+    readonly unitPrice: Money,
+  ) {}
+
+  lineTotal(): Money {
+    return this.unitPrice.multiply(this.quantity.value); // => unit price × quantity count
+    // => returns new Money; unitPrice unchanged
+  }
+
+  // => Entity equality: two LineItems are the same entity if they share the same id
+  equals(other: LineItem): boolean {
+    return this.id === other.id;
+  }
+  toString(): string {
+    return `LineItem(${this.id}, ${this.skuCode})`;
+  }
+}
+
+// Usage
+const item = new LineItem("li-001", "OFF-001234", new Quantity(500, "EACH"), new Money(0.5, "USD"));
+// => item = LineItem(li-001, OFF-001234, qty=500 EACH, unitPrice=0.50 USD)
+
+console.log(item.lineTotal().toString()); // => Output: 250 USD
+
+// "Revised" item: same id, different quantity — same entity in the domain
+const revised = new LineItem("li-001", "OFF-001234", new Quantity(1000, "EACH"), new Money(0.5, "USD"));
+// => revised shares id "li-001" with item
+
+console.log(revised.lineTotal().toString()); // => Output: 500 USD
+console.log(item.lineTotal().toString()); // => Output: 250 USD (item unchanged; Money is immutable)
+console.log(item.equals(revised)); // => Output: true (same id; entity equality)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Entity equality uses identity (id), not structural field comparison. Operator overloads on `Money` make line-item total computation read as natural arithmetic while preserving immutability.
@@ -3875,7 +5193,7 @@ Console.WriteLine(item.Equals(revised)); // => Output: True (same Id; entity equ
 
 Business rules often require ordering `Money` values (e.g., checking whether a requisition total exceeds a threshold). Each language provides a standard ordering interface: `Comparable<Money>` in Java, `Comparable<Money>` in Kotlin, and `IComparable<Money>` in C#.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4075,6 +5393,65 @@ foreach (var m in totals)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Money with comparison support in TypeScript
+// => TypeScript has no Comparable interface; implement comparison methods directly
+
+class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+
+  static of(amount: string, currency: string): Money {
+    const parsed = parseFloat(amount);
+    if (isNaN(parsed) || parsed < 0) throw new Error("amount >= 0 required");
+    if (currency.length !== 3) throw new Error("3-letter currency required");
+    return new Money(parsed, currency.toUpperCase());
+  }
+
+  // => compareTo: natural ordering by amount within same currency
+  compareTo(other: Money): number {
+    if (this.currency !== other.currency)
+      throw new Error(`Cannot compare Money across currencies: ${this.currency} vs ${other.currency}`);
+    // => negative: this < other; 0: equal; positive: this > other
+    return this.amount - other.amount;
+  }
+
+  isGreaterThan(other: Money): boolean {
+    return this.compareTo(other) > 0;
+  } // => this > other
+  isLessThan(other: Money): boolean {
+    return this.compareTo(other) < 0;
+  } // => this < other
+
+  equals(other: Money): boolean {
+    return this.amount === other.amount && this.currency === other.currency;
+  }
+
+  toString(): string {
+    return `${this.amount} ${this.currency}`;
+  }
+}
+
+// Threshold check: does this requisition require L3 approval?
+const total = Money.of("15000.00", "USD"); // => total   = 15000.00 USD
+const l3Floor = Money.of("10000.00", "USD"); // => L3 approval threshold
+
+console.log(total.isGreaterThan(l3Floor)); // => Output: true (15000 > 10000)
+
+// Sorting multiple line totals ascending using Array.sort
+const totals = [Money.of("5000.00", "USD"), Money.of("250.00", "USD"), Money.of("15000.00", "USD")];
+totals.sort((a, b) => a.compareTo(b)); // => compareTo provides sort order
+totals.forEach((m) => console.log(m.toString()));
+// => Output: 250 USD
+// => Output: 5000 USD
+// => Output: 15000 USD
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Implementing the platform's ordering interface (`Comparable` in Java/Kotlin, `IComparable<T>` in C#) on a Value Object enables direct ordering, making threshold checks and sorting idiomatic and safe.
@@ -4087,7 +5464,7 @@ foreach (var m in totals)
 
 The aggregate must not expose mutable internal collections. Returning an unmodifiable view or a defensive copy prevents external code from bypassing domain logic.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4297,6 +5674,70 @@ Console.WriteLine(req.GetLineItems().Count); // => Output: 2 (live wrapper refle
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Defensive copying in TypeScript: Object.freeze or return copies to protect aggregate internals
+// => TypeScript arrays are mutable by default; spread [...arr] or slice() creates safe copies
+
+type Status = "DRAFT" | "SUBMITTED" | "APPROVED";
+
+interface LineItemVO {
+  id: string;
+  skuCode: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+class PurchaseRequisition {
+  private _status: Status = "DRAFT";
+  private readonly _lineItems: LineItemVO[] = []; // => mutable internally; never returned directly
+
+  constructor(readonly id: string) {}
+
+  addLine(line: LineItemVO): void {
+    if (this._status !== "DRAFT") throw new Error("Only in DRAFT");
+    this._lineItems.push(line);
+  }
+
+  // Pattern A: spread copy (most defensive; caller gets a snapshot)
+  // => Subsequent aggregate mutations do NOT affect the returned array
+  getLineItems(): readonly LineItemVO[] {
+    return [...this._lineItems] as const; // => spread creates a new array; O(n)
+    // => 'as const' makes TypeScript infer readonly; caller cannot push/pop
+  }
+
+  // Pattern B: frozen snapshot (structural immutability for shallow objects)
+  getLineItemsFrozen(): readonly LineItemVO[] {
+    return Object.freeze([...this._lineItems]); // => frozen array; add/remove throws at runtime
+    // => Note: freeze is shallow; nested objects are still mutable
+  }
+
+  getStatus(): Status {
+    return this._status;
+  }
+}
+
+// Stub types for compilation
+const req = new PurchaseRequisition("req_550e8400-e29b-41d4-a716-446655440000");
+req.addLine({ id: "li-001", skuCode: "OFF-001234", quantity: 10, unitPrice: 25.0 });
+
+// Pattern A: spread copy
+const view = req.getLineItems();
+console.log(view.length); // => Output: 1
+
+// TypeScript's readonly prevents push at compile time (error in strict mode)
+// view.push(null); // => TypeScript compile error: push not on readonly array
+
+// Adding another line to aggregate does not affect the copy already taken
+const copyBefore = req.getLineItems(); // => snapshot: 1 item
+req.addLine({ id: "li-002", skuCode: "PPR-8500", quantity: 5, unitPrice: 50.0 });
+
+console.log(copyBefore.length); // => Output: 1 (snapshot frozen at copy time)
+console.log(req.getLineItems().length); // => Output: 2 (fresh spread from aggregate)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Expose internal collections only through unmodifiable views or defensive copies. This is the boundary that keeps the Aggregate Root the sole controller of its state.
@@ -4309,7 +5750,7 @@ Console.WriteLine(req.GetLineItems().Count); // => Output: 2 (live wrapper refle
 
 Each language provides a native mechanism for creating a modified copy of an immutable value: Java uses a manual `withValue` factory method on records, Kotlin uses `copy()` on data classes, and C# uses `with`-expressions on records. All three preserve the original and produce a distinct revised instance.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4442,6 +5883,71 @@ Console.WriteLine(original == revised);       // => Output: False (Quantity diff
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Immutable copy-and-modify in TypeScript: explicit withValue and spread pattern
+// => TypeScript has no built-in with-expression; explicit methods achieve the same
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+
+class Quantity {
+  private constructor(
+    readonly value: number,
+    readonly unit: UnitOfMeasure,
+  ) {}
+
+  static of(value: number, unit: UnitOfMeasure): Quantity {
+    if (value <= 0) throw new Error(`Quantity.value must be > 0, got: ${value}`);
+    return new Quantity(value, unit);
+  }
+
+  // withValue: named copy-and-modify factory; preserves unit
+  withValue(newValue: number): Quantity {
+    return Quantity.of(newValue, this.unit); // => new Quantity; unit preserved; guard re-runs
+  }
+}
+
+class LineItem {
+  private constructor(
+    readonly id: string,
+    readonly skuCode: string,
+    readonly quantity: Quantity,
+    readonly unitPrice: number,
+  ) {}
+
+  static of(id: string, skuCode: string, quantity: Quantity, unitPrice: number): LineItem {
+    return new LineItem(id, skuCode, quantity, unitPrice);
+  }
+
+  lineTotal(): number {
+    return this.unitPrice * this.quantity.value;
+  }
+  // => computed property; no backing field to go stale
+
+  // withQuantity: wraps the copy pattern in a domain-meaningful method name
+  withQuantity(newQuantity: Quantity): LineItem {
+    if (newQuantity.value <= 0) throw new Error("newQuantity.value must be > 0");
+    return new LineItem(this.id, this.skuCode, newQuantity, this.unitPrice);
+    // => new LineItem; id, skuCode, unitPrice preserved unchanged
+  }
+}
+
+// Demonstrate copy-and-modify
+const original = LineItem.of("li-001", "OFF-001234", Quantity.of(500, "EACH"), 0.5); // => original: 500 EACH × $0.50 = $250.00
+console.log(original.lineTotal()); // => Output: 250
+
+const revised = original.withQuantity(Quantity.of(1000, "EACH"));
+// => revised: 1000 EACH × $0.50 = $500.00; original is unchanged
+console.log(revised.lineTotal()); // => Output: 500
+console.log(original.lineTotal()); // => Output: 250 (original intact)
+
+// Identity preserved
+console.log(original.id === revised.id); // => Output: true (same entity id)
+console.log(original === revised); // => Output: false (different object references)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: All three languages provide a native copy-and-modify mechanism for immutable types — Java's `with<Field>` factory, Kotlin's `copy()`, and C#'s `with`-expression — each producing a new instance while leaving the original unchanged.
@@ -4454,7 +5960,7 @@ Console.WriteLine(original == revised);       // => Output: False (Quantity diff
 
 This example tests the aggregate's encapsulation boundary directly: external code should not be able to mutate line items by keeping a reference from before they were added.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4627,6 +6133,63 @@ Console.WriteLine(goodReq.GetLines()[0].Quantity);          // => Output: 999 (c
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Aggregate boundary test: TypeScript demonstrates encapsulation with mutable objects
+// => Anti-pattern: storing reference; correct: copy on input
+
+// Mutable entity (simulates legacy or ORM-managed mutable state)
+class MutableLineItem {
+  readonly id: string;
+  quantity: number; // => public mutable field; mutation point
+
+  constructor(id: string, quantity: number) {
+    this.id = id;
+    this.quantity = quantity;
+  }
+}
+
+class ReqWithMutableLines {
+  private readonly _lines: MutableLineItem[] = [];
+
+  // Anti-pattern: addLineDirect stores the exact reference the caller holds
+  addLineDirect(line: MutableLineItem): void {
+    this._lines.push(line); // => no copy; caller retains mutation ability
+  }
+
+  // Correct pattern: addLineSafe copies on input; aggregate stores its own instance
+  addLineSafe(line: MutableLineItem): void {
+    this._lines.push(new MutableLineItem(line.id, line.quantity));
+    // => defensive copy: new object; caller's future mutations do not affect aggregate
+  }
+
+  getLines(): readonly MutableLineItem[] {
+    return [...this._lines]; // => spread copy; callers cannot mutate the returned array
+  }
+}
+
+const external = new MutableLineItem("li-001", 10);
+// => external.quantity = 10
+
+const badReq = new ReqWithMutableLines();
+badReq.addLineDirect(external); // => stores reference; no copy
+console.log(badReq.getLines()[0].quantity); // => Output: 10
+
+external.quantity = 999; // => caller mutates original object
+console.log(badReq.getLines()[0].quantity); // => Output: 999 (leaked mutation!)
+// => aggregate's internal state changed silently; encapsulation broken
+
+const goodReq = new ReqWithMutableLines();
+goodReq.addLineSafe(external); // => stores defensive copy; quantity = 999
+console.log(goodReq.getLines()[0].quantity); // => Output: 999 (copy took current value)
+
+external.quantity = 12345; // => caller mutates again
+console.log(goodReq.getLines()[0].quantity); // => Output: 999 (copy unaffected)
+// => aggregate's copy is independent; encapsulation holds
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Storing references to mutable objects breaks aggregate encapsulation — external mutation leaks through. Defensive copy on input prevents the leak.
@@ -4639,7 +6202,7 @@ Console.WriteLine(goodReq.GetLines()[0].Quantity);          // => Output: 999 (c
 
 A complete end-to-end demonstration: create a requisition, add lines with value objects, submit, verify approval level, and check the domain event raised.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5042,6 +6605,170 @@ var events = req.PullEvents();                                                  
 Console.WriteLine($"Events: {events.Count}");                                   // => Output: Events: 1
 Console.WriteLine($"Event total: {events[0].Total}");                           // => Output: Event total: 500.00 USD
 Console.WriteLine($"Event level: {events[0].Level}");                           // => Output: Event level: L1
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Full PurchaseRequisition lifecycle in TypeScript
+
+// ── Value Objects ──────────────────────────────────────────────────────────────
+class RequisitionId {
+  private constructor(readonly value: string) {}
+  static of(value: string): RequisitionId {
+    if (!value || !value.startsWith("req_")) throw new Error(`RequisitionId must start with 'req_', got: ${value}`);
+    return new RequisitionId(value);
+  }
+  toString(): string {
+    return this.value;
+  }
+}
+
+class SkuCode {
+  private constructor(readonly value: string) {}
+  static of(value: string): SkuCode {
+    if (!/^[A-Z]{3}-\d{4,8}$/.test(value)) throw new Error(`invalid SkuCode: ${value}`);
+    return new SkuCode(value);
+  }
+}
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+
+class Quantity {
+  private constructor(
+    readonly value: number,
+    readonly unit: UnitOfMeasure,
+  ) {}
+  static of(value: number, unit: UnitOfMeasure): Quantity {
+    if (value <= 0) throw new Error("qty > 0 required");
+    return new Quantity(value, unit);
+  }
+}
+
+class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+  static of(amount: number, currency: string): Money {
+    if (amount < 0) throw new Error("amount >= 0");
+    if (currency.length !== 3) throw new Error("3-letter currency required");
+    return new Money(amount, currency.toUpperCase());
+  }
+  add(other: Money): Money {
+    if (this.currency !== other.currency) throw new Error("currency mismatch");
+    return Money.of(this.amount + other.amount, this.currency);
+  }
+  multiply(factor: number): Money {
+    if (factor <= 0) throw new Error("factor > 0");
+    return Money.of(this.amount * factor, this.currency);
+  }
+  toString(): string {
+    return `${this.amount} ${this.currency}`;
+  }
+}
+
+type ApprovalLevel = "L1" | "L2" | "L3";
+
+function approvalLevelFrom(total: Money): ApprovalLevel {
+  if (total.amount <= 1000) return "L1"; // => up to $1 000 → L1
+  if (total.amount <= 10000) return "L2"; // => up to $10 000 → L2
+  return "L3"; // => above $10 000 → L3
+}
+
+// ── Entity ─────────────────────────────────────────────────────────────────────
+class LineItem {
+  constructor(
+    readonly id: string,
+    readonly skuCode: SkuCode,
+    readonly quantity: Quantity,
+    readonly unitPrice: Money,
+  ) {}
+  lineTotal(): Money {
+    return this.unitPrice.multiply(this.quantity.value);
+  }
+}
+
+// ── Domain Event ───────────────────────────────────────────────────────────────
+interface RequisitionSubmittedEvent {
+  readonly type: "RequisitionSubmitted";
+  readonly id: RequisitionId;
+  readonly total: Money;
+  readonly level: ApprovalLevel;
+  readonly at: Date;
+}
+
+// ── Aggregate Root ─────────────────────────────────────────────────────────────
+type Status = "DRAFT" | "SUBMITTED";
+
+class PurchaseRequisition {
+  private _status: Status = "DRAFT";
+  private readonly _lines: LineItem[] = [];
+  private readonly _events: RequisitionSubmittedEvent[] = [];
+
+  private constructor(
+    readonly id: RequisitionId,
+    readonly requesterId: string,
+  ) {}
+
+  static create(id: RequisitionId, requesterId: string): PurchaseRequisition {
+    if (!requesterId || requesterId.trim() === "") throw new Error("requesterId required");
+    return new PurchaseRequisition(id, requesterId);
+  }
+
+  get status(): Status {
+    return this._status;
+  }
+
+  addLine(line: LineItem): void {
+    if (this._status !== "DRAFT") throw new Error("only in DRAFT");
+    this._lines.push(line);
+  }
+
+  submit(): void {
+    if (this._status !== "DRAFT" || this._lines.length === 0) throw new Error("cannot submit");
+    this._status = "SUBMITTED";
+    const total = this._lines.reduce((acc, l) => acc.add(l.lineTotal()), Money.of(0, "USD")); // => fold all line totals
+    this._events.push({
+      type: "RequisitionSubmitted",
+      id: this.id,
+      total,
+      level: approvalLevelFrom(total),
+      at: new Date(), // => UTC timestamp; wall clock at commit time
+    }); // => event collected; application layer dispatches after commit
+  }
+
+  pullEvents(): readonly RequisitionSubmittedEvent[] {
+    const snapshot = [...this._events]; // => copy before clearing
+    this._events.length = 0; // => clear after pull; events are one-shot
+    return snapshot;
+  }
+
+  estimatedTotal(): Money {
+    return this._lines.reduce((acc, l) => acc.add(l.lineTotal()), Money.of(0, "USD"));
+  }
+}
+
+// ── Full lifecycle demonstration ───────────────────────────────────────────────
+const req = PurchaseRequisition.create(RequisitionId.of("req_550e8400-e29b-41d4-a716-446655440000"), "emp-42"); // => status=DRAFT; lines=[]
+
+req.addLine(new LineItem("li-001", SkuCode.of("OFF-001234"), Quantity.of(500, "EACH"), Money.of(0.5, "USD")));
+// => li-001: 500 EACH × $0.50 = $250.00
+
+req.addLine(new LineItem("li-002", SkuCode.of("PPR-8500"), Quantity.of(10, "BOX"), Money.of(25.0, "USD")));
+// => li-002: 10 BOX × $25.00 = $250.00
+
+console.log(`Total: ${req.estimatedTotal()}`); // => Output: Total: 500 USD
+console.log(`Level: ${approvalLevelFrom(req.estimatedTotal())}`); // => Output: Level: L1
+
+req.submit(); // => DRAFT -> SUBMITTED; raises event
+console.log(`Status: ${req.status}`); // => Output: Status: SUBMITTED
+
+const events = req.pullEvents(); // => [RequisitionSubmittedEvent{...}]
+console.log(`Events: ${events.length}`); // => Output: Events: 1
+console.log(`Event total: ${events[0].total}`); // => Output: Event total: 500 USD
+console.log(`Event level: ${events[0].level}`); // => Output: Event level: L1
 ```
 
 {{< /tab >}}

@@ -28,7 +28,7 @@ This beginner-level section introduces DDD through F# types, using the `purchasi
 
 Ubiquitous language means every term the business uses has an exact counterpart in the code. In F# the cheapest way to honour this is a type alias: `type RequisitionId = string` makes the intent explicit without adding runtime cost. The type alias lives in the same module as the rest of the domain model and is visible to both developers and procurement domain experts reading the code.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -107,6 +107,49 @@ printfn "Type aliases defined — zero runtime cost, maximum documentation value
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: purchasingDomain.ts ────────────────────────────────────────────────
+// Branded types map procurement vocabulary to distinct TypeScript identifiers.
+// Unlike plain string aliases, branded types prevent accidental interchangeability.
+// [F#: type alias (type RequisitionId = string) — zero overhead; TS brands add nominal safety]
+// [Clojure: namespaced keywords :purchasing/requisition-id — runtime; TS brands are compile-time]
+
+// Branded ID types — each is a distinct nominal type at compile time
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+// => Branding makes RequisitionId distinct from PurchaseOrderId at compile time
+// => No runtime overhead — the brand exists only in the type system
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+// => Distinct from RequisitionId — cannot be accidentally substituted
+
+type SupplierId = string & { readonly __brand: "SupplierId" };
+// => Every important domain noun gets its own branded type
+
+type SkuCode = string & { readonly __brand: "SkuCode" };
+// => SkuCode brand — raw (string -> string -> string) becomes self-documenting
+
+// Helper casts — used only at the validated boundary (smart constructors)
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+// => Cast is safe here: called only after validation
+const asPurchaseOrderId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
+// => Each brand gets its own cast function
+
+// Usage in a workflow function signature — pure documentation value
+type GetRequisitionById = (id: RequisitionId) => string | null;
+// => Arrow type reads "given a RequisitionId, produce a string or null"
+// => Domain experts can read this as "look up a requisition by its id"
+
+const reqId: RequisitionId = asRequisitionId("req_f4c2a1b7");
+// => reqId : RequisitionId — branded type prevents passing a SupplierId here
+
+console.log("Branded types defined — zero runtime cost, maximum documentation value");
+// => Output: Branded types defined — zero runtime cost, maximum documentation value
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Type aliases convert the ubiquitous language of procurement into F# identifiers at zero runtime cost and maximum readability.
@@ -136,7 +179,7 @@ graph TD
     style PI fill:#DE8F05,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -250,6 +293,70 @@ printfn "Event created: %A" submitted
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Domain events are readonly objects with a discriminant literal type.
+// Past-tense naming signals an immutable fact that already occurred.
+// [F#: DU with payload records — compile-time exhaustive match; TS uses tagged unions]
+// [Clojure: maps with :event/type keyword — open runtime dispatch; TS tags are closed]
+
+// Branded IDs
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+// Payload record for the RequisitionSubmitted event
+interface RequisitionSubmittedPayload {
+  readonly requisitionId: RequisitionId;
+  // => The identifier of the submitted requisition
+  readonly requestedBy: string;
+  // => Who submitted it — approval router needs this for routing logic
+  readonly totalAmount: number;
+  // => Sum of all line items — determines the approval level (L1/L2/L3)
+  readonly submittedAt: string;
+  // => ISO 8601 timestamp — used for SLA tracking and audit trail
+}
+// => RequisitionSubmittedPayload : readonly interface with four fields
+
+// Tagged union for procurement events — literal type tags close the set
+type ProcurementEvent =
+  | { readonly type: "RequisitionSubmitted"; readonly payload: RequisitionSubmittedPayload }
+  // => Fired when an employee submits a purchase requisition
+  | { readonly type: "RequisitionApproved"; readonly requisitionId: RequisitionId; readonly approvedAt: string }
+  // => Fired when a manager approves the requisition
+  | {
+      readonly type: "PurchaseOrderIssued";
+      readonly purchaseOrderId: PurchaseOrderId;
+      readonly supplierId: SupplierId;
+    };
+// => Fired when an approved PO is formally sent to the supplier
+// => ProcurementEvent : closed tagged union — exhaustive switch required
+
+// Constructing an event
+const submitted: ProcurementEvent = {
+  type: "RequisitionSubmitted",
+  // => Literal string tag — enables narrowing in switch/if checks
+  payload: {
+    requisitionId: asRequisitionId("req_f4c2a1b7"),
+    // => Branded ID created at submission boundary
+    requestedBy: "emp_00123",
+    // => Employee identifier — drives approval routing
+    totalAmount: 2500.0,
+    // => 2500 USD — falls in L2 approval bracket
+    submittedAt: new Date().toISOString(),
+    // => ISO 8601 wall-clock timestamp captured at submission
+  },
+};
+// => submitted : ProcurementEvent (narrowed to RequisitionSubmitted case)
+
+console.log("Event created:", submitted.type);
+// => Output: Event created: RequisitionSubmitted
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Past-tense named discriminated union cases model domain events as immutable facts, with payloads carrying everything downstream consumers need.
@@ -278,7 +385,7 @@ graph TD
     style I fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -395,6 +502,60 @@ printfn "Requisition: %A" req
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Bounded contexts as TypeScript namespaces — each context owns its own types.
+// [F#: module Purchasing = ... — compile-time boundary; TS namespaces group types per context]
+// [Clojure: (ns purchasing.domain) — runtime boundary; TS module separation is compile-time]
+
+namespace Purchasing {
+  export type RequisitionId = string & { readonly __brand: "Purchasing.RequisitionId" };
+  // => RequisitionId is a purchasing-context concept
+  // => The supplier context has no use for this type
+
+  export type RequisitionStatus = "Draft" | "Submitted" | "ManagerReview" | "Approved" | "Rejected" | "ConvertedToPO";
+  // => Literal union — full lifecycle of a purchase requisition
+  // => Other contexts don't care about this internal lifecycle
+
+  export interface PurchaseRequisition {
+    readonly id: RequisitionId;
+    // => Identity of the requisition — required, drives all lookups
+    readonly requestedBy: string;
+    // => Employee identifier — drives approval routing rules
+    readonly status: RequisitionStatus;
+    // => Current lifecycle state — only FSM-allowed transitions are valid
+    readonly lines: readonly string[];
+    // => Line items (simplified for this example — elaborated in later examples)
+  }
+  // => PurchaseRequisition : readonly interface with four fields
+}
+
+namespace Supplier {
+  export type SupplierId = string & { readonly __brand: "Supplier.SupplierId" };
+  // => The supplier context's identity type — different from Purchasing.RequisitionId
+  export type SupplierStatus = "Pending" | "Approved" | "Suspended" | "Blacklisted";
+  // => Supplier lifecycle states — invisible to the purchasing context directly
+}
+
+// Modules keep contexts honest
+const req: Purchasing.PurchaseRequisition = {
+  id: "req_abc123" as Purchasing.RequisitionId,
+  // => Fully typed — unambiguous which context this belongs to
+  requestedBy: "emp_00456",
+  status: "Draft",
+  // => Starts in Draft — cannot be submitted until at least one line is added
+  lines: [],
+  // => No lines yet — requisition is in its initial empty state
+};
+// => req : Purchasing.PurchaseRequisition — purchasing context aggregate root
+
+console.log("Requisition:", req.id, "status:", req.status);
+// => Output: Requisition: req_abc123 status: Draft
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: F# modules are the zero-cost mechanical translation of bounded contexts — they enforce the boundary between purchasing, supplier, receiving, and invoicing without any framework overhead.
@@ -407,7 +568,7 @@ printfn "Requisition: %A" req
 
 A record type is an AND type: a `PurchaseRequisitionLine` has a `SkuCode` AND a `Quantity` AND a `UnitPrice`. All fields are required and immutable by default. Records are the primary building block for aggregates and value objects in functional DDD.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -507,6 +668,48 @@ printfn "Line total: %.2f" lineTotal
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Readonly interfaces model AND types — all fields must be present and immutable.
+// [F#: record type with required fields — compile-time structural guarantee]
+// [Clojure: plain map with s/keys spec — runtime; TS readonly interfaces are compile-time]
+
+// A line item on a purchase requisition
+interface PurchaseRequisitionLine {
+  readonly skuCode: string;
+  // => Stock-Keeping Unit — identifies exactly what is being requested
+  // => Example: "OFF-0042" for office supplies item 42
+  readonly quantity: number;
+  // => How many units are requested — must be > 0 (enforced by smart constructor later)
+  readonly unitPrice: number;
+  // => Price per unit in the configured currency — used to compute line total
+}
+// => PurchaseRequisitionLine : readonly interface with three required fields
+
+// Object spread for "update" — original is unchanged (immutable pattern)
+const line1: PurchaseRequisitionLine = { skuCode: "OFF-0042", quantity: 10, unitPrice: 4.99 };
+// => line1 : PurchaseRequisitionLine = { skuCode: "OFF-0042", quantity: 10, unitPrice: 4.99 }
+
+const correctedLine: PurchaseRequisitionLine = { ...line1, quantity: 12 };
+// => Spread creates a NEW object — line1 is still { quantity: 10 }
+// => correctedLine : PurchaseRequisitionLine = { ..., quantity: 12, ... }
+// => Immutability: correction produces a new value, never mutates in place
+
+const lineTotal = correctedLine.quantity * correctedLine.unitPrice;
+// => 12 * 4.99 = 59.88
+// => lineTotal : number = 59.88 — used to compute requisition total for approval routing
+
+console.log("Line:", line1);
+// => Output: Line: { skuCode: 'OFF-0042', quantity: 10, unitPrice: 4.99 }
+console.log("Corrected:", correctedLine);
+// => Output: Corrected: { skuCode: 'OFF-0042', quantity: 12, unitPrice: 4.99 }
+console.log(`Line total: ${lineTotal.toFixed(2)}`);
+// => Output: Line total: 59.88
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Records model AND-types — all fields required, all immutable, with `with`-expressions providing safe "update" that creates a new value rather than mutating the existing one.
@@ -519,7 +722,7 @@ printfn "Line total: %.2f" lineTotal
 
 A discriminated union (DU) is an OR type: an `ApprovalLevel` is either `L1` OR `L2` OR `L3`. Exactly one case applies at any given time. DUs are the F# mechanism for making mutually exclusive states explicit and compiler-checked.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -634,6 +837,65 @@ printfn "%s" (describeLevel level3)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Literal union types model OR relationships — exactly one member is active.
+// [F#: discriminated union with exhaustive match — compiler-enforced coverage]
+// [Clojure: defmulti on :approval/level keyword — open dispatch; TS literal unions are closed]
+
+// ApprovalLevel derived from the total value of a purchase order
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => "L1": direct manager (<=  $1,000)
+// => "L2": department head ($1,001-$10,000)
+// => "L3": CFO / finance committee (> $10,000)
+// => Exactly one of these is active — never "L1 and L2 simultaneously"
+
+// Derive the approval level from the total amount — a pure domain rule
+function deriveApprovalLevel(totalAmount: number): ApprovalLevel {
+  // => Pure function — no side effects, deterministic
+  if (totalAmount <= 1000) return "L1";
+  // => Under $1,000 — direct manager approval sufficient
+  if (totalAmount <= 10000) return "L2";
+  // => $1,001-$10,000 — department head must approve
+  return "L3";
+  // => Over $10,000 — CFO-level approval required
+}
+
+// Test cases
+const level1 = deriveApprovalLevel(500);
+// => 500 <= 1000 — level1 : ApprovalLevel = "L1"
+const level2 = deriveApprovalLevel(5000);
+// => 5000 > 1000 and <= 10000 — level2 : ApprovalLevel = "L2"
+const level3 = deriveApprovalLevel(50000);
+// => 50000 > 10000 — level3 : ApprovalLevel = "L3"
+
+// Consuming the union — exhaustive switch narrows the type
+function describeLevel(level: ApprovalLevel): string {
+  switch (level) {
+    case "L1":
+      return "Direct manager approval (<= $1,000)";
+    // => L1 branch: single manager can approve
+    case "L2":
+      return "Department head approval ($1,001-$10,000)";
+    // => L2 branch: escalated to department leadership
+    case "L3":
+      return "CFO approval (> $10,000)";
+    // => L3 branch: finance committee must sign off
+  }
+}
+// => TypeScript exhaustiveness: if a new case is added, switch requires a new arm
+
+console.log(describeLevel(level1));
+// => Output: Direct manager approval (<= $1,000)
+console.log(describeLevel(level2));
+// => Output: Department head approval ($1,001-$10,000)
+console.log(describeLevel(level3));
+// => Output: CFO approval (> $10,000)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Discriminated unions make mutually exclusive states explicit and exhaustively checkable — the compiler ensures you handle every case, eliminating silent bugs from unhandled states.
@@ -646,7 +908,7 @@ printfn "%s" (describeLevel level3)
 
 A business workflow is modelled as a plain function type. The type signature is the contract: it names what goes in, what comes out, and what errors are possible. In the procurement platform, `SubmitRequisition` takes an unvalidated input and produces either a list of domain events or a procurement error.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -778,6 +1040,82 @@ printfn "Workflow type defined — signature is the domain contract"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Workflows as typed function signatures — the function type IS the domain contract.
+// [F#: type alias (type SubmitRequisition = UnvalidatedRequisition -> Result<...>)]
+// [Clojure: defn with spec/fdef contract — runtime; TS function types are compile-time]
+
+// Result<T,E> modelled as a discriminated union — mirrors F# built-in Result
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okResult = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errResult = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+// => [F#: built-in Ok/Error constructors; TS: hand-rolled for clarity without extra deps]
+
+// Branded ID
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+// The unvalidated input from the HTTP layer
+interface UnvalidatedRequisition {
+  readonly requestedBy: string;
+  // => Raw employee ID string from the HTTP request body
+  readonly lines: ReadonlyArray<readonly [string, number, number]>;
+  // => Raw array of [skuCode, quantity, unitPrice] tuples — not yet validated
+}
+// => UnvalidatedRequisition : DTO-shaped interface — may contain invalid data
+
+// Possible errors the submission workflow can produce
+type SubmissionError =
+  | { readonly kind: "NoLinesProvided" }
+  | { readonly kind: "InvalidSkuCode"; readonly sku: string }
+  | { readonly kind: "NegativeQuantity"; readonly sku: string; readonly qty: number }
+  | { readonly kind: "RequestedByRequired" };
+// => Tagged union — each error carries the data needed for diagnostic messages
+
+// Domain event produced on success
+interface RequisitionSubmittedPayload {
+  readonly requisitionId: RequisitionId;
+  readonly requestedBy: string;
+  readonly totalAmount: number;
+  readonly submittedAt: string;
+}
+type ProcurementEvent = { readonly type: "RequisitionSubmitted"; readonly payload: RequisitionSubmittedPayload };
+
+// The workflow function type — the entire contract in one line
+type SubmitRequisition = (req: UnvalidatedRequisition) => Result<ProcurementEvent[], SubmissionError>;
+// => Input:  UnvalidatedRequisition — the raw command from outside
+// => Output: Result — either success with a list of events, or a named failure
+// => Result forces callers to handle both branches explicitly
+
+// A simplified implementation matching the signature
+const submitRequisition: SubmitRequisition = (req) => {
+  if (!req.requestedBy.trim()) return errResult({ kind: "RequestedByRequired" });
+  // => First guard: cannot route approval without an employee ID
+  if (req.lines.length === 0) return errResult({ kind: "NoLinesProvided" });
+  // => Second guard: a blank requisition has no business meaning
+  const total = req.lines.reduce((s, [, q, p]) => s + q * p, 0);
+  // => Compute total across all line items for approval level routing
+  const event: ProcurementEvent = {
+    type: "RequisitionSubmitted",
+    payload: {
+      requisitionId: asRequisitionId("req_" + Math.random().toString(36).slice(2, 10)),
+      requestedBy: req.requestedBy,
+      totalAmount: total,
+      submittedAt: new Date().toISOString(),
+    },
+  };
+  return okResult([event]);
+  // => Single event in the array — more events possible in richer workflows
+};
+
+console.log("Workflow type defined — signature is the domain contract");
+// => Output: Workflow type defined — signature is the domain contract
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling workflows as function types makes the entire domain contract — inputs, outputs, and failure modes — visible at the type level before any implementation is written.
@@ -813,7 +1151,7 @@ graph LR
     style note1 fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -911,6 +1249,54 @@ printfn "Type wrappers prevent ID confusion at compile time"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Branded types prevent ID confusion at compile time — same underlying string, distinct types.
+// [F#: single-case DU (type RequisitionId = RequisitionId of string) — compile-time nominal type]
+// [Clojure: spec predicates (s/def :purchasing/requisition-id ...) — runtime guard; TS is compile-time]
+
+// Each branded ID type is distinct — cannot be accidentally substituted
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+// => "RequisitionId" brand — distinct from PurchaseOrderId and SupplierId
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+// => Distinct brand — cannot be passed where RequisitionId is expected
+type SupplierId = string & { readonly __brand: "SupplierId" };
+// => Same pattern for every domain identifier in the procurement platform
+
+// Smart factory functions — the only safe way to create branded values
+function makeRequisitionId(raw: string): RequisitionId {
+  if (!raw.startsWith("req_")) throw new Error(`Invalid RequisitionId: ${raw}`);
+  // => Enforce the "req_" prefix at creation time — mirrors F# single-case constructor
+  return raw as RequisitionId;
+  // => Cast is safe: invariant already verified above
+}
+
+// A function that takes a RequisitionId cannot accidentally receive a PurchaseOrderId
+function routeApproval(id: RequisitionId, approverEmail: string): void {
+  // => TypeScript brand check: PurchaseOrderId passed here is a compile error
+  console.log(`Routing requisition ${id} to approver ${approverEmail}`);
+  // => id : RequisitionId — the branded value, safe to use here
+}
+
+// Construction
+const reqId = makeRequisitionId("req_f4c2a1b7");
+// => reqId : RequisitionId
+const poId = "po_e3d1f8a0" as PurchaseOrderId;
+// => poId : PurchaseOrderId — different type, same underlying string shape
+
+routeApproval(reqId, "manager@procurement.example.com");
+// => Output: Routing requisition req_f4c2a1b7 to approver manager@procurement.example.com
+
+// routeApproval(poId, "...")  <- TypeScript compile error: PurchaseOrderId is not assignable to RequisitionId
+// => The branded type system prevents this mistake at compile time
+
+console.log("Branded types prevent ID confusion at compile time");
+// => Output: Branded types prevent ID confusion at compile time
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Single-case discriminated unions create nominally distinct types from primitives, so the compiler prevents the common bug of confusing two IDs that happen to share the same string representation.
@@ -943,7 +1329,7 @@ graph LR
     style Err2 fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1056,6 +1442,63 @@ match result1 with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Smart constructors with Result<T,E> make validation mandatory at construction time.
+// [F#: private constructor + module returning Result<RequisitionId, string>]
+// [Clojure: {:ok ...} / {:error ...} maps — same contract, different representation]
+
+// Result type — explicit success/failure without exceptions
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// Branded type — private by convention (factory is the only entry point)
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+
+// Smart constructor: validates raw string and returns Result<RequisitionId, string>
+function createRequisitionId(raw: string): Result<RequisitionId, string> {
+  // => raw : string — untrusted input from HTTP body, DTO, config file
+  if (!raw || raw.trim() === "") {
+    return errR("RequisitionId cannot be blank");
+    // => Guard 1: nil or blank strings are not valid in this domain
+  }
+  if (!raw.startsWith("req_")) {
+    return errR(`RequisitionId '${raw}' must start with 'req_'`);
+    // => Guard 2: canonical format requires the "req_" prefix
+    // => Descriptive error message for logging and API error responses
+  }
+  return okR(raw as RequisitionId);
+  // => Both guards passed — cast is safe here; downstream code trusts the brand
+}
+
+// Accessor: extract the string from the branded type
+function requisitionIdValue(id: RequisitionId): string {
+  return id as string;
+  // => [F#: let value (RequisitionId id) = id — pattern-match destructs the DU]
+}
+
+// Usage — parallel to the F# tab's three examples
+const result1 = createRequisitionId("req_f4c2a1b7");
+// => result1 : Result<RequisitionId, string> = { ok: true, value: RequisitionId }
+
+const result2 = createRequisitionId("");
+// => result2 : Result<RequisitionId, string> = { ok: false, error: "RequisitionId cannot be blank" }
+
+const result3 = createRequisitionId("12345");
+// => result3 : Result<RequisitionId, string> = { ok: false, error: "RequisitionId '12345' must start with 'req_'" }
+
+// Consuming the result — check ok before accessing value
+if (result1.ok) console.log("Valid:", requisitionIdValue(result1.value));
+// => Output: Valid: req_f4c2a1b7
+
+if (!result2.ok) console.log("Invalid:", result2.error);
+// => Output: Invalid: RequisitionId cannot be blank
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Smart constructors with `Result` return types make validation mandatory — the compiler requires every call site to handle the failure case, preventing invalid domain objects from ever existing.
@@ -1068,7 +1511,7 @@ match result1 with
 
 Pattern matching is the primary tool for consuming discriminated union values. It forces you to decide what happens in every case. Combined with the exhaustive match checking of the F# compiler, it eliminates entire classes of "forgot to handle this case" bugs.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1198,6 +1641,67 @@ printfn "%s" (describeStatus s3)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Exhaustive switch over a literal union — TypeScript enforces coverage at compile time.
+// [F#: DU with exhaustive match — FS0025 warning on missing cases; TS uses never type]
+// [Clojure: defmulti — open dispatch; adding :status doesn't break existing code]
+
+// Six mutually exclusive states in the PurchaseRequisition lifecycle
+type RequisitionStatus = "Draft" | "Submitted" | "ManagerReview" | "Approved" | "Rejected" | "ConvertedToPO";
+// => Literal union — adding a new member requires all switches to be updated
+
+// Exhaustiveness helper — any unhandled branch narrows to never
+function assertNever(x: never): never {
+  throw new Error(`Unhandled status: ${String(x)}`);
+  // => Runtime guard catches missed cases in non-strict builds
+}
+
+// A function that handles all requisition statuses
+function describeStatus(status: RequisitionStatus): string {
+  switch (status) {
+    case "Draft":
+      return "Draft: employee is building the line items";
+    // => Initial state — requisition not yet submitted
+    case "Submitted":
+      return "Submitted: awaiting approval routing";
+    // => Employee has submitted — awaiting manager routing
+    case "ManagerReview":
+      return "Under review by approving manager";
+    // => Routed to the appropriate approver based on amount
+    case "Approved":
+      return "Approved: ready for PO creation";
+    // => Manager has approved — can be converted to a PO
+    case "Rejected":
+      return "Rejected: employee notified";
+    // => Manager rejected — employee notified via email
+    case "ConvertedToPO":
+      return "Converted to Purchase Order";
+    // => Successfully converted — downstream PO lifecycle begins
+    default:
+      return assertNever(status);
+    // => TypeScript narrows status to never here — all cases handled
+  }
+}
+
+// Test each case
+const s1: RequisitionStatus = "Draft";
+const s2: RequisitionStatus = "ManagerReview";
+const s3: RequisitionStatus = "Approved";
+
+console.log(describeStatus(s1));
+// => Matches "Draft" case — Output: Draft: employee is building the line items
+console.log(describeStatus(s2));
+// => Matches "ManagerReview" case — Output: Under review by approving manager
+console.log(describeStatus(s3));
+// => Matches "Approved" case — Output: Approved: ready for PO creation
+// => Adding a new status (e.g. "OnHold") causes a TypeScript error on describeStatus
+// => Compile-time checklist of all code paths that need updating
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Pattern matching on discriminated unions is exhaustive by default — adding a new state to the type immediately surfaces every match expression that must handle it.
@@ -1210,7 +1714,7 @@ printfn "%s" (describeStatus s3)
 
 The F# compiler issues a warning — treated as an error in strict builds — when a match expression does not cover all cases of a discriminated union. This example shows how to see the warning, how to fix it, and why it is one of the most valuable correctness tools in functional DDD.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1327,6 +1831,62 @@ results |> List.iter (fun (s, r) ->
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Exhaustive switch with never type — TypeScript guarantees all union members handled.
+// [F#: FS0025 compile warning for missing DU cases — treated as error in strict builds]
+// [Clojure: :else clause catches unhandled variants at runtime — no compile guard]
+
+type PurchaseOrderStatus = "Draft" | "AwaitingApproval" | "Approved" | "Issued" | "Cancelled";
+// => Five PurchaseOrder states (simplified subset of the full state machine)
+
+// Exhaustiveness guard — if any case is missing, TypeScript narrows to never
+function assertNever(x: never): never {
+  throw new Error(`Unhandled PurchaseOrderStatus: ${String(x)}`);
+}
+
+// COMPLETE switch — all cases handled
+function approvalRequired(status: PurchaseOrderStatus): boolean {
+  switch (status) {
+    case "Draft":
+      return false;
+    // => Draft POs have not yet been submitted for approval
+    case "AwaitingApproval":
+      return true;
+    // => This is exactly the state requiring approval action
+    case "Approved":
+      return false;
+    // => Already approved — approval is no longer required
+    case "Issued":
+      return false;
+    // => Issued to supplier — past the approval gate
+    case "Cancelled":
+      return false;
+    // => Cancelled — approval is moot; the PO is no longer active
+    default:
+      return assertNever(status);
+    // => All five cases covered — compiler satisfied
+  }
+}
+// => Adding "Disputed" to PurchaseOrderStatus immediately errors on this switch
+
+// Test
+const statuses: PurchaseOrderStatus[] = ["Draft", "AwaitingApproval", "Approved", "Issued", "Cancelled"];
+const results = statuses.map((s) => [s, approvalRequired(s)] as const);
+
+results.forEach(([s, r]) => {
+  console.log(`${s} -> approvalRequired: ${r}`);
+});
+// => Output: Draft -> approvalRequired: false
+// => Output: AwaitingApproval -> approvalRequired: true
+// => Output: Approved -> approvalRequired: false
+// => Output: Issued -> approvalRequired: false
+// => Output: Cancelled -> approvalRequired: false
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The F# compiler's exhaustive match warning is a compile-time correctness guarantee — it ensures every state of a discriminated union is handled, preventing silent bugs from newly added cases.
@@ -1341,7 +1901,7 @@ results |> List.iter (fun (s, r) ->
 
 `Option<'T>` models the presence or absence of a value without using null. In F#, null is not a valid value for most types. `Option` is the explicit, type-safe alternative that forces callers to handle the "not present" case — something nullable references never enforce.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1469,6 +2029,69 @@ printfn "%s" (formatAddress simpleAddress)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Optional values with explicit presence — no null surprises.
+// [F#: Option<'T> with Some/None — compiler-forced handling; TS uses T | undefined]
+// [Clojure: absent key returns nil; when-let handles the absent case explicitly]
+
+// An address interface with an optional secondary line
+interface SupplierAddress {
+  readonly street: string;
+  // => Required: every supplier address must have a street
+  readonly city: string;
+  // => Required: city is always known
+  readonly postalCode: string;
+  // => Required: needed for logistics and tax calculations
+  readonly secondaryLine?: string;
+  // => Optional field: absent = undefined — never null by design
+  // => [F#: string option = Some "Suite 400" or None; TS: string | undefined]
+}
+
+// Address with secondary line present
+const addressWithSuite: SupplierAddress = {
+  street: "Jl. Sudirman No. 1",
+  city: "Jakarta",
+  postalCode: "10220",
+  secondaryLine: "Lantai 12",
+  // => Optional field present — value is a string
+};
+// => addressWithSuite.secondaryLine : string | undefined = "Lantai 12"
+
+// Address without secondary line
+const simpleAddress: SupplierAddress = {
+  street: "Jl. Gatot Subroto 45",
+  city: "Jakarta",
+  postalCode: "12930",
+  // => secondaryLine omitted — accessing it returns undefined, not null
+};
+// => simpleAddress.secondaryLine : string | undefined = undefined
+
+// Consuming the optional value — conditional check mirrors F# Some/None match
+function formatAddress(addr: SupplierAddress): string {
+  const line2 =
+    addr.secondaryLine !== undefined
+      ? `\n${addr.secondaryLine}`
+      : // => Present: prepend newline — mirrors F# Some s -> "\n" + s
+        "";
+  // => Absent: produce empty string — mirrors F# None -> ""
+  return `${addr.street}${line2}\n${addr.city} ${addr.postalCode}`;
+}
+
+console.log(formatAddress(addressWithSuite));
+// => Output: Jl. Sudirman No. 1
+// =>         Lantai 12
+// =>         Jakarta 10220
+
+console.log(formatAddress(simpleAddress));
+// => secondaryLine absent — conditional takes the "" branch
+// => Output: Jl. Gatot Subroto 45
+// =>         Jakarta 12930
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Option<'T>` makes optionality explicit in the type system — you must handle both `Some` and `None`, eliminating null-reference exceptions by construction.
@@ -1481,7 +2104,7 @@ printfn "%s" (formatAddress simpleAddress)
 
 A constrained `SkuCode` type enforces format invariants at the boundary. The P2P spec mandates the pattern `^[A-Z]{3}-\d{4,8}$` — for example `OFF-0042` or `ELE-12345`. Once inside the type, the value is guaranteed to satisfy the pattern.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1625,6 +2248,62 @@ match badFormat with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// SkuCode branded type: validates the pattern ^[A-Z]{3}-\d{4,8}$ at construction time.
+// [F#: private single-case DU with module — only SkuCode.create can produce values]
+// [Clojure: malli schema validates at boundary; TS brands enforce after validation]
+
+// Result type — explicit error handling without exceptions
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// Branded SkuCode type — private constructor by convention
+type SkuCode = string & { readonly __brand: "SkuCode" };
+
+// Pre-compiled regex for performance — compiled once at module load
+const skuPattern = /^[A-Z]{3}-\d{4,8}$/;
+// => Pattern: three uppercase letters, hyphen, 4-8 digits (e.g. OFF-0042)
+
+// Smart constructor: validates and brands the raw string
+function createSkuCode(raw: string): Result<SkuCode, string> {
+  if (!raw || raw.trim() === "") {
+    return errR("SkuCode must not be blank");
+    // => Guard 1: blank or whitespace strings are not valid SKU codes
+  }
+  if (!skuPattern.test(raw)) {
+    return errR(`SkuCode '${raw}' must match ^[A-Z]{3}-\\d{4,8}$ (e.g. OFF-0042)`);
+    // => Guard 2: string does not match the canonical SKU pattern
+  }
+  return okR(raw as SkuCode);
+  // => Both guards passed — brand the validated string; no downstream re-checking needed
+}
+
+// Accessor: extract the raw string from the branded type
+const skuCodeValue = (sku: SkuCode): string => sku as string;
+// => [F#: let value (SkuCode s) = s — pattern-matches the private constructor]
+
+// Building a SkuCode from valid input
+const validSku = createSkuCode("OFF-0042");
+// => "OFF-0042" matches pattern — { ok: true, value: SkuCode }
+
+const badFormat = createSkuCode("off-0042");
+// => "off-0042" has lowercase letters — { ok: false, error: "SkuCode 'off-0042' must match ..." }
+
+const tooShort = createSkuCode("OF-42");
+// => "OF-42" has only 2 letters and 2 digits — { ok: false, error: "..." }
+
+if (validSku.ok) console.log("SKU:", skuCodeValue(validSku.value));
+// => Output: SKU: OFF-0042
+
+if (!badFormat.ok) console.log("Validation error:", badFormat.error);
+// => Output: Validation error: SkuCode 'off-0042' must match ...
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Constrained string types wrap raw strings with validated invariants, so any value that exists is guaranteed valid — no defensive checks needed downstream in the procurement pipeline.
@@ -1637,7 +2316,7 @@ match badFormat with
 
 `Quantity` wraps an integer and a unit of measure, guaranteeing the integer is strictly positive and the unit is one of the allowed domain values. Domain invariant: a purchase line item must request at least one unit.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1789,6 +2468,62 @@ match invalidQty with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Quantity branded type: wraps a positive integer and a unit of measure.
+// [F#: private Quantity of int * UnitOfMeasure — smart constructor validates both]
+// [Clojure: {:quantity/value n :quantity/unit kw} map; TS brands the validated pair]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// UnitOfMeasure as a closed literal union
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+// => EACH: individual items; BOX: boxes; KG: weight; LITRE: liquid; HOUR: time
+
+// Branded Quantity interface — both components validated before creation
+interface QuantityBrand {
+  readonly __brand: "Quantity";
+}
+type Quantity = { readonly value: number; readonly unit: UnitOfMeasure } & QuantityBrand;
+
+// Smart constructor: validates value > 0 and unit is a valid member
+function createQuantity(value: number, unit: UnitOfMeasure): Result<Quantity, string> {
+  if (value <= 0) {
+    return errR(`Quantity must be > 0, got ${value}`);
+    // => Domain rule: you cannot requisition zero or negative units
+  }
+  return okR({ value, unit } as Quantity);
+  // => Invariant satisfied — the Quantity is safe to use in any domain function
+}
+
+// Accessors
+const quantityValue = (q: Quantity): number => q.value;
+const quantityUnit = (q: Quantity): UnitOfMeasure => q.unit;
+const describeQuantity = (q: Quantity): string => `${q.value} ${q.unit}`;
+// => Produces human-readable string like "12 BOX" or "3 EACH"
+
+// Creating quantities for a procurement requisition
+const laptopQty = createQuantity(3, "EACH");
+// => 3 > 0 and "EACH" is a valid unit — { ok: true, value: Quantity }
+const paperBoxQty = createQuantity(20, "BOX");
+// => 20 > 0 and "BOX" is a valid unit — { ok: true, value: Quantity }
+const invalidQty = createQuantity(0, "KG");
+// => 0 <= 0 — { ok: false, error: "Quantity must be > 0, got 0" }
+
+if (laptopQty.ok) console.log("Laptop quantity:", describeQuantity(laptopQty.value));
+// => Output: Laptop quantity: 3 EACH
+if (paperBoxQty.ok) console.log("Paper quantity:", describeQuantity(paperBoxQty.value));
+// => Output: Paper quantity: 20 BOX
+if (!invalidQty.ok) console.log("Validation error:", invalidQty.error);
+// => Output: Validation error: Quantity must be > 0, got 0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Wrapping a primitive pair in a constrained value object prevents invalid quantities from ever entering procurement logic — a function accepting `Quantity` cannot accidentally receive zero or a negative count.
@@ -1801,7 +2536,7 @@ match invalidQty with
 
 `Money` is a value object combining a non-negative decimal amount with an ISO 4217 currency code. It is one of the most important value objects in the procurement domain — every line item price, PO total, and invoice amount is expressed as `Money`.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1962,6 +2697,74 @@ match unitPrice with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Money branded type: non-negative amount plus ISO 4217 currency code.
+// [F#: private Money of decimal * string with module — only Money.create produces values]
+// [Clojure: malli iso-currency-schema validates at boundary; TS brands after validation]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// Branded Money interface — encapsulates both validated components
+interface MoneyBrand {
+  readonly __brand: "Money";
+}
+type Money = { readonly amount: number; readonly currency: string } & MoneyBrand;
+
+// ISO 4217 pattern: exactly three uppercase letters (USD, IDR, EUR, GBP)
+const isoPattern = /^[A-Z]{3}$/;
+
+// Smart constructor: validates both components before branding
+function createMoney(amount: number, currency: string): Result<Money, string> {
+  if (amount < 0) {
+    return errR(`Money amount must be >= 0, got ${amount}`);
+    // => Negative money is not meaningful in the procurement domain
+  }
+  if (!isoPattern.test(currency)) {
+    return errR(`Currency '${currency}' is not a valid ISO 4217 code`);
+    // => Currency must be a three-letter ISO code — not a symbol, not a name
+  }
+  return okR({ amount, currency } as Money);
+  // => Both invariants satisfied — valid Money value object
+}
+
+// Accessors
+const moneyAmount = (m: Money): number => m.amount;
+const moneyCurrency = (m: Money): string => m.currency;
+const formatMoney = (m: Money): string => `${m.currency} ${m.amount.toFixed(2)}`;
+// => "USD 2500.00" — currency first, amount to 2 decimal places
+
+function addMoney(m1: Money, m2: Money): Result<Money, string> {
+  if (moneyCurrency(m1) !== moneyCurrency(m2)) {
+    return errR(`Cannot add ${moneyCurrency(m1)} and ${moneyCurrency(m2)} — currency mismatch`);
+    // => Cross-currency addition requires an exchange rate — out of scope here
+  }
+  return okR({ amount: moneyAmount(m1) + moneyAmount(m2), currency: moneyCurrency(m1) } as Money);
+  // => Same currency — simply sum the amounts
+}
+
+// Building Money for requisition line items
+const unitPrice = createMoney(499.99, "USD");
+// => 499.99 >= 0 and "USD" matches [A-Z]{3} — { ok: true, value: Money }
+const qty = 5;
+const lineTotal = unitPrice.ok
+  ? createMoney(qty * moneyAmount(unitPrice.value), moneyCurrency(unitPrice.value))
+  : unitPrice;
+// => 5 x 499.99 = 2499.95
+
+const badCurrency = createMoney(100, "dollars");
+// => "dollars" does not match [A-Z]{3} — { ok: false, error: "Currency 'dollars' is not a valid ISO 4217 code" }
+
+if (unitPrice.ok) console.log("Unit price:", formatMoney(unitPrice.value));
+// => Output: Unit price: USD 499.99
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `Money` value object encapsulates both amount and currency, with invariant checking ensuring non-negative amounts and valid ISO currency codes — preventing the common Falsehoods Programmers Believe About Money.
@@ -1986,7 +2789,7 @@ stateDiagram-v2
     Rejected --> [*]
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2121,6 +2924,91 @@ printfn "After submit: %A" submitted
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Lifecycle states as a tagged union — each state carries its own payload.
+// [F#: DU where each case carries different payload — accessing wrong state field is compile error]
+// [Clojure: map with :status keyword — multimethods dispatch; TS narrows via discriminant]
+
+// Branded ID
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+// Each state as a distinct interface carrying only its meaningful data
+interface DraftState {
+  readonly status: "Draft";
+  readonly lines: readonly string[];
+}
+// => Draft: just the line items being built — no submission metadata yet
+interface SubmittedState {
+  readonly status: "Submitted";
+  readonly requisitionId: RequisitionId;
+  readonly requestedBy: string;
+  readonly submittedAt: string;
+}
+// => Submitted: requisitionId assigned, who submitted, when submitted
+interface ManagerReviewState {
+  readonly status: "ManagerReview";
+  readonly requisitionId: RequisitionId;
+  readonly approverEmail: string;
+}
+// => Under review: know which approver is responsible
+interface ApprovedState {
+  readonly status: "Approved";
+  readonly requisitionId: RequisitionId;
+  readonly approvedAt: string;
+}
+// => Approved: timestamp of approval captured for audit trail
+interface RejectedState {
+  readonly status: "Rejected";
+  readonly requisitionId: RequisitionId;
+  readonly reason: string;
+}
+// => Rejected: rejection reason mandatory — employee needs feedback
+interface ConvertedToPOState {
+  readonly status: "ConvertedToPO";
+  readonly requisitionId: RequisitionId;
+  readonly purchaseOrderId: string;
+}
+// => Converted: linked to the resulting PO — bidirectional traceability
+
+// The full lifecycle union — discriminated by the "status" literal
+type PurchaseRequisition =
+  | DraftState
+  | SubmittedState
+  | ManagerReviewState
+  | ApprovedState
+  | RejectedState
+  | ConvertedToPOState;
+
+// State transition — submit a Draft requisition
+function submitRequisition(req: DraftState, requestedBy: string): SubmittedState {
+  // => TypeScript enforces: only DraftState can be passed here
+  // => Calling submitRequisition with an ApprovedState is a compile error
+  return {
+    status: "Submitted",
+    requisitionId: asRequisitionId(`req_${Math.random().toString(36).slice(2, 10)}`),
+    // => Generate a requisition ID at submission time — not before
+    requestedBy,
+    submittedAt: new Date().toISOString(),
+  };
+}
+
+const myReq: PurchaseRequisition = { status: "Draft", lines: ["OFF-0042", "ELE-1001"] };
+// => myReq : PurchaseRequisition (typed as DraftState)
+
+const submitted = submitRequisition(myReq as DraftState, "emp_00456");
+// => submitRequisition transitions Draft -> Submitted
+
+console.log("Initial state:", myReq.status);
+// => Output: Initial state: Draft
+console.log("After submit:", submitted.status, submitted.requestedBy);
+// => Output: After submit: Submitted emp_00456
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling lifecycle states as a discriminated union where each case carries its own payload makes illegal states and premature data access impossible — you cannot access the `approverEmail` of a `Draft` requisition because `Draft` does not have that field.
@@ -2141,7 +3029,7 @@ stateDiagram-v2
     DraftRequisition --> [*] : cancelled
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2284,6 +3172,82 @@ printfn "Approved requisition: %A" approv
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// State transitions as typed functions — illegal transitions are compile errors.
+// [F#: typed functions per state — compile error if wrong input state is passed]
+// [Clojure: runtime :status guard; TS enforces the precondition at compile time]
+
+// Branded ID
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+// Separate state types — each is a distinct interface
+interface DraftRequisition {
+  readonly lines: readonly string[];
+  readonly requestedBy: string;
+}
+// => Draft state: only knows its lines and the submitter
+
+interface SubmittedRequisition {
+  readonly id: RequisitionId;
+  readonly requestedBy: string;
+  readonly submittedAt: string;
+  readonly lines: readonly string[];
+}
+// => Submitted state: has an ID and a timestamp — assigned at submission
+
+interface ApprovedRequisition {
+  readonly id: RequisitionId;
+  readonly approvedAt: string;
+}
+// => Approved state: knows when approval happened
+
+interface RejectedRequisition {
+  readonly id: RequisitionId;
+  readonly reason: string;
+}
+// => Rejected state: knows why it was rejected — mandatory feedback
+
+// Transition functions — each takes exactly the right input state
+function submit(draft: DraftRequisition): SubmittedRequisition {
+  // => submit : DraftRequisition -> SubmittedRequisition
+  // => Cannot accidentally call submit on an ApprovedRequisition — different type
+  return {
+    id: asRequisitionId(`req_${Math.random().toString(36).slice(2, 10)}`),
+    requestedBy: draft.requestedBy,
+    // => Carry the employee identifier forward
+    submittedAt: new Date().toISOString(),
+    // => Record the submission timestamp
+    lines: draft.lines,
+    // => Carry the line items forward for the approval review
+  };
+}
+
+function approve(submitted: SubmittedRequisition): ApprovedRequisition {
+  // => approve : SubmittedRequisition -> ApprovedRequisition
+  // => Cannot approve a DraftRequisition — TypeScript blocks it
+  return {
+    id: submitted.id,
+    approvedAt: new Date().toISOString(),
+    // => Record the approval timestamp for audit trail
+  };
+}
+
+const draft: DraftRequisition = { lines: ["OFF-0042"], requestedBy: "emp_00123" };
+const subm = submit(draft);
+// => subm : SubmittedRequisition — submit transitions Draft -> Submitted
+const approv = approve(subm);
+// => approv : ApprovedRequisition — approve transitions Submitted -> Approved
+
+// approve(draft)  <- TypeScript compile error: DraftRequisition not assignable to SubmittedRequisition
+console.log("Approved requisition:", approv.id, "at", approv.approvedAt);
+// => Output: Approved requisition: req_... at 2026-...
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Encoding state transitions as functions with typed inputs and outputs makes illegal transitions (Draft → Approved without going through Submitted) literal compile errors rather than runtime bugs caught only in testing.
@@ -2296,7 +3260,7 @@ printfn "Approved requisition: %A" approv
 
 `UnitPrice` wraps a `decimal` and guarantees it is strictly positive. A zero-price item is likely a data entry error; a negative price is impossible in the procurement context. The wrapper makes this invariant permanent.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2436,6 +3400,63 @@ printfn "Line total: %A" lineTotal
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// UnitPrice branded type: a number guaranteed to be strictly positive.
+// [F#: private UnitPrice of decimal with module returning Result<UnitPrice, string>]
+// [Clojure: create-unit-price returning {:ok value} or {:error message}; TS brands after validation]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// Branded UnitPrice — positive number, enforced by smart constructor
+type UnitPrice = number & { readonly __brand: "UnitPrice" };
+
+// Smart constructor: validates value > 0
+function createUnitPrice(fieldName: string, value: number): Result<UnitPrice, string> {
+  if (value <= 0) {
+    return errR(`${fieldName} must be > 0, got ${value}`);
+    // => Zero and negative prices violate the procurement domain invariant
+    // => fieldName names the field for structured API error responses
+  }
+  return okR(value as UnitPrice);
+  // => Wraps the validated number — invariant is now documented in the type
+}
+
+// Accessor: unwrap for arithmetic, persistence, or display
+const unitPriceValue = (p: UnitPrice): number => p as number;
+// => [F#: let value (UnitPrice v) = v — pattern-matches the private constructor]
+
+// Usage in the purchasing context
+const priceResult = createUnitPrice("UnitPrice", 4.99);
+// => 4.99 > 0 — { ok: true, value: UnitPrice(4.99) }
+const zeroResult = createUnitPrice("UnitPrice", 0);
+// => 0 <= 0 — { ok: false, error: "UnitPrice must be > 0, got 0" }
+const negResult = createUnitPrice("UnitPrice", -10);
+// => -10 <= 0 — { ok: false, error: "UnitPrice must be > 0, got -10" }
+
+if (priceResult.ok) console.log("Unit price:", unitPriceValue(priceResult.value));
+// => Output: Unit price: 4.99
+
+// Compute a line total using validated types
+function computeLineTotal(price: UnitPrice, qty: number): number {
+  return unitPriceValue(price) * qty;
+  // => Pure arithmetic — no defensive checks; both inputs are trusted types
+}
+
+if (priceResult.ok) {
+  const total = computeLineTotal(priceResult.value, 10);
+  // => priceResult was { ok: true } — compute 4.99 x 10 = 49.9
+  console.log(`Line total: ${total.toFixed(2)}`);
+  // => Output: Line total: 49.90
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Wrapping decimal prices in constrained types prevents invalid values from ever entering procurement logic — a function that accepts `UnitPrice` cannot accidentally receive zero or a negative number.
@@ -2448,7 +3469,7 @@ printfn "Line total: %A" lineTotal
 
 F# has first-class support for units of measure — a compile-time mechanism that prevents mixing amounts in different units. In the procurement context, this means you cannot accidentally add a quantity in `KG` to a quantity in `EACH` without explicit conversion.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2588,6 +3609,65 @@ printfn "Requisition total: %M USD" (decimal requisitionTotal)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Units of measure encoded as branded numeric types — prevent dimension mixing.
+// [F#: first-class [<Measure>] types — compile-time dimensional analysis]
+// [Clojure: {:value n :unit :each} maps with runtime unit guards; TS brands simulate F# measures]
+
+// Generic quantity brand — Qty<"each"> cannot be added to Qty<"box">
+type Qty<TUnit extends string> = number & { readonly __unit: TUnit };
+
+// Currency amount brands — USD<"each"> is price-per-item; USD<""> is a plain amount
+type USD<TPerUnit extends string = ""> = number & { readonly __currency: "USD"; readonly __per: TPerUnit };
+
+// Helper casts — used only after dimensional check
+const qty = <T extends string>(n: number): Qty<T> => n as Qty<T>;
+const price = <T extends string>(n: number): USD<T> => n as USD<T>;
+const money = (n: number): USD<""> => n as USD<"">;
+
+// Typed quantities
+const laptopCount: Qty<"each"> = qty<"each">(3);
+// => 3 individual laptops — brand encodes the unit dimension
+const paperBoxCount: Qty<"box"> = qty<"box">(20);
+// => 20 boxes of paper
+const steelWeight: Qty<"kg"> = qty<"kg">(150);
+// => 150 kg of steel (unused in totals — illustrates the brand)
+
+// Typed prices
+const laptopUnitPrice: USD<"each"> = price<"each">(899.99);
+// => $899.99 per laptop — brand encodes "per each"
+const paperBoxPrice: USD<"box"> = price<"box">(8.5);
+// => $8.50 per box
+
+// Unit-aware multiplication: Qty<T> x USD<T> = USD<""> — units cancel
+function lineTotal<TUnit extends string>(q: Qty<TUnit>, p: USD<TUnit>): USD<""> {
+  return money(q * p);
+  // => TypeScript enforces matching unit brands: Qty<"each"> x USD<"each"> is valid
+  // => Qty<"each"> x USD<"box"> would be a compile error — different T
+}
+
+const laptopTotal = lineTotal(laptopCount, laptopUnitPrice);
+// => Qty<"each"> x USD<"each"> = USD<""> = 2699.97
+const paperTotal = lineTotal(paperBoxCount, paperBoxPrice);
+// => Qty<"box"> x USD<"box"> = USD<""> = 170.00
+
+const requisitionTotal = money(laptopTotal + paperTotal);
+// => USD<""> + USD<""> = USD<""> = 2869.97
+// => [F#: decimal<usd> + decimal<usd> = decimal<usd> — same unit guarantee]
+
+// lineTotal(laptopCount, paperBoxPrice)  <- TypeScript error: Qty<"each"> vs USD<"box">
+console.log(`Laptop total: ${laptopTotal.toFixed(4)} USD`);
+// => Output: Laptop total: 2699.9700 USD
+console.log(`Paper total: ${paperTotal.toFixed(4)} USD`);
+// => Output: Paper total: 170.0000 USD
+console.log(`Requisition total: ${requisitionTotal.toFixed(4)} USD`);
+// => Output: Requisition total: 2869.9700 USD
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: F# units of measure provide compile-time dimensional analysis — mixing quantities in different units (KG vs EACH) or adding money to quantity is a compile error, not a runtime bug.
@@ -2600,7 +3680,7 @@ printfn "Requisition total: %M USD" (decimal requisitionTotal)
 
 An email address on a supplier or employee record is a constrained string with format requirements. Active patterns let you embed validation logic directly into pattern-matching syntax, making validation readable and composable.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2732,6 +3812,60 @@ match badEmail with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Email branded type: validated against a minimal format regex.
+// [F#: active patterns (|ValidEmail|InvalidEmail|) embedded in match syntax]
+// [Clojure: valid-email-format? predicate + create-email; TS smart constructor returns Result]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// Branded Email type — only lowercase-normalised valid emails
+type Email = string & { readonly __brand: "Email" };
+
+// Minimal email regex: something @ something . something
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// => Full RFC 5322 compliance is complex; this covers 99% of real addresses
+// => Pre-compiled for performance — compiled once at module load
+
+// Smart constructor: validates and normalises the raw string
+function createEmail(raw: string): Result<Email, string> {
+  if (!raw || !emailPattern.test(raw)) {
+    return errR(`'${raw}' is not a valid email address`);
+    // => Pattern did not match — return descriptive error
+  }
+  return okR(raw.toLowerCase() as Email);
+  // => Normalise to lowercase — consistent storage in the supplier master
+  // => [F#: s.ToLowerInvariant() inside the Ok branch]
+}
+
+// Accessor: extract the string when sending notifications
+const emailValue = (e: Email): string => e as string;
+// => [F#: Email.value pattern-matches the private constructor]
+
+// Creating emails for procurement contacts
+const supplierEmail = createEmail("purchasing@acme-supplies.com");
+// => Matches the format — normalised to lowercase — { ok: true, value: Email }
+
+const approverEmail = createEmail("manager.finance@company.com");
+// => Valid format — { ok: true, value: Email }
+
+const badEmail = createEmail("not-an-email");
+// => "not-an-email" has no @ — { ok: false, error: "'not-an-email' is not a valid email address" }
+
+if (supplierEmail.ok) console.log("Supplier contact:", emailValue(supplierEmail.value));
+// => Output: Supplier contact: purchasing@acme-supplies.com
+
+if (!badEmail.ok) console.log("Validation error:", badEmail.error);
+// => Output: Validation error: 'not-an-email' is not a valid email address
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Active patterns embed validation logic into match expressions, making smart constructors readable as domain rules rather than imperative if/else chains.
@@ -2744,7 +3878,7 @@ match badEmail with
 
 Some domain concepts have multiple valid forms. A `ProductCode` in the procurement domain can be either a standard `SkuCode` (format `OFF-0042`) or a `ServiceCode` (format `SVC-YYYYMMDD-NNN` for contracted services). The union type captures both forms without collapsing them into a single string.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2881,6 +4015,72 @@ match cleaning with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ProductCode as a tagged union of two validated subtypes.
+// [F#: DU ProductCode = Sku of SkuCode | Service of ServiceCode — exhaustive match]
+// [Clojure: {:kind :sku/:service :code "..."} maps with defmulti; TS uses tagged union]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// Two branded subtypes — each with its own format invariant
+type SkuCode = string & { readonly __brand: "SkuCode" };
+// => Goods: format ^[A-Z]{3}-\d{4,8}$ e.g. OFF-0042
+type ServiceCode = string & { readonly __brand: "ServiceCode" };
+// => Services: format SVC-YYYYMMDD-NNN e.g. SVC-20260101-001
+
+// The tagged union — a ProductCode is one OR the other
+type ProductCode =
+  | { readonly kind: "Sku"; readonly code: SkuCode }
+  // => Physical goods with a stock-keeping unit identifier
+  | { readonly kind: "Service"; readonly code: ServiceCode };
+// => Contracted services (consulting, maintenance, cleaning)
+
+// Smart constructors for each subtype
+const skuPattern = /^[A-Z]{3}-\d{4,8}$/;
+const servicePattern = /^SVC-\d{8}-\d{3}$/;
+
+function createSku(s: string): Result<ProductCode, string> {
+  if (!skuPattern.test(s)) return errR(`Invalid SKU: ${s}`);
+  return okR({ kind: "Sku", code: s as SkuCode });
+  // => [F#: Ok (Sku (SkuCode s)) — wrapped in the union type]
+}
+
+function createService(s: string): Result<ProductCode, string> {
+  if (!servicePattern.test(s)) return errR(`Invalid ServiceCode: ${s}`);
+  return okR({ kind: "Service", code: s as ServiceCode });
+  // => [F#: Ok (Service (ServiceCode s))]
+}
+
+// Exhaustive switch — TypeScript enforces coverage via never
+function describeLineType(code: ProductCode): string {
+  switch (code.kind) {
+    case "Sku":
+      return `Physical goods: ${code.code}`;
+    // => Sku branch: standard goods with warehouse inventory
+    case "Service":
+      return `Contracted service: ${code.code}`;
+    // => Service branch: no inventory, billed by service agreement
+  }
+}
+
+const laptop = createSku("ELE-0099");
+// => "ELE-0099" matches pattern — { ok: true, value: { kind: "Sku", code: "ELE-0099" } }
+const cleaning = createService("SVC-20260601-003");
+// => "SVC-20260601-003" matches pattern — { ok: true, value: { kind: "Service", ... } }
+
+if (laptop.ok) console.log(describeLineType(laptop.value));
+// => Output: Physical goods: ELE-0099
+if (cleaning.ok) console.log(describeLineType(cleaning.value));
+// => Output: Contracted service: SVC-20260601-003
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A union type for `ProductCode` preserves the semantic distinction between physical goods and contracted services, enabling different handling rules to be enforced at compile time rather than at runtime via string prefix checks.
@@ -2895,7 +4095,7 @@ match cleaning with
 
 A `PurchaseRequisitionLine` composes the validated value objects from the previous examples into a single record. Every field is a domain type, not a primitive — the record itself becomes valid by construction if all its fields were validated.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3042,6 +4242,73 @@ printfn "Line 2 total: %M" (lineTotal line2)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// PurchaseRequisitionLine: composed of validated branded value types.
+// [F#: record type — all fields are domain types, valid by construction]
+// [Clojure: namespaced map with s/keys spec; TS readonly interface with branded fields]
+
+// Simplified branded and literal types for composition
+type SkuCode = string & { readonly __brand: "SkuCode" };
+type UnitPrice = number & { readonly __brand: "UnitPrice" };
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+interface Quantity {
+  readonly value: number;
+  readonly unit: UnitOfMeasure;
+}
+// => Simplified Quantity interface for composition example
+
+// The composed line interface — all fields are domain types
+interface PurchaseRequisitionLine {
+  readonly lineNumber: number;
+  // => 1-based position within the requisition — for display ordering
+  readonly skuCode: SkuCode;
+  // => Validated SKU — not a raw string
+  readonly quantity: Quantity;
+  // => Validated quantity — value > 0, unit is a closed literal union
+  readonly unitPrice: UnitPrice;
+  // => Validated price — > 0 number
+}
+// => All fields are domain types — if they exist, they are valid
+
+// Helper to compute the line total
+function lineTotal(line: PurchaseRequisitionLine): number {
+  return line.quantity.value * (line.unitPrice as number);
+  // => Both arguments are validated — no defensive checks needed here
+}
+
+// Constructing lines — all field values are validated types
+const line1: PurchaseRequisitionLine = {
+  lineNumber: 1,
+  // => First line item on the requisition
+  skuCode: "OFF-0042" as SkuCode,
+  // => Using the SkuCode brand — not a raw string
+  quantity: { value: 10, unit: "BOX" },
+  // => 10 boxes — value > 0, unit is a valid literal union member
+  unitPrice: 8.5 as UnitPrice,
+  // => $8.50 per box — positive price
+};
+// => line1 : PurchaseRequisitionLine — valid by construction
+
+const line2: PurchaseRequisitionLine = {
+  lineNumber: 2,
+  skuCode: "ELE-0099" as SkuCode,
+  // => Electronics SKU
+  quantity: { value: 3, unit: "EACH" },
+  // => 3 individual laptops
+  unitPrice: 899.99 as UnitPrice,
+  // => $899.99 per laptop
+};
+
+console.log(`Line 1 total: ${lineTotal(line1).toFixed(4)}`);
+// => 10 x 8.50 = 85.00 — Output: Line 1 total: 85.0000
+console.log(`Line 2 total: ${lineTotal(line2).toFixed(4)}`);
+// => 3 x 899.99 = 2699.97 — Output: Line 2 total: 2699.9700
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Composing validated value objects into a record creates a record that is valid by construction — no downstream function needs to re-validate individual fields because the types already guarantee their invariants.
@@ -3080,7 +4347,7 @@ graph TD
     style UP fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3269,6 +4536,89 @@ printfn "Status: %A" sampleReq.Status
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// PurchaseRequisition aggregate root: groups identity, status, lines, and metadata.
+// [F#: record type — compiler guarantees all required fields are present]
+// [Clojure: map with :purchasing/requisition spec; TS readonly interface enforces shape]
+
+// Simplified branded and literal types for this example
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+type RequisitionStatus = "Draft" | "Submitted" | "ManagerReview" | "Approved" | "Rejected" | "ConvertedToPO";
+type SkuCode = string & { readonly __brand: "SkuCode" };
+type UnitPrice = number & { readonly __brand: "UnitPrice" };
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+interface Quantity {
+  readonly value: number;
+  readonly unit: UnitOfMeasure;
+}
+
+interface PurchaseRequisitionLine {
+  readonly lineNumber: number;
+  readonly skuCode: SkuCode;
+  readonly quantity: Quantity;
+  readonly unitPrice: UnitPrice;
+}
+
+// The aggregate root
+interface PurchaseRequisition {
+  readonly id: RequisitionId;
+  // => Unique identity — drives all lookups and event references
+  readonly requestedBy: string;
+  // => Employee identifier — used for approval routing and audit trail
+  readonly status: RequisitionStatus;
+  // => Current lifecycle state — only legal transitions permitted
+  readonly lines: readonly PurchaseRequisitionLine[];
+  // => Line items — at least one required before submission
+  readonly createdAt: string;
+  // => ISO 8601 timestamp when the requisition was first saved — for SLA tracking
+  readonly updatedAt: string;
+  // => ISO 8601 timestamp when last modified — for concurrency detection
+}
+// => PurchaseRequisition : aggregate root with identity, status, lines, metadata
+
+// Helper: compute the total value of the requisition
+function requisitionTotal(req: PurchaseRequisition): number {
+  return req.lines.reduce((sum, line) => sum + line.quantity.value * (line.unitPrice as number), 0);
+  // => Sum all line totals to get the requisition total
+}
+
+// Build a sample requisition
+const sampleReq: PurchaseRequisition = {
+  id: "req_f4c2a1b7" as RequisitionId,
+  requestedBy: "emp_00456",
+  status: "Draft",
+  lines: [
+    {
+      lineNumber: 1,
+      skuCode: "OFF-0042" as SkuCode,
+      quantity: { value: 10, unit: "BOX" },
+      unitPrice: 8.5 as UnitPrice,
+    },
+    // => 10 x $8.50 = $85.00
+    {
+      lineNumber: 2,
+      skuCode: "ELE-0099" as SkuCode,
+      quantity: { value: 3, unit: "EACH" },
+      unitPrice: 899.99 as UnitPrice,
+    },
+    // => 3 x $899.99 = $2,699.97
+  ],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
+console.log("Requisition", sampleReq.id);
+// => Output: Requisition req_f4c2a1b7
+console.log(`Total: ${requisitionTotal(sampleReq).toFixed(4)}`);
+// => 85.00 + 2699.97 = 2784.97 — Output: Total: 2784.9700
+console.log("Status:", sampleReq.status);
+// => Output: Status: Draft
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The aggregate root record groups identity, status, line items, and metadata into a single cohesive type that the entire approval workflow passes through as a unit.
@@ -3281,7 +4631,7 @@ printfn "Status: %A" sampleReq.Status
 
 The `UnvalidatedRequisition` is the DTO that arrives from the HTTP layer. It uses only primitives — strings, ints, decimals — because JSON deserialisation produces raw values. The workflow's first step is to validate this DTO into the domain aggregate.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3474,6 +4824,89 @@ match validatedLine1 with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// UnvalidatedRequisition: the DTO arriving from the HTTP layer — primitives only.
+// [F#: record type using only string/int/decimal fields — distinct from domain types]
+// [Clojure: plain map with non-namespaced keys — key namespace IS the boundary marker; TS uses separate interfaces]
+
+// Raw line item from the HTTP request body
+interface UnvalidatedLine {
+  skuCode: string;
+  // => Raw string — may be empty, wrong format, or missing
+  quantity: number;
+  // => Raw number — may be zero or negative
+  unitPrice: number;
+  // => Raw number — may be zero or negative
+  unit: string;
+  // => Raw string representation of the unit — may not match a valid UnitOfMeasure
+}
+// => UnvalidatedLine : primitive-only DTO — no domain type guarantees
+
+// Raw requisition from the HTTP request body
+interface UnvalidatedRequisition {
+  requestedBy: string;
+  // => Raw employee ID — may be empty or not exist in the employee directory
+  lines: UnvalidatedLine[];
+  // => Array of unvalidated line items — may be empty or contain invalid items
+}
+// => UnvalidatedRequisition : DTO-shaped aggregate — purely for deserialization
+
+// Validated domain line (branded types separate from DTO types)
+type SkuCode = string & { readonly __brand: "SkuCode" };
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+interface ValidatedLine {
+  readonly lineNumber: number;
+  readonly skuCode: SkuCode;
+  readonly qty: number;
+  readonly unit: UnitOfMeasure;
+  readonly unitPrice: number;
+}
+
+// Parse a raw unit string to a UnitOfMeasure
+function parseUnit(raw: string): UnitOfMeasure | null {
+  const map: Record<string, UnitOfMeasure> = { EACH: "EACH", BOX: "BOX", KG: "KG", LITRE: "LITRE", HOUR: "HOUR" };
+  return map[raw.toUpperCase()] ?? null;
+  // => Returns null for unknown units — caller checks before using
+}
+
+// Validate a single unvalidated line — returns ValidatedLine or an error string
+function validateLine(n: number, raw: UnvalidatedLine): ValidatedLine | string {
+  if (!raw.skuCode.trim()) return "SkuCode required";
+  // => Guard 1: blank SKU code violates the domain invariant
+  if (raw.quantity <= 0) return `Quantity must be > 0, got ${raw.quantity}`;
+  // => Guard 2: zero or negative quantity is a domain violation
+  if (raw.unitPrice <= 0) return `UnitPrice must be > 0, got ${raw.unitPrice}`;
+  // => Guard 3: non-positive price is a domain violation
+  const unit = parseUnit(raw.unit);
+  if (!unit) return `Unknown unit: '${raw.unit}' — expected EACH, BOX, KG, LITRE, or HOUR`;
+  // => Guard 4: invalid unit string
+  return { lineNumber: n, skuCode: raw.skuCode as SkuCode, qty: raw.quantity, unit, unitPrice: raw.unitPrice };
+  // => All guards passed — promote primitives to branded domain types
+}
+
+// Test with sample DTO input
+const rawReq: UnvalidatedRequisition = {
+  requestedBy: "emp_00456",
+  lines: [
+    { skuCode: "OFF-0042", quantity: 10, unitPrice: 8.5, unit: "BOX" },
+    { skuCode: "ELE-0099", quantity: 3, unitPrice: 899.99, unit: "EACH" },
+  ],
+};
+// => rawReq : UnvalidatedRequisition — from HTTP body / JSON deserialization
+
+const validatedLine1 = validateLine(1, rawReq.lines[0]);
+// => "OFF-0042" non-blank, 10 > 0, 8.50 > 0, "BOX" matches — ValidatedLine
+
+typeof validatedLine1 === "string"
+  ? console.log("Error:", validatedLine1)
+  : console.log("Line 1 validated:", validatedLine1.skuCode);
+// => Output: Line 1 validated: OFF-0042
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A separate DTO type for unvalidated input makes the boundary between "outside the domain" and "inside the domain" explicit — the type system prevents raw DTO fields from being used where validated domain types are expected.
@@ -3503,7 +4936,7 @@ graph LR
     style L3 fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3668,6 +5101,80 @@ printfn "Routing: %s" (describeApprovalRouting level)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ApprovalLevel derived from requisition total — a pure domain rule.
+// [F#: deriveApprovalLevel : decimal -> ApprovalLevel — pure, deterministic function]
+// [Clojure: derive-approval-level returns a keyword; defmulti dispatches on it; TS uses exhaustive switch]
+
+// Literal union — closed set of approval levels
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => "L1": direct manager (<= $1,000)
+// => "L2": department head ($1,001-$10,000)
+// => "L3": CFO / finance committee (> $10,000)
+
+interface PurchaseRequisitionLine {
+  readonly lineNumber: number;
+  readonly unitPrice: number;
+  readonly qty: number;
+}
+
+// Pure domain functions
+function lineTotal(line: PurchaseRequisitionLine): number {
+  return line.qty * line.unitPrice;
+  // => Pure, no side effects — same input always produces same output
+}
+
+function requisitionTotal(lines: readonly PurchaseRequisitionLine[]): number {
+  return lines.reduce((sum, line) => sum + lineTotal(line), 0);
+  // => Sum all line totals — identity element 0 handles empty requisitions
+}
+
+function deriveApprovalLevel(total: number): ApprovalLevel {
+  if (total <= 1000) return "L1";
+  // => Under $1,000 — direct manager approval
+  if (total <= 10000) return "L2";
+  // => $1,001-$10,000 — department head
+  return "L3";
+  // => Over $10,000 — CFO-level required
+}
+
+// Exhaustive switch — TypeScript enforces all cases are handled
+function describeApprovalRouting(level: ApprovalLevel): string {
+  switch (level) {
+    case "L1":
+      return "Route to direct manager — SLA: 2 business days";
+    case "L2":
+      return "Route to department head — SLA: 5 business days";
+    case "L3":
+      return "Route to CFO approval committee — SLA: 10 business days";
+  }
+}
+
+// Test with sample line items
+const lines: PurchaseRequisitionLine[] = [
+  { lineNumber: 1, unitPrice: 899.99, qty: 3 },
+  // => 3 x $899.99 = $2,699.97
+  { lineNumber: 2, unitPrice: 8.5, qty: 20 },
+  // => 20 x $8.50 = $170.00
+];
+
+const total = requisitionTotal(lines);
+// => 2699.97 + 170.00 = 2869.97
+const level = deriveApprovalLevel(total);
+// => 2869.97 > 1000 and <= 10000 — "L2"
+
+console.log(`Total: ${total.toFixed(4)}`);
+// => Output: Total: 2869.9700
+console.log("Approval level:", level);
+// => Output: Approval level: L2
+console.log("Routing:", describeApprovalRouting(level));
+// => Output: Routing: Route to department head — SLA: 5 business days
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Deriving `ApprovalLevel` as a pure function from the requisition total keeps the approval routing rule in the domain layer, independently testable and free of infrastructure dependencies.
@@ -3680,7 +5187,7 @@ printfn "Routing: %s" (describeApprovalRouting level)
 
 The complete `SubmitRequisition` workflow signature ties together all the types from this beginner section. The type alias is the domain contract — a self-documenting specification that makes the workflow's purpose, inputs, outputs, and failure modes visible without reading the implementation.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3902,6 +5409,103 @@ match result with
       ;; => Output: Event: :procurement/requisition-submitted level: :approval/l2
   (println "Submission failed:" (:error result)))
   ;; => Would print the error keyword if any guard fired
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// The complete SubmitRequisition workflow — ties all beginner types together.
+// [F#: type alias SubmitRequisition = UnvalidatedRequisition -> Result<RequisitionEvent list, SubmissionError>]
+// [Clojure: submit-requisition defn with {:ok [event]} / {:error kw} — same data-first contract]
+
+// Result type — mirrors F# built-in Result
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// ── Domain types (simplified for composition demonstration) ──────────────────
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+type ApprovalLevel = "L1" | "L2" | "L3";
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+// ── Unvalidated DTO ───────────────────────────────────────────────────────────
+interface UnvalidatedRequisition {
+  readonly requestedBy: string;
+  // => Raw employee ID — not validated
+  readonly rawLines: ReadonlyArray<readonly [string, number, number, string]>;
+  // => Raw tuples: (skuCode, quantity, unitPrice, unit) — not validated
+}
+
+// ── Domain event payload ──────────────────────────────────────────────────────
+interface RequisitionSubmittedPayload {
+  readonly requisitionId: RequisitionId;
+  readonly approvalLevel: ApprovalLevel;
+  // => "L1"/"L2"/"L3" — drives the approval router
+  readonly requestedBy: string;
+  readonly totalAmount: number;
+  readonly submittedAt: string;
+}
+type RequisitionEvent = { readonly type: "RequisitionSubmitted"; readonly payload: RequisitionSubmittedPayload };
+
+// ── Error union ───────────────────────────────────────────────────────────────
+type SubmissionError =
+  | { readonly kind: "RequestedByRequired" }
+  | { readonly kind: "NoLinesProvided" }
+  | { readonly kind: "InvalidSkuCode"; readonly sku: string }
+  | { readonly kind: "InvalidQuantity"; readonly sku: string; readonly qty: number }
+  | { readonly kind: "InvalidUnitPrice"; readonly sku: string; readonly price: number }
+  | { readonly kind: "UnknownUnit"; readonly unit: string };
+// => Tagged union — each error carries the data needed for diagnostic messages
+
+// ── The workflow function type ────────────────────────────────────────────────
+type SubmitRequisition = (req: UnvalidatedRequisition) => Result<RequisitionEvent[], SubmissionError>;
+// => Input:  UnvalidatedRequisition — raw command from outside
+// => Output: Result — success with domain events, or named failure
+// => Result forces callers to handle both branches explicitly
+
+// ── Stub implementation matching the signature ────────────────────────────────
+const submitRequisition: SubmitRequisition = (req) => {
+  if (!req.requestedBy.trim()) return errR({ kind: "RequestedByRequired" });
+  // => Guard 1: employee ID required for approval routing
+  if (req.rawLines.length === 0) return errR({ kind: "NoLinesProvided" });
+  // => Guard 2: at least one line item required
+  const total = req.rawLines.reduce((sum, [, qty, price]) => sum + qty * price, 0);
+  // => Compute total for approval level derivation
+  const level: ApprovalLevel = total <= 1000 ? "L1" : total <= 10000 ? "L2" : "L3";
+  // => Derive approval level from total — pure domain rule
+  const payload: RequisitionSubmittedPayload = {
+    requisitionId: asRequisitionId(`req_${Math.random().toString(36).slice(2, 10)}`),
+    approvalLevel: level,
+    requestedBy: req.requestedBy,
+    totalAmount: total,
+    submittedAt: new Date().toISOString(),
+  };
+  return okR([{ type: "RequisitionSubmitted", payload }]);
+  // => Return the single domain event — downstream consumers react to it
+};
+
+// ── Test the complete workflow ─────────────────────────────────────────────────
+const testReq: UnvalidatedRequisition = {
+  requestedBy: "emp_00456",
+  rawLines: [
+    ["OFF-0042", 10, 8.5, "BOX"],
+    ["ELE-0099", 3, 899.99, "EACH"],
+  ],
+};
+
+const result = submitRequisition(testReq);
+// => Guards pass; total = 2784.97; level = "L2"; event emitted
+
+if (result.ok) {
+  console.log(`Submission successful — ${result.value.length} event(s) produced`);
+  // => Output: Submission successful — 1 event(s) produced
+  result.value.forEach((e) => console.log("Event:", e.type, "level:", e.payload.approvalLevel));
+  // => Output: Event: RequisitionSubmitted level: L2
+} else {
+  console.log("Submission failed:", result.error.kind);
+}
 ```
 
 {{< /tab >}}

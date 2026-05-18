@@ -48,7 +48,7 @@ graph TD
     style Adapters fill:#DE8F05,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -160,6 +160,56 @@ printfn "Three zones defined — dependency rule enforced by module namespaces"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: domain.ts ──────────────────────────────────────────────────────
+// The Domain zone has ZERO imports from any infrastructure library.
+// No pg, no express, no axios — only TypeScript built-ins and domain types.
+// This is the innermost zone: pure business logic, always testable in isolation.
+
+// Branded types enforce identity discipline at compile time.
+type PurchaseOrderId = string & { readonly _brand: "PurchaseOrderId" };
+// => Branded string — prevents passing a SupplierId where a PurchaseOrderId is expected
+
+type SupplierId = string & { readonly _brand: "SupplierId" };
+// => Distinct brand from PurchaseOrderId — documents the domain vocabulary
+
+type PurchaseOrderStatus = "Draft" | "AwaitingApproval" | "Approved" | "Issued";
+// => Literal union — exhaustive status set; compiler rejects unknown strings
+
+interface PurchaseOrder {
+  // => The aggregate root of the purchasing context
+  readonly id: PurchaseOrderId;
+  // => Unique identifier in format po_<uuid>
+  readonly supplierId: SupplierId;
+  // => Identifies the supplier this PO is addressed to
+  readonly totalAmount: number;
+  // => Sum of all line item values; drives approval-level routing
+  readonly status: PurchaseOrderStatus;
+  // => Current state in the PO lifecycle
+}
+
+// ── file: application/ports.ts ────────────────────────────────────────────
+// Application zone imports only domain types — no infrastructure.
+// import type { PurchaseOrder } from "../domain";  ← only this import permitted
+
+// ── file: adapters/postgresAdapter.ts ─────────────────────────────────────
+// Adapters zone imports application zone plus infrastructure libraries.
+// import { PurchaseOrderRepo } from "../application/ports";  ← permitted
+// import { Pool } from "pg";                                 ← permitted
+
+// ── ANTI-PATTERN: what NOT to do ─────────────────────────────────────────
+// import { Pool } from "pg"  ← inside domain.ts — THIS IS WRONG
+// Domain importing an infrastructure library violates the dependency rule.
+// The domain would become untestable without a real database.
+// => If you see an infrastructure import inside domain.ts, it is a zone violation.
+
+console.log("Three zones defined — dependency rule enforced by module imports");
+// => Output: Three zones defined — dependency rule enforced by module imports
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The three zones (Domain, Application, Adapters) map directly to F# module namespaces, and the dependency rule — inner zones never import outer zones — is a simple constraint on `open` statements.
@@ -172,7 +222,7 @@ printfn "Three zones defined — dependency rule enforced by module namespaces"
 
 A pure domain function accepts only domain types and returns a `Result`. It has no `open` statements for external libraries. It cannot call a database, make an HTTP request, or read a file. This purity is not a limitation — it is what makes the function instantly testable and independently deployable.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -302,6 +352,86 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── CORRECT: pure domain function ────────────────────────────────────────
+// Zero imports from any library — only TypeScript language constructs.
+// This function can be tested by calling it directly with no setup.
+
+type PurchaseOrderId = string & { readonly _brand: "PurchaseOrderId" };
+// => Branded string — distinguishes PO identity from other strings
+
+// Branded money type — amount must be >= 0, currency ISO 3-letter
+type Money = { readonly amount: number; readonly currency: string };
+// => Value object: branded to prevent using arbitrary numbers as money
+
+// Tagged union for domain errors — compiler-enforced exhaustive matching
+type DomainError =
+  | { readonly kind: "BlankOrderId" }
+  // => The PO ID was empty or whitespace
+  | { readonly kind: "BlankSupplierId" }
+  // => The supplier ID was empty or whitespace
+  | { readonly kind: "NonPositiveAmount"; readonly value: number };
+// => Total amount was zero or negative — domain rule violation
+
+interface DraftPurchaseOrder {
+  // => Raw input arriving from the outside world; nothing validated yet
+  readonly id: string;
+  // => Raw string — may be blank, may not follow po_<uuid> format
+  readonly supplierId: string;
+  // => Raw supplier identifier — not yet verified
+  readonly totalAmount: number;
+  // => Raw amount — may be negative or zero
+}
+
+// Result<T, E> — FP-style tagged union for success or failure
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => Avoids exceptions as control flow; callers must handle both cases
+
+const ok = <T>(value: T): Result<T, never> => ({ ok: true, value });
+// => Constructor helper for success case
+const err = <E>(error: E): Result<never, E> => ({ ok: false, error });
+// => Constructor helper for failure case
+
+const validateDraftPO = (input: DraftPurchaseOrder): Result<DraftPurchaseOrder, DomainError> => {
+  // => Input: raw DTO from the outside world
+  // => Output: ok DraftPurchaseOrder if all rules pass, error DomainError if any fail
+  if (!input.id || input.id.trim() === "") {
+    // => Guard 1: the PO ID must be non-blank
+    return err({ kind: "BlankOrderId" });
+    // => Returns named error — the caller knows exactly what went wrong
+  }
+  if (!input.supplierId || input.supplierId.trim() === "") {
+    // => Guard 2: the supplier ID must be non-blank
+    return err({ kind: "BlankSupplierId" });
+    // => Named error for blank supplier ID
+  }
+  if (input.totalAmount <= 0) {
+    // => Guard 3: total amount must be positive — domain rule
+    return err({ kind: "NonPositiveAmount", value: input.totalAmount });
+    // => Carries the actual invalid value for diagnostics
+  }
+  return ok(input);
+  // => All guards passed — returns the validated draft PO
+};
+
+// Testing the pure function — no database, no HTTP, no setup
+const result = validateDraftPO({ id: "po_abc-123", supplierId: "sup_xyz-456", totalAmount: 500 });
+// => All three guards pass; totalAmount 500 > 0
+// => result: Result<DraftPurchaseOrder, DomainError> = { ok: true, value: { id: "po_abc-123", ... } }
+
+if (result.ok) {
+  console.log("Valid PO:", result.value.id);
+  // => result.value.id = "po_abc-123" — unwrapped from ok
+} else {
+  console.log("Error:", result.error);
+  // => Not reached — input was valid
+}
+// => Output: Valid PO: po_abc-123
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A pure domain function with no infrastructure imports is the most testable unit of code in the system — calling it requires nothing but the F# runtime and domain types.
@@ -334,7 +464,7 @@ graph LR
     style TEST fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -426,6 +556,69 @@ let submitPurchaseOrder : SubmitPurchaseOrderUseCase =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Input port: the complete contract for submitting a purchase order.
+// A function-type alias — not a class, not an interface hierarchy.
+
+interface DraftPurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+}
+// => Raw input from any delivery mechanism — nothing validated yet
+
+interface SubmittedPurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Represents a PO in AwaitingApproval state — validated and persisted
+
+type SubmissionError =
+  | { readonly kind: "ValidationError"; readonly message: string }
+  // => Domain rule violated — caller should fix the request
+  | { readonly kind: "RepositoryError"; readonly message: string };
+// => Infrastructure failure — caller may retry
+
+// Result type for FP-style error handling — no throw
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => Exhaustive — callers must handle both branches
+
+// Input port type alias — the complete contract in one line
+type SubmitPurchaseOrderUseCase = (
+  draft: DraftPurchaseOrder,
+) => Promise<Result<SubmittedPurchaseOrder, SubmissionError>>;
+// => Input:  raw, unvalidated PO DTO from any delivery mechanism
+// => Output: ok SubmittedPurchaseOrder on success, or SubmissionError on failure
+// => Promise acknowledges that persistence is effectful (async I/O)
+
+// Any function with this signature satisfies the port — no inheritance needed
+const submitPurchaseOrder: SubmitPurchaseOrderUseCase = async (draft) => {
+  // => This is ONE implementation of the port — tests can supply a different one
+  if (!draft.id || draft.id.trim() === "") {
+    return { ok: false, error: { kind: "ValidationError", message: "PO Id must not be blank" } };
+    // => Domain rule enforced before any I/O
+  }
+  const submitted: SubmittedPurchaseOrder = {
+    id: draft.id,
+    supplierId: draft.supplierId,
+    totalAmount: draft.totalAmount,
+    status: "AwaitingApproval",
+    // => State transition: Draft -> AwaitingApproval
+  };
+  return { ok: true, value: submitted };
+  // => Happy path — PO is now awaiting manager approval
+};
+
+// The HTTP adapter holds the injected port — it never names the implementation
+// const handler = (useCase: SubmitPurchaseOrderUseCase) => (dto: HttpDto) => ...
+// => useCase is the port; the implementation is wired at the composition root
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: An input port expressed as a function type alias gives every adapter (HTTP, CLI, test) a single, compiler-checked contract without requiring a base class or interface hierarchy.
@@ -438,7 +631,7 @@ let submitPurchaseOrder : SubmitPurchaseOrderUseCase =
 
 An **output port** is a record of functions that the application layer calls but never implements. The record type is the contract; record literals in the adapters zone are the implementations. The `PurchaseOrderRepository` port appears identically in every example that uses it.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -532,6 +725,62 @@ printfn "PurchaseOrderRepository port defined — zero adapter knowledge in appl
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Domain types ──────────────────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+// => Branded alias for the PO primary key — format po_<uuid>
+
+interface PurchaseOrder {
+  // => Aggregate root of the purchasing context
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+// ── Infrastructure error type ─────────────────────────────────────────────
+type RepoError =
+  | { readonly kind: "DatabaseError"; readonly message: string }
+  // => Named error — DatabaseError carries the message
+  | { readonly kind: "ConnectionTimeout" };
+// => ConnectionTimeout signals a retry opportunity
+
+// ── Result type ───────────────────────────────────────────────────────────
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — avoids exceptions as control flow
+
+// ── Output port: the canonical PurchaseOrderRepository definition ─────────
+// This type alias is THE port contract. Every adapter must satisfy it.
+// No adapter name, no SQL, no pg — just function signatures.
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  // => Persist a PO — upsert semantics recommended
+  // => Promise because disk/network I/O is involved
+  // => Result<void, RepoError> because the database can fail with named cases
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  // => Load a PO by its ID
+  // => Returns null when the PO does not exist (not an error)
+  // => Returns error RepoError on infrastructure failure
+};
+// => This exact type alias is used in every example that touches the repository port
+
+// ── Demonstration: the port is just a type ────────────────────────────────
+// The application service accepts this type — it never names an implementation.
+const exampleService =
+  (repo: PurchaseOrderRepo) =>
+  async (id: POId): Promise<Result<PurchaseOrder | null, RepoError>> => {
+    // => repo is the injected port — could be Postgres, in-memory, or a spy
+    return repo.findById(id);
+    // => Calls the port — no knowledge of what is behind the boundary
+  };
+
+console.log("PurchaseOrderRepo port defined — zero adapter knowledge in application layer");
+// => Output: PurchaseOrderRepo port defined — zero adapter knowledge in application layer
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `PurchaseOrderRepository` record type is the complete port contract — any record literal that provides matching `save` and `load` functions satisfies it, regardless of the underlying storage mechanism.
@@ -544,7 +793,7 @@ printfn "PurchaseOrderRepository port defined — zero adapter knowledge in appl
 
 The `Clock` port makes the current timestamp injectable. Without it, `System.DateTimeOffset.UtcNow` would be hard-coded in application services, making time-dependent domain rules (approval deadlines, order expiry) non-deterministic in tests.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -652,6 +901,59 @@ printfn "Submitted at: %A" prodPO.SubmittedAt
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Clock port ────────────────────────────────────────────────────────────
+// A synchronous function — reading the clock has no failure mode.
+// No Promise wrapper, no Result — clocks do not throw recoverable errors.
+type Clock = () => Date;
+// => Returns the current timestamp as seen by the application layer
+// => Synchronous: no await required at call site
+
+// ── Domain type that depends on time ─────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly submittedAt: Date;
+  // => Timestamp is part of the domain aggregate — used for approval SLA tracking
+}
+
+// ── Application service using the Clock port ──────────────────────────────
+// The service is parameterised by the clock — never calls new Date() directly.
+const submitPO =
+  (clock: Clock) =>
+  (id: string, amount: number): PurchaseOrder => {
+    // => clock is the injected Clock port — synchronous, pure from caller's view
+    const now = clock();
+    // => Delegates timestamp resolution to the injected adapter
+    return { id, totalAmount: amount, submittedAt: now };
+    // => PO timestamp is now deterministic in tests
+  };
+
+// ── System clock adapter (production) ────────────────────────────────────
+const systemClock: Clock = () => new Date();
+// => Production adapter: reads the real wall-clock
+// => Non-deterministic — different call, different timestamp
+
+// ── Fixed clock adapter (tests) ───────────────────────────────────────────
+const fixedClock: Clock = () => new Date("2026-01-15T09:00:00Z");
+// => Test adapter: always returns the same Date
+// => Every test assertion can use this literal value
+
+// ── Demonstration ─────────────────────────────────────────────────────────
+const testPO = submitPO(fixedClock)("po_test-001", 2500);
+// => Uses fixed clock — deterministic
+console.log("Submitted at:", testPO.submittedAt.toISOString());
+// => Output: Submitted at: 2026-01-15T09:00:00.000Z  (exact, always the same)
+
+const prodPO = submitPO(systemClock)("po_prod-001", 2500);
+// => Uses system clock — non-deterministic (different run = different value)
+console.log("Submitted at:", prodPO.submittedAt.toISOString());
+// => Output: Submitted at: <current UTC time>  (varies by run)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A `Clock` port that returns a `DateTimeOffset` makes time a dependency like any other — injectable, swappable, and deterministic in tests.
@@ -664,7 +966,7 @@ printfn "Submitted at: %A" prodPO.SubmittedAt
 
 The dependency rule states that the direction of source-code imports must always point inward: adapters import the application zone, the application zone imports the domain zone, and the domain zone imports nothing outside itself. Violating this rule is the single most common hexagonal architecture mistake.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -779,6 +1081,52 @@ printfn "Dependency rule: Domain ← Application ← Adapters (arrows = allowed 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── CORRECT dependency directions ────────────────────────────────────────
+
+// domain.ts — zero external imports
+// import { Pool } from "pg"  ← WRONG: domain cannot import pg
+type PurchaseOrder = { readonly id: string; readonly totalAmount: number; readonly status: string };
+// => Domain type — defined without knowledge of any infrastructure
+type DomainError = { readonly kind: "InvalidAmount"; readonly amount: number } | { readonly kind: "BlankId" };
+// => Named errors — no exception types, no HTTP status codes here
+
+// application/ports.ts — imports domain only
+// import type { PurchaseOrder, DomainError } from "../domain"  ← CORRECT
+
+type PurchaseOrderRepo = {
+  // => Port defined in application — depends on domain types only
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+// => Application knows domain; application does NOT know adapters
+
+// adapters/postgresRepo.ts — imports application (and transitively domain)
+// import type { PurchaseOrderRepo } from "../application/ports"  ← CORRECT
+// import { Pool } from "pg"                                       ← CORRECT: adapters may import infrastructure
+
+// ── WRONG dependency directions ───────────────────────────────────────────
+// These are the mistakes the dependency rule prevents.
+
+// MISTAKE 1: Domain importing infrastructure
+// import { Pool } from "pg"  ← inside domain.ts — WRONG
+// => Effect: domain is now untestable without a real Postgres connection
+
+// MISTAKE 2: Application importing an adapter
+// import { PostgresRepo } from "../adapters/postgresRepo"  ← inside application — WRONG
+// => Effect: swapping the adapter requires changing the application layer
+
+// MISTAKE 3: Domain importing application
+// import type { PurchaseOrderRepo } from "../application/ports"  ← inside domain.ts — WRONG
+// => Effect: circular dependency; domain becomes aware of ports it should not know about
+
+console.log("Dependency rule: Domain <- Application <- Adapters (arrows = allowed imports)");
+// => Output: Dependency rule: Domain <- Application <- Adapters (arrows = allowed imports)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The dependency rule — imports only point inward — is enforced by F# module ordering; a module cannot open a module defined later in the compilation order.
@@ -791,7 +1139,7 @@ printfn "Dependency rule: Domain ← Application ← Adapters (arrows = allowed 
 
 Hexagonal Architecture's zone boundaries should be visible in the file system. The module namespace convention maps directly to folder structure, making zone violations easy to detect in a code review without reading any code.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -907,6 +1255,61 @@ printfn "File layout enforces zone boundaries — violations are visible at a gl
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── File system layout ────────────────────────────────────────────────────
+// procurement-platform/
+// ├── domain/
+// │   └── purchaseOrder.ts          ← inner zone: no external imports
+// ├── application/
+// │   ├── ports.ts                  ← port type aliases: PurchaseOrderRepo, Clock
+// │   └── purchaseOrderService.ts   ← orchestration: calls domain + ports
+// └── adapters/
+//     ├── postgresPurchaseOrderRepo.ts  ← output port implementation
+//     ├── inMemoryPurchaseOrderRepo.ts  ← test adapter
+//     ├── httpController.ts             ← primary (driving) adapter
+//     └── composition.ts               ← wires adapters to port types
+
+// ── domain/purchaseOrder.ts ───────────────────────────────────────────────
+// No import from "pg", "express", or any infrastructure library here
+
+type POId = string & { readonly _brand: "POId" };
+// => Branded alias — prevents mixing PO IDs with other string identifiers
+
+interface PurchaseOrder {
+  // => Aggregate root of the purchasing context — lives only in this module
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+// ── application/ports.ts ─────────────────────────────────────────────────
+// import type { PurchaseOrder, POId } from "../domain/purchaseOrder"
+// ← only domain types imported
+
+type PurchaseOrderRepo = {
+  // => Port definition — ONLY in the application zone
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: POId) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+// => Adapters implement this; the application service consumes it
+
+type Clock = () => Date;
+// => Time port — all ports live alongside each other in ports.ts
+
+// ── adapters/composition.ts ───────────────────────────────────────────────
+// The composition root is the ONLY file that knows about all adapters.
+// import { buildPostgresRepo } from "./postgresPurchaseOrderRepo"
+// import { createHttpRouter }  from "./httpController"
+// import type { PurchaseOrderRepo, Clock } from "../application/ports"
+
+console.log("File layout enforces zone boundaries — violations are visible at a glance");
+// => Output: File layout enforces zone boundaries — violations are visible at a glance
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Mapping the three zones directly to three top-level folders makes every dependency rule violation visible as a misplaced file, before any code is read.
@@ -921,7 +1324,7 @@ printfn "File layout enforces zone boundaries — violations are visible at a gl
 
 The `PurchaseOrderRepository` port is the canonical output port for the `purchasing` context. It appears identically in every beginner example that persists or retrieves a `PurchaseOrder`. Here the focus is on understanding WHY the record-of-functions shape is the right abstraction.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1054,6 +1457,69 @@ printfn "PurchaseOrderRepository port declared — adapters implement; applicati
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── The canonical PurchaseOrderRepo port ──────────────────────────────────
+// This type is IDENTICAL in every example that uses this port.
+// Never rename fields, never change signatures — the contract is the port.
+type POId = string & { readonly _brand: "POId" };
+// => PO primary key — format po_<uuid>; branded to prevent stringly-typed confusion
+
+interface PurchaseOrder {
+  // => Aggregate root — the only type the repository cares about
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+
+type RepoError =
+  | { readonly kind: "DatabaseError"; readonly message: string }
+  // => Infrastructure errors — named so callers can respond appropriately
+  | { readonly kind: "ConnectionTimeout" };
+// => ConnectionTimeout signals a retry opportunity
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — callers must handle both branches
+
+// Port as a type alias for an object of function types
+type PurchaseOrderRepo = {
+  // => The complete output port — two operations, two function signatures
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  // => save: persist the aggregate; returns void on success
+  // => Promise because disk write is I/O-bound
+  // => Result because the database can fail (constraint, connection, timeout)
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  // => findById: retrieve by identity; returns null when not found (not an error)
+  // => null distinguishes "not found" from "infrastructure failure"
+};
+// => Any object satisfying this shape is a valid PurchaseOrderRepo adapter
+
+// ── How the application service depends on the port ───────────────────────
+const loadAndInspect =
+  (repo: PurchaseOrderRepo) =>
+  async (id: POId): Promise<string> => {
+    // => repo is the port — injected by the composition root
+    const result = await repo.findById(id);
+    // => Delegates to whichever adapter was injected — no SQL in this function
+    if (!result.ok) {
+      if (result.error.kind === "DatabaseError") return `DB error: ${result.error.message}`;
+      // => Infrastructure failure — propagate with context
+      return "Timeout — retry later";
+      // => Timeout — signal to the caller that a retry is safe
+    }
+    if (result.value === null) return `PO ${id} not found`;
+    // => Not found — explicit, not an error
+    return `Found PO ${result.value.id} in status ${result.value.status}`;
+    // => PO found — return a summary string
+  };
+
+console.log("PurchaseOrderRepo port declared — adapters implement; application layer consumes");
+// => Output: PurchaseOrderRepo port declared — adapters implement; application layer consumes
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `PurchaseOrderRepository` record type (F#) and protocol (Clojure) make the port contract explicit — any implementation satisfying the required operations substitutes without changing the application service.
@@ -1066,7 +1532,7 @@ printfn "PurchaseOrderRepository port declared — adapters implement; applicati
 
 Port signatures should be minimal: only the parameters the application service needs. Extra parameters are adapter concerns. This example shows the difference between a minimal port and an over-specified one.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1174,6 +1640,66 @@ printfn "Minimal port: connection management is the adapter's responsibility, no
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── OVER-SPECIFIED port (wrong) ───────────────────────────────────────────
+// The save function carries database-specific parameters.
+// The application service must now know connection pools and transaction handles.
+type OverSpecifiedRepo = {
+  save: (connectionString: string, txHandle: unknown, po: unknown) => Promise<unknown>;
+  // => WRONG: connectionString and txHandle are adapter concerns
+  // => Application layer now knows about databases — zone violation
+};
+// => The application layer is now coupled to SQL-specific infrastructure
+
+// ── MINIMAL port (correct) ────────────────────────────────────────────────
+// Connection management is the adapter's responsibility — not visible here.
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Domain type — no infrastructure fields
+
+type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | { readonly kind: "ConnectionTimeout" };
+// => Named error type — canonical for all PurchaseOrderRepo ports
+
+type PurchaseOrderRepo = {
+  // => Minimal: the application service needs exactly these two operations
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: RepoError }>;
+  // => CORRECT: no connection string, no transaction — adapter manages those internally
+  readonly findById: (
+    id: string,
+  ) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: RepoError }>;
+  // => CORRECT: only the identity is needed — the adapter knows where to look
+};
+// => The connection string is a constructor parameter of the adapter, not a port parameter
+
+// ── Adapter: the connection string is captured at construction time ────────
+const buildPostgresRepo = (connectionString: string): PurchaseOrderRepo => ({
+  // => connectionString is closed over — not visible to the application layer
+  save: async (po) => {
+    // pg Pool and INSERT logic lives here — connectionString in scope via closure
+    console.log(`[PG] INSERT INTO purchase_orders VALUES (${po.id}, ${po.totalAmount})`);
+    // => Real: execute INSERT with pg Pool — connectionString is in scope
+    return { ok: true };
+    // => Returns void equivalent on success — the PO identity is already in the input
+  },
+  findById: async (id) => {
+    console.log(`[PG] SELECT * FROM purchase_orders WHERE id = ${id}`);
+    // => Real: execute SELECT with pg Pool; return null if no rows
+    return { ok: true, value: null };
+    // => Simplified: always returns null; real adapter queries Postgres
+  },
+});
+
+console.log("Minimal port: connection management is the adapter's responsibility, not the port's");
+// => Output: Minimal port: connection management is the adapter's responsibility, not the port's
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Port signatures must contain only the domain concepts the application service needs — infrastructure parameters like connection strings belong inside the adapter, captured in a closure.
@@ -1186,7 +1712,7 @@ printfn "Minimal port: connection management is the adapter's responsibility, no
 
 Ports that perform I/O use `Async<Result<_,_>>`. Ports that are logically instantaneous (clock, ID generation) use synchronous signatures. Mixing these up leads to unnecessary async overhead or missed error-handling.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1292,6 +1818,61 @@ printfn "Sync ports for instantaneous operations; Async<Result<_,_>> for I/O-bou
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Rule: I/O-bound ports return Promise<Result<_,_>> ───────────────────
+// The database can fail and the call is I/O-bound — both reasons for async+Result.
+interface PurchaseOrder {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Domain aggregate — same type referenced by both ports below
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — callers must handle both branches
+
+type PurchaseOrderRepo = {
+  save: (po: PurchaseOrder) => Promise<Result<void, string>>;
+  // => CORRECT: Promise because disk write is I/O; Result because write can fail
+  findById: (id: string) => Promise<Result<PurchaseOrder | null, string>>;
+  // => CORRECT: Promise because network read; Result because read can fail
+};
+
+// ── Rule: logically-instantaneous ports return the value directly ──────────
+// The clock never fails and the call is CPU-bound — neither reason for Promise+Result.
+type Clock = () => Date;
+// => CORRECT: no Promise (no I/O); no Result (no failure mode for reading time)
+// => Simplifies every call site: const now = clock()  — no await, no match
+
+type IdGenerator = () => string;
+// => CORRECT: generating a UUID is synchronous and infallible
+// => Wrapping in Promise<Result<_,_>> would be purely ceremonial overhead
+
+// ── WRONG: over-wrapping the clock ───────────────────────────────────────
+// type BadClock = () => Promise<Result<Date, string>>
+// => This forces every call site to: const now = await clock(); then check ok
+// => Both are meaningless ceremony — the clock cannot fail
+
+// ── Demonstration: call-site simplicity ──────────────────────────────────
+const buildPO =
+  (clock: Clock, gen: IdGenerator) =>
+  (supplierId: string, amount: number): PurchaseOrder => {
+    // => Both synchronous ports: no await, no Result at call site
+    const id = gen();
+    // => id: string — immediate UUID, no await needed
+    const now = clock();
+    // => now: Date — immediate timestamp, no await needed
+    return { id: `po_${id}`, totalAmount: amount, status: "Draft" };
+    // => PO constructed synchronously — timestamp available as now
+  };
+
+console.log("Sync ports for instantaneous operations; Promise<Result<_,_>> for I/O-bound ports");
+// => Output: Sync ports for instantaneous operations; Promise<Result<_,_>> for I/O-bound ports
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Match the port signature to the failure and timing characteristics of the operation — synchronous for infallible in-process operations, async with error representation for I/O-bound fallible operations.
@@ -1304,7 +1885,7 @@ printfn "Sync ports for instantaneous operations; Async<Result<_,_>> for I/O-bou
 
 The error type in a port's `Result` should be a discriminated union specific to that port, not a generic `exn` or `string`. Named error cases allow the application service to respond to different failures differently.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1448,6 +2029,76 @@ printfn "Named RepoError DU: exhaustive matching; no string parsing; compile-tim
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── GENERIC error (wrong) ─────────────────────────────────────────────────
+// type BadRepo = { save: (po: unknown) => Promise<Result<void, Error>> }
+// => Error leaks exception semantics into the functional type system
+// => The caller cannot distinguish a timeout from a constraint violation
+
+// ── STRING error (also wrong) ─────────────────────────────────────────────
+// type BadRepo = { save: (po: unknown) => Promise<Result<void, string>> }
+// => Better than Error, but still untyped — the caller must parse the string to branch
+// => A typo in the error string is a runtime bug, not a compile error
+
+// ── NAMED tagged-union error (correct) ────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — used in the port signatures below
+
+type RepoError =
+  // => Tagged union: each case is a distinct failure mode
+  | { readonly kind: "DuplicateKey"; readonly id: string }
+  // => PO with this ID already exists — caller should not retry with same ID
+  | { readonly kind: "ConnectionTimeout" }
+  // => Database unreachable — caller may retry after a delay
+  | { readonly kind: "ConstraintViolation"; readonly message: string }
+  // => Schema constraint failed — caller should inspect the PO for data errors
+  | { readonly kind: "UnexpectedError"; readonly message: string };
+// => Catch-all for unexpected failures — carry message for diagnostics
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — exhaustive matching enforced by TypeScript
+
+type PurchaseOrderRepo = {
+  // => Port with named error type — exhaustive matching at application layer
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+};
+
+// ── Application service: branch on error case ─────────────────────────────
+const handleSaveError =
+  (repo: PurchaseOrderRepo) =>
+  async (po: PurchaseOrder): Promise<string> => {
+    const result = await repo.save(po);
+    // => Delegates to the injected adapter
+    if (result.ok) return "Saved successfully";
+    // => Happy path
+    switch (result.error.kind) {
+      case "DuplicateKey":
+        return `PO ${result.error.id} already exists`;
+      // => Idempotency: PO already saved — not necessarily an error
+      case "ConnectionTimeout":
+        return "Retry after delay — DB unreachable";
+      // => Transient failure: safe to retry
+      case "ConstraintViolation":
+        return `Data error: ${result.error.message}`;
+      // => Permanent failure: the PO data has a problem
+      case "UnexpectedError":
+        return `Unexpected: ${result.error.message}`;
+      // => Catch-all: surface for diagnostics
+    }
+  };
+
+console.log("Named RepoError union: exhaustive matching; no string parsing; compile-time completeness");
+// => Output: Named RepoError union: exhaustive matching; no string parsing; compile-time completeness
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Using a discriminated union (F#) or typed error map (Clojure) as the port's error representation makes all failure modes explicit, enabling the application service to respond differently to transient vs permanent failures.
@@ -1460,7 +2111,7 @@ printfn "Named RepoError DU: exhaustive matching; no string parsing; compile-tim
 
 The same input port type alias is satisfied by three different adapters: an HTTP handler, a CLI parser, and an event consumer. Each adapter translates its delivery-mechanism-specific input into the domain type, then calls the same port.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1628,6 +2279,93 @@ printfn "One input port type — three adapters, zero changes to the application
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Shared domain and port types ──────────────────────────────────────────
+interface DraftPurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+}
+// => Raw input from any delivery mechanism
+
+interface SubmittedPO {
+  readonly id: string;
+  readonly status: string;
+}
+// => Simplified output confirming submission
+
+type SubmissionError =
+  | { readonly kind: "ValidationError"; readonly message: string }
+  // => Named errors — each delivery mechanism maps these to its own response format
+  | { readonly kind: "RepositoryError"; readonly message: string };
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — identical for all three adapters below
+
+// Input port type alias — identical for all three adapters below
+type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise<Result<SubmittedPO, SubmissionError>>;
+// => Input port: identical for all three adapters below
+
+// ── Adapter 1: HTTP ───────────────────────────────────────────────────────
+interface HttpPoDto {
+  readonly po_id: string;
+  readonly supplier_id: string;
+  readonly total_amount: number;
+}
+// => JSON shape — snake_case, number amounts (JSON spec)
+
+const httpAdapter =
+  (useCase: SubmitPurchaseOrderUseCase) =>
+  async (dto: HttpPoDto): Promise<string> => {
+    // => dto: parsed from JSON request body by the framework (Express / Fastify)
+    const draft: DraftPurchaseOrder = { id: dto.po_id, supplierId: dto.supplier_id, totalAmount: dto.total_amount };
+    // => Translate: HTTP DTO → domain input type (snake_case → camelCase)
+    const result = await useCase(draft);
+    // => Delegate to the port — the adapter does no business logic
+    if (result.ok) return `201 Created: ${result.value.id}`;
+    if (result.error.kind === "ValidationError") return `422: ${result.error.message}`;
+    return `503: ${result.error.message}`;
+  };
+
+// ── Adapter 2: CLI ────────────────────────────────────────────────────────
+const cliAdapter =
+  (useCase: SubmitPurchaseOrderUseCase) =>
+  async (args: string[]): Promise<void> => {
+    // => args: command-line arguments ["--id", "po_001", "--supplier", "sup_001", "--amount", "1000"]
+    const draft: DraftPurchaseOrder = { id: args[1], supplierId: args[3], totalAmount: parseFloat(args[5]) };
+    // => Translate: argv → domain input type
+    const result = await useCase(draft);
+    // => Same port call — CLI and HTTP are interchangeable from the use case's view
+    if (result.ok) console.log(`PO submitted: ${result.value.id}`);
+    else console.log(`Error: ${result.error.message}`);
+  };
+
+// ── Adapter 3: Event consumer ─────────────────────────────────────────────
+interface KafkaMessage {
+  readonly key: string;
+  readonly payload: string;
+}
+// => Raw Kafka message — key is the PO ID, payload is a JSON string
+
+const eventConsumerAdapter =
+  (useCase: SubmitPurchaseOrderUseCase) =>
+  async (msg: KafkaMessage): Promise<void> => {
+    // => msg: deserialized Kafka message from the consumer loop
+    const draft: DraftPurchaseOrder = { id: msg.key, supplierId: "sup_from_payload", totalAmount: 750 };
+    // => Translate: Kafka message → domain input type
+    const result = await useCase(draft);
+    // => Same port call — the use case is delivery-mechanism-agnostic
+    if (result.ok) console.log(`PO consumed from Kafka: ${msg.key}`);
+    else console.log(`Consumer error: ${result.error.message}`);
+  };
+
+console.log("One input port type — three adapters, zero changes to the application service");
+// => Output: One input port type — three adapters, zero changes to the application service
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The input port decouples the application service from its delivery mechanism — HTTP, CLI, and Kafka consumers all call the same function without the service knowing which adapter is in use.
@@ -1640,7 +2378,7 @@ printfn "One input port type — three adapters, zero changes to the application
 
 An application service often needs more than one output port. Composing them as separate parameters (or as fields in a ports record) keeps each port independently testable and swappable.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1759,6 +2497,71 @@ printfn "Two output ports — independently swappable — compose in application
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ────────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — used across multiple ports
+
+type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | { readonly kind: "ConnectionTimeout" };
+// => Named error type — canonical for PurchaseOrderRepo
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+};
+// => Persistence port — same canonical definition
+
+type Clock = () => Date;
+// => Time port — synchronous, infallible
+
+// ── Application service with two output ports ──────────────────────────────
+// Parameters: ports first, then domain inputs — enables partial application
+const submitPurchaseOrder =
+  (repo: PurchaseOrderRepo, clock: Clock) =>
+  async (draft: { id: string; supplierId: string; totalAmount: number }): Promise<Result<PurchaseOrder, string>> => {
+    // => Validation — pure, no ports used
+    if (!draft.id || draft.id.trim() === "") return { ok: false, error: "PO Id must not be blank" };
+    // => Domain rule enforced before any I/O
+
+    // Clock port — synchronous call
+    const submittedAt = clock();
+    // => Timestamp from the injected clock — deterministic in tests
+
+    // Build the persisted PO
+    const po: PurchaseOrder = {
+      id: draft.id,
+      supplierId: draft.supplierId,
+      totalAmount: draft.totalAmount,
+      status: "AwaitingApproval",
+    };
+    // => State: Draft → AwaitingApproval after valid submission
+
+    // Repository port — async I/O call
+    const saveResult = await repo.save(po);
+    // => Persist the PO — Postgres in production, Map in tests
+    if (!saveResult.ok) return { ok: false, error: `Save failed: ${saveResult.error.kind}` };
+    // => Propagate named RepoError to the caller
+    console.log(`[${submittedAt.toISOString()}] PO ${po.id} submitted for approval`);
+    // => Log: real adapter would use a structured logger
+    return { ok: true, value: po };
+    // => Return the submitted PO to the HTTP adapter
+  };
+
+console.log("Two output ports — independently swappable — compose in application service parameters");
+// => Output: Two output ports — independently swappable — compose in application service parameters
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Multiple output ports are composed as separate function parameters — each independently injectable and independently testable regardless of whether F# or Clojure is used.
@@ -1771,7 +2574,7 @@ printfn "Two output ports — independently swappable — compose in application
 
 Two syntactic styles for injecting ports: a named record (`Ports` record) vs individual curried parameters. Each has trade-offs. Both are valid; the record style scales better to many ports.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1940,6 +2743,90 @@ printfn "Both styles valid — curried for few ports, record for many ports"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Shared types ──────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root shared by both port styles
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+// => Canonical repository port — same signature in both styles
+
+type Clock = () => Date;
+// => Time port — synchronous
+
+// ── Style A: individual function parameters ────────────────────────────────
+// Individual port parameters — readable for services with 1-3 ports.
+const submitPO_Individual =
+  (repo: PurchaseOrderRepo, clock: Clock) =>
+  async (id: string, amount: number): Promise<string> => {
+    // => Each port is a separate parameter — explicit at every call site
+    const now = clock();
+    // => Clock port called synchronously
+    const po: PurchaseOrder = { id, totalAmount: amount, status: "AwaitingApproval" };
+    // => Draft PO constructed before persistence
+    await repo.save(po);
+    // => Repository port called; result ignored for brevity
+    return `Submitted at ${now.toISOString()}`;
+    // => Returns confirmation with timestamp
+  };
+
+// Closure: bake ports in, expose domain parameters
+const submitWithTestPorts = submitPO_Individual(
+  {
+    save: async (po) => {
+      console.log(`[MemDB] Saving ${po.id}`);
+      return { ok: true };
+    },
+    // => Stub standing in for a real Postgres adapter
+    findById: async () => ({ ok: true, value: null }),
+  },
+  () => new Date("2026-01-15T09:00:00Z"),
+);
+// => submitWithTestPorts: (id: string, amount: number) => Promise<string>
+// => "ports baked in" — callers only see the domain parameters
+
+// ── Style B: ports record ─────────────────────────────────────────────────
+// Bundle ports into a named record — preferred for services with 4+ ports.
+interface PurchasingPorts {
+  readonly repo: PurchaseOrderRepo;
+  // => Repository port field
+  readonly clock: Clock;
+  // => Clock port field
+}
+// => Adding a new port: add one field here, one parameter in the application service
+
+const submitPO_Record =
+  (ports: PurchasingPorts) =>
+  async (id: string, amount: number): Promise<string> => {
+    // => Single ports record — all dependencies in one value
+    const now = ports.clock();
+    // => Access clock via record field — named, self-documenting
+    const po: PurchaseOrder = { id, totalAmount: amount, status: "AwaitingApproval" };
+    // => Construct the PO before persisting
+    await ports.repo.save(po);
+    // => Access repository via record field
+    return `Submitted at ${now.toISOString()}`;
+    // => Returns confirmation with timestamp
+  };
+
+// In tests: replace any field independently
+// const testPorts: PurchasingPorts = { repo: inMemRepo, clock: fixedClock }
+// => Replace repo with an in-memory stub; keep clock as fixed time
+
+console.log("Both styles valid — individual params for few ports, record for many ports");
+// => Output: Both styles valid — individual params for few ports, record for many ports
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Individual parameters work well for 1–3 ports; a named ports record (F#) or ports map (Clojure) scales better when the application service depends on 4 or more ports.
@@ -1954,7 +2841,7 @@ printfn "Both styles valid — curried for few ports, record for many ports"
 
 The in-memory adapter is the simplest possible implementation of `PurchaseOrderRepository`. It stores `PurchaseOrder` values in a `Dictionary`, returns them on `load`, and is the default test adapter for all unit and integration tests.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2096,6 +2983,81 @@ printfn "Load (different store): %A" missResult
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Shared types ──────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — the type the repository stores and retrieves
+
+type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | { readonly kind: "ConnectionTimeout" };
+// => Named error cases — in-memory adapter never produces ConnectionTimeout
+// => but must satisfy the same error type as the Postgres adapter
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: RepoError }>;
+  readonly findById: (
+    id: string,
+  ) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: RepoError }>;
+};
+// => Canonical port — the in-memory adapter satisfies this type exactly
+
+// ── In-memory adapter ─────────────────────────────────────────────────────
+// buildInMemoryRepo: factory function; each call creates an isolated store.
+// Isolation matters: two tests sharing a store would pollute each other's state.
+const buildInMemoryRepo = (): PurchaseOrderRepo => {
+  // => Returns a new PurchaseOrderRepo object on each call
+  const store = new Map<string, PurchaseOrder>();
+  // => The Map is closed over — visible only inside this factory scope
+  return {
+    save: async (po) => {
+      // => po: PurchaseOrder — the aggregate to persist
+      store.set(po.id, po);
+      // => Map write — no SQL, no network, no disk
+      return { ok: true };
+      // => Always succeeds — in-memory never produces ConnectionTimeout
+    },
+    findById: async (id) => {
+      const po = store.get(id);
+      // => Map read — O(1), deterministic
+      return po !== undefined ? { ok: true, value: po } : { ok: true, value: null };
+      // => Found: return the PurchaseOrder; not found: return null — not an error
+    },
+  };
+};
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const repo1 = buildInMemoryRepo();
+// => repo1: PurchaseOrderRepo — empty store; independent of repo2
+const repo2 = buildInMemoryRepo();
+// => repo2: PurchaseOrderRepo — separate empty store
+
+const testPO: PurchaseOrder = { id: "po_test-001", supplierId: "sup_acme-1", totalAmount: 1500, status: "Draft" };
+// => A sample PurchaseOrder for demonstration
+
+const saveResult = await repo1.save(testPO);
+// => saveResult: { ok: true }
+console.log("Save:", saveResult);
+// => Output: Save: { ok: true }
+
+const loadResult = await repo1.findById("po_test-001");
+// => loadResult: { ok: true, value: { id: "po_test-001", ... } }
+console.log("Load:", loadResult);
+// => Output: Load: { ok: true, value: { id: 'po_test-001', supplierId: 'sup_acme-1', totalAmount: 1500, status: 'Draft' } }
+
+const missResult = await repo2.findById("po_test-001");
+// => missResult: { ok: true, value: null }
+// => repo2 is a separate store — the save to repo1 did not affect it
+console.log("Load (different store):", missResult);
+// => Output: Load (different store): { ok: true, value: null }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The in-memory adapter satisfies `PurchaseOrderRepository` exactly — same type, same error cases, isolated store per test — making unit tests fast, deterministic, and infrastructure-free.
@@ -2108,7 +3070,7 @@ printfn "Load (different store): %A" missResult
 
 The HTTP handler is the primary (driving) adapter. It receives an HTTP request, translates it to a domain input type, calls the input port, and maps the result to an HTTP response. It contains zero business logic.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2262,6 +3224,103 @@ printfn "%s" response
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Domain and port types ──────────────────────────────────────────────────
+interface DraftPurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+}
+// => Domain input type — validated by the application service
+
+interface SubmittedPO {
+  readonly id: string;
+  readonly status: string;
+}
+// => Domain output type — returned by the application service on success
+
+type SubmissionError =
+  | { readonly kind: "ValidationError"; readonly message: string }
+  // => Named errors — each maps to a different HTTP status code
+  | { readonly kind: "RepositoryError"; readonly message: string };
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — identical result shape for all ports
+
+type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise<Result<SubmittedPO, SubmissionError>>;
+// => Input port — the HTTP adapter calls this; never implements it
+
+// ── HTTP DTO (adapter zone only) ──────────────────────────────────────────
+interface HttpSubmitPoRequest {
+  readonly po_id: string;
+  readonly supplier_id: string;
+  readonly total_amount: number;
+}
+// => JSON request body shape — snake_case per REST convention
+interface HttpSubmitPoResponse {
+  readonly po_id: string;
+  readonly status: string;
+}
+// => JSON response body — minimal confirmation
+
+// ── Inbound translation: HTTP DTO → domain input ─────────────────────────
+const toDomainInput = (req: HttpSubmitPoRequest): DraftPurchaseOrder => ({
+  // => Pure mapping: JSON DTO → domain type; no validation logic here
+  id: req.po_id,
+  supplierId: req.supplier_id,
+  totalAmount: req.total_amount,
+  // => snake_case → camelCase naming convention alignment
+});
+
+// ── Outbound translation: domain output → HTTP response ──────────────────
+const toHttpResponse = (submitted: SubmittedPO): HttpSubmitPoResponse => ({
+  // => Pure mapping: domain type → JSON DTO; no business logic here
+  po_id: submitted.id,
+  status: submitted.status,
+  // => camelCase domain → snake_case JSON
+});
+
+// ── HTTP handler — the primary adapter ────────────────────────────────────
+const httpHandler =
+  (useCase: SubmitPurchaseOrderUseCase) =>
+  async (req: HttpSubmitPoRequest): Promise<string> => {
+    // => useCase: injected input port — the handler never names the implementation
+    // => req: JSON body parsed by the framework (Express / Fastify)
+    const domainInput = toDomainInput(req);
+    // => Translate: HTTP DTO → domain input type (adapter responsibility)
+    const result = await useCase(domainInput);
+    // => Call the input port — all business logic lives here, not in the handler
+    if (result.ok) {
+      const response = toHttpResponse(result.value);
+      // => Translate: domain output → JSON response DTO
+      return `201 Created: ${JSON.stringify(response)}`;
+      // => Real Express: res.status(201).json(response)
+    }
+    if (result.error.kind === "ValidationError") return `422 Unprocessable: ${result.error.message}`;
+    // => Domain validation error → HTTP 422
+    return `503 Service Unavailable: ${result.error.message}`;
+    // => Infrastructure failure → HTTP 503
+  };
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const stubUseCase: SubmitPurchaseOrderUseCase = async (draft) => ({
+  ok: true,
+  value: { id: draft.id, status: "AwaitingApproval" },
+  // => Stub implementation — satisfies the port type alias for demonstration
+});
+
+const request: HttpSubmitPoRequest = { po_id: "po_001", supplier_id: "sup_001", total_amount: 2000 };
+// => Sample HTTP request body
+
+const response = await httpHandler(stubUseCase)(request);
+// => response: string = '201 Created: {"po_id":"po_001","status":"AwaitingApproval"}'
+console.log(response);
+// => Output: 201 Created: {"po_id":"po_001","status":"AwaitingApproval"}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The HTTP handler is a thin translation layer — it maps HTTP DTOs to domain types and back, delegates all logic to the input port, and never contains business rules.
@@ -2274,7 +3333,7 @@ printfn "%s" response
 
 The composition root is the single place where adapters are named and connected to ports. Every other module sees only the port type — only the composition root sees the adapter implementations.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2450,6 +3509,102 @@ printfn "Test result: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── All shared types ───────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — used across domain, application, and adapters
+
+type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | { readonly kind: "ConnectionTimeout" };
+// => Named error — the port's failure vocabulary
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — used by all port return types
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+};
+// => Canonical port — same definition throughout all examples
+
+type Clock = () => Date;
+// => Time port — synchronous, infallible
+
+interface DraftPurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+}
+// => Raw input from the HTTP layer — not yet validated
+
+// ── Application service (application zone) ────────────────────────────────
+const submitPurchaseOrder =
+  (repo: PurchaseOrderRepo, clock: Clock) =>
+  async (draft: DraftPurchaseOrder): Promise<Result<PurchaseOrder, string>> => {
+    if (!draft.id || draft.id.trim() === "") return { ok: false, error: "PO Id must not be blank" };
+    // => Domain rule: invalid ID rejected before any I/O
+    const now = clock();
+    // => Timestamp from the injected Clock port
+    const po: PurchaseOrder = {
+      id: draft.id,
+      supplierId: draft.supplierId,
+      totalAmount: draft.totalAmount,
+      status: "AwaitingApproval",
+    };
+    // => State: Draft → AwaitingApproval
+    const saveResult = await repo.save(po);
+    // => Port call: persist via injected adapter
+    if (!saveResult.ok) return { ok: false, error: `Save failed: ${saveResult.error.kind}` };
+    return { ok: true, value: po };
+  };
+
+// ── Adapter implementations (adapters zone) ───────────────────────────────
+const buildInMemoryRepo = (): PurchaseOrderRepo => {
+  const store = new Map<string, PurchaseOrder>();
+  // => Isolated Map per call — each test gets its own store
+  return {
+    save: async (po) => {
+      store.set(po.id, po);
+      return { ok: true };
+    },
+    findById: async (id) => {
+      const po = store.get(id);
+      return { ok: true, value: po ?? null };
+    },
+  };
+};
+
+const systemClock: Clock = () => new Date();
+// => Reads the real wall clock — non-deterministic
+
+const fixedClock: Clock = () => new Date("2026-01-15T09:00:00Z");
+// => Always returns the same timestamp — deterministic
+
+// ── Composition root — the ONLY place that names adapters ─────────────────
+const productionSubmit = submitPurchaseOrder(buildInMemoryRepo(), systemClock);
+// => productionSubmit: (draft: DraftPurchaseOrder) => Promise<Result<PurchaseOrder, string>>
+// => In real code: replace buildInMemoryRepo() with buildPostgresRepo(connectionString)
+
+const testSubmit = submitPurchaseOrder(buildInMemoryRepo(), fixedClock);
+// => testSubmit: identical type; only the injected adapters differ
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const draft: DraftPurchaseOrder = { id: "po_001", supplierId: "sup_acme-1", totalAmount: 5000 };
+// => Sample draft PO from the HTTP adapter
+
+const result = await testSubmit(draft);
+// => Uses in-memory adapter and fixed clock — fully deterministic
+console.log("Test result:", result);
+// => Output: Test result: { ok: true, value: { id: 'po_001', supplierId: 'sup_acme-1', totalAmount: 5000, status: 'AwaitingApproval' } }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root is the single file that knows adapter names — every other module sees only port types, making adapter swaps a one-line change in one file.
@@ -2462,7 +3617,7 @@ printfn "Test result: %A" result
 
 A spy adapter records the calls made to it, enabling tests to assert not only the return value but also the exact sequence and arguments of port calls.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2621,6 +3776,98 @@ printfn "load called %d time(s)" spy.LoadedIds.Count
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — the type saved and loaded via the port
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+// => Canonical port — spy adapter must satisfy this exact type
+
+// ── Spy adapter ────────────────────────────────────────────────────────────
+interface RepositorySpy {
+  readonly repo: PurchaseOrderRepo;
+  // => The spy exposes the port — application service receives this field
+  readonly savedPos: PurchaseOrder[];
+  // => Accumulates every PO passed to save — assert on this in tests
+  readonly loadedIds: string[];
+  // => Accumulates every ID passed to findById — assert call order
+}
+
+const buildRepositorySpy = (): RepositorySpy => {
+  // => Factory: each call creates an isolated spy with empty call records
+  const savedPos: PurchaseOrder[] = [];
+  const loadedIds: string[] = [];
+  // => Closed over by the functions below — visible only in this scope
+  return {
+    repo: {
+      save: async (po) => {
+        savedPos.push(po);
+        // => Record the call argument BEFORE returning
+        return { ok: true };
+        // => Always succeeds — spy never simulates failure unless needed
+      },
+      findById: async (id) => {
+        loadedIds.push(id);
+        // => Record the ID looked up
+        return { ok: true, value: null };
+        // => Returns null by default — override in specific tests
+      },
+    },
+    savedPos,
+    loadedIds,
+  };
+};
+
+// ── Application service under test ────────────────────────────────────────
+const submitAndSave =
+  (repo: PurchaseOrderRepo) =>
+  async (
+    id: string,
+    supplierId: string,
+    amount: number,
+  ): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }> => {
+    // => Application service: validates, builds PO, calls save
+    if (!id || id.trim() === "") return { ok: false, error: "blank id" };
+    // => Validation before any I/O
+    const po: PurchaseOrder = { id, supplierId, totalAmount: amount, status: "AwaitingApproval" };
+    // => Build the PO aggregate
+    const saveResult = await repo.save(po);
+    // => Port call — spy records this
+    if (!saveResult.ok) return { ok: false, error: saveResult.error };
+    return { ok: true, value: po };
+    // => Return the PO on success
+  };
+
+// ── Test assertions using the spy ─────────────────────────────────────────
+const spy = buildRepositorySpy();
+// => Fresh spy — empty call records
+
+const result = await submitAndSave(spy.repo)("po_spy-001", "sup_001", 800);
+// => Runs the application service with the spy adapter
+
+console.log("Result:", result);
+// => Output: Result: { ok: true, value: { id: 'po_spy-001', supplierId: 'sup_001', totalAmount: 800, status: 'AwaitingApproval' } }
+
+console.log(`save called ${spy.savedPos.length} time(s)`);
+// => Output: save called 1 time(s)
+console.log("Saved PO id:", spy.savedPos[0].id);
+// => Output: Saved PO id: po_spy-001
+console.log(`findById called ${spy.loadedIds.length} time(s)`);
+// => Output: findById called 0 time(s)  (submitAndSave does not call findById)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A spy adapter records port calls for test assertions, enabling verification that the application service invokes ports with the correct arguments in the correct order.
@@ -2633,7 +3880,7 @@ printfn "load called %d time(s)" spy.LoadedIds.Count
 
 A failing adapter always returns `Error`, enabling tests to verify that the application service handles infrastructure failures correctly and propagates errors to the caller.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2769,6 +4016,78 @@ printfn "Timeout result: %A" timeoutResult
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root
+
+type RepoError =
+  | { readonly kind: "DatabaseError"; readonly message: string }
+  // => Named error cases the application service must handle
+  | { readonly kind: "ConnectionTimeout" };
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+};
+// => Canonical port — same definition throughout all examples
+
+// ── Failing adapter — always returns error ────────────────────────────────
+const alwaysFailRepo = (errorCase: RepoError): PurchaseOrderRepo => ({
+  // => Parameterised by the error to return — different tests use different errors
+  save: async (_po) => ({ ok: false, error: errorCase }),
+  // => Always fails — never persists anything
+  findById: async (_id) => ({ ok: false, error: errorCase }),
+  // => Always fails — never returns data
+});
+
+// ── Application service under test ────────────────────────────────────────
+const submitPOWithErrorHandling =
+  (repo: PurchaseOrderRepo) =>
+  async (id: string, amount: number): Promise<Result<string, string>> => {
+    // => Application service: must gracefully handle repository failure
+    if (!id || id.trim() === "") return { ok: false, error: "Validation: blank PO Id" };
+    // => Validation runs before any I/O — no port call on invalid input
+    const po: PurchaseOrder = { id, supplierId: "sup_001", totalAmount: amount, status: "AwaitingApproval" };
+    // => PO ready for persistence
+    const saveResult = await repo.save(po);
+    // => Port call — failing adapter returns error here
+    if (saveResult.ok) return { ok: true, value: `Saved: ${po.id}` };
+    // => Happy path — not reached with failing adapter
+    if (saveResult.error.kind === "DatabaseError") return { ok: false, error: `DB error: ${saveResult.error.message}` };
+    // => Permanent failure: surface for the HTTP adapter to return 500
+    return { ok: false, error: "Timeout: retry later" };
+    // => Transient failure: surface for the HTTP adapter to return 503
+  };
+
+// ── Test: database error path ──────────────────────────────────────────────
+const dbErrorRepo = alwaysFailRepo({ kind: "DatabaseError", message: "constraint violation on purchase_orders" });
+// => Adapter that always returns a DatabaseError
+const dbErrorResult = await submitPOWithErrorHandling(dbErrorRepo)("po_001", 1000);
+// => Application service receives error { kind: "DatabaseError", ... }
+console.log("DB error result:", dbErrorResult);
+// => Output: DB error result: { ok: false, error: 'DB error: constraint violation on purchase_orders' }
+
+// ── Test: timeout path ────────────────────────────────────────────────────
+const timeoutRepo = alwaysFailRepo({ kind: "ConnectionTimeout" });
+// => Adapter that always returns a ConnectionTimeout
+const timeoutResult = await submitPOWithErrorHandling(timeoutRepo)("po_002", 500);
+// => Application service receives error { kind: "ConnectionTimeout" }
+console.log("Timeout result:", timeoutResult);
+// => Output: Timeout result: { ok: false, error: 'Timeout: retry later' }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Failing adapters enable targeted testing of every error branch in the application service without modifying any production code or spinning up infrastructure.
@@ -2781,7 +4100,7 @@ printfn "Timeout result: %A" timeoutResult
 
 Partial application is F#'s native mechanism for baking dependencies into a function. It eliminates the need for DI containers, reflection, and registration boilerplate while producing the same substitutability.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2918,6 +4237,75 @@ printfn "Result: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Port types ─────────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — used across all adapter and application types
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+// => Canonical port — satisfied by any object with matching save/findById fields
+
+type Clock = () => Date;
+// => Time port — synchronous
+
+// ── Application service: ports as constructor parameters ──────────────────
+// Convention: ports provided at construction time — enables dependency injection.
+const buildSubmitPurchaseOrder =
+  (repo: PurchaseOrderRepo, clock: Clock) =>
+  async (id: string, amount: number): Promise<{ ok: true; value: string } | { ok: false; error: string }> => {
+    const now = clock();
+    // => Timestamp from the injected clock adapter
+    const po: PurchaseOrder = { id, supplierId: "sup_001", totalAmount: amount, status: "AwaitingApproval" };
+    // => Build PO aggregate with the runtime domain inputs
+    const saveResult = await repo.save(po);
+    if (!saveResult.ok) return { ok: false, error: saveResult.error };
+    return { ok: true, value: `PO ${id} submitted at ${now.toISOString()}` };
+    // => Return confirmation to the HTTP adapter
+  };
+
+// ── In-memory adapters for demonstration ──────────────────────────────────
+const inMemRepo: PurchaseOrderRepo = {
+  save: async (po) => {
+    console.log(`[MemDB] Saving ${po.id}`);
+    return { ok: true };
+  },
+  // => In-memory: prints to demonstrate the call without real infrastructure
+  findById: async () => ({ ok: true, value: null }),
+  // => In-memory: always returns null for this demonstration
+};
+const testFixedClock: Clock = () => new Date("2026-01-15T09:00:00Z");
+// => Fixed time — deterministic in tests
+
+// ── Closure: bake in the ports ────────────────────────────────────────────
+const submitWithTestPorts = buildSubmitPurchaseOrder(inMemRepo, testFixedClock);
+// => submitWithTestPorts: (id: string, amount: number) => Promise<...>
+// => The port parameters are baked in; only domain inputs remain
+// => This is DI without a container — just function closure
+
+// ── Call site: only domain inputs needed ──────────────────────────────────
+const paResult = await submitWithTestPorts("po_001", 3500);
+// => Calls buildSubmitPurchaseOrder with inMemRepo, testFixedClock, "po_001", 3500
+console.log("Result:", paResult);
+// => Output: [MemDB] Saving po_001
+// => Output: Result: { ok: true, value: 'PO po_001 submitted at 2026-01-15T09:00:00.000Z' }
+
+// ── Swap to production ports — one line change ────────────────────────────
+// const submitWithProductionPorts = buildSubmitPurchaseOrder(postgresRepo, systemClock)
+// => One-line swap: different adapters, same application service function
+// => No DI container to configure, no decorators or metadata to update
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Partial application bakes port adapters into application service functions, producing a DI-injected use case function without a container, reflection, or registration boilerplate.
@@ -2932,7 +4320,7 @@ printfn "Result: %A" result
 
 Three distinct responsibilities live in three distinct code zones. Domain functions are pure; application services orchestrate ports; adapters translate between delivery mechanisms and domain types.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3130,6 +4518,126 @@ printfn "%s" response
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── ZONE 1: Domain — pure functions, no I/O ────────────────────────────────
+// domain/purchaseOrder.ts — zero external imports
+
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => Literal union derived from PO total — L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Domain type: defined without knowledge of any infrastructure
+
+type ValidationResult<T> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: string };
+// => FP-style tagged union for domain validation — no throw
+
+const determineApprovalLevel = (total: number): ApprovalLevel => {
+  // => Pure function: no I/O, no side effects, always deterministic
+  if (total <= 1000) return "L1";
+  // => L1: manager approval threshold
+  if (total <= 10000) return "L2";
+  // => L2: department head approval threshold
+  return "L3";
+  // => L3: CFO approval — required for high-value POs
+};
+
+const validateDraft = (id: string, supplierId: string, amount: number): ValidationResult<PurchaseOrder> => {
+  // => Pure validation: domain rules only, no infrastructure
+  if (!id || id.trim() === "") return { ok: false, error: "Blank PO Id" };
+  if (!supplierId || supplierId.trim() === "") return { ok: false, error: "Blank SupplierId" };
+  if (amount <= 0) return { ok: false, error: "Amount must be positive" };
+  return { ok: true, value: { id, supplierId, totalAmount: amount, status: "Draft" } };
+  // => Returns validated PO or named error — no async, no I/O
+};
+
+// ── ZONE 2: Application — orchestration only ─────────────────────────────
+// application/ports.ts — import from domain only
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+// => Output port: application layer defines, adapters implement
+
+const buildSubmitPO =
+  (repo: PurchaseOrderRepo) =>
+  async (
+    id: string,
+    supplierId: string,
+    amount: number,
+  ): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }> => {
+    // => Application service: calls domain functions + output ports; no HTTP knowledge
+    const validation = validateDraft(id, supplierId, amount);
+    if (!validation.ok) return validation;
+    // => Domain validation failed — short-circuit before I/O
+    const level = determineApprovalLevel(validation.value.totalAmount);
+    // => Pure domain function: determines which manager must approve
+    const awaitingPO: PurchaseOrder = { ...validation.value, status: `AwaitingApproval-${level}` };
+    // => State transition: Draft → AwaitingApproval-L1/L2/L3
+    const saveResult = await repo.save(awaitingPO);
+    // => Output port call: persist the PO
+    if (!saveResult.ok) return saveResult;
+    return { ok: true, value: awaitingPO };
+    // => Return the saved PO or infrastructure error
+  };
+
+// ── ZONE 3: Adapters — translation only ───────────────────────────────────
+// adapters/httpHandler.ts — imports application zone only
+
+interface HttpDto {
+  readonly po_id: string;
+  readonly supplier_id: string;
+  readonly total_amount: number;
+}
+// => JSON request body shape — adapter zone only; never leaks into domain
+
+const inMemRepo: PurchaseOrderRepo = {
+  save: async (po) => {
+    console.log(`[Mem] Saved ${po.id} as ${po.status}`);
+    return { ok: true };
+  },
+  findById: async () => ({ ok: true, value: null }),
+  // => In-memory adapter satisfying the output port
+};
+
+const handleHttpRequest =
+  (
+    submit: (
+      id: string,
+      supplierId: string,
+      amount: number,
+    ) => Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }>,
+  ) =>
+  async (dto: HttpDto): Promise<string> => {
+    // => Thin HTTP handler: translate, delegate, respond
+    const result = await submit(dto.po_id, dto.supplier_id, dto.total_amount);
+    // => Delegate to the injected application service
+    if (result.ok) return `201 Created: ${result.value.id} in ${result.value.status}`;
+    return `422 Unprocessable: ${result.error}`;
+  };
+
+// ── Composition root: wire everything together ────────────────────────────
+const submitService = buildSubmitPO(inMemRepo);
+// => submitService: (id, supplierId, amount) => Promise<...>
+// => Port baked in — domain inputs remain
+
+const z1request: HttpDto = { po_id: "po_001", supplier_id: "sup_acme", total_amount: 5500 };
+// => Sample HTTP request body
+const z1response = await handleHttpRequest(submitService)(z1request);
+// => Runs the full flow: HTTP → Application → Domain → In-memory adapter → HTTP
+console.log(z1response);
+// => Output: [Mem] Saved po_001 as AwaitingApproval-L2
+// => Output: 201 Created: po_001 in AwaitingApproval-L2
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain functions are pure, application services orchestrate ports, and adapters translate — three distinct responsibilities in three distinct zones, each independently testable.
@@ -3142,7 +4650,7 @@ printfn "%s" response
 
 Pure domain functions can be tested without any ports, adapters, or infrastructure. This is the fastest and most reliable test tier.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3308,6 +4816,86 @@ printfn "Valid PO: %A" valid
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Domain types and pure functions ──────────────────────────────────────
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => Literal union derived from PO total — L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — domain type with no infrastructure dependencies
+
+type ValidationError =
+  | { readonly kind: "BlankId" }
+  | { readonly kind: "BlankSupplierId" }
+  | { readonly kind: "NonPositiveAmount"; readonly value: number };
+// => Named domain errors — not strings, not exceptions
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — callers must handle both branches
+
+const determineApprovalLevel = (total: number): ApprovalLevel => {
+  // => Pure function: receives number, returns literal union member
+  // => No I/O, no async — can be called millions of times with zero infrastructure
+  if (total <= 1000) return "L1";
+  if (total <= 10000) return "L2";
+  return "L3";
+};
+
+const validatePO = (id: string, supplierId: string, amount: number): Result<PurchaseOrder, ValidationError> => {
+  // => Pure validation: checks domain rules, returns Result
+  if (!id || id.trim() === "") return { ok: false, error: { kind: "BlankId" } };
+  if (!supplierId || supplierId.trim() === "") return { ok: false, error: { kind: "BlankSupplierId" } };
+  if (amount <= 0) return { ok: false, error: { kind: "NonPositiveAmount", value: amount } };
+  return { ok: true, value: { id, supplierId, totalAmount: amount, status: "Draft" } };
+};
+
+// ── Domain tests — zero infrastructure ────────────────────────────────────
+// These are the fastest tests in the system: no async, no setup, no teardown.
+
+const level1 = determineApprovalLevel(999);
+// => level1: ApprovalLevel = "L1"  (999 ≤ 1000 threshold)
+console.log(`999 → ${level1} (expected L1)`);
+// => Output: 999 → L1 (expected L1)
+
+const level2 = determineApprovalLevel(1000);
+// => level2: ApprovalLevel = "L1"  (1000 ≤ 1000: at boundary, still L1)
+console.log(`1000 → ${level2} (expected L1 at boundary)`);
+// => Output: 1000 → L1 (expected L1 at boundary)
+
+const level2b = determineApprovalLevel(1001);
+// => level2b: ApprovalLevel = "L2"  (1001 > 1000)
+console.log(`1001 → ${level2b} (expected L2)`);
+// => Output: 1001 → L2 (expected L2)
+
+const level3 = determineApprovalLevel(15000);
+// => level3: ApprovalLevel = "L3"  (15000 > 10000)
+console.log(`15000 → ${level3} (expected L3)`);
+// => Output: 15000 → L3 (expected L3)
+
+const blankId = validatePO("", "sup_001", 500);
+// => blankId: Result = { ok: false, error: { kind: "BlankId" } }
+console.log("Blank id:", blankId);
+// => Output: Blank id: { ok: false, error: { kind: 'BlankId' } }
+
+const zeroAmount = validatePO("po_001", "sup_001", 0);
+// => zeroAmount: Result = { ok: false, error: { kind: "NonPositiveAmount", value: 0 } }
+console.log("Zero amount:", zeroAmount);
+// => Output: Zero amount: { ok: false, error: { kind: 'NonPositiveAmount', value: 0 } }
+
+const valid = validatePO("po_001", "sup_001", 7500);
+// => valid: Result = { ok: true, value: { id: "po_001", ... } }
+console.log("Valid PO:", valid);
+// => Output: Valid PO: { ok: true, value: { id: 'po_001', supplierId: 'sup_001', totalAmount: 7500, status: 'Draft' } }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Pure domain functions are tested by direct invocation with no setup — the fastest and most reliable test tier, covering all boundary conditions and error cases without infrastructure.
@@ -3320,7 +4908,7 @@ printfn "Valid PO: %A" valid
 
 Application service tests inject in-memory adapters to verify orchestration without infrastructure. They run in milliseconds and can run in parallel with zero contention.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3496,6 +5084,96 @@ printfn "Test 2 saved count: %d" saved2.Count
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── Shared types ───────────────────────────────────────────────────────────
+interface PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate root — same type across domain, application, and adapter layers
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+};
+// => Canonical port — in-memory adapter satisfies this type
+
+type Clock = () => Date;
+// => Time port — fixed in tests for deterministic assertions
+
+// ── Application service under test ────────────────────────────────────────
+const submitPO =
+  (repo: PurchaseOrderRepo, clock: Clock) =>
+  async (
+    id: string,
+    supplierId: string,
+    amount: number,
+  ): Promise<{ ok: true; value: [PurchaseOrder, Date] } | { ok: false; error: string }> => {
+    // => Application service: parameterised by ports — injectable in all environments
+    if (!id || id.trim() === "") return { ok: false, error: "Blank PO Id" };
+    if (!supplierId || supplierId.trim() === "") return { ok: false, error: "Blank SupplierId" };
+    if (amount <= 0) return { ok: false, error: "Non-positive amount" };
+    const level = amount <= 1000 ? "L1" : amount <= 10000 ? "L2" : "L3";
+    // => Pure domain logic: approval level derived from amount
+    const submittedAt = clock();
+    // => Timestamp from injected Clock port — fixed in tests
+    const po: PurchaseOrder = { id, supplierId, totalAmount: amount, status: `AwaitingApproval-${level}` };
+    // => State: Draft → AwaitingApproval-{level}
+    const saveResult = await repo.save(po);
+    // => Output port call: persist via injected adapter
+    if (!saveResult.ok) return { ok: false, error: saveResult.error };
+    return { ok: true, value: [po, submittedAt] };
+    // => Return the saved PO and timestamp for caller inspection
+  };
+
+// ── In-memory adapters ─────────────────────────────────────────────────────
+const buildTestRepo = () => {
+  // => Isolated spy: records saves, returns expected data on findById
+  const saved: PurchaseOrder[] = [];
+  const repo: PurchaseOrderRepo = {
+    save: async (po) => {
+      saved.push(po);
+      return { ok: true };
+    },
+    // => Record the saved PO for assertion
+    findById: async (id) => ({ ok: true, value: saved.find((po) => po.id === id) ?? null }),
+    // => Find in the accumulated saves — simulates SELECT query
+  };
+  return { repo, saved };
+  // => Returns both the port and the spy array for assertions
+};
+
+const testFixedClock22: Clock = () => new Date("2026-01-15T09:00:00Z");
+// => Always returns the same timestamp — assert on this literal value in tests
+
+// ── Test 1: valid L2 PO ────────────────────────────────────────────────────
+const { repo: repo1, saved: saved1 } = buildTestRepo();
+// => Fresh isolated repo — not shared with Test 2
+const result1 = await submitPO(repo1, testFixedClock22)("po_001", "sup_001", 5000);
+// => 5000 → L2 approval level
+console.log("Test 1 result:", result1);
+// => Output: Test 1 result: { ok: true, value: [{ id: 'po_001', ..., status: 'AwaitingApproval-L2' }, 2026-01-15T09:00:00.000Z] }
+console.log("Test 1 saved count:", saved1.length);
+// => Output: Test 1 saved count: 1
+console.log("Test 1 saved status:", saved1[0].status);
+// => Output: Test 1 saved status: AwaitingApproval-L2
+
+// ── Test 2: validation failure — no save ──────────────────────────────────
+const { repo: repo2, saved: saved2 } = buildTestRepo();
+// => Fresh isolated repo — Test 1 state not visible here
+const result2 = await submitPO(repo2, testFixedClock22)("", "sup_001", 500);
+// => Blank PO Id — validation fails before any port call
+console.log("Test 2 result:", result2);
+// => Output: Test 2 result: { ok: false, error: 'Blank PO Id' }
+console.log("Test 2 saved count:", saved2.length);
+// => Output: Test 2 saved count: 0  (validation failed before repo.save was called)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Application service tests use in-memory adapters to verify orchestration — which ports are called, with which arguments, in which order — without spinning up any infrastructure.
@@ -3508,7 +5186,7 @@ printfn "Test 2 saved count: %d" saved2.Count
 
 The anti-corruption layer (ACL) is a translation function in the adapter zone that converts external API responses into domain types. It prevents vendor-specific naming, types, and error codes from leaking into the domain.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3665,6 +5343,84 @@ printfn "Unknown: %A" unknownDomain
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── External supplier API response (adapter zone only) ─────────────────────
+// This interface models EXACTLY what a hypothetical external supplier portal returns.
+// It uses their naming conventions and types — not the domain's.
+interface SupplierAcknowledgementApiResponse {
+  // => External API shape — fields named by the supplier's engineering team
+  readonly reference_no: string;
+  // => Their name for what we call PurchaseOrderId
+  readonly acknowledged_at: string;
+  // => ISO8601 string — not Date
+  readonly status_code: number;
+  // => 200 = acknowledged, 404 = unknown PO, 500 = system error
+  readonly error_message: string | null;
+  // => Non-null on failure — sometimes "" even on success
+}
+
+// ── Domain types (domain zone) ─────────────────────────────────────────────
+type POId = string & { readonly _brand: "POId" };
+// => Our identifier — format po_<uuid>
+
+type AcknowledgementResult =
+  | { readonly kind: "Acknowledged"; readonly poId: POId; readonly acknowledgedAt: string }
+  // => Supplier confirmed receipt of the PO
+  | { readonly kind: "UnknownPO"; readonly poId: POId }
+  // => Supplier has no record of this PO
+  | { readonly kind: "SupplierSystemError"; readonly message: string };
+// => Supplier's system is unavailable — caller may retry
+
+// ── Anti-corruption layer: translate external response → domain type ───────
+// Lives in the adapter zone — never in the application or domain zones.
+const toAcknowledgementResult = (poId: POId, resp: SupplierAcknowledgementApiResponse): AcknowledgementResult => {
+  // => Translates the external API shape into domain vocabulary
+  if (resp.status_code === 200) {
+    const acknowledgedAt = resp.acknowledged_at || new Date().toISOString();
+    // => Use supplier's timestamp; fall back to current time if blank
+    return { kind: "Acknowledged", poId, acknowledgedAt };
+    // => Map 200 + timestamp → domain Acknowledged case
+  }
+  if (resp.status_code === 404) {
+    return { kind: "UnknownPO", poId };
+    // => Map 404 → domain UnknownPO case; suppress vendor error_message
+  }
+  const msg = resp.error_message || `HTTP ${resp.status_code}`;
+  // => Extract message or construct a generic one from the status code
+  return { kind: "SupplierSystemError", message: msg };
+  // => Map all other codes → domain SupplierSystemError case
+};
+
+// ── Demonstration ──────────────────────────────────────────────────────────
+const successResp: SupplierAcknowledgementApiResponse = {
+  reference_no: "po_001",
+  acknowledged_at: "2026-01-15T09:00:00Z",
+  status_code: 200,
+  error_message: null,
+  // => Simulates a successful supplier acknowledgement response
+};
+
+const successDomain = toAcknowledgementResult("po_001" as POId, successResp);
+// => successDomain: AcknowledgementResult = { kind: "Acknowledged", poId: "po_001", acknowledgedAt: "2026-01-15T09:00:00Z" }
+console.log("Success:", successDomain);
+// => Output: Success: { kind: 'Acknowledged', poId: 'po_001', acknowledgedAt: '2026-01-15T09:00:00Z' }
+
+const unknownResp: SupplierAcknowledgementApiResponse = {
+  reference_no: "po_999",
+  acknowledged_at: "",
+  status_code: 404,
+  error_message: "Not found",
+  // => Simulates a 404 response for an unknown PO
+};
+const unknownDomain = toAcknowledgementResult("po_999" as POId, unknownResp);
+// => unknownDomain: AcknowledgementResult = { kind: "UnknownPO", poId: "po_999" }
+console.log("Unknown:", unknownDomain);
+// => Output: Unknown: { kind: 'UnknownPO', poId: 'po_999' }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The anti-corruption layer translates external API responses into clean domain types inside the adapter, shielding the domain from vendor naming conventions and error codes.
@@ -3709,7 +5465,7 @@ graph TD
     style RESP fill:#808080,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4082,6 +5838,171 @@ printfn "Stored status: %s" store.["po_full-001"].Status
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── ZONE 1: Domain (innermost — no external imports) ──────────────────────
+// domain types and pure functions — no pg, no express, no axios.
+
+type POId = string & { readonly _brand: "POId" };
+// => PO primary key — branded to prevent stringly-typed confusion
+
+interface DraftPurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+}
+// => Raw input from any delivery mechanism — nothing validated yet
+
+interface PurchaseOrder {
+  readonly id: POId;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly status: string;
+}
+// => Aggregate after validation — carries the approval-level status
+
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => Derived from PO total: L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+type SubmissionError =
+  | { readonly kind: "ValidationError"; readonly message: string }
+  | { readonly kind: "RepositoryError"; readonly message: string };
+// => All named failure modes — exhaustively matched at adapter boundaries
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => FP-style tagged union — used across all three zones
+
+const determineApprovalLevel = (total: number): ApprovalLevel => {
+  if (total <= 1000) return "L1";
+  if (total <= 10000) return "L2";
+  return "L3";
+};
+
+const validateDraft = (input: DraftPurchaseOrder): Result<DraftPurchaseOrder, SubmissionError> => {
+  if (!input.id || (input.id as string).trim() === "")
+    return { ok: false, error: { kind: "ValidationError", message: "PO Id blank" } };
+  if (!input.supplierId || input.supplierId.trim() === "")
+    return { ok: false, error: { kind: "ValidationError", message: "SupplierId blank" } };
+  if (input.totalAmount <= 0)
+    return { ok: false, error: { kind: "ValidationError", message: "TotalAmount must be positive" } };
+  return { ok: true, value: input };
+};
+
+// ── ZONE 2: Application (middle — imports domain only) ─────────────────────
+// port type aliases and application service orchestration.
+
+type PurchaseOrderRepo = {
+  readonly save: (po: PurchaseOrder) => Promise<Result<void, SubmissionError>>;
+  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, SubmissionError>>;
+};
+// => Adapters implement this; the application service calls it
+
+type Clock = () => Date;
+// => Time port — synchronous, infallible
+
+type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise<Result<PurchaseOrder, SubmissionError>>;
+// => Input port: the complete contract for the SubmitPurchaseOrder workflow
+
+const buildSubmitPurchaseOrder =
+  (repo: PurchaseOrderRepo, clock: Clock): SubmitPurchaseOrderUseCase =>
+  async (input: DraftPurchaseOrder): Promise<Result<PurchaseOrder, SubmissionError>> => {
+    const validation = validateDraft(input);
+    if (!validation.ok) return validation;
+    // => Validation failed — short-circuit before any port calls
+    const level = determineApprovalLevel(validation.value.totalAmount);
+    // => Approval level derived from total — pure, instant, no I/O
+    const now = clock();
+    // => Timestamp from the Clock port — deterministic in tests
+    const po: PurchaseOrder = { ...validation.value, status: `AwaitingApproval-${level}` };
+    // => State transition: Draft → AwaitingApproval-{L1|L2|L3}
+    const saveResult = await repo.save(po);
+    // => Calls the injected adapter — could be Postgres or in-memory
+    if (!saveResult.ok) return saveResult;
+    return { ok: true, value: po };
+    // => Return the saved PO or the infrastructure error
+  };
+
+// ── ZONE 3: Adapters (outer — imports application and infrastructure libs) ─
+// HTTP adapter, repository adapter — all in the adapters zone.
+
+interface HttpPoDto {
+  readonly po_id: string;
+  readonly supplier_id: string;
+  readonly total_amount: number;
+}
+// => Mirrors the JSON request body — snake_case
+interface HttpPoResponse {
+  readonly po_id: string;
+  readonly status: string;
+}
+// => JSON response shape — confirms the submitted PO and its approval status
+
+const toDomainInput = (dto: HttpPoDto): DraftPurchaseOrder => ({
+  id: dto.po_id as POId,
+  supplierId: dto.supplier_id,
+  totalAmount: dto.total_amount,
+  // => snake_case → camelCase + type coercion
+});
+
+const toHttpResponse = (po: PurchaseOrder): HttpPoResponse => ({
+  po_id: po.id,
+  status: po.status,
+  // => camelCase domain → snake_case JSON
+});
+
+const httpHandlerFull =
+  (useCase: SubmitPurchaseOrderUseCase) =>
+  async (dto: HttpPoDto): Promise<string> => {
+    const input = toDomainInput(dto);
+    // => Translate HTTP DTO to domain input type
+    const result = await useCase(input);
+    // => Call the input port — application service handles all logic
+    if (result.ok) {
+      const response = toHttpResponse(result.value);
+      return `201 Created: ${JSON.stringify(response)}`;
+      // => Real Express: res.status(201).json(response)
+    }
+    if (result.error.kind === "ValidationError") return `422 Unprocessable: ${result.error.message}`;
+    return `503 Service Unavailable: ${result.error.message}`;
+  };
+
+// ── Composition root: wire adapters to ports ──────────────────────────────
+const store25 = new Map<string, PurchaseOrder>();
+// => In-memory store (simulates Postgres for this demonstration)
+
+const inMemRepo25: PurchaseOrderRepo = {
+  save: async (po) => {
+    store25.set(po.id, po);
+    return { ok: true, value: undefined };
+  },
+  findById: async (id) => {
+    const po = store25.get(id);
+    return { ok: true, value: po ?? null };
+  },
+};
+const fixedClock25: Clock = () => new Date("2026-01-15T09:00:00Z");
+// => Fixed clock adapter: deterministic timestamp for this demonstration
+
+const productionUseCase25: SubmitPurchaseOrderUseCase = buildSubmitPurchaseOrder(inMemRepo25, fixedClock25);
+// => Input port function: ports baked in via closure
+
+// ── Full flow demonstration ────────────────────────────────────────────────
+const request25: HttpPoDto = { po_id: "po_full-001", supplier_id: "sup_acme-1", total_amount: 7500 };
+// => Sample HTTP request body — $7,500 PO → L2 approval required
+
+const response25 = await httpHandlerFull(productionUseCase25)(request25);
+// => Runs the full hexagonal flow: HTTP → Application → Domain → Repository → HTTP
+console.log(response25);
+// => Output: 201 Created: {"po_id":"po_full-001","status":"AwaitingApproval-L2"}
+
+console.log("Stored POs:", store25.size);
+// => Output: Stored POs: 1
+console.log("Stored status:", store25.get("po_full-001")?.status);
+// => Output: Stored status: AwaitingApproval-L2
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The full hexagonal flow — HTTP adapter → input port → application service → domain functions → output port → repository adapter → response — demonstrates that each zone's responsibilities are cleanly separated and independently swappable.

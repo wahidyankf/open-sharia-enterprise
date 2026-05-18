@@ -37,7 +37,7 @@ stateDiagram-v2
     class Blacklisted blacklisted
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -327,6 +327,45 @@ class SupplierFSM
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: string literal union for Supplier FSM states
+type SupplierState = "PENDING" | "APPROVED" | "SUSPENDED" | "BLACKLISTED";
+type SupplierEvent = "APPROVE" | "SUSPEND" | "REINSTATE" | "BLACKLIST";
+
+interface Supplier {
+  readonly id: string;
+  readonly name: string;
+  readonly state: SupplierState;
+}
+
+type SupplierResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
+
+// => Transition table: only BLACKLISTED is absent (terminal)
+const SUPPLIER_TRANSITIONS: Readonly<Partial<Record<SupplierState, Partial<Record<SupplierEvent, SupplierState>>>>> = {
+  PENDING: { APPROVE: "APPROVED", BLACKLIST: "BLACKLISTED" },
+  APPROVED: { SUSPEND: "SUSPENDED", BLACKLIST: "BLACKLISTED" },
+  SUSPENDED: { REINSTATE: "APPROVED", BLACKLIST: "BLACKLISTED" },
+} as const;
+
+function transitionSupplier(sup: Supplier, event: SupplierEvent): SupplierResult<Supplier> {
+  const next = SUPPLIER_TRANSITIONS[sup.state]?.[event];
+  if (next === undefined) return { kind: "err", error: `${sup.state} --${event}--> (forbidden)` };
+  return { kind: "ok", value: { ...sup, state: next } };
+}
+
+const sup: Supplier = { id: "sup_001", name: "Acme Supplies Ltd", state: "APPROVED" };
+const r1 = transitionSupplier(sup, "SUSPEND");
+if (r1.kind === "ok") console.log(r1.value.state); // => SUSPENDED
+const r2 = transitionSupplier(r1.kind === "ok" ? r1.value : sup, "REINSTATE");
+if (r2.kind === "ok") console.log(r2.value.state); // => APPROVED
+const r3 = transitionSupplier(sup, "APPROVE");
+if (r3.kind === "err") console.log(r3.error); // => APPROVED --APPROVE--> (forbidden)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Even a four-state machine encodes significant business rules — the asymmetry between `Suspended` (reversible) and `Blacklisted` (terminal) is the entire compliance enforcement model.
@@ -362,7 +401,7 @@ stateDiagram-v2
     class Blacklisted,Blocked,Rejected blocked
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -541,6 +580,44 @@ if (bl is Ok<BlacklistResult> ok)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: guard and cascade functions for supplier state
+function supplierEligibleForPO(state: SupplierState): boolean {
+  return state === "APPROVED";
+  // => Only APPROVED: PENDING unvetted, SUSPENDED blocked, BLACKLISTED terminal
+}
+
+function blacklistingForcesDispute(newState: SupplierState, oldState: SupplierState): boolean {
+  return newState === "BLACKLISTED" && oldState !== "BLACKLISTED";
+}
+
+interface BlacklistResult {
+  readonly supplier: Supplier;
+  readonly affectedPOIds: readonly string[];
+}
+
+function blacklistSupplier(sup: Supplier, openPOIds: readonly string[]): SupplierResult<BlacklistResult> {
+  if (sup.state === "BLACKLISTED") return { kind: "err", error: `Supplier ${sup.id} is already blacklisted` };
+  const r = transitionSupplier(sup, "BLACKLIST");
+  if (r.kind === "err") return { kind: "err", error: r.error };
+  const affected = blacklistingForcesDispute(r.value.state, sup.state) ? openPOIds : [];
+  return { kind: "ok", value: { supplier: r.value, affectedPOIds: affected } };
+}
+
+console.log(supplierEligibleForPO("APPROVED")); // => true
+console.log(supplierEligibleForPO("SUSPENDED")); // => false
+const sup: Supplier = { id: "sup_002", name: "Beta Corp", state: "APPROVED" };
+const bl = blacklistSupplier(sup, ["po_101", "po_102", "po_103"]);
+if (bl.kind === "ok") {
+  console.log(bl.value.supplier.state); // => BLACKLISTED
+  console.log(bl.value.affectedPOIds.length); // => 3
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Cross-machine effects (blacklisting a supplier forces all their open POs to Disputed) are encoded as explicit functions that return the affected entity IDs — the caller is responsible for applying the cascading changes.
@@ -553,7 +630,7 @@ if (bl is Ok<BlacklistResult> ok)
 
 Supplier approval might require a minimum risk score. A numeric guard on the `approve` transition enforces the risk threshold.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -764,6 +841,46 @@ if (r2 is Ok<Supplier> ok) Console.WriteLine(ok.Value.State); // => Output: Appr
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: approval thresholds and multi-criteria guard
+interface SupplierApplication {
+  readonly supplierId: string;
+  readonly riskScore: number; // => 0.0 (high risk) to 1.0 (low risk)
+  readonly hasDocuments: boolean;
+}
+
+const APPROVAL_THRESHOLDS = { minRiskScore: 0.6, requireDocuments: true } as const;
+
+function canApproveSupplier(app: SupplierApplication): readonly string[] {
+  const errors: string[] = [];
+  if (app.riskScore < APPROVAL_THRESHOLDS.minRiskScore)
+    errors.push(`Risk score ${app.riskScore.toFixed(2)} below minimum ${APPROVAL_THRESHOLDS.minRiskScore}`);
+  if (APPROVAL_THRESHOLDS.requireDocuments && !app.hasDocuments)
+    errors.push("Required compliance documents not submitted");
+  return errors;
+}
+
+function approveSupplier(sup: Supplier, app: SupplierApplication): SupplierResult<Supplier> {
+  if (sup.state !== "PENDING") return { kind: "err", error: `Supplier ${sup.id} is not in PENDING state` };
+  const errors = canApproveSupplier(app);
+  if (errors.length > 0) return { kind: "err", error: `Approval blocked: ${errors.join("; ")}` };
+  return { kind: "ok", value: { ...sup, state: "APPROVED" } };
+}
+
+const sup: Supplier = { id: "sup_003", name: "Gamma Ltd", state: "PENDING" };
+const badApp: SupplierApplication = { supplierId: "sup_003", riskScore: 0.45, hasDocuments: false };
+const r1 = approveSupplier(sup, badApp);
+if (r1.kind === "err") console.log(r1.error);
+// => Approval blocked: Risk score 0.45 below minimum 0.6; Required compliance documents not submitted
+const goodApp: SupplierApplication = { supplierId: "sup_003", riskScore: 0.75, hasDocuments: true };
+const r2 = approveSupplier(sup, goodApp);
+if (r2.kind === "ok") console.log(r2.value.state); // => APPROVED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Multi-criteria guards return all failing reasons at once — the supplier vetting officer sees the complete list of issues, not just the first one.
@@ -802,7 +919,7 @@ stateDiagram-v2
     class Blacklisted blacklisted
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1095,6 +1212,58 @@ class HierarchicalFSM
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: hierarchical state using a tagged union with a parent tier
+type HierarchicalState =
+  | { readonly kind: "Pending" }
+  | { readonly kind: "Suspended" }
+  | { readonly kind: "Blacklisted" }
+  | { readonly kind: "ApprovedStandard" } // => Approved.Standard sub-state
+  | { readonly kind: "ApprovedPreferred" }; // => Approved.Preferred sub-state
+
+type HierarchicalEvent = "APPROVE" | "SUSPEND" | "REINSTATE" | "BLACKLIST" | "PROMOTE" | "DEMOTE";
+
+function isApproved(state: HierarchicalState): boolean {
+  return state.kind === "ApprovedStandard" || state.kind === "ApprovedPreferred";
+}
+
+// => Combined transition: parent events apply to all Approved sub-states
+function hierarchicalTransition(state: HierarchicalState, event: HierarchicalEvent): HierarchicalState | undefined {
+  // => Parent events (SUSPEND, BLACKLIST) apply to any Approved sub-state
+  if (isApproved(state) && (event === "SUSPEND" || event === "BLACKLIST"))
+    return event === "SUSPEND" ? { kind: "Suspended" } : { kind: "Blacklisted" };
+
+  switch (state.kind) {
+    case "Pending":
+      if (event === "APPROVE") return { kind: "ApprovedStandard" };
+      if (event === "BLACKLIST") return { kind: "Blacklisted" };
+      return undefined;
+    case "ApprovedStandard":
+      if (event === "PROMOTE") return { kind: "ApprovedPreferred" };
+      return undefined;
+    case "ApprovedPreferred":
+      if (event === "DEMOTE") return { kind: "ApprovedStandard" };
+      return undefined;
+    case "Suspended":
+      if (event === "REINSTATE") return { kind: "ApprovedStandard" };
+      if (event === "BLACKLIST") return { kind: "Blacklisted" };
+      return undefined;
+    case "Blacklisted":
+      return undefined; // => Terminal
+  }
+}
+
+const pref: HierarchicalState = { kind: "ApprovedPreferred" };
+console.log(hierarchicalTransition(pref, "SUSPEND")?.kind); // => Suspended (parent transition)
+const std: HierarchicalState = { kind: "ApprovedStandard" };
+console.log(hierarchicalTransition(std, "PROMOTE")?.kind); // => ApprovedPreferred (sub-state)
+console.log(hierarchicalTransition(pref, "BLACKLIST")?.kind); // => Blacklisted (parent from Preferred)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Hierarchical states eliminate transition duplication — parent-level transitions (suspend, blacklist) are defined once and inherited by all sub-states.
@@ -1128,7 +1297,7 @@ stateDiagram-v2
     class Suspended suspended
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1335,6 +1504,54 @@ if (r1 is Ok<SupplierWithHistory> ok1)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: supplier record extended with history state for suspension recovery
+interface SupplierWithHistory {
+  readonly id: string;
+  readonly name: string;
+  readonly state: HierarchicalState;
+  readonly historyState: HierarchicalState | null; // => null if never suspended
+}
+
+function suspendWithHistory(sup: SupplierWithHistory): SupplierResult<SupplierWithHistory> {
+  if (!isApproved(sup.state))
+    return { kind: "err", error: `Cannot suspend: supplier is ${sup.state.kind}, not Approved` };
+  return {
+    kind: "ok",
+    value: { ...sup, state: { kind: "Suspended" }, historyState: sup.state },
+    // => Save current Approved sub-state to history before transitioning
+  };
+}
+
+function reinstateWithHistory(sup: SupplierWithHistory): SupplierResult<SupplierWithHistory> {
+  if (sup.state.kind !== "Suspended") return { kind: "err", error: `Cannot reinstate: supplier is ${sup.state.kind}` };
+  const restored = sup.historyState ?? { kind: "ApprovedStandard" as const };
+  // => Null coalescing: restore history or default to Standard
+  return { kind: "ok", value: { ...sup, state: restored, historyState: null } };
+}
+
+const preferred: SupplierWithHistory = {
+  id: "sup_004",
+  name: "Delta Corp",
+  state: { kind: "ApprovedPreferred" },
+  historyState: null,
+};
+const r1 = suspendWithHistory(preferred);
+if (r1.kind === "ok") {
+  console.log(r1.value.state.kind); // => Suspended
+  console.log(r1.value.historyState?.kind); // => ApprovedPreferred
+  const r2 = reinstateWithHistory(r1.value);
+  if (r2.kind === "ok") {
+    console.log(r2.value.state.kind); // => ApprovedPreferred (restored, not Standard)
+    console.log(r2.value.historyState); // => null (cleared after reinstatement)
+  }
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: History states preserve context across temporary deviations — the machine resumes exactly where it left off, not at some default sub-state.
@@ -1347,7 +1564,7 @@ if (r1 is Ok<SupplierWithHistory> ok1)
 
 Enum-keyed maps provide the same sealed-type guarantees across JVM and CLR languages: typos are caught at compile time, not at runtime, and `switch`/`when`/pattern-match expressions enforce exhaustiveness.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1600,6 +1817,48 @@ class SupplierEnumFSM
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: enum-equivalent using string literal union with type-safe lookup
+type SupState = "PENDING" | "APPROVED" | "SUSPENDED" | "BLACKLISTED";
+type SupEvent = "APPROVE" | "SUSPEND" | "REINSTATE" | "BLACKLIST";
+
+interface SupRecord {
+  readonly id: string;
+  readonly name: string;
+  readonly state: SupState;
+}
+
+// => Transition table keyed by enum-equivalent string literals
+const SUP_TABLE: Readonly<Partial<Record<SupState, Partial<Record<SupEvent, SupState>>>>> = {
+  PENDING: { APPROVE: "APPROVED", BLACKLIST: "BLACKLISTED" },
+  APPROVED: { SUSPEND: "SUSPENDED", BLACKLIST: "BLACKLISTED" },
+  SUSPENDED: { REINSTATE: "APPROVED", BLACKLIST: "BLACKLISTED" },
+  // => BLACKLISTED: absent — terminal, all events return undefined
+} as const;
+
+function supApply(supplier: SupRecord, event: SupEvent): SupRecord | undefined {
+  const next = SUP_TABLE[supplier.state]?.[event];
+  return next !== undefined ? { ...supplier, state: next } : undefined;
+}
+
+const sup: SupRecord = { id: "sup_005", name: "Epsilon Ltd", state: "PENDING" };
+const newSup = supApply(sup, "APPROVE");
+console.log(newSup?.state); // => Output: APPROVED
+
+const invalid = newSup ? supApply(newSup, "APPROVE") : undefined;
+console.log(invalid === undefined); // => Output: true (invalid from APPROVED)
+
+const blSup = newSup ? supApply(newSup, "BLACKLIST") : undefined;
+console.log(blSup?.state); // => Output: BLACKLISTED
+
+const noReinstate = blSup ? supApply(blSup, "REINSTATE") : undefined;
+console.log(noReinstate === undefined); // => Output: true (BLACKLISTED is terminal)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Enum-keyed maps avoid magic strings entirely — the transition table keys are enum members, so typos are caught at compile time rather than at runtime.
@@ -1612,7 +1871,7 @@ class SupplierEnumFSM
 
 When a supplier is blacklisted, the domain rule requires all their open POs to be forced into the `Disputed` state. This example implements the cascade as a pure function.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1851,6 +2110,50 @@ class BlacklistCascadeService
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: pure function computing the blacklist cascade
+interface OpenPO {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly state: string;
+}
+
+interface BlacklistCascade {
+  readonly blacklistedSupplier: SupRecord;
+  readonly posToDispute: readonly OpenPO[];
+  readonly posAlreadyClosed: readonly OpenPO[];
+}
+
+const TERMINAL_PO_STATES = new Set(["Closed", "Cancelled", "Paid"]);
+
+function computeBlacklistCascade(sup: SupRecord, openPOs: readonly OpenPO[]): SupplierResult<BlacklistCascade> {
+  const r = supApply(sup, "BLACKLIST");
+  if (r === undefined) return { kind: "err", error: `${sup.state} --BLACKLIST--> (forbidden)` };
+  const supplierPOs = openPOs.filter((po) => po.supplierId === sup.id);
+  const posToDispute = supplierPOs.filter((po) => !TERMINAL_PO_STATES.has(po.state));
+  const posAlreadyClosed = supplierPOs.filter((po) => TERMINAL_PO_STATES.has(po.state));
+  return { kind: "ok", value: { blacklistedSupplier: r, posToDispute, posAlreadyClosed } };
+}
+
+const sup: SupRecord = { id: "sup_006", name: "Zeta Ltd", state: "APPROVED" };
+const pos: OpenPO[] = [
+  { id: "po_201", supplierId: "sup_006", state: "Acknowledged" },
+  { id: "po_202", supplierId: "sup_006", state: "Issued" },
+  { id: "po_203", supplierId: "sup_006", state: "Closed" },
+  { id: "po_204", supplierId: "sup_007", state: "Approved" },
+];
+const cascade = computeBlacklistCascade(sup, pos);
+if (cascade.kind === "ok") {
+  console.log(cascade.value.blacklistedSupplier.state); // => BLACKLISTED
+  console.log(cascade.value.posToDispute.map((p) => p.id)); // => [po_201, po_202]
+  console.log(cascade.value.posAlreadyClosed.map((p) => p.id)); // => [po_203]
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Cross-aggregate cascade effects are computed as pure functions returning IDs — the application service applies each change using the individual aggregate's own FSM.
@@ -1889,7 +2192,7 @@ stateDiagram-v2
     class Reversed reversed
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2206,6 +2509,52 @@ class PaymentFSM
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: Payment FSM state and event unions
+type PaymentState = "SCHEDULED" | "DISBURSED" | "REMITTED" | "FAILED" | "REVERSED";
+type PaymentEvent = "DISBURSE" | "REMIT" | "FAIL" | "RETRY" | "REVERSE";
+
+interface Payment {
+  readonly id: string;
+  readonly invoiceId: string;
+  readonly amount: number;
+  readonly bankAccount: string;
+  readonly state: PaymentState;
+}
+
+type PaymentResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
+
+const PAYMENT_TRANSITIONS: Readonly<Partial<Record<PaymentState, Partial<Record<PaymentEvent, PaymentState>>>>> = {
+  SCHEDULED: { DISBURSE: "DISBURSED", REVERSE: "REVERSED" },
+  DISBURSED: { REMIT: "REMITTED", FAIL: "FAILED", REVERSE: "REVERSED" },
+  FAILED: { RETRY: "SCHEDULED" },
+  // => REMITTED, REVERSED: absent — terminal states, no valid outgoing events
+} as const;
+
+function paymentApply(pmt: Payment, event: PaymentEvent): PaymentResult<Payment> {
+  const next = PAYMENT_TRANSITIONS[pmt.state]?.[event];
+  if (next === undefined) return { kind: "err", error: `${pmt.state} --${event}--> (forbidden)` };
+  return { kind: "ok", value: { ...pmt, state: next } };
+}
+
+const pmt: Payment = {
+  id: "pay_001",
+  invoiceId: "inv_007",
+  amount: 5000,
+  bankAccount: "GB29NWBK60161331926819",
+  state: "SCHEDULED",
+};
+const r1 = paymentApply(pmt, "DISBURSE");
+if (r1.kind === "ok") console.log(r1.value.state); // => DISBURSED
+const disbursed = r1.kind === "ok" ? r1.value : pmt;
+const r2 = paymentApply(disbursed, "FAIL");
+if (r2.kind === "ok") console.log(r2.value.state); // => FAILED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `Failed → Scheduled` self-retry loop models the payment run retry policy — a payment can attempt disbursement multiple times before being manually reversed.
@@ -2218,7 +2567,7 @@ class PaymentFSM
 
 Without a retry limit, a payment could cycle through `Failed → Scheduled → Disbursed → Failed` indefinitely. A retry counter guards the `retry` transition.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2436,6 +2785,49 @@ if (r3 is Err<PaymentWithRetries> err3)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: payment extended with retry tracking
+interface PaymentWithRetries extends Payment {
+  readonly retryCount: number;
+  readonly maxRetries: number;
+}
+
+function canRetry(pmt: PaymentWithRetries): boolean {
+  return pmt.retryCount < pmt.maxRetries;
+}
+
+function retryPayment(pmt: PaymentWithRetries): PaymentResult<PaymentWithRetries> {
+  if (pmt.state !== "FAILED") return { kind: "err", error: `Cannot retry payment in state ${pmt.state}` };
+  if (!canRetry(pmt))
+    return {
+      kind: "err",
+      error: `Payment ${pmt.id} exceeded retry limit (${pmt.maxRetries}); manual reversal required`,
+    };
+  return { kind: "ok", value: { ...pmt, state: "SCHEDULED", retryCount: pmt.retryCount + 1 } };
+}
+
+const failedPmt: PaymentWithRetries = {
+  id: "pay_002",
+  invoiceId: "inv_008",
+  amount: 3000,
+  bankAccount: "GB29NWBK60161331926819",
+  state: "FAILED",
+  retryCount: 2,
+  maxRetries: 3,
+};
+const r1 = retryPayment(failedPmt);
+if (r1.kind === "ok") console.log(`${r1.value.state}, retries: ${r1.value.retryCount}`);
+// => SCHEDULED, retries: 3
+const atLimit: PaymentWithRetries = { ...failedPmt, retryCount: 3 };
+const r2 = retryPayment(atLimit);
+if (r2.kind === "err") console.log(r2.error);
+// => Payment pay_002 exceeded retry limit (3); manual reversal required
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Retry limits are policy guards on the FSM, not operational logic in a cron job — the machine enforces the limit declaratively, and the cron job just sends events.
@@ -2478,7 +2870,7 @@ stateDiagram-v2
     class PartiallyFailed,Failed failed
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2712,6 +3104,51 @@ Console.WriteLine(EvaluateParallelState(regions));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: parallel region state tracking for payment + notification
+type TransferState = "PENDING" | "SENT" | "CONFIRMED" | "FAILED";
+type NotificationState = "QUEUED" | "SENT" | "DELIVERED" | "FAILED";
+type ParallelOutcome = "DISBURSING" | "COMPLETED" | "PARTIALLY_FAILED" | "FAILED";
+
+interface ParallelPaymentState {
+  readonly transfer: TransferState;
+  readonly notification: NotificationState;
+}
+
+function updateTransfer(regions: ParallelPaymentState, outcome: TransferState): ParallelPaymentState {
+  return { ...regions, transfer: outcome };
+}
+function updateNotification(regions: ParallelPaymentState, outcome: NotificationState): ParallelPaymentState {
+  return { ...regions, notification: outcome };
+}
+
+function evaluateParallelState(regions: ParallelPaymentState): ParallelOutcome {
+  const tDone = regions.transfer === "CONFIRMED";
+  const nDone = regions.notification === "DELIVERED";
+  const tFail = regions.transfer === "FAILED";
+  const nFail = regions.notification === "FAILED";
+  if (tDone && nDone) return "COMPLETED";
+  if (tFail && nFail) return "FAILED";
+  if (tFail || nFail) return "PARTIALLY_FAILED";
+  return "DISBURSING";
+}
+
+let regions: ParallelPaymentState = { transfer: "PENDING", notification: "QUEUED" };
+regions = updateTransfer(regions, "SENT");
+regions = updateNotification(regions, "SENT");
+console.log(evaluateParallelState(regions)); // => DISBURSING
+
+regions = updateTransfer(regions, "CONFIRMED");
+console.log(evaluateParallelState(regions)); // => DISBURSING (notification still in progress)
+
+regions = updateNotification(regions, "DELIVERED");
+console.log(evaluateParallelState(regions)); // => COMPLETED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Parallel regions track independent progress across concurrent concerns — the parent state advances only when all regions reach their terminal sub-states.
@@ -2746,7 +3183,7 @@ stateDiagram-v2
     class JSONSnapshot store
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2983,6 +3420,56 @@ if (badR is Err<PaymentWithRetries> err)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: payment snapshot for JSON persistence
+interface PaymentSnapshot {
+  readonly id: string;
+  readonly invoiceId: string;
+  readonly amount: number;
+  readonly bankAccount: string;
+  readonly state: string; // => String for JSON safety; validated on deserialise
+  readonly retryCount: number;
+  readonly maxRetries: number;
+  readonly savedAt: string; // => ISO-8601 timestamp
+}
+
+function serialisePayment(pmt: PaymentWithRetries): PaymentSnapshot {
+  return { ...pmt, savedAt: new Date().toISOString() };
+  // => All fields are primitives: safe for JSON, database, or message bus
+}
+
+function deserialisePayment(snap: PaymentSnapshot): PaymentResult<PaymentWithRetries> {
+  const VALID_STATES = new Set<PaymentState>(["SCHEDULED", "DISBURSED", "REMITTED", "FAILED", "REVERSED"]);
+  if (!VALID_STATES.has(snap.state as PaymentState))
+    return { kind: "err", error: `Unknown payment state in snapshot: '${snap.state}'` };
+  return { kind: "ok", value: { ...snap, state: snap.state as PaymentState } };
+}
+
+const pmt: PaymentWithRetries = {
+  id: "pay_003",
+  invoiceId: "inv_009",
+  amount: 2500,
+  bankAccount: "GB29NWBK60161331926819",
+  state: "FAILED",
+  retryCount: 1,
+  maxRetries: 3,
+};
+const snap = serialisePayment(pmt);
+const r = deserialisePayment(snap);
+if (r.kind === "ok") {
+  console.log(r.value.state); // => FAILED
+  console.log(r.value.retryCount); // => 1
+}
+const badSnap = { ...snap, state: "failed" };
+const badR = deserialisePayment(badSnap);
+if (badR.kind === "err") console.log(badR.error);
+// => Unknown payment state in snapshot: 'failed'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Validation on deserialisation catches migration failures at the boundary — the FSM itself never operates on unvalidated state strings.
@@ -2995,7 +3482,7 @@ if (badR is Err<PaymentWithRetries> err)
 
 Storing events instead of state means the Payment record is always rebuildable from its event log.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3187,6 +3674,49 @@ if (rebuilt is Ok<Payment> ok)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: stored event for event sourcing
+interface StoredPaymentEvent {
+  readonly eventId: string;
+  readonly paymentId: string;
+  readonly event: PaymentEvent;
+  readonly timestamp: string; // => ISO-8601 wall-clock time
+}
+
+function rebuildPayment(initial: Payment, events: readonly StoredPaymentEvent[]): PaymentResult<Payment> {
+  let current = initial;
+  for (const stored of events) {
+    const r = paymentApply(current, stored.event);
+    if (r.kind === "err") return { kind: "err", error: `Replay failed at event '${stored.event}': ${r.error}` };
+    current = r.value;
+  }
+  return { kind: "ok", value: current };
+}
+
+const initial: Payment = {
+  id: "pay_004",
+  invoiceId: "inv_010",
+  amount: 4000,
+  bankAccount: "GB29NWBK60161331926820",
+  state: "SCHEDULED",
+};
+
+const history: StoredPaymentEvent[] = [
+  { eventId: "evt_1", paymentId: "pay_004", event: "DISBURSE", timestamp: "2026-01-15T09:00:00Z" },
+  { eventId: "evt_2", paymentId: "pay_004", event: "FAIL", timestamp: "2026-01-15T09:05:00Z" },
+  { eventId: "evt_3", paymentId: "pay_004", event: "RETRY", timestamp: "2026-01-15T14:00:00Z" },
+  { eventId: "evt_4", paymentId: "pay_004", event: "DISBURSE", timestamp: "2026-01-15T14:30:00Z" },
+  { eventId: "evt_5", paymentId: "pay_004", event: "REMIT", timestamp: "2026-01-16T08:00:00Z" },
+];
+const rebuilt = rebuildPayment(initial, history);
+if (rebuilt.kind === "ok") console.log(rebuilt.value.state); // => REMITTED
+// => Five events replayed: SCHEDULED -> DISBURSED -> FAILED -> SCHEDULED -> DISBURSED -> REMITTED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A pure-function FSM is a natural event-sourcing projector — the rebuild function is just the transition function applied repeatedly over the event log.
@@ -3227,7 +3757,7 @@ stateDiagram-v2
     class Reversed terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3500,6 +4030,67 @@ Console.WriteLine(sc.GetType().Name); // => Output: Completed
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: statechart state using a tagged union
+type StatechartPaymentState =
+  | {
+      readonly kind: "Active";
+      readonly regions: ParallelPaymentState;
+      readonly historyRegions: ParallelPaymentState | null;
+    }
+  | { readonly kind: "Completed" }
+  | { readonly kind: "Reversed" };
+
+type StatechartEvent =
+  | "TransferSent"
+  | "TransferConfirmed"
+  | "TransferFailed"
+  | "NotificationSent"
+  | "NotificationDelivered"
+  | "NotificationFailed"
+  | "Reverse";
+
+function applyStatechartEvent(state: StatechartPaymentState, event: StatechartEvent): StatechartPaymentState {
+  if (state.kind !== "Active") return state;
+  const r = state.regions;
+  switch (event) {
+    case "TransferSent":
+      return { ...state, regions: updateTransfer(r, "SENT") };
+    case "TransferConfirmed":
+      return { ...state, regions: updateTransfer(r, "CONFIRMED") };
+    case "TransferFailed":
+      return { ...state, regions: updateTransfer(r, "FAILED"), historyRegions: r };
+    case "NotificationSent":
+      return { ...state, regions: updateNotification(r, "SENT") };
+    case "NotificationDelivered":
+      return { ...state, regions: updateNotification(r, "DELIVERED") };
+    case "NotificationFailed":
+      return { ...state, regions: updateNotification(r, "FAILED") };
+    case "Reverse":
+      return { kind: "Reversed" };
+  }
+}
+
+function checkCompletion(state: StatechartPaymentState): StatechartPaymentState {
+  if (state.kind !== "Active") return state;
+  return evaluateParallelState(state.regions) === "COMPLETED" ? { kind: "Completed" } : state;
+}
+
+let sc: StatechartPaymentState = {
+  kind: "Active",
+  regions: { transfer: "PENDING", notification: "QUEUED" },
+  historyRegions: null,
+};
+sc = applyStatechartEvent(sc, "TransferConfirmed");
+sc = applyStatechartEvent(sc, "NotificationDelivered");
+sc = checkCompletion(sc);
+console.log(sc.kind); // => Output: Completed
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Statecharts — hierarchical + parallel + history — handle real-world complexity that flat FSMs cannot express without state explosion: the three concepts together keep state machines manageable at scale.
@@ -3512,7 +4103,7 @@ Console.WriteLine(sc.GetType().Name); // => Output: Completed
 
 A runtime check that verifies all four machines cover their expected states — the machine specification as executable test.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3719,6 +4310,42 @@ Console.WriteLine($"All spec states accounted for (terminals as values): {allAcc
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: machine coverage check as pure data comparison
+interface MachineSpec {
+  readonly machineName: string;
+  readonly expectedStates: readonly string[];
+}
+interface CoverageReport {
+  readonly covered: readonly string[];
+  readonly missing: readonly string[];
+  readonly extra: readonly string[];
+}
+
+function coverageCheck(spec: MachineSpec, implementedStateNames: ReadonlySet<string>): CoverageReport {
+  const covered = spec.expectedStates.filter((s) => implementedStateNames.has(s));
+  const missing = spec.expectedStates.filter((s) => !implementedStateNames.has(s));
+  const extra = [...implementedStateNames].filter((s) => !spec.expectedStates.includes(s));
+  return { covered, missing, extra };
+}
+
+const paymentSpec: MachineSpec = {
+  machineName: "Payment",
+  expectedStates: ["SCHEDULED", "DISBURSED", "REMITTED", "FAILED", "REVERSED"],
+};
+// => Only SCHEDULED, DISBURSED, FAILED appear as keys; REMITTED and REVERSED are terminals
+const implementedKeys = new Set(["SCHEDULED", "DISBURSED", "FAILED"]);
+const report = coverageCheck(paymentSpec, implementedKeys);
+console.log(`Payment covered: ${report.covered.length}/${paymentSpec.expectedStates.length}`);
+// => Output: Payment covered: 3/5
+console.log("Missing from table keys:", report.missing);
+// => Output: Missing from table keys: [REMITTED, REVERSED] (terminal states — expected)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A coverage check that runs as code — not a document — catches discrepancies between the domain spec and the implementation before they reach production.
@@ -3759,7 +4386,7 @@ stateDiagram-v2
     class Settled,Defaulted terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4139,6 +4766,67 @@ class MurabahaFSM
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: Murabaha contract FSM for Sharia-compliant financing
+type MurabahaState =
+  | "QUOTED" // => Financing terms proposed by the murabaha bank
+  | "ASSET_ACQUIRED" // => Bank purchased the underlying asset
+  | "SIGNED" // => Buyer and bank signed the murabaha agreement
+  | "INSTALLMENT_PENDING" // => Next installment due from buyer
+  | "INSTALLMENT_PAID" // => Installment paid; more may follow
+  | "SETTLED" // => All installments paid — terminal success
+  | "DEFAULTED"; // => Buyer failed to pay — terminal failure
+
+type MurabahaEvent =
+  | "ACQUIRE_ASSET"
+  | "SIGN"
+  | "FIRST_INSTALLMENT_DUE"
+  | "PAY_INSTALLMENT"
+  | "NEXT_INSTALLMENT_DUE"
+  | "FINAL_INSTALLMENT"
+  | "DEFAULT";
+
+interface MurabahaContract {
+  readonly id: string;
+  readonly poId: string;
+  readonly basisPoints: number;
+  readonly state: MurabahaState;
+}
+type MurabahaResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
+
+const MURABAHA_TRANSITIONS: Readonly<Partial<Record<MurabahaState, Partial<Record<MurabahaEvent, MurabahaState>>>>> = {
+  QUOTED: { ACQUIRE_ASSET: "ASSET_ACQUIRED" },
+  ASSET_ACQUIRED: { SIGN: "SIGNED" },
+  SIGNED: { FIRST_INSTALLMENT_DUE: "INSTALLMENT_PENDING" },
+  INSTALLMENT_PENDING: { PAY_INSTALLMENT: "INSTALLMENT_PAID", DEFAULT: "DEFAULTED" },
+  INSTALLMENT_PAID: { NEXT_INSTALLMENT_DUE: "INSTALLMENT_PENDING", FINAL_INSTALLMENT: "SETTLED" },
+} as const;
+
+function validateMarkup(basisPoints: number): string | undefined {
+  if (basisPoints <= 0) return "Markup must be > 0 basis points";
+  if (basisPoints > 5000) return "Markup exceeds 5000 basis points (50% maximum)";
+  return undefined;
+}
+
+function applyMurabaha(contract: MurabahaContract, event: MurabahaEvent): MurabahaResult<MurabahaContract> {
+  const next = MURABAHA_TRANSITIONS[contract.state]?.[event];
+  if (next === undefined) return { kind: "err", error: `${contract.state} --${event}--> (forbidden)` };
+  return { kind: "ok", value: { ...contract, state: next } };
+}
+
+console.log(validateMarkup(300) === undefined); // => true (valid)
+console.log(validateMarkup(6000)); // => Markup exceeds 5000 basis points (50% maximum)
+const contract: MurabahaContract = { id: "mur_001", poId: "po_fin_001", basisPoints: 300, state: "QUOTED" };
+const r1 = applyMurabaha(contract, "ACQUIRE_ASSET");
+if (r1.kind === "ok") console.log(r1.value.state); // => ASSET_ACQUIRED
+const r2 = applyMurabaha(contract, "SIGN");
+if (r2.kind === "err") console.log(r2.error); // => QUOTED --SIGN--> (forbidden)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The MurabahaContract FSM is structurally identical to PO and Invoice machines — the domain logic is different (installments, Sharia markup), but the sealed-type + transition-table + pure-function pattern is the same.
@@ -4151,7 +4839,7 @@ class MurabahaFSM
 
 The `InstallmentPaid → InstallmentPending` cycle repeats for each installment. The number of installments completed is tracked in the contract context.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4363,6 +5051,49 @@ for (int i = 0; i < 3; i++)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: extended murabaha contract with installment counter
+interface MurabahaContractWithPayments extends MurabahaContract {
+  readonly totalInstallments: number;
+  readonly installmentsPaid: number;
+  readonly installmentAmount: number;
+}
+
+function payInstallment(c: MurabahaContractWithPayments): MurabahaResult<MurabahaContractWithPayments> {
+  if (c.state !== "INSTALLMENT_PENDING") return { kind: "err", error: `Cannot pay installment in state ${c.state}` };
+  const newCount = c.installmentsPaid + 1;
+  if (newCount >= c.totalInstallments)
+    return { kind: "ok", value: { ...c, state: "SETTLED", installmentsPaid: newCount } };
+  return { kind: "ok", value: { ...c, state: "INSTALLMENT_PAID", installmentsPaid: newCount } };
+}
+
+let contract: MurabahaContractWithPayments = {
+  id: "mur_002",
+  poId: "po_fin_002",
+  basisPoints: 250,
+  state: "INSTALLMENT_PENDING",
+  totalInstallments: 3,
+  installmentsPaid: 0,
+  installmentAmount: 10000,
+};
+
+for (let i = 0; i < 3; i++) {
+  const r = payInstallment(contract);
+  if (r.kind === "ok") {
+    contract = r.value;
+    console.log(`Paid ${contract.installmentsPaid}/${contract.totalInstallments}: ${contract.state}`);
+    if (contract.state === "INSTALLMENT_PAID") contract = { ...contract, state: "INSTALLMENT_PENDING" };
+  }
+}
+// => Paid 1/3: INSTALLMENT_PAID
+// => Paid 2/3: INSTALLMENT_PAID
+// => Paid 3/3: SETTLED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Installment counters in the FSM context determine which event fires after each payment — the counter bridges the discrete state machine and the continuous payment schedule.
@@ -4375,7 +5106,7 @@ for (int i = 0; i < 3; i++)
 
 When a PurchaseOrder is financed via murabaha, the PO's payment leg is handled by the MurabahaContract, not the Payment aggregate. The link is a foreign key — the PO carries the contract reference.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4551,6 +5282,57 @@ if (r3 is Ok<FinancedPO> ok3) Console.WriteLine(ok3.Value.State);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: financed PO with optional murabaha contract reference
+interface FinancedPO {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly state: string;
+  readonly murabahaContractId: string | null; // => null: conventional; non-null: murabaha
+}
+
+function paymentPath(po: FinancedPO): "murabaha" | "conventional" {
+  return po.murabahaContractId !== null ? "murabaha" : "conventional";
+}
+
+function advancePOToPaid(po: FinancedPO, murabahaState: MurabahaState | null): MurabahaResult<FinancedPO> {
+  if (paymentPath(po) === "murabaha") {
+    if (murabahaState !== "SETTLED")
+      return {
+        kind: "err",
+        error: `Murabaha-financed PO cannot be marked Paid: contract is ${murabahaState ?? "unknown"}`,
+      };
+  }
+  return { kind: "ok", value: { ...po, state: "Paid" } };
+}
+
+const murabahaPO: FinancedPO = {
+  id: "po_mur_01",
+  totalAmount: 30000,
+  state: "Invoiced",
+  murabahaContractId: "mur_003",
+};
+const r1 = advancePOToPaid(murabahaPO, "INSTALLMENT_PENDING");
+if (r1.kind === "err") console.log(r1.error);
+// => Murabaha-financed PO cannot be marked Paid: contract is INSTALLMENT_PENDING
+
+const r2 = advancePOToPaid(murabahaPO, "SETTLED");
+if (r2.kind === "ok") console.log(r2.value.state); // => Paid
+
+const conventionalPO: FinancedPO = {
+  id: "po_conv_01",
+  totalAmount: 15000,
+  state: "Invoiced",
+  murabahaContractId: null,
+};
+const r3 = advancePOToPaid(conventionalPO, null);
+if (r3.kind === "ok") console.log(r3.value.state); // => Paid (no murabaha guard)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The optional murabaha path adds a guard on the PO's `Paid` transition without changing the rest of the PO machine — optional features should extend the machine with guards, not restructure it.
@@ -4565,7 +5347,7 @@ if (r3 is Ok<FinancedPO> ok3) Console.WriteLine(ok3.Value.State);
 
 In the Akka or Erlang actor model, each aggregate instance is an actor. The actor receives events, updates its FSM state, and persists the result. This patterns pairs naturally with FSM because actors are inherently single-threaded — no locking required.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4748,6 +5530,58 @@ actor.Receive(PaymentEvent.Fail, r =>
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: PaymentActor encapsulates a single Payment FSM — no shared state
+class PaymentActor {
+  private state: PaymentWithRetries;
+  // => Actor's internal FSM state: mutable only via receive() — no race conditions
+
+  constructor(initialPayment: PaymentWithRetries) {
+    this.state = initialPayment;
+  }
+
+  receive(event: PaymentEvent, replyTo: (r: PaymentResult<Payment>) => void): void {
+    const r = paymentApply(this.state, event);
+    if (r.kind === "ok") this.state = { ...this.state, state: r.value.state };
+    // => Update only the state field; retryCount/maxRetries are preserved
+    replyTo(r);
+  }
+
+  currentState(): PaymentState {
+    return this.state.state;
+  }
+}
+
+const actor = new PaymentActor({
+  id: "pay_actor_01",
+  invoiceId: "inv_011",
+  amount: 6000,
+  bankAccount: "GB29NWBK60161331926821",
+  state: "SCHEDULED",
+  retryCount: 0,
+  maxRetries: 3,
+});
+
+actor.receive("DISBURSE", (r) => {
+  if (r.kind === "ok") console.log(r.value.state);
+});
+// => Output: DISBURSED
+
+actor.receive("REMIT", (r) => {
+  if (r.kind === "ok") console.log(r.value.state);
+});
+// => Output: REMITTED
+
+actor.receive("FAIL", (r) => {
+  if (r.kind === "err") console.log(r.error);
+  // => Output: REMITTED --FAIL--> (forbidden)
+});
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The actor model and the FSM model align naturally — each actor owns exactly one aggregate's state, processes events one at a time, and is its own lock-free consistency boundary.
@@ -4760,7 +5594,7 @@ actor.Receive(PaymentEvent.Fail, r =>
 
 When two processes try to update the same PO simultaneously, optimistic concurrency prevents the second update from overwriting the first.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4956,6 +5790,55 @@ if (r3 is Ok<Versioned<PO>> ok3) Console.WriteLine($"Resolved at version {ok3.Va
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: Versioned<T> wraps any record with a version counter
+interface Versioned<T> {
+  readonly data: T;
+  readonly version: number;
+}
+
+function updateVersioned<T>(
+  stored: Versioned<T>,
+  expected: Versioned<T>,
+  updater: (data: T) => PaymentResult<T>,
+): PaymentResult<Versioned<T>> {
+  if (stored.version !== expected.version)
+    return {
+      kind: "err",
+      error: `Concurrency conflict: expected version ${expected.version}, found ${stored.version}`,
+    };
+  const r = updater(stored.data);
+  if (r.kind === "err") return { kind: "err", error: r.error };
+  return { kind: "ok", value: { data: r.value, version: stored.version + 1 } };
+}
+
+interface SimplePO {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly state: string;
+}
+
+const storedPO: Versioned<SimplePO> = {
+  data: { id: "po_conc_01", totalAmount: 500, state: "AwaitingApproval" },
+  version: 1,
+};
+const approver2 = storedPO; // => Loads at version 1
+
+const storedAfterFirst: Versioned<SimplePO> = { data: { ...storedPO.data, state: "Approved" }, version: 2 };
+const r2 = updateVersioned(storedAfterFirst, approver2, (po) => ({ kind: "ok", value: { ...po, state: "Approved" } }));
+if (r2.kind === "err") console.log(r2.error);
+// => Concurrency conflict: expected version 1, found 2
+
+const reloaded: Versioned<SimplePO> = { data: storedAfterFirst.data, version: 2 };
+const r3 = updateVersioned(storedAfterFirst, reloaded, (po) => ({ kind: "ok", value: { ...po, state: "Approved" } }));
+if (r3.kind === "ok") console.log(`Resolved at version ${r3.value.version}`);
+// => Resolved at version 3
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Optimistic concurrency with version numbers prevents double-apply of the same event — the second concurrent transition is detected and rejected before the FSM even runs.
@@ -4992,7 +5875,7 @@ stateDiagram-v2
     class SagaFailed terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5218,6 +6101,64 @@ else if (sagaResult is Err<IReadOnlyList<object>> sagaErr)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: saga step with forward action and compensating rollback
+interface SagaStep<T> {
+  readonly name: string;
+  readonly execute: () => PaymentResult<T>;
+  readonly compensate: () => void;
+}
+
+function runSaga<T>(...steps: Array<SagaStep<T>>): PaymentResult<readonly T[]> {
+  const results: T[] = [];
+  const executed: Array<SagaStep<T>> = [];
+
+  for (const step of steps) {
+    const r = step.execute();
+    if (r.kind === "err") {
+      // => Step failed: compensate all previously executed steps in reverse order
+      [...executed].reverse().forEach((s) => {
+        console.log(`Compensating: ${s.name}`);
+        s.compensate();
+      });
+      return { kind: "err", error: `Saga failed at step '${step.name}': ${r.error}` };
+    }
+    results.push(r.value);
+    executed.push(step);
+    console.log(`Step '${step.name}' succeeded`);
+  }
+  return { kind: "ok", value: results };
+}
+
+const po: SimplePO = { id: "po_saga_01", totalAmount: 5000, state: "Approved" };
+const pmt: Payment = {
+  id: "pay_saga_01",
+  invoiceId: "inv_saga_01",
+  amount: 5000,
+  bankAccount: "GB29NWBK60161331926822",
+  state: "SCHEDULED",
+};
+
+const result = runSaga<Payment | SimplePO>(
+  {
+    name: "IssuePO",
+    execute: () => ({ kind: "ok", value: { ...po, state: "Issued" } }),
+    compensate: () => console.log("  Cancel PO issue: PO reverted to Approved"),
+  },
+  {
+    name: "DisbursePayment",
+    execute: () => paymentApply(pmt, "DISBURSE"),
+    compensate: () => console.log("  Reverse payment disbursement"),
+  },
+);
+if (result.kind === "ok") console.log(`Saga complete: ${result.value.length} steps succeeded`);
+// => Step 'IssuePO' succeeded / Step 'DisbursePayment' succeeded / Saga complete: 2 steps succeeded
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Sagas replace distributed transactions — each step can succeed or fail independently, and compensation rolls back exactly the steps that succeeded.
@@ -5230,7 +6171,7 @@ else if (sagaResult is Err<IReadOnlyList<object>> sagaErr)
 
 In long-running workflows, the machine might be interrupted (process crash, pod restart). A snapshot captures all FSM state at a checkpoint, enabling resume without replaying the full event history.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5410,6 +6351,53 @@ Console.WriteLine(resumed.Payment is null);             // => Output: True (not 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: P2PSnapshot captures all three aggregate states at a checkpoint
+interface P2PSnapshot {
+  readonly snapshotId: string;
+  readonly takenAt: string;
+  readonly po: SimplePO;
+  readonly invoice: Invoice | null;
+  readonly payment: Payment | null;
+  readonly eventsAfter: number; // => Replay start index
+}
+
+function takeSnapshot(po: SimplePO, invoice: Invoice | null, payment: Payment | null, eventCount: number): P2PSnapshot {
+  return {
+    snapshotId: `snap_${Math.random().toString(36).slice(2)}`,
+    takenAt: new Date().toISOString(),
+    po,
+    invoice,
+    payment,
+    eventsAfter: eventCount,
+  };
+}
+
+interface ResumedState {
+  readonly po: SimplePO;
+  readonly invoice: Invoice | null;
+  readonly payment: Payment | null;
+}
+
+function resumeFromSnapshot(snap: P2PSnapshot): ResumedState {
+  return { po: snap.po, invoice: snap.invoice, payment: snap.payment };
+}
+
+const po: SimplePO = { id: "po_snap", totalAmount: 8000, state: "Acknowledged" };
+const invoice: Invoice = { id: "inv_snap", poId: "po_snap", supplierAmount: 8000, state: "MATCHING" };
+const snap = takeSnapshot(po, invoice, null, 42);
+console.log(snap.snapshotId.startsWith("snap_")); // => true
+console.log(snap.eventsAfter); // => 42
+const resumed = resumeFromSnapshot(snap);
+console.log(resumed.po.state); // => Acknowledged
+console.log(resumed.invoice?.state); // => MATCHING
+console.log(resumed.payment); // => null (not yet created)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Snapshots + partial event replay combine the correctness of event sourcing with the performance of state snapshots — no need to replay years of events on every process restart.
@@ -5422,7 +6410,7 @@ Console.WriteLine(resumed.Payment is null);             // => Output: True (not 
 
 Generate a Mermaid state diagram directly from the transition table so the diagram always matches the implementation.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5670,6 +6658,43 @@ foreach (var line in diagram.Split('\n').Take(8))
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: generate Mermaid stateDiagram-v2 from transition table
+// => Note: using template literal with actual backtick chars for mermaid fence
+function generateMermaid(
+  title: string,
+  table: Partial<Record<string, Partial<Record<string, string>>>>,
+  terminalStates: readonly string[],
+): string {
+  const lines: string[] = ["\`\`\`mermaid", "stateDiagram-v2", `    %% ${title}`];
+  const initialState = Object.keys(table)[0];
+  if (initialState) lines.push(`    [*] --> ${initialState}`);
+  for (const [from, events] of Object.entries(table)) {
+    if (!events) continue;
+    for (const [event, to] of Object.entries(events)) lines.push(`    ${from} --> ${to}: ${event}`);
+  }
+  for (const terminal of terminalStates) lines.push(`    ${terminal} --> [*]`);
+  lines.push("\`\`\`");
+  return lines.join("\n");
+}
+
+const paymentTable: Record<string, Record<string, string>> = {
+  Scheduled: { disburse: "Disbursed", reverse: "Reversed" },
+  Disbursed: { remit: "Remitted", fail: "Failed" },
+  Failed: { retry: "Scheduled", reverse: "Reversed" },
+};
+const diagram = generateMermaid("Payment FSM", paymentTable, ["Remitted", "Reversed"]);
+diagram
+  .split("\n")
+  .slice(0, 5)
+  .forEach((l) => console.log(l));
+// => Output lines: mermaid fence / stateDiagram-v2 / %% Payment FSM / [*] --> Scheduled / ...
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Diagram generation from the transition table ensures documentation is never out of sync with the implementation — the code is the single source of truth.
@@ -5682,7 +6707,7 @@ foreach (var line in diagram.Split('\n').Take(8))
 
 The FSM state determines which HTTP status codes the API returns — a structural mapping that prevents ad-hoc HTTP status decisions in controller code.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5964,6 +6989,57 @@ Console.WriteLine(body.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: FSM result mapped to HTTP response codes
+interface FsmApiResponse {
+  readonly status: number;
+  readonly body: unknown;
+}
+
+type SimplePoState = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "CLOSED";
+interface SimplePoRecord {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly state: SimplePoState;
+}
+
+const SIMPLE_PO_TABLE: Partial<Record<SimplePoState, Partial<Record<string, SimplePoState>>>> = {
+  DRAFT: { submit: "AWAITING_APPROVAL" },
+  AWAITING_APPROVAL: { approve: "APPROVED" },
+  APPROVED: { close: "CLOSED" },
+};
+
+function simplePoApply(po: SimplePoRecord, event: string): PaymentResult<SimplePoRecord> {
+  const next = SIMPLE_PO_TABLE[po.state]?.[event];
+  if (next === undefined) return { kind: "err", error: `${po.state} --${event}--> (forbidden)` };
+  return { kind: "ok", value: { ...po, state: next } };
+}
+
+function toHttpResponse(result: PaymentResult<SimplePoRecord>, event: string): FsmApiResponse {
+  if (result.kind === "ok") return { status: 200, body: { id: result.value.id, state: result.value.state } };
+  const isConflict = result.error.includes("(forbidden)") || result.error.startsWith("Cannot");
+  if (isConflict)
+    return {
+      status: 409,
+      body: {
+        error: "Transition not allowed in current state",
+        hint: `Event '${event}' is not valid for the current PO state`,
+      },
+    };
+  return { status: 422, body: { error: "Business rule violation", detail: result.error } };
+}
+
+const po: SimplePoRecord = { id: "po_http_01", totalAmount: 500, state: "DRAFT" };
+const r1 = simplePoApply(po, "submit");
+console.log(toHttpResponse(r1, "submit").status); // => 200
+const r2 = simplePoApply(po, "close");
+console.log(toHttpResponse(r2, "close").status); // => 409
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Mapping FSM results to HTTP status codes structurally — 200 for success, 409 for forbidden transitions, 422 for business guard failures — produces consistent API semantics without ad-hoc status decisions.
@@ -5976,7 +7052,7 @@ Console.WriteLine(body.error);
 
 An integration-style test that walks a complete P2P workflow: PO from Draft to Closed, Invoice from Registered to Paid, Supplier approval, Payment from Scheduled to Remitted.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -6310,6 +7386,64 @@ TestFullP2PHappyPath();
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: abbreviated domain types for integration test
+type SupSt = "PENDING" | "APPROVED";
+type PoSt2 = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "ACKNOWLEDGED" | "CLOSED";
+type InvSt2 = "REGISTERED" | "MATCHING" | "MATCHED" | "SCHEDULED_FOR_PAYMENT" | "PAID";
+type PmtSt2 = "SCHEDULED" | "DISBURSED" | "REMITTED";
+
+const SUP_T2: Partial<Record<SupSt, Partial<Record<string, SupSt>>>> = { PENDING: { approve: "APPROVED" } };
+const PO_T2: Partial<Record<PoSt2, Partial<Record<string, PoSt2>>>> = {
+  DRAFT: { submit: "AWAITING_APPROVAL" },
+  AWAITING_APPROVAL: { approve: "APPROVED" },
+  APPROVED: { issue: "ISSUED" },
+  ISSUED: { acknowledge: "ACKNOWLEDGED" },
+  ACKNOWLEDGED: { close: "CLOSED" },
+};
+const INV_T2: Partial<Record<InvSt2, Partial<Record<string, InvSt2>>>> = {
+  REGISTERED: { start_match: "MATCHING" },
+  MATCHING: { match_ok: "MATCHED" },
+  MATCHED: { schedule: "SCHEDULED_FOR_PAYMENT" },
+  SCHEDULED_FOR_PAYMENT: { pay: "PAID" },
+};
+const PMT_T2: Partial<Record<PmtSt2, Partial<Record<string, PmtSt2>>>> = {
+  SCHEDULED: { disburse: "DISBURSED" },
+  DISBURSED: { remit: "REMITTED" },
+};
+
+function step<S extends string>(table: Partial<Record<S, Partial<Record<string, S>>>>, state: S, event: string): S {
+  const next = table[state]?.[event];
+  if (!next) throw new Error(`${state} --${event}--> (forbidden)`);
+  return next;
+}
+
+let supState: SupSt = "PENDING";
+let poState: PoSt2 = "DRAFT";
+let invState: InvSt2 = "REGISTERED";
+let pmtState: PmtSt2 = "SCHEDULED";
+
+supState = step(SUP_T2, supState, "approve");
+console.log("Supplier:", supState);
+for (const e of ["submit", "approve", "issue", "acknowledge"] as string[]) {
+  poState = step(PO_T2, poState, e);
+  console.log("PO:", poState);
+}
+for (const e of ["start_match", "match_ok", "schedule", "pay"] as string[]) {
+  invState = step(INV_T2, invState, e);
+  console.log("Invoice:", invState);
+}
+for (const e of ["disburse", "remit"] as string[]) {
+  pmtState = step(PMT_T2, pmtState, e);
+  console.log("Payment:", pmtState);
+}
+console.log("PASS: Full P2P happy path complete");
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An integration test that exercises all four machines in sequence validates the domain model as a whole — not just individual transitions, but the complete protocol.
@@ -6322,7 +7456,7 @@ TestFullP2PHappyPath();
 
 A final synthesis example showing all four P2P state machines as a unified statechart specification.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -6582,6 +7716,83 @@ Console.WriteLine($"Total states across all machines: {totalStates}");
 Console.WriteLine($"\nPatterns covered: {spec.Patterns.Count}");
 // => Output: Patterns covered: 7
 // => Seven patterns: the complete breadth of advanced FSM techniques in this tutorial
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: complete P2P statechart specification as plain data
+interface MachineSpec2 {
+  readonly name: string;
+  readonly states: number;
+  readonly events: number;
+  readonly terminal: number;
+  readonly role: string;
+  readonly coordinates: readonly string[];
+}
+
+interface P2pStatechart {
+  readonly machines: readonly MachineSpec2[];
+  readonly eventBus: string;
+  readonly patterns: readonly string[];
+}
+
+const spec: P2pStatechart = {
+  machines: [
+    {
+      name: "Supplier",
+      states: 4,
+      events: 4,
+      terminal: 1,
+      role: "Vendor lifecycle — gates PO eligibility",
+      coordinates: [],
+    },
+    {
+      name: "PurchaseOrder",
+      states: 12,
+      events: 10,
+      terminal: 2,
+      role: "Core procurement lifecycle — the workflow spine",
+      coordinates: ["Supplier"],
+    },
+    {
+      name: "Invoice",
+      states: 6,
+      events: 6,
+      terminal: 1,
+      role: "Financial validation — three-way match enforcement",
+      coordinates: ["PurchaseOrder"],
+    },
+    {
+      name: "Payment",
+      states: 5,
+      events: 5,
+      terminal: 2,
+      role: "Disbursement tracking — bank transfer lifecycle",
+      coordinates: ["Invoice"],
+    },
+  ],
+  eventBus: "Domain events coordinate machines across bounded context boundaries",
+  patterns: [
+    "Hierarchical states (Supplier tiers, Payment parallel regions)",
+    "History states (Supplier reinstatement to previous tier)",
+    "Parallel regions (Payment transfer + notification)",
+    "Event sourcing (replay from event log)",
+    "Saga (compensating transactions across machines)",
+    "Optimistic concurrency (version numbers)",
+    "Snapshot + partial replay (performance at scale)",
+  ],
+};
+
+console.log("P2P FSM System Summary");
+console.log("======================");
+const totalStates = spec.machines.reduce((sum, m) => sum + m.states, 0);
+spec.machines.forEach((m) => console.log(`${m.name}: ${m.states} states, ${m.events} events — ${m.role}`));
+console.log(`Total states across all machines: ${totalStates}`);
+// => Supplier: 4 / PurchaseOrder: 12 / Invoice: 6 / Payment: 5 / Total: 27
+console.log(`\nPatterns covered: ${spec.patterns.length}`); // => 7
 ```
 
 {{< /tab >}}

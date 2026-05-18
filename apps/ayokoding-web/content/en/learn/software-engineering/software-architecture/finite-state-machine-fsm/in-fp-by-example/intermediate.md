@@ -50,7 +50,7 @@ stateDiagram-v2
     class Rejected terminal
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -120,6 +120,35 @@ printfn "Paid terminal: %b"     (isInvoiceTerminal Paid)      // => true
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: InvoiceState DU; Clojure: keyword values]
+// TypeScript: literal union for invoice states — compiler-checked.
+
+type InvoiceState = "Received" | "UnderReview" | "Approved" | "Disputed" | "Rejected" | "Paid";
+// => Literal union: compiler rejects any string outside this set
+
+type InvoiceEvent = "Review" | "Approve" | "Dispute" | "Resubmit" | "Reject" | "Pay";
+// => All events that can drive an invoice through its lifecycle
+
+// Branded Result type for all invoice operations
+type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
+const Ok = <T>(v: T): Result<T, never> => ({ ok: true, value: v });
+const Err = <E>(e: E): Result<never, E> => ({ ok: false, error: e });
+
+// Pure predicate: is this invoice state terminal?
+// [F#: | Rejected | Paid -> true | _ -> false]
+const isInvoiceTerminal = (state: InvoiceState): boolean => state === "Rejected" || state === "Paid";
+// => Two terminal invoice states; all others allow further transitions
+
+console.log("Received terminal?", isInvoiceTerminal("Received")); // => false
+console.log("Paid terminal?", isInvoiceTerminal("Paid")); // => true
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The Invoice FSM mirrors the PO FSM structure — DU states, DU events, pure terminal predicate — establishing a consistent pattern across all aggregates in the domain.
@@ -132,7 +161,7 @@ printfn "Paid terminal: %b"     (isInvoiceTerminal Paid)      // => true
 
 The three-way match checks that invoice amount, PO committed amount, and goods-receipt amount agree within a configurable tolerance. The guard is a pure function on domain values — easy to test in isolation from the FSM.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -229,6 +258,62 @@ printfn "%A" (threeWayMatch ctx2)  // => Error "Invoice 1100 vs PO 1000..."
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: ThreeWayMatchContext record + pure guard; Clojure: plain map guard]
+// TypeScript: readonly context type + pure guard function.
+
+type ThreeWayMatchContext = Readonly<{
+  invoiceAmount: number; // => Amount billed by the supplier
+  poAmount: number; // => Amount committed on the purchase order
+  receiptAmount: number; // => Amount confirmed received by the warehouse
+  tolerancePercent: number; // => Allowed variance (e.g. 0.02 for 2%)
+}>;
+// => Readonly enforces immutability after construction
+
+// Pure helper: is |a - b| within tolerance of b?
+const withinTolerance = (a: number, b: number, tol: number): boolean => Math.abs(a - b) <= b * tol;
+// => Same formula as F# helper function
+
+// Pure guard: all three amounts must agree within the tolerance percentage.
+// [F#: Result<unit,string>; TS: Result<true,string>]
+const threeWayMatch = (ctx: ThreeWayMatchContext): Result<true, string> => {
+  if (!withinTolerance(ctx.invoiceAmount, ctx.poAmount, ctx.tolerancePercent))
+    return Err(`Invoice ${ctx.invoiceAmount} vs PO ${ctx.poAmount}: outside tolerance ${ctx.tolerancePercent}`);
+  // => Invoice amount diverges too much from the PO commitment
+  if (!withinTolerance(ctx.invoiceAmount, ctx.receiptAmount, ctx.tolerancePercent))
+    return Err(
+      `Invoice ${ctx.invoiceAmount} vs receipt ${ctx.receiptAmount}: outside tolerance ${ctx.tolerancePercent}`,
+    );
+  // => Invoice amount diverges too much from what was actually received
+  return Ok(true as const);
+  // => All three amounts agree within tolerance — match passes
+};
+
+const ctx1: ThreeWayMatchContext = {
+  invoiceAmount: 1010,
+  poAmount: 1000,
+  receiptAmount: 1005,
+  tolerancePercent: 0.02,
+};
+// => 1010 vs 1000: diff=10, allowed=20 -> within tolerance
+
+const ctx2: ThreeWayMatchContext = {
+  invoiceAmount: 1100,
+  poAmount: 1000,
+  receiptAmount: 1000,
+  tolerancePercent: 0.02,
+};
+// => 1100 vs 1000: diff=100, allowed=20 -> outside tolerance
+
+console.log(threeWayMatch(ctx1)); // => { ok: true, value: true }
+console.log(threeWayMatch(ctx2)); // => { ok: false, error: "Invoice 1100 vs PO 1000..." }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The three-way match is a composable pure function on domain values — it can be tested exhaustively before being wired into the transition function.
@@ -241,7 +326,7 @@ printfn "%A" (threeWayMatch ctx2)  // => Error "Invoice 1100 vs PO 1000..."
 
 Combining the three-way match guard with the invoice transition function produces a full guarded FSM. The Approve event succeeds only when `threeWayMatch` returns `Ok ()`.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -367,6 +452,62 @@ printfn "%A" rejected  // => Error "Invoice 1200 vs PO 1000..."
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: Invoice record + guarded invoiceTransition; Clojure: cond dispatch]
+// TypeScript: Invoice type + switch-based guarded transition.
+
+type Invoice = Readonly<{
+  id: string;
+  state: InvoiceState;
+  matchCtx: ThreeWayMatchContext; // => Context needed by the Approve guard
+}>;
+
+const resultBind = <T, U, E>(r: Result<T, E>, f: (v: T) => Result<U, E>): Result<U, E> => (r.ok ? f(r.value) : r);
+// => Short-circuits on error — same semantics as F# Result.bind
+
+const invoiceTransition = (inv: Invoice, event: InvoiceEvent): Result<Invoice, string> => {
+  const s = inv.state;
+  if (s === "Received" && event === "Review") return Ok({ ...inv, state: "UnderReview" });
+  // => No guard: start review unconditionally
+  if (s === "UnderReview" && event === "Approve") {
+    // => Guard: three-way match must pass before approval
+    return resultBind(threeWayMatch(inv.matchCtx), () => Ok({ ...inv, state: "Approved" }));
+    // => Result.bind: if Ok() -> Ok Approved; if Error msg -> Error msg propagates
+  }
+  if (s === "UnderReview" && event === "Dispute") return Ok({ ...inv, state: "Disputed" });
+  if (s === "Disputed" && event === "Resubmit") return Ok({ ...inv, state: "UnderReview" });
+  // => Resubmit returns to UnderReview for re-evaluation
+  if (s === "UnderReview" && event === "Reject") return Ok({ ...inv, state: "Rejected" });
+  if (s === "Approved" && event === "Pay") return Ok({ ...inv, state: "Paid" });
+  return Err(`Invalid invoice transition: ${s} + ${event}`);
+};
+
+const goodCtx: ThreeWayMatchContext = {
+  invoiceAmount: 1010,
+  poAmount: 1000,
+  receiptAmount: 1005,
+  tolerancePercent: 0.02,
+};
+const inv: Invoice = { id: "INV-001", state: "UnderReview", matchCtx: goodCtx };
+const approved = invoiceTransition(inv, "Approve");
+// => { ok: true, value: { state: "Approved" } }
+
+console.log(approved.ok ? approved.value.state : approved.error);
+// => "Approved"
+
+const badCtx: ThreeWayMatchContext = { ...goodCtx, invoiceAmount: 1200 };
+const inv2: Invoice = { ...inv, matchCtx: badCtx };
+const rejected = invoiceTransition(inv2, "Approve");
+// => { ok: false, error: "Invoice 1200 vs PO 1000..." }
+
+console.log(rejected.ok ? "" : rejected.error);
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.map` threads the guard result into the state update without nested `match` expressions — the guard failure propagates automatically.
@@ -379,7 +520,7 @@ printfn "%A" rejected  // => Error "Invoice 1200 vs PO 1000..."
 
 An invoice is always linked to a PO. When an invoice is approved, the PO may need to advance to `Invoiced`. This example shows how to coordinate two FSMs by returning a command list from the invoice transition.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -516,6 +657,70 @@ match invoiceTransitionWithCommands inv3 Approve with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: InvoiceCommand DU; Clojure: tagged command maps]
+// TypeScript: tagged union for cross-machine commands — application layer executes them.
+
+type InvoiceCommand =
+  | { kind: "AdvancePOToInvoiced"; poId: string }
+  // => Tell PO FSM to advance
+  | { kind: "SendPaymentRequest"; invoiceId: string; amount: number }
+  // => Queue payment disbursement
+  | { kind: "NotifyRequester"; poId: string; message: string };
+// => Notify the requester
+
+// Transition returns [newInvoice, commands[]] — pure, no direct PO FSM calls.
+const invoiceTransitionWithCommands = (
+  inv: Invoice,
+  event: InvoiceEvent,
+): Result<[Invoice, InvoiceCommand[]], string> => {
+  const s = inv.state;
+  if (s === "Received" && event === "Review") return Ok([{ ...inv, state: "UnderReview" }, []]);
+  // => Review: no cross-machine commands needed
+  if (s === "UnderReview" && event === "Approve") {
+    return resultBind(threeWayMatch(inv.matchCtx), () => {
+      const cmds: InvoiceCommand[] = [
+        { kind: "AdvancePOToInvoiced", poId: "PO-001" },
+        // => Coordinate PO state
+        { kind: "SendPaymentRequest", invoiceId: inv.id, amount: inv.matchCtx.invoiceAmount },
+        // => Queue payment
+        { kind: "NotifyRequester", poId: "PO-001", message: "Invoice approved" },
+        // => Notify employee
+      ];
+      return Ok([{ ...inv, state: "Approved" } as Invoice, cmds] as [Invoice, InvoiceCommand[]]);
+    });
+  }
+  if (s === "UnderReview" && event === "Dispute")
+    return Ok([
+      { ...inv, state: "Disputed" },
+      [{ kind: "NotifyRequester", poId: "PO-001", message: "Invoice disputed — awaiting supplier" }],
+    ]);
+  if (s === "Disputed" && event === "Resubmit") return Ok([{ ...inv, state: "UnderReview" }, []]);
+  if (s === "Approved" && event === "Pay") return Ok([{ ...inv, state: "Paid" }, []]);
+  return Err(`Invalid: ${s} + ${event}`);
+};
+
+const inv3: Invoice = {
+  id: "INV-002",
+  state: "UnderReview",
+  matchCtx: { invoiceAmount: 500, poAmount: 500, receiptAmount: 500, tolerancePercent: 0.01 },
+};
+const r = invoiceTransitionWithCommands(inv3, "Approve");
+if (r.ok) {
+  const [nextInv, cmds] = r.value;
+  console.log("Next state:", nextInv.state); // => Approved
+  cmds.forEach((c) => console.log("Command:", c.kind));
+  // => Command: AdvancePOToInvoiced
+  // => Command: SendPaymentRequest
+  // => Command: NotifyRequester
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Returning a command list from the invoice transition delegates cross-machine coordination to the application layer — the FSM itself remains a pure function.
@@ -528,7 +733,7 @@ match invoiceTransitionWithCommands inv3 Approve with
 
 Different procurement categories have different match tolerances. This example shows parameterising the tolerance at the FSM level, so the same transition function works for capital goods (strict) and consumables (relaxed).
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -621,6 +826,56 @@ printfn "Consumables:   %A" (threeWayMatch consumablesCtx)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: ProcurementCategory DU; Clojure: category-tolerances map]
+// TypeScript: literal union for category + data-driven tolerance lookup.
+
+type ProcurementCategory = "CapitalGoods" | "Consumables" | "Services";
+// => Literal union: compiler rejects unknown categories
+
+// Tolerance policy as a lookup object — data-driven, easy to extend.
+const categoryTolerances: Record<ProcurementCategory, number> = {
+  CapitalGoods: 0.005, // => 0.5% — tight control for expensive assets
+  Consumables: 0.03, // => 3% — relaxed for bulk low-value items
+  Services: 0.01, // => 1% — moderate for service invoices
+};
+// => Record type ensures all categories have an entry — compiler-checked
+
+// Pure lookup: deterministic, no I/O.
+const toleranceFor = (category: ProcurementCategory): number => categoryTolerances[category];
+// => TypeScript Record guarantees the key exists — no undefined return
+
+// Build a match context with category-derived tolerance.
+const buildMatchCtx = (
+  invoiceAmt: number,
+  poAmt: number,
+  receiptAmt: number,
+  category: ProcurementCategory,
+): ThreeWayMatchContext => ({
+  invoiceAmount: invoiceAmt,
+  poAmount: poAmt,
+  receiptAmount: receiptAmt,
+  tolerancePercent: toleranceFor(category),
+  // => Tolerance from category lookup — caller does not set it directly
+});
+
+// Test: same amounts, different categories — 2% variance on invoice vs PO
+const capitalCtx = buildMatchCtx(10200, 10000, 10100, "CapitalGoods");
+// => tolerance = 0.5% — 2% variance exceeds this limit
+const consumablesCtx = buildMatchCtx(10200, 10000, 10100, "Consumables");
+// => tolerance = 3% — 2% variance is within this limit
+
+console.log("CapitalGoods: ", threeWayMatch(capitalCtx).ok ? "pass" : "fail");
+// => fail
+console.log("Consumables:  ", threeWayMatch(consumablesCtx).ok ? "pass" : "fail");
+// => pass
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Parameterising tolerance by category keeps the guard function generic while expressing category-specific business rules as data, not branching logic.
@@ -633,7 +888,7 @@ printfn "Consumables:   %A" (threeWayMatch consumablesCtx)
 
 A complete invoice approval workflow involves multiple steps: validate the invoice, run the three-way match, check budget availability, then approve. `Result.bind` chains these into a pipeline where any failure short-circuits the rest.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -746,6 +1001,56 @@ printfn "%A" (approveInvoicePipeline invOk 500m)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: Result.bind pipeline; Clojure: manual bind-result chain]
+// TypeScript: Result pipeline helper — sequential guards short-circuit on first error.
+
+// Budget check: ensure department has remaining budget for this invoice.
+const checkBudget = (departmentBudget: number, invoiceAmount: number): Result<true, string> =>
+  invoiceAmount <= departmentBudget
+    ? Ok(true as const)
+    : // => Budget available
+      Err(`Invoice ${invoiceAmount} exceeds remaining budget ${departmentBudget}`);
+// => Budget exceeded — approval blocked
+
+// Multi-step approval pipeline using Result.bind.
+const approveInvoicePipeline = (inv: Invoice, departmentBudget: number): Result<Invoice, string> =>
+  // => Step 1: must be in UnderReview state
+  resultBind(
+    inv.state === "UnderReview" ? Ok(inv) : Err(`Invoice must be UnderReview, got ${inv.state}`),
+    // => Step 2: three-way match must pass
+    (i) =>
+      resultBind(
+        threeWayMatch(i.matchCtx),
+        // => Step 3: budget must be available
+        () =>
+          resultBind(
+            checkBudget(departmentBudget, i.matchCtx.invoiceAmount),
+            // => Step 4: advance state to Approved
+            () => Ok({ ...i, state: "Approved" as InvoiceState }),
+          ),
+      ),
+  );
+// => Each bind step only runs if the previous step returned Ok
+
+const invOk: Invoice = {
+  id: "INV-003",
+  state: "UnderReview",
+  matchCtx: { invoiceAmount: 800, poAmount: 800, receiptAmount: 800, tolerancePercent: 0.02 },
+};
+
+console.log(approveInvoicePipeline(invOk, 1000));
+// => { ok: true, value: { state: "Approved" } }
+
+console.log(approveInvoicePipeline(invOk, 500));
+// => { ok: false, error: "Invoice 800 exceeds remaining budget 500" }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.bind` chains compose multi-step approval logic into a single readable pipeline where each step is independently testable.
@@ -758,7 +1063,7 @@ printfn "%A" (approveInvoicePipeline invOk 500m)
 
 A declarative FSM definition stores both the transition table and guard functions in a data structure. The interpreter is a generic function that looks up the transition and evaluates the guard — no machine-specific code required.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -875,6 +1180,67 @@ printfn "%A" (runMachine machine Received Pay)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: MachineDef generic Map; Clojure: map of maps]
+// TypeScript: data-driven machine definition — generic interpreter.
+
+type TransitionDef<S extends string> = {
+  guard: () => Result<true, string>; // => Guard closure (or always-pass)
+  nextState: S; // => Target state if guard passes
+};
+// => Generic over state type so the same interpreter drives any machine
+
+type MachineDef<S extends string, E extends string> = Map<string, TransitionDef<S>>;
+// => Keys are "State:Event" composite strings
+
+// Build the invoice machine definition with guards embedded as closures.
+const buildInvoiceMachine = (matchCtx: ThreeWayMatchContext): MachineDef<InvoiceState, InvoiceEvent> => {
+  const alwaysOk = (): Result<true, string> => Ok(true as const);
+  // => Reusable no-guard sentinel — keeps definitions concise
+  return new Map([
+    ["Received:Review", { guard: alwaysOk, nextState: "UnderReview" }],
+    // => :received + :review — no guard
+    ["UnderReview:Approve", { guard: () => threeWayMatch(matchCtx), nextState: "Approved" }],
+    // => :under-review + :approve — three-way match guard (closure captures matchCtx)
+    ["UnderReview:Dispute", { guard: alwaysOk, nextState: "Disputed" }],
+    ["Disputed:Resubmit", { guard: alwaysOk, nextState: "UnderReview" }],
+    ["UnderReview:Reject", { guard: alwaysOk, nextState: "Rejected" }],
+    ["Approved:Pay", { guard: alwaysOk, nextState: "Paid" }],
+  ]);
+};
+
+// Generic interpreter: same code runs any conformant machine definition.
+const runMachine = <S extends string, E extends string>(
+  machine: MachineDef<S, E>,
+  state: S,
+  event: E,
+): Result<S, string> => {
+  const def = machine.get(`${state}:${event}`);
+  if (!def) return Err(`No transition for ${state} + ${event}`);
+  // => Transition not defined — reject the event
+  return resultBind(def.guard(), () => Ok(def.nextState));
+  // => Guard passed — return the next state
+};
+
+const ctx: ThreeWayMatchContext = {
+  invoiceAmount: 1000,
+  poAmount: 1000,
+  receiptAmount: 1000,
+  tolerancePercent: 0.01,
+};
+const machine = buildInvoiceMachine(ctx);
+
+console.log(runMachine(machine, "UnderReview", "Approve"));
+// => { ok: true, value: "Approved" }
+console.log(runMachine(machine, "Received", "Pay"));
+// => { ok: false, error: "No transition for Received + Pay" }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A declarative machine definition separates FSM data from FSM execution — the same generic `runMachine` interpreter drives any conformant machine definition.
@@ -887,7 +1253,7 @@ printfn "%A" (runMachine machine Received Pay)
 
 Extending the declarative machine with named guards — identified by string keys and resolved through a registry — makes the machine definition serialisable and the guards swappable at runtime.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1018,6 +1384,75 @@ printfn "%A" (runNamedMachine registry serialisableInvoiceMachine UnderReview Ap
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: NamedTransitionDef + GuardRegistry; Clojure: named-guard map]
+// TypeScript: serialisable machine definition + runtime guard registry.
+
+type NamedTransitionDef<S extends string> = {
+  guardName: string | null; // => null means "no guard — always passes"
+  nextState: S;
+};
+// => No closures — definition is serialisable to JSON/database
+
+type GuardRegistry = Map<string, () => Result<true, string>>;
+// => Maps guard name strings to their implementations; built at startup
+
+// Resolve and run a named guard from the registry.
+const resolveGuard = (registry: GuardRegistry, guardName: string | null): Result<true, string> => {
+  if (guardName === null) return Ok(true as const);
+  // => No guard — transition always allowed
+  const guardFn = registry.get(guardName);
+  if (!guardFn) return Err(`Guard '${guardName}' not found in registry`);
+  // => Missing guard — fail safe (reject the transition)
+  return guardFn();
+  // => Guard found — evaluate it
+};
+
+// Serialisable invoice machine definition — no closures, just strings.
+const serialisableInvoiceMachine = new Map<string, NamedTransitionDef<InvoiceState>>([
+  ["Received:Review", { guardName: null, nextState: "UnderReview" }],
+  ["UnderReview:Approve", { guardName: "threeWayMatch", nextState: "Approved" }],
+  ["UnderReview:Dispute", { guardName: null, nextState: "Disputed" }],
+  ["Disputed:Resubmit", { guardName: null, nextState: "UnderReview" }],
+  ["UnderReview:Reject", { guardName: null, nextState: "Rejected" }],
+  ["Approved:Pay", { guardName: null, nextState: "Paid" }],
+]);
+// => Each entry stores a guard name string, not a closure — safe to serialise
+
+// Build registry with concrete guard implementations.
+const buildRegistry = (matchCtx: ThreeWayMatchContext): GuardRegistry =>
+  new Map([["threeWayMatch", () => threeWayMatch(matchCtx)]]);
+// => Only "threeWayMatch" defined; new guards added by setting additional entries
+
+// Generic named-machine runner.
+const runNamedMachine = (
+  registry: GuardRegistry,
+  machine: Map<string, NamedTransitionDef<InvoiceState>>,
+  state: InvoiceState,
+  event: InvoiceEvent,
+): Result<InvoiceState, string> => {
+  const def = machine.get(`${state}:${event}`);
+  if (!def) return Err(`No transition: ${state} + ${event}`);
+  return resultBind(resolveGuard(registry, def.guardName), () => Ok(def.nextState));
+};
+
+const ctx5: ThreeWayMatchContext = {
+  invoiceAmount: 950,
+  poAmount: 1000,
+  receiptAmount: 990,
+  tolerancePercent: 0.05,
+};
+const registry = buildRegistry(ctx5);
+
+console.log(runNamedMachine(registry, serialisableInvoiceMachine, "UnderReview", "Approve"));
+// => { ok: true, value: "Approved" }  (950 vs 1000 = 5% difference, tolerance = 5%)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Named guards decouple the machine definition from guard implementations — the definition can be stored in a database while implementations are registered at startup.
@@ -1032,7 +1467,7 @@ printfn "%A" (runNamedMachine registry serialisableInvoiceMachine UnderReview Ap
 
 Entry actions are business operations that must execute when a state is entered. Modelling them as a `InvoiceState -> Command list` function keeps the transition pure — effects are queued, not executed.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1155,6 +1590,67 @@ match invoiceTransitionWithEntry invU Approve with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: InvoiceEntryCommand DU; Clojure: tagged command maps]
+// TypeScript: tagged union for entry commands — deferred execution pattern.
+
+type InvoiceEntryCommand =
+  | { kind: "AssignReviewer"; invoiceId: string }
+  // => Assign AP reviewer on entry to UnderReview
+  | { kind: "SchedulePayment"; invoiceId: string; amount: number }
+  // => Queue payment on Approved
+  | { kind: "ArchiveInvoice"; invoiceId: string };
+// => Archive on terminal states
+
+// Entry action function: pure, deterministic, no side effects.
+const entryActions = (state: InvoiceState, inv: Invoice): InvoiceEntryCommand[] => {
+  switch (state) {
+    case "UnderReview":
+      return [{ kind: "AssignReviewer", invoiceId: inv.id }];
+    // => Assign a reviewer when invoice enters review
+    case "Approved":
+      return [{ kind: "SchedulePayment", invoiceId: inv.id, amount: inv.matchCtx.invoiceAmount }];
+    // => Schedule payment when invoice is approved
+    case "Rejected":
+    case "Paid":
+      return [{ kind: "ArchiveInvoice", invoiceId: inv.id }];
+    // => Archive when lifecycle ends — both terminal states
+    default:
+      return [];
+    // => No entry action for Received, Disputed
+  }
+};
+
+// Combine transition and entry action into one result.
+const invoiceTransitionWithEntry = (
+  inv: Invoice,
+  event: InvoiceEvent,
+): Result<[Invoice, InvoiceEntryCommand[]], string> =>
+  resultBind(invoiceTransition(inv, event), (nextInv) =>
+    Ok([nextInv, entryActions(nextInv.state, nextInv)] as [Invoice, InvoiceEntryCommand[]]),
+  );
+// => Entry actions computed for the target state after transition succeeds
+
+const invU: Invoice = {
+  id: "INV-004",
+  state: "UnderReview",
+  matchCtx: { invoiceAmount: 600, poAmount: 600, receiptAmount: 600, tolerancePercent: 0.01 },
+};
+
+const r = invoiceTransitionWithEntry(invU, "Approve");
+if (r.ok) {
+  const [nextInv, cmds] = r.value;
+  console.log("State:", nextInv.state); // => Approved
+  cmds.forEach((c) => console.log(c.kind, c.kind === "SchedulePayment" ? c.amount : ""));
+  // => SchedulePayment 600
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `entryActions state inv` separates the "what should happen when entering this state" decision from the "execute those effects" step — the transition function stays pure.
@@ -1167,7 +1663,7 @@ match invoiceTransitionWithEntry invU Approve with
 
 When a supplier resubmits a disputed invoice, the system should track how many times resubmission has occurred. This example extends the invoice record with a counter maintained by the FSM.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1305,6 +1801,61 @@ printfn "%A" (trackedInvoiceTransition tinv Resubmit)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: TrackedInvoice record; Clojure: extended map with resubmission fields]
+// TypeScript: extends Invoice with resubmission tracking fields.
+
+type TrackedInvoice = Invoice &
+  Readonly<{
+    resubmissionCount: number; // => Increments on every Resubmit event
+    maxResubmissions: number; // => Business rule: max retries allowed
+  }>;
+// => Intersection type adds tracking fields to the base Invoice type
+
+// Guard: resubmission only allowed below the maximum.
+const canResubmit = (inv: TrackedInvoice): Result<true, string> =>
+  inv.resubmissionCount < inv.maxResubmissions
+    ? Ok(true as const)
+    : // => Below limit — allow resubmission
+      Err(`Invoice ${inv.id} has reached the maximum of ${inv.maxResubmissions} resubmissions`);
+// => Limit reached — must reject or escalate
+
+// Transition function for tracked invoice.
+const trackedInvoiceTransition = (inv: TrackedInvoice, event: InvoiceEvent): Result<TrackedInvoice, string> => {
+  const s = inv.state;
+  if (s === "Received" && event === "Review") return Ok({ ...inv, state: "UnderReview" });
+  if (s === "UnderReview" && event === "Approve")
+    return resultBind(threeWayMatch(inv.matchCtx), () => Ok({ ...inv, state: "Approved" }));
+  if (s === "UnderReview" && event === "Dispute") return Ok({ ...inv, state: "Disputed" });
+  if (s === "Disputed" && event === "Resubmit")
+    // => Guard: check resubmission limit before allowing
+    return resultBind(canResubmit(inv), () =>
+      Ok({ ...inv, state: "UnderReview", resubmissionCount: inv.resubmissionCount + 1 }),
+    );
+  // => Increment counter atomically with the state change
+  if (s === "UnderReview" && event === "Reject") return Ok({ ...inv, state: "Rejected" });
+  if (s === "Approved" && event === "Pay") return Ok({ ...inv, state: "Paid" });
+  return Err(`Invalid: ${s} + ${event}`);
+};
+
+const tinv: TrackedInvoice = {
+  id: "INV-005",
+  state: "Disputed",
+  matchCtx: { invoiceAmount: 500, poAmount: 500, receiptAmount: 500, tolerancePercent: 0.01 },
+  resubmissionCount: 2,
+  maxResubmissions: 2,
+};
+
+const result = trackedInvoiceTransition(tinv, "Resubmit");
+console.log(result.ok ? "" : result.error);
+// => "Invoice INV-005 has reached the maximum of 2 resubmissions"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Embedding a resubmission counter in the record and guarding `Resubmit` against a maximum keeps retry-limit enforcement inside the FSM — no external counter needed.
@@ -1317,7 +1868,7 @@ printfn "%A" (trackedInvoiceTransition tinv Resubmit)
 
 An FSM is a protocol: only certain event sequences are valid. Enforcing the protocol at the API layer means rejecting HTTP requests that would trigger invalid transitions before any database writes occur.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1396,6 +1947,60 @@ handleApproveRequest Paid         // => HTTP 422: Event 'Approve' not allowed in
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: enforceProtocol using Map.tryFind; Clojure: get on machine map]
+// TypeScript: protocol validator at the API boundary — pure, no I/O.
+
+// Protocol validator: check whether the requested event is legal in the current state.
+const enforceProtocol = (
+  machine: Map<string, NamedTransitionDef<InvoiceState>>,
+  currentState: InvoiceState,
+  requestedEvent: InvoiceEvent,
+): Result<true, string> =>
+  machine.has(`${currentState}:${requestedEvent}`)
+    ? Ok(true as const)
+    : // => Transition found in the machine definition — event is legal
+      Err(`Event '${requestedEvent}' is not allowed when invoice is in state '${currentState}'`);
+// => No matching transition — protocol violation
+
+// Simulate API request handling
+const handleApproveRequest = (
+  machine: Map<string, NamedTransitionDef<InvoiceState>>,
+  currentState: InvoiceState,
+): void => {
+  const result = enforceProtocol(machine, currentState, "Approve");
+  if (!result.ok) {
+    console.log("HTTP 422:", result.error);
+    // => Unprocessable Entity — reject before any database write
+  } else {
+    console.log("HTTP 200: Approval transition is valid — proceeding");
+    // => Transition is legal — proceed to guard evaluation and persistence
+  }
+};
+
+// Use the serialisable machine from Example 33
+const ctx5b: ThreeWayMatchContext = {
+  invoiceAmount: 1000,
+  poAmount: 1000,
+  receiptAmount: 1000,
+  tolerancePercent: 0.01,
+};
+const reg5b = buildRegistry(ctx5b);
+// => registry not needed for protocol check — only machine definition required
+
+handleApproveRequest(serialisableInvoiceMachine, "UnderReview");
+// => HTTP 200: Approval transition is valid — proceeding
+handleApproveRequest(serialisableInvoiceMachine, "Received");
+// => HTTP 422: Event 'Approve' is not allowed when invoice is in state 'Received'
+handleApproveRequest(serialisableInvoiceMachine, "Paid");
+// => HTTP 422: Event 'Approve' is not allowed when invoice is in state 'Paid'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Using the machine definition as a protocol enforcer at the API layer prevents invalid state transitions before any database access — cheap, early rejection.
@@ -1408,7 +2013,7 @@ handleApproveRequest Paid         // => HTTP 422: Event 'Approve' not allowed in
 
 The PO lifecycle needs a `PartiallyReceived` state for partial deliveries. This example introduces it as a new DU case and shows how F#'s exhaustiveness check immediately flags every incomplete handler.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1539,6 +2144,75 @@ printfn "%A" result  // => Ok Acknowledged
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: ExtendedPOState DU — compiler flags incomplete handlers; Clojure: new keywords]
+// TypeScript: extended literal union — adding new variant requires handling in all switches.
+
+type ExtendedPOState =
+  | "Draft"
+  | "AwaitingApproval"
+  | "Approved"
+  | "Issued"
+  | "PartiallyReceived" // => New: partial delivery confirmed by warehouse
+  | "Acknowledged" // => Full delivery confirmed
+  | "Closed"
+  | "Cancelled"
+  | "Disputed";
+// => Adding "PartiallyReceived" makes exhaustive switches require a new case
+
+type ExtendedPOEvent =
+  | "Submit"
+  | "Approve"
+  | "Reject"
+  | "Issue"
+  | "ReceivePartial"
+  | "Acknowledge"
+  | "Close"
+  | "Cancel"
+  | "Dispute";
+
+// Extended transition table — data-driven, easy to add new transitions.
+const extendedPOTable = new Map<string, ExtendedPOState>([
+  ["Draft:Submit", "AwaitingApproval"],
+  ["AwaitingApproval:Approve", "Approved"],
+  ["AwaitingApproval:Reject", "Cancelled"],
+  ["Approved:Issue", "Issued"],
+  ["Issued:ReceivePartial", "PartiallyReceived"],
+  // => New transition: partial receipt moves to PartiallyReceived
+  ["PartiallyReceived:ReceivePartial", "PartiallyReceived"],
+  // => Self-loop: another partial delivery keeps state the same
+  ["PartiallyReceived:Acknowledge", "Acknowledged"],
+  // => Full receipt acknowledged from partial state
+  ["Issued:Acknowledge", "Acknowledged"],
+  // => Full receipt from Issued without partial step
+  ["Acknowledged:Close", "Closed"],
+  ["Draft:Cancel", "Cancelled"],
+  ["Approved:Cancel", "Cancelled"],
+  ["Issued:Dispute", "Disputed"],
+  ["PartiallyReceived:Dispute", "Disputed"],
+  // => Dispute can also arise after a partial delivery
+]);
+
+const extendedTransition = (state: ExtendedPOState, event: ExtendedPOEvent): Result<ExtendedPOState, string> => {
+  const next = extendedPOTable.get(`${state}:${event}`);
+  if (!next) return Err(`No transition: ${state} + ${event}`);
+  return Ok(next);
+};
+
+// Test: two partial deliveries then full acknowledgement
+const chainResult = (["ReceivePartial", "ReceivePartial", "Acknowledge"] as ExtendedPOEvent[]).reduce<
+  Result<ExtendedPOState, string>
+>((acc, ev) => resultBind(acc, (s) => extendedTransition(s, ev)), Ok("Issued" as ExtendedPOState));
+
+console.log(chainResult);
+// => { ok: true, value: "Acknowledged" }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Adding `PartiallyReceived` to the DU and adding two new `match` arms — one for the new state and one for the self-loop — is the complete change required; the compiler flags every other handler that needs updating.
@@ -1551,7 +2225,7 @@ printfn "%A" result  // => Ok Acknowledged
 
 When an invoice is approved, the PO must advance to `Invoiced`. This example models a simple in-process event bus that routes the `InvoiceApproved` domain event to the PO FSM handler.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1657,6 +2331,63 @@ simulateApproval ()
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: DomainEvent DU + EventBus; Clojure: defmulti on :type key]
+// TypeScript: tagged union for domain events + Map-based dispatcher.
+
+type DomainEvent =
+  | { kind: "InvoiceApproved"; invoiceId: string; poId: string; amount: number }
+  | { kind: "InvoicePaid"; invoiceId: string; poId: string }
+  | { kind: "POInvoiced"; poId: string };
+// => Tagged union: discriminates on kind string; payload varies per event
+
+// PO FSM handler for InvoiceApproved event — pure, no side effects.
+type POState2 = "Issued" | "Acknowledged" | "Closed";
+// => Simplified PO states used in this example
+
+const handleInvoiceApproved = (poId: string, currentPOState: POState2): Result<[POState2, DomainEvent[]], string> => {
+  if (currentPOState === "Issued" || currentPOState === "Acknowledged")
+    return Ok(["Acknowledged", [{ kind: "POInvoiced", poId }]]);
+  // => Advance PO to Acknowledged; emit POInvoiced for downstream consumers
+  return Err(`PO ${poId} in state ${currentPOState} cannot be marked Invoiced`);
+};
+
+// Simple in-process event bus: Map of handlers keyed by event kind.
+type EventHandler<E extends DomainEvent> = (event: E) => void;
+const eventBus = new Map<DomainEvent["kind"], EventHandler<any>>();
+// => Handlers registered at startup; event processing is synchronous and pure
+
+// Register the PO handler for InvoiceApproved
+eventBus.set("InvoiceApproved", (event: Extract<DomainEvent, { kind: "InvoiceApproved" }>) => {
+  console.log("Handling InvoiceApproved:", event.invoiceId, event.poId, event.amount);
+  const result = handleInvoiceApproved(event.poId, "Issued");
+  if (result.ok) {
+    const [newPOState, emittedEvents] = result.value;
+    console.log("PO new state:", newPOState); // => Acknowledged
+    emittedEvents.forEach((e) => console.log("Emitted:", e.kind, (e as any).poId));
+    // => Emitted: POInvoiced PO-010
+  } else {
+    console.log("Error:", result.error);
+  }
+});
+
+// Dispatch an event through the bus
+const dispatch = (event: DomainEvent): void => {
+  const handler = eventBus.get(event.kind);
+  if (handler) handler(event);
+};
+
+dispatch({ kind: "InvoiceApproved", invoiceId: "INV-006", poId: "PO-010", amount: 1500 });
+// => Handling InvoiceApproved: INV-006 PO-010 1500
+// => PO new state: Acknowledged
+// => Emitted: POInvoiced PO-010
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An event bus decouples the Invoice and PO FSMs — each machine publishes domain events, and handlers update the other machine, without direct function calls between machines.
@@ -1669,7 +2400,7 @@ simulateApproval ()
 
 Testing cross-machine coordination requires verifying that the correct commands and events are produced, not that side effects occurred. This example tests the coordination logic by inspecting the returned command list.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1775,6 +2506,51 @@ match applyInvoiceEvents startInv lifecycle with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: List.fold + Result.bind test harness; Clojure: reduce with short-circuit]
+// TypeScript: Array.reduce accumulator — collect all commands in one pass.
+
+const applyInvoiceEvents = (
+  inv: Invoice,
+  events: readonly InvoiceEvent[],
+): Result<[Invoice, InvoiceCommand[]], string> =>
+  events.reduce<Result<[Invoice, InvoiceCommand[]], string>>(
+    (acc, event) =>
+      resultBind(acc, ([currentInv, allCmds]) =>
+        resultBind(invoiceTransitionWithCommands(currentInv, event), ([nextInv, newCmds]) =>
+          Ok([nextInv, [...allCmds, ...newCmds]] as [Invoice, InvoiceCommand[]]),
+        ),
+      ),
+    Ok([inv, []] as [Invoice, InvoiceCommand[]]),
+    // => Start with the initial invoice and an empty command list
+  );
+// => reduce threads state and commands; first error stops processing
+
+const startInv: Invoice = {
+  id: "INV-007",
+  state: "Received",
+  matchCtx: { invoiceAmount: 1000, poAmount: 1000, receiptAmount: 1000, tolerancePercent: 0.01 },
+};
+const lifecycle: InvoiceEvent[] = ["Review", "Approve", "Pay"];
+// => Full happy-path event sequence
+
+const result = applyInvoiceEvents(startInv, lifecycle);
+if (result.ok) {
+  const [finalInv, cmds] = result.value;
+  console.log("Final state:", finalInv.state); // => Paid
+  console.log("Commands produced:", cmds.length); // => 3
+  cmds.forEach((c, i) => console.log(`  [${i}]`, c.kind));
+  // => [0] AdvancePOToInvoiced
+  // => [1] SendPaymentRequest
+  // => [2] NotifyRequester
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Testing FSM coordination by inspecting the returned command list requires no mocking, no I/O, and no test doubles — commands are plain data.
@@ -1787,7 +2563,7 @@ match applyInvoiceEvents startInv lifecycle with
 
 Invoice creation requires multiple field validations. Using a list of errors rather than fail-fast gives the supplier a complete picture of what needs correcting, reducing the number of correction-resubmission cycles.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1908,6 +2684,66 @@ match validateInvoice badInput goodCtx2 with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: Result<Invoice, string list>; Clojure: error accumulation vector]
+// TypeScript: accumulate all validation errors in one pass — same fail-all pattern.
+
+type InvoiceInput = Readonly<{
+  invoiceId: string;
+  poReference: string;
+  amount: number;
+  lineCount: number;
+}>;
+// => Raw input before validation — may contain invalid fields
+
+type Validator = (input: InvoiceInput) => string | null;
+// => Returns an error string or null (valid)
+
+const invoiceValidators: readonly Validator[] = [
+  (i) => (!i.invoiceId || i.invoiceId.trim() === "" ? "Invoice ID must not be empty" : null),
+  // => Blank ID rejected
+  (i) => (!i.poReference || i.poReference.trim() === "" ? "PO reference must not be empty" : null),
+  // => Blank PO reference rejected
+  (i) => (i.amount <= 0 ? "Invoice amount must be positive" : null),
+  // => Non-positive amount rejected
+  (i) => (i.lineCount <= 0 ? "Invoice must have at least one line" : null),
+  // => Zero or negative line count rejected
+];
+// => Array of validators — add new checks by appending, no branching logic to change
+
+const validateInvoice = (input: InvoiceInput, matchCtx: ThreeWayMatchContext): Result<Invoice, string[]> => {
+  const errors = invoiceValidators.map((v) => v(input)).filter((e): e is string => e !== null);
+  // => Collect all failing validators; filter removes nulls (passing validators)
+  if (errors.length > 0) return Err(errors);
+  // => Return all errors for the caller to display
+  return Ok({ id: input.invoiceId, state: "Received", matchCtx });
+  // => No errors — construct invoice in initial Received state
+};
+
+const badInput: InvoiceInput = { invoiceId: "", poReference: "", amount: -100, lineCount: 0 };
+const goodCtx2: ThreeWayMatchContext = {
+  invoiceAmount: 0,
+  poAmount: 0,
+  receiptAmount: 0,
+  tolerancePercent: 0.01,
+};
+
+const vResult = validateInvoice(badInput, goodCtx2);
+if (!vResult.ok) {
+  console.log("Validation errors:");
+  vResult.error.forEach((e) => console.log(" -", e));
+  // => - Invoice ID must not be empty
+  // => - PO reference must not be empty
+  // => - Invoice amount must be positive
+  // => - Invoice must have at least one line
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result<Invoice, string list>` accumulates all validation errors in a single pass — the caller sees a complete list, not just the first failure.
@@ -1920,7 +2756,7 @@ match validateInvoice badInput goodCtx2 with
 
 A PO aggregate can own its associated invoices. This example models a `CompositePO` that holds both the PO state and a list of invoice states, with a transition function that coordinates both.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2029,6 +2865,64 @@ printfn "%A" (closePO cpoPaid)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: CompositePO record + allInvoicesPaid guard; Clojure: nested map]
+// TypeScript: composite type with cross-aggregate guard.
+
+type CompositePO = Readonly<{
+  id: string;
+  poState: "Acknowledged" | "Closed" | string;
+  // => Simplified PO state for this example
+  invoices: readonly Invoice[];
+  // => Associated invoices — PO owns its invoices
+}>;
+
+// Derive PO state from invoice states: can PO close?
+const allInvoicesPaid = (invoices: readonly Invoice[]): boolean => invoices.every((inv) => inv.state === "Paid");
+// => Array.every returns true for empty array — consistent with F# List.forall
+
+// Guarded close: PO can only close when all invoices are paid.
+const closePO = (po: CompositePO): Result<CompositePO, string> => {
+  if (po.poState !== "Acknowledged") return Err(`Cannot close PO in state ${po.poState}: must be Acknowledged`);
+  // => Wrong state — reject
+  if (!allInvoicesPaid(po.invoices)) return Err("Cannot close PO: not all invoices are paid");
+  // => Outstanding invoices — block closing
+  return Ok({ ...po, poState: "Closed" });
+  // => All invoices paid — PO can close
+};
+
+const mockCtx: ThreeWayMatchContext = {
+  invoiceAmount: 500,
+  poAmount: 500,
+  receiptAmount: 500,
+  tolerancePercent: 0.01,
+};
+const paidInv: Invoice = { id: "INV-A", state: "Paid", matchCtx: mockCtx };
+const pendingInv: Invoice = { id: "INV-B", state: "Approved", matchCtx: mockCtx };
+
+const cpo: CompositePO = {
+  id: "PO-020",
+  poState: "Acknowledged",
+  invoices: [paidInv, pendingInv],
+};
+// => One invoice paid, one not — PO should not close
+
+console.log(closePO(cpo));
+// => { ok: false, error: "Cannot close PO: not all invoices are paid" }
+
+const cpoPaid: CompositePO = {
+  ...cpo,
+  invoices: [paidInv, { ...pendingInv, state: "Paid" }],
+};
+console.log(closePO(cpoPaid));
+// => { ok: true, value: { poState: "Closed", ... } }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Composing PO and Invoice states into a `CompositePO` record enables guards that span both machines — the PO close guard reads invoice states from the same record.
@@ -2041,7 +2935,7 @@ printfn "%A" (closePO cpoPaid)
 
 An invoice that has been under review for more than a configurable number of days should escalate automatically. This example models timeout as a guard that compares the review start date against the current date.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2174,6 +3068,59 @@ printfn "%A" (timedApprove timedInv System.DateTime.UtcNow 48)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: TimedInvoice record + withinReviewSla; Clojure: review-started-at ms]
+// TypeScript: optional Date field + SLA guard function.
+
+type TimedInvoice = Invoice &
+  Readonly<{
+    reviewStartedAt?: Date; // => Set when entering UnderReview; undefined if not started
+  }>;
+// => Optional reviewStartedAt: undefined serves as None (no timeout applicable)
+
+// Timeout guard: returns error if review has exceeded the SLA.
+const withinReviewSla = (slaHours: number, now: Date, inv: TimedInvoice): Result<true, string> => {
+  if (!inv.reviewStartedAt) return Ok(true as const);
+  // => Review hasn't started — no timeout applicable
+  const elapsedHours = (now.getTime() - inv.reviewStartedAt.getTime()) / 3_600_000;
+  // => Convert millisecond difference to hours
+  if (elapsedHours <= slaHours) return Ok(true as const);
+  // => Within SLA window — allow approval
+  return Err(`Invoice ${inv.id} review SLA exceeded: ${elapsedHours.toFixed(1)}h > ${slaHours}h`);
+  // => Timeout: must escalate
+};
+
+// Timed transition: approval blocked if SLA is exceeded.
+const timedApprove = (inv: TimedInvoice, now: Date, slaHours: number): Result<TimedInvoice, string> => {
+  if (inv.state !== "UnderReview") return Err(`Cannot approve invoice in state ${inv.state}`);
+  return resultBind(withinReviewSla(slaHours, now, inv), () =>
+    resultBind(
+      threeWayMatch(inv.matchCtx),
+      () => Ok({ ...inv, state: "Approved" as InvoiceState, reviewStartedAt: undefined }),
+      // => Clear timestamp on approval
+    ),
+  );
+};
+
+// Test: invoice started 50 hours ago with 48-hour SLA
+const reviewStart = new Date(Date.now() - 50 * 3_600_000);
+// => Subtract 50 hours from current time
+const timedInv: TimedInvoice = {
+  id: "INV-008",
+  state: "UnderReview",
+  matchCtx: { invoiceAmount: 300, poAmount: 300, receiptAmount: 300, tolerancePercent: 0.01 },
+  reviewStartedAt: reviewStart,
+};
+
+console.log(timedApprove(timedInv, new Date(), 48));
+// => { ok: false, error: "Invoice INV-008 review SLA exceeded: 50.0h > 48h" }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Timeout guards are pure functions that compare timestamps — they integrate with the `Result.bind` chain like any other guard, requiring no special FSM infrastructure.
@@ -2186,7 +3133,7 @@ printfn "%A" (timedApprove timedInv System.DateTime.UtcNow 48)
 
 A runner applies a sequence of events to an invoice, threading the state through each transition and collecting all commands. It is the invoice equivalent of the `replayEvents` function from the beginner level.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2310,6 +3257,53 @@ match runInvoiceFSM freshInv events with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: runInvoiceFSM with List.fold + Result.bind; Clojure: reduce with reduced]
+// TypeScript: Array.reduce — collect final state and all commands.
+
+const runInvoiceFSM = (
+  initialInv: Invoice,
+  events: readonly InvoiceEvent[],
+): Result<[Invoice, InvoiceCommand[]], string> =>
+  events.reduce<Result<[Invoice, InvoiceCommand[]], string>>(
+    (acc, event) =>
+      resultBind(acc, ([inv, cmds]) =>
+        resultBind(invoiceTransitionWithCommands(inv, event), ([nextInv, newCmds]) =>
+          Ok([nextInv, [...cmds, ...newCmds]] as [Invoice, InvoiceCommand[]]),
+        ),
+      ),
+    Ok([initialInv, []] as [Invoice, InvoiceCommand[]]),
+    // => Start with initial invoice and empty command list
+  );
+// => Left fold: process events left-to-right; first error stops processing
+
+// Run a complete lifecycle from Received through to Paid
+const freshInv: Invoice = {
+  id: "INV-009",
+  state: "Received",
+  matchCtx: { invoiceAmount: 2500, poAmount: 2500, receiptAmount: 2500, tolerancePercent: 0.02 },
+};
+const events: InvoiceEvent[] = ["Review", "Approve", "Pay"];
+
+const runResult = runInvoiceFSM(freshInv, events);
+if (runResult.ok) {
+  const [finalInv, cmds] = runResult.value;
+  console.log("Final state:", finalInv.state); // => Paid
+  console.log("Total commands:", cmds.length); // => 3 commands from the Approve transition
+  cmds.forEach((c, i) => console.log(`[${i}]`, c.kind));
+  // => [0] AdvancePOToInvoiced
+  // => [1] SendPaymentRequest
+  // => [2] NotifyRequester
+} else {
+  console.log("Runner error:", runResult.error);
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A generic FSM runner built on `List.fold` and `Result.bind` applies any sequence of events to any machine that follows the `(State, Event) -> Result<(State, Commands), Error>` signature.
@@ -2322,7 +3316,7 @@ match runInvoiceFSM freshInv events with
 
 Tracking all states across both machines provides a coverage map that shows which lifecycle combinations are possible and which are mutually exclusive.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2418,6 +3412,55 @@ validCoverageSnapshots
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: P2PCoverageState record list; Clojure: vector of plain maps]
+// TypeScript: readonly array of snapshot objects — living documentation.
+
+type P2PCoverageSnapshot = Readonly<{
+  poState: string;
+  invoiceState: InvoiceState | null;
+  // => null means no invoice yet created for this PO
+}>;
+// => Documents which (PO, Invoice) combinations are reachable in the P2P domain
+
+const validCoverageSnapshots: readonly P2PCoverageSnapshot[] = [
+  { poState: "Draft", invoiceState: null },
+  // => PO in Draft — no invoice yet
+  { poState: "AwaitingApproval", invoiceState: null },
+  // => PO under manager review — no invoice yet
+  { poState: "Approved", invoiceState: null },
+  // => PO approved, not yet issued — no invoice
+  { poState: "Issued", invoiceState: null },
+  // => PO issued to supplier — invoice may arrive
+  { poState: "Issued", invoiceState: "Received" },
+  // => Invoice just registered against an issued PO
+  { poState: "Acknowledged", invoiceState: "UnderReview" },
+  // => Goods received; invoice under AP review
+  { poState: "Acknowledged", invoiceState: "Approved" },
+  // => Invoice approved; payment scheduled
+  { poState: "Acknowledged", invoiceState: "Paid" },
+  // => Invoice paid; PO can now close
+  { poState: "Closed", invoiceState: "Paid" },
+  // => Terminal: PO closed, invoice paid — fully complete P2P lifecycle
+];
+// => 9 valid combinations — documents the reachable state space
+
+console.log(`Valid P2P state combinations: ${validCoverageSnapshots.length}`);
+// => 9
+
+validCoverageSnapshots.forEach((s) =>
+  console.log(`  PO: ${s.poState.padEnd(20)} | Invoice: ${s.invoiceState ?? "<none>"}`),
+);
+// => PO: Draft                | Invoice: <none>
+// => PO: AwaitingApproval     | Invoice: <none>
+// => ... (one line per snapshot)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Enumerating valid cross-machine state combinations as data makes the P2P lifecycle specification explicit and queryable — a snapshot test can assert this list is stable.
@@ -2432,7 +3475,7 @@ validCoverageSnapshots
 
 Network retries can cause the same event to arrive twice. An idempotent transition function returns `Ok currentState` when the transition has already been applied, rather than `Error`.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2536,6 +3579,50 @@ printfn "%A" r2  // => Ok ({ State = Approved; ... }, true)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: idempotentInvoiceTransition returning (Invoice * bool); Clojure: Set of idempotent pairs]
+// TypeScript: Set-based idempotency check + boolean flag in result.
+
+const idempotentPairs = new Set<string>([
+  "UnderReview:Review",
+  // => Already in UnderReview — Review event is idempotent
+  "Approved:Approve",
+  // => Already Approved — Approve event is idempotent
+  "Paid:Pay",
+  // => Already Paid — Pay event is idempotent
+]);
+// => Set of "State:Event" composite keys that represent already-applied operations
+
+const idempotentInvoiceTransition = (inv: Invoice, event: InvoiceEvent): Result<[Invoice, boolean], string> => {
+  if (idempotentPairs.has(`${inv.state}:${event}`)) return Ok([inv, false]);
+  // => false signals a no-op; caller should skip command execution
+  return resultBind(invoiceTransition(inv, event), (nextInv) => Ok([nextInv, true] as [Invoice, boolean]));
+  // => true signals a real transition; caller should execute commands
+};
+
+const approvedInv: Invoice = {
+  id: "INV-010",
+  state: "Approved",
+  matchCtx: { invoiceAmount: 300, poAmount: 300, receiptAmount: 300, tolerancePercent: 0.01 },
+};
+const r1 = idempotentInvoiceTransition(approvedInv, "Approve");
+// => { ok: true, value: [{ state: "Approved" }, false] } — idempotent, no change
+
+const reviewedInv: Invoice = { ...approvedInv, state: "UnderReview" };
+const r2 = idempotentInvoiceTransition(reviewedInv, "Approve");
+// => { ok: true, value: [{ state: "Approved" }, true] } — real transition
+
+console.log(r1.ok ? `transitioned: ${r1.value[1]}` : r1.error);
+// => transitioned: false
+console.log(r2.ok ? `transitioned: ${r2.value[1]}` : r2.error);
+// => transitioned: true
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Idempotency is a property of the transition function, not the messaging infrastructure — encoding it here makes the FSM safe to use with at-least-once delivery messaging.
@@ -2548,7 +3635,7 @@ printfn "%A" r2  // => Ok ({ State = Approved; ... }, true)
 
 Over time, the domain model evolves. An `InvoiceState` value serialised two years ago may not match the current DU definition. This example shows a migration function that upgrades old state values to the current model.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2654,6 +3741,73 @@ legacyStates
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: event versioning with discriminated union + migration; Clojure: schema evolution]
+// TypeScript: versioned event union + pure migration function.
+
+// Versioned event type: V1 events use string state; V2 events use typed payload.
+type InvoiceEventV1 = Readonly<{
+  version: 1;
+  type: string; // => "review" | "approve" | ...
+  invoiceId: string;
+}>;
+// => Legacy format — type is an untyped string
+
+type InvoiceEventV2 = Readonly<{
+  version: 2;
+  type: InvoiceEvent; // => Typed literal union — compiler-checked
+  invoiceId: string;
+  timestamp: string; // => ISO 8601 timestamp added in V2
+}>;
+// => Current format — type is a literal union with compiler enforcement
+
+type VersionedInvoiceEvent = InvoiceEventV1 | InvoiceEventV2;
+// => Discriminated union on "version" field — exhaustive switch enforced
+
+// Pure migration function: upgrade V1 events to V2.
+const migrateEvent = (event: VersionedInvoiceEvent): InvoiceEventV2 => {
+  switch (event.version) {
+    case 1:
+      return {
+        version: 2,
+        type: event.type as InvoiceEvent,
+        // => Cast V1 untyped string to typed literal — safe if V1 data was valid
+        invoiceId: event.invoiceId,
+        timestamp: new Date(0).toISOString(),
+        // => Default timestamp for migrated events: epoch start
+      };
+    case 2:
+      return event;
+    // => Already V2 — pass through unchanged
+    default: {
+      const _exhaustive: never = event;
+      throw new Error(`Unhandled event version: ${JSON.stringify(_exhaustive)}`);
+    }
+  }
+};
+
+// Test migration
+const v1Event: InvoiceEventV1 = { version: 1, type: "approve", invoiceId: "INV-011" };
+const migrated = migrateEvent(v1Event);
+// => { version: 2, type: "approve", invoiceId: "INV-011", timestamp: "1970-01-01T00:00:00.000Z" }
+
+console.log(migrated);
+// => { version: 2, type: "approve", invoiceId: "INV-011", timestamp: "..." }
+
+const v2Event: InvoiceEventV2 = {
+  version: 2,
+  type: "Approve",
+  invoiceId: "INV-012",
+  timestamp: new Date().toISOString(),
+};
+console.log(migrateEvent(v2Event) === v2Event); // => true (pass-through)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A versioned state wrapper with a migration function makes schema evolution explicit — unknown legacy values produce recoverable `Error` results rather than silent data corruption.
@@ -2666,7 +3820,7 @@ legacyStates
 
 The FSM defines which operations are currently available. A query function derives this from the current state, providing the UI with an up-to-date set of allowed actions without coupling the UI to FSM internals.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2785,6 +3939,68 @@ let actionLabel (action: InvoiceAction) : string =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: pure query functions on Invoice record; Clojure: pure data queries]
+// TypeScript: pure query functions — derive answers from state without side effects.
+
+// Query: what events are valid in the current state?
+const validEventsForState = (
+  machine: Map<string, NamedTransitionDef<InvoiceState>>,
+  state: InvoiceState,
+): InvoiceEvent[] => {
+  const valid: InvoiceEvent[] = [];
+  machine.forEach((_, key) => {
+    const [s, e] = key.split(":") as [InvoiceState, InvoiceEvent];
+    if (s === state) valid.push(e);
+    // => Collect all events that are valid in the given state
+  });
+  return valid;
+};
+// => Returns the list of currently allowed events — drives UI action buttons
+
+// Query: has the invoice passed the point of no return?
+const isInvoicePostApproval = (state: InvoiceState): boolean => state === "Approved" || state === "Paid";
+// => Post-approval invoices cannot be disputed or rejected — used by UI guards
+
+// Query: what is the display label for a state?
+const invoiceStateLabel = (state: InvoiceState): string => {
+  switch (state) {
+    case "Received":
+      return "Registered — awaiting review";
+    case "UnderReview":
+      return "Under AP Review";
+    case "Approved":
+      return "Approved — payment scheduled";
+    case "Disputed":
+      return "Disputed — awaiting supplier";
+    case "Rejected":
+      return "Rejected — terminal";
+    case "Paid":
+      return "Paid — complete";
+    default: {
+      const _exhaustive: never = state;
+      throw new Error(`Unhandled state: ${_exhaustive}`);
+    }
+  }
+};
+// => Exhaustive switch: adding a new InvoiceState variant produces a compiler error
+
+// Test queries using the serialisable machine from Example 33
+const validForReview = validEventsForState(serialisableInvoiceMachine, "UnderReview");
+console.log("Valid events for UnderReview:", validForReview);
+// => ["Approve", "Dispute", "Reject"]  (from the machine definition entries)
+
+console.log(isInvoicePostApproval("Approved")); // => true
+console.log(isInvoicePostApproval("Disputed")); // => false
+
+console.log(invoiceStateLabel("UnderReview")); // => "Under AP Review"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `availableActions` is a pure query on the FSM state — the UI reads it to show only valid actions, eliminating the need for per-button permission checks scattered across the frontend.
@@ -2816,7 +4032,7 @@ sequenceDiagram
     POFSM->>POFSM: Close (Acknowledged -> Closed)
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2969,6 +4185,60 @@ match finalP2P with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: Mermaid sequence diagram as string; Clojure: same string generation]
+// TypeScript: pure function generates a Mermaid sequence diagram from event sequences.
+
+type EventStep = Readonly<{
+  actor: string; // => Who sends the event (e.g. "Employee", "Manager")
+  machine: string; // => Which FSM receives it (e.g. "PO-FSM", "Invoice-FSM")
+  event: string; // => Event name
+  result: string; // => Result state after the transition
+}>;
+// => Describes one step in a multi-machine interaction sequence
+
+// Pure function: generate a Mermaid sequence diagram from steps.
+const generateSequenceDiagram = (steps: readonly EventStep[]): string => {
+  const lines: string[] = ["sequenceDiagram"];
+  // => Mermaid sequence diagram header
+  steps.forEach((step) => {
+    lines.push(`    ${step.actor}->>+${step.machine}: ${step.event}`);
+    // => Arrow from actor to machine with event label
+    lines.push(`    ${step.machine}-->>-${step.actor}: ${step.result}`);
+    // => Reply arrow from machine to actor with result state
+  });
+  return lines.join("\n");
+};
+
+// PO + Invoice happy-path interaction sequence
+const p2pSequence: readonly EventStep[] = [
+  { actor: "Employee", machine: "PO-FSM", event: "Submit", result: "AwaitingApproval" },
+  // => Employee submits PO for approval
+  { actor: "Manager", machine: "PO-FSM", event: "Approve", result: "Approved" },
+  // => Manager grants approval
+  { actor: "Finance", machine: "PO-FSM", event: "Issue", result: "Issued" },
+  // => Finance issues PO to supplier
+  { actor: "Supplier", machine: "Invoice-FSM", event: "Review", result: "UnderReview" },
+  // => Invoice enters AP review queue
+  { actor: "AP-Team", machine: "Invoice-FSM", event: "Approve", result: "Approved" },
+  // => Three-way match passes; invoice approved
+  { actor: "Finance", machine: "Invoice-FSM", event: "Pay", result: "Paid" },
+  // => Payment disbursed
+];
+
+const diagram = generateSequenceDiagram(p2pSequence);
+console.log(diagram);
+// => sequenceDiagram
+// =>     Employee->>+PO-FSM: Submit
+// =>     PO-FSM-->>-Employee: AwaitingApproval
+// =>     ... (one pair per step)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling the two-machine interaction as a fold over a shared event log produces a co-simulation: both FSMs advance in response to the same ordered event stream.
@@ -2981,7 +4251,7 @@ match finalP2P with
 
 SLA metadata — review deadlines, payment terms, escalation thresholds — can be attached to the FSM as a record of policy values. This example associates SLA metadata with each invoice state.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3105,6 +4375,62 @@ printfn "Overdue: %b" (isOverdue defaultSLA overdueInv System.DateTime.UtcNow)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: SLA metadata embedded in machine definition; Clojure: map with :sla-hours]
+// TypeScript: extended machine definition with SLA metadata field.
+
+type TransitionDefWithSLA<S extends string> = NamedTransitionDef<S> &
+  Readonly<{
+    slaHours?: number; // => Optional SLA for this transition step
+  }>;
+// => Intersection type adds SLA metadata without changing the base definition
+
+// Invoice machine with SLA annotations — same data-driven approach.
+const invoiceMachineWithSLA = new Map<string, TransitionDefWithSLA<InvoiceState>>([
+  ["Received:Review", { guardName: null, nextState: "UnderReview", slaHours: 24 }],
+  // => AP team must start review within 24 hours of receipt
+  [
+    "UnderReview:Approve",
+    {
+      guardName: "threeWayMatch",
+      nextState: "Approved",
+      slaHours: 48,
+    },
+  ],
+  // => AP team has 48 hours to approve or dispute after review starts
+  ["UnderReview:Dispute", { guardName: null, nextState: "Disputed", slaHours: undefined }],
+  // => Disputes have no fixed SLA — handled by escalation policy
+  ["Disputed:Resubmit", { guardName: null, nextState: "UnderReview" }],
+  ["UnderReview:Reject", { guardName: null, nextState: "Rejected" }],
+  ["Approved:Pay", { guardName: null, nextState: "Paid", slaHours: 30 }],
+  // => Finance must disburse payment within 30 hours of invoice approval
+]);
+
+// Pure query: what is the SLA for reaching a given state?
+const slaFor = (machine: Map<string, TransitionDefWithSLA<InvoiceState>>, state: InvoiceState): number | undefined => {
+  for (const [key, def] of machine.entries()) {
+    if (key.endsWith(`:${"Review"}`) && def.nextState === state) return def.slaHours;
+    // => Find the transition that leads to this state and return its SLA
+    if (def.nextState === state) return def.slaHours;
+  }
+  return undefined;
+};
+
+// Summarise SLAs for all transitions
+invoiceMachineWithSLA.forEach((def, key) => {
+  if (def.slaHours !== undefined) console.log(`${key} -> ${def.nextState}: SLA ${def.slaHours}h`);
+  // => Only print transitions with explicit SLAs
+});
+// => Received:Review -> UnderReview: SLA 24h
+// => UnderReview:Approve -> Approved: SLA 48h
+// => Approved:Pay -> Paid: SLA 30h
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: SLA metadata as a record attached to the FSM makes policy values auditable and configurable without changing the transition logic.
@@ -3117,7 +4443,7 @@ printfn "Overdue: %b" (isOverdue defaultSLA overdueInv System.DateTime.UtcNow)
 
 The PO and Invoice FSMs together define the core protocol of a Procure-to-Pay system. This summary example demonstrates how composition, guards, commands, and replay combine into a coherent architectural pattern.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3274,6 +4600,69 @@ runP2PLifecycle
 ;; => === P2P Lifecycle Summary ===
 ;; => PO final state:      :acknowledged
 ;; => Invoice final state: :paid
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ── file: invoiceFsm.ts ────────────────────────────────────────────────────
+// [F#: module summary with protocol documentation; Clojure: namespace summary]
+// TypeScript: FSM system summary — all machines and their invariants as typed data.
+
+// System-level FSM registry: documents all machines in the P2P domain.
+type MachineRegistryEntry = Readonly<{
+  name: string;
+  states: readonly string[];
+  events: readonly string[];
+  terminalStates: readonly string[];
+  description: string;
+}>;
+// => Each entry documents one FSM aggregate
+
+const p2pMachineRegistry: readonly MachineRegistryEntry[] = [
+  {
+    name: "PurchaseOrder",
+    states: ["Draft", "AwaitingApproval", "Approved", "Issued", "Acknowledged", "Closed", "Cancelled", "Disputed"],
+    events: ["Submit", "Approve", "Reject", "Issue", "Acknowledge", "Close", "Cancel", "Dispute"],
+    terminalStates: ["Closed", "Cancelled"],
+    description: "Core P2P lifecycle: creation through approval to issuance and receipt",
+  },
+  {
+    name: "Invoice",
+    states: ["Received", "UnderReview", "Approved", "Disputed", "Rejected", "Paid"],
+    events: ["Review", "Approve", "Dispute", "Resubmit", "Reject", "Pay"],
+    terminalStates: ["Rejected", "Paid"],
+    description: "Invoice three-way match lifecycle: receipt through AP review to payment",
+  },
+];
+// => Registry documents the domain vocabulary; used by tooling and onboarding docs
+
+// Pure summary function: produce a human-readable overview.
+const summariseMachines = (registry: readonly MachineRegistryEntry[]): string =>
+  registry
+    .map((m) =>
+      [
+        `Machine: ${m.name}`,
+        `  States (${m.states.length}): ${m.states.join(", ")}`,
+        `  Events (${m.events.length}): ${m.events.join(", ")}`,
+        `  Terminal: ${m.terminalStates.join(", ")}`,
+        `  Purpose: ${m.description}`,
+      ].join("\n"),
+    )
+    .join("\n\n");
+// => Maps each registry entry to a formatted string block; joins with blank line
+
+console.log(summariseMachines(p2pMachineRegistry));
+// => Machine: PurchaseOrder
+// =>   States (8): Draft, AwaitingApproval, ...
+// =>   Events (8): Submit, Approve, ...
+// =>   Terminal: Closed, Cancelled
+// =>   Purpose: Core P2P lifecycle: creation through approval to issuance and receipt
+// =>
+// => Machine: Invoice
+// => ...
 ```
 
 {{< /tab >}}

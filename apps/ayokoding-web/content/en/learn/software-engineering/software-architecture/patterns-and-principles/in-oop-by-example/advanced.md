@@ -42,7 +42,7 @@ graph TD
     style E fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -219,6 +219,62 @@ Console.WriteLine(svc.CancelOrder(oid));  // => Output: True
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => Value type: immutable identifier scoped to the Orders domain
+class OrderId {
+  private constructor(readonly value: string) {}
+  // => private constructor: use factory to create instances
+
+  static generate(): OrderId {
+    return new OrderId(crypto.randomUUID());
+    // => UUID-backed id — stable across service boundaries
+  }
+}
+
+// => Separate type prevents ProductId/OrderId mixup at compile time
+class ProductId {
+  constructor(readonly value: string) {}
+}
+
+// => Interface defines the Orders service contract
+// => Real service, HTTP adapter, and in-memory stub all implement this
+interface OrdersService {
+  placeOrder(productId: ProductId, qty: number): OrderId;
+  // => Returns OrderId so callers never depend on internal order structure
+  cancelOrder(orderId: OrderId): boolean;
+}
+
+// => In-memory implementation — used in tests and local dev
+class InMemoryOrdersService implements OrdersService {
+  private readonly orders: Map<string, { productId: string; qty: number; status: string }> = new Map();
+  // => order map: orderId -> order data
+
+  placeOrder(productId: ProductId, qty: number): OrderId {
+    const oid = OrderId.generate(); // => Fresh id per call — no collision risk
+    this.orders.set(oid.value, { productId: productId.value, qty, status: "PLACED" });
+    // => Stores minimal state; real impl persists to DB
+    return oid; // => Caller receives id to reference the order later
+  }
+
+  cancelOrder(orderId: OrderId): boolean {
+    const order = this.orders.get(orderId.value);
+    if (!order) return false; // => Not found — idempotent cancel is safe
+    this.orders.set(orderId.value, { ...order, status: "CANCELLED" });
+    return true; // => Caller knows the cancel succeeded
+  }
+}
+
+// => Usage: swap InMemoryOrdersService for HttpOrdersService without changing callers
+const svc: OrdersService = new InMemoryOrdersService();
+const pid = new ProductId("SKU-001");
+const oid = svc.placeOrder(pid, 3); // => Returns OrderId
+console.log(oid.value); // => Output: <uuid string>
+console.log(svc.cancelOrder(oid)); // => Output: true
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Decompose by business capability using Protocol types (or interfaces) to enforce
@@ -251,7 +307,7 @@ graph LR
     style Old fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -425,6 +481,66 @@ Console.WriteLine(proxy.Route("/api/products/abc", new() { ["action"] = "list" }
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => RouteHandler: takes (path, payload) and returns a response
+type RouteHandler = (path: string, payload: Record<string, unknown>) => Record<string, unknown>;
+
+class StranglerProxy {
+  // => Map preserves insertion order — first matching prefix wins
+  private readonly newRoutes: Map<string, RouteHandler> = new Map();
+  // => Legacy handler is the single catch-all for all unmigrated paths
+  private legacyHandler: RouteHandler | null = null;
+
+  registerNew(prefix: string, handler: RouteHandler): void {
+    this.newRoutes.set(prefix, handler);
+    // => Each call represents one migrated service
+  }
+
+  setLegacy(handler: RouteHandler): void {
+    this.legacyHandler = handler; // => Monolith becomes the fallback until retired
+  }
+
+  route(path: string, payload: Record<string, unknown>): Record<string, unknown> {
+    for (const [prefix, handler] of this.newRoutes) {
+      if (path.startsWith(prefix)) {
+        return handler(path, payload);
+        // => New service handles this path — monolith not involved
+      }
+    }
+    // => No migrated handler matched — delegate to legacy monolith
+    if (this.legacyHandler) return this.legacyHandler(path, payload);
+    throw new Error(`No handler for path: ${path}`);
+  }
+}
+
+// => Simulated migrated Orders service
+const newOrdersHandler: RouteHandler = (path, payload) => ({
+  source: "new_service",
+  path,
+  data: payload,
+  // => New service responds; monolith is bypassed entirely
+});
+
+// => Simulated legacy monolith catch-all
+const legacyHandler: RouteHandler = (path, payload) => ({
+  source: "legacy_monolith",
+  path,
+  data: payload,
+});
+
+const proxy = new StranglerProxy();
+proxy.setLegacy(legacyHandler);
+proxy.registerNew("/api/orders", newOrdersHandler); // => Orders route migrated
+
+console.log(proxy.route("/api/orders/123", { action: "get" }));
+// => { source: 'new_service', path: '/api/orders/123', data: { action: 'get' } }
+console.log(proxy.route("/api/products/abc", { action: "list" }));
+// => { source: 'legacy_monolith', path: '/api/products/abc', data: { action: 'list' } }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** The Strangler Fig pattern allows zero-downtime incremental migration by routing
@@ -460,7 +576,7 @@ sequenceDiagram
     O->>I: ReleaseStock (compensation)
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -648,6 +764,81 @@ Console.WriteLine($"Stock released: {!stockReserved}");   // => Output: Stock re
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN EVENT: published when order state changes
+interface OrderEvent {
+  type: string;
+  orderId: string;
+  occurredAt: number;
+}
+
+interface OrderPlaced extends OrderEvent {
+  type: "OrderPlaced";
+  customerId: string;
+  total: number;
+}
+interface OrderShipped extends OrderEvent {
+  type: "OrderShipped";
+  trackingId: string;
+}
+interface OrderCancelled extends OrderEvent {
+  type: "OrderCancelled";
+  reason: string;
+}
+
+type AppOrderEvent = OrderPlaced | OrderShipped | OrderCancelled;
+
+// => IN-PROCESS MESSAGE BUS (simulates Kafka/RabbitMQ)
+class MessageBus {
+  private readonly handlers: Map<string, Array<(e: AppOrderEvent) => void>> = new Map();
+
+  subscribe(type: string, handler: (e: AppOrderEvent) => void): void {
+    const list = this.handlers.get(type) ?? [];
+    this.handlers.set(type, [...list, handler]);
+  }
+
+  publish(event: AppOrderEvent): void {
+    const eventHandlers = this.handlers.get(event.type) ?? [];
+    for (const handler of eventHandlers) handler(event);
+  }
+}
+
+// => ORDER SERVICE: produces events
+class OrderService {
+  constructor(private readonly bus: MessageBus) {}
+
+  placeOrder(orderId: string, customerId: string, total: number): void {
+    // => save order to DB (simulated)
+    console.log(`[Orders] Order ${orderId} created`);
+    this.bus.publish({ type: "OrderPlaced", orderId, customerId, total, occurredAt: Date.now() });
+  }
+}
+
+// => INDEPENDENT CONSUMERS: react without coupling to OrderService
+const bus = new MessageBus();
+
+bus.subscribe("OrderPlaced", (evt) => {
+  const e = evt as OrderPlaced;
+  console.log(`[Inventory] Reserve items for order ${e.orderId}`);
+  // => Inventory reacts without knowing about OrderService
+});
+
+bus.subscribe("OrderPlaced", (evt) => {
+  const e = evt as OrderPlaced;
+  console.log(`[Billing] Invoice customer ${e.customerId} for $${e.total}`);
+  // => Billing reacts independently
+});
+
+const orderSvc = new OrderService(bus);
+orderSvc.placeOrder("ord-1", "cust-42", 150.0);
+// => [Orders] Order ord-1 created
+// => [Inventory] Reserve items for order ord-1
+// => [Billing] Invoice customer cust-42 for $150
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Orchestration keeps saga logic in one place; the orchestrator compensates
@@ -684,7 +875,7 @@ graph LR
     style F fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -842,6 +1033,83 @@ Console.WriteLine($"Stock held after failure: {stockHeld}"); // => Output: Stock
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SERVICE REGISTRY: tracks available service instances
+interface ServiceInstance {
+  id: string;
+  host: string;
+  port: number;
+  healthy: boolean;
+}
+
+class ServiceRegistry {
+  private readonly services: Map<string, ServiceInstance[]> = new Map();
+
+  register(name: string, instance: ServiceInstance): void {
+    const existing = this.services.get(name) ?? [];
+    this.services.set(name, [...existing, instance]);
+    console.log(`[Registry] Registered ${name} at ${instance.host}:${instance.port}`);
+  }
+
+  deregister(name: string, instanceId: string): void {
+    const existing = this.services.get(name) ?? [];
+    this.services.set(
+      name,
+      existing.filter((i) => i.id !== instanceId),
+    );
+    console.log(`[Registry] Deregistered ${name} instance ${instanceId}`);
+  }
+
+  getHealthy(name: string): ServiceInstance[] {
+    return (this.services.get(name) ?? []).filter((i) => i.healthy);
+    // => returns only healthy instances — unhealthy are excluded from routing
+  }
+}
+
+// => LOAD BALANCER: round-robin selection from healthy instances
+class LoadBalancer {
+  private readonly indices: Map<string, number> = new Map();
+
+  select(instances: ServiceInstance[]): ServiceInstance | null {
+    if (instances.length === 0) return null;
+    const idx = (this.indices.get("_") ?? 0) % instances.length;
+    this.indices.set("_", idx + 1);
+    return instances[idx]; // => round-robin selection
+  }
+}
+
+// => SERVICE PROXY: handles discovery, load balancing, and retry
+class ServiceProxy {
+  constructor(
+    private readonly registry: ServiceRegistry,
+    private readonly balancer: LoadBalancer,
+  ) {}
+
+  call(serviceName: string, path: string): string {
+    const instances = this.registry.getHealthy(serviceName);
+    const instance = this.balancer.select(instances);
+    if (!instance) return `Error: No healthy instances for ${serviceName}`;
+
+    // => In real service mesh, this would be an HTTP call
+    console.log(`[Proxy] Routing ${path} to ${instance.host}:${instance.port}`);
+    return `OK from ${instance.host}:${instance.port}`;
+  }
+}
+
+const registry = new ServiceRegistry();
+registry.register("orders", { id: "o1", host: "orders-1", port: 8080, healthy: true });
+registry.register("orders", { id: "o2", host: "orders-2", port: 8080, healthy: true });
+
+const proxy = new ServiceProxy(registry, new LoadBalancer());
+console.log(proxy.call("orders", "/api/orders"));
+// => [Proxy] Routing /api/orders to orders-1:8080
+console.log(proxy.call("orders", "/api/orders"));
+// => [Proxy] Routing /api/orders to orders-2:8080
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Choreography achieves loose coupling through events, but requires careful event
@@ -867,7 +1135,7 @@ routing ease.
 
 **URI path versioning (most common, most cacheable):**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -956,6 +1224,35 @@ Console.WriteLine(Dispatch("GET", "/v2/users")["version"]); // => Output: 2
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => Route map keyed by "METHOD:/path" — path includes version prefix
+// => Function defers response construction until dispatched — lazy evaluation
+const routes: Record<string, () => Record<string, unknown>> = {
+  "GET:/v1/users": () => ({ version: 1, users: ["alice"] }),
+  // => v1 contract: flat list of usernames — never change this response shape
+  "GET:/v2/users": () => ({
+    version: 2,
+    users: [{ name: "alice", email: "alice@example.com" }],
+  }),
+  // => v2 contract: richer user objects with email field added
+};
+
+// => Dispatcher routes requests to versioned handlers
+function dispatch(method: string, path: string): Record<string, unknown> {
+  const handler = routes[`${method}:${path}`];
+  if (!handler) return { error: "Not found" }; // => 404 equivalent
+  return handler(); // => Execute matched route handler
+}
+
+console.log(dispatch("GET", "/v1/users"));
+// => { version: 1, users: [ 'alice' ] }
+console.log(dispatch("GET", "/v2/users"));
+// => { version: 2, users: [ { name: 'alice', email: 'alice@example.com' } ] }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 URI versioning: CDN caches `/v1/users` and `/v2/users` independently; path is visible in logs and
@@ -963,7 +1260,7 @@ browser history; old clients never break when a new version is added.
 
 **Accept header versioning (REST-purist, less cacheable):**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1050,6 +1347,32 @@ Console.WriteLine(DispatchHeader("GET", "/users", "application/vnd.myapi.v2+json
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => Version is negotiated through the Accept header, keeping URLs clean
+function dispatchHeader(method: string, path: string, accept: string): Record<string, unknown> {
+  // => Parse version from Accept: application/vnd.myapi.v2+json
+  const version = accept.includes("v2") ? "v2" : "v1";
+  // => Default to v1 when header absent or unversioned — conservative fallback
+
+  if (path === "/users") {
+    if (version === "v2") {
+      return { version: 2, users: [{ name: "alice", email: "alice@example.com" }] };
+    }
+    return { version: 1, users: ["alice"] };
+    // => Same URL, different response shape based on negotiated version
+  }
+  return { error: "Not found" };
+}
+
+console.log(dispatchHeader("GET", "/users", "application/json"));
+// => { version: 1, users: [ 'alice' ] }
+console.log(dispatchHeader("GET", "/users", "application/vnd.myapi.v2+json"));
+// => { version: 2, users: [ { name: 'alice', email: 'alice@example.com' } ] }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 Header versioning: same URL makes REST purists happy; however, CDNs cannot cache different versions
@@ -1092,7 +1415,7 @@ graph TD
     style DS fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1249,6 +1572,82 @@ Console.WriteLine(WebBffDashboard("u1")["orderCount"]);        // => Output: 2
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => TOKEN BUCKET: allows burst traffic up to capacity, refills at fixed rate
+interface RateLimiter {
+  tryAcquire(clientId: string): boolean; // => true if request is allowed
+}
+
+class TokenBucketLimiter implements RateLimiter {
+  private readonly buckets: Map<string, { tokens: number; lastRefill: number }> = new Map();
+  // => per-client buckets: tokens available + last refill timestamp
+
+  constructor(
+    private readonly capacity: number, // => max tokens per bucket
+    private readonly refillRatePerSec: number, // => tokens added per second
+  ) {}
+
+  tryAcquire(clientId: string): boolean {
+    const now = Date.now();
+    let bucket = this.buckets.get(clientId);
+    if (!bucket) {
+      bucket = { tokens: this.capacity, lastRefill: now };
+      this.buckets.set(clientId, bucket);
+      // => new client starts with full bucket
+    }
+
+    // => REFILL: add tokens proportional to elapsed time
+    const elapsed = (now - bucket.lastRefill) / 1000;
+    bucket.tokens = Math.min(this.capacity, bucket.tokens + elapsed * this.refillRatePerSec);
+    bucket.lastRefill = now;
+
+    if (bucket.tokens >= 1) {
+      bucket.tokens -= 1; // => consume one token
+      return true; // => request allowed
+    }
+    return false; // => bucket empty — request throttled
+  }
+}
+
+// => SLIDING WINDOW: counts requests in a rolling time window
+class SlidingWindowLimiter implements RateLimiter {
+  private readonly windows: Map<string, number[]> = new Map();
+  // => per-client: list of request timestamps in current window
+
+  constructor(
+    private readonly maxRequests: number, // => max requests per window
+    private readonly windowMs: number, // => window size in milliseconds
+  ) {}
+
+  tryAcquire(clientId: string): boolean {
+    const now = Date.now();
+    const cutoff = now - this.windowMs;
+    const timestamps = (this.windows.get(clientId) ?? []).filter((t) => t > cutoff);
+    // => remove timestamps outside the window
+
+    if (timestamps.length >= this.maxRequests) return false;
+    // => at capacity — throttle
+
+    timestamps.push(now);
+    this.windows.set(clientId, timestamps);
+    return true; // => request allowed
+  }
+}
+
+const limiter = new TokenBucketLimiter(3, 1);
+for (let i = 0; i < 5; i++) {
+  console.log(`Request ${i + 1}: ${limiter.tryAcquire("client-1") ? "allowed" : "throttled"}`);
+}
+// => Request 1: allowed
+// => Request 2: allowed
+// => Request 3: allowed
+// => Request 4: throttled (bucket empty)
+// => Request 5: throttled
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Each BFF owns its own aggregation logic so client teams can evolve their API
@@ -1279,7 +1678,7 @@ stateDiagram-v2
     HalfOpen --> Open : probe fails
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1522,6 +1921,91 @@ for (int i = 1; i <= 6; i++) Console.WriteLine($"Call {i}: {cb.Call(flakyService
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => CIRCUIT BREAKER STATES
+type State = "closed" | "open" | "half-open";
+
+class CircuitBreaker {
+  private state: State = "closed";
+  private failureCount = 0;
+  private successCount = 0;
+  private lastFailureTime = 0;
+
+  constructor(
+    private readonly failureThreshold: number, // => failures before opening
+    private readonly successThreshold: number, // => successes in half-open before closing
+    private readonly timeoutMs: number, // => time to wait in open state
+  ) {}
+
+  async call<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.state === "open") {
+      if (Date.now() - this.lastFailureTime > this.timeoutMs) {
+        this.state = "half-open";
+        this.successCount = 0;
+        console.log("[CB] → half-open (probing)");
+      } else {
+        throw new Error("[CB] Circuit open — call rejected");
+      }
+    }
+
+    try {
+      const result = await fn();
+      this.onSuccess();
+      return result;
+    } catch (err) {
+      this.onFailure();
+      throw err;
+    }
+  }
+
+  private onSuccess(): void {
+    if (this.state === "half-open") {
+      this.successCount++;
+      if (this.successCount >= this.successThreshold) {
+        this.state = "closed";
+        this.failureCount = 0;
+        console.log("[CB] → closed (recovered)");
+      }
+    } else {
+      this.failureCount = 0; // => reset on success in closed state
+    }
+  }
+
+  private onFailure(): void {
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
+    if (this.failureCount >= this.failureThreshold || this.state === "half-open") {
+      this.state = "open";
+      console.log(`[CB] → open (${this.failureCount} failures)`);
+    }
+  }
+
+  getState(): State {
+    return this.state;
+  }
+}
+
+const cb = new CircuitBreaker(3, 2, 100);
+let failMode = true;
+const service = async () => {
+  if (failMode) throw new Error("Service down");
+  return "OK";
+};
+
+for (let i = 0; i < 4; i++) {
+  try {
+    await cb.call(service);
+  } catch {
+    console.log(`Call ${i + 1}: ${cb.getState()}`);
+  }
+}
+// => [CB] → open (3 failures)
+// => Call 1-3: closed; Call 4: open
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Circuit breakers prevent cascading failures by fast-failing requests when a
@@ -1561,7 +2045,7 @@ graph TD
     style I fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1743,6 +2227,56 @@ Console.WriteLine(invResult);  // => Output: stock_ok:SKU-1 (unaffected by payme
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => BULKHEAD: limits concurrent calls to a downstream dependency via semaphore
+// => Prevents one service from consuming all thread/connection pool resources
+class Bulkhead {
+  private active = 0;
+  // => count of currently executing calls
+
+  constructor(private readonly maxConcurrent: number) {
+    // => max concurrent calls allowed to this downstream service
+  }
+
+  async execute<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.active >= this.maxConcurrent) {
+      throw new Error(`Bulkhead full (${this.maxConcurrent} max concurrent)`);
+      // => reject call immediately rather than queuing — fail fast
+    }
+    this.active++;
+    console.log(`[Bulkhead] active: ${this.active}/${this.maxConcurrent}`);
+    try {
+      return await fn(); // => execute the call within the bulkhead
+    } finally {
+      this.active--; // => always release slot, even on error
+      console.log(`[Bulkhead] released: active=${this.active}`);
+    }
+  }
+}
+
+// => Two bulkheads: different capacities for different services
+const paymentBulkhead = new Bulkhead(5); // => up to 5 concurrent payment calls
+const inventoryBulkhead = new Bulkhead(10); // => up to 10 concurrent inventory calls
+
+// => Simulate concurrent calls
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function callPayment(id: number): Promise<void> {
+  await paymentBulkhead.execute(async () => {
+    console.log(`[Payment] Processing payment ${id}`);
+    await delay(10); // => simulate async work
+  });
+}
+
+// => Run 3 concurrent payment calls (within limit of 5)
+await Promise.all([callPayment(1), callPayment(2), callPayment(3)]);
+// => [Bulkhead] active: 1/5, 2/5, 3/5
+// => [Bulkhead] released: active=2, 1, 0
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Assign separate resource pools (semaphores or thread pools) to each downstream
@@ -1763,7 +2297,7 @@ Retrying transient failures is essential in distributed systems, but naive fixed
 cause thundering herds when many clients retry simultaneously. Exponential backoff with jitter
 spreads retries over time, reducing collision probability and letting overloaded services recover.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1922,6 +2456,66 @@ Console.WriteLine($"Total attempts: {callCount}"); // => Output: Total attempts:
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => RETRY WITH EXPONENTIAL BACKOFF: retries failed calls with increasing delays
+interface RetryConfig {
+  maxAttempts: number; // => total attempts including the first
+  baseDelayMs: number; // => initial delay before first retry
+  maxDelayMs: number; // => cap on delay to prevent excessive wait
+  jitterMs: number; // => random jitter to prevent thundering herd
+}
+
+async function retryWithBackoff<T>(fn: () => Promise<T>, config: RetryConfig): Promise<T> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= config.maxAttempts; attempt++) {
+    try {
+      return await fn(); // => attempt the call
+    } catch (err) {
+      lastError = err as Error;
+      if (attempt === config.maxAttempts) break; // => no more retries
+
+      // => EXPONENTIAL BACKOFF: delay doubles each attempt
+      const exponential = config.baseDelayMs * Math.pow(2, attempt - 1);
+      const jitter = Math.random() * config.jitterMs;
+      const delay = Math.min(exponential + jitter, config.maxDelayMs);
+
+      console.log(`[Retry] Attempt ${attempt} failed: ${lastError.message}`);
+      console.log(`[Retry] Waiting ${delay.toFixed(0)}ms before retry ${attempt + 1}`);
+
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      // => wait with backoff before next attempt
+    }
+  }
+
+  throw new Error(`All ${config.maxAttempts} attempts failed: ${lastError?.message}`);
+}
+
+// => USAGE: wrap unreliable operations with retry logic
+let callCount = 0;
+const unreliableService = async (): Promise<string> => {
+  callCount++;
+  if (callCount < 3) throw new Error("Transient error");
+  return `Success on attempt ${callCount}`;
+  // => fails first 2 times, succeeds on 3rd
+};
+
+try {
+  const result = await retryWithBackoff(unreliableService, {
+    maxAttempts: 5,
+    baseDelayMs: 100,
+    maxDelayMs: 2000,
+    jitterMs: 50,
+  });
+  console.log(result); // => Success on attempt 3
+} catch (err) {
+  console.error((err as Error).message);
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Use exponential backoff to avoid retry storms, and add jitter to spread load
@@ -1956,7 +2550,7 @@ sequenceDiagram
     Note over A,C: All spans share trace_id=abc
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2144,6 +2738,70 @@ root.Finish();       // => Gateway finishes last — outermost span spans the en
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SPAN: represents one timed operation within a distributed trace tree
+class Span {
+  readonly traceId: string;
+  readonly spanId: string;
+  readonly parentId: string | null;
+  readonly operation: string;
+  private readonly startTime: number;
+  private endTime: number | null = null;
+  private readonly tags: Map<string, string> = new Map();
+
+  constructor(traceId: string, operation: string, parentId: string | null = null) {
+    this.traceId = traceId;
+    this.spanId = crypto.randomUUID().split("-")[0]; // => short id
+    this.parentId = parentId;
+    this.operation = operation;
+    this.startTime = Date.now();
+  }
+
+  setTag(key: string, value: string): void {
+    this.tags.set(key, value); // => attach metadata to the span
+  }
+
+  finish(): void {
+    this.endTime = Date.now();
+    const duration = this.endTime - this.startTime;
+    const parent = this.parentId ? ` (parent: ${this.parentId})` : "";
+    console.log(`[Trace] ${this.traceId} | ${this.spanId}${parent} | ${this.operation} | ${duration}ms`);
+  }
+}
+
+// => TRACER: creates spans and maintains active span context
+class Tracer {
+  startSpan(operation: string, traceId?: string, parentId?: string): Span {
+    const tid = traceId ?? crypto.randomUUID();
+    // => new trace if no traceId provided; propagate existing traceId across services
+    return new Span(tid, operation, parentId ?? null);
+  }
+}
+
+// => USAGE: instrument service boundaries
+const tracer = new Tracer();
+
+// => Simulate: API gateway → OrderService → InventoryService
+const rootSpan = tracer.startSpan("POST /api/orders");
+rootSpan.setTag("http.method", "POST");
+await new Promise((resolve) => setTimeout(resolve, 5)); // => simulate work
+
+const orderSpan = tracer.startSpan("OrderService.create", rootSpan.traceId, rootSpan.spanId);
+orderSpan.setTag("db.table", "orders");
+await new Promise((resolve) => setTimeout(resolve, 3));
+
+const invSpan = tracer.startSpan("InventoryService.reserve", rootSpan.traceId, orderSpan.spanId);
+invSpan.setTag("product.id", "p1");
+await new Promise((resolve) => setTimeout(resolve, 2));
+
+invSpan.finish(); // => innermost span finishes first
+orderSpan.finish(); // => then its parent
+rootSpan.finish(); // => root span finishes last
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Propagate `trace_id` in every outbound request header (W3C `traceparent`) so
@@ -2180,7 +2838,7 @@ graph LR
     style Collector fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2374,6 +3032,68 @@ Console.WriteLine(okResp["data"]);
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SERVICE DISCOVERY: services register themselves; clients look up by name
+interface ServiceEndpoint {
+  host: string;
+  port: number;
+}
+
+class ServiceDiscovery {
+  private readonly registry: Map<string, ServiceEndpoint[]> = new Map();
+
+  register(name: string, endpoint: ServiceEndpoint): void {
+    const existing = this.registry.get(name) ?? [];
+    this.registry.set(name, [...existing, endpoint]);
+    console.log(`[Discovery] Registered ${name} at ${endpoint.host}:${endpoint.port}`);
+  }
+
+  deregister(name: string, endpoint: ServiceEndpoint): void {
+    const existing = this.registry.get(name) ?? [];
+    this.registry.set(
+      name,
+      existing.filter((e) => !(e.host === endpoint.host && e.port === endpoint.port)),
+    );
+    console.log(`[Discovery] Deregistered ${name} at ${endpoint.host}:${endpoint.port}`);
+  }
+
+  resolve(name: string): ServiceEndpoint[] {
+    return this.registry.get(name) ?? [];
+    // => returns all registered endpoints for the service
+  }
+}
+
+// => CLIENT-SIDE LOAD BALANCING: chooses one endpoint from discovered list
+class DiscoveryAwareClient {
+  private roundRobinIdx = 0;
+
+  constructor(private readonly discovery: ServiceDiscovery) {}
+
+  call(serviceName: string, path: string): string {
+    const endpoints = this.discovery.resolve(serviceName);
+    if (endpoints.length === 0) throw new Error(`Service ${serviceName} not found`);
+
+    // => round-robin selection across discovered instances
+    const endpoint = endpoints[this.roundRobinIdx % endpoints.length];
+    this.roundRobinIdx++;
+
+    console.log(`[Client] Calling ${endpoint.host}:${endpoint.port}${path}`);
+    return `Response from ${endpoint.host}:${endpoint.port}`;
+  }
+}
+
+const discovery = new ServiceDiscovery();
+discovery.register("users", { host: "users-1", port: 8080 });
+discovery.register("users", { host: "users-2", port: 8080 });
+
+const client = new DiscoveryAwareClient(discovery);
+console.log(client.call("users", "/api/users")); // => users-1:8080
+console.log(client.call("users", "/api/users")); // => users-2:8080
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Sidecars let application developers focus on business logic while a separate
@@ -2395,7 +3115,7 @@ concerns specific to that client's relationship with the service: protocol trans
 policy, credential injection, and connection pooling. Unlike the sidecar (which handles all
 outbound traffic), an ambassador is purpose-built for one specific remote.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2573,6 +3293,64 @@ Console.WriteLine($"Total calls made (including retries): {db.CallCount}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => AMBASSADOR: proxy that sits in front of a service call and adds cross-cutting concerns
+// => Handles retries, timeouts, logging, circuit breaking — transparent to the caller
+interface ServiceClient {
+  call(path: string, payload: unknown): Promise<unknown>;
+}
+
+// => REAL CLIENT: makes the actual network call
+class HttpClient implements ServiceClient {
+  constructor(private readonly baseUrl: string) {}
+
+  async call(path: string, payload: unknown): Promise<unknown> {
+    console.log(`[HTTP] POST ${this.baseUrl}${path}`);
+    // => real impl: fetch(this.baseUrl + path, { body: JSON.stringify(payload) })
+    return { status: 200, data: payload }; // => simulated response
+  }
+}
+
+// => AMBASSADOR: wraps the real client with cross-cutting concerns
+class AmbassadorClient implements ServiceClient {
+  constructor(
+    private readonly client: ServiceClient,
+    private readonly maxRetries: number = 3,
+    private readonly timeoutMs: number = 5000,
+  ) {}
+
+  async call(path: string, payload: unknown): Promise<unknown> {
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        // => TIMEOUT: race between the actual call and a timeout
+        const result = await Promise.race([
+          this.client.call(path, payload),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), this.timeoutMs)),
+        ]);
+        console.log(`[Ambassador] Success on attempt ${attempt}`);
+        return result; // => return on first success
+      } catch (err) {
+        console.log(`[Ambassador] Attempt ${attempt} failed: ${(err as Error).message}`);
+        if (attempt === this.maxRetries) throw err;
+        await new Promise((r) => setTimeout(r, 100 * attempt));
+        // => exponential-ish backoff before retry
+      }
+    }
+  }
+}
+
+const baseClient = new HttpClient("https://api.example.com");
+const ambassador = new AmbassadorClient(baseClient, 3, 2000);
+
+const response = await ambassador.call("/orders", { item: "laptop" });
+console.log(response);
+// => [HTTP] POST https://api.example.com/orders
+// => [Ambassador] Success on attempt 1
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** The ambassador externalises connection management, retry logic, and credential
@@ -2610,7 +3388,7 @@ graph TD
     style E4 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2834,6 +3612,79 @@ Console.WriteLine($"Balance after deposit only: {accountAtT2.Balance}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SIDECAR: a companion process that augments a main service without modifying it
+// => Handles logging, metrics, service mesh — transparent to the main service
+
+// => MAIN SERVICE: pure business logic, no observability concerns
+class OrderService {
+  processOrder(orderId: string, amount: number): string {
+    if (amount <= 0) throw new Error("Invalid amount");
+    return `Order ${orderId} processed for $${amount}`;
+    // => Service has no logging, metrics, or tracing code
+  }
+}
+
+// => SIDECAR 1: logging interceptor
+class LoggingSidecar {
+  constructor(private readonly service: OrderService) {}
+
+  processOrder(orderId: string, amount: number): string {
+    console.log(`[Log] processOrder called: orderId=${orderId}, amount=${amount}`);
+    try {
+      const result = this.service.processOrder(orderId, amount);
+      console.log(`[Log] processOrder succeeded: ${result}`);
+      return result;
+    } catch (err) {
+      console.log(`[Log] processOrder failed: ${(err as Error).message}`);
+      throw err;
+    }
+  }
+}
+
+// => SIDECAR 2: metrics interceptor (wraps logging sidecar)
+class MetricsSidecar {
+  private callCount = 0;
+  private errorCount = 0;
+
+  constructor(private readonly service: LoggingSidecar) {}
+
+  processOrder(orderId: string, amount: number): string {
+    this.callCount++;
+    try {
+      const result = this.service.processOrder(orderId, amount);
+      return result;
+    } catch (err) {
+      this.errorCount++;
+      throw err;
+    }
+  }
+
+  getMetrics(): { calls: number; errors: number } {
+    return { calls: this.callCount, errors: this.errorCount };
+    // => metrics collected without touching OrderService
+  }
+}
+
+// => WIRE: main service wrapped in sidecars
+const orderSvc = new OrderService();
+const withLogs = new LoggingSidecar(orderSvc);
+const withMetrics = new MetricsSidecar(withLogs);
+
+withMetrics.processOrder("ord-1", 150.0);
+// => [Log] processOrder called / succeeded
+
+try {
+  withMetrics.processOrder("ord-2", -5);
+} catch {}
+// => [Log] processOrder called / failed
+
+console.log(withMetrics.getMetrics()); // => { calls: 2, errors: 1 }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Store domain events as the source of truth; derive read-state by replaying events
@@ -2857,7 +3708,7 @@ preventing cross-module dependencies at the wrong level of abstraction. Each mod
 model, service layer, and repository — but shares the process and database, making local calls
 cheap and distributed tracing unnecessary.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3090,6 +3941,82 @@ Console.WriteLine($"Order: {order.OrderId}, Invoice: {invoice.InvoiceId}, Amount
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => MODULAR MONOLITH: modules with strict boundaries — clear path to microservices
+// => Each module owns its own data, exposes a public API, communicates via events
+
+// === MODULE: USERS — owns user registration and profile ===
+interface UserRegisteredEvent {
+  type: "UserRegistered";
+  userId: string;
+  email: string;
+}
+
+class UsersModule {
+  private readonly users: Map<string, { id: string; email: string; name: string }> = new Map();
+  private readonly listeners: Array<(e: UserRegisteredEvent) => void> = [];
+
+  register(userId: string, email: string, name: string): void {
+    this.users.set(userId, { id: userId, email, name });
+    const event: UserRegisteredEvent = { type: "UserRegistered", userId, email };
+    for (const listener of this.listeners) listener(event);
+    // => publishes event — other modules react without coupling
+  }
+
+  onUserRegistered(listener: (e: UserRegisteredEvent) => void): void {
+    this.listeners.push(listener);
+    // => external modules subscribe to events, not to internal state
+  }
+
+  getUser(userId: string) {
+    return this.users.get(userId);
+  }
+}
+
+// === MODULE: NOTIFICATIONS — sends emails when users register ===
+class NotificationsModule {
+  init(users: UsersModule): void {
+    users.onUserRegistered((evt) => {
+      console.log(`[Notifications] Welcome email sent to ${evt.email}`);
+      // => reacts to event — does not import UsersModule internals
+    });
+  }
+}
+
+// === MODULE: BILLING — creates initial plan when users register ===
+class BillingModule {
+  private readonly plans: Map<string, string> = new Map();
+
+  init(users: UsersModule): void {
+    users.onUserRegistered((evt) => {
+      this.plans.set(evt.userId, "free");
+      console.log(`[Billing] Free plan created for ${evt.userId}`);
+    });
+  }
+
+  getPlan(userId: string): string | undefined {
+    return this.plans.get(userId);
+  }
+}
+
+// => WIRE: modules are wired at the application root
+const usersModule = new UsersModule();
+const notifModule = new NotificationsModule();
+const billingModule = new BillingModule();
+
+notifModule.init(usersModule);
+billingModule.init(usersModule);
+
+usersModule.register("u1", "alice@example.com", "Alice");
+// => [Notifications] Welcome email sent to alice@example.com
+// => [Billing] Free plan created for u1
+
+console.log(billingModule.getPlan("u1")); // => free
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Enforce module boundaries through Protocols and dependency injection rather than
@@ -3110,7 +4037,7 @@ Vertical slice architecture organises code by feature rather than by technical l
 Service, Repository). Each slice contains all layers needed for that feature in one cohesive unit,
 reducing cross-slice coupling and making it easy to find, understand, and change a complete feature.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3319,6 +4246,66 @@ Console.WriteLine(got);
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => VERTICAL SLICE: feature owns its own handler, data, and response — no shared layers
+// => Each feature (slice) is independently deployable and understandable
+
+// === FEATURE SLICE: Place Order ===
+// => Everything needed for PlaceOrder lives in one place
+interface PlaceOrderCommand {
+  customerId: string;
+  productId: string;
+  qty: number;
+}
+interface PlaceOrderResult {
+  orderId: string;
+  total: number;
+}
+
+// => In-memory store for this slice only
+const orderStore: Map<string, { customerId: string; productId: string; qty: number }> = new Map();
+
+async function handlePlaceOrder(cmd: PlaceOrderCommand): Promise<PlaceOrderResult> {
+  // => validate
+  if (cmd.qty <= 0) throw new Error("Quantity must be positive");
+  // => execute
+  const orderId = `ord-${Date.now()}`;
+  orderStore.set(orderId, { customerId: cmd.customerId, productId: cmd.productId, qty: cmd.qty });
+  // => respond with output DTO
+  return { orderId, total: cmd.qty * 10 }; // => simulated price $10/unit
+  // => this handler owns the entire PlaceOrder feature — no shared service layer
+}
+
+// === FEATURE SLICE: Get Order ===
+// => Independent slice — does not reuse handlePlaceOrder internals
+interface GetOrderQuery {
+  orderId: string;
+}
+interface GetOrderResult {
+  orderId: string;
+  customerId: string;
+  status: string;
+}
+
+async function handleGetOrder(query: GetOrderQuery): Promise<GetOrderResult | null> {
+  const order = orderStore.get(query.orderId);
+  if (!order) return null;
+  return { orderId: query.orderId, customerId: order.customerId, status: "confirmed" };
+  // => this slice reads from the store directly — no shared repository layer
+}
+
+// => USAGE: each slice is invoked independently
+const placed = await handlePlaceOrder({ customerId: "c1", productId: "p1", qty: 3 });
+console.log(placed.orderId); // => ord-...
+console.log(placed.total); // => 30
+
+const fetched = await handleGetOrder({ orderId: placed.orderId });
+console.log(fetched?.status); // => confirmed
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** One feature, one folder, all layers — a developer should be able to read a
@@ -3339,7 +4326,7 @@ The Shared Kernel is a bounded context pattern where two related domains share a
 chosen subset of their domain model — typically value objects and domain events — without sharing
 full application or infrastructure code. Both teams must agree on changes to the kernel.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3508,6 +4495,79 @@ Console.WriteLine($"Overdue (35 days): {invoice.IsOverdue(35)}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SHARED KERNEL: only value objects and domain events shared between bounded contexts
+// => Sharing minimized — each context owns its own domain model
+
+// === SHARED KERNEL: types agreed upon by both Sales and Shipping contexts ===
+// => These types are versioned and change only with explicit cross-team agreement
+namespace SharedKernel {
+  // => Money: shared value object — both contexts understand currency + amount
+  export class Money {
+    constructor(
+      readonly amount: number,
+      readonly currency: string,
+    ) {}
+
+    equals(other: Money): boolean {
+      return this.amount === other.amount && this.currency === other.currency;
+    }
+
+    toString(): string {
+      return `${this.currency} ${this.amount.toFixed(2)}`;
+    }
+  }
+
+  // => CustomerId: shared identity value — agreed cross-context identifier
+  export class CustomerId {
+    constructor(readonly value: string) {}
+    toString(): string {
+      return this.value;
+    }
+  }
+}
+
+// === SALES CONTEXT: uses shared kernel types ===
+class SalesOrder {
+  constructor(
+    readonly customerId: SharedKernel.CustomerId, // => shared kernel type
+    readonly total: SharedKernel.Money, // => shared kernel type
+  ) {}
+
+  applyDiscount(pct: number): SalesOrder {
+    const discounted = new SharedKernel.Money(this.total.amount * (1 - pct / 100), this.total.currency);
+    return new SalesOrder(this.customerId, discounted);
+    // => Sales-specific business logic; Shipping has no concept of discount
+  }
+}
+
+// === SHIPPING CONTEXT: uses same shared kernel types ===
+class ShipmentRequest {
+  constructor(
+    readonly customerId: SharedKernel.CustomerId, // => same shared kernel type
+    readonly insuredValue: SharedKernel.Money, // => same shared kernel type
+    readonly destination: string, // => Shipping-specific concept
+  ) {}
+
+  shippingCost(): SharedKernel.Money {
+    const cost = 5.0 + (this.destination === "international" ? 20.0 : 0);
+    return new SharedKernel.Money(cost, this.insuredValue.currency);
+    // => Shipping-specific formula — Sales has no concept of shipping cost
+  }
+}
+
+// => Both contexts use SharedKernel types without sharing domain logic
+const customerId = new SharedKernel.CustomerId("c-42");
+const order = new SalesOrder(customerId, new SharedKernel.Money(100, "USD")).applyDiscount(10);
+console.log(order.total.toString()); // => USD 90.00
+
+const shipment = new ShipmentRequest(customerId, order.total, "domestic");
+console.log(shipment.shippingCost().toString()); // => USD 5.00
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Keep the shared kernel minimal — value objects and events only — and require
@@ -3530,7 +4590,7 @@ The specification pattern encapsulates a business rule as a composable object wi
 `is_satisfied_by(candidate)` method. Specifications compose via `and_`, `or_`, and `not_`,
 enabling complex business rules to be expressed as readable, testable combinations.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3707,6 +4767,79 @@ Console.WriteLine(discountEligible.IsSatisfiedBy(o3)); // => Output: False (no c
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => Base Specification: composable business rule abstraction
+// => Each subclass implements one focused predicate; combinations built via and/or/not
+abstract class Specification<T> {
+  abstract isSatisfiedBy(candidate: T): boolean;
+
+  and(other: Specification<T>): Specification<T> {
+    return { isSatisfiedBy: (c) => this.isSatisfiedBy(c) && other.isSatisfiedBy(c) } as Specification<T>;
+  }
+
+  or(other: Specification<T>): Specification<T> {
+    return { isSatisfiedBy: (c) => this.isSatisfiedBy(c) || other.isSatisfiedBy(c) } as Specification<T>;
+  }
+
+  not(): Specification<T> {
+    return { isSatisfiedBy: (c) => !this.isSatisfiedBy(c) } as Specification<T>;
+  }
+}
+
+// => DOMAIN: concrete specifications for order eligibility
+interface Order {
+  total: number;
+  status: string;
+  daysOld: number;
+  customerId: string;
+}
+
+class MinimumOrderSpec extends Specification<Order> {
+  constructor(private readonly min: number) {
+    super();
+  }
+  isSatisfiedBy(o: Order): boolean {
+    return o.total >= this.min;
+  }
+  // => true if order meets minimum total
+}
+
+class PendingStatusSpec extends Specification<Order> {
+  isSatisfiedBy(o: Order): boolean {
+    return o.status === "pending";
+  }
+  // => true if order is in pending state
+}
+
+class FreshOrderSpec extends Specification<Order> {
+  constructor(private readonly maxDays: number) {
+    super();
+  }
+  isSatisfiedBy(o: Order): boolean {
+    return o.daysOld <= this.maxDays;
+  }
+  // => true if order is recent enough to process
+}
+
+// => COMPOSE: express complex rules as combinations
+const eligibleForProcessing = new PendingStatusSpec().and(new MinimumOrderSpec(50)).and(new FreshOrderSpec(7));
+// => must be pending AND >= $50 AND at most 7 days old
+
+const orders: Order[] = [
+  { total: 100, status: "pending", daysOld: 2, customerId: "c1" }, // => eligible
+  { total: 30, status: "pending", daysOld: 1, customerId: "c2" }, // => too small
+  { total: 100, status: "shipped", daysOld: 1, customerId: "c3" }, // => wrong status
+  { total: 100, status: "pending", daysOld: 10, customerId: "c4" }, // => too old
+];
+
+const eligible = orders.filter((o) => eligibleForProcessing.isSatisfiedBy(o));
+console.log(`${eligible.length} eligible orders`); // => 1 eligible orders
+console.log(eligible[0].customerId); // => c1
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Express business rules as composable specification objects so rules can be
@@ -3745,7 +4878,7 @@ graph LR
     style Resp3 fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3990,6 +5123,82 @@ Console.WriteLine(chain(new HttpRequest("/orders", "key-abc", "caller-1")));
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// === WRITE SIDE: strict command validation and aggregate ===
+interface CreateOrderCommand {
+  orderId: string;
+  customerId: string;
+  items: Array<{ productId: string; qty: number; price: number }>;
+}
+interface CancelOrderCommand {
+  orderId: string;
+  reason: string;
+}
+
+// => AGGREGATE: enforces business invariants on write side
+class OrderAggregate {
+  private status: "draft" | "placed" | "cancelled" = "draft";
+  private readonly items: Array<{ productId: string; qty: number; price: number }> = [];
+
+  place(cmd: CreateOrderCommand): void {
+    if (this.status !== "draft") throw new Error("Order already placed");
+    if (cmd.items.length === 0) throw new Error("Order must have at least one item");
+    for (const item of cmd.items) this.items.push(item);
+    this.status = "placed";
+    console.log(`[Write] Order ${cmd.orderId} placed`);
+  }
+
+  cancel(cmd: CancelOrderCommand): void {
+    if (this.status !== "placed") throw new Error(`Cannot cancel ${this.status} order`);
+    this.status = "cancelled";
+    console.log(`[Write] Order ${cmd.orderId} cancelled: ${cmd.reason}`);
+  }
+
+  getTotal(): number {
+    return this.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  }
+}
+
+// === READ SIDE: denormalized for fast queries ===
+interface OrderSummaryView {
+  orderId: string;
+  customerId: string;
+  totalFormatted: string;
+  status: string;
+}
+
+const readStore: Map<string, OrderSummaryView> = new Map();
+// => separate read store optimized for display
+
+// => PROJECTION: builds/updates read model from command side
+function projectOrderView(orderId: string, aggregate: OrderAggregate, customerId: string, status: string): void {
+  readStore.set(orderId, {
+    orderId,
+    customerId,
+    totalFormatted: `$${aggregate.getTotal().toFixed(2)}`,
+    status,
+  });
+}
+
+// => USAGE: write side enforces rules; read side serves queries
+const agg = new OrderAggregate();
+const cmd: CreateOrderCommand = {
+  orderId: "ord-1",
+  customerId: "c1",
+  items: [{ productId: "p1", qty: 2, price: 25.0 }],
+};
+
+agg.place(cmd);
+projectOrderView("ord-1", agg, "c1", "placed");
+
+const view = readStore.get("ord-1");
+console.log(view?.totalFormatted); // => $50.00
+console.log(view?.status); // => placed
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Build middleware chains with clear early-termination semantics so each handler has
@@ -4011,7 +5220,7 @@ class per algorithm. Each domain object accepts a visitor and calls the appropri
 enabling new operations to be added without modifying domain classes — valuable when adding
 reporting, serialisation, or transformation rules to a stable object hierarchy.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4337,6 +5546,92 @@ Console.WriteLine($"Violations: {string.Join(", ", compliance.Violations)}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => Stable domain hierarchy — these classes do NOT change when new operations are added
+interface ShapeVisitor {
+  visitCircle(circle: Circle): number | string;
+  visitRectangle(rect: Rectangle): number | string;
+  visitTriangle(tri: Triangle): number | string;
+}
+
+abstract class Shape {
+  abstract accept(visitor: ShapeVisitor): number | string;
+}
+
+class Circle extends Shape {
+  constructor(readonly radius: number) {
+    super();
+  }
+  accept(visitor: ShapeVisitor) {
+    return visitor.visitCircle(this);
+  }
+}
+
+class Rectangle extends Shape {
+  constructor(
+    readonly width: number,
+    readonly height: number,
+  ) {
+    super();
+  }
+  accept(visitor: ShapeVisitor) {
+    return visitor.visitRectangle(this);
+  }
+}
+
+class Triangle extends Shape {
+  constructor(
+    readonly base: number,
+    readonly height: number,
+  ) {
+    super();
+  }
+  accept(visitor: ShapeVisitor) {
+    return visitor.visitTriangle(this);
+  }
+}
+
+// => VISITOR 1: area calculation — new operation, no shape classes modified
+class AreaVisitor implements ShapeVisitor {
+  visitCircle(c: Circle): number {
+    return Math.PI * c.radius ** 2; // => π r²
+  }
+  visitRectangle(r: Rectangle): number {
+    return r.width * r.height;
+  }
+  visitTriangle(t: Triangle): number {
+    return 0.5 * t.base * t.height;
+  }
+}
+
+// => VISITOR 2: description — another new operation, still no shape classes modified
+class DescriptionVisitor implements ShapeVisitor {
+  visitCircle(c: Circle): string {
+    return `Circle with radius ${c.radius}`;
+  }
+  visitRectangle(r: Rectangle): string {
+    return `Rectangle ${r.width}x${r.height}`;
+  }
+  visitTriangle(t: Triangle): string {
+    return `Triangle base=${t.base}, height=${t.height}`;
+  }
+}
+
+const shapes: Shape[] = [new Circle(5), new Rectangle(4, 3), new Triangle(6, 4)];
+const areaVisitor = new AreaVisitor();
+const descVisitor = new DescriptionVisitor();
+
+for (const shape of shapes) {
+  console.log(`${shape.accept(descVisitor)}: area = ${(shape.accept(areaVisitor) as number).toFixed(2)}`);
+}
+// => Circle with radius 5: area = 78.54
+// => Rectangle 4x3: area = 12.00
+// => Triangle base=6, height=4: area = 12.00
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Use the visitor pattern when you need to add operations to a stable class hierarchy
@@ -4362,7 +5657,7 @@ preventing schema coupling and enabling independent scaling and technology selec
 data access uses APIs — never direct database joins — ensuring services remain independently
 deployable.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4576,6 +5871,79 @@ foreach (var r in GetOrdersWithCustomer("CUST-1", ordersDb, customersDb))
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => ORDERS SERVICE — owns its own database; no other service queries orders_db directly
+class OrdersDb {
+  private readonly orders: Map<string, { id: string; customerId: string; total: number; status: string }> = new Map();
+  // => isolated data store — only OrdersService accesses this
+
+  save(order: { id: string; customerId: string; total: number; status: string }): void {
+    this.orders.set(order.id, order);
+  }
+
+  findById(id: string) {
+    return this.orders.get(id);
+  }
+}
+
+class OrdersService {
+  constructor(private readonly db: OrdersDb) {}
+
+  placeOrder(customerId: string, total: number): string {
+    const id = `ord-${Date.now()}`;
+    this.db.save({ id, customerId, total, status: "pending" });
+    return id; // => returns only the id — other services reference by id
+  }
+
+  getOrder(id: string) {
+    return this.db.findById(id);
+  }
+}
+
+// => INVENTORY SERVICE — owns its own database; no cross-service joins
+class InventoryDb {
+  private readonly stock: Map<string, { productId: string; qty: number }> = new Map();
+  // => isolated data store — only InventoryService accesses this
+
+  setStock(productId: string, qty: number): void {
+    this.stock.set(productId, { productId, qty });
+  }
+
+  getStock(productId: string) {
+    return this.stock.get(productId);
+  }
+}
+
+class InventoryService {
+  constructor(private readonly db: InventoryDb) {}
+
+  reserve(productId: string, qty: number): boolean {
+    const stock = this.db.getStock(productId);
+    if (!stock || stock.qty < qty) return false;
+    this.db.setStock(productId, stock.qty - qty);
+    return true;
+  }
+}
+
+// => USAGE: services communicate via IDs and events, not shared tables
+const ordersDb = new OrdersDb();
+const inventoryDb = new InventoryDb();
+const ordersSvc = new OrdersService(ordersDb);
+const inventorySvc = new InventoryService(inventoryDb);
+
+inventoryDb.setStock("p1", 10); // => seed inventory
+
+const orderId = ordersSvc.placeOrder("c1", 150.0);
+const reserved = inventorySvc.reserve("p1", 2);
+console.log(`Order: ${orderId}, Reserved: ${reserved}`);
+// => Order: ord-..., Reserved: true
+
+// => No shared DB — each service controls its own schema evolution
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Each service's database is a private implementation detail; all cross-service
@@ -4619,7 +5987,7 @@ graph LR
     style F2 fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4844,6 +6212,83 @@ Console.WriteLine(store.IsEnabled("new_checkout", "beta-tester-1"));
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => OUTBOX PATTERN: guarantees at-least-once event delivery by persisting events
+// => to the same DB transaction as business data before publishing to message bus
+
+interface OutboxMessage {
+  id: string;
+  type: string;
+  payload: unknown;
+  published: boolean;
+  createdAt: number;
+}
+
+// => TRANSACTIONAL OUTBOX: writes business data + event in same atomic operation
+class OrderWithOutbox {
+  private readonly orders: Map<string, { id: string; customerId: string }> = new Map();
+  private readonly outbox: OutboxMessage[] = [];
+  // => outbox and business data written together — no partial state
+
+  placeOrder(customerId: string): string {
+    const orderId = `ord-${Date.now()}`;
+
+    // => STEP 1: write business data
+    this.orders.set(orderId, { id: orderId, customerId });
+
+    // => STEP 2: write outbox message in same transaction
+    this.outbox.push({
+      id: crypto.randomUUID(),
+      type: "OrderPlaced",
+      payload: { orderId, customerId },
+      published: false,
+      createdAt: Date.now(),
+    });
+    // => Both writes succeed or both fail — no lost events, no orphan events
+
+    console.log(`[Order] Order ${orderId} placed (outbox message queued)`);
+    return orderId;
+  }
+
+  getUnpublished(): OutboxMessage[] {
+    return this.outbox.filter((m) => !m.published);
+    // => relay queries this to find messages to publish
+  }
+
+  markPublished(id: string): void {
+    const msg = this.outbox.find((m) => m.id === id);
+    if (msg) msg.published = true;
+    // => marked after successful publish to message bus
+  }
+}
+
+// => OUTBOX RELAY: polls outbox and publishes to message bus
+class OutboxRelay {
+  constructor(private readonly outboxStore: OrderWithOutbox) {}
+
+  async flush(): Promise<void> {
+    const pending = this.outboxStore.getUnpublished();
+    for (const msg of pending) {
+      // => real impl: publish to Kafka/RabbitMQ
+      console.log(`[Relay] Publishing ${msg.type}: ${JSON.stringify(msg.payload)}`);
+      this.outboxStore.markPublished(msg.id);
+      // => mark after successful publish — safe to retry on failure
+    }
+  }
+}
+
+const orderSvc = new OrderWithOutbox();
+orderSvc.placeOrder("c1");
+// => [Order] Order ord-... placed (outbox message queued)
+
+const relay = new OutboxRelay(orderSvc);
+await relay.flush();
+// => [Relay] Publishing OrderPlaced: {"orderId":"ord-...","customerId":"c1"}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Use deterministic hash-based bucketing so the same user always gets the same
@@ -4889,7 +6334,7 @@ graph TD
     style CP fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5078,6 +6523,54 @@ foreach (var entry in proxyA.Telemetry)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => IDEMPOTENT CONSUMER: processes each message exactly once using deduplication
+interface Message {
+  id: string; // => unique message id — used for deduplication
+  type: string;
+  payload: unknown;
+}
+
+class IdempotentOrderConsumer {
+  private readonly processed: Set<string> = new Set();
+  // => tracks processed message ids — prevents duplicate processing
+
+  process(message: Message): string {
+    if (this.processed.has(message.id)) {
+      console.log(`[Consumer] Duplicate skipped: ${message.id}`);
+      return "duplicate";
+      // => message already processed — safe to skip
+    }
+
+    // => PROCESS: handle the message
+    console.log(`[Consumer] Processing ${message.type}: ${JSON.stringify(message.payload)}`);
+    this.processed.add(message.id); // => mark as processed AFTER success
+
+    return "processed";
+    // => real impl: use DB-stored set for durability across restarts
+  }
+
+  isProcessed(messageId: string): boolean {
+    return this.processed.has(messageId);
+    // => query for idempotency checks
+  }
+}
+
+// => USAGE: consumer is safe when message broker delivers duplicates
+const consumer = new IdempotentOrderConsumer();
+const msg: Message = { id: "msg-abc-123", type: "OrderPlaced", payload: { orderId: "ord-1" } };
+
+consumer.process(msg); // => [Consumer] Processing OrderPlaced
+consumer.process(msg); // => [Consumer] Duplicate skipped
+consumer.process(msg); // => [Consumer] Duplicate skipped
+
+// => Three deliveries; only one processed — exactly-once semantics achieved
+console.log(consumer.isProcessed("msg-abc-123")); // => true
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Service mesh moves cross-cutting network concerns (retries, mTLS, tracing) to the
@@ -5099,7 +6592,7 @@ in that language. In architecture it enables policy engines, query filters, rule
 configuration DSLs where business logic is expressed in a structured mini-language rather than
 hardcoded conditionals.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5300,6 +6793,85 @@ Console.WriteLine(discountRule.Interpret(ctxBronze)); // => Output: False (bronz
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => Abstract expression — every node in the rule tree implements this
+interface Expression {
+  interpret(context: Record<string, number>): number;
+  // => evaluates the expression given variable bindings
+}
+
+// => TERMINAL EXPRESSIONS: leaves of the expression tree
+class NumberLiteral implements Expression {
+  constructor(private readonly value: number) {}
+  interpret(_ctx: Record<string, number>): number {
+    return this.value;
+  }
+  // => literal number always evaluates to its own value
+}
+
+class Variable implements Expression {
+  constructor(private readonly name: string) {}
+  interpret(ctx: Record<string, number>): number {
+    if (!(this.name in ctx)) throw new Error(`Undefined variable: ${this.name}`);
+    return ctx[this.name]; // => look up variable in context
+  }
+}
+
+// => NON-TERMINAL EXPRESSIONS: composite nodes
+class Add implements Expression {
+  constructor(
+    private readonly left: Expression,
+    private readonly right: Expression,
+  ) {}
+  interpret(ctx: Record<string, number>): number {
+    return this.left.interpret(ctx) + this.right.interpret(ctx);
+    // => sum of left and right sub-expressions
+  }
+}
+
+class Multiply implements Expression {
+  constructor(
+    private readonly left: Expression,
+    private readonly right: Expression,
+  ) {}
+  interpret(ctx: Record<string, number>): number {
+    return this.left.interpret(ctx) * this.right.interpret(ctx);
+    // => product of left and right sub-expressions
+  }
+}
+
+class IfGreater implements Expression {
+  constructor(
+    private readonly condition: Expression, // => left side of >
+    private readonly threshold: Expression, // => right side of >
+    private readonly thenExpr: Expression, // => result if true
+    private readonly elseExpr: Expression, // => result if false
+  ) {}
+  interpret(ctx: Record<string, number>): number {
+    return this.condition.interpret(ctx) > this.threshold.interpret(ctx)
+      ? this.thenExpr.interpret(ctx)
+      : this.elseExpr.interpret(ctx);
+    // => conditional expression: if condition > threshold then thenExpr else elseExpr
+  }
+}
+
+// => BUILD EXPRESSION TREE: (qty * price) + (qty > 10 ? -5 : 0)
+// => Represents: total cost with bulk discount of $5 when qty > 10
+const expr: Expression = new Add(
+  new Multiply(new Variable("qty"), new Variable("price")),
+  new IfGreater(new Variable("qty"), new NumberLiteral(10), new NumberLiteral(-5), new NumberLiteral(0)),
+);
+
+const result1 = expr.interpret({ qty: 5, price: 20 });
+console.log(result1); // => 100 (5*20 + 0: no discount)
+
+const result2 = expr.interpret({ qty: 15, price: 20 });
+console.log(result2); // => 295 (15*20 + -5: bulk discount)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Build expression trees using composable terminal and non-terminal expression
@@ -5344,7 +6916,7 @@ graph LR
     style RM fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5588,6 +7160,93 @@ foreach (var s in projection.QueryAll())
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// === Write side: command + domain model with invariants ===
+interface AccountEvent {
+  type: string;
+  accountId: string;
+  occurredAt: number;
+}
+interface AccountOpened extends AccountEvent {
+  type: "AccountOpened";
+  owner: string;
+  initialBalance: number;
+}
+interface MoneyDeposited extends AccountEvent {
+  type: "MoneyDeposited";
+  amount: number;
+}
+interface MoneyWithdrawn extends AccountEvent {
+  type: "MoneyWithdrawn";
+  amount: number;
+}
+type AllAccountEvents = AccountOpened | MoneyDeposited | MoneyWithdrawn;
+
+class Account {
+  private id = "";
+  private owner = "";
+  private balance = 0;
+  private opened = false;
+
+  static fromHistory(events: AllAccountEvents[]): Account {
+    const account = new Account();
+    for (const event of events) account.apply(event);
+    return account;
+    // => reconstructed by replaying all past events — current state always derivable
+  }
+
+  private apply(event: AllAccountEvents): void {
+    switch (event.type) {
+      case "AccountOpened":
+        this.id = event.accountId;
+        this.owner = event.owner;
+        this.balance = event.initialBalance;
+        this.opened = true;
+        break;
+      case "MoneyDeposited":
+        this.balance += event.amount;
+        break;
+      case "MoneyWithdrawn":
+        this.balance -= event.amount;
+        break;
+    }
+  }
+
+  withdraw(amount: number, accountId: string): AllAccountEvents {
+    if (!this.opened) throw new Error("Account not opened");
+    if (amount > this.balance) throw new Error(`Insufficient funds: ${this.balance}`);
+    // => business rule checked on current reconstructed state
+    const event: MoneyWithdrawn = { type: "MoneyWithdrawn", accountId, amount, occurredAt: Date.now() };
+    this.apply(event); // => apply immediately (optimistic)
+    return event; // => caller persists this event to the event store
+  }
+
+  getBalance(): number {
+    return this.balance;
+  }
+  getOwner(): string {
+    return this.owner;
+  }
+}
+
+// === Event Store (append-only) ===
+const eventStore: AllAccountEvents[] = [
+  { type: "AccountOpened", accountId: "acc1", owner: "Alice", initialBalance: 0, occurredAt: Date.now() },
+  { type: "MoneyDeposited", accountId: "acc1", amount: 1000, occurredAt: Date.now() },
+  { type: "MoneyDeposited", accountId: "acc1", amount: 500, occurredAt: Date.now() },
+];
+
+// Reconstruct and withdraw
+const account = Account.fromHistory(eventStore);
+const withdrawEvent = account.withdraw(200, "acc1");
+eventStore.push(withdrawEvent); // => append to event store — never modify existing events
+
+console.log(account.getBalance()); // => 1300 (0 + 1000 + 500 - 200)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Separate command handlers (enforce invariants, emit events) from query handlers
@@ -5624,7 +7283,7 @@ graph LR
     style Consumers fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5855,6 +7514,90 @@ Console.WriteLine($"Unpublished after relay: {db.GetUnpublished().Count()}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => OBSERVABLE: a stream of values that can be subscribed to
+type Observer<T> = {
+  next: (value: T) => void;
+  error?: (err: Error) => void;
+  complete?: () => void;
+};
+
+class Observable<T> {
+  constructor(private readonly subscribe: (observer: Observer<T>) => void) {}
+
+  static from<T>(values: T[]): Observable<T> {
+    return new Observable((observer) => {
+      for (const v of values) observer.next(v);
+      observer.complete?.();
+      // => emits all values then completes
+    });
+  }
+
+  map<U>(fn: (v: T) => U): Observable<U> {
+    return new Observable((observer) => {
+      this.subscribe({
+        next: (v) => observer.next(fn(v)), // => transform each value
+        error: observer.error,
+        complete: observer.complete,
+      });
+    });
+  }
+
+  filter(predicate: (v: T) => boolean): Observable<T> {
+    return new Observable((observer) => {
+      this.subscribe({
+        next: (v) => {
+          if (predicate(v)) observer.next(v);
+        },
+        // => only pass values that satisfy the predicate
+        error: observer.error,
+        complete: observer.complete,
+      });
+    });
+  }
+
+  reduce<U>(fn: (acc: U, v: T) => U, initial: U): Observable<U> {
+    return new Observable((observer) => {
+      let acc = initial;
+      this.subscribe({
+        next: (v) => {
+          acc = fn(acc, v);
+        },
+        // => accumulates without emitting intermediate values
+        error: observer.error,
+        complete: () => {
+          observer.next(acc);
+          observer.complete?.();
+        },
+        // => emits final accumulated value on completion
+      });
+    });
+  }
+
+  run(observer: Observer<T>): void {
+    this.subscribe(observer); // => start the stream
+  }
+}
+
+// => PIPELINE: order totals > $100, summed
+const orders = [
+  { id: 1, total: 150 },
+  { id: 2, total: 50 },
+  { id: 3, total: 200 },
+  { id: 4, total: 75 },
+];
+
+Observable.from(orders)
+  .filter((o) => o.total > 100) // => only large orders
+  .map((o) => o.total) // => extract total
+  .reduce((sum, t) => sum + t, 0) // => sum them
+  .run({ next: (sum) => console.log(`Sum of large orders: ${sum}`) });
+// => Sum of large orders: 350 (150 + 200)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Write business data and the outbox event in a single database transaction, then
@@ -5877,7 +7620,7 @@ The anti-corruption layer (ACL) is a translation boundary that prevents a downst
 concepts from leaking into an upstream domain. The ACL translates between two bounded contexts'
 vocabularies, protecting the upstream domain from being corrupted by legacy or third-party models.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6087,6 +7830,86 @@ Console.WriteLine($"CRM: acct={crmOut.AcctNum}, status={crmOut.StatusCode}, cred
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ---- Legacy CRM system model — uses its own vocabulary ----
+
+// => CRM calls customers "accounts" with numeric status codes and string money values
+interface CrmAccount {
+  account_id: string; // => legacy: underscore naming
+  account_name: string;
+  status_code: number; // => legacy: 1=active, 2=suspended, 3=closed
+  credit_balance_str: string; // => legacy: money as string "1234.56"
+}
+
+// => CRM API — cannot be modified (third-party system)
+class CrmApiClient {
+  fetchAccount(accountId: string): CrmAccount {
+    // => simulates external CRM response
+    return { account_id: accountId, account_name: "Alice Corp", status_code: 1, credit_balance_str: "5000.00" };
+  }
+}
+
+// ---- Domain model — clean, type-safe, no CRM concepts ----
+type AccountStatus = "active" | "suspended" | "closed";
+
+interface DomainAccount {
+  id: string;
+  name: string;
+  status: AccountStatus;
+  creditBalance: number; // => domain: number not string
+}
+
+// ---- Anti-Corruption Layer: translates CRM → Domain ----
+class CrmAntiCorruptionLayer {
+  constructor(private readonly crmClient: CrmApiClient) {}
+
+  getAccount(accountId: string): DomainAccount {
+    const crmData = this.crmClient.fetchAccount(accountId);
+    // => translate: CRM → Domain — domain code never sees CRM shapes
+    return {
+      id: crmData.account_id,
+      name: crmData.account_name,
+      status: this.translateStatus(crmData.status_code),
+      creditBalance: parseFloat(crmData.credit_balance_str),
+      // => convert string money to number
+    };
+  }
+
+  private translateStatus(code: number): AccountStatus {
+    switch (code) {
+      case 1:
+        return "active";
+      case 2:
+        return "suspended";
+      case 3:
+        return "closed";
+      default:
+        throw new Error(`Unknown CRM status code: ${code}`);
+    }
+  }
+}
+
+// ---- Domain service — only knows DomainAccount ----
+class CreditCheckService {
+  constructor(private readonly acl: CrmAntiCorruptionLayer) {}
+
+  canExtendCredit(accountId: string, amount: number): boolean {
+    const account = this.acl.getAccount(accountId);
+    // => domain code works with clean domain types — CRM is fully hidden
+    return account.status === "active" && account.creditBalance >= amount;
+  }
+}
+
+const crmClient = new CrmApiClient();
+const acl = new CrmAntiCorruptionLayer(crmClient);
+const creditCheck = new CreditCheckService(acl);
+
+console.log(creditCheck.canExtendCredit("acc-42", 1000)); // => true (active, balance 5000)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** The ACL is the boundary where foreign vocabulary and types stop; everything
@@ -6129,7 +7952,7 @@ graph TD
     style Domain fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6383,6 +8206,94 @@ Console.WriteLine($"Events published: {publisher.Published.Count}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ---- Ports — domain-owned interfaces; depend on nothing outside the domain ----
+interface EventStore {
+  append(streamId: string, event: unknown): void;
+  // => append-only write port
+  load(streamId: string): unknown[];
+  // => load all events for a stream
+}
+
+interface EventPublisher {
+  publish(topic: string, event: unknown): void;
+  // => publish to message broker port
+}
+
+// ---- Domain event ----
+interface OrderEvent {
+  type: string;
+  orderId: string;
+  occurredAt: number;
+}
+interface OrderPlaced extends OrderEvent {
+  type: "OrderPlaced";
+  customerId: string;
+  items: unknown[];
+}
+
+// ---- Application service: pure domain logic + ports only ----
+class OrderApplicationService {
+  constructor(
+    private readonly store: EventStore,
+    private readonly publisher: EventPublisher,
+  ) {}
+
+  placeOrder(orderId: string, customerId: string, items: unknown[]): void {
+    // => validate invariants
+    if ((items as unknown[]).length === 0) throw new Error("Order must have items");
+
+    // => create and persist domain event
+    const event: OrderPlaced = {
+      type: "OrderPlaced",
+      orderId,
+      customerId,
+      items,
+      occurredAt: Date.now(),
+    };
+    this.store.append(orderId, event); // => persist via port
+    this.publisher.publish("orders", event); // => publish via port
+    // => service imports no frameworks — only its own ports
+  }
+}
+
+// ---- Infrastructure adapters ----
+class InMemoryEventStore implements EventStore {
+  private readonly streams: Map<string, unknown[]> = new Map();
+
+  append(streamId: string, event: unknown): void {
+    const existing = this.streams.get(streamId) ?? [];
+    this.streams.set(streamId, [...existing, event]);
+    console.log(`[EventStore] Appended ${(event as OrderEvent).type} to ${streamId}`);
+  }
+
+  load(streamId: string): unknown[] {
+    return this.streams.get(streamId) ?? [];
+  }
+}
+
+class ConsoleEventPublisher implements EventPublisher {
+  publish(topic: string, event: unknown): void {
+    console.log(`[Broker] Published to "${topic}": ${(event as OrderEvent).type}`);
+  }
+}
+
+// ---- Wire adapters into application service ----
+const eventStore = new InMemoryEventStore();
+const publisher = new ConsoleEventPublisher();
+const orderAppSvc = new OrderApplicationService(eventStore, publisher);
+
+orderAppSvc.placeOrder("ord-1", "c1", [{ productId: "p1", qty: 2 }]);
+// => [EventStore] Appended OrderPlaced to ord-1
+// => [Broker] Published to "orders": OrderPlaced
+
+const history = eventStore.load("ord-1");
+console.log(`Events in stream: ${history.length}`); // => Events in stream: 1
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Domain logic is testable in complete isolation using in-memory adapters; swapping
@@ -6422,7 +8333,7 @@ graph LR
     style B fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6572,6 +8483,91 @@ Console.WriteLine($"Processed: {processed}");
 // => Output: Processed: ~10-20 (bounded by buffer capacity + consumer speed)
 // => Key: memory capped at capacity=10 — no unbounded backlog accumulated
 subscription.Dispose(); // => Unsubscribe; clean up resources
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => TypeScript: RxJS-style observable pipeline (simplified inline implementation)
+// => Demonstrates the reactive programming model used by Angular, NestJS, and RxJS
+
+type NextFn<T> = (value: T) => void;
+type Operator<T, U> = (source: AsyncIterable<T>) => AsyncIterable<U>;
+
+// => SUBJECT: both producer and consumer — emits values imperatively
+class Subject<T> {
+  private readonly subscribers: NextFn<T>[] = [];
+  private readonly buffered: T[] = [];
+
+  emit(value: T): void {
+    this.buffered.push(value);
+    for (const sub of this.subscribers) sub(value);
+    // => push to all current subscribers
+  }
+
+  [Symbol.asyncIterator](): AsyncIterator<T> {
+    let index = 0;
+    const self = this;
+    return {
+      async next(): Promise<IteratorResult<T>> {
+        while (index >= self.buffered.length) {
+          await new Promise((r) => setTimeout(r, 1));
+          // => poll until new value — real RxJS uses push-based backpressure
+        }
+        return { value: self.buffered[index++], done: false };
+      },
+    };
+  }
+}
+
+// => PIPELINE OPERATORS
+async function* mapOp<T, U>(source: AsyncIterable<T>, fn: (v: T) => U): AsyncIterable<U> {
+  for await (const v of source) yield fn(v);
+  // => transforms each value through fn
+}
+
+async function* filterOp<T>(source: AsyncIterable<T>, pred: (v: T) => boolean): AsyncIterable<T> {
+  for await (const v of source) {
+    if (pred(v)) yield v;
+  }
+  // => passes only values satisfying pred
+}
+
+async function* takeOp<T>(source: AsyncIterable<T>, n: number): AsyncIterable<T> {
+  let count = 0;
+  for await (const v of source) {
+    yield v;
+    if (++count >= n) return; // => stop after n values
+  }
+}
+
+// => USAGE: streaming order price pipeline
+const orders$ = new Subject<{ id: string; total: number }>();
+
+// => Build pipeline: filter high-value orders, map to display strings, take first 3
+const pipeline = takeOp(
+  mapOp(
+    filterOp(orders$, (o) => o.total > 100),
+    (o) => `Order ${o.id}: $${o.total}`,
+  ),
+  3,
+);
+
+// => Emit values
+orders$.emit({ id: "o1", total: 50 }); // => filtered out (< 100)
+orders$.emit({ id: "o2", total: 200 }); // => passes
+orders$.emit({ id: "o3", total: 150 }); // => passes
+orders$.emit({ id: "o4", total: 300 }); // => passes (3rd taken)
+orders$.emit({ id: "o5", total: 400 }); // => not consumed (take 3 reached)
+
+// => Consume pipeline
+for await (const item of pipeline) {
+  console.log(item);
+}
+// => Order o2: $200
+// => Order o3: $150
+// => Order o4: $300
 ```
 
 {{< /tab >}}

@@ -41,7 +41,7 @@ stateDiagram-v2
     class Closed,Cancelled terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -140,6 +140,35 @@ Console.WriteLine(POState.IsTerminal(new POState.Closed())); // => Output: True
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: string literal union models the sealed state set
+type POState =
+  | "DRAFT" // => PO created, not yet submitted for approval
+  | "AWAITING_APPROVAL" // => Submitted; waiting for manager decision
+  | "APPROVED" // => Manager approved; ready to issue to supplier
+  | "ISSUED" // => Sent to supplier; lines now immutable
+  | "ACKNOWLEDGED" // => Supplier confirmed receipt of PO
+  | "CLOSED" // => Terminal: fully complete
+  | "CANCELLED" // => Terminal: abandoned before payment
+  | "DISPUTED"; // => Discrepancy detected; resolution required
+
+// => Pure helper: decide whether a state allows no further transitions
+function isTerminal(state: POState): boolean {
+  return state === "CLOSED" || state === "CANCELLED";
+}
+
+// => Usage
+const initial: POState = "DRAFT";
+console.log(isTerminal(initial)); // => Output: false
+console.log(isTerminal("CLOSED")); // => Output: true
+// const bad: POState = 'Pending';       // => Compile error: not in the union
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Sealed union types turn the FSM state set into a compile-time contract — invalid states are errors, not bugs found in production.
@@ -152,7 +181,7 @@ Console.WriteLine(POState.IsTerminal(new POState.Closed())); // => Output: True
 
 The machine is the state plus the transition function. This example models the simplest possible PO FSM as a plain record holding the current state.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -256,6 +285,34 @@ Console.WriteLine(po.TotalAmount); // => Output: 500
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: readonly interface models the immutable PO value object
+interface PurchaseOrder {
+  readonly id: string; // => Immutable identifier, format "po_<uuid>"
+  readonly totalAmount: number; // => Monetary total in USD
+  readonly state: POState; // => Current FSM state
+}
+
+// => Factory: pure function — always returns Draft state
+function createPO(id: string, totalAmount: number): PurchaseOrder {
+  if (!id.trim()) throw new Error("PO id must not be blank");
+  if (totalAmount < 0) throw new Error("totalAmount must be >= 0");
+  return { id, totalAmount, state: "DRAFT" };
+  // => All POs begin in DRAFT — FSM invariant enforced here
+}
+
+// => Usage
+const po = createPO("po_abc123", 500);
+console.log(po.state); // => Output: DRAFT
+console.log(po.totalAmount); // => Output: 500
+// po.state = 'APPROVED';    // => Compile error: readonly property
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Keeping state in an immutable record and behaviour in separate functions is the functional FSM pattern — it makes transitions testable in isolation.
@@ -300,7 +357,7 @@ stateDiagram-v2
     class Disputed dispute
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -499,6 +556,38 @@ Console.WriteLine(NextState(new POState.Closed(), new POEvent.Cancel()));
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: string literal union for the event alphabet
+type POEvent = "SUBMIT" | "APPROVE" | "REJECT" | "ISSUE" | "ACKNOWLEDGE" | "CLOSE" | "CANCEL" | "DISPUTE";
+
+// => Transition table as nested readonly Record: state -> (event -> nextState)
+const TRANSITIONS: Readonly<Partial<Record<POState, Readonly<Partial<Record<POEvent, POState>>>>>> = {
+  DRAFT: { SUBMIT: "AWAITING_APPROVAL", CANCEL: "CANCELLED" },
+  // => Draft only allows submit (-> awaiting) or cancel (-> cancelled)
+  AWAITING_APPROVAL: { APPROVE: "APPROVED", REJECT: "CANCELLED", CANCEL: "CANCELLED" },
+  APPROVED: { ISSUE: "ISSUED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
+  ISSUED: { ACKNOWLEDGE: "ACKNOWLEDGED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
+  ACKNOWLEDGED: { CLOSE: "CLOSED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
+  DISPUTED: { APPROVE: "APPROVED", CANCEL: "CANCELLED" },
+  // => CLOSED and CANCELLED: absent — terminal states allow no transitions
+} as const;
+
+// => Pure lookup: returns undefined when transition is forbidden
+function nextState(current: POState, event: POEvent): POState | undefined {
+  return TRANSITIONS[current]?.[event];
+  // => Optional chaining: undefined if state absent or event not found
+}
+
+console.log(nextState("DRAFT", "SUBMIT")); // => Output: AWAITING_APPROVAL
+console.log(nextState("DRAFT", "APPROVE")); // => Output: undefined
+console.log(nextState("CLOSED", "CANCEL")); // => Output: undefined (terminal)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A data-driven transition table decouples the FSM structure from the execution logic — you can print, diff, or migrate it without touching the interpreter.
@@ -511,7 +600,7 @@ Console.WriteLine(NextState(new POState.Closed(), new POEvent.Cancel()));
 
 Wrapping the table lookup in a function that returns a `Result` type makes the FSM's success/failure contract explicit without throwing exceptions.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -675,6 +764,34 @@ Console.WriteLine(msg2);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: discriminated union models the Result sum type
+type Result<T> = { readonly kind: "ok"; readonly value: T } | { readonly kind: "err"; readonly error: string };
+
+// => Pure transition function: (PO, event) -> Result<PO>
+function transition(po: PurchaseOrder, event: POEvent): Result<PurchaseOrder> {
+  const next = nextState(po.state, event);
+  if (next === undefined)
+    return { kind: "err", error: `Invalid transition: ${po.state} --${event}--> (no such transition)` };
+  return { kind: "ok", value: { ...po, state: next } };
+  // => Spread creates a shallow copy; only state is updated
+}
+
+const po = createPO("po_abc123", 500);
+const r1 = transition(po, "SUBMIT");
+if (r1.kind === "ok") console.log(r1.value.state);
+// => Output: AWAITING_APPROVAL
+
+const r2 = transition(po, "CLOSE");
+if (r2.kind === "err") console.log(r2.error);
+// => Output: Invalid transition: DRAFT --CLOSE--> (no such transition)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Returning `Result` instead of throwing makes invalid transitions an explicit, typed outcome — callers must handle both paths, which prevents silent state corruption.
@@ -687,7 +804,7 @@ Console.WriteLine(msg2);
 
 Pattern-matching on the state with an exhaustive `switch` guarantees every state has been handled — the TypeScript compiler catches missing cases at compile time.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -800,6 +917,44 @@ Console.WriteLine(StateLabel(new POState.Issued()));
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: exhaustive switch with never-default catches missing cases at compile time
+function stateLabel(state: POState): string {
+  switch (state) {
+    case "DRAFT":
+      return "Draft — pending submission";
+    case "AWAITING_APPROVAL":
+      return "Awaiting Approval";
+    case "APPROVED":
+      return "Approved — ready to issue";
+    case "ISSUED":
+      return "Issued to Supplier";
+    case "ACKNOWLEDGED":
+      return "Acknowledged by Supplier";
+    case "CLOSED":
+      return "Closed";
+    case "CANCELLED":
+      return "Cancelled";
+    case "DISPUTED":
+      return "Disputed — resolution pending";
+    default: {
+      const _exhaustive: never = state;
+      // => never check: if a new POState is added without updating this switch,
+      // => TypeScript reports: "Type 'NewState' is not assignable to type 'never'"
+      throw new Error(`Unhandled state: ${_exhaustive}`);
+    }
+  }
+}
+
+console.log(stateLabel("DRAFT")); // => Output: Draft — pending submission
+console.log(stateLabel("ISSUED")); // => Output: Issued to Supplier
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Exhaustive `switch` with a `never` default turns adding a new state without updating all handlers from a silent runtime bug into a compile-time error.
@@ -834,7 +989,7 @@ stateDiagram-v2
     class Rejected rejected
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -964,6 +1119,37 @@ Console.WriteLine(CanApprove(highPO, ApprovalLevel.L3)); // => Output: True
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: string literal union for approval levels
+type ApprovalLevel = "L1" | "L2" | "L3";
+
+// => Rank map: explicit numeric values for comparison
+const RANK: Record<ApprovalLevel, number> = { L1: 1, L2: 2, L3: 3 } as const;
+
+// => Pure function: derive required level from PO monetary total
+function requiredLevel(totalAmount: number): ApprovalLevel {
+  if (totalAmount <= 1_000) return "L1";
+  if (totalAmount <= 10_000) return "L2";
+  return "L3";
+}
+
+// => Guard: is the actor's level sufficient to approve this PO?
+function canApprove(po: PurchaseOrder, actorLevel: ApprovalLevel): boolean {
+  return RANK[actorLevel] >= RANK[requiredLevel(po.totalAmount)];
+}
+
+const lowPO = createPO("po_low", 800);
+const highPO = createPO("po_high", 15_000);
+console.log(canApprove(lowPO, "L1")); // => Output: true
+console.log(canApprove(highPO, "L2")); // => Output: false
+console.log(canApprove(highPO, "L3")); // => Output: true
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Guards are pure predicates that sit between an event and a transition — they encode business rules without coupling them to state storage.
@@ -976,7 +1162,7 @@ Console.WriteLine(CanApprove(highPO, ApprovalLevel.L3)); // => Output: True
 
 Composing the guard with the transition function produces a single `approve` operation that enforces both the FSM state check and the business-rule guard.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1161,6 +1347,39 @@ Console.WriteLine(msg2); // => Output: Approved
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: interface bundles PO + actor level into one parameter
+interface ApprovableContext {
+  readonly po: PurchaseOrder;
+  readonly actorLevel: ApprovalLevel;
+}
+
+// => Guarded approve: FSM state check AND business-rule guard
+function approvePO(ctx: ApprovableContext): Result<PurchaseOrder> {
+  const { po, actorLevel } = ctx;
+  if (po.state !== "AWAITING_APPROVAL") return { kind: "err", error: `Cannot approve PO in state: ${po.state}` };
+  // => Guard 1: FSM structural check
+  if (!canApprove(po, actorLevel)) {
+    const req = requiredLevel(po.totalAmount);
+    return { kind: "err", error: `Actor level ${actorLevel} cannot approve $${po.totalAmount} PO (requires ${req})` };
+  }
+  // => Guard 2: business-rule authority check
+  return { kind: "ok", value: { ...po, state: "APPROVED" } };
+}
+
+const po: PurchaseOrder = { id: "po_001", totalAmount: 12_000, state: "AWAITING_APPROVAL" };
+const r1 = approvePO({ po, actorLevel: "L2" });
+if (r1.kind === "err") console.log(r1.error);
+// => Output: Actor level L2 cannot approve $12000 PO (requires L3)
+const r2 = approvePO({ po, actorLevel: "L3" });
+if (r2.kind === "ok") console.log(r2.value.state); // => Output: APPROVED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Layering domain guards on top of FSM state checks produces a single, testable function that enforces both structural and business invariants.
@@ -1173,7 +1392,7 @@ Console.WriteLine(msg2); // => Output: Approved
 
 A PO cannot move past `Approved` without at least one line item. This is a structural invariant, not an approval-level rule — it lives in its own guard.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1417,6 +1636,43 @@ Console.WriteLine(result switch
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: readonly interface for one product line item
+interface POLine {
+  readonly skuCode: string;
+  readonly quantity: number;
+  readonly unitPrice: number;
+}
+
+interface POWithLines extends PurchaseOrder {
+  readonly lines: readonly POLine[];
+}
+
+// => Guard: checks the structural invariant "at least one line with positive quantity"
+function guardAtLeastOneLine(po: POWithLines): string | undefined {
+  if (po.lines.length === 0) return "Cannot issue PO: no line items (add at least one product line)";
+  if (po.lines.some((l) => l.quantity <= 0)) return "Cannot issue PO: all line quantities must be > 0";
+  return undefined; // => Guard passes: no structural violation found
+}
+
+function issuePO(po: POWithLines): Result<POWithLines> {
+  if (po.state !== "APPROVED") return { kind: "err", error: `Cannot issue PO in state ${po.state}` };
+  const err = guardAtLeastOneLine(po);
+  if (err !== undefined) return { kind: "err", error: err };
+  return { kind: "ok", value: { ...po, state: "ISSUED" } };
+}
+
+const poNoLines: POWithLines = { id: "po_002", totalAmount: 500, state: "APPROVED", lines: [] };
+const r = issuePO(poNoLines);
+if (r.kind === "err") console.log(r.error);
+// => Output: Cannot issue PO: no line items (add at least one product line)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Structural invariants (must have lines) belong in dedicated guard functions, not buried in the transition table — each guard tests one rule and one rule only.
@@ -1450,7 +1706,7 @@ stateDiagram-v2
     class Closed terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1618,6 +1874,36 @@ Console.WriteLine(result switch
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => Set of states after which lines become immutable — a legal commitment exists
+const IMMUTABLE_STATES = new Set<POState>(["ISSUED", "ACKNOWLEDGED", "CLOSED"]);
+
+// => addLine: returns Result.failure if state forbids mutation
+function addLine(po: POWithLines, line: POLine): Result<POWithLines> {
+  if (IMMUTABLE_STATES.has(po.state))
+    return { kind: "err", error: `Cannot modify lines: PO is ${po.state} (lines immutable after issue)` };
+  if (line.quantity <= 0) return { kind: "err", error: "Line quantity must be > 0" };
+  return { kind: "ok", value: { ...po, lines: [...po.lines, line] } };
+  // => Spread creates a new array with the appended line — original unchanged
+}
+
+const issuedPO: POWithLines = {
+  id: "po_003",
+  totalAmount: 800,
+  state: "ISSUED",
+  lines: [{ skuCode: "ELC-0042", quantity: 10, unitPrice: 80 }],
+};
+const newLine: POLine = { skuCode: "ELC-0099", quantity: 5, unitPrice: 50 };
+const r = addLine(issuedPO, newLine);
+if (r.kind === "err") console.log(r.error);
+// => Output: Cannot modify lines: PO is ISSUED (lines immutable after issue)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: FSM state is not just routing logic — it also gates data mutations. Tying mutation guards to state makes the immutability rule automatic and auditable.
@@ -1651,7 +1937,7 @@ stateDiagram-v2
     class Cancelled,Closed terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1822,6 +2108,39 @@ Console.WriteLine(result2 switch
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => Cancellable states as an explicit allow-list (safer than deny-list)
+const CANCELLABLE = new Set<POState>([
+  "DRAFT",
+  "AWAITING_APPROVAL",
+  "APPROVED",
+  "ISSUED",
+  "ACKNOWLEDGED",
+  "DISPUTED",
+  // => CLOSED and CANCELLED omitted: terminal states must not be cancellable
+]);
+
+// => cancelPO: pure function, no side effects
+function cancelPO(po: PurchaseOrder): Result<PurchaseOrder> {
+  if (!CANCELLABLE.has(po.state)) return { kind: "err", error: `Cannot cancel PO in state '${po.state}'` };
+  return { kind: "ok", value: { ...po, state: "CANCELLED" } };
+}
+
+const approved: PurchaseOrder = { id: "po_xyz", totalAmount: 1500, state: "APPROVED" };
+const r1 = cancelPO(approved);
+if (r1.kind === "ok") console.log(r1.value.state); // => Output: CANCELLED
+
+const closed: PurchaseOrder = { id: "po_xyz", totalAmount: 1500, state: "CLOSED" };
+const r2 = cancelPO(closed);
+if (r2.kind === "err") console.log(r2.error);
+// => Output: Cannot cancel PO in state 'CLOSED'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An explicit allow-list (`CANCELLABLE`) is safer than a deny-list — new states default to non-cancellable, which is the conservative choice for a procurement platform.
@@ -1856,7 +2175,7 @@ stateDiagram-v2
     class Cancelled terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2053,6 +2372,40 @@ public static PurchaseOrder? Transition(PurchaseOrder po, POEvent @event)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: extended event type including dispute resolution
+type POEventExtended = POEvent | "RESOLVE_APPROVE" | "RESOLVE_CANCEL";
+
+// => Dispute-aware transition using switch on current state
+function transitionWithDispute(po: PurchaseOrder, event: POEventExtended): PurchaseOrder | undefined {
+  switch (po.state) {
+    case "APPROVED":
+      if (event === "ISSUE") return { ...po, state: "ISSUED" };
+      if (event === "DISPUTE") return { ...po, state: "DISPUTED" };
+      if (event === "CANCEL") return { ...po, state: "CANCELLED" };
+      return undefined;
+    case "DISPUTED":
+      if (event === "RESOLVE_APPROVE") return { ...po, state: "APPROVED" };
+      // => Data error corrected: PO reinstated to Approved
+      if (event === "RESOLVE_CANCEL") return { ...po, state: "CANCELLED" };
+      return undefined;
+    default:
+      return undefined;
+  }
+}
+
+const ap: PurchaseOrder = { id: "po_d01", totalAmount: 500, state: "APPROVED" };
+console.log(transitionWithDispute(ap, "DISPUTE")?.state); // => DISPUTED
+const dp = { ...ap, state: "DISPUTED" as POState };
+console.log(transitionWithDispute(dp, "RESOLVE_APPROVE")?.state); // => APPROVED
+console.log(transitionWithDispute(dp, "RESOLVE_CANCEL")?.state); // => CANCELLED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Typed state and event enums give the FSM a compile-safe alphabet; `Optional` / nullable returns communicate "no valid transition" without throwing exceptions.
@@ -2102,7 +2455,7 @@ stateDiagram-v2
     class Disputed dispute
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2300,6 +2653,37 @@ foreach (var evt in new[] { POEvent.Submit, POEvent.Approve, POEvent.Issue })
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: full PO transition table including dispute cycle
+const PO_TRANSITIONS: Readonly<Partial<Record<POState, Partial<Record<POEventExtended, POState>>>>> = {
+  DRAFT: { SUBMIT: "AWAITING_APPROVAL", CANCEL: "CANCELLED" },
+  AWAITING_APPROVAL: { APPROVE: "APPROVED", REJECT: "CANCELLED", CANCEL: "CANCELLED" },
+  APPROVED: { ISSUE: "ISSUED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
+  ISSUED: { ACKNOWLEDGE: "ACKNOWLEDGED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
+  ACKNOWLEDGED: { CLOSE: "CLOSED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
+  DISPUTED: { RESOLVE_APPROVE: "APPROVED", RESOLVE_CANCEL: "CANCELLED" },
+  // => CLOSED and CANCELLED: absent — terminal states have no outgoing transitions
+} as const;
+
+function applyEvent(po: PurchaseOrder, event: POEventExtended): PurchaseOrder | undefined {
+  const next = PO_TRANSITIONS[po.state]?.[event];
+  return next !== undefined ? { ...po, state: next } : undefined;
+}
+
+// => Walk the happy path: DRAFT -> AWAITING_APPROVAL -> APPROVED -> ISSUED
+let po = createPO("po_full", 5000);
+for (const evt of ["SUBMIT", "APPROVE", "ISSUE"] as POEventExtended[]) {
+  po = applyEvent(po, evt) ?? po;
+  console.log(po.state);
+}
+// => Output (3 lines): AWAITING_APPROVAL / APPROVED / ISSUED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A single table and a single interpreter function handle the entire PO lifecycle — adding a new transition is one map entry, not a code change.
@@ -2312,7 +2696,7 @@ foreach (var evt in new[] { POEvent.Submit, POEvent.Approve, POEvent.Issue })
 
 Every transition should append to an audit trail. This example extends the PO with a log of events that drove each state change.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2506,6 +2890,41 @@ if (r2 is not null)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: readonly interface for one structured audit log entry
+interface LogEntry {
+  readonly event: string;
+  readonly fromState: POState;
+  readonly toState: POState;
+  readonly timestamp: string; // => ISO-8601 wall-clock time
+}
+
+interface AuditedPO extends PurchaseOrder {
+  readonly eventLog: readonly LogEntry[];
+}
+
+// => auditedTransition: atomically updates state AND appends to the log
+function auditedTransition(po: AuditedPO, event: POEventExtended): AuditedPO | undefined {
+  const next = PO_TRANSITIONS[po.state]?.[event];
+  if (next === undefined) return undefined;
+  const entry: LogEntry = { event, fromState: po.state, toState: next, timestamp: new Date().toISOString() };
+  return { ...po, state: next, eventLog: [...po.eventLog, entry] };
+  // => Spread creates new array with entry appended — original eventLog unchanged
+}
+
+let apo: AuditedPO = { id: "po_audit", totalAmount: 200, state: "DRAFT", eventLog: [] };
+apo = auditedTransition(apo, "SUBMIT") ?? apo;
+apo = auditedTransition(apo, "APPROVE") ?? apo;
+console.log(apo.state); // => Output: APPROVED
+console.log(apo.eventLog.length); // => Output: 2 (SUBMIT + APPROVE)
+console.log(apo.eventLog[0].event); // => Output: SUBMIT
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Appending to an immutable event log in the same operation as the state transition keeps audit records structurally coupled to state changes — they cannot diverge.
@@ -2518,7 +2937,7 @@ if (r2 is not null)
 
 Combining the transition table, structural guard (at least one line), and a validated apply function into a single cohesive FSM module demonstrates how all the pieces compose.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2825,6 +3244,43 @@ Console.WriteLine(result2?.State); // => Output: Issued
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: validation result as a discriminated union
+type ValidationResult<T> =
+  | { readonly kind: "valid"; readonly value: T }
+  | { readonly kind: "invalid"; readonly errors: readonly string[] };
+
+function validateForIssue(po: POWithLines): ValidationResult<POWithLines> {
+  const errors: string[] = [];
+  if (po.lines.length === 0) errors.push("Must have at least one line item");
+  if (po.lines.some((l) => l.quantity <= 0)) errors.push("All line quantities must be > 0");
+  if (po.totalAmount <= 0) errors.push("Total amount must be > 0");
+  return errors.length === 0 ? { kind: "valid", value: po } : { kind: "invalid", errors };
+}
+
+function applyValidatedEvent(po: POWithLines, event: POEventExtended): POWithLines | undefined {
+  if (event === "ISSUE") {
+    const vr = validateForIssue(po);
+    if (vr.kind === "invalid") {
+      console.log("Validation failed:", vr.errors);
+      return undefined;
+    }
+  }
+  const next = PO_TRANSITIONS[po.state]?.[event];
+  return next !== undefined ? { ...po, state: next } : undefined;
+}
+
+const poNoLines: POWithLines = { id: "po_val_01", totalAmount: 3000, state: "APPROVED", lines: [] };
+const result = applyValidatedEvent(poNoLines, "ISSUE");
+console.log(result !== undefined); // => Output: false
+// => Validation failed: [Must have at least one line item]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Validation and transition logic compose cleanly when each concern lives in its own function — the guard checks invariants, the table checks reachability, and the interpreter orchestrates both.
@@ -2837,7 +3293,7 @@ Console.WriteLine(result2?.State); // => Output: Issued
 
 Java records and enums together produce the most concise idiomatic Java FSM implementation. Kotlin sealed classes and `when` expressions offer an expressive alternative, while C# records with a `Dictionary`-backed table provide the same safety with pattern-matching syntax.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3065,6 +3521,58 @@ public static class POStateMachine
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: class-based FSM with Map for the transition table
+type MachineState =
+  | "DRAFT"
+  | "AWAITING_APPROVAL"
+  | "APPROVED"
+  | "ISSUED"
+  | "ACKNOWLEDGED"
+  | "DISPUTED"
+  | "CLOSED"
+  | "CANCELLED";
+type MachineEvent =
+  | "SUBMIT"
+  | "APPROVE"
+  | "REJECT"
+  | "ISSUE"
+  | "ACKNOWLEDGE"
+  | "CLOSE"
+  | "CANCEL"
+  | "DISPUTE"
+  | "RESOLVE_APPROVE"
+  | "RESOLVE_CANCEL";
+interface MachineRecord {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly state: MachineState;
+}
+
+const MACHINE_TABLE: Readonly<Partial<Record<MachineState, Partial<Record<MachineEvent, MachineState>>>>> = {
+  DRAFT: { SUBMIT: "AWAITING_APPROVAL", CANCEL: "CANCELLED" },
+  AWAITING_APPROVAL: { APPROVE: "APPROVED", REJECT: "CANCELLED" },
+  APPROVED: { ISSUE: "ISSUED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
+  ISSUED: { ACKNOWLEDGE: "ACKNOWLEDGED", CANCEL: "CANCELLED" },
+  ACKNOWLEDGED: { CLOSE: "CLOSED", CANCEL: "CANCELLED" },
+  DISPUTED: { RESOLVE_APPROVE: "APPROVED", RESOLVE_CANCEL: "CANCELLED" },
+  // => CLOSED and CANCELLED: absent — no outgoing transitions from terminal states
+};
+
+function machineApply(po: MachineRecord, event: MachineEvent): MachineRecord | undefined {
+  const next = MACHINE_TABLE[po.state]?.[event];
+  return next !== undefined ? { ...po, state: next } : undefined;
+}
+
+const po: MachineRecord = { id: "po_k01", totalAmount: 1500, state: "DRAFT" };
+console.log(machineApply(po, "SUBMIT")?.state); // => Output: AWAITING_APPROVAL
+console.log(machineApply(po, "APPROVE")); // => Output: undefined
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Each language's idiom — Java `EnumMap`, Kotlin `copy()`, C# `with` expression — enforces immutability at the type level; the transition table is the single authoritative source of valid moves.
@@ -3098,7 +3606,7 @@ stateDiagram-v2
     class Approved approved
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3343,6 +3851,36 @@ public static class POEntryActions
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: entry actions as a Record of functions returning description strings
+const ENTRY_ACTIONS: Partial<Record<MachineState, (po: MachineRecord) => string>> = {
+  AWAITING_APPROVAL: (po) => `Route approval request for PO ${po.id} ($${po.totalAmount}) to manager`,
+  ISSUED: (po) => `Send PO ${po.id} to supplier via EDI/email`,
+  CANCELLED: (po) => `Notify all parties: PO ${po.id} cancelled`,
+};
+
+interface TransitionResult {
+  readonly po: MachineRecord | undefined;
+  readonly sideEffect: string | undefined;
+}
+
+function applyWithEntry(po: MachineRecord, event: MachineEvent): TransitionResult {
+  const next = MACHINE_TABLE[po.state]?.[event];
+  if (next === undefined) return { po: undefined, sideEffect: undefined };
+  const newPO: MachineRecord = { ...po, state: next };
+  return { po: newPO, sideEffect: ENTRY_ACTIONS[next]?.(newPO) };
+}
+
+const po: MachineRecord = { id: "po_entry", totalAmount: 8500, state: "DRAFT" };
+const result = applyWithEntry(po, "SUBMIT");
+console.log(result.po?.state); // => Output: AWAITING_APPROVAL
+console.log(result.sideEffect); // => Output: Route approval request for PO po_entry ($8500) to manager
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Entry actions separate the pure FSM transition from its side effects — the machine always transitions correctly, even if the side effect fails or is skipped in tests.
@@ -3355,7 +3893,7 @@ public static class POEntryActions
 
 When leaving `Issued` (via `acknowledge`), the system should log that the supplier acknowledged the PO. Exit actions fire when leaving a state.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3636,6 +4174,53 @@ public static class POExitActions
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: exit + entry actions for the ISSUED state transition
+type IssueState = "ISSUED" | "ACKNOWLEDGED" | "CANCELLED";
+type IssueEvent = "ACKNOWLEDGE" | "CANCEL";
+interface IssuePO {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly state: IssueState;
+}
+
+const EXIT_ACTIONS: Partial<Record<IssueState, (po: IssuePO, ev: IssueEvent) => string>> = {
+  ISSUED: (po, ev) =>
+    ev === "ACKNOWLEDGE"
+      ? `PO ${po.id} acknowledged by supplier — GRN window now open`
+      : `PO ${po.id} leaving ISSUED state via ${ev}`,
+};
+const ENTRY: Partial<Record<IssueState, (po: IssuePO) => string>> = {
+  ACKNOWLEDGED: (po) => `Open GRN window for PO ${po.id}`,
+};
+const ISSUE_TABLE: Partial<Record<IssueState, Partial<Record<IssueEvent, IssueState>>>> = {
+  ISSUED: { ACKNOWLEDGE: "ACKNOWLEDGED", CANCEL: "CANCELLED" },
+};
+interface ActionResult {
+  po?: IssuePO;
+  exitEffect?: string;
+  entryEffect?: string;
+}
+
+function applyWithActions(po: IssuePO, ev: IssueEvent): ActionResult {
+  const exitEffect = EXIT_ACTIONS[po.state]?.(po, ev);
+  const next = ISSUE_TABLE[po.state]?.[ev];
+  if (!next) return {};
+  const newPO: IssuePO = { ...po, state: next };
+  return { po: newPO, exitEffect, entryEffect: ENTRY[next]?.(newPO) };
+}
+
+const issuedPO: IssuePO = { id: "po_ack", totalAmount: 1200, state: "ISSUED" };
+const r = applyWithActions(issuedPO, "ACKNOWLEDGE");
+console.log(r.po?.state); // => Output: ACKNOWLEDGED
+console.log(r.exitEffect); // => Output: PO po_ack acknowledged by supplier — GRN window now open
+console.log(r.entryEffect ?? "(none)"); // => Output: Open GRN window for PO po_ack
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Entry and exit actions are ordered: exit fires before transition, entry fires after — the order is part of the FSM contract, not an implementation detail.
@@ -3648,7 +4233,7 @@ public static class POExitActions
 
 FSMs built from pure functions and immutable records are trivially testable — no mocks, no database, no HTTP client.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3971,6 +4556,42 @@ public static class POFsmTest
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: self-contained test harness — no framework required
+function check(label: string, condition: boolean): void {
+  if (!condition) throw new Error(`FAIL: ${label}`);
+  console.log(`  PASS: ${label}`);
+}
+
+function testSubmitTransition(): void {
+  const po: MachineRecord = { id: "po_t01", totalAmount: 1000, state: "DRAFT" };
+  const result = machineApply(po, "SUBMIT");
+  check("submit returns non-undefined", result !== undefined);
+  check("new state is AWAITING_APPROVAL", result?.state === "AWAITING_APPROVAL");
+}
+
+function testInvalidApproveFromDraft(): void {
+  const po: MachineRecord = { id: "po_t02", totalAmount: 500, state: "DRAFT" };
+  check("approve-from-draft returns undefined", machineApply(po, "APPROVE") === undefined);
+}
+
+function testCancelFromApproved(): void {
+  const approved: MachineRecord = { id: "po_t03", totalAmount: 200, state: "APPROVED" };
+  const result = machineApply(approved, "CANCEL");
+  check("cancel from APPROVED is valid", result !== undefined);
+  check("new state is CANCELLED", result?.state === "CANCELLED");
+}
+
+testSubmitTransition();
+testInvalidApproveFromDraft();
+testCancelFromApproved();
+// => Output:   PASS: submit returns non-undefined / PASS: new state is AWAITING_APPROVAL / ...
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Pure FSM functions require zero test infrastructure — no database setup, no HTTP mocking, no class instantiation beyond the data record itself.
@@ -3983,7 +4604,7 @@ public static class POFsmTest
 
 The PO's `totalAmount` should be computed from its line items, not stored as a free-standing number — a computed property enforces the invariant that total = sum of lines.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4175,6 +4796,39 @@ public static class POTotalValidation
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: pure functions for computing and validating the PO total
+function computeTotal(lines: readonly POLine[]): number {
+  return lines.reduce((sum, l) => sum + l.quantity * l.unitPrice, 0);
+  // => Array.reduce: functional accumulation — O(n) single pass
+}
+
+function validateTotal(po: POWithLines): string | undefined {
+  const computed = computeTotal(po.lines);
+  const delta = Math.abs(computed - po.totalAmount);
+  // => Floating-point safe: allow rounding error smaller than half a cent
+  return delta > 0.005
+    ? `Total mismatch: stored $${po.totalAmount.toFixed(2)} vs computed $${computed.toFixed(2)}`
+    : undefined;
+}
+
+const lines: POLine[] = [
+  { skuCode: "ELC-0042", quantity: 5, unitPrice: 100 }, // => 5 * $100 = $500
+  { skuCode: "ELC-0099", quantity: 10, unitPrice: 25 }, // => 10 * $25  = $250
+];
+console.log(computeTotal(lines)); // => Output: 750
+
+const consistentPO: POWithLines = { id: "po_tot", totalAmount: 750, state: "DRAFT", lines };
+console.log(validateTotal(consistentPO) ?? "(consistent)"); // => (consistent)
+
+const inconsistentPO: POWithLines = { id: "po_bad", totalAmount: 999, state: "DRAFT", lines };
+console.log(validateTotal(inconsistentPO)); // => Total mismatch: stored $999.00 vs computed $750.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Derived values like total should be recomputable from the canonical source (line items) and validated as part of the guard chain — stored totals that can drift are a data-integrity risk.
@@ -4187,7 +4841,7 @@ public static class POTotalValidation
 
 A constructor function that validates all invariants before returning the `PurchaseOrder` record ensures the FSM always starts in a valid state.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4436,6 +5090,34 @@ public static class POConstructor
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: smart constructor returning a Result — no raw PO returned
+type BuildResult<T> = { readonly kind: "ok"; readonly value: T } | { readonly kind: "err"; readonly message: string };
+
+function buildPO(id: string, lines: readonly POLine[]): BuildResult<POWithLines> {
+  if (!id.startsWith("po_") || id.length < 7)
+    return { kind: "err", message: `Invalid PO id format: ${id} (expected po_<uuid>)` };
+  if (lines.length === 0) return { kind: "err", message: "PO must have at least one line item" };
+  const bad = lines.find((l) => l.quantity <= 0);
+  if (bad) return { kind: "err", message: `Line ${bad.skuCode} has invalid quantity ${bad.quantity}` };
+  const total = computeTotal(lines);
+  // => Total always computed from lines — never trusted from caller to prevent drift
+  return { kind: "ok", value: { id, totalAmount: total, state: "DRAFT", lines } };
+}
+
+const r1 = buildPO("po_001xx", [{ skuCode: "ELC-0042", quantity: 10, unitPrice: 50 }]);
+if (r1.kind === "ok") console.log(`${r1.value.state}, total $${r1.value.totalAmount}`);
+// => Output: DRAFT, total $500
+const r2 = buildPO("po_001xx", []);
+if (r2.kind === "err") console.log(r2.message); // => PO must have at least one line item
+const r3 = buildPO("bad_id", [{ skuCode: "ELC-0042", quantity: 5, unitPrice: 10 }]);
+if (r3.kind === "err") console.log(r3.message); // => Invalid PO id format: bad_id (expected po_<uuid>)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Smart constructors that validate all invariants and return `Result` ensure the FSM only ever receives valid input — garbage-in-garbage-out is prevented at the boundary.
@@ -4450,7 +5132,7 @@ public static class POConstructor
 
 Instead of a flat enum, each state can carry its own data — a discriminated union that makes invalid state-data combinations impossible.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4677,6 +5359,48 @@ public static class PODiscriminatedUnion
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: discriminated union with "kind" tag — each variant carries state-specific fields
+type POStateVariant =
+  | { readonly kind: "Draft"; readonly createdAt: string }
+  | { readonly kind: "AwaitingApproval"; readonly submittedBy: string; readonly submittedAt: string }
+  | { readonly kind: "Approved"; readonly approvedBy: string; readonly approvedAt: string }
+  | { readonly kind: "Issued"; readonly issuedAt: string; readonly supplierRef: string }
+  | { readonly kind: "Cancelled"; readonly reason: string }
+  | { readonly kind: "Disputed"; readonly disputeReason: string };
+
+// => switch on the kind discriminant — TypeScript narrows the union in each branch
+function describeState(s: POStateVariant): string {
+  switch (s.kind) {
+    case "Draft":
+      return `Draft since ${s.createdAt}`;
+    case "AwaitingApproval":
+      return `Waiting for approval (submitted by ${s.submittedBy})`;
+    case "Approved":
+      return `Approved by ${s.approvedBy}`;
+    case "Issued":
+      return `Issued — supplier ref: ${s.supplierRef}`;
+    case "Cancelled":
+      return `Cancelled: ${s.reason}`;
+    case "Disputed":
+      return `Disputed: ${s.disputeReason}`;
+    default: {
+      const _x: never = s;
+      throw new Error();
+    }
+  }
+}
+
+const approved: POStateVariant = { kind: "Approved", approvedBy: "mgr_001", approvedAt: "2026-01-15" };
+console.log(describeState(approved)); // => Output: Approved by mgr_001
+const disputed: POStateVariant = { kind: "Disputed", disputeReason: "Quantity received does not match PO" };
+console.log(describeState(disputed)); // => Output: Disputed: Quantity received does not match PO
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Discriminated union states make it impossible to access state-specific data in the wrong state — the compiler enforces state-data coherence.
@@ -4689,7 +5413,7 @@ public static class PODiscriminatedUnion
 
 Production FSMs need structured logging of every transition — not just console output, but structured records that feed into tracing systems.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4878,6 +5602,43 @@ public static class LoggedTransitionDemo
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: structured logging for FSM state transitions
+interface TransitionLog {
+  readonly poId: string;
+  readonly event: string;
+  readonly fromState: string;
+  readonly toState: string;
+  readonly timestamp: string;
+  readonly actorId: string | null;
+}
+const tsLogs: TransitionLog[] = [];
+
+function loggedTransition(po: MachineRecord, event: MachineEvent, actorId: string | null): MachineRecord | undefined {
+  const next = machineApply(po, event);
+  if (next !== undefined)
+    tsLogs.push({
+      poId: po.id,
+      event,
+      fromState: po.state,
+      toState: next.state,
+      timestamp: new Date().toISOString(),
+      actorId,
+    });
+  return next;
+}
+
+const po: MachineRecord = { id: "po_log01", totalAmount: 3000, state: "DRAFT" };
+loggedTransition(po, "SUBMIT", "user_buyer_001");
+console.log(tsLogs.length); // => Output: 1
+console.log(tsLogs[0].fromState); // => Output: DRAFT
+console.log(tsLogs[0].toState); // => Output: AWAITING_APPROVAL
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Logging only successful transitions keeps the audit trail clean — rejected events indicate caller bugs, not business events worth archiving.
@@ -4912,7 +5673,7 @@ stateDiagram-v2
     class Approved,Issued,Acknowledged active
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5066,6 +5827,34 @@ public static class ReplayDemo
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: replay applies events left-to-right starting from DRAFT state
+function replay(id: string, totalAmount: number, events: readonly MachineEvent[]): MachineRecord | undefined {
+  let po: MachineRecord = { id, totalAmount, state: "DRAFT" };
+  // => Start from initial state (DRAFT) — no events applied yet
+  for (const event of events) {
+    const result = machineApply(po, event);
+    if (result === undefined) {
+      console.error(`Replay failed at event '${event}' in state '${po.state}'`);
+      return undefined;
+    }
+    po = result;
+  }
+  return po;
+}
+
+const history: MachineEvent[] = ["SUBMIT", "APPROVE", "ISSUE", "ACKNOWLEDGE"];
+const result = replay("po_replay01", 2000, history);
+console.log(result?.state); // => Output: ACKNOWLEDGED
+
+const bad = replay("po_replay02", 500, ["APPROVE"]);
+console.log(bad === undefined); // => Output: true (replay failed)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A list of events is a complete description of PO history — the current state is a derived projection, not the source of truth.
@@ -5078,7 +5867,7 @@ public static class ReplayDemo
 
 A data-driven transition table can generate its own state diagram — no manual diagram maintenance.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5244,6 +6033,35 @@ public static class DotGraphDemo
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: generate a Graphviz DOT graph from the transition table
+function generateDOT(table: Partial<Record<string, Partial<Record<string, string>>>>, title: string): string {
+  const lines: string[] = [`digraph "${title}" {`, "  rankdir=LR;", "  node [shape=box, style=rounded];"];
+  for (const [from, events] of Object.entries(table)) {
+    if (!events) continue;
+    for (const [event, to] of Object.entries(events)) lines.push(`  "${from}" -> "${to}" [label="${event}"];`);
+  }
+  lines.push("}");
+  return lines.join("\n");
+}
+
+const dot = generateDOT(MACHINE_TABLE as Record<string, Record<string, string>>, "PurchaseOrder FSM");
+dot
+  .split("\n")
+  .slice(0, 5)
+  .forEach((l) => console.log(l));
+// => Output:
+// => digraph "PurchaseOrder FSM" {
+// =>   rankdir=LR;
+// =>   node [shape=box, style=rounded];
+// =>   "DRAFT" -> "AWAITING_APPROVAL" [label="SUBMIT"];
+// =>   "DRAFT" -> "CANCELLED" [label="CANCEL"];
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Generating diagrams from the transition table guarantees the diagram matches the code — they cannot diverge because the diagram is derived from the code.
@@ -5286,7 +6104,7 @@ stateDiagram-v2
     class Closed,Cancelled terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5438,6 +6256,39 @@ public static class ProtocolDemo
         // => Output: [Issued] Waiting for Supplier: acknowledge PO receipt
     }
 }
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: FSM as a communication protocol — each state is a waiting point
+interface ProtocolStep {
+  readonly actor: string; // => Who is expected to act in this state
+  readonly expects: string; // => What action the actor must perform
+}
+
+const PO_PROTOCOL: Record<MachineState, ProtocolStep> = {
+  DRAFT: { actor: "Buyer", expects: "submit the PO for approval" },
+  AWAITING_APPROVAL: { actor: "Manager", expects: "approve or reject" },
+  APPROVED: { actor: "Finance", expects: "issue PO to supplier" },
+  ISSUED: { actor: "Supplier", expects: "acknowledge PO receipt" },
+  ACKNOWLEDGED: { actor: "System", expects: "receive goods and close" },
+  CLOSED: { actor: "None", expects: "terminal — no further action" },
+  CANCELLED: { actor: "None", expects: "terminal — no further action" },
+  DISPUTED: { actor: "Buyer", expects: "resolve or cancel the dispute" },
+} as const;
+
+function protocolStatus(state: MachineState): string {
+  const step = PO_PROTOCOL[state];
+  return `[${state}] Waiting for ${step.actor}: ${step.expects}`;
+}
+
+console.log(protocolStatus("AWAITING_APPROVAL"));
+// => Output: [AWAITING_APPROVAL] Waiting for Manager: approve or reject
+console.log(protocolStatus("ISSUED"));
+// => Output: [ISSUED] Waiting for Supplier: acknowledge PO receipt
 ```
 
 {{< /tab >}}

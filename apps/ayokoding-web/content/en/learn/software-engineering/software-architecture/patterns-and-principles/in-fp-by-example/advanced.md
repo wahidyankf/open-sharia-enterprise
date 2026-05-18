@@ -41,7 +41,7 @@ graph TD
     style E fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -188,6 +188,75 @@ printfn "Cancelled: %b, Reserved: %b" cancelled reserved
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: modules as service boundaries + single-case DU identifiers — TypeScript version]
+
+// => Domain value objects — branded types prevent OrderId/ProductId confusion
+type OrderId58 = Readonly<{ value: string; _brand: "OrderId" }>;
+type ProductId58 = Readonly<{ value: string; _brand: "ProductId" }>;
+
+const orderId58 = (v: string): OrderId58 => ({ value: v, _brand: "OrderId" });
+const productId58 = (v: string): ProductId58 => ({ value: v, _brand: "ProductId" });
+
+// => Orders capability: functions define the service contract
+const OrdersService58 = (() => {
+  const store = new Map<string, unknown>();
+  return {
+    placeOrder: (pid: ProductId58, qty: number): OrderId58 => {
+      const oid = orderId58(crypto.randomUUID?.() ?? `ord-${Date.now()}`);
+      store.set(oid.value, { productId: pid.value, qty, status: "PLACED" });
+      // => Stores minimal order state; real implementation persists to DB
+      return oid;
+      // => Returns OrderId so callers reference the order without knowing its internals
+    },
+    cancelOrder: (oid: OrderId58): boolean => {
+      if (!store.has(oid.value)) return false;
+      // => Absent order is an expected business outcome — not an exception
+      store.set(oid.value, { status: "CANCELLED" });
+      return true;
+    },
+  };
+})();
+
+// => Inventory capability: independent namespace, no dependency on Orders internals
+const InventoryService58 = (() => {
+  const stock = new Map<string, number>();
+  return {
+    reserve: (pid: ProductId58, qty: number): boolean => {
+      const current = stock.get(pid.value) ?? 10;
+      // => Default 10 units available for demo
+      if (current >= qty) {
+        stock.set(pid.value, current - qty);
+        return true;
+      }
+      return false;
+      // => False signals the business outcome; caller decides how to proceed
+    },
+    release: (pid: ProductId58, qty: number): void => {
+      const current = stock.get(pid.value) ?? 0;
+      stock.set(pid.value, current + qty);
+      // => Compensation: returns reserved units to available stock
+    },
+  };
+})();
+
+// => Usage: each module swapped independently
+const pid58 = productId58("SKU-001");
+const oid58 = OrdersService58.placeOrder(pid58, 3);
+// => oid58: OrderId58 — caller holds stable reference
+
+const reserved58 = InventoryService58.reserve(pid58, 3);
+// => reserved58: boolean = true — stock available
+const cancelled58 = OrdersService58.cancelOrder(oid58);
+
+console.log(`Cancelled: ${cancelled58}, Reserved: ${reserved58}`);
+// => Output: Cancelled: true, Reserved: true
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# modules with typed function signatures enforce service boundaries as firmly as
@@ -220,7 +289,7 @@ graph LR
     style Old fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -337,6 +406,62 @@ printfn "%A" result2
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: immutable route table + pure dispatch function — TypeScript version]
+
+type RouteHandler59 = (path: string, payload: Record<string, string>) => { source: string; path: string };
+// => Handler type: path and payload in, response out
+
+// => Register a route: returns a new Map with the route added — pure, no side effects
+const registerRoute59 = (
+  routes: ReadonlyMap<string, RouteHandler59>,
+  prefix: string,
+  handler: RouteHandler59,
+): ReadonlyMap<string, RouteHandler59> => {
+  const next = new Map(routes);
+  next.set(prefix, handler);
+  return next;
+  // => Returns a new Map — no mutation of the existing table
+};
+
+// => Route dispatch: tries each prefix, falls back to legacy handler
+const routeRequest59 = (
+  routes: ReadonlyMap<string, RouteHandler59>,
+  legacyHandler: RouteHandler59,
+  path: string,
+  payload: Record<string, string>,
+): { source: string; path: string } => {
+  const matchedPrefix = [...routes.keys()].find((p) => path.startsWith(p));
+  // => Searches the route table for a matching prefix
+  if (matchedPrefix) return routes.get(matchedPrefix)!(path, payload);
+  // => If found, invoke the matched handler
+  return legacyHandler(path, payload);
+  // => If not found, delegate to the legacy monolith handler
+};
+
+// => Simulated new Orders module handler (already migrated)
+const newOrdersHandler59: RouteHandler59 = (path, _payload) => ({ source: "new_module", path });
+// => New handler responds; legacy monolith not involved
+
+// => Legacy monolith catch-all
+const legacyHandler59: RouteHandler59 = (path, _payload) => ({ source: "legacy_monolith", path });
+
+// => Build route table: start empty, add migrated routes one by one
+const routes59 = registerRoute59(new Map(), "/api/orders", newOrdersHandler59);
+
+const result59a = routeRequest59(routes59, legacyHandler59, "/api/orders/123", {});
+console.log(JSON.stringify(result59a));
+// => Output: {"source":"new_module","path":"/api/orders/123"}
+
+const result59b = routeRequest59(routes59, legacyHandler59, "/api/products/abc", {});
+console.log(JSON.stringify(result59b));
+// => Output: {"source":"legacy_monolith","path":"/api/products/abc"}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Modelling the routing table as an immutable map makes each migration step a
@@ -372,7 +497,7 @@ sequenceDiagram
     O->>I: ReleaseStock (compensation)
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -518,6 +643,76 @@ printfn "Stock after failure: %b" stockReserved
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: Result-chaining orchestrator with compensation stack — TypeScript version]
+type Result60<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => SagaStep: forward action returns Result; compensate is always () => void
+type SagaStep60 = {
+  name: string;
+  execute: () => Result60<void, string>;
+  compensate: () => void;
+};
+
+// => Orchestrator: run steps in order, compensate completed steps on failure
+const runSaga60 = (steps: readonly SagaStep60[]): Result60<void, string> => {
+  const completed: SagaStep60[] = [];
+  for (const step of steps) {
+    const result = step.execute();
+    if (result.ok) {
+      completed.push(step);
+      // => Step succeeded; push onto completed stack and continue
+    } else {
+      for (const done of [...completed].reverse()) done.compensate();
+      // => Step failed; compensate all completed steps in LIFO order
+      return { ok: false, error: `Saga failed at '${step.name}': ${result.error}` };
+    }
+  }
+  return { ok: true, value: undefined };
+};
+
+// => Simulated participants with mutable state for demo
+let stockReserved60 = false;
+
+const reserveStock60 = (): Result60<void, string> => {
+  stockReserved60 = true;
+  console.log("Stock reserved");
+  return { ok: true, value: undefined };
+  // => Always succeeds in this demo
+};
+
+const releaseStock60 = (): void => {
+  stockReserved60 = false;
+  console.log("Stock released (compensation)");
+};
+
+const chargePayment60 = (): Result60<void, string> => {
+  console.log("Payment failed");
+  return { ok: false, error: "card declined" };
+  // => Simulates payment processor rejection
+};
+
+const refundPayment60 = (): void => console.log("Payment refunded (compensation)");
+
+const steps60: SagaStep60[] = [
+  { name: "reserve", execute: reserveStock60, compensate: releaseStock60 },
+  { name: "payment", execute: chargePayment60, compensate: refundPayment60 },
+];
+
+const result60 = runSaga60(steps60);
+console.log(`Saga ok: ${result60.ok}`);
+// => Output: Stock reserved
+// => Output: Payment failed
+// => Output: Stock released (compensation)
+// => Output: Saga ok: false
+console.log(`Stock after failure: ${stockReserved60}`);
+// => Output: Stock after failure: false — compensation correctly unwound the reservation
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Modelling the saga as a recursive function over a step list with a
@@ -553,7 +748,7 @@ graph LR
     style F fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -677,6 +872,74 @@ printfn "Stock held after failure: %b" stockHeld
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: event bus + reactive handlers publishing new events — TypeScript version]
+
+type ChoreographyEvent61 =
+  | { tag: "OrderPlaced"; orderId: string; productId: string; qty: number }
+  | { tag: "StockReserved"; orderId: string }
+  | { tag: "StockUnavailable"; orderId: string }
+  | { tag: "PaymentCharged"; orderId: string; amount: number }
+  | { tag: "PaymentFailed"; orderId: string }
+  | { tag: "StockReleased"; orderId: string };
+// => Each event is an immutable fact; handlers react and publish new events
+
+type EventHandler61 = (event: ChoreographyEvent61) => void;
+
+const makeEventBus61 = () => {
+  const registry = new Map<string, EventHandler61[]>();
+  const subscribe = (tag: string, handler: EventHandler61) => {
+    registry.set(tag, [...(registry.get(tag) ?? []), handler]);
+  };
+  const publish = (event: ChoreographyEvent61) => {
+    for (const h of registry.get(event.tag) ?? []) h(event);
+  };
+  return { subscribe, publish };
+};
+
+const { subscribe: sub61, publish: pub61 } = makeEventBus61();
+
+// => INVENTORY SERVICE: reacts to OrderPlaced, publishes StockReserved or StockUnavailable
+sub61("OrderPlaced", (event) => {
+  if (event.tag !== "OrderPlaced") return;
+  const available = event.qty <= 5; // => Simulate: up to 5 units available
+  if (available) {
+    console.log(`Inventory: reserved ${event.qty} units for ${event.orderId}`);
+    pub61({ tag: "StockReserved", orderId: event.orderId });
+  } else {
+    pub61({ tag: "StockUnavailable", orderId: event.orderId });
+  }
+});
+
+// => PAYMENT SERVICE: reacts to StockReserved, publishes PaymentCharged or PaymentFailed
+sub61("StockReserved", (event) => {
+  if (event.tag !== "StockReserved") return;
+  const approved = true; // => Simulate successful payment
+  if (approved) {
+    console.log(`Payment: charged for ${event.orderId}`);
+    pub61({ tag: "PaymentCharged", orderId: event.orderId, amount: 99.0 });
+  } else {
+    pub61({ tag: "PaymentFailed", orderId: event.orderId });
+  }
+});
+
+// => COMPENSATION: release stock if payment failed
+sub61("PaymentFailed", (event) => {
+  if (event.tag !== "PaymentFailed") return;
+  console.log(`Inventory: releasing stock for ${event.orderId}`);
+  pub61({ tag: "StockReleased", orderId: event.orderId });
+});
+
+// Trigger the choreography
+pub61({ tag: "OrderPlaced", orderId: "ord-1", productId: "SKU-001", qty: 2 });
+// => Inventory: reserved 2 units for ord-1
+// => Payment: charged for ord-1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each handler is a plain function from payload map to unit side-effects; adding a
@@ -697,7 +960,7 @@ API versioning prevents breaking changes from disrupting consumers. The version 
 function from method and path to a response value. Multiple version handlers coexist; the router
 selects the correct one based on path prefix or Accept header.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -815,6 +1078,61 @@ printfn "%A" (dispatchHeader "GET" "/users" "application/vnd.myapi.v2+json")
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: pure dispatch functions with no mutable route registry — TypeScript version]
+
+// => Response type shared across versions
+type ApiResponse62 = { version: number; body: unknown };
+
+// => V1 contract: flat list of usernames
+const v1GetUsers62 = (): ApiResponse62 => ({
+  version: 1,
+  body: ["alice"],
+  // => V1 body: simple string array
+});
+
+// => V2 contract: richer objects with email added — backward-incompatible change
+const v2GetUsers62 = (): ApiResponse62 => ({
+  version: 2,
+  body: [{ name: "alice", email: "alice@example.com" }],
+  // => V2 body: object array — richer shape than V1
+});
+
+// => URI path versioning: version embedded in path — most CDN-cacheable strategy
+const dispatchUri62 = (method: string, path: string): ApiResponse62 | undefined => {
+  if (method === "GET" && path === "/v1/users") return v1GetUsers62();
+  // => V1 path matched explicitly — CDN caches /v1/users and /v2/users independently
+  if (method === "GET" && path === "/v2/users") return v2GetUsers62();
+  // => V2 path adds richer user object; old clients keep calling /v1/users unchanged
+  return undefined;
+  // => undefined is the 404 equivalent — caller decides the HTTP status code
+};
+
+console.log(JSON.stringify(dispatchUri62("GET", "/v1/users")));
+// => Output: {"version":1,"body":["alice"]}
+console.log(JSON.stringify(dispatchUri62("GET", "/v2/users")));
+// => Output: {"version":2,"body":[{"name":"alice","email":"alice@example.com"}]}
+
+// => Accept header versioning: same URL, version negotiated via header
+const dispatchHeader62 = (method: string, path: string, accept: string): ApiResponse62 | undefined => {
+  const version = accept.includes("v2") ? "v2" : "v1";
+  // => Default to v1 if header absent or does not name a version
+  if (path === "/users" && version === "v2") return v2GetUsers62();
+  // => Same URL, different response shape based on negotiated version
+  if (path === "/users") return v1GetUsers62();
+  return undefined;
+};
+
+console.log(JSON.stringify(dispatchHeader62("GET", "/users", "application/json")));
+// => Output: {"version":1,"body":["alice"]}
+console.log(JSON.stringify(dispatchHeader62("GET", "/users", "application/vnd.myapi.v2+json")));
+// => Output: {"version":2,"body":[{"name":"alice","email":"alice@example.com"}]}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** URI path versioning is expressed as a pure dispatch expression — adding a new
@@ -852,7 +1170,7 @@ graph TD
     style DS fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -958,6 +1276,60 @@ printfn "%A" (webBffDashboard "u1")
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: pure aggregation functions per client type — TypeScript version]
+
+// => Downstream service stubs: return full data; BFF functions select what each client needs
+const getUserProfile63 = (userId: string) => ({
+  id: userId,
+  name: "Alice",
+  email: "alice@example.com",
+  theme: "dark",
+  // => Full profile — downstream owns all fields; BFF picks what to expose
+});
+
+const getUserOrders63 = (_userId: string) => [
+  { id: "ORD-1", total: 99.99, status: "shipped" },
+  { id: "ORD-2", total: 14.5, status: "pending" },
+  // => Full order list — may be large; mobile BFF will aggregate, not pass through
+];
+
+// => Mobile BFF: strips fields to reduce bandwidth for cellular connections
+const mobileBffDashboard63 = (userId: string) => {
+  const profile = getUserProfile63(userId);
+  const orders = getUserOrders63(userId);
+  return {
+    name: profile.name,
+    // => Only name; email and theme omitted — mobile screen has no space for them
+    pendingOrders: orders.filter((o) => o.status === "pending").length,
+    // => Pre-aggregated count: mobile renders one integer, not a full list
+  };
+};
+
+// => Web BFF: returns richer aggregate with full order list and preferences
+const webBffDashboard63 = (userId: string) => {
+  const profile = getUserProfile63(userId);
+  const orders = getUserOrders63(userId);
+  return {
+    profile,
+    // => Full profile including email and theme preference
+    orders,
+    // => Full order objects — web renders a sortable table
+    orderCount: orders.length,
+    // => Pre-computed convenience field; saves the JS client a .length call
+  };
+};
+
+console.log(JSON.stringify(mobileBffDashboard63("u1")));
+// => Output: {"name":"Alice","pendingOrders":1}
+console.log(JSON.stringify(webBffDashboard63("u1")));
+// => Output: {"profile":{...},"orders":[...],"orderCount":2}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each BFF is a plain function that selects and shapes data; adding a new client
@@ -988,7 +1360,7 @@ stateDiagram-v2
     HalfOpen --> Open : probe fails
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1168,6 +1540,71 @@ for i in 1..6 do
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: circuit breaker with fallback function — TypeScript version]
+type Result64<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+type CircuitState64 = { tag: "Closed"; failureCount: number } | { tag: "Open"; openedAt: number } | { tag: "HalfOpen" };
+
+const makeCircuitBreaker64 = (threshold: number, resetMs: number, fallback: () => string) => {
+  let state: CircuitState64 = { tag: "Closed", failureCount: 0 };
+
+  const call = (fn: () => string): string => {
+    // => Check if circuit is Open and timeout has not elapsed
+    if (state.tag === "Open") {
+      if (Date.now() - state.openedAt < resetMs) {
+        console.log("Circuit OPEN — using fallback");
+        return fallback();
+        // => Still blocked: return fallback value instead of throwing
+      }
+      state = { tag: "HalfOpen" };
+    }
+
+    try {
+      const result = fn();
+      state = { tag: "Closed", failureCount: 0 };
+      // => Success: reset failure count
+      return result;
+    } catch (e) {
+      if (state.tag === "Closed") {
+        const n = state.failureCount + 1;
+        state =
+          n >= threshold
+            ? (console.log("Circuit OPENED"), { tag: "Open", openedAt: Date.now() })
+            : { tag: "Closed", failureCount: n };
+      } else {
+        state = { tag: "Open", openedAt: Date.now() };
+      }
+      return fallback();
+      // => On failure: return fallback rather than propagating the exception
+    }
+  };
+
+  return { call, getState: () => state };
+};
+
+const cb64 = makeCircuitBreaker64(
+  2,
+  5000,
+  () => "FALLBACK: cached data",
+  // => Fallback provides a degraded but safe response
+);
+
+const failSvc64 = (): string => {
+  throw new Error("Service down");
+};
+
+console.log(cb64.call(failSvc64)); // => FALLBACK: cached data  (failure 1 of 2)
+console.log(cb64.call(failSvc64)); // => Circuit OPENED
+// => FALLBACK: cached data  (threshold reached)
+console.log(cb64.call(failSvc64)); // => Circuit OPEN — using fallback
+// => FALLBACK: cached data  (circuit open)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# models the three circuit breaker states as a discriminated union with
@@ -1204,7 +1641,7 @@ graph TD
     style I fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1344,6 +1781,79 @@ paymentsBh.Semaphore.Release(2) |> ignore
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: function-level semaphore-style concurrency limiting — TypeScript version]
+
+// => Bulkhead: limits concurrent executions of a given function
+// => In Node.js we model this with a counter and a queue
+const makeBulkhead65 = (maxConcurrent: number) => {
+  let active = 0;
+  const queue: (() => void)[] = [];
+  // => queue holds pending work that is waiting for a slot
+
+  const acquire = (): Promise<void> => {
+    if (active < maxConcurrent) {
+      active++;
+      return Promise.resolve();
+      // => Slot available: immediately grant access
+    }
+    return new Promise((resolve) => {
+      queue.push(() => {
+        active++;
+        resolve();
+      });
+      // => No slot: enqueue a callback that will fire when one opens
+    });
+  };
+
+  const release = (): void => {
+    active--;
+    const next = queue.shift();
+    if (next) next();
+    // => Release slot and wake next queued waiter
+  };
+
+  const run = async <T>(fn: () => Promise<T>): Promise<T> => {
+    await acquire();
+    // => Wait for a slot — bulkhead prevents overload
+    try {
+      return await fn();
+      // => Execute the protected function
+    } finally {
+      release();
+      // => Always release the slot — even if fn throws
+    }
+  };
+
+  const stats = () => ({ active, queued: queue.length });
+
+  return { run, stats };
+};
+
+// => Two bulkheads: one for DB (max 2 concurrent), one for external API (max 1 concurrent)
+const dbBulkhead65 = makeBulkhead65(2);
+const apiBulkhead65 = makeBulkhead65(1);
+
+const simulateDb65 = () => new Promise<string>((r) => setTimeout(() => r("DB result"), 50));
+const simulateApi65 = () => new Promise<string>((r) => setTimeout(() => r("API result"), 50));
+
+// Fire 3 concurrent DB requests — only 2 run at once
+const db65Results = await Promise.all([
+  dbBulkhead65.run(simulateDb65),
+  dbBulkhead65.run(simulateDb65),
+  dbBulkhead65.run(simulateDb65),
+]);
+console.log(`DB results: ${db65Results.length}`);
+// => DB results: 3  (all complete; third waited for a slot)
+
+console.log(`DB stats after: ${JSON.stringify(dbBulkhead65.stats())}`);
+// => DB stats after: {"active":0,"queued":0}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Returning `Result<'a, string>` from `withBulkhead` means the compiler forces
@@ -1362,7 +1872,7 @@ Retrying transient failures is essential in distributed systems, but naive fixed
 cause thundering herds. In F#, the retry is a recursive `async` computation that accumulates
 attempts via tail-recursive loop without mutable loop counters.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1484,6 +1994,58 @@ printfn "Result: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: recursive retry function with exponential backoff — TypeScript async version]
+type Result66<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+const sleep66 = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+// => Promise-based sleep — awaitable in async functions
+
+const retryWithBackoff66 = async <T>(
+  fn: () => Promise<T>,
+  maxRetries: number,
+  baseMs: number,
+): Promise<Result66<T, string>> => {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const value = await fn();
+      return { ok: true, value };
+      // => Success on this attempt
+    } catch (err) {
+      if (attempt === maxRetries) return { ok: false, error: `Max retries (${maxRetries}) exceeded: ${err}` };
+      // => All retries exhausted: return error
+      const jitter = Math.random() * baseMs;
+      // => Jitter: random fraction of baseMs to avoid thundering herd
+      const delayMs = Math.pow(2, attempt) * baseMs + jitter;
+      // => Exponential backoff: 1x, 2x, 4x, 8x... base delay + jitter
+      console.log(`Attempt ${attempt + 1} failed; retrying in ${Math.round(delayMs)}ms`);
+      await sleep66(delayMs);
+    }
+  }
+  return { ok: false, error: "unreachable" };
+};
+
+// Demo: service that fails twice then succeeds
+let attempt66 = 0;
+const flakySvc66 = async (): Promise<string> => {
+  attempt66++;
+  if (attempt66 < 3) throw new Error("temporary failure");
+  // => Fails on attempts 1 and 2, succeeds on attempt 3
+  return `Success on attempt ${attempt66}`;
+};
+
+const r66 = await retryWithBackoff66(flakySvc66, 4, 50);
+if (r66.ok) console.log(r66.value);
+// => Attempt 1 failed; retrying in ...ms
+// => Attempt 2 failed; retrying in ...ms
+// => Success on attempt 3
+else console.log(`Error: ${r66.error}`);
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Tail recursion threads attempt state through function parameters instead of a
@@ -1518,7 +2080,7 @@ sequenceDiagram
     Note over A,C: All spans share traceId=abc
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1642,6 +2204,83 @@ let _ = finishSpan rootSpan    // => Gateway finishes last
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: trace context propagated through function calls — TypeScript version]
+
+// => Trace context: immutable value passed through every function call
+type TraceContext67 = Readonly<{
+  traceId: string;
+  spanId: string;
+  parentSpanId: string | undefined;
+}>;
+
+// => Span: wraps a function call with timing and correlation
+type Span67 = Readonly<{
+  traceId: string;
+  spanId: string;
+  parentSpanId: string | undefined;
+  name: string;
+  durationMs: number;
+}>;
+
+const spans67: Span67[] = []; // => In production: sent to Jaeger/Zipkin
+
+const makeSpanId67 = (): string => Math.random().toString(36).slice(2, 10);
+// => Random span id — production uses 64-bit random
+
+const withSpan67 = <T>(ctx: TraceContext67, name: string, fn: (ctx: TraceContext67) => T): T => {
+  const childSpanId = makeSpanId67();
+  // => Each child gets a new span id; parent span id links to caller
+  const childCtx: TraceContext67 = {
+    traceId: ctx.traceId,
+    spanId: childSpanId,
+    parentSpanId: ctx.spanId,
+    // => Child inherits traceId; parentSpanId = caller's spanId
+  };
+  const start = Date.now();
+  const result = fn(childCtx);
+  // => Execute the work with the child context
+  spans67.push({
+    traceId: ctx.traceId,
+    spanId: childSpanId,
+    parentSpanId: ctx.spanId,
+    name,
+    durationMs: Date.now() - start,
+  });
+  return result;
+};
+
+// => Application code: every function receives and passes ctx
+const getUser67 = (ctx: TraceContext67, userId: string) =>
+  withSpan67(ctx, "getUser", (_ctx) => {
+    // => _ctx would be passed to any further nested calls
+    return { id: userId, name: "Alice" };
+    // => Business logic runs within span — tracing is transparent
+  });
+
+const processOrder67 = (ctx: TraceContext67, userId: string) =>
+  withSpan67(ctx, "processOrder", (childCtx) => {
+    const user = getUser67(childCtx, userId);
+    // => Pass child context to nested calls — propagates the trace
+    return { user, orderId: "ord-1" };
+  });
+
+const rootCtx67: TraceContext67 = {
+  traceId: "trace-abc123",
+  spanId: makeSpanId67(),
+  parentSpanId: undefined,
+};
+const result67 = processOrder67(rootCtx67, "u1");
+console.log(`Order: ${JSON.stringify(result67.orderId)}`);
+// => Order: "ord-1"
+console.log(`Spans recorded: ${spans67.length}`);
+// => Spans recorded: 2  (processOrder + getUser)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Immutable span records mean `finishSpan` always returns a new record; the original
@@ -1675,7 +2314,7 @@ graph LR
     style Collector fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1778,6 +2417,73 @@ printfn "%A" r2
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: decorator function that adds cross-cutting concerns around a service — TypeScript version]
+
+// => The main service: focused purely on business logic
+const createOrderService68 = () => ({
+  placeOrder: (customerId: string, total: number): string => {
+    // => Pure business logic — no logging, no metrics, no auth
+    const orderId = `ord-${Date.now()}`;
+    return orderId;
+    // => Returns the order id; sidecar handles everything else
+  },
+  cancelOrder: (orderId: string): boolean => {
+    return orderId.startsWith("ord-");
+    // => Simulates cancellation logic
+  },
+});
+
+// => Sidecar: wraps the service and adds cross-cutting concerns
+const withSidecar68 = <T extends Record<string, (...args: unknown[]) => unknown>>(
+  service: T,
+  config: { enableLogging: boolean; enableMetrics: boolean },
+): T => {
+  const metrics = new Map<string, number>();
+
+  return new Proxy(service, {
+    get(target, prop) {
+      const fn = target[prop as keyof T];
+      if (typeof fn !== "function") return fn;
+
+      return (...args: unknown[]) => {
+        const name = String(prop);
+        const start = Date.now();
+
+        if (config.enableLogging) console.log(`[LOG] ${name} called with ${JSON.stringify(args)}`);
+        // => Sidecar logs the call — service has no logging code
+
+        const result = (fn as (...a: unknown[]) => unknown)(...args);
+
+        const duration = Date.now() - start;
+        if (config.enableMetrics) {
+          metrics.set(name, (metrics.get(name) ?? 0) + 1);
+          console.log(`[METRIC] ${name} completed in ${duration}ms (count: ${metrics.get(name)})`);
+          // => Sidecar records metrics — service has no metrics code
+        }
+
+        return result;
+      };
+    },
+  }) as T;
+};
+
+const rawService68 = createOrderService68();
+const svcWithSidecar68 = withSidecar68(rawService68, { enableLogging: true, enableMetrics: true });
+
+svcWithSidecar68.placeOrder("c1", 99.0);
+// => [LOG] placeOrder called with ["c1",99]
+// => [METRIC] placeOrder completed in 0ms (count: 1)
+
+svcWithSidecar68.cancelOrder("ord-123");
+// => [LOG] cancelOrder called with ["ord-123"]
+// => [METRIC] cancelOrder completed in 0ms (count: 1)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The sidecar as a higher-order function means cross-cutting concerns are composed,
@@ -1796,7 +2502,7 @@ The ambassador pattern places a proxy between an application and a remote servic
 connection management, retry logic, and credential injection. In F#, the ambassador is a record
 of configuration plus a function that returns `Result`, hiding all complexity from callers.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1926,6 +2632,64 @@ printfn "Total calls including retries: %d" db.CallCount
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: ambassador function that wraps a downstream call with retry and circuit breaker — TypeScript]
+
+// => The ambassador wraps a downstream client and provides resilience features
+const makeAmbassador69 = (
+  client: (path: string) => Promise<string>,
+  config: { maxRetries: number; timeoutMs: number },
+) => {
+  const call = async (path: string): Promise<string> => {
+    // => TIMEOUT: race the client call against a timeout
+    const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Timeout")), config.timeoutMs));
+
+    for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
+      try {
+        const result = await Promise.race([client(path), timeout]);
+        // => Ambassador transparently retries on failure
+        if (attempt > 0) console.log(`[Ambassador] Succeeded on attempt ${attempt + 1}`);
+        return result;
+      } catch (err) {
+        if (attempt < config.maxRetries) {
+          const delay = Math.pow(2, attempt) * 100;
+          console.log(`[Ambassador] Attempt ${attempt + 1} failed; retrying in ${delay}ms`);
+          await new Promise((r) => setTimeout(r, delay));
+        } else {
+          console.log(`[Ambassador] All ${config.maxRetries + 1} attempts failed`);
+          throw err;
+          // => All retries exhausted: propagate the error to the caller
+        }
+      }
+    }
+    throw new Error("unreachable");
+  };
+
+  return { call };
+};
+
+// => Downstream client: simulates a flaky HTTP service
+let callCount69 = 0;
+const flakyClient69 = async (path: string): Promise<string> => {
+  callCount69++;
+  if (callCount69 < 3) throw new Error("connection refused");
+  // => Fails twice then succeeds — ambassador retries transparently
+  return `OK: ${path}`;
+};
+
+const ambassador69 = makeAmbassador69(flakyClient69, { maxRetries: 3, timeoutMs: 500 });
+const result69 = await ambassador69.call("/api/data");
+console.log(result69);
+// => [Ambassador] Attempt 1 failed; retrying in 100ms
+// => [Ambassador] Attempt 2 failed; retrying in 200ms
+// => [Ambassador] Succeeded on attempt 3
+// => OK: /api/data
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The ambassador's `query` function exposes a `Result` to the caller, not the raw
@@ -1961,7 +2725,7 @@ graph TD
     style E4 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2077,6 +2841,83 @@ printfn "Balance after deposit only: %M" stateAtT2.Balance
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: event log as source of truth + fold to reconstruct state — TypeScript version]
+type Result70<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => All events are immutable facts — never updated, only appended
+type OrderEvent70 =
+  | { tag: "OrderCreated"; orderId: string; customerId: string; total: number }
+  | { tag: "OrderConfirmed"; orderId: string }
+  | { tag: "OrderCancelled"; orderId: string; reason: string }
+  | { tag: "OrderShipped"; orderId: string; trackingCode: string };
+
+type OrderState70 = Readonly<{
+  orderId: string;
+  status: string;
+  customerId: string;
+  total: number;
+  trackingCode: string | undefined;
+}>;
+
+// => FOLD: reconstruct current state from event log
+const applyOrderEvent70 = (state: OrderState70 | undefined, event: OrderEvent70): OrderState70 => {
+  switch (event.tag) {
+    case "OrderCreated":
+      return {
+        orderId: event.orderId,
+        status: "created",
+        customerId: event.customerId,
+        total: event.total,
+        trackingCode: undefined,
+      };
+    case "OrderConfirmed":
+      return { ...state!, status: "confirmed" };
+    case "OrderCancelled":
+      return { ...state!, status: "cancelled" };
+    case "OrderShipped":
+      return { ...state!, status: "shipped", trackingCode: event.trackingCode };
+  }
+};
+
+const rebuildOrder70 = (events: readonly OrderEvent70[]): OrderState70 | undefined =>
+  events.reduce<OrderState70 | undefined>((s, e) => applyOrderEvent70(s, e), undefined);
+
+// => Event store (append-only)
+const eventStore70: OrderEvent70[] = [];
+
+const appendEvent70 = (event: OrderEvent70): void => {
+  eventStore70.push(event);
+  // => In production: persist to EventStore, PostgreSQL, or Kafka
+};
+
+// => Command handlers: validate then append events
+const createOrder70 = (orderId: string, customerId: string, total: number): void => {
+  appendEvent70({ tag: "OrderCreated", orderId, customerId, total });
+};
+
+const shipOrder70 = (orderId: string, trackingCode: string): Result70<void, string> => {
+  const state = rebuildOrder70(eventStore70.filter((e) => e.orderId === orderId));
+  if (!state || state.status !== "confirmed") return { ok: false, error: "Order must be confirmed before shipping" };
+  appendEvent70({ tag: "OrderShipped", orderId, trackingCode });
+  return { ok: true, value: undefined };
+};
+
+createOrder70("ord-1", "c1", 99.0);
+appendEvent70({ tag: "OrderConfirmed", orderId: "ord-1" });
+shipOrder70("ord-1", "TRACK-123");
+
+const final70 = rebuildOrder70(eventStore70);
+console.log(`Status: ${final70?.status}, Tracking: ${final70?.trackingCode}`);
+// => Status: shipped, Tracking: TRACK-123
+console.log(`Events recorded: ${eventStore70.length}`);
+// => Events recorded: 3
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** `List.fold applyEvent` is the direct FP expression of event replay — there is
@@ -2098,7 +2939,7 @@ A modular monolith deploys as a single process but enforces strict module bounda
 boundaries are enforced by the file ordering in the project — types defined in later files cannot
 be referenced by earlier files, making circular dependencies a compile error.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2235,6 +3076,86 @@ printfn "Order: %s, Invoice: %s, Amount: %M" order.OrderId invoice.InvoiceId inv
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: strongly bounded modules with explicit function-type contracts — TypeScript version]
+
+// => Each module declares its contract as a TypeScript interface
+// => The module satisfies its own contract — boundaries are enforced at compile time
+
+// ── ORDER MODULE ──────────────────────────────────────────────────────────────
+interface OrderModule71 {
+  create: (customerId: string, total: number) => string; // => returns orderId
+  cancel: (orderId: string) => boolean;
+  findAll: () => readonly { id: string; customerId: string; total: number; status: string }[];
+}
+
+const makeOrderModule71 = (): OrderModule71 => {
+  const orders = new Map<string, { customerId: string; total: number; status: string }>();
+  let counter = 1;
+  return {
+    create: (customerId, total) => {
+      const id = `ord-${counter++}`;
+      orders.set(id, { customerId, total, status: "created" });
+      return id;
+    },
+    cancel: (orderId) => {
+      const o = orders.get(orderId);
+      if (!o) return false;
+      orders.set(orderId, { ...o, status: "cancelled" });
+      return true;
+    },
+    findAll: () => [...orders.entries()].map(([id, o]) => ({ id, ...o })),
+  };
+};
+
+// ── INVENTORY MODULE ──────────────────────────────────────────────────────────
+interface InventoryModule71 {
+  reserve: (productId: string, qty: number) => boolean;
+  release: (productId: string, qty: number) => void;
+  getStock: (productId: string) => number;
+}
+
+const makeInventoryModule71 = (): InventoryModule71 => {
+  const stock = new Map<string, number>();
+  return {
+    reserve: (pid, qty) => {
+      const current = stock.get(pid) ?? 10;
+      if (current < qty) return false;
+      stock.set(pid, current - qty);
+      return true;
+    },
+    release: (pid, qty) => {
+      stock.set(pid, (stock.get(pid) ?? 0) + qty);
+    },
+    getStock: (pid) => stock.get(pid) ?? 10,
+  };
+};
+
+// ── COMPOSITION ROOT: wire modules together ───────────────────────────────────
+const orders71 = makeOrderModule71();
+const inventory71 = makeInventoryModule71();
+
+// => Business use case: place an order (orchestrates both modules)
+const placeOrder71 = (customerId: string, productId: string, qty: number, total: number): string | undefined => {
+  if (!inventory71.reserve(productId, qty)) {
+    console.log("Order rejected: insufficient stock");
+    return undefined;
+  }
+  const orderId = orders71.create(customerId, total);
+  console.log(`Order ${orderId} created; stock remaining: ${inventory71.getStock(productId)}`);
+  return orderId;
+};
+
+placeOrder71("c1", "SKU-001", 3, 99.0);
+// => Order ord-1 created; stock remaining: 7
+console.log(`Total orders: ${orders71.findAll().length}`);
+// => Total orders: 1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F#'s file-ordering rule means module dependencies are enforced by the compiler —
@@ -2255,7 +3176,7 @@ slice is a module containing its own request and response types plus a single ha
 all layers for one feature in one place. In Clojure, each slice is a namespace containing its own
 data shapes and handler function.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2389,6 +3310,71 @@ printfn "%A" getResp
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: one module per feature containing all layers for that feature — TypeScript version]
+
+// => Each "slice" is a self-contained module: types + handler + repository + validator
+// => No shared service layer — each feature owns its full stack
+
+// ── SLICE: Create Product ─────────────────────────────────────────────────────
+// => All code needed for "create product" lives in this slice
+type CreateProductSlice72 = {
+  request: { name: string; price: number };
+  response: { productId: string; name: string; price: number };
+};
+type Result72<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+const createProductSlice72 = (() => {
+  const store = new Map<string, { name: string; price: number }>();
+  let counter = 1;
+
+  const validate = (req: CreateProductSlice72["request"]): string[] => {
+    const errors: string[] = [];
+    if (!req.name.trim()) errors.push("name required");
+    if (req.price <= 0) errors.push("price must be positive");
+    return errors;
+  };
+
+  const handle = (req: CreateProductSlice72["request"]): Result72<CreateProductSlice72["response"], string[]> => {
+    const errors = validate(req);
+    if (errors.length > 0) return { ok: false, errors };
+    const id = `p${counter++}`;
+    store.set(id, { name: req.name.trim(), price: req.price });
+    return { ok: true, value: { productId: id, name: req.name.trim(), price: req.price } };
+  };
+
+  return { handle };
+})();
+
+// ── SLICE: Get Product ────────────────────────────────────────────────────────
+// => Independent slice: no dependency on create-product slice internals
+const getProductSlice72 = (() => {
+  // => In a real app this slice would have its own read-model store
+  // => Here we simulate a shared read store for demo purposes
+  const readStore = new Map([["p1", { name: "Widget", price: 9.99 }]]);
+
+  const handle = (productId: string): { productId: string; name: string; price: number } | undefined => {
+    const p = readStore.get(productId);
+    return p ? { productId, ...p } : undefined;
+  };
+
+  return { handle };
+})();
+
+// Demo: each slice handles its own vertical
+const created72 = createProductSlice72.handle({ name: "Gadget", price: 24.99 });
+if (created72.ok) console.log(`Created: ${JSON.stringify(created72.value)}`);
+// => Created: {"productId":"p1","name":"Gadget","price":24.99}
+
+const found72 = getProductSlice72.handle("p1");
+console.log(`Found: ${JSON.stringify(found72)}`);
+// => Found: {"productId":"p1","name":"Widget","price":9.99}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each feature lives in its own F# module or Clojure namespace — a developer reads
@@ -2409,7 +3395,7 @@ the shared kernel is a separate module containing only immutable record types. I
 shared kernel is a namespace exporting only data-manipulation functions and spec definitions — no
 application logic.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2577,6 +3563,57 @@ printfn "Overdue (35 days): %b" (BillingDomain.isOverdue invoice)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: shared domain types used by multiple bounded contexts — TypeScript version]
+
+// ── SHARED KERNEL: types and pure functions used by multiple contexts ──────────
+// => The shared kernel must be small and stable — it is a coordination cost
+type Money73 = Readonly<{ amount: number; currency: string }>;
+type Address73 = Readonly<{ street: string; city: string; country: string }>;
+// => Money73 and Address73 are stable domain concepts shared by multiple contexts
+
+const formatMoney73 = (m: Money73): string => `${m.currency} ${m.amount.toFixed(2)}`;
+// => Shared formatting rule — both Billing and Shipping contexts use this
+
+const isValidCurrency73 = (code: string): boolean => code.length === 3;
+// => Shared validation rule — ISO 4217 check used wherever currency is handled
+
+// ── BILLING CONTEXT: uses shared kernel types ─────────────────────────────────
+const billingContext73 = {
+  createInvoice: (amount: number, currency: string, address: Address73) => {
+    if (!isValidCurrency73(currency)) return { error: `Invalid currency: ${currency}` };
+    // => Uses shared kernel validation — Billing does not re-implement it
+    const money: Money73 = { amount, currency };
+    return { invoiceId: "INV-001", total: formatMoney73(money), billingAddress: address };
+    // => Uses shared Money73 type and formatMoney73 function
+  },
+};
+
+// ── SHIPPING CONTEXT: uses same shared kernel types ────────────────────────────
+const shippingContext73 = {
+  createShipment: (orderId: string, address: Address73, cost: Money73) => ({
+    shipmentId: `SHP-${orderId}`,
+    destination: `${address.city}, ${address.country}`,
+    shippingCost: formatMoney73(cost),
+    // => Uses shared formatMoney73 — same function, different context
+  }),
+};
+
+const addr73: Address73 = { street: "123 Main St", city: "New York", country: "US" };
+
+const invoice73 = billingContext73.createInvoice(99.0, "USD", addr73);
+console.log(JSON.stringify(invoice73));
+// => {"invoiceId":"INV-001","total":"USD 99.00","billingAddress":{...}}
+
+const shipment73 = shippingContext73.createShipment("ord-1", addr73, { amount: 5.99, currency: "USD" });
+console.log(JSON.stringify(shipment73));
+// => {"shipmentId":"SHP-ord-1","destination":"New York, US","shippingCost":"USD 5.99"}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The shared kernel module contains only type definitions and data helpers — no
@@ -2598,7 +3635,7 @@ The specification pattern encapsulates a business rule as a composable predicate
 specification is simply `'a -> bool` — functions compose with `&&`, `||`, and `not`. In Clojure,
 specifications are plain predicate functions composed with `every-pred` and `some-fn`.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2726,6 +3763,69 @@ printfn "o3 eligible: %b" (discountEligible o3)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: composable business rule specifications — TypeScript version at architecture scale]
+
+// => Specification: a named, composable predicate over a domain value
+interface Spec74<T> {
+  readonly name: string;
+  readonly isSatisfiedBy: (candidate: T) => boolean;
+  readonly and: (other: Spec74<T>) => Spec74<T>;
+  readonly or: (other: Spec74<T>) => Spec74<T>;
+  readonly not: () => Spec74<T>;
+}
+
+const makeSpec74 = <T>(name: string, pred: (t: T) => boolean): Spec74<T> => {
+  const spec: Spec74<T> = {
+    name,
+    isSatisfiedBy: pred,
+    and: (other) => makeSpec74(`${name} AND ${other.name}`, (t) => spec.isSatisfiedBy(t) && other.isSatisfiedBy(t)),
+    or: (other) => makeSpec74(`${name} OR ${other.name}`, (t) => spec.isSatisfiedBy(t) || other.isSatisfiedBy(t)),
+    not: () => makeSpec74(`NOT ${name}`, (t) => !spec.isSatisfiedBy(t)),
+  };
+  return spec;
+};
+
+// => Domain: loan application eligibility
+type LoanApplication74 = Readonly<{
+  creditScore: number;
+  income: number;
+  existingDebt: number;
+  age: number;
+}>;
+
+// => Atomic specifications — each encodes one business rule
+const goodCreditSpec74 = makeSpec74<LoanApplication74>("goodCredit", (a) => a.creditScore >= 700);
+const sufficientIncomeSpec74 = makeSpec74<LoanApplication74>("sufficientIncome", (a) => a.income >= 50000);
+const debtRatioSpec74 = makeSpec74<LoanApplication74>("lowDebtRatio", (a) => a.existingDebt / a.income < 0.4);
+const ageSpec74 = makeSpec74<LoanApplication74>("legalAge", (a) => a.age >= 18);
+
+// => COMPOSITE specification: all four rules must pass
+const eligibleForLoan74 = ageSpec74.and(goodCreditSpec74).and(sufficientIncomeSpec74).and(debtRatioSpec74);
+// => Composed rule reads as a business policy document
+
+const applications74: readonly LoanApplication74[] = [
+  { creditScore: 750, income: 60000, existingDebt: 10000, age: 30 },
+  // => Eligible: all rules pass
+  { creditScore: 650, income: 60000, existingDebt: 10000, age: 30 },
+  // => Not eligible: credit score < 700
+  { creditScore: 750, income: 40000, existingDebt: 10000, age: 30 },
+  // => Not eligible: income < 50000
+];
+
+for (const app of applications74) {
+  const eligible = eligibleForLoan74.isSatisfiedBy(app);
+  console.log(`Score ${app.creditScore}, Income ${app.income}: ${eligible ? "ELIGIBLE" : "REJECTED"}`);
+}
+// => Score 750, Income 60000: ELIGIBLE
+// => Score 650, Income 60000: REJECTED
+// => Score 750, Income 40000: REJECTED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** In F#, specification composition is ordinary function composition using `&&`,
@@ -2763,7 +3863,7 @@ graph LR
     style Resp3 fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2901,6 +4001,74 @@ printfn "%A" (chain { Path = "/orders"; ApiKey = Some "key-abc"; CallerId = "c1"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: linked handler functions that pass to the next or short-circuit — TypeScript version]
+
+// => Handler type: processes a request or passes it to the next handler
+type Handler75 = (request: Request75, next: () => Response75) => Response75;
+type Request75 = Readonly<{ path: string; method: string; headers: Record<string, string> }>;
+type Response75 = Readonly<{ status: number; body: string }>;
+
+// => LINK handler functions into a chain
+const makeChain75 = (...handlers: readonly Handler75[]): ((req: Request75) => Response75) => {
+  const finalHandler: () => Response75 = () => ({ status: 404, body: "Not found" });
+  // => Chain exhausted without a response: return 404
+
+  return (req: Request75): Response75 => {
+    const dispatch = (index: number): Response75 => {
+      if (index >= handlers.length) return finalHandler();
+      return handlers[index](req, () => dispatch(index + 1));
+      // => Call current handler; pass "next" as a thunk to the successor
+    };
+    return dispatch(0);
+  };
+};
+
+// => HANDLER 1: authentication check
+const authHandler75: Handler75 = (req, next) => {
+  if (!req.headers["authorization"]) {
+    console.log("Auth: rejected — no authorization header");
+    return { status: 401, body: "Unauthorized" };
+    // => Short-circuit: stop chain and return 401
+  }
+  console.log("Auth: passed");
+  return next();
+  // => Authenticated: pass to next handler
+};
+
+// => HANDLER 2: rate limiting
+const rateLimitHandler75: Handler75 = (req, next) => {
+  if (req.headers["x-rate-limited"] === "true") {
+    console.log("RateLimit: blocked");
+    return { status: 429, body: "Too Many Requests" };
+  }
+  console.log("RateLimit: passed");
+  return next();
+};
+
+// => HANDLER 3: business logic (final handler — does actual work)
+const businessHandler75: Handler75 = (req, _next) => {
+  console.log(`Business: handling ${req.method} ${req.path}`);
+  return { status: 200, body: `OK: ${req.path}` };
+};
+
+const chain75 = makeChain75(authHandler75, rateLimitHandler75, businessHandler75);
+
+console.log(chain75({ path: "/api/orders", method: "GET", headers: { authorization: "Bearer token" } }));
+// => Auth: passed
+// => RateLimit: passed
+// => Business: handling GET /api/orders
+// => { status: 200, body: "OK: /api/orders" }
+
+console.log(chain75({ path: "/api/orders", method: "GET", headers: {} }).status);
+// => Auth: rejected — no authorization header
+// => 401
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# uses `Result.bind` for early-termination — `Ok` continues, `Error` short-
@@ -2922,7 +4090,7 @@ pattern matching — a discriminated union type represents the object hierarchy,
 algorithm" is a function that pattern-matches over it. In Clojure, multimethods provide open
 dispatch where each algorithm is a new `defmulti`/`defmethod` pair over shared data maps.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3106,6 +4274,78 @@ printfn "Violations: %A" (allViolations arch)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: discriminated union + match expression as visitor — TypeScript version]
+
+// => The "visited" hierarchy: a tagged union of all node types
+type AstNode76 =
+  | { tag: "Literal"; value: number }
+  | { tag: "BinaryOp"; op: "+" | "-" | "*" | "/"; left: AstNode76; right: AstNode76 }
+  | { tag: "UnaryNeg"; operand: AstNode76 }
+  | { tag: "Identifier"; name: string };
+// => Each variant is a value — no class hierarchy; visitor is a function
+
+// => VISITOR 1: evaluate the AST to a number
+const evaluate76 = (node: AstNode76, env: Record<string, number>): number => {
+  switch (node.tag) {
+    case "Literal":
+      return node.value;
+    // => Leaf: return the literal value
+    case "Identifier":
+      return env[node.name] ?? 0;
+    // => Look up variable in environment — 0 if not found
+    case "UnaryNeg":
+      return -evaluate76(node.operand, env);
+    // => Recurse on the operand and negate
+    case "BinaryOp": {
+      const l = evaluate76(node.left, env);
+      const r = evaluate76(node.right, env);
+      switch (node.op) {
+        case "+":
+          return l + r;
+        case "-":
+          return l - r;
+        case "*":
+          return l * r;
+        case "/":
+          return r !== 0 ? l / r : 0;
+      }
+    }
+  }
+};
+
+// => VISITOR 2: pretty-print the AST to a string
+const prettyPrint76 = (node: AstNode76): string => {
+  switch (node.tag) {
+    case "Literal":
+      return String(node.value);
+    case "Identifier":
+      return node.name;
+    case "UnaryNeg":
+      return `(-${prettyPrint76(node.operand)})`;
+    case "BinaryOp":
+      return `(${prettyPrint76(node.left)} ${node.op} ${prettyPrint76(node.right)})`;
+  }
+};
+
+// => Build AST: (x + 3) * (-2)
+const ast76: AstNode76 = {
+  tag: "BinaryOp",
+  op: "*",
+  left: { tag: "BinaryOp", op: "+", left: { tag: "Identifier", name: "x" }, right: { tag: "Literal", value: 3 } },
+  right: { tag: "UnaryNeg", operand: { tag: "Literal", value: 2 } },
+};
+
+console.log(prettyPrint76(ast76));
+// => ((x + 3) * (-2))
+console.log(evaluate76(ast76, { x: 5 }));
+// => -16  (5 + 3 = 8, 8 * -2 = -16)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# pattern matching enforces exhaustive handling at compile time — a new DU case
@@ -3128,7 +4368,7 @@ In F#, each service's data access is a record of injected repository functions; 
 access goes through composed function calls. In Clojure, each service owns an independent atom —
 cross-service access goes through function calls, never shared atom references.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3287,6 +4527,69 @@ results |> List.iter (fun r ->
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: each service owns its data store — TypeScript shows clear ownership boundaries]
+
+// => Each service owns its OWN data store — no cross-service table access
+// => Cross-service queries use service API calls, not joins
+
+// ── ORDER SERVICE owns its orders store ───────────────────────────────────────
+const orderServiceDb77 = new Map<string, { customerId: string; total: number; status: string }>();
+
+const OrderService77 = {
+  create: (customerId: string, total: number): string => {
+    const id = `ord-${Date.now()}`;
+    orderServiceDb77.set(id, { customerId, total, status: "created" });
+    // => Only OrderService77 writes to orderServiceDb77 — other services cannot access it
+    return id;
+  },
+  getById: (id: string) => {
+    const o = orderServiceDb77.get(id);
+    return o ? { orderId: id, ...o } : undefined;
+    // => OrderService77 exposes a safe API — callers never touch the raw DB map
+  },
+};
+
+// ── CUSTOMER SERVICE owns its customers store ─────────────────────────────────
+const customerServiceDb77 = new Map<string, { name: string; email: string }>();
+
+const CustomerService77 = {
+  create: (name: string, email: string): string => {
+    const id = `c-${Date.now()}`;
+    customerServiceDb77.set(id, { name, email });
+    // => Only CustomerService77 writes to customerServiceDb77
+    return id;
+  },
+  getById: (id: string) => {
+    const c = customerServiceDb77.get(id);
+    return c ? { customerId: id, ...c } : undefined;
+    // => API call: returns a safe projection of customer data
+  },
+};
+
+// ── AGGREGATE VIEW: compose data by calling service APIs — no cross-DB joins ──
+const getOrderWithCustomer77 = (orderId: string) => {
+  const order = OrderService77.getById(orderId);
+  // => Call OrderService77 API — never access customerServiceDb77 directly
+  if (!order) return undefined;
+  const customer = CustomerService77.getById(order.customerId);
+  // => Call CustomerService77 API — never access orderServiceDb77 directly
+  return order && customer ? { ...order, customerName: customer.name, customerEmail: customer.email } : undefined;
+  // => Aggregated view built from two service calls — no join, no shared store
+};
+
+const cid77 = CustomerService77.create("Alice", "alice@example.com");
+const oid77 = OrderService77.create(cid77, 99.0);
+
+const view77 = getOrderWithCustomer77(oid77);
+console.log(`Customer: ${view77?.customerName}, Total: $${view77?.total}`);
+// => Customer: Alice, Total: $99
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# uses immutable Maps per service — functional separation is structural separation.
@@ -3331,7 +4634,7 @@ graph LR
     style F2 fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3460,6 +4763,69 @@ printfn "beta after kill: %b" (isEnabled killedStore "new_checkout" "beta-tester
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: feature flags as pure function predicates — TypeScript version]
+
+// => Feature toggle: a named flag + an optional gradual rollout predicate
+type FeatureToggle78 = Readonly<{
+  name: string;
+  enabled: boolean;
+  // => Global on/off switch
+  rollout?: (userId: string) => boolean;
+  // => Optional gradual rollout — override enabled if provided
+}>;
+
+// => Feature flag registry
+const makeToggleRegistry78 = (toggles: readonly FeatureToggle78[]) => {
+  const registry = new Map(toggles.map((t) => [t.name, t]));
+  // => Map from feature name to toggle configuration
+
+  const isEnabled = (featureName: string, userId?: string): boolean => {
+    const toggle = registry.get(featureName);
+    if (!toggle) return false;
+    // => Unknown feature: safe default is disabled
+    if (!toggle.enabled) return false;
+    // => Globally disabled: no further checks
+    if (toggle.rollout && userId) return toggle.rollout(userId);
+    // => Gradual rollout: delegate to the predicate
+    return toggle.enabled;
+    // => Globally enabled, no rollout predicate: feature is on for everyone
+  };
+
+  return { isEnabled };
+};
+
+// => Concrete toggle configuration
+const toggles78 = makeToggleRegistry78([
+  {
+    name: "new-checkout",
+    enabled: true,
+    rollout: (userId) => parseInt(userId.slice(-1)) < 5,
+    // => 50% rollout: users whose last digit < 5 get new checkout
+  },
+  { name: "dark-mode", enabled: true },
+  // => Globally enabled for all users — no gradual rollout
+  { name: "ai-assistant", enabled: false },
+  // => Globally disabled — no user sees it regardless of rollout
+]);
+
+const users78 = ["user1", "user4", "user7", "user9"];
+for (const user of users78) {
+  const checkout = toggles78.isEnabled("new-checkout", user);
+  const dark = toggles78.isEnabled("dark-mode", user);
+  const ai = toggles78.isEnabled("ai-assistant", user);
+  console.log(`${user}: checkout=${checkout}, dark=${dark}, ai=${ai}`);
+}
+// => user1: checkout=true,  dark=true, ai=false  (last digit 1 < 5)
+// => user4: checkout=true,  dark=true, ai=false  (last digit 4 < 5)
+// => user7: checkout=false, dark=true, ai=false  (last digit 7 >= 5)
+// => user9: checkout=false, dark=true, ai=false  (last digit 9 >= 5)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# uses an immutable `ToggleStore` — the kill switch creates a new store value,
@@ -3502,7 +4868,7 @@ graph TD
     style CP fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3648,6 +5014,69 @@ telemetry.Value |> List.rev |> List.iter (fun r ->
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: service mesh as a transparent proxy wrapping each service call — TypeScript version]
+
+// => Service mesh adds observability and resilience transparently
+// => Services call each other through the mesh — they don't know the mesh exists
+
+type ServiceRequest79 = Readonly<{ serviceId: string; path: string; payload: unknown }>;
+type ServiceResponse79 = Readonly<{ status: number; body: unknown; durationMs: number }>;
+
+// => Mesh proxy: wraps each service call with cross-cutting concerns
+const makeMeshProxy79 = (config: { enableRetry: boolean; maxRetries: number }) => {
+  const metrics = new Map<string, { calls: number; errors: number; totalMs: number }>();
+
+  const call = async (
+    req: ServiceRequest79,
+    handler: (r: ServiceRequest79) => Promise<unknown>,
+  ): Promise<ServiceResponse79> => {
+    const key = `${req.serviceId}:${req.path}`;
+    const start = Date.now();
+    let lastError: Error | undefined;
+
+    const attempts = config.enableRetry ? config.maxRetries + 1 : 1;
+    for (let i = 0; i < attempts; i++) {
+      try {
+        const body = await handler(req);
+        const durationMs = Date.now() - start;
+        const m = metrics.get(key) ?? { calls: 0, errors: 0, totalMs: 0 };
+        metrics.set(key, { calls: m.calls + 1, errors: m.errors, totalMs: m.totalMs + durationMs });
+        // => Record success metrics
+        return { status: 200, body, durationMs };
+      } catch (e) {
+        lastError = e as Error;
+        if (i < attempts - 1) await new Promise((r) => setTimeout(r, Math.pow(2, i) * 50));
+      }
+    }
+    const durationMs = Date.now() - start;
+    const m = metrics.get(key) ?? { calls: 0, errors: 0, totalMs: 0 };
+    metrics.set(key, { calls: m.calls + 1, errors: m.errors + 1, totalMs: m.totalMs + durationMs });
+    return { status: 500, body: lastError?.message ?? "error", durationMs };
+  };
+
+  const getMetrics = () => Object.fromEntries(metrics);
+
+  return { call, getMetrics };
+};
+
+// Demo
+const mesh79 = makeMeshProxy79({ enableRetry: true, maxRetries: 2 });
+
+const userHandler79 = async (req: ServiceRequest79) => ({ userId: "u1", name: "Alice" });
+// => Simulated user service
+
+const result79 = await mesh79.call({ serviceId: "user-service", path: "/users/u1", payload: null }, userHandler79);
+console.log(`Status: ${result79.status}, Duration: ${result79.durationMs}ms`);
+// => Status: 200, Duration: 0ms
+console.log(JSON.stringify(mesh79.getMetrics()));
+// => {"user-service:/users/u1":{"calls":1,"errors":0,...}}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The mesh proxy higher-order function composes with any inter-service call — adding
@@ -3667,7 +5096,7 @@ The interpreter pattern defines a grammar and an evaluator. In F#, a configurati
 representing the AST; the interpreter is a recursive function that evaluates the tree against a
 context map — no class hierarchy, just pattern matching.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3826,6 +5255,83 @@ printfn "Bronze: %b"      (eval ctxBronze discountRule)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: algebraic data type + recursive interpreter — TypeScript version]
+
+// => Configuration DSL: a typed, composable language for infrastructure config
+type ConfigExpr80 =
+  | { tag: "Literal"; value: string | number | boolean }
+  | { tag: "EnvVar"; name: string; default?: string }
+  | { tag: "Concat"; parts: readonly ConfigExpr80[] }
+  | { tag: "Condition"; test: ConfigExpr80; then: ConfigExpr80; else: ConfigExpr80 }
+  | { tag: "ToInt"; expr: ConfigExpr80 }
+  | { tag: "ToBool"; expr: ConfigExpr80 };
+// => Each case is an expression — the interpreter evaluates it recursively
+
+// => INTERPRETER: evaluates a ConfigExpr80 given an environment
+const evalConfig80 = (expr: ConfigExpr80, env: Record<string, string>): string | number | boolean => {
+  switch (expr.tag) {
+    case "Literal":
+      return expr.value;
+    // => Base case: return the literal value unchanged
+
+    case "EnvVar": {
+      const val = env[expr.name];
+      return val !== undefined ? val : (expr.default ?? "");
+      // => Look up environment variable; use default if absent
+    }
+
+    case "Concat":
+      return expr.parts.map((p) => String(evalConfig80(p, env))).join("");
+    // => Concatenate all parts as strings
+
+    case "Condition": {
+      const test = evalConfig80(expr.test, env);
+      return Boolean(test) ? evalConfig80(expr.then, env) : evalConfig80(expr.else, env);
+      // => Conditional: evaluate test, then pick the appropriate branch
+    }
+
+    case "ToInt":
+      return parseInt(String(evalConfig80(expr.expr, env)), 10) || 0;
+
+    case "ToBool": {
+      const v = evalConfig80(expr.expr, env);
+      return v === "true" || v === true || v === 1;
+    }
+  }
+};
+
+// => Build a configuration as a DSL expression
+const dbUrlExpr80: ConfigExpr80 = {
+  tag: "Concat",
+  parts: [
+    { tag: "Literal", value: "postgres://" },
+    { tag: "EnvVar", name: "DB_HOST", default: "localhost" },
+    { tag: "Literal", value: ":" },
+    { tag: "EnvVar", name: "DB_PORT", default: "5432" },
+    { tag: "Literal", value: "/mydb" },
+  ],
+};
+
+const debugModeExpr80: ConfigExpr80 = {
+  tag: "ToBool",
+  expr: { tag: "EnvVar", name: "DEBUG", default: "false" },
+};
+
+const env80 = { DB_HOST: "prod-db.example.com", DB_PORT: "5433", DEBUG: "true" };
+
+console.log(evalConfig80(dbUrlExpr80, env80));
+// => postgres://prod-db.example.com:5433/mydb
+console.log(evalConfig80(debugModeExpr80, env80));
+// => true
+console.log(evalConfig80(dbUrlExpr80, {}));
+// => postgres://localhost:5432/mydb  (uses defaults)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The DU AST and recursive evaluator form a complete interpreter in under 30 lines
@@ -3867,7 +5373,7 @@ graph LR
     style RM fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4033,6 +5539,70 @@ processCommand { ProductId = "P2"; Name = "Gadget"; Price = -5M; Stock = 10 }
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: separate write model + projections for read models — TypeScript version]
+
+// => Write model: normalised, optimised for correctness and consistency
+type WriteEvent81 =
+  | { tag: "ProductAdded"; id: string; name: string; price: number; category: string }
+  | { tag: "PriceChanged"; id: string; newPrice: number }
+  | { tag: "ProductRemoved"; id: string };
+
+// => Event store: append-only
+const eventStore81: WriteEvent81[] = [];
+
+const appendEvent81 = (event: WriteEvent81): void => {
+  eventStore81.push(event);
+};
+
+// => READ MODELS: projections derived from events — each optimised for specific queries
+type ProductListItem81 = Readonly<{ id: string; name: string; price: number }>;
+type CategoryGroup81 = Readonly<{ category: string; count: number }>;
+
+// => Projection 1: flat product list (optimised for list views)
+const buildProductList81 = (): readonly ProductListItem81[] => {
+  const products = new Map<string, ProductListItem81>();
+  for (const e of eventStore81) {
+    if (e.tag === "ProductAdded") products.set(e.id, { id: e.id, name: e.name, price: e.price });
+    if (e.tag === "PriceChanged") {
+      const p = products.get(e.id);
+      if (p) products.set(e.id, { ...p, price: e.newPrice });
+    }
+    if (e.tag === "ProductRemoved") products.delete(e.id);
+  }
+  return [...products.values()];
+};
+
+// => Projection 2: category count (optimised for dashboard widgets)
+const buildCategoryGroups81 = (): readonly CategoryGroup81[] => {
+  const counts = new Map<string, number>();
+  for (const e of eventStore81) {
+    if (e.tag === "ProductAdded") counts.set(e.category, (counts.get(e.category) ?? 0) + 1);
+    if (e.tag === "ProductRemoved") {
+      // => We need category from original event — replay from beginning
+      const addEvent = eventStore81.find((x) => x.tag === "ProductAdded" && x.id === e.id);
+      if (addEvent?.tag === "ProductAdded")
+        counts.set(addEvent.category, Math.max(0, (counts.get(addEvent.category) ?? 0) - 1));
+    }
+  }
+  return [...counts.entries()].map(([category, count]) => ({ category, count }));
+};
+
+// Demo: write-side commands produce events; read-side projections answer queries
+appendEvent81({ tag: "ProductAdded", id: "p1", name: "Widget", price: 9.99, category: "tools" });
+appendEvent81({ tag: "ProductAdded", id: "p2", name: "Gadget", price: 24.99, category: "electronics" });
+appendEvent81({ tag: "PriceChanged", id: "p1", newPrice: 8.99 });
+
+console.log(`Products: ${JSON.stringify(buildProductList81())}`);
+// => Products: [{"id":"p1","name":"Widget","price":8.99},{"id":"p2","name":"Gadget","price":24.99}]
+console.log(`Categories: ${JSON.stringify(buildCategoryGroups81())}`);
+// => Categories: [{"category":"tools","count":1},{"category":"electronics","count":1}]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The write side returns `Result<ProductEvent list, string>` — the compiler forces
@@ -4066,7 +5636,7 @@ graph LR
     style Consumers fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4246,6 +5816,82 @@ printfn "Unpublished after relay: %d" (List.length unpublished)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: outbox table + polling publisher — TypeScript version]
+type Result82<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => Outbox entry: stored in the same DB transaction as the domain change
+type OutboxEntry82 = Readonly<{
+  id: string;
+  eventType: string;
+  payload: unknown;
+  createdAt: number;
+  publishedAt?: number;
+  // => publishedAt is set when the message broker acknowledges delivery
+}>;
+
+// => Outbox store (simulate DB table)
+const outboxStore82: OutboxEntry82[] = [];
+let outboxId82 = 1;
+
+// => Domain operation + outbox write happen atomically (simulated here)
+const createOrderWithOutbox82 = (customerId: string, total: number): string => {
+  const orderId = `ord-${Date.now()}`;
+  // => Step 1: write domain state (simulated — real code uses a DB transaction)
+  console.log(`Domain: order ${orderId} created`);
+
+  // => Step 2: write outbox entry IN THE SAME TRANSACTION
+  const entry: OutboxEntry82 = {
+    id: String(outboxId82++),
+    eventType: "OrderCreated",
+    payload: { orderId, customerId, total },
+    createdAt: Date.now(),
+    // => publishedAt is undefined until the outbox publisher processes this entry
+  };
+  outboxStore82.push(entry);
+  // => If the transaction commits, both domain state and outbox entry exist
+  // => If it rolls back, neither exists — no partial failure
+
+  return orderId;
+};
+
+// => Outbox publisher: polls the outbox and publishes unpublished entries
+const publishOutbox82 = (broker: (entry: OutboxEntry82) => Result82<void, string>): void => {
+  const unpublished = outboxStore82.filter((e) => !e.publishedAt);
+  for (const entry of unpublished) {
+    const result = broker(entry);
+    if (result.ok) {
+      // => Mark as published — in production: atomic DB update
+      const idx = outboxStore82.findIndex((e) => e.id === entry.id);
+      outboxStore82[idx] = { ...entry, publishedAt: Date.now() };
+      console.log(`Published event ${entry.eventType} (id=${entry.id})`);
+    } else {
+      console.log(`Failed to publish ${entry.id}: ${result.error}`);
+      // => Retry on next poll — at-least-once delivery
+    }
+  }
+};
+
+// Demo
+createOrderWithOutbox82("c1", 99.0);
+createOrderWithOutbox82("c2", 149.0);
+
+// Simulate broker
+publishOutbox82((entry) => {
+  console.log(`Broker received: ${JSON.stringify(entry.payload)}`);
+  return { ok: true, value: undefined };
+});
+
+console.log(
+  `Total outbox entries: ${outboxStore82.length}, published: ${outboxStore82.filter((e) => e.publishedAt).length}`,
+);
+// => Total outbox entries: 2, published: 2
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Returning a new `AppState` record from `saveOrderWithEvent` makes atomicity
@@ -4264,7 +5910,7 @@ The Anti-Corruption Layer (ACL) is a translation boundary between two bounded co
 the ACL is a pair of pure functions — `translateIn` and `translateOut` — with no class, no state,
 and no mutation.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4443,6 +6089,82 @@ match CrmAcl.translateIn crmData with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: ACL functions that translate between domain and external models — TypeScript version]
+
+// => EXTERNAL models: third-party CRM system — we don't control these types
+type CrmContact83 = {
+  contact_id: number; // => snake_case, integer id
+  first_name: string;
+  last_name: string;
+  email_addr: string;
+  is_active: 0 | 1; // => boolean encoded as 0/1
+  created_ts: string; // => ISO 8601 string
+};
+
+type CrmUpdatePayload83 = {
+  contact_id: number;
+  first_name?: string;
+  last_name?: string;
+  is_active?: 0 | 1;
+};
+
+// => DOMAIN models: our clean internal representation
+type Customer83 = Readonly<{
+  id: string; // => string uuid
+  firstName: string;
+  lastName: string;
+  email: string;
+  active: boolean; // => proper boolean
+  createdAt: Date;
+}>;
+
+type CustomerUpdate83 = Partial<Pick<Customer83, "firstName" | "lastName" | "active">>;
+
+// => ANTI-CORRUPTION LAYER: translation functions
+const fromCrmContact83 = (crm: CrmContact83): Customer83 => ({
+  id: String(crm.contact_id),
+  firstName: crm.first_name,
+  lastName: crm.last_name,
+  email: crm.email_addr,
+  active: crm.is_active === 1,
+  createdAt: new Date(crm.created_ts),
+  // => ACL converts every field: snake_case → camelCase, 0/1 → boolean, string → Date
+});
+
+const toCrmUpdatePayload83 = (id: number, update: CustomerUpdate83): CrmUpdatePayload83 => ({
+  contact_id: id,
+  ...(update.firstName !== undefined && { first_name: update.firstName }),
+  ...(update.lastName !== undefined && { last_name: update.lastName }),
+  ...(update.active !== undefined && { is_active: update.active ? 1 : 0 }),
+  // => ACL converts back: camelCase → snake_case, boolean → 0/1
+});
+
+// Demo
+const crmData83: CrmContact83 = {
+  contact_id: 42,
+  first_name: "Alice",
+  last_name: "Smith",
+  email_addr: "alice@example.com",
+  is_active: 1,
+  created_ts: "2024-01-15T10:00:00Z",
+};
+
+const customer83 = fromCrmContact83(crmData83);
+console.log(`Customer: ${customer83.firstName} ${customer83.lastName}, active: ${customer83.active}`);
+// => Customer: Alice Smith, active: true
+// => Domain code uses clean camelCase booleans — never sees 0/1 or snake_case
+
+const payload83 = toCrmUpdatePayload83(42, { active: false, firstName: "Alicia" });
+console.log(JSON.stringify(payload83));
+// => {"contact_id":42,"first_name":"Alicia","is_active":0}
+// => ACL translates back to CRM's format — domain never holds snake_case fields
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Using a DU for `CustomerStatus` means the compiler enforces exhaustive handling
@@ -4481,7 +6203,7 @@ graph TD
     style Domain fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4632,6 +6354,79 @@ printfn "Event type: %s" publishedEvents.Head.eventType
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: comprehensive hexagonal architecture with multiple adapters — TypeScript version]
+
+// ── DOMAIN ────────────────────────────────────────────────────────────────────
+type Product84 = Readonly<{ id: string; name: string; price: number; stock: number }>;
+type Result84<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// ── PORTS (defined by the application core) ───────────────────────────────────
+type ProductRepo84 = {
+  findById: (id: string) => Product84 | undefined;
+  save: (p: Product84) => void;
+  findAll: () => readonly Product84[];
+};
+type Logger84 = { log: (level: string, msg: string) => void };
+type EventBus84 = { publish: (topic: string, payload: unknown) => void };
+
+// ── APPLICATION CORE (depends only on port types) ─────────────────────────────
+const makeProductCore84 = (repo: ProductRepo84, logger: Logger84, bus: EventBus84) => ({
+  purchaseProduct: (productId: string, qty: number): Result84<Product84, string> => {
+    const product = repo.findById(productId);
+    if (!product) return { ok: false, error: `Product ${productId} not found` };
+    if (product.stock < qty) return { ok: false, error: `Insufficient stock for ${product.name}` };
+    const updated: Product84 = { ...product, stock: product.stock - qty };
+    repo.save(updated);
+    logger.log("INFO", `Purchased ${qty}x ${product.name}`);
+    bus.publish("product.purchased", { productId, qty, remaining: updated.stock });
+    return { ok: true, value: updated };
+  },
+});
+
+// ── ADAPTERS (defined by infrastructure, implement port interfaces) ────────────
+// => In-memory repo adapter
+const makeInMemoryRepo84 = (seed: readonly Product84[]): ProductRepo84 => {
+  const store = new Map(seed.map((p) => [p.id, p]));
+  return {
+    findById: (id) => store.get(id),
+    save: (p) => {
+      store.set(p.id, p);
+    },
+    findAll: () => [...store.values()],
+  };
+};
+
+// => Console logger adapter
+const consoleLogger84: Logger84 = {
+  log: (level, msg) => console.log(`[${level}] ${msg}`),
+};
+
+// => In-memory event bus adapter
+const events84: { topic: string; payload: unknown }[] = [];
+const inMemoryBus84: EventBus84 = {
+  publish: (topic, payload) => {
+    events84.push({ topic, payload });
+  },
+};
+
+// ── WIRING ────────────────────────────────────────────────────────────────────
+const repo84 = makeInMemoryRepo84([{ id: "p1", name: "Widget", price: 9.99, stock: 10 }]);
+const core84 = makeProductCore84(repo84, consoleLogger84, inMemoryBus84);
+
+const r84 = core84.purchaseProduct("p1", 3);
+if (r84.ok) console.log(`Remaining stock: ${r84.value.stock}`);
+// => [INFO] Purchased 3x Widget
+// => Remaining stock: 7
+
+console.log(`Events published: ${events84.length}`);
+// => Events published: 1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Ports as function-type aliases mean any function with the matching signature is
@@ -4669,7 +6464,7 @@ graph LR
     style B fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4809,6 +6604,97 @@ printfn "Queue never exceeded maxQueueSize=%d: %b" maxQueueSize (queuedCount <= 
 ;; => Output: Dropped count bounded by queue size: true
 (close! ch)
 ;; => Signal consumer go-block to stop; <! returns nil on closed channel; when-let exits loop
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// [F#: reactive stream with bounded buffer and backpressure signals — TypeScript version]
+
+// => Reactive stream: producer → bounded buffer → consumer with backpressure
+// => Backpressure: consumer signals "I'm full" and producer slows down or drops
+
+type StreamEvent85<T> = { tag: "Value"; value: T } | { tag: "Overflow"; dropped: T } | { tag: "Complete" };
+// => Three signal types: normal value, dropped-due-to-backpressure, stream-end
+
+const makeReactiveStream85 = <T>(bufferSize: number) => {
+  const buffer: T[] = [];
+  // => Bounded buffer — enforces backpressure at capacity
+
+  const subscribers: ((event: StreamEvent85<T>) => void)[] = [];
+
+  const subscribe = (handler: (event: StreamEvent85<T>) => void): void => {
+    subscribers.push(handler);
+  };
+
+  const emit = (event: StreamEvent85<T>): void => {
+    for (const sub of subscribers) sub(event);
+  };
+
+  const produce = (value: T): "accepted" | "dropped" => {
+    if (buffer.length >= bufferSize) {
+      emit({ tag: "Overflow", dropped: value });
+      // => Buffer full: signal backpressure and drop the value
+      return "dropped";
+    }
+    buffer.push(value);
+    emit({ tag: "Value", value });
+    // => Buffer has space: accept the value
+    return "accepted";
+  };
+
+  const consume = (): T | undefined => {
+    return buffer.shift();
+    // => Consume one item from the front of the buffer
+  };
+
+  const complete = (): void => {
+    emit({ tag: "Complete" });
+    // => Signal end-of-stream to all subscribers
+  };
+
+  const stats = () => ({ bufferSize, currentSize: buffer.length });
+
+  return { subscribe, produce, consume, complete, stats };
+};
+
+// Demo: bounded buffer of 3; producer emits 5 items
+const stream85 = makeReactiveStream85<number>(3);
+
+stream85.subscribe((event) => {
+  switch (event.tag) {
+    case "Value":
+      console.log(`Received: ${event.value}`);
+      break;
+    case "Overflow":
+      console.log(`DROPPED (backpressure): ${event.dropped}`);
+      break;
+    case "Complete":
+      console.log("Stream complete");
+      break;
+  }
+});
+
+for (let i = 1; i <= 5; i++) {
+  const result = stream85.produce(i * 10);
+  if (result === "dropped") console.log(`Producer slowing down (dropped ${i * 10})`);
+}
+// => Received: 10, 20, 30 (buffer fills up)
+// => DROPPED (backpressure): 40
+// => DROPPED (backpressure): 50
+
+console.log(`Buffer stats: ${JSON.stringify(stream85.stats())}`);
+// => Buffer stats: {"bufferSize":3,"currentSize":3}
+
+stream85.consume();
+stream85.consume();
+stream85.consume();
+// => Drain the buffer
+
+stream85.complete();
+// => Stream complete
 ```
 
 {{< /tab >}}

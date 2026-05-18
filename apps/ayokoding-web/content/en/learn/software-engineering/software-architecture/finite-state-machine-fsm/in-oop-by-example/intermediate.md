@@ -39,7 +39,7 @@ stateDiagram-v2
     class ScheduledForPayment,Paid terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -202,6 +202,40 @@ public static readonly IReadOnlyDictionary<Type, IReadOnlyDictionary<string, Inv
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: string literal union for the Invoice FSM states
+type InvoiceState =
+  | "REGISTERED" // => Supplier submitted invoice; not yet matched
+  | "MATCHING" // => Three-way match in progress
+  | "MATCHED" // => Match passed within tolerance; ready for payment
+  | "DISPUTED" // => Match failed; supplier must correct and resubmit
+  | "SCHEDULED_FOR_PAYMENT" // => Finance scheduled the payment run
+  | "PAID"; // => Bank disbursement confirmed — terminal state
+
+// => Immutable Invoice interface
+interface Invoice {
+  readonly id: string; // => Format: inv_<uuid>
+  readonly poId: string; // => Links invoice to a PurchaseOrder aggregate
+  readonly supplierAmount: number; // => Amount the supplier claims (USD)
+  readonly state: InvoiceState; // => Current FSM state
+}
+
+// => Transition table as nested readonly Record
+const INVOICE_TRANSITIONS: Readonly<Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>>> = {
+  REGISTERED: { start_match: "MATCHING" },
+  MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
+  // => Matching has two outcomes: guard picks which event to send
+  DISPUTED: { resubmit: "MATCHING" },
+  MATCHED: { schedule: "SCHEDULED_FOR_PAYMENT" },
+  SCHEDULED_FOR_PAYMENT: { pay: "PAID" },
+  // => PAID: no entry — terminal state with no valid outgoing events
+} as const;
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The Invoice FSM mirrors the PO FSM in structure — sealed states, event alphabet, transition table — but its guards depend on external data (GRN, PO unit prices) that are passed in at match time.
@@ -235,7 +269,7 @@ stateDiagram-v2
     class Disputed disputed
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -469,6 +503,55 @@ Console.WriteLine(ThreeWayMatchPasses(highInv, grn, po, tol));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: value interfaces for three-way match computation
+interface GRNLine {
+  readonly skuCode: string;
+  readonly receivedQty: number; // => Actual quantity received at warehouse
+}
+
+interface POLineForMatch {
+  readonly skuCode: string;
+  readonly unitPrice: number; // => Contractual reference price
+}
+
+// => Pure function: compute expected invoice amount from GRN and PO data
+function computeExpectedAmount(grnLines: readonly GRNLine[], poLines: readonly POLineForMatch[]): number {
+  const priceMap = new Map(poLines.map((l) => [l.skuCode, l.unitPrice]));
+  // => Map for O(1) per-line lookup
+  return grnLines.reduce((sum, grn) => {
+    const price = priceMap.get(grn.skuCode) ?? 0;
+    // => 0 if SKU missing from PO — forces match failure for unknown SKUs
+    return sum + grn.receivedQty * price;
+  }, 0);
+}
+
+// => Three-way match guard: true if invoice amount is within tolerance of expected
+function threeWayMatchPasses(
+  invoice: Invoice,
+  grnLines: readonly GRNLine[],
+  poLines: readonly POLineForMatch[],
+  tolerancePct: number,
+): boolean {
+  const expected = computeExpectedAmount(grnLines, poLines);
+  if (expected === 0) return false;
+  const delta = Math.abs(invoice.supplierAmount - expected) / expected;
+  return delta <= tolerancePct;
+}
+
+// => Example: 10 units * $50 = $500 expected; supplier invoices $508 (1.6% delta)
+const grn: GRNLine[] = [{ skuCode: "ELC-0042", receivedQty: 10 }];
+const po: POLineForMatch[] = [{ skuCode: "ELC-0042", unitPrice: 50 }];
+const inv: Invoice = { id: "inv_001", poId: "po_001", supplierAmount: 508, state: "MATCHING" };
+console.log(threeWayMatchPasses(inv, grn, po, 0.02)); // => Output: true (1.6% delta <= 2%)
+const highInv: Invoice = { ...inv, supplierAmount: 560 };
+console.log(threeWayMatchPasses(highInv, grn, po, 0.02)); // => Output: false (12% delta > 2%)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The three-way match guard is a pure function that can be tested independently of the FSM — the FSM calls it as a precondition for the `match_ok` transition.
@@ -481,7 +564,7 @@ Console.WriteLine(ThreeWayMatchPasses(highInv, grn, po, tol));
 
 Wrapping the three-way match guard in the transition function produces the complete `match` operation.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -699,6 +782,47 @@ if (r2 is Result<Invoice>.Ok ok2)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: MatchContext interface bundles all guard inputs
+interface MatchContext {
+  readonly invoice: Invoice;
+  readonly grnLines: readonly GRNLine[];
+  readonly poLines: readonly POLineForMatch[];
+  readonly tolerancePct: number;
+}
+
+type InvoiceResult<T> = { readonly kind: "ok"; readonly value: T } | { readonly kind: "err"; readonly error: string };
+
+// => Guarded match transition: guard determines which state to target
+function applyMatch(ctx: MatchContext): InvoiceResult<Invoice> {
+  const { invoice } = ctx;
+  if (invoice.state !== "MATCHING") return { kind: "err", error: `Cannot match invoice in state: ${invoice.state}` };
+  // => FSM structural guard
+
+  const passes = threeWayMatchPasses(invoice, ctx.grnLines, ctx.poLines, ctx.tolerancePct);
+  const next: InvoiceState = passes ? "MATCHED" : "DISPUTED";
+  // => Guard determines the outcome — caller cannot choose
+  return { kind: "ok", value: { ...invoice, state: next } };
+}
+
+const ctx1: MatchContext = {
+  invoice: { id: "inv_002", poId: "po_002", supplierAmount: 508, state: "MATCHING" },
+  grnLines: [{ skuCode: "ELC-0042", receivedQty: 10 }],
+  poLines: [{ skuCode: "ELC-0042", unitPrice: 50 }],
+  tolerancePct: 0.02,
+};
+const r1 = applyMatch(ctx1);
+if (r1.kind === "ok") console.log(r1.value.state); // => Output: MATCHED
+
+const ctx2 = { ...ctx1, invoice: { ...ctx1.invoice, supplierAmount: 600 } };
+const r2 = applyMatch(ctx2);
+if (r2.kind === "ok") console.log(r2.value.state); // => Output: DISPUTED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Some FSM transitions are not chosen by the caller — they are determined by a guard. The caller provides input data; the guard chooses the outcome state. This removes the temptation for callers to bypass validation by choosing the "good" event directly.
@@ -734,7 +858,7 @@ stateDiagram-v2
     class Matching,Matched,ScheduledForPayment inv
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -937,6 +1061,53 @@ if (r2 is Result<ExtendedPOState>.Err err)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: typed domain event for cross-machine coordination
+interface InvoiceMatchedEvent {
+  readonly invoiceId: string; // => Which invoice matched
+  readonly poId: string; // => Which PO to update
+  readonly timestamp: string; // => ISO-8601 UTC timestamp
+}
+
+// => Extended PO state including Invoiced
+type ExtendedPOState =
+  | "DRAFT"
+  | "AWAITING_APPROVAL"
+  | "APPROVED"
+  | "ISSUED"
+  | "ACKNOWLEDGED"
+  | "INVOICED"
+  | "CLOSED"
+  | "CANCELLED"
+  | "DISPUTED";
+
+interface ExtendedPO {
+  readonly id: string;
+  readonly totalAmount: number;
+  readonly state: ExtendedPOState;
+}
+
+// => Handle InvoiceMatchedEvent on the PurchaseOrder FSM
+function handleInvoiceMatched(poState: ExtendedPOState, event: InvoiceMatchedEvent): InvoiceResult<ExtendedPOState> {
+  if (poState !== "ACKNOWLEDGED")
+    return { kind: "err", error: `PO cannot accept InvoiceMatched in state ${poState} (expected ACKNOWLEDGED)` };
+  console.log(`PO ${event.poId} transitioning to INVOICED by invoice ${event.invoiceId}`);
+  return { kind: "ok", value: "INVOICED" };
+}
+
+const evt: InvoiceMatchedEvent = { invoiceId: "inv_003", poId: "po_003", timestamp: "2026-01-20T10:30:00Z" };
+const r1 = handleInvoiceMatched("ACKNOWLEDGED", evt);
+if (r1.kind === "ok") console.log(r1.value); // => Output: INVOICED
+
+const r2 = handleInvoiceMatched("ISSUED", evt);
+if (r2.kind === "err") console.log(r2.error);
+// => Output: PO cannot accept InvoiceMatched in state ISSUED (expected ACKNOWLEDGED)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Domain events are the communication protocol between FSMs in different bounded contexts — each FSM handles only events it recognises and rejects others with a typed error.
@@ -949,7 +1120,7 @@ if (r2 is Result<ExtendedPOState>.Err err)
 
 The Invoice FSM integrates the three-way match guard directly into the state transition, making the guard an inseparable part of the `match` operation. Each language expresses this combination in its own idiomatic style.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1151,6 +1322,39 @@ Console.WriteLine(next2?.State.GetType().Name); // => Output: Disputed
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: InvoiceFSM combines transition table with the three-way match guard
+const INVOICE_FSM_TABLE: Readonly<Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>>> = {
+  REGISTERED: { start_match: "MATCHING" },
+  MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
+  DISPUTED: { resubmit: "MATCHING" },
+  MATCHED: { schedule: "SCHEDULED_FOR_PAYMENT" },
+  SCHEDULED_FOR_PAYMENT: { pay: "PAID" },
+} as const;
+
+function invoiceApply(inv: Invoice, event: string): Invoice | undefined {
+  const next = INVOICE_FSM_TABLE[inv.state]?.[event];
+  return next !== undefined ? { ...inv, state: next } : undefined;
+}
+
+// => evaluateMatch: converts continuous data into a discrete FSM event string
+function evaluateMatch(supplierAmount: number, expectedAmount: number, tolerancePct: number): string {
+  if (expectedAmount === 0) return "match_fail";
+  const delta = Math.abs(supplierAmount - expectedAmount) / expectedAmount;
+  return delta <= tolerancePct ? "match_ok" : "match_fail";
+}
+
+const matchingInv: Invoice = { id: "inv_030", poId: "po_030", supplierAmount: 508, state: "MATCHING" };
+const evt1 = evaluateMatch(508, 500, 0.02); // => match_ok (1.6% <= 2%)
+console.log(invoiceApply(matchingInv, evt1)?.state); // => Output: MATCHED
+const evt2 = evaluateMatch(600, 500, 0.02); // => match_fail (20% > 2%)
+console.log(invoiceApply(matchingInv, evt2)?.state); // => Output: DISPUTED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `evaluateMatch` function converts continuous business data into a discrete FSM event — the bridge between the analogue world (amounts, percentages) and the digital world (event strings).
@@ -1163,7 +1367,7 @@ Console.WriteLine(next2?.State.GetType().Name); // => Output: Disputed
 
 `Optional` (Java), nullable types (Kotlin), and nullable returns (C#) all model the same "valid or rejected" transition contract without exceptions. Each idiomatic approach communicates that the result may be absent.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1378,6 +1582,39 @@ Console.WriteLine(rejected is null); // => Output: True (null = FSM rejected)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: InvoiceFSMOptional — undefined return instead of Result<T>
+// => undefined signals the FSM rejected the event; matches TypeScript null-safety idioms
+const INV_OPTIONAL_TABLE: Readonly<Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>>> = {
+  REGISTERED: { start_match: "MATCHING" },
+  MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
+  DISPUTED: { resubmit: "MATCHING" },
+  MATCHED: { schedule: "SCHEDULED_FOR_PAYMENT" },
+  SCHEDULED_FOR_PAYMENT: { pay: "PAID" },
+} as const;
+
+function invOptApply(inv: Invoice, event: string): Invoice | undefined {
+  const next = INV_OPTIONAL_TABLE[inv.state]?.[event];
+  return next !== undefined ? { ...inv, state: next } : undefined;
+}
+
+function evalMatch(supplierAmount: number, expectedAmount: number, tolerancePct: number): string {
+  if (expectedAmount === 0) return "match_fail";
+  return Math.abs(supplierAmount - expectedAmount) / expectedAmount <= tolerancePct ? "match_ok" : "match_fail";
+}
+
+const matchingInv: Invoice = { id: "inv_031", poId: "po_031", supplierAmount: 508, state: "MATCHING" };
+const evt = evalMatch(508, 500, 0.02); // => match_ok
+console.log(invOptApply(matchingInv, evt)?.state); // => Output: MATCHED
+
+const rejected = invOptApply(matchingInv, "pay");
+console.log(rejected === undefined); // => Output: true (Optional.empty equivalent)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `EvaluateMatch`/`evaluateMatch` converts continuous business data into a discrete FSM event — the bridge between the analogue world (amounts, percentages) and the digital world (event strings).
@@ -1392,7 +1629,7 @@ Console.WriteLine(rejected is null); // => Output: True (null = FSM rejected)
 
 Separating machine configuration (data) from behaviour (action functions) is the key insight behind libraries like XState, Spring State Machine, and similar. Each language has idiomatic patterns for expressing FSM configuration as data and wiring action implementations separately.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1618,6 +1855,50 @@ Console.WriteLine($"Paid terminal: {paidCfg.Terminal}"); // => Output: Paid term
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: declarative state configuration as a plain object (data, not code)
+interface StateConfig {
+  readonly validEvents: readonly string[];
+  readonly entryActionName: string | null;
+  readonly terminal: boolean;
+}
+
+function withEntry(entryAction: string, ...events: string[]): StateConfig {
+  return { validEvents: events, entryActionName: entryAction, terminal: false };
+}
+function asTerminal(): StateConfig {
+  return { validEvents: [], entryActionName: null, terminal: true };
+}
+
+// => Machine config: maps each state to its configuration — pure data, no behaviour
+const INVOICE_MACHINE_CONFIG: Readonly<Record<InvoiceState, StateConfig>> = {
+  REGISTERED: withEntry("logRegistered", "start_match"),
+  MATCHING: withEntry("logMatchingStarted", "match_ok", "match_fail"),
+  MATCHED: withEntry("notifyFinance", "schedule"),
+  DISPUTED: withEntry("notifySupplier", "resubmit"),
+  SCHEDULED_FOR_PAYMENT: withEntry("notifySupplierPaymentScheduled", "pay"),
+  PAID: asTerminal(),
+} as const;
+
+// => Action registry: named entry actions wired separately from config
+const INVOICE_ACTIONS: Readonly<Record<string, (id: string) => void>> = {
+  logRegistered: (id) => console.log(`Invoice ${id} registered`),
+  logMatchingStarted: (id) => console.log(`Matching started for invoice ${id}`),
+  notifyFinance: (id) => console.log(`Finance notified: invoice ${id} matched`),
+  notifySupplier: (id) => console.log(`Supplier notified: invoice ${id} disputed`),
+  notifySupplierPaymentScheduled: (id) => console.log(`Supplier notified: payment scheduled for ${id}`),
+};
+
+const matchingCfg = INVOICE_MACHINE_CONFIG.MATCHING;
+console.log("MATCHING valid events:", matchingCfg.validEvents); // => [match_ok, match_fail]
+console.log("MATCHING entry action:", matchingCfg.entryActionName); // => logMatchingStarted
+console.log("PAID terminal:", INVOICE_MACHINE_CONFIG.PAID.terminal); // => true
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Declarative machine configuration separates structure (data) from behaviour (action functions) — the machine definition can be inspected, serialised, and version-controlled independently of its action implementations.
@@ -1630,7 +1911,7 @@ Console.WriteLine($"Paid terminal: {paidCfg.Terminal}"); // => Output: Paid term
 
 Named guards separate the guard predicate from the machine configuration — the guard function is supplied separately and resolved by name at runtime, so the machine definition reads like a specification and guard implementations can be swapped independently.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1876,6 +2157,60 @@ Console.WriteLine(ResolveGuardedTransition(new InvoiceState.Matching(), "evaluat
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: named guards in XState-style configuration
+interface MatchCtx {
+  readonly supplierAmount: number;
+  readonly expectedAmount: number;
+  readonly tolerancePct: number;
+}
+
+// => Named guard registry: maps guard name to predicate
+const INVOICE_GUARDS: Record<string, (ctx: MatchCtx) => boolean> = {
+  matchPasses: (ctx) => {
+    if (ctx.expectedAmount === 0) return false;
+    return Math.abs(ctx.supplierAmount - ctx.expectedAmount) / ctx.expectedAmount <= ctx.tolerancePct;
+  },
+};
+
+// => TransitionCandidate: target state + optional guard name
+interface TransitionCandidate {
+  readonly target: InvoiceState;
+  readonly guardName: string | null;
+}
+
+// => Guarded config: (state, event) -> ordered list of candidates
+const GUARDED_CONFIG: Partial<Record<InvoiceState, Record<string, readonly TransitionCandidate[]>>> = {
+  MATCHING: {
+    evaluate: [
+      { target: "MATCHED", guardName: "matchPasses" }, // => First: fires if guard passes
+      { target: "DISPUTED", guardName: null }, // => Second: unguarded fallback
+    ],
+  },
+};
+
+// => Resolve: evaluate candidates in order, return first matching target
+function resolveGuardedTransition(current: InvoiceState, event: string, ctx: MatchCtx): InvoiceState {
+  const candidates = GUARDED_CONFIG[current]?.[event] ?? [];
+  for (const c of candidates) {
+    if (c.guardName === null) return c.target;
+    const guard = INVOICE_GUARDS[c.guardName];
+    if (guard?.(ctx)) return c.target;
+  }
+  throw new Error(`No transition matched for ${current} + ${event}`);
+}
+
+const passing: MatchCtx = { supplierAmount: 505, expectedAmount: 500, tolerancePct: 0.02 };
+console.log(resolveGuardedTransition("MATCHING", "evaluate", passing)); // => MATCHED
+
+const failing: MatchCtx = { supplierAmount: 600, expectedAmount: 500, tolerancePct: 0.02 };
+console.log(resolveGuardedTransition("MATCHING", "evaluate", failing)); // => DISPUTED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Named guards in a configuration-driven machine make guard logic inspectable and replaceable — the machine config reads like a specification, and guard implementations can be swapped without changing the machine structure.
@@ -1917,7 +2252,7 @@ stateDiagram-v2
     class ScheduledForPayment scheduled
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2159,6 +2494,52 @@ TransitionInvoice(inv, "start_match", new ConsoleNotifier());
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: INotifier interface — injectable for testing
+interface INotifier {
+  send(to: string, message: string): void;
+}
+const consoleNotifier: INotifier = { send: (to, msg) => console.log(`[NOTIFY] ${to}: ${msg}`) };
+
+// => Entry action for each Invoice state
+function invoiceEntryAction(state: InvoiceState, invoice: Invoice, notifier: INotifier): void {
+  switch (state) {
+    case "MATCHING":
+      notifier.send("system", `Invoice ${invoice.id} entering three-way match`);
+      break;
+    case "DISPUTED":
+      notifier.send("supplier", `Invoice ${invoice.id} disputed — please review and resubmit`);
+      break;
+    case "SCHEDULED_FOR_PAYMENT":
+      notifier.send("finance", `Invoice ${invoice.id} scheduled for payment run`);
+      break;
+    case "PAID":
+      notifier.send("supplier", `Invoice ${invoice.id} paid — check your bank account`);
+      break;
+    default:
+      break; // => REGISTERED, MATCHED: no immediate notification required
+  }
+}
+
+type InvResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
+
+function transitionInvoice(inv: Invoice, event: string, notifier: INotifier): InvResult<Invoice> {
+  const next = INVOICE_FSM_TABLE[inv.state]?.[event];
+  if (next === undefined) return { kind: "err", error: `${inv.state} --${event}--> (forbidden)` };
+  const newInv: Invoice = { ...inv, state: next };
+  invoiceEntryAction(next, newInv, notifier);
+  return { kind: "ok", value: newInv };
+}
+
+const inv: Invoice = { id: "inv_004", poId: "po_004", supplierAmount: 500, state: "REGISTERED" };
+transitionInvoice(inv, "start_match", consoleNotifier);
+// => Output: [NOTIFY] system: Invoice inv_004 entering three-way match
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Injecting the notifier as a dependency makes entry actions testable — swap the real notifier for a recording mock in unit tests without touching the FSM logic.
@@ -2171,7 +2552,7 @@ TransitionInvoice(inv, "start_match", new ConsoleNotifier());
 
 An invoice that goes through Disputed → Matching → Matched → Disputed cycles needs a resubmission counter — the FSM state alone does not capture this history.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2353,6 +2734,49 @@ if (r2 is Result<InvoiceWithHistory>.Err err)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: invoice extended with resubmission tracking context
+interface InvoiceWithHistory extends Invoice {
+  readonly resubmissionCount: number; // => How many times supplier has resubmitted
+  readonly maxResubmissions: number; // => Policy limit before escalation
+}
+
+function canResubmit(inv: InvoiceWithHistory): boolean {
+  return inv.resubmissionCount < inv.maxResubmissions;
+}
+
+function resubmitInvoice(inv: InvoiceWithHistory): InvResult<InvoiceWithHistory> {
+  if (inv.state !== "DISPUTED") return { kind: "err", error: `Cannot resubmit invoice in state ${inv.state}` };
+  if (!canResubmit(inv))
+    return { kind: "err", error: `Invoice ${inv.id} exceeded resubmission limit (${inv.maxResubmissions})` };
+  return {
+    kind: "ok",
+    value: { ...inv, state: "MATCHING", resubmissionCount: inv.resubmissionCount + 1 },
+  };
+}
+
+const inv: InvoiceWithHistory = {
+  id: "inv_005",
+  poId: "po_005",
+  supplierAmount: 600,
+  state: "DISPUTED",
+  resubmissionCount: 2,
+  maxResubmissions: 3,
+};
+const r1 = resubmitInvoice(inv);
+if (r1.kind === "ok") console.log(`${r1.value.state}, count: ${r1.value.resubmissionCount}`);
+// => Output: MATCHING, count: 3
+
+const atLimit: InvoiceWithHistory = { ...inv, resubmissionCount: 3 };
+const r2 = resubmitInvoice(atLimit);
+if (r2.kind === "err") console.log(r2.error);
+// => Output: Invoice inv_005 exceeded resubmission limit (3)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Counters and timestamps that accumulate across state transitions belong in the context object alongside the state — they are part of the machine's memory, not its current state.
@@ -2388,7 +2812,7 @@ stateDiagram-v2
     class Paid terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2575,6 +2999,35 @@ if (r3 is ProtocolResult.Rejected rej3) Console.WriteLine(rej3.Reason);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: ProtocolResult as a discriminated union
+type ProtocolResult =
+  | { readonly kind: "allowed"; readonly newState: InvoiceState }
+  | { readonly kind: "rejected"; readonly reason: string };
+
+function enforceInvoiceProtocol(inv: Invoice, event: string): ProtocolResult {
+  const stateTransitions = INVOICE_FSM_TABLE[inv.state];
+  if (stateTransitions?.[event] !== undefined) return { kind: "allowed", newState: stateTransitions[event]! };
+  const allowedEvents = stateTransitions ? Object.keys(stateTransitions).sort().join(", ") : "";
+  return {
+    kind: "rejected",
+    reason: `Protocol violation: cannot send '${event}' to invoice in state '${inv.state}'. Allowed events: [${allowedEvents}]`,
+  };
+}
+
+const inv: Invoice = { id: "inv_006", poId: "po_006", supplierAmount: 500, state: "REGISTERED" };
+const r1 = enforceInvoiceProtocol(inv, "start_match");
+if (r1.kind === "allowed") console.log(`allowed -> ${r1.newState}`); // => allowed -> MATCHING
+
+const r2 = enforceInvoiceProtocol(inv, "pay");
+if (r2.kind === "rejected") console.log(r2.reason);
+// => Protocol violation: cannot send 'pay' to invoice in state 'REGISTERED'. Allowed events: [start_match]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The FSM's rejection of invalid transitions is the first line of defence against integration bugs — the protocol enforcer converts FSM rejections into actionable API error messages.
@@ -2608,7 +3061,7 @@ stateDiagram-v2
     class Closed terminal
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2854,6 +3307,50 @@ if (FullPoTransitions.TryGetValue(typeof(FullPOState.PartiallyReceived), out var
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: full PO state including receiving substates
+type FullPOState =
+  | "DRAFT"
+  | "AWAITING_APPROVAL"
+  | "APPROVED"
+  | "ISSUED"
+  | "ACKNOWLEDGED"
+  | "PARTIALLY_RECEIVED" // => Some goods received; more shipments expected
+  | "RECEIVED" // => All goods received against the PO quantity
+  | "INVOICED" // => Matched invoice received from supplier
+  | "PAID"
+  | "CLOSED"
+  | "CANCELLED"
+  | "DISPUTED";
+
+// => Receiving transitions: self-loop for PartiallyReceived
+const FULL_PO_TRANSITIONS: Readonly<Partial<Record<FullPOState, Partial<Record<string, FullPOState>>>>> = {
+  ACKNOWLEDGED: {
+    partial_receive: "PARTIALLY_RECEIVED",
+    full_receive: "RECEIVED",
+    cancel: "CANCELLED",
+    dispute: "DISPUTED",
+  },
+  PARTIALLY_RECEIVED: {
+    partial_receive: "PARTIALLY_RECEIVED", // => Self-loop: another partial batch
+    full_receive: "RECEIVED",
+    cancel: "CANCELLED",
+    dispute: "DISPUTED",
+  },
+  RECEIVED: { invoice_matched: "INVOICED", dispute: "DISPUTED" },
+  INVOICED: { pay: "PAID", dispute: "DISPUTED" },
+  PAID: { close: "CLOSED" },
+} as const;
+
+// => Demonstrate the self-loop
+const next = FULL_PO_TRANSITIONS.PARTIALLY_RECEIVED?.partial_receive;
+console.log(next); // => Output: PARTIALLY_RECEIVED (self-loop for additional shipments)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Self-loops in an FSM model iterative real-world operations — each partial shipment fires the same event, and the machine stays in the same state until the full-receive event arrives.
@@ -2866,7 +3363,7 @@ if (FullPoTransitions.TryGetValue(typeof(FullPOState.PartiallyReceived), out var
 
 In production, the two FSMs live in separate services. They coordinate via domain events on a message bus. This example simulates the coordination.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3043,6 +3540,45 @@ InvoiceMatchSucceeded(bus, "inv_bus_01", "po_bus_01");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: minimal in-memory event bus
+interface DomainEvent {
+  readonly kind: string;
+  readonly payload: Readonly<Record<string, string>>;
+}
+
+class EventBus {
+  private handlers = new Map<string, Array<(e: DomainEvent) => void>>();
+  subscribe(kind: string, handler: (e: DomainEvent) => void): void {
+    if (!this.handlers.has(kind)) this.handlers.set(kind, []);
+    this.handlers.get(kind)!.push(handler);
+  }
+  publish(event: DomainEvent): void {
+    this.handlers.get(event.kind)?.forEach((h) => h(event));
+  }
+}
+
+const bus = new EventBus();
+
+// => Purchasing context: subscribes to InvoiceMatched
+bus.subscribe("InvoiceMatched", (e) => {
+  const { poId, invoiceId } = e.payload;
+  console.log(`PO ${poId} receives InvoiceMatched from invoice ${invoiceId} -> transition to INVOICED`);
+});
+
+// => Invoice context: publishes InvoiceMatched when matching succeeds
+function invoiceMatchSucceeded(b: EventBus, invoiceId: string, poId: string): void {
+  b.publish({ kind: "InvoiceMatched", payload: { invoiceId, poId } });
+}
+
+invoiceMatchSucceeded(bus, "inv_bus_01", "po_bus_01");
+// => Output: PO po_bus_01 receives InvoiceMatched from invoice inv_bus_01 -> transition to INVOICED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Domain events are the coupling mechanism between bounded contexts — each FSM publishes what happened; other FSMs subscribe and decide how to react.
@@ -3055,7 +3591,7 @@ InvoiceMatchSucceeded(bus, "inv_bus_01", "po_bus_01");
 
 Unit-testing the coordination between Invoice and PurchaseOrder FSMs without a real event bus.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3243,6 +3779,40 @@ TestInvoiceMatchedUpdatesPO();
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: typed domain event for tests — no loose Record<string,string>
+interface TypedInvoiceMatchedEvent {
+  readonly invoiceId: string;
+  readonly poId: string;
+  readonly timestamp: string;
+}
+
+function handleInvoiceMatchedTyped(current: FullPOState, event: TypedInvoiceMatchedEvent): InvResult<FullPOState> {
+  const next = FULL_PO_TRANSITIONS[current]?.invoice_matched;
+  if (next !== undefined) return { kind: "ok", value: next };
+  return { kind: "err", error: `PO cannot accept InvoiceMatched in state ${current} — expected RECEIVED` };
+}
+
+function testCheck(label: string, cond: boolean): void {
+  if (!cond) throw new Error(`FAIL: ${label}`);
+  console.log(`PASS: ${label}`);
+}
+
+const evt: TypedInvoiceMatchedEvent = { invoiceId: "inv_test01", poId: "po_test01", timestamp: "2026-01-20T11:00:00Z" };
+const r1 = handleInvoiceMatchedTyped("RECEIVED", evt);
+testCheck("PO transitions to INVOICED on InvoiceMatched", r1.kind === "ok");
+if (r1.kind === "ok") console.log(`  New state: ${r1.value}`);
+// => INVOICED
+
+const r2 = handleInvoiceMatchedTyped("ACKNOWLEDGED", evt);
+testCheck("InvoiceMatched rejected when PO not in RECEIVED", r2.kind === "err");
+if (r2.kind === "err") console.log(`  Error: ${r2.error}`);
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Testing coordination between two FSMs requires only the event handler function and typed test data — no running services, no Kafka, no database.
@@ -3276,7 +3846,7 @@ stateDiagram-v2
     class Invalid,StillDisputed invalid
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3512,6 +4082,57 @@ foreach (var e in errors) Console.WriteLine($"- {e}");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: accumulate all validation failures in one pass
+interface ValidationContext {
+  readonly invoice: InvoiceWithHistory;
+  readonly grnLines: readonly GRNLine[];
+  readonly poLines: readonly POLineForMatch[];
+  readonly tolerancePct: number;
+}
+
+function validateInvoiceForSubmission(ctx: ValidationContext): readonly string[] {
+  const errors: string[] = [];
+  const { invoice } = ctx;
+
+  if (invoice.state !== "DISPUTED")
+    errors.push(`Invoice is in state '${invoice.state}'; only DISPUTED invoices can be resubmitted`);
+
+  if (!canResubmit(invoice)) errors.push(`Resubmission limit (${invoice.maxResubmissions}) reached`);
+
+  if (invoice.supplierAmount <= 0) errors.push(`Supplier amount must be > 0 (got ${invoice.supplierAmount})`);
+
+  const expected = computeExpectedAmount(ctx.grnLines, ctx.poLines);
+  if (expected > 0 && !threeWayMatchPasses(invoice, ctx.grnLines, ctx.poLines, ctx.tolerancePct)) {
+    const delta = Math.abs(invoice.supplierAmount - expected) / expected;
+    errors.push(
+      `Amount still outside tolerance: ${(delta * 100).toFixed(1)}% vs ${(ctx.tolerancePct * 100).toFixed(1)}% max`,
+    );
+  }
+
+  return errors;
+}
+
+const ctx: ValidationContext = {
+  invoice: {
+    id: "inv_val01",
+    poId: "po_val01",
+    supplierAmount: -100,
+    state: "REGISTERED",
+    resubmissionCount: 3,
+    maxResubmissions: 3,
+  },
+  grnLines: [{ skuCode: "ELC-0042", receivedQty: 10 }],
+  poLines: [{ skuCode: "ELC-0042", unitPrice: 50 }],
+  tolerancePct: 0.02,
+};
+validateInvoiceForSubmission(ctx).forEach((e) => console.log(`- ${e}`));
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Accumulating validation errors before attempting a transition gives callers actionable feedback — fix all issues at once rather than discovering them one at a time.
@@ -3547,7 +4168,7 @@ stateDiagram-v2
     class Matched,ScheduledForPayment,Paid inv
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3742,6 +4363,41 @@ if (r1 is Result<P2PWorkflow>.Ok ok1)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: P2PWorkflow aggregate tracking both outer and inner FSM state
+interface P2PWorkflow {
+  readonly po: ExtendedPO;
+  readonly invoice: Invoice | null; // => null until invoice registered
+}
+
+function ofPO(po: ExtendedPO): P2PWorkflow {
+  return { po, invoice: null };
+}
+
+// => Step 1: registerInvoice — starts the inner FSM
+function registerInvoice(workflow: P2PWorkflow, invoiceId: string, supplierAmount: number): InvResult<P2PWorkflow> {
+  if (workflow.po.state !== "ACKNOWLEDGED")
+    return { kind: "err", error: `Cannot register invoice: PO goods not yet received (state: ${workflow.po.state})` };
+  const invoice: Invoice = { id: invoiceId, poId: workflow.po.id, supplierAmount, state: "REGISTERED" };
+  return { kind: "ok", value: { ...workflow, invoice } };
+}
+
+// => Step 2: advancePOOnInvoicePaid — outer reacts to inner FSM terminal state
+function advancePOOnInvoicePaid(workflow: P2PWorkflow): InvResult<P2PWorkflow> {
+  if (workflow.invoice?.state !== "PAID") return { kind: "err", error: "Cannot advance PO: invoice not yet paid" };
+  const updatedPO: ExtendedPO = { ...workflow.po, state: "INVOICED" };
+  return { kind: "ok", value: { ...workflow, po: updatedPO } };
+}
+
+const wf = ofPO({ id: "po_comp01", totalAmount: 500, state: "ACKNOWLEDGED" });
+const r1 = registerInvoice(wf, "inv_comp01", 505);
+if (r1.kind === "ok") console.log(r1.value.invoice?.state); // => Output: REGISTERED
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Nested FSM composition — an inner machine controlling when an outer machine advances — models real-world subprocess coordination without a general-purpose workflow engine.
@@ -3754,7 +4410,7 @@ if (r1 is Result<P2PWorkflow>.Ok ok1)
 
 Some transitions have time-based guards: an invoice must be matched within 30 days of registration or it auto-disputes.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3975,6 +4631,56 @@ Console.WriteLine($"{r2.Invoice.State.GetType().Name} / {r2.Reason}");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: invoice extended with registration timestamp for timeout checks
+interface InvoiceTimed extends Invoice {
+  readonly registeredAt: string; // => ISO-8601 timestamp — clock-in for timeout
+}
+
+const MATCH_DEADLINE_DAYS = 30;
+
+// => isMatchOverdue: pure guard — injectable 'now' makes it deterministically testable
+function isMatchOverdue(invoice: InvoiceTimed, now: string): boolean {
+  const registeredMs = new Date(invoice.registeredAt).getTime();
+  const nowMs = new Date(now).getTime();
+  const deadlineMs = registeredMs + MATCH_DEADLINE_DAYS * 24 * 60 * 60 * 1000;
+  return nowMs > deadlineMs;
+}
+
+interface TimeoutResult {
+  readonly invoice: InvoiceTimed;
+  readonly reason: string | null;
+}
+
+function autoDisputeIfOverdue(invoice: InvoiceTimed, now: string): TimeoutResult {
+  if (invoice.state !== "MATCHING") return { invoice, reason: null };
+  if (isMatchOverdue(invoice, now)) {
+    const disputed: InvoiceTimed = { ...invoice, state: "DISPUTED" };
+    return { invoice: disputed, reason: "timeout" };
+  }
+  return { invoice, reason: null };
+}
+
+// => Test with an overdue invoice: registered 80 days before check date
+const oldInv: InvoiceTimed = {
+  id: "inv_old",
+  poId: "po_old",
+  supplierAmount: 500,
+  state: "MATCHING",
+  registeredAt: "2025-11-01T00:00:00Z",
+};
+const r1 = autoDisputeIfOverdue(oldInv, "2026-01-20T00:00:00Z");
+console.log(`${r1.invoice.state} / ${r1.reason}`); // => DISPUTED / timeout
+
+const recentInv: InvoiceTimed = { ...oldInv, registeredAt: "2026-01-15T00:00:00Z" };
+const r2 = autoDisputeIfOverdue(recentInv, "2026-01-20T00:00:00Z");
+console.log(`${r2.invoice.state} / ${r2.reason}`); // => MATCHING / null
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Time-based guards require an injectable `now` parameter to be testable — production uses the real clock; tests pass a fixed instant for reproducibility.
@@ -3987,7 +4693,7 @@ Console.WriteLine($"{r2.Invoice.State.GetType().Name} / {r2.Reason}");
 
 A complete FSM runner encapsulates the transition table, guards, and entry actions in a single reusable class.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4331,6 +5037,57 @@ Console.WriteLine(rejected is null); // => Output: True (guard rejected)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: self-contained FSM runner class with guards and entry actions
+class InvoiceFSMRunner {
+  private readonly table: Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>> = {
+    REGISTERED: { start_match: "MATCHING" },
+    MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
+    DISPUTED: { resubmit: "MATCHING" },
+    MATCHED: { schedule: "SCHEDULED_FOR_PAYMENT" },
+    SCHEDULED_FOR_PAYMENT: { pay: "PAID" },
+  };
+
+  private readonly guards: Record<string, (inv: Invoice, ctx: Record<string, number>) => boolean> = {
+    match_ok: (inv, ctx) => {
+      const expected = ctx["expected"] ?? 0;
+      const tolerance = ctx["tolerance"] ?? 0.02;
+      if (expected === 0) return false;
+      return Math.abs(inv.supplierAmount - expected) / expected <= tolerance;
+    },
+  };
+
+  private readonly entryActions: Partial<Record<InvoiceState, (inv: Invoice) => void>> = {
+    MATCHED: (inv) => console.log(`Notify finance: invoice ${inv.id} matched`),
+    DISPUTED: (inv) => console.log(`Notify supplier: invoice ${inv.id} disputed`),
+  };
+
+  apply(inv: Invoice, event: string, ctx: Record<string, number> = {}): Invoice | undefined {
+    const next = this.table[inv.state]?.[event];
+    if (next === undefined) return undefined;
+    const guard = this.guards[event];
+    if (guard && !guard(inv, ctx)) return undefined;
+    const newInv: Invoice = { ...inv, state: next };
+    this.entryActions[next]?.(newInv);
+    return newInv;
+  }
+}
+
+const runner = new InvoiceFSMRunner();
+const inv: Invoice = { id: "inv_j01", poId: "po_j01", supplierAmount: 508, state: "MATCHING" };
+
+const matched = runner.apply(inv, "match_ok", { expected: 500, tolerance: 0.02 });
+// => Output: Notify finance: invoice inv_j01 matched
+console.log(matched?.state); // => Output: MATCHED
+
+const rejected = runner.apply(inv, "match_ok", { expected: 600, tolerance: 0.02 });
+console.log(rejected === undefined); // => Output: true (guard rejected)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A FSM runner class bundles table + guards + entry actions into a single reusable component — the same runner pattern works for any state machine in the system.
@@ -4343,7 +5100,7 @@ Console.WriteLine(rejected is null); // => Output: True (guard rejected)
 
 A tabular view of all states across both machines helps confirm the tutorial covers the full domain specification.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4549,6 +5306,90 @@ PrintCoverageReport();
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: machine coverage snapshot as plain data objects
+interface MachineCoverage {
+  readonly machineName: string;
+  readonly states: readonly string[];
+  readonly terminalStates: ReadonlySet<string>;
+  readonly offRamps: ReadonlySet<string>;
+  get stateCount(): number;
+  get terminalCount(): number;
+  get offRampCount(): number;
+}
+
+function makeCoverage(
+  machineName: string,
+  states: readonly string[],
+  terminalStates: readonly string[],
+  offRamps: readonly string[],
+): MachineCoverage {
+  return {
+    machineName,
+    states,
+    terminalStates: new Set(terminalStates),
+    offRamps: new Set(offRamps),
+    get stateCount() {
+      return this.states.length;
+    },
+    get terminalCount() {
+      return this.terminalStates.size;
+    },
+    get offRampCount() {
+      return this.offRamps.size;
+    },
+  };
+}
+
+const DOMAIN_COVERAGE: readonly MachineCoverage[] = [
+  makeCoverage(
+    "PurchaseOrder",
+    [
+      "Draft",
+      "AwaitingApproval",
+      "Approved",
+      "Issued",
+      "Acknowledged",
+      "PartiallyReceived",
+      "Received",
+      "Invoiced",
+      "Paid",
+      "Closed",
+      "Cancelled",
+      "Disputed",
+    ],
+    ["Closed", "Cancelled"],
+    ["Cancelled", "Disputed"],
+  ),
+  makeCoverage(
+    "Invoice",
+    ["Registered", "Matching", "Matched", "Disputed", "ScheduledForPayment", "Paid"],
+    ["Paid"],
+    ["Disputed"],
+  ),
+];
+
+function printCoverageReport(): void {
+  let totalStates = 0;
+  for (const mc of DOMAIN_COVERAGE) {
+    console.log(
+      `${mc.machineName}: ${mc.stateCount} states, ${mc.terminalCount} terminal, ${mc.offRampCount} off-ramp(s)`,
+    );
+    totalStates += mc.stateCount;
+  }
+  console.log(`Total domain states covered: ${totalStates}`);
+}
+
+printCoverageReport();
+// => PurchaseOrder: 12 states, 2 terminal, 2 off-ramp(s)
+// => Invoice: 6 states, 1 terminal, 1 off-ramp(s)
+// => Total domain states covered: 18
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Maintaining a coverage snapshot as code — not a separate document — ensures the diagram, the code, and the coverage report always refer to the same machine definition.
@@ -4563,7 +5404,7 @@ PrintCoverageReport();
 
 In distributed systems, events can be delivered more than once. An idempotent transition handler returns the same result for the same event applied to the same state, whether called once or ten times.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4742,6 +5583,39 @@ if (r2 is Result<Invoice>.Ok ok2)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: idempotent transition handler for at-least-once delivery
+function idempotentTransition(inv: Invoice, event: string): InvResult<Invoice> {
+  // => Step 1: attempt normal table-driven transition
+  const next = INVOICE_FSM_TABLE[inv.state]?.[event];
+  if (next !== undefined) return { kind: "ok", value: { ...inv, state: next } };
+
+  // => Step 2: check if current state IS already the target of this event
+  for (const events of Object.values(INVOICE_FSM_TABLE)) {
+    const candidateTarget = events?.[event];
+    if (candidateTarget === inv.state) return { kind: "ok", value: inv };
+    // => Current state is the target — event already applied; idempotent success
+  }
+
+  // => Step 3: genuinely invalid transition
+  return { kind: "err", error: `Invalid transition: ${inv.state} --${event}-->` };
+}
+
+const inv: Invoice = { id: "inv_idem", poId: "po_idem", supplierAmount: 500, state: "REGISTERED" };
+const r1 = idempotentTransition(inv, "start_match");
+const matchingInv = r1.kind === "ok" ? r1.value : inv;
+console.log(matchingInv.state); // => Output: MATCHING
+
+// => Simulate second delivery (duplicate)
+const r2 = idempotentTransition(matchingInv, "start_match");
+console.log(r2.kind === "ok" ? "idempotent ok" : "error");
+// => Output: idempotent ok (MATCHING is the target of start_match)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Idempotent FSM handlers make duplicate event delivery safe — at-least-once delivery semantics (common in Kafka) do not corrupt state.
@@ -4754,7 +5628,7 @@ if (r2 is Result<Invoice>.Ok ok2)
 
 When the state machine evolves, stored state values might use old names. A migration function maps old state names to new ones.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4964,6 +5838,45 @@ Console.WriteLine(MigrateInvoiceState("Matched").GetType().Name);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: state migration function at the persistence boundary
+const STATE_MIGRATIONS: Readonly<Record<string, InvoiceState>> = {
+  InProgress: "MATCHING",
+  Approved: "MATCHED",
+  Rejected: "DISPUTED",
+  ReadyToPay: "SCHEDULED_FOR_PAYMENT",
+} as const;
+
+const CURRENT_STATE_NAMES = new Set<InvoiceState>([
+  "REGISTERED",
+  "MATCHING",
+  "MATCHED",
+  "DISPUTED",
+  "SCHEDULED_FOR_PAYMENT",
+  "PAID",
+]);
+
+function migrateInvoiceState(rawState: string): InvoiceState {
+  // => Step 1: check migration table for deprecated names
+  const migrated = STATE_MIGRATIONS[rawState];
+  if (migrated !== undefined) {
+    console.log(`Migrated invoice state: '${rawState}' -> ${migrated}`);
+    return migrated;
+  }
+  // => Step 2: validate that the raw state is a known current name
+  if (!CURRENT_STATE_NAMES.has(rawState as InvoiceState))
+    throw new Error(`Unknown invoice state: '${rawState}' — check migration table`);
+  return rawState as InvoiceState;
+}
+
+console.log(migrateInvoiceState("InProgress")); // => Migrated + MATCHING
+console.log(migrateInvoiceState("MATCHED")); // => MATCHED (no migration needed)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: State migration functions isolate the versioning concern from the FSM logic — the machine always works with current state names; the migration layer translates at the persistence boundary.
@@ -4976,7 +5889,7 @@ Console.WriteLine(MigrateInvoiceState("Matched").GetType().Name);
 
 FSM state often drives UI rendering. Pure query functions over the state model are preferable to imperative conditional blocks in the UI layer.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5165,6 +6078,51 @@ Console.WriteLine(StateDisplayLabel(new InvoiceState.Disputed()));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: query functions derived directly from the FSM transition table
+function availableEvents(state: InvoiceState): readonly string[] {
+  const events = INVOICE_FSM_TABLE[state];
+  return events ? Object.keys(events) : [];
+  // => Empty array for terminal states (PAID has no entry in table)
+}
+
+function requiresUserAction(state: InvoiceState): boolean {
+  return state === "DISPUTED";
+  // => Only DISPUTED demands external supplier input; all others are system-driven
+}
+
+function stateDisplayLabel(state: InvoiceState): string {
+  switch (state) {
+    case "REGISTERED":
+      return "Invoice Received";
+    case "MATCHING":
+      return "Under Review (Three-Way Match)";
+    case "MATCHED":
+      return "Approved for Payment";
+    case "DISPUTED":
+      return "Action Required — Please Review";
+    case "SCHEDULED_FOR_PAYMENT":
+      return "Payment Scheduled";
+    case "PAID":
+      return "Paid";
+    default: {
+      const _x: never = state;
+      throw new Error();
+    }
+  }
+}
+
+console.log(availableEvents("MATCHING")); // => Output: [match_ok, match_fail]
+console.log(availableEvents("PAID")); // => Output: [] (terminal)
+console.log(requiresUserAction("DISPUTED")); // => Output: true
+console.log(requiresUserAction("MATCHING")); // => Output: false
+console.log(stateDisplayLabel("DISPUTED")); // => Output: Action Required — Please Review
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Query functions derived from the FSM model keep the UI layer honest — available actions come from the transition table, not from a separate (potentially stale) UI configuration.
@@ -5200,7 +6158,7 @@ sequenceDiagram
 
 The diagram above shows the choreography. The code below shows how each language models the event flow programmatically.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5387,6 +6345,38 @@ foreach (var s in P2PSequence())
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: sequence step as a readonly interface
+interface SequenceStep {
+  readonly from: string;
+  readonly to: string;
+  readonly message: string;
+}
+
+// => p2pSequence: ordered list of every step in the PO+Invoice coordination flow
+function p2pSequence(): readonly SequenceStep[] {
+  return [
+    { from: "Buyer", to: "PO FSM", message: "issue (Approved -> Issued)" },
+    { from: "PO FSM", to: "Event Bus", message: "PurchaseOrderIssued" },
+    { from: "Event Bus", to: "Supplier", message: "EDI/email notification" },
+    { from: "Supplier", to: "PO FSM", message: "acknowledge (Issued -> Acknowledged)" },
+    { from: "Supplier", to: "Invoice FSM", message: "submit invoice (Registered)" },
+    { from: "Invoice FSM", to: "Event Bus", message: "InvoiceRegistered" },
+    { from: "Event Bus", to: "Invoice FSM", message: "start_match" },
+    { from: "Invoice FSM", to: "Invoice FSM", message: "three-way match guard" },
+    { from: "Invoice FSM", to: "Event Bus", message: "InvoiceMatched" },
+    { from: "Event Bus", to: "PO FSM", message: "invoice_matched (Received -> Invoiced)" },
+    { from: "Event Bus", to: "Buyer", message: "notify payment scheduled" },
+  ] as const;
+}
+
+p2pSequence().forEach((s) => console.log(`${s.from.padEnd(14)} -> ${s.to.padEnd(14)} : ${s.message}`));
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The sequence diagram confirms that neither FSM calls the other directly — they coordinate exclusively via domain events on the event bus, enabling independent deployment and testing.
@@ -5399,7 +6389,7 @@ foreach (var s in P2PSequence())
 
 Each state can carry a maximum dwell time — the SLA for how long the workflow can stay in that state before escalation.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5663,6 +6653,45 @@ if (result.Sla is { } sla)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// => TypeScript: SLA metadata attached to FSM states
+type EscalationAction = "WARN" | "AUTO_DISPUTE" | "ESCALATE_MANAGER";
+
+interface StateSLA {
+  readonly maxHours: number;
+  readonly escalateTo: string;
+  readonly action: EscalationAction;
+}
+
+const INVOICE_SLAS: Partial<Record<InvoiceState, StateSLA>> = {
+  MATCHING: { maxHours: 24, escalateTo: "accounts_payable", action: "WARN" },
+  DISPUTED: { maxHours: 168, escalateTo: "procurement_manager", action: "ESCALATE_MANAGER" },
+} as const;
+
+interface SlaCheckResult {
+  readonly breached: boolean;
+  readonly sla: StateSLA | null;
+  readonly hoursElapsed: number;
+}
+
+function checkSLA(invoice: Invoice, enteredAt: string, now: string): SlaCheckResult {
+  const sla = INVOICE_SLAS[invoice.state];
+  if (!sla) return { breached: false, sla: null, hoursElapsed: 0 };
+  const hoursElapsed = (new Date(now).getTime() - new Date(enteredAt).getTime()) / 3_600_000;
+  return { breached: hoursElapsed > sla.maxHours, sla, hoursElapsed };
+}
+
+const matchingInv: Invoice = { id: "inv_sla01", poId: "po_sla01", supplierAmount: 500, state: "MATCHING" };
+const result = checkSLA(matchingInv, "2026-01-10T09:00:00Z", "2026-01-13T09:00:00Z");
+console.log(result.breached); // => Output: true (72h > 24h SLA)
+console.log(result.hoursElapsed); // => Output: 72
+console.log(result.sla?.action); // => Output: WARN
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: SLA metadata attached to FSM states turns the state machine into a living workflow monitor — not just a state tracker, but a time-aware process manager.
@@ -5675,7 +6704,7 @@ if (result.Sla is { } sla)
 
 The final intermediate example synthesises what the Invoice and PO machines together encode: the complete P2P business protocol as a formal system.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5893,6 +6922,59 @@ PrintP2PSystem();
 // =>     Protocol: Supplier → System (three-way match) → Finance → Bank
 // =>     Terminal: [Paid]
 // =>   Coordination: Domain events via Event Bus (InvoiceMatched → PO invoice_matched)
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TypeScript: P2P system summary as plain data objects
+interface MachineSummary {
+  readonly name: string;
+  readonly context: string;
+  readonly stateCount: number;
+  readonly eventCount: number;
+  readonly terminal: readonly string[];
+  readonly protocol: string;
+}
+
+interface P2pSystem {
+  readonly machines: readonly MachineSummary[];
+  readonly eventBus: string;
+  readonly patterns: readonly string[];
+}
+
+const PO_MACHINE: MachineSummary = {
+  name: "PurchaseOrder",
+  context: "purchasing",
+  stateCount: 12,
+  eventCount: 10,
+  terminal: ["Closed", "Cancelled"],
+  protocol: "Buyer -> Manager -> Finance -> Supplier -> Finance -> System",
+};
+const INVOICE_MACHINE: MachineSummary = {
+  name: "Invoice",
+  context: "invoicing",
+  stateCount: 6,
+  eventCount: 6,
+  terminal: ["Paid"],
+  protocol: "Supplier -> System (three-way match) -> Finance -> Bank",
+};
+const P2P_COORDINATION = "Domain events via Event Bus (InvoiceMatched -> PO invoice_matched)";
+
+function printP2PSystem(): void {
+  console.log("P2P FSM System:");
+  for (const m of [PO_MACHINE, INVOICE_MACHINE])
+    console.log(`  ${m.name} [${m.context}]: ${m.stateCount} states, ${m.eventCount} events`);
+  console.log(`  Coordination: ${P2P_COORDINATION}`);
+}
+
+printP2PSystem();
+// => P2P FSM System:
+// =>   PurchaseOrder [purchasing]: 12 states, 10 events
+// =>   Invoice [invoicing]: 6 states, 6 events
+// =>   Coordination: Domain events via Event Bus (InvoiceMatched -> PO invoice_matched)
 ```
 
 {{< /tab >}}

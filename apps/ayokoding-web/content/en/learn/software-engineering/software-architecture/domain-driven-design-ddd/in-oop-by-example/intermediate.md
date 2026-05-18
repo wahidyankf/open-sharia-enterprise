@@ -36,7 +36,7 @@ graph TD
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -239,6 +239,88 @@ Console.WriteLine(po.Lines.Count);                          // => Output: 0
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// PurchaseOrder aggregate root: TypeScript with private readonly fields
+// => private backing array + readonly public view enforces encapsulation
+
+// Typed identities with brand tags for nominal distinction
+class PurchaseOrderId {
+  private readonly _brand = "PurchaseOrderId" as const;
+  private constructor(readonly value: string) {}
+  static of(value: string): PurchaseOrderId {
+    if (!value.startsWith("po_"))
+      // => format rule: po_<uuid>
+      throw new Error("PurchaseOrderId must start with po_");
+    return new PurchaseOrderId(value);
+  }
+}
+
+class SupplierId {
+  private readonly _brand = "SupplierId" as const;
+  private constructor(readonly value: string) {}
+  static of(value: string): SupplierId {
+    if (!value.startsWith("sup_"))
+      // => format rule: sup_<uuid>
+      throw new Error("SupplierId must start with sup_");
+    return new SupplierId(value);
+  }
+}
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+
+interface Money {
+  amount: number;
+  currency: string;
+}
+interface Quantity {
+  value: number;
+  unit: UnitOfMeasure;
+}
+
+interface PurchaseOrderLine {
+  // => line item owned by PurchaseOrder
+  lineId: string;
+  skuCode: string;
+  quantity: Quantity;
+  unitPrice: Money;
+}
+
+type PurchaseOrderStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
+// => five states; full state machine extended later
+
+// Aggregate root: encapsulates all state behind domain methods
+class PurchaseOrder {
+  readonly id: PurchaseOrderId; // => identity; readonly — never changes
+  readonly supplierId: SupplierId; // => reference by id only — never by object graph
+  private readonly _lines: PurchaseOrderLine[] = []; // => internal mutable array
+  private _status: PurchaseOrderStatus = "DRAFT"; // => all POs begin in DRAFT
+
+  constructor(id: PurchaseOrderId, supplierId: SupplierId) {
+    this.id = id;
+    this.supplierId = supplierId;
+  }
+
+  get status(): PurchaseOrderStatus {
+    return this._status;
+  }
+  get lines(): readonly PurchaseOrderLine[] {
+    return [...this._lines];
+  }
+  // => spread creates an immutable copy; caller cannot push/pop
+}
+
+// Usage
+const po = new PurchaseOrder(
+  PurchaseOrderId.of("po_550e8400-0000"), // => valid id; starts with po_
+  SupplierId.of("sup_660f9511-0001"), // => supplier referenced by id only
+);
+console.log(po.status); // => Output: DRAFT
+console.log(po.lines.length); // => Output: 0
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: An aggregate root enforces all invariants for the cluster it owns. External code interacts exclusively through the root's public methods — never through direct mutation of interior objects.
@@ -251,7 +333,7 @@ Console.WriteLine(po.Lines.Count);                          // => Output: 0
 
 The aggregate root's `addLine` method enforces every invariant before accepting a new line. Callers cannot bypass this by constructing a `PurchaseOrderLine` and injecting it directly — the list is encapsulated.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -478,6 +560,103 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// PurchaseOrder with addLine enforcing all invariants
+// => TypeScript uses private array; callers cannot bypass addLine
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+type PurchaseOrderStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
+
+interface Money {
+  amount: number;
+  currency: string;
+}
+interface Quantity {
+  value: number;
+  unit: UnitOfMeasure;
+}
+
+interface PurchaseOrderLine {
+  lineId: string;
+  skuCode: string;
+  quantity: Quantity;
+  unitPrice: Money;
+}
+
+class PurchaseOrder {
+  readonly id: string;
+  readonly supplierId: string;
+  private readonly _lines: PurchaseOrderLine[] = [];
+  private _status: PurchaseOrderStatus = "DRAFT";
+
+  constructor(id: string, supplierId: string) {
+    this.id = id;
+    this.supplierId = supplierId;
+  }
+
+  get status(): PurchaseOrderStatus {
+    return this._status;
+  }
+  get lines(): readonly PurchaseOrderLine[] {
+    return [...this._lines];
+  }
+
+  // Invariant-enforcing mutator
+  addLine(line: PurchaseOrderLine): void {
+    if (this._status !== "DRAFT")
+      // => invariant: lines only added in DRAFT
+      throw new Error(`Lines can only be added to a DRAFT PurchaseOrder, current: ${this._status}`);
+    if (line == null)
+      // => null guard; fail fast
+      throw new Error("line must not be null");
+    const duplicate = this._lines.some((l) => l.lineId === line.lineId);
+    if (duplicate)
+      // => domain rule: unique lineId within PO
+      throw new Error(`Duplicate lineId: ${line.lineId}`);
+    this._lines.push(line); // => mutation allowed only through this method
+  }
+
+  computeTotal(): Money {
+    const sum = this._lines.reduce((acc, l) => acc + l.unitPrice.amount * l.quantity.value, 0); // => sum of all line totals
+    const currency = this._lines.length === 0 ? "USD" : this._lines[0].unitPrice.currency;
+    return { amount: sum, currency };
+  }
+}
+
+// Usage
+const po = new PurchaseOrder("po_550e8400-0001", "sup_660f9511-0001");
+po.addLine({
+  lineId: "L1",
+  skuCode: "OFF-001234",
+  quantity: { value: 5, unit: "BOX" },
+  unitPrice: { amount: 20.0, currency: "USD" },
+});
+po.addLine({
+  lineId: "L2",
+  skuCode: "TLS-9999",
+  quantity: { value: 2, unit: "EACH" },
+  unitPrice: { amount: 150.0, currency: "USD" },
+});
+console.log(po.lines.length); // => Output: 2
+console.log(po.computeTotal().amount); // => Output: 400 (5*20 + 2*150)
+
+// TypeScript's readonly prevents direct push at compile time
+// (po.lines as PurchaseOrderLine[]).push(null); // => compile error: push not on readonly
+try {
+  po.addLine({
+    lineId: "L1",
+    skuCode: "OFF-001234", // => duplicate lineId
+    quantity: { value: 1, unit: "EACH" },
+    unitPrice: { amount: 10, currency: "USD" },
+  });
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: Duplicate lineId: L1
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Expose only behaviour-carrying methods from the aggregate root. Return unmodifiable views of collections to prevent external bypasses of invariants.
@@ -490,7 +669,7 @@ try {
 
 `ApprovalLevel` is a value object whose value is derived from the PO total at submission time. The derivation logic lives in the domain, not in a service, keeping the business rule co-located with the data it operates on.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -618,6 +797,47 @@ Console.WriteLine(level == ApprovalLevel.L3); // => Output: True
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ApprovalLevel derived value object: TypeScript function + const enum pattern
+// => Single factory function; all threshold logic in one place
+
+interface Money {
+  amount: number;
+  currency: string;
+}
+
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => L1 ≤ $1,000 — first-line manager
+// => L2 ≤ $10,000 — department head
+// => L3 > $10,000 — CFO or board
+
+// Factory function on the module level: Money → ApprovalLevel; single source of truth
+function approvalLevelFrom(total: Money): ApprovalLevel {
+  if (total == null) throw new Error("total is required");
+  // => Thresholds from domain spec: L1 ≤ 1k, L2 ≤ 10k, L3 above
+  if (total.amount <= 1000) return "L1"; // => ≤ 1,000 → first-line manager
+  if (total.amount <= 10000) return "L2"; // => ≤ 10,000 → department head
+  return "L3"; // => > 10,000 → CFO or board
+}
+
+// Usage
+const smallPO: Money = { amount: 500, currency: "USD" }; // => 500 USD
+const mediumPO: Money = { amount: 5000, currency: "USD" }; // => 5,000 USD
+const largePO: Money = { amount: 25000, currency: "USD" }; // => 25,000 USD
+
+console.log(approvalLevelFrom(smallPO)); // => Output: L1
+console.log(approvalLevelFrom(mediumPO)); // => Output: L2
+console.log(approvalLevelFrom(largePO)); // => Output: L3
+
+// Derived value used in aggregate submission logic
+const level = approvalLevelFrom(largePO); // => level = "L3"
+console.log(level === "L3"); // => Output: true
+// => L3 POs must route to CFO for approval per domain spec
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Encoding derivation rules as static factory methods on domain enums keeps business thresholds in the domain layer, not scattered in application services.
@@ -630,7 +850,7 @@ Console.WriteLine(level == ApprovalLevel.L3); // => Output: True
 
 `Supplier` is the aggregate root for the `supplier` bounded context. Its lifecycle states (`Pending → Approved → Suspended → Blacklisted`) determine whether a `PurchaseOrder` can reference it. The business rule "blacklisted suppliers force existing POs to Disputed" is enforced at the aggregate boundary.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -869,6 +1089,97 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Supplier aggregate root with approval lifecycle in TypeScript
+// => State transitions guarded by domain methods; no direct field mutation
+
+class SupplierId {
+  private readonly _brand = "SupplierId" as const;
+  private constructor(readonly value: string) {}
+  static of(value: string): SupplierId {
+    if (!value.startsWith("sup_")) throw new Error("SupplierId must start with sup_");
+    return new SupplierId(value);
+  }
+}
+
+class Email {
+  private constructor(readonly address: string) {}
+  static of(address: string): Email {
+    if (!address || !address.includes("@"))
+      // => minimal format guard
+      throw new Error("Email must contain @");
+    return new Email(address);
+  }
+}
+
+type SupplierStatus = "PENDING" | "APPROVED" | "SUSPENDED" | "BLACKLISTED";
+// => PENDING: newly registered; APPROVED: vetted; SUSPENDED: temporarily ineligible;
+// => BLACKLISTED: excluded from all activity
+
+class Supplier {
+  readonly id: SupplierId; // => identity; readonly — never changes
+  readonly email: Email; // => contact address; immutable after creation
+  private _status: SupplierStatus = "PENDING"; // => all new suppliers start PENDING
+
+  constructor(id: SupplierId, email: Email) {
+    this.id = id;
+    this.email = email;
+    // => status starts PENDING; only transitions via methods
+  }
+
+  get status(): SupplierStatus {
+    return this._status;
+  }
+
+  approve(): void {
+    // => valid from PENDING only
+    if (this._status !== "PENDING") throw new Error(`Can only approve a PENDING supplier, current: ${this._status}`);
+    this._status = "APPROVED"; // => transition: PENDING → APPROVED
+  }
+
+  suspend(): void {
+    // => valid from APPROVED only
+    if (this._status !== "APPROVED") throw new Error(`Can only suspend an APPROVED supplier, current: ${this._status}`);
+    this._status = "SUSPENDED"; // => transition: APPROVED → SUSPENDED
+  }
+
+  reinstate(): void {
+    // => valid from SUSPENDED only
+    if (this._status !== "SUSPENDED")
+      throw new Error(`Can only reinstate a SUSPENDED supplier, current: ${this._status}`);
+    this._status = "APPROVED"; // => transition: SUSPENDED → APPROVED
+  }
+
+  blacklist(): void {
+    // => valid from APPROVED or SUSPENDED
+    if (this._status !== "APPROVED" && this._status !== "SUSPENDED")
+      throw new Error(`Cannot blacklist a ${this._status} supplier`);
+    this._status = "BLACKLISTED"; // => terminal-like state; no exit in normal flow
+  }
+}
+
+// Happy path
+const sup = new Supplier(SupplierId.of("sup_660f9511-0001"), Email.of("contact@supplier.example"));
+console.log(sup.status); // => Output: PENDING
+sup.approve(); // => PENDING → APPROVED
+console.log(sup.status); // => Output: APPROVED
+sup.suspend(); // => APPROVED → SUSPENDED
+console.log(sup.status); // => Output: SUSPENDED
+sup.reinstate(); // => SUSPENDED → APPROVED
+console.log(sup.status); // => Output: APPROVED
+
+// Guard: cannot approve an already-APPROVED supplier
+try {
+  sup.approve();
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: Can only approve a PENDING supplier, current: APPROVED
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Model lifecycle states as an enum and guard transitions inside the aggregate root's methods. Never allow external code to set status directly.
@@ -883,7 +1194,7 @@ try {
 
 Java 21 sealed classes let the compiler enforce that all states are handled. Using sealed types for `PurchaseOrderStatus` means a forgotten branch is a compile error, not a runtime NullPointerException.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1004,6 +1315,59 @@ Console.WriteLine(Describe(cancelled)); // => Output: Cancelled: Vendor out of s
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Sealed types for exhaustive state modeling in TypeScript
+// => TypeScript discriminated union + exhaustive switch replaces sealed classes
+
+// Discriminated union: each variant carries its own payload
+type PurchaseOrderState =
+  | { readonly tag: "Draft" }
+  | { readonly tag: "AwaitingApproval"; readonly submittedAt: Date }
+  | { readonly tag: "Approved"; readonly approvedBy: string; readonly approvedAt: Date }
+  | { readonly tag: "Issued"; readonly issuedAt: Date }
+  | { readonly tag: "Cancelled"; readonly reason: string };
+// => Each variant has a discriminant tag and variant-specific fields
+
+// Exhaustive switch: TypeScript enforces all cases are handled
+function describeState(state: PurchaseOrderState): string {
+  switch (state.tag) {
+    case "Draft":
+      return "PO is in draft; lines can still be added";
+    case "AwaitingApproval":
+      return `Submitted on ${state.submittedAt.toISOString()}; awaiting approval`;
+    case "Approved":
+      return `Approved by ${state.approvedBy} on ${state.approvedAt.toISOString()}`;
+    case "Issued":
+      return `Issued to supplier on ${state.issuedAt.toISOString()}`;
+    case "Cancelled":
+      return `Cancelled: ${state.reason}`;
+    default: {
+      // => This branch is unreachable if all cases are covered — TypeScript enforces it
+      const _exhaustive: never = state; // => compile error if a case is missing
+      throw new Error(`Unhandled state: ${(_exhaustive as any).tag}`);
+    }
+  }
+}
+
+// Usage
+const draft: PurchaseOrderState = { tag: "Draft" };
+const awaiting: PurchaseOrderState = { tag: "AwaitingApproval", submittedAt: new Date("2026-01-10") };
+const approved: PurchaseOrderState = {
+  tag: "Approved",
+  approvedBy: "emp-42",
+  approvedAt: new Date("2026-01-11"),
+};
+const cancelled: PurchaseOrderState = { tag: "Cancelled", reason: "Budget freeze" };
+
+console.log(describeState(draft)); // => Output: PO is in draft; lines can still be added
+console.log(describeState(awaiting)); // => Output: Submitted on 2026-01-10T00:00:00.000Z; awaiting approval
+console.log(describeState(approved)); // => Output: Approved by emp-42 on ...
+console.log(describeState(cancelled)); // => Output: Cancelled: Budget freeze
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Sealed types with record variants turn state into a closed set known at compile time. Pattern matching then guarantees every case is handled — no default escape hatch.
@@ -1016,7 +1380,7 @@ Console.WriteLine(Describe(cancelled)); // => Output: Cancelled: Vendor out of s
 
 The aggregate root exposes behavior methods (`submit`, `approve`, `issue`) that perform the state transition and enforce guards. Callers invoke behavior, not setters.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1283,6 +1647,81 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// State machine: transition table + typed status in TypeScript
+// => Map<Status, Set<Status>> makes invalid transitions a runtime Error
+
+type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
+
+// Transition table: maps current status to allowed next statuses
+const TRANSITIONS = new Map<POStatus, Set<POStatus>>([
+  ["DRAFT", new Set<POStatus>(["AWAITING_APPROVAL", "CANCELLED"])],
+  ["AWAITING_APPROVAL", new Set<POStatus>(["APPROVED", "CANCELLED"])],
+  ["APPROVED", new Set<POStatus>(["ISSUED", "CANCELLED"])],
+  ["ISSUED", new Set<POStatus>()], // => terminal state
+  ["CANCELLED", new Set<POStatus>()], // => terminal state
+]);
+
+function validateTransition(from: POStatus, to: POStatus): void {
+  const allowed = TRANSITIONS.get(from) ?? new Set<POStatus>();
+  if (!allowed.has(to))
+    // => guard against table
+    throw new Error(`Invalid transition: ${from} -> ${to}`);
+}
+
+class PurchaseOrder {
+  readonly id: string;
+  private _status: POStatus = "DRAFT";
+
+  constructor(id: string) {
+    if (!id) throw new Error("id required");
+    this.id = id;
+  }
+
+  get status(): POStatus {
+    return this._status;
+  }
+
+  private transition(next: POStatus): void {
+    validateTransition(this._status, next); // => guard in validateTransition
+    this._status = next; // => assigned only after guard passes
+  }
+
+  submitForApproval(): void {
+    this.transition("AWAITING_APPROVAL");
+  }
+  approve(): void {
+    this.transition("APPROVED");
+  }
+  issue(): void {
+    this.transition("ISSUED");
+  }
+  cancel(): void {
+    this.transition("CANCELLED");
+  }
+}
+
+// Happy path
+const po = new PurchaseOrder("po_550e8400-0001");
+po.submitForApproval(); // => DRAFT → AWAITING_APPROVAL
+po.approve(); // => AWAITING_APPROVAL → APPROVED
+po.issue(); // => APPROVED → ISSUED
+console.log(po.status); // => Output: ISSUED
+
+// Invalid transition
+const po2 = new PurchaseOrder("po_550e8400-0002");
+po2.submitForApproval();
+try {
+  po2.issue(); // => AWAITING_APPROVAL → ISSUED not allowed; must approve first
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: Invalid transition: AWAITING_APPROVAL -> ISSUED
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Expose state transitions as named business operations with guard clauses. Each method is a verb from the domain language — `submit`, `approve`, `issue` — not a generic `setStatus`.
@@ -1295,7 +1734,7 @@ try {
 
 A custom `DomainException` hierarchy communicates guard failures in terms the application layer understands without coupling to `IllegalStateException` semantics.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1517,6 +1956,107 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Domain exception hierarchy in TypeScript
+// => Custom error classes with discriminant fields for structured error handling
+
+// Base domain error
+class DomainError extends Error {
+  readonly type: string;
+  constructor(type: string, message: string) {
+    super(message);
+    this.type = type;
+    this.name = type; // => name shows the domain error type in stack traces
+  }
+}
+
+// Specific domain exception for invalid state transitions
+class InvalidTransitionError extends DomainError {
+  readonly from: string;
+  readonly to: string;
+  constructor(from: string, to: string) {
+    super("InvalidTransitionError", `Invalid state transition: ${from} -> ${to}`);
+    this.from = from;
+    this.to = to;
+  }
+}
+
+// Domain exception for business rule violations
+class DomainRuleViolationError extends DomainError {
+  readonly rule: string;
+  constructor(rule: string, message: string) {
+    super("DomainRuleViolationError", message);
+    this.rule = rule;
+  }
+}
+
+type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
+const ALLOWED = new Map<POStatus, Set<POStatus>>([
+  ["DRAFT", new Set<POStatus>(["AWAITING_APPROVAL", "CANCELLED"])],
+  ["AWAITING_APPROVAL", new Set<POStatus>(["APPROVED", "CANCELLED"])],
+  ["APPROVED", new Set<POStatus>(["ISSUED", "CANCELLED"])],
+  ["ISSUED", new Set<POStatus>()],
+  ["CANCELLED", new Set<POStatus>()],
+]);
+
+class PurchaseOrder {
+  readonly id: string;
+  private _status: POStatus = "DRAFT";
+  private readonly _lines: string[] = [];
+
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  get status(): POStatus {
+    return this._status;
+  }
+
+  addLine(line: string): void {
+    if (this._status !== "DRAFT")
+      throw new DomainRuleViolationError("lines-only-in-draft", `Cannot add lines: PO is ${this._status}`);
+    this._lines.push(line);
+  }
+
+  submitForApproval(): void {
+    const allowed = ALLOWED.get(this._status)!;
+    if (!allowed.has("AWAITING_APPROVAL")) throw new InvalidTransitionError(this._status, "AWAITING_APPROVAL");
+    if (this._lines.length === 0)
+      throw new DomainRuleViolationError("no-lines-on-submit", "Cannot submit a PO with no line items");
+    this._status = "AWAITING_APPROVAL";
+  }
+}
+
+// Usage
+const po = new PurchaseOrder("po_550e8400-0001");
+
+// Domain rule violation: no lines on submit
+try {
+  po.submitForApproval();
+} catch (e: unknown) {
+  if (e instanceof DomainRuleViolationError) {
+    console.log(`Rule violated: ${e.rule} — ${e.message}`);
+    // => Output: Rule violated: no-lines-on-submit — Cannot submit a PO with no line items
+  }
+}
+
+po.addLine("OFF-001234 x5 BOX @ 20.00 USD");
+po.submitForApproval(); // => DRAFT → AWAITING_APPROVAL
+
+// Invalid transition
+try {
+  po.submitForApproval(); // => already AWAITING_APPROVAL; cannot re-submit
+} catch (e: unknown) {
+  if (e instanceof InvalidTransitionError) {
+    console.log(`Transition error: ${e.from} -> ${e.to}`);
+    // => Output: Transition error: AWAITING_APPROVAL -> AWAITING_APPROVAL
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Use a custom domain exception hierarchy so the application layer can distinguish state-machine violations from business rule violations without parsing exception messages.
@@ -1529,7 +2069,7 @@ try {
 
 Cancellation is an off-ramp valid from any state before `Paid`. Encoding this as a predicate on the current state keeps the guard logic in one method rather than repeated conditions across the codebase.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1746,6 +2286,79 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Cancellation off-ramp: TypeScript handles cancel() from multiple pre-paid states
+
+type InvoiceStatus = "PENDING_MATCH" | "MATCHED" | "DISPUTED" | "APPROVED_FOR_PAYMENT" | "PAID" | "CANCELLED";
+// => PAID is terminal; CANCELLED is a terminal exit from pre-paid states
+
+class Invoice {
+  readonly id: string;
+  private _status: InvoiceStatus = "PENDING_MATCH";
+
+  constructor(id: string) {
+    if (!id) throw new Error("id required");
+    this.id = id;
+  }
+
+  get status(): InvoiceStatus {
+    return this._status;
+  }
+
+  // => Domain method: cancel() valid from any pre-paid state
+  cancel(reason: string): void {
+    const cancelableStates: InvoiceStatus[] = ["PENDING_MATCH", "MATCHED", "DISPUTED", "APPROVED_FOR_PAYMENT"];
+    if (!cancelableStates.includes(this._status))
+      // => guard: cannot cancel PAID
+      throw new Error(`Cannot cancel invoice in ${this._status} state; only from pre-paid states`);
+    if (!reason || reason.trim() === "")
+      // => domain rule: reason required for audit
+      throw new Error("Cancellation reason is required");
+    this._status = "CANCELLED";
+    // => In production: record cancellationReason and raise InvoiceCancelled domain event
+  }
+
+  match(): void {
+    if (this._status !== "PENDING_MATCH")
+      throw new Error(`Can only match from PENDING_MATCH, current: ${this._status}`);
+    this._status = "MATCHED";
+  }
+
+  approveForPayment(): void {
+    if (this._status !== "MATCHED") throw new Error(`Can only approve from MATCHED, current: ${this._status}`);
+    this._status = "APPROVED_FOR_PAYMENT";
+  }
+
+  pay(): void {
+    if (this._status !== "APPROVED_FOR_PAYMENT")
+      throw new Error(`Can only pay from APPROVED_FOR_PAYMENT, current: ${this._status}`);
+    this._status = "PAID";
+  }
+}
+
+// Happy path: cancel from MATCHED
+const inv = new Invoice("inv_001");
+inv.match();
+console.log(inv.status); // => Output: MATCHED
+inv.cancel("Duplicate invoice");
+console.log(inv.status); // => Output: CANCELLED
+
+// Guard: cannot cancel a PAID invoice
+const inv2 = new Invoice("inv_002");
+inv2.match();
+inv2.approveForPayment();
+inv2.pay();
+try {
+  inv2.cancel("Late claim");
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: Cannot cancel invoice in PAID state; only from pre-paid states
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Model the cancellable set as a static `HashSet` on the aggregate. This documents allowed states declaratively and allows O(1) lookup rather than a chain of `||` comparisons that grows with each new state.
@@ -1758,7 +2371,7 @@ try {
 
 `Tolerance` is a value object from the invoicing context describing an acceptable percentage deviation in matched quantities. Combined with `Quantity`, it provides the three-way match rule: invoice amount within tolerance of `GRN quantity × PO unit price`.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1994,6 +2607,60 @@ Console.WriteLine($"Outside tolerance: {outside}");   // => Output: Outside tole
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Quantity tolerance matching for goods receipt: TypeScript
+// => Domain rule: received quantity within tolerance of ordered quantity is acceptable
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+
+class Quantity {
+  private constructor(
+    readonly value: number,
+    readonly unit: UnitOfMeasure,
+  ) {}
+
+  static of(value: number, unit: UnitOfMeasure): Quantity {
+    if (value <= 0) throw new Error(`Quantity.value must be > 0, got: ${value}`);
+    return new Quantity(value, unit);
+  }
+
+  // => Domain method: is this quantity within tolerance of an expected quantity?
+  isWithinTolerance(expected: Quantity, tolerancePct: number): boolean {
+    if (this.unit !== expected.unit)
+      // => cross-unit comparison is a domain error
+      throw new Error(`Cannot compare quantities with different units: ${this.unit} vs ${expected.unit}`);
+    if (tolerancePct < 0 || tolerancePct > 100) throw new Error(`tolerancePct must be 0-100, got: ${tolerancePct}`);
+    const delta = (Math.abs(this.value - expected.value) / expected.value) * 100;
+    return delta <= tolerancePct; // => within tolerance if deviation ≤ tolerancePct
+  }
+
+  toString(): string {
+    return `Quantity(${this.value}, ${this.unit})`;
+  }
+}
+
+// Usage: three-way match — ordered vs received with 5% tolerance
+const ordered = Quantity.of(100, "BOX"); // => ordered: 100 BOX
+const received = Quantity.of(98, "BOX"); // => received: 98 BOX (2% short)
+const excess = Quantity.of(108, "BOX"); // => excess:  108 BOX (8% over)
+
+console.log(received.isWithinTolerance(ordered, 5)); // => Output: true  (2% ≤ 5%)
+console.log(excess.isWithinTolerance(ordered, 5)); // => Output: false (8% > 5%)
+console.log(received.isWithinTolerance(ordered, 1)); // => Output: false (2% > 1%)
+
+// Guard: cross-unit comparison rejected
+try {
+  const kgQty = Quantity.of(50, "KG");
+  received.isWithinTolerance(kgQty, 5);
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: Cannot compare quantities with different units: BOX vs KG
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Encode business tolerance rules in a value object with a dedicated `isWithin` method. This removes magic-number percentage checks from service code and makes the matching rule testable in isolation.
@@ -2008,7 +2675,7 @@ Console.WriteLine($"Outside tolerance: {outside}");   // => Output: Outside tole
 
 Domain events are facts — things that happened. They are immutable, carry only the data needed by consumers, and are named in past tense. Java records, Kotlin data classes, and C# positional records are all natural fits: immutable by construction, with built-in `equals`, `hashCode`, and `toString`.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2155,6 +2822,63 @@ Console.WriteLine(evt == same);               // => Output: True
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Immutable domain events in TypeScript: readonly interface + Object.freeze
+// => Domain events are facts; once recorded they cannot change
+
+// Domain event: readonly interface enforces immutability at the type level
+interface PurchaseOrderIssued {
+  readonly type: "PurchaseOrderIssued"; // => discriminated union tag
+  readonly purchaseOrderId: string; // => which PO was issued
+  readonly supplierId: string; // => to which supplier
+  readonly totalAmount: number; // => amount at time of issuance
+  readonly currency: string; // => ISO 4217 currency code
+  readonly issuedAt: Date; // => UTC timestamp
+}
+
+interface PurchaseOrderCancelled {
+  readonly type: "PurchaseOrderCancelled";
+  readonly purchaseOrderId: string;
+  readonly reason: string;
+  readonly cancelledAt: Date;
+}
+
+// Union type for all PurchaseOrder events
+type PurchaseOrderEvent = PurchaseOrderIssued | PurchaseOrderCancelled;
+
+// Factory functions construct events with guaranteed immutability
+function createPOIssuedEvent(poId: string, supplierId: string, total: number, currency: string): PurchaseOrderIssued {
+  return Object.freeze({
+    // => Object.freeze prevents mutation at runtime
+    type: "PurchaseOrderIssued" as const,
+    purchaseOrderId: poId,
+    supplierId,
+    totalAmount: total,
+    currency: currency.toUpperCase(),
+    issuedAt: new Date(), // => UTC wall clock
+  });
+}
+
+// Usage
+const event: PurchaseOrderEvent = createPOIssuedEvent("po_550e8400-0001", "sup_660f9511-0001", 400.0, "USD");
+
+console.log(event.type); // => Output: PurchaseOrderIssued
+if (event.type === "PurchaseOrderIssued") {
+  console.log(event.totalAmount); // => Output: 400
+  // => TypeScript narrows to PurchaseOrderIssued inside this branch
+}
+
+// Attempt to mutate frozen event (runtime check — TypeScript also prevents with readonly)
+try {
+  (event as any).totalAmount = 9999; // => strict mode: TypeError; silent fail in sloppy mode
+} catch (e: unknown) {
+  console.log("Event is immutable — mutation rejected");
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Records for domain events guarantee immutability, structural equality, and compact syntax — three properties events require by definition.
@@ -2167,7 +2891,7 @@ Console.WriteLine(evt == same);               // => Output: True
 
 The aggregate collects domain events in a private list during transitions. The application layer drains and dispatches these events after saving the aggregate to the repository. This pattern keeps event publishing coupled to successful persistence, not to the transition itself.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2447,6 +3171,102 @@ Console.WriteLine(empty.Count);                              // => Output: 0
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Aggregate collecting domain events: TypeScript private event array + pullEvents()
+// => Application layer dispatches events after transaction commit
+
+interface DomainEvent {
+  readonly type: string;
+  readonly occurredAt: Date;
+}
+
+interface POIssuedEvent extends DomainEvent {
+  readonly type: "PurchaseOrderIssued";
+  readonly purchaseOrderId: string;
+  readonly totalAmount: number;
+}
+
+type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
+
+class PurchaseOrder {
+  readonly id: string;
+  private _status: POStatus = "DRAFT";
+  private readonly _lines: Array<{ lineId: string; amount: number }> = [];
+  private readonly _events: DomainEvent[] = []; // => internal event log
+
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  get status(): POStatus {
+    return this._status;
+  }
+
+  addLine(lineId: string, amount: number): void {
+    if (this._status !== "DRAFT") throw new Error("Only in DRAFT");
+    this._lines.push({ lineId, amount });
+  }
+
+  submitForApproval(): void {
+    if (this._status !== "DRAFT") throw new Error("Only from DRAFT");
+    if (this._lines.length === 0) throw new Error("No line items");
+    this._status = "AWAITING_APPROVAL";
+  }
+
+  approve(): void {
+    if (this._status !== "AWAITING_APPROVAL") throw new Error("Not awaiting approval");
+    this._status = "APPROVED";
+  }
+
+  issue(): void {
+    if (this._status !== "APPROVED") throw new Error("Must be APPROVED to issue");
+    this._status = "ISSUED"; // => state transition first
+
+    const total = this._lines.reduce((s, l) => s + l.amount, 0);
+    // => compute total from lines
+
+    this._events.push(
+      Object.freeze({
+        // => record the domain event
+        type: "PurchaseOrderIssued" as const,
+        purchaseOrderId: this.id,
+        totalAmount: total,
+        occurredAt: new Date(),
+      }),
+    );
+    // => event collected; application layer will dispatch after commit
+  }
+
+  // => pullEvents: snapshot then clear; one-shot delivery
+  pullEvents(): readonly DomainEvent[] {
+    const snapshot = [...this._events]; // => copy before clearing
+    this._events.length = 0; // => clear after pull; events are one-shot
+    return snapshot;
+  }
+}
+
+// Usage
+const po = new PurchaseOrder("po_550e8400-0001");
+po.addLine("L1", 200.0);
+po.addLine("L2", 150.0);
+po.submitForApproval();
+po.approve();
+po.issue(); // => raises POIssuedEvent
+
+const events = po.pullEvents(); // => [POIssuedEvent{...}]
+console.log(events.length); // => Output: 1
+const issued = events[0] as POIssuedEvent;
+console.log(issued.type); // => Output: PurchaseOrderIssued
+console.log(issued.totalAmount); // => Output: 350
+
+// Pull again: events cleared
+const again = po.pullEvents();
+console.log(again.length); // => Output: 0 (already pulled)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Collect domain events in a private list on the aggregate and drain them only after the aggregate is successfully persisted. This prevents publishing stale events when a database transaction rolls back.
@@ -2459,7 +3279,7 @@ Console.WriteLine(empty.Count);                              // => Output: 0
 
 When `RequisitionApproved` fires, a domain event handler in the `purchasing` context auto-converts the approved requisition into a `PurchaseOrder` in Draft state. This shows cross-aggregate communication via events rather than direct method calls.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2705,6 +3525,81 @@ Console.WriteLine(po.SupplierId.Value);                      // => Output: sup_6
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Domain event handler: RequisitionApproved triggers PO creation in TypeScript
+// => Application layer receives event; calls factory to create PO in purchasing context
+
+// Cross-context domain event (integration event)
+interface RequisitionApprovedEvent {
+  readonly type: "RequisitionApproved";
+  readonly requisitionId: string;
+  readonly supplierId: string;
+  readonly totalAmount: number;
+  readonly currency: string;
+  readonly approvedBy: string;
+  readonly approvedAt: Date;
+}
+
+// PurchaseOrder value objects
+class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static of(value: string): PurchaseOrderId {
+    if (!value.startsWith("po_")) throw new Error("PurchaseOrderId must start with po_");
+    return new PurchaseOrderId(value);
+  }
+}
+
+// PurchaseOrder aggregate (simplified for event-handler demo)
+class PurchaseOrder {
+  readonly id: PurchaseOrderId;
+  readonly supplierId: string;
+  readonly sourceRequisitionId: string; // => tracks which requisition originated this PO
+  readonly status = "DRAFT" as const;
+
+  private constructor(id: PurchaseOrderId, supplierId: string, sourceReqId: string) {
+    this.id = id;
+    this.supplierId = supplierId;
+    this.sourceRequisitionId = sourceReqId;
+  }
+
+  // Factory method: creates PO from RequisitionApproved event
+  // => Named factory communicates domain intent; "create" > "new"
+  static fromApprovedRequisition(event: RequisitionApprovedEvent): PurchaseOrder {
+    const id = PurchaseOrderId.of(`po_${event.requisitionId.replace("req_", "")}`);
+    // => Derive PO id from requisition id; production uses a UUID generator
+    return new PurchaseOrder(id, event.supplierId, event.requisitionId);
+  }
+}
+
+// Application layer: domain event handler
+function handleRequisitionApproved(event: RequisitionApprovedEvent): PurchaseOrder {
+  // => Create PO; all validation inside the factory
+  const po = PurchaseOrder.fromApprovedRequisition(event);
+  // => In production: persist po, then dispatch po domain events
+  return po;
+}
+
+// Usage
+const event: RequisitionApprovedEvent = {
+  type: "RequisitionApproved",
+  requisitionId: "req_550e8400-e29b-41d4-a716-446655440000",
+  supplierId: "sup_660f9511-0001",
+  totalAmount: 500.0,
+  currency: "USD",
+  approvedBy: "manager-42",
+  approvedAt: new Date(),
+};
+
+const po = handleRequisitionApproved(event);
+console.log(po.id.value); // => Output: po_550e8400-e29b-41d4-a716-446655440000
+console.log(po.supplierId); // => Output: sup_660f9511-0001
+console.log(po.sourceRequisitionId); // => Output: req_550e8400-e29b-41d4-a716-446655440000
+console.log(po.status); // => Output: DRAFT
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain event handlers translate events into aggregate state changes. They are pure functions: event in, new aggregate (or mutation) out, with no infrastructure dependencies.
@@ -2717,7 +3612,7 @@ Console.WriteLine(po.SupplierId.Value);                      // => Output: sup_6
 
 `SupplierApproved` flows from the `supplier` context to the `purchasing` context, which maintains an in-memory eligible-supplier list. This shows how bounded contexts remain decoupled while staying aware of each other through events.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2879,6 +3774,66 @@ Console.WriteLine(policy.EligibleCount());           // => Output: 2
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// SupplierApproved event: cross-context integration event in TypeScript
+// => supplier context publishes event; purchasing context listens and unblocks POs
+
+interface SupplierApprovedEvent {
+  readonly type: "SupplierApproved";
+  readonly supplierId: string;
+  readonly approvedBy: string;
+  readonly approvedAt: Date;
+}
+
+// Purchasing context: pending POs held until supplier is approved
+class PendingPurchaseOrderRegistry {
+  // => Map from supplierId to list of pending PO ids
+  private readonly _pending = new Map<string, string[]>();
+
+  enqueueForSupplier(supplierId: string, poId: string): void {
+    const list = this._pending.get(supplierId) ?? [];
+    this._pending.set(supplierId, [...list, poId]);
+    // => PO queued; cannot be submitted until supplier is approved
+  }
+
+  // => Called by event handler when SupplierApproved is received
+  releasePendingOrders(supplierId: string): string[] {
+    const poIds = this._pending.get(supplierId) ?? [];
+    this._pending.delete(supplierId); // => release all pending POs for this supplier
+    return poIds; // => caller submits each released PO
+  }
+}
+
+// Application layer event handler in purchasing context
+function handleSupplierApproved(event: SupplierApprovedEvent, registry: PendingPurchaseOrderRegistry): string[] {
+  // => Cross-context: event arrives via message bus; handler is in purchasing context
+  const releasedPoIds = registry.releasePendingOrders(event.supplierId);
+  // => In production: submit each PO through its aggregate root method
+  return releasedPoIds;
+}
+
+// Usage
+const registry = new PendingPurchaseOrderRegistry();
+registry.enqueueForSupplier("sup_660f9511-0001", "po_550e8400-0001");
+registry.enqueueForSupplier("sup_660f9511-0001", "po_550e8400-0002");
+// => two POs are waiting for this supplier to be approved
+
+const event: SupplierApprovedEvent = {
+  type: "SupplierApproved",
+  supplierId: "sup_660f9511-0001",
+  approvedBy: "procurement-admin",
+  approvedAt: new Date(),
+};
+
+const released = handleSupplierApproved(event, registry);
+console.log(released.length); // => Output: 2
+console.log(released[0]); // => Output: po_550e8400-0001
+console.log(released[1]); // => Output: po_550e8400-0002
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A policy class encapsulates how a bounded context reacts to events from another context. It owns its own read model, keeping the two contexts decoupled.
@@ -2893,7 +3848,7 @@ Console.WriteLine(policy.EligibleCount());           // => Output: 2
 
 A static factory method named `create` encapsulates all construction logic: generating a new ID, validating inputs, and setting initial state. Callers never use `new PurchaseOrder(...)` directly.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3220,6 +4175,86 @@ Console.WriteLine(reconstituted.Status);          // => Output: Approved
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Factory method on PurchaseOrder aggregate in TypeScript
+// => Static create() forces all callers through validated construction path
+
+class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static of(value: string): PurchaseOrderId {
+    if (!value.startsWith("po_")) throw new Error("PurchaseOrderId must start with po_");
+    return new PurchaseOrderId(value);
+  }
+}
+
+class SupplierId {
+  private constructor(readonly value: string) {}
+  static of(value: string): SupplierId {
+    if (!value.startsWith("sup_")) throw new Error("SupplierId must start with sup_");
+    return new SupplierId(value);
+  }
+}
+
+type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
+
+class PurchaseOrder {
+  readonly id: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly requesterId: string;
+  private _status: POStatus = "DRAFT";
+  private readonly _lines: string[] = [];
+
+  // Private constructor: callers must use static factory
+  private constructor(id: PurchaseOrderId, supplierId: SupplierId, requesterId: string) {
+    this.id = id;
+    this.supplierId = supplierId;
+    this.requesterId = requesterId;
+  }
+
+  // Static factory: validates, names creation intent, constructs
+  // => "create" communicates domain action; direct constructor expresses plumbing
+  static create(id: PurchaseOrderId, supplierId: SupplierId, requesterId: string): PurchaseOrder {
+    if (!requesterId || requesterId.trim() === "") throw new Error("requesterId required; anonymous POs not allowed");
+    // => Future: validate supplier is APPROVED in supplier context (application layer)
+    return new PurchaseOrder(id, supplierId, requesterId);
+  }
+
+  get status(): POStatus {
+    return this._status;
+  }
+
+  addLine(line: string): void {
+    if (this._status !== "DRAFT") throw new Error("Only in DRAFT");
+    this._lines.push(line);
+  }
+
+  submitForApproval(): void {
+    if (this._status !== "DRAFT") throw new Error("Only from DRAFT");
+    if (this._lines.length === 0) throw new Error("No line items");
+    this._status = "AWAITING_APPROVAL";
+  }
+}
+
+// Usage
+const po = PurchaseOrder.create(PurchaseOrderId.of("po_550e8400-0001"), SupplierId.of("sup_660f9511-0001"), "emp-42"); // => po.status = DRAFT
+console.log(po.status); // => Output: DRAFT
+
+// Invalid requesterId rejected at factory
+try {
+  PurchaseOrder.create(
+    PurchaseOrderId.of("po_550e8400-0002"),
+    SupplierId.of("sup_660f9511-0001"),
+    "", // => blank requesterId; anonymous PO not allowed
+  );
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: requesterId required; anonymous POs not allowed
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Two factory methods serve distinct purposes: `create` for new aggregates (generates ID, sets timestamp, enforces all invariants) and `reconstitute` for rehydrating from persistence (restores state without re-running invariant guards).
@@ -3232,7 +4267,7 @@ Console.WriteLine(reconstituted.Status);          // => Output: Approved
 
 The repository interface defines the persistence contract for the aggregate in pure domain terms: `save`, `findById`, and `findBySupplier`. No SQL, no JPA annotations, no Spring — just the contract.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3470,6 +4505,90 @@ Console.WriteLine(missing);                      // => Output: False
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Repository interface: domain owns the contract; infrastructure provides the implementation
+// => TypeScript interface in domain layer; class in infrastructure layer
+
+class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static of(value: string): PurchaseOrderId {
+    if (!value.startsWith("po_")) throw new Error("PurchaseOrderId must start with po_");
+    return new PurchaseOrderId(value);
+  }
+}
+
+// PurchaseOrder aggregate (simplified)
+class PurchaseOrder {
+  constructor(
+    readonly id: PurchaseOrderId,
+    readonly supplierId: string,
+    readonly status: string = "DRAFT",
+  ) {}
+}
+
+// Repository interface: defined in domain layer, not infrastructure
+// => Domain code depends only on this interface, never on concrete implementations
+interface PurchaseOrderRepository {
+  save(po: PurchaseOrder): Promise<void>;
+  // => save: upsert; creates or updates the PO
+
+  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  // => findById: returns null when not found; never throws for "not found"
+
+  findBySupplier(supplierId: string): Promise<PurchaseOrder[]>;
+  // => findBySupplier: returns empty array when no results
+
+  remove(id: PurchaseOrderId): Promise<void>;
+  // => remove: idempotent; no error if already absent
+}
+
+// Infrastructure layer: in-memory implementation for tests
+class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository {
+  private readonly _store = new Map<string, PurchaseOrder>();
+  // => Map key is id.value; backing store for the in-memory repository
+
+  async save(po: PurchaseOrder): Promise<void> {
+    this._store.set(po.id.value, po); // => upsert
+  }
+
+  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+    return this._store.get(id.value) ?? null; // => null if not found
+  }
+
+  async findBySupplier(supplierId: string): Promise<PurchaseOrder[]> {
+    return [...this._store.values()].filter((po) => po.supplierId === supplierId);
+    // => filter returns empty array when no matches
+  }
+
+  async remove(id: PurchaseOrderId): Promise<void> {
+    this._store.delete(id.value); // => idempotent; no error if absent
+  }
+}
+
+// Usage
+async function demo(): Promise<void> {
+  const repo: PurchaseOrderRepository = new InMemoryPurchaseOrderRepository();
+
+  const po1 = new PurchaseOrder(PurchaseOrderId.of("po_550e8400-0001"), "sup_660f9511-0001");
+  const po2 = new PurchaseOrder(PurchaseOrderId.of("po_550e8400-0002"), "sup_660f9511-0001");
+  await repo.save(po1);
+  await repo.save(po2);
+
+  const found = await repo.findById(PurchaseOrderId.of("po_550e8400-0001"));
+  console.log(found?.supplierId); // => Output: sup_660f9511-0001
+
+  const bySupplier = await repo.findBySupplier("sup_660f9511-0001");
+  console.log(bySupplier.length); // => Output: 2
+
+  const missing = await repo.findById(PurchaseOrderId.of("po_000000-0000"));
+  console.log(missing); // => Output: null
+}
+demo();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Define the repository as a domain interface with domain-typed parameters and `Optional` returns. The in-memory implementation enables full domain testing with zero infrastructure.
@@ -3482,7 +4601,7 @@ Console.WriteLine(missing);                      // => Output: False
 
 A `Specification` encapsulates a query predicate in domain terms. Applied to the in-memory repository, it replaces `filter` lambdas scattered across services; in production it translates to SQL predicates.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3717,6 +4836,105 @@ Console.WriteLine(awaiting.Count);    // => Output: 2 — po_0001 and po_0002 ar
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Specification pattern in TypeScript: composable predicate objects
+// => Specification<T> encapsulates a query criterion; they compose with and/or/not
+
+interface PurchaseOrder {
+  id: string;
+  supplierId: string;
+  status: string;
+  totalAmount: number;
+}
+
+// Specification interface: single method isSatisfiedBy(candidate)
+interface Specification<T> {
+  isSatisfiedBy(candidate: T): boolean;
+  and(other: Specification<T>): Specification<T>;
+  or(other: Specification<T>): Specification<T>;
+  not(): Specification<T>;
+}
+
+// Base implementation with default and/or/not combinators
+abstract class AbstractSpecification<T> implements Specification<T> {
+  abstract isSatisfiedBy(candidate: T): boolean;
+
+  and(other: Specification<T>): Specification<T> {
+    return new AndSpecification(this, other); // => both must be satisfied
+  }
+  or(other: Specification<T>): Specification<T> {
+    return new OrSpecification(this, other); // => either must be satisfied
+  }
+  not(): Specification<T> {
+    return new NotSpecification(this); // => must NOT be satisfied
+  }
+}
+
+class AndSpecification<T> extends AbstractSpecification<T> {
+  constructor(
+    private readonly left: Specification<T>,
+    private readonly right: Specification<T>,
+  ) {
+    super();
+  }
+  isSatisfiedBy(c: T): boolean {
+    return this.left.isSatisfiedBy(c) && this.right.isSatisfiedBy(c);
+  }
+}
+class OrSpecification<T> extends AbstractSpecification<T> {
+  constructor(
+    private readonly left: Specification<T>,
+    private readonly right: Specification<T>,
+  ) {
+    super();
+  }
+  isSatisfiedBy(c: T): boolean {
+    return this.left.isSatisfiedBy(c) || this.right.isSatisfiedBy(c);
+  }
+}
+class NotSpecification<T> extends AbstractSpecification<T> {
+  constructor(private readonly inner: Specification<T>) {
+    super();
+  }
+  isSatisfiedBy(c: T): boolean {
+    return !this.inner.isSatisfiedBy(c);
+  }
+}
+
+// Domain specifications
+class IssuedPOSpec extends AbstractSpecification<PurchaseOrder> {
+  isSatisfiedBy(po: PurchaseOrder): boolean {
+    return po.status === "ISSUED";
+  }
+}
+class HighValuePOSpec extends AbstractSpecification<PurchaseOrder> {
+  constructor(private readonly threshold: number) {
+    super();
+  }
+  isSatisfiedBy(po: PurchaseOrder): boolean {
+    return po.totalAmount > this.threshold;
+  }
+}
+
+// Usage
+const pos: PurchaseOrder[] = [
+  { id: "po_001", supplierId: "sup_001", status: "ISSUED", totalAmount: 15000 },
+  { id: "po_002", supplierId: "sup_001", status: "DRAFT", totalAmount: 20000 },
+  { id: "po_003", supplierId: "sup_002", status: "ISSUED", totalAmount: 500 },
+  { id: "po_004", supplierId: "sup_002", status: "AWAITING_APPROVAL", totalAmount: 12000 },
+];
+
+const issuedAndHighValue = new IssuedPOSpec().and(new HighValuePOSpec(10000));
+// => Specification: ISSUED AND totalAmount > 10,000
+
+const matching = pos.filter((po) => issuedAndHighValue.isSatisfiedBy(po));
+console.log(matching.length); // => Output: 1 (only po_001)
+console.log(matching[0].id); // => Output: po_001
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Composable specifications encode named query predicates in domain language. Composed with `and`, they replace ad-hoc filter chains while remaining readable to procurement analysts.
@@ -3729,7 +4947,7 @@ Console.WriteLine(awaiting.Count);    // => Output: 2 — po_0001 and po_0002 ar
 
 `GoodsReceiptNote` (GRN) is the aggregate root for the `receiving` bounded context. It records which items arrived against a `PurchaseOrder` and flags quality discrepancies. Intermediate tutorials introduce `receiving` to show how a second bounded context references the first by ID only.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3977,6 +5195,84 @@ Console.WriteLine(grn.DiscrepancyCount()); // => Output: 1
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// GoodsReceiptNote aggregate: receiving context introduction in TypeScript
+// => Separate aggregate from PurchaseOrder; encapsulates receipt lifecycle
+
+class GoodsReceiptNoteId {
+  private constructor(readonly value: string) {}
+  static of(value: string): GoodsReceiptNoteId {
+    if (!value.startsWith("grn_")) throw new Error("GoodsReceiptNoteId must start with grn_");
+    return new GoodsReceiptNoteId(value);
+  }
+}
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+interface ReceivedLine {
+  lineId: string;
+  skuCode: string;
+  receivedQty: { value: number; unit: UnitOfMeasure };
+}
+
+type GRNStatus = "OPEN" | "PARTIALLY_RECEIVED" | "FULLY_RECEIVED" | "OVER_RECEIVED";
+
+class GoodsReceiptNote {
+  readonly id: GoodsReceiptNoteId;
+  readonly purchaseOrderId: string; // => references PO by id only
+  private _status: GRNStatus = "OPEN";
+  private readonly _lines: ReceivedLine[] = [];
+
+  private constructor(id: GoodsReceiptNoteId, poId: string) {
+    this.id = id;
+    this.purchaseOrderId = poId;
+  }
+
+  static create(id: GoodsReceiptNoteId, purchaseOrderId: string): GoodsReceiptNote {
+    if (!purchaseOrderId.startsWith("po_")) throw new Error("purchaseOrderId must start with po_");
+    return new GoodsReceiptNote(id, purchaseOrderId);
+  }
+
+  get status(): GRNStatus {
+    return this._status;
+  }
+  get lines(): readonly ReceivedLine[] {
+    return [...this._lines];
+  }
+
+  recordReceipt(line: ReceivedLine): void {
+    if (this._status === "FULLY_RECEIVED") throw new Error("GRN is already fully received; no more lines accepted");
+    if (this._lines.some((l) => l.lineId === line.lineId)) throw new Error(`Duplicate lineId: ${line.lineId}`);
+    this._lines.push(line);
+    this._status = "PARTIALLY_RECEIVED"; // => at least one line received
+    // => Production: compare with PO ordered quantities to determine FULLY_RECEIVED
+  }
+
+  close(): void {
+    if (this._lines.length === 0) throw new Error("Cannot close a GRN with no lines");
+    this._status = "FULLY_RECEIVED";
+    // => In production: raise GoodsFullyReceived domain event
+  }
+}
+
+// Usage
+const grn = GoodsReceiptNote.create(GoodsReceiptNoteId.of("grn_001"), "po_550e8400-0001");
+console.log(grn.status); // => Output: OPEN
+
+grn.recordReceipt({
+  lineId: "L1",
+  skuCode: "OFF-001234",
+  receivedQty: { value: 4, unit: "BOX" }, // => received 4 of ordered 5 BOX
+});
+console.log(grn.status); // => Output: PARTIALLY_RECEIVED
+console.log(grn.lines.length); // => Output: 1
+
+grn.close();
+console.log(grn.status); // => Output: FULLY_RECEIVED
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Reference aggregates from other bounded contexts using only their ID value object, never by object pointer. Each context owns its own model of shared concepts.
@@ -3991,7 +5287,7 @@ Console.WriteLine(grn.DiscrepancyCount()); // => Output: 1
 
 Event sourcing stores every domain event rather than current state. Reconstituting an aggregate means replaying events in order. This example shows `apply` methods that fold each event into the aggregate's state.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4314,6 +5610,93 @@ Console.WriteLine(newEvents[0].GetType().Name); // => Output: Approved
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Aggregate reconstitution from event store in TypeScript
+// => Replay events to rebuild aggregate state without loading from a relational DB
+
+interface DomainEvent {
+  readonly type: string;
+  readonly occurredAt: Date;
+}
+
+interface POCreatedEvent extends DomainEvent {
+  readonly type: "POCreated";
+  readonly id: string;
+  readonly supplierId: string;
+}
+interface LineAddedEvent extends DomainEvent {
+  readonly type: "LineAdded";
+  readonly lineId: string;
+  readonly amount: number;
+}
+interface POSubmittedEvent extends DomainEvent {
+  readonly type: "POSubmitted";
+}
+interface POApprovedEvent extends DomainEvent {
+  readonly type: "POApproved";
+  readonly approvedBy: string;
+}
+
+type POEvent = POCreatedEvent | LineAddedEvent | POSubmittedEvent | POApprovedEvent;
+type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED";
+
+// Aggregate with reconstitution from events
+class PurchaseOrder {
+  id: string = "";
+  supplierId: string = "";
+  status: POStatus = "DRAFT";
+  lines: Array<{ lineId: string; amount: number }> = [];
+
+  // => Apply: pure function; takes current state + event → returns new state
+  // => No side effects; just state transition
+  apply(event: POEvent): void {
+    switch (event.type) {
+      case "POCreated":
+        this.id = event.id;
+        this.supplierId = event.supplierId;
+        this.status = "DRAFT";
+        break;
+      case "LineAdded":
+        this.lines.push({ lineId: event.lineId, amount: event.amount });
+        break;
+      case "POSubmitted":
+        this.status = "AWAITING_APPROVAL";
+        break;
+      case "POApproved":
+        this.status = "APPROVED";
+        break;
+    }
+  }
+
+  // Static reconstitution: replay events in order to rebuild state
+  static reconstitute(events: readonly POEvent[]): PurchaseOrder {
+    const po = new PurchaseOrder(); // => empty aggregate; no state yet
+    for (const event of events) {
+      po.apply(event); // => each event advances state
+    }
+    return po; // => fully reconstituted from event history
+  }
+}
+
+// Simulate event store: historical events for po_001
+const eventHistory: POEvent[] = [
+  { type: "POCreated", id: "po_001", supplierId: "sup_001", occurredAt: new Date("2026-01-10") },
+  { type: "LineAdded", lineId: "L1", amount: 200.0, occurredAt: new Date("2026-01-10") },
+  { type: "LineAdded", lineId: "L2", amount: 150.0, occurredAt: new Date("2026-01-10") },
+  { type: "POSubmitted", occurredAt: new Date("2026-01-11") },
+  { type: "POApproved", approvedBy: "emp-42", occurredAt: new Date("2026-01-12") },
+];
+
+const po = PurchaseOrder.reconstitute(eventHistory);
+console.log(po.id); // => Output: po_001
+console.log(po.status); // => Output: APPROVED
+console.log(po.lines.length); // => Output: 2
+console.log(po.lines.reduce((s, l) => s + l.amount, 0)); // => Output: 350
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: In event sourcing, `apply` folds one event into aggregate state without guards. Guards live only in command methods (`approve`, `issue`). Reconstitution replays history through `apply` exclusively — no business rules re-evaluated.
@@ -4326,7 +5709,7 @@ Console.WriteLine(newEvents[0].GetType().Name); // => Output: Approved
 
 `BankAccount` is a value object associated with `Supplier` for payment disbursement. It enforces IBAN format presence and BIC length at construction. This example shows a richer value object with multi-field validation.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4582,6 +5965,87 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// BankAccount value object: supplier payment details in TypeScript
+// => private constructor + factory enforces IBAN/account number format
+
+class BankAccount {
+  private constructor(
+    readonly accountNumber: string, // => IBAN or local account number
+    readonly bankCode: string, // => SWIFT/BIC or local routing code
+    readonly currency: string, // => ISO 4217; account currency
+  ) {}
+
+  static of(accountNumber: string, bankCode: string, currency: string): BankAccount {
+    if (!accountNumber || accountNumber.trim().length < 8)
+      throw new Error("accountNumber must be at least 8 characters (IBAN/local format)");
+    if (!bankCode || bankCode.trim().length < 4)
+      throw new Error("bankCode must be at least 4 characters (SWIFT/BIC format)");
+    if (!currency || currency.length !== 3) throw new Error("currency must be 3-letter ISO code");
+    return new BankAccount(accountNumber.trim(), bankCode.trim().toUpperCase(), currency.toUpperCase());
+  }
+
+  equals(other: BankAccount): boolean {
+    return (
+      this.accountNumber === other.accountNumber && this.bankCode === other.bankCode && this.currency === other.currency
+    );
+  }
+
+  toString(): string {
+    return `BankAccount(${this.accountNumber}, ${this.bankCode}, ${this.currency})`;
+  }
+}
+
+class SupplierId {
+  private constructor(readonly value: string) {}
+  static of(value: string): SupplierId {
+    if (!value.startsWith("sup_")) throw new Error("SupplierId must start with sup_");
+    return new SupplierId(value);
+  }
+}
+
+// Supplier aggregate with BankAccount value object
+class Supplier {
+  readonly id: SupplierId;
+  private _bankAccount: BankAccount | null = null; // => null until supplier provides details
+
+  constructor(id: SupplierId) {
+    this.id = id;
+  }
+
+  get bankAccount(): BankAccount | null {
+    return this._bankAccount;
+  }
+
+  // => Domain method: update payment details; named for business intent
+  updatePaymentDetails(account: BankAccount): void {
+    this._bankAccount = account;
+    // => In production: raise SupplierBankAccountUpdated domain event
+  }
+}
+
+// Usage
+const supplier = new Supplier(SupplierId.of("sup_660f9511-0001"));
+console.log(supplier.bankAccount); // => Output: null (not yet provided)
+
+const account = BankAccount.of("GB29NWBK60161331926819", "NWBKGB2L", "GBP");
+// => Valid IBAN + SWIFT code
+supplier.updatePaymentDetails(account);
+console.log(supplier.bankAccount?.toString());
+// => Output: BankAccount(GB29NWBK60161331926819, NWBKGB2L, GBP)
+
+// Invalid: short account number
+try {
+  BankAccount.of("ABC", "NWBK", "GBP");
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: accountNumber must be at least 8 characters (IBAN/local format)
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Multi-field value objects like `BankAccount` validate all invariants in the constructor, normalise data at construction, and provide structural equality through records. The enclosing aggregate references it as an optional field — nullable until supplied.
@@ -4594,7 +6058,7 @@ try {
 
 When integrating with a legacy ERP system that represents suppliers as flat DTOs with string-typed fields, an Anti-Corruption Layer (ACL) translates the foreign model into the clean domain model without polluting domain classes with legacy concepts.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4870,6 +6334,84 @@ Console.WriteLine(unknownResult.Warnings[0]);
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Anti-Corruption Layer: translating a legacy supplier DTO into the domain model
+// => ACL lives at the boundary; domain model stays clean of legacy concepts
+
+// Legacy DTO (external system format — not our domain vocabulary)
+interface LegacySupplierDTO {
+  vendor_id: string; // => legacy: "vendor" not "supplier"
+  vendor_name: string;
+  active_flag: 0 | 1; // => legacy: 1=active, 0=inactive
+  payment_terms: string; // => legacy: e.g. "NET30", "NET60"
+  contact_email: string;
+}
+
+// Domain model (our vocabulary)
+class SupplierId {
+  private constructor(readonly value: string) {}
+  static of(raw: string): SupplierId {
+    const normalized = raw.startsWith("sup_") ? raw : `sup_${raw}`;
+    return new SupplierId(normalized); // => translate legacy vendor_id to domain SupplierId
+  }
+}
+
+type SupplierStatus = "ACTIVE" | "INACTIVE";
+type PaymentTerms = "NET_30" | "NET_60" | "NET_90" | "IMMEDIATE";
+
+interface SupplierRecord {
+  id: SupplierId;
+  name: string;
+  status: SupplierStatus;
+  paymentTerms: PaymentTerms;
+  email: string;
+}
+
+// ACL translator: maps legacy DTO to domain record
+class SupplierAntiCorruptionLayer {
+  translate(dto: LegacySupplierDTO): SupplierRecord {
+    return {
+      id: SupplierId.of(dto.vendor_id), // => vendor_id → SupplierId
+      name: dto.vendor_name,
+      status: dto.active_flag === 1 ? "ACTIVE" : "INACTIVE",
+      // => translate integer flag to domain status
+      paymentTerms: this.translatePaymentTerms(dto.payment_terms),
+      email: dto.contact_email,
+    };
+  }
+
+  private translatePaymentTerms(legacy: string): PaymentTerms {
+    const map: Record<string, PaymentTerms> = {
+      NET30: "NET_30", // => legacy "NET30" → domain "NET_30"
+      NET60: "NET_60",
+      NET90: "NET_90",
+      IMMED: "IMMEDIATE",
+    };
+    const result = map[legacy.toUpperCase()];
+    if (!result) throw new Error(`Unknown legacy payment terms: ${legacy}`);
+    return result;
+  }
+}
+
+// Usage
+const acl = new SupplierAntiCorruptionLayer();
+const legacyDTO: LegacySupplierDTO = {
+  vendor_id: "V00123",
+  vendor_name: "Acme Supplies",
+  active_flag: 1,
+  payment_terms: "NET30",
+  contact_email: "billing@acme.example",
+};
+
+const domainRecord = acl.translate(legacyDTO);
+console.log(domainRecord.id.value); // => Output: sup_V00123
+console.log(domainRecord.status); // => Output: ACTIVE
+console.log(domainRecord.paymentTerms); // => Output: NET_30
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The ACL lives at the boundary between external and domain models. It takes responsibility for all translation — prefix normalisation, status mapping, default handling — keeping domain classes clean of legacy concerns.
@@ -4884,7 +6426,7 @@ Console.WriteLine(unknownResult.Warnings[0]);
 
 A bounded context maps directly to a Java package (or module in Java 9+). Classes in `purchasing` are not imported directly by `receiving`; instead, only integration events cross the boundary.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5075,6 +6617,78 @@ Console.WriteLine(string.Join(", ", delivery.SkuCodes)); // => Output: OFF-001, 
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Bounded context as a TypeScript module: explicit import boundaries
+// => Each bounded context exports only its public API; internals stay encapsulated
+
+// ── purchasing/index.ts (public API of purchasing context) ────────────────────
+// In TypeScript, export controls visibility between bounded contexts
+
+// Public API types
+interface PurchaseOrderSummary {
+  readonly id: string;
+  readonly supplierId: string;
+  readonly status: string;
+  readonly totalAmount: number;
+  readonly currency: string;
+}
+
+// Public API: PurchaseOrderQuery (read model for cross-context queries)
+class PurchaseOrderQuery {
+  private readonly _store = new Map<string, PurchaseOrderSummary>();
+
+  save(summary: PurchaseOrderSummary): void {
+    this._store.set(summary.id, summary); // => upsert read model
+  }
+
+  findById(id: string): PurchaseOrderSummary | null {
+    return this._store.get(id) ?? null; // => null if not found
+  }
+
+  findBySupplier(supplierId: string): PurchaseOrderSummary[] {
+    return [...this._store.values()].filter((s) => s.supplierId === supplierId);
+  }
+}
+
+// ── supplier/index.ts (public API of supplier context) ──────────────────────
+
+interface SupplierSummary {
+  readonly id: string;
+  readonly name: string;
+  readonly status: string;
+}
+
+// ── approvals/index.ts — cross-context service using both bounded contexts ──
+// => approvals context depends on summaries from purchasing and supplier — never on internals
+
+function buildApprovalView(
+  poSummary: PurchaseOrderSummary,
+  supplierSummary: SupplierSummary,
+): { needsApproval: boolean; reason: string } {
+  if (supplierSummary.status !== "APPROVED") {
+    return { needsApproval: true, reason: "Supplier not yet approved" };
+  }
+  if (poSummary.totalAmount > 10000) {
+    return { needsApproval: true, reason: "PO exceeds L2 threshold — requires L3 approval" };
+  }
+  return { needsApproval: false, reason: "Auto-approve: supplier approved and below L2 threshold" };
+}
+
+// Usage
+const poQuery = new PurchaseOrderQuery();
+poQuery.save({ id: "po_001", supplierId: "sup_001", status: "AWAITING_APPROVAL", totalAmount: 15000, currency: "USD" });
+
+const po = poQuery.findById("po_001")!;
+const supplier: SupplierSummary = { id: "sup_001", name: "Acme Supplies", status: "APPROVED" };
+
+const view = buildApprovalView(po, supplier);
+console.log(view.needsApproval); // => Output: true
+console.log(view.reason); // => Output: PO exceeds L2 threshold — requires L3 approval
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A bounded context is a hard package boundary. Integration events carry only primitive types across; domain types never cross.
@@ -5104,7 +6718,7 @@ graph LR
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5388,6 +7002,82 @@ Console.WriteLine(results[0].Id.Value);                // => Output: po_001
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Specification composition: TypeScript chained specifications for procurement queries
+
+interface PurchaseOrderSpec {
+  id: string;
+  supplierId: string;
+  status: string;
+  totalAmount: number;
+  currency: string;
+  requesterId: string;
+}
+
+// Generic composable specification
+type Spec<T> = { isSatisfiedBy(item: T): boolean };
+
+function and<T>(left: Spec<T>, right: Spec<T>): Spec<T> {
+  return { isSatisfiedBy: (i: T) => left.isSatisfiedBy(i) && right.isSatisfiedBy(i) };
+}
+function or<T>(left: Spec<T>, right: Spec<T>): Spec<T> {
+  return { isSatisfiedBy: (i: T) => left.isSatisfiedBy(i) || right.isSatisfiedBy(i) };
+}
+function not<T>(spec: Spec<T>): Spec<T> {
+  return { isSatisfiedBy: (i: T) => !spec.isSatisfiedBy(i) };
+}
+
+// Domain specifications for PurchaseOrder
+const awaitingApproval: Spec<PurchaseOrderSpec> = {
+  isSatisfiedBy: (po) => po.status === "AWAITING_APPROVAL",
+};
+const highValue: Spec<PurchaseOrderSpec> = {
+  isSatisfiedBy: (po) => po.totalAmount > 10000, // => L3 threshold
+};
+const fromRequester = (id: string): Spec<PurchaseOrderSpec> => ({
+  isSatisfiedBy: (po) => po.requesterId === id, // => filter by requester
+});
+
+// Compose: awaiting approval AND (high value OR from specific requester)
+const urgentApproval = and(awaitingApproval, or(highValue, fromRequester("emp-cfo")));
+
+const orders: PurchaseOrderSpec[] = [
+  {
+    id: "po_001",
+    supplierId: "sup_001",
+    status: "AWAITING_APPROVAL",
+    totalAmount: 15000,
+    currency: "USD",
+    requesterId: "emp-42",
+  },
+  {
+    id: "po_002",
+    supplierId: "sup_001",
+    status: "AWAITING_APPROVAL",
+    totalAmount: 500,
+    currency: "USD",
+    requesterId: "emp-cfo",
+  },
+  { id: "po_003", supplierId: "sup_001", status: "DRAFT", totalAmount: 20000, currency: "USD", requesterId: "emp-42" },
+  {
+    id: "po_004",
+    supplierId: "sup_001",
+    status: "AWAITING_APPROVAL",
+    totalAmount: 800,
+    currency: "USD",
+    requesterId: "emp-99",
+  },
+];
+
+const urgent = orders.filter((po) => urgentApproval.isSatisfiedBy(po));
+console.log(urgent.length); // => Output: 2 (po_001: high value; po_002: from cfo)
+console.log(urgent[0].id); // => Output: po_001
+console.log(urgent[1].id); // => Output: po_002
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Specifications encode named business predicates that compose algebraically; they are tested in isolation and applied to repositories or in-memory collections without SQL leaking into domain logic.
@@ -5400,7 +7090,7 @@ Console.WriteLine(results[0].Id.Value);                // => Output: po_001
 
 Command Query Responsibility Segregation (CQRS) separates writes (commands against the domain aggregate) from reads (queries against a denormalised read model). The read model is shaped for the UI, not for domain invariants.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5677,6 +7367,101 @@ Console.WriteLine(dashboard[0].StatusLabel);   // => Output: Awaiting Approval
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// CQRS: separate command and query models for the approval dashboard in TypeScript
+// => Commands mutate aggregate; queries use optimized read models
+
+// ── Command model (write side) ─────────────────────────────────────────────────
+type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
+
+class PurchaseOrder {
+  readonly id: string;
+  private _status: POStatus = "DRAFT";
+  private readonly _lines: Array<{ id: string; amount: number }> = [];
+
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  get status(): POStatus {
+    return this._status;
+  }
+
+  addLine(id: string, amount: number): void {
+    if (this._status !== "DRAFT") throw new Error("Only in DRAFT");
+    this._lines.push({ id, amount });
+  }
+
+  submitForApproval(): void {
+    if (this._status !== "DRAFT") throw new Error("Only from DRAFT");
+    if (this._lines.length === 0) throw new Error("No lines");
+    this._status = "AWAITING_APPROVAL";
+  }
+
+  total(): number {
+    return this._lines.reduce((s, l) => s + l.amount, 0);
+  }
+}
+
+// ── Read model (query side) ────────────────────────────────────────────────────
+
+// Optimized read model for the approval dashboard; flat projection, no aggregate traversal
+interface ApprovalDashboardItem {
+  readonly poId: string;
+  readonly supplierId: string;
+  readonly requesterId: string;
+  readonly totalAmount: number;
+  readonly currency: string;
+  readonly lineCount: number;
+  readonly submittedAt: Date;
+  readonly approvalLevel: "L1" | "L2" | "L3";
+}
+
+class ApprovalDashboardReadModel {
+  private readonly _items = new Map<string, ApprovalDashboardItem>();
+
+  upsert(item: ApprovalDashboardItem): void {
+    this._items.set(item.poId, item); // => denormalized projection; updated on command completion
+  }
+
+  pendingApprovals(): ApprovalDashboardItem[] {
+    return [...this._items.values()]; // => full dashboard; no aggregate traversal needed
+  }
+
+  highValuePending(): ApprovalDashboardItem[] {
+    return [...this._items.values()].filter((i) => i.approvalLevel === "L3");
+    // => L3 items require CFO approval; filtered in-memory from read model
+  }
+}
+
+// Usage
+const dashboard = new ApprovalDashboardReadModel();
+
+// When a PO is submitted, the application layer projects it into the read model
+const po = new PurchaseOrder("po_001");
+po.addLine("L1", 8000);
+po.addLine("L2", 7000);
+po.submitForApproval();
+
+dashboard.upsert({
+  poId: po.id,
+  supplierId: "sup_001",
+  requesterId: "emp-42",
+  totalAmount: po.total(),
+  currency: "USD",
+  lineCount: 2,
+  submittedAt: new Date(),
+  approvalLevel: po.total() > 10000 ? "L3" : "L2", // => derived at projection time
+});
+
+console.log(dashboard.pendingApprovals().length); // => Output: 1
+console.log(dashboard.highValuePending()[0].poId); // => Output: po_001
+console.log(dashboard.highValuePending()[0].approvalLevel); // => Output: L3
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: CQRS separates the write model (aggregate enforcing invariants) from the read model (denormalised, view-shaped data). Each is optimised for its purpose.
@@ -5706,7 +7491,7 @@ graph LR
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5946,6 +7731,92 @@ Console.WriteLine(adapter.FindById(new PurchaseOrderId("po_001"))?.Status);
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Hexagonal architecture (Ports & Adapters) in TypeScript
+// => Domain defines the port (interface); adapters implement it
+
+// ── Port (domain layer) ────────────────────────────────────────────────────────
+
+class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static of(v: string): PurchaseOrderId {
+    return new PurchaseOrderId(v);
+  }
+}
+
+class PurchaseOrder {
+  constructor(
+    readonly id: PurchaseOrderId,
+    readonly supplierId: string,
+    readonly totalAmount: number,
+    readonly status: string = "DRAFT",
+  ) {}
+}
+
+// Port: defined in domain layer; implementation in infrastructure
+interface PurchaseOrderPort {
+  save(po: PurchaseOrder): Promise<void>;
+  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  findPendingApprovals(): Promise<PurchaseOrder[]>;
+}
+
+// ── Adapter (infrastructure layer) ────────────────────────────────────────────
+
+// In-memory adapter: used in tests and demos
+class InMemoryPurchaseOrderAdapter implements PurchaseOrderPort {
+  private readonly _store = new Map<string, PurchaseOrder>();
+
+  async save(po: PurchaseOrder): Promise<void> {
+    this._store.set(po.id.value, po); // => simple upsert in memory
+  }
+
+  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+    return this._store.get(id.value) ?? null;
+  }
+
+  async findPendingApprovals(): Promise<PurchaseOrder[]> {
+    return [...this._store.values()].filter((po) => po.status === "AWAITING_APPROVAL");
+    // => filter in memory; SQL adapter would issue a WHERE clause instead
+  }
+}
+
+// ── Application service (domain layer) ────────────────────────────────────────
+
+// Application service depends only on the Port, never on the Adapter
+class PurchaseOrderApplicationService {
+  constructor(private readonly repo: PurchaseOrderPort) {}
+  // => repo is injected; service works with any adapter (in-memory, SQL, etc.)
+
+  async submitForApproval(poId: PurchaseOrderId): Promise<void> {
+    const po = await this.repo.findById(poId);
+    if (!po) throw new Error(`PurchaseOrder not found: ${poId.value}`);
+    if (po.status !== "DRAFT") throw new Error(`Can only submit from DRAFT, current: ${po.status}`);
+    const updated = new PurchaseOrder(po.id, po.supplierId, po.totalAmount, "AWAITING_APPROVAL");
+    await this.repo.save(updated);
+  }
+}
+
+// Usage: wire adapter to application service
+async function demo(): Promise<void> {
+  const adapter = new InMemoryPurchaseOrderAdapter();
+  const service = new PurchaseOrderApplicationService(adapter);
+
+  const poId = PurchaseOrderId.of("po_001");
+  await adapter.save(new PurchaseOrder(poId, "sup_001", 5000));
+  await service.submitForApproval(poId);
+
+  const po = await adapter.findById(poId);
+  console.log(po?.status); // => Output: AWAITING_APPROVAL
+
+  const pending = await adapter.findPendingApprovals();
+  console.log(pending.length); // => Output: 1
+}
+demo();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Ports (interfaces) belong to the domain; adapters (implementations) belong to infrastructure. The application service depends only on the port — it never imports JPA, JDBC, or any framework class.
@@ -5958,7 +7829,7 @@ Console.WriteLine(adapter.FindById(new PurchaseOrderId("po_001"))?.Status);
 
 Domain exceptions carry business meaning. A flat `IllegalArgumentException` tells a caller nothing about _which_ invariant fired; a typed exception hierarchy enables callers to distinguish `BudgetExceededException` from `SupplierNotApprovedException`.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6266,6 +8137,98 @@ catch (BudgetExceededException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Domain exception hierarchy in TypeScript
+// => Structured error classes with domain-specific fields for typed error handling
+
+// Root domain error
+class ProcurementError extends Error {
+  readonly domain = "procurement" as const;
+  constructor(message: string) {
+    super(message);
+    this.name = new.target.name; // => subclass name appears in stack traces
+  }
+}
+
+// Validation errors (bad input)
+class ValidationError extends ProcurementError {
+  constructor(
+    readonly field: string,
+    message: string,
+  ) {
+    super(`Validation failed for '${field}': ${message}`);
+  }
+}
+
+// State transition errors (lifecycle violations)
+class InvalidStateTransitionError extends ProcurementError {
+  constructor(
+    readonly from: string,
+    readonly to: string,
+    readonly entity: string,
+  ) {
+    super(`${entity}: invalid transition ${from} → ${to}`);
+  }
+}
+
+// Business rule violations (domain invariants)
+class BusinessRuleViolationError extends ProcurementError {
+  constructor(
+    readonly rule: string,
+    message: string,
+  ) {
+    super(`Business rule violated [${rule}]: ${message}`);
+  }
+}
+
+// Not found errors (repository misses)
+class EntityNotFoundError extends ProcurementError {
+  constructor(
+    readonly entityType: string,
+    readonly id: string,
+  ) {
+    super(`${entityType} not found: ${id}`);
+  }
+}
+
+// Usage: typed error handling for each domain case
+function processOrder(status: string, lineCount: number): void {
+  if (status !== "AWAITING_APPROVAL") throw new InvalidStateTransitionError(status, "APPROVED", "PurchaseOrder");
+  if (lineCount === 0)
+    throw new BusinessRuleViolationError("po-must-have-lines", "Cannot approve a PurchaseOrder with no line items");
+}
+
+try {
+  processOrder("DRAFT", 2);
+} catch (e: unknown) {
+  if (e instanceof InvalidStateTransitionError) {
+    console.log(`State error: ${e.from} → ${e.to} on ${e.entity}`);
+    // => Output: State error: DRAFT → APPROVED on PurchaseOrder
+  }
+}
+
+try {
+  processOrder("AWAITING_APPROVAL", 0);
+} catch (e: unknown) {
+  if (e instanceof BusinessRuleViolationError) {
+    console.log(`Rule: ${e.rule} — ${e.message}`);
+    // => Output: Rule: po-must-have-lines — Business rule violated [po-must-have-lines]: ...
+  }
+}
+
+try {
+  throw new EntityNotFoundError("PurchaseOrder", "po_unknown");
+} catch (e: unknown) {
+  if (e instanceof EntityNotFoundError) {
+    console.log(e.message);
+    // => Output: PurchaseOrder not found: po_unknown
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A typed domain exception hierarchy communicates _which_ business invariant was violated, not just that something went wrong. Each exception class carries machine-readable fields alongside a human-readable message.
@@ -6278,7 +8241,7 @@ catch (BudgetExceededException e)
 
 A domain service encapsulates logic that naturally operates across multiple aggregates or value objects without belonging to any single aggregate. Here, `BudgetCheckService` validates a multi-currency purchase requisition against a budget expressed in a base currency.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6646,6 +8609,85 @@ sealed class StubFxRateProvider(CurrencyCode eur, CurrencyCode gbp) : IFxRatePro
     // => ternary chain covers EUR, GBP, and default (same-currency) cases
     // => real implementation would call an FX API or read from a rates table
 }
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Domain service: three-currency budget check across purchasing lines in TypeScript
+// => Domain service holds cross-entity logic that doesn't belong to any single aggregate
+
+interface Money {
+  readonly amount: number;
+  readonly currency: string;
+}
+interface PurchaseOrderLine {
+  readonly lineId: string;
+  readonly unitPrice: Money;
+  readonly quantity: number;
+}
+
+// Currency conversion port (domain knows the interface; infrastructure provides rates)
+interface ExchangeRatePort {
+  getRate(from: string, to: string): number; // => returns conversion rate from -> to
+}
+
+// In-memory exchange rate adapter for demo
+class InMemoryExchangeRateAdapter implements ExchangeRatePort {
+  private readonly _rates = new Map<string, number>([
+    ["USD-IDR", 16000], // => 1 USD = 16,000 IDR
+    ["IDR-USD", 0.0000625],
+    ["USD-MYR", 4.75], // => 1 USD = 4.75 MYR
+    ["MYR-USD", 0.2105],
+    ["USD-USD", 1.0],
+    ["IDR-IDR", 1.0],
+    ["MYR-MYR", 1.0],
+  ]);
+
+  getRate(from: string, to: string): number {
+    const key = `${from}-${to}`;
+    const rate = this._rates.get(key);
+    if (rate == null) throw new Error(`No exchange rate for ${from} -> ${to}`);
+    return rate;
+  }
+}
+
+// Domain service: budget check across lines with mixed currencies
+class BudgetCheckDomainService {
+  constructor(private readonly exchangeRates: ExchangeRatePort) {}
+
+  // => Converts all line totals to a reference currency and compares against budget
+  isWithinBudget(lines: PurchaseOrderLine[], budget: Money, referenceCurrency: string): boolean {
+    const totalInRef = lines.reduce((sum, line) => {
+      const lineAmount = line.unitPrice.amount * line.quantity; // => line total
+      const rate = this.exchangeRates.getRate(line.unitPrice.currency, referenceCurrency);
+      return sum + lineAmount * rate; // => convert to reference currency
+    }, 0);
+
+    const budgetInRef = budget.amount * this.exchangeRates.getRate(budget.currency, referenceCurrency);
+
+    return totalInRef <= budgetInRef; // => within budget if total ≤ budget
+  }
+}
+
+// Usage
+const exchangeRates = new InMemoryExchangeRateAdapter();
+const budgetService = new BudgetCheckDomainService(exchangeRates);
+
+const lines: PurchaseOrderLine[] = [
+  { lineId: "L1", unitPrice: { amount: 100, currency: "USD" }, quantity: 5 }, // => $500 USD
+  { lineId: "L2", unitPrice: { amount: 1000000, currency: "IDR" }, quantity: 2 }, // => 2M IDR ≈ $125 USD
+  { lineId: "L3", unitPrice: { amount: 50, currency: "MYR" }, quantity: 3 }, // => 150 MYR ≈ $31.6 USD
+];
+
+const budget: Money = { amount: 700, currency: "USD" };
+// => Total ≈ $500 + $125 + $31.6 = $656.6 USD
+
+console.log(budgetService.isWithinBudget(lines, budget, "USD")); // => Output: true ($656.6 ≤ $700)
+
+const tightBudget: Money = { amount: 600, currency: "USD" };
+console.log(budgetService.isWithinBudget(lines, tightBudget, "USD")); // => Output: false ($656.6 > $600)
 ```
 
 {{< /tab >}}

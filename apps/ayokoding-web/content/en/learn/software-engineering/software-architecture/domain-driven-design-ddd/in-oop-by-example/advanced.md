@@ -29,7 +29,7 @@ graph LR
     classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -207,6 +207,74 @@ public static class AclDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Anti-Corruption Layer: translating purchasing vocabulary into receiving context
+// => ACL translator is the only class that knows both models
+
+// purchasing context DTO (upstream — we cannot change this)
+interface PurchaseOrderIssuedEvent {
+  purchaseOrderId: string; // => format "po_<uuid>" per spec
+  supplierId: string; // => format "sup_<uuid>"
+  lines: LineDto[]; // => list of ordered lines from purchasing
+}
+interface LineDto {
+  skuCode: string;
+  qty: number; // => purchasing language: "qty"
+  unit: string;
+  unitPriceCents: number; // => purchasing carries price; receiving does not need it
+}
+
+// receiving context's own model (domain-specific vocabulary)
+class PurchaseOrderId {
+  // => typed ID in receiving context
+  constructor(readonly value: string) {}
+}
+interface ExpectedDeliveryLine {
+  skuCode: string;
+  expectedQty: number; // => receiving language: "expectedQty" (not "qty")
+  unit: string;
+  // => no price field — receiving context does not care about pricing
+}
+interface ExpectedDelivery {
+  poId: PurchaseOrderId;
+  lines: ExpectedDeliveryLine[];
+}
+
+// Anti-Corruption Layer: translator lives at the boundary
+class PurchaseOrderTranslator {
+  // => ACL class; single responsibility
+  translate(event: PurchaseOrderIssuedEvent): ExpectedDelivery {
+    // => Converts purchasing's DTO into receiving's clean domain model
+    const lines: ExpectedDeliveryLine[] = event.lines.map((l) => ({
+      skuCode: l.skuCode, // => skuCode concept shared; name identical
+      expectedQty: l.qty, // => "qty" renamed to "expectedQty" — UL alignment
+      unit: l.unit, // => unit of measure passes through unchanged
+      // => unitPriceCents discarded; receiving context has no use for it
+    }));
+    return {
+      poId: new PurchaseOrderId(event.purchaseOrderId), // => raw string wrapped in typed ID
+      lines, // => translated lines; no purchasing pricing data
+    };
+  }
+}
+
+// Usage
+const event: PurchaseOrderIssuedEvent = {
+  purchaseOrderId: "po_550e8400-e29b-41d4-a716-446655440000",
+  supplierId: "sup_7c9e6679-7425-40de-944b-e07fc1f90ae7",
+  lines: [{ skuCode: "OFF-001234", qty: 50, unit: "BOX", unitPriceCents: 2500 }],
+}; // => simulates event arriving from purchasing context
+const acl = new PurchaseOrderTranslator();
+const delivery = acl.translate(event);
+console.log(delivery.poId.value); // => Output: po_550e8400-e29b-41d4-a716-446655440000
+console.log(delivery.lines[0]);
+// => Output: { skuCode: "OFF-001234", expectedQty: 50, unit: "BOX" }
+// => Price data absent; receiving model contains only what receiving cares about
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: An ACL translates at the seam — neither the upstream event nor the downstream model is polluted by the other's vocabulary.
@@ -219,7 +287,7 @@ public static class AclDemo
 
 The `invoicing` context receives a `GoodsReceived` event from `receiving`. Receiving uses a boolean `qcPassed` flag; invoicing needs its own sealed type hierarchy `MatchReadiness` so its logic never depends on receiving's internal flag semantics.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -411,6 +479,78 @@ public static class InvoicingAclDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ACL with discriminated union state translation in TypeScript
+// => receiving's boolean qcPassed → invoicing's MatchReadiness discriminated union
+
+// receiving context's event (upstream — cannot change)
+interface GoodsReceivedEvent {
+  grnId: string; // => format "grn_<uuid>"
+  purchaseOrderId: string; // => links to the originating PO
+  qcPassed: boolean; // => receiving's flag — true = no defects found
+  receivedQty: number; // => actual quantity inspected and accepted
+}
+
+// invoicing context's discriminated union for match readiness
+// => models "can we match this?" more expressively than a boolean
+type MatchReadiness =
+  | { readonly tag: "Ready"; readonly grnId: string; readonly qty: number }
+  | { readonly tag: "Blocked"; readonly grnId: string; readonly reason: string };
+// => Ready: QC passed; Blocked: QC failed — TypeScript exhaustive switch enforces both cases
+
+// ACL for invoicing context
+class GoodsReceiptTranslator {
+  translate(event: GoodsReceivedEvent): MatchReadiness {
+    // => Converts receiving's boolean into invoicing's domain concept
+    if (event.qcPassed) {
+      return { tag: "Ready", grnId: event.grnId, qty: event.receivedQty };
+      // => QC passed → invoicing can proceed to three-way match
+    }
+    return { tag: "Blocked", grnId: event.grnId, reason: "QC failed at receiving" };
+    // => QC failed → invoicing is blocked; reason surfaces in Invoice dispute log
+  }
+}
+
+// Helper: exhaustive switch over MatchReadiness
+function describeReadiness(readiness: MatchReadiness): string {
+  switch (readiness.tag) {
+    case "Ready":
+      return `Ready to match: ${readiness.qty} units`;
+    case "Blocked":
+      return `Blocked: ${readiness.reason}`;
+    default: {
+      const _x: never = readiness; // => compile error if a case is missing
+      throw new Error(`Unhandled: ${(_x as any).tag}`);
+    }
+  }
+}
+
+const translator = new GoodsReceiptTranslator();
+
+// Scenario A: goods passed QC
+const passedEvent: GoodsReceivedEvent = {
+  grnId: "grn_abc",
+  purchaseOrderId: "po_xyz",
+  qcPassed: true,
+  receivedQty: 50,
+};
+console.log(describeReadiness(translator.translate(passedEvent)));
+// => Output: Ready to match: 50 units
+
+// Scenario B: goods failed QC
+const failedEvent: GoodsReceivedEvent = {
+  grnId: "grn_def",
+  purchaseOrderId: "po_xyz",
+  qcPassed: false,
+  receivedQty: 0,
+};
+console.log(describeReadiness(translator.translate(failedEvent)));
+// => Output: Blocked: QC failed at receiving
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The ACL translates primitive upstream types (boolean) into expressive downstream domain types (sealed hierarchy), giving invoicing a richer vocabulary without depending on receiving's internals.
@@ -423,7 +563,7 @@ public static class InvoicingAclDemo
 
 After a successful three-way match, invoicing emits `InvoiceMatched`. The `payments` context consumes it to schedule a payment run. The event is the contract; no direct dependency exists between the two bounded contexts.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -584,6 +724,67 @@ public static class EventIntegrationDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Domain event as cross-context integration contract in TypeScript
+// => InvoiceMatched event published by invoicing; consumed by payments context
+
+// invoicing context: publishes InvoiceMatchedEvent when 3-way match succeeds
+interface InvoiceMatchedEvent {
+  readonly type: "InvoiceMatched"; // => discriminated union tag
+  readonly invoiceId: string; // => which invoice was matched
+  readonly purchaseOrderId: string; // => originating PO
+  readonly grnId: string; // => goods receipt note
+  readonly amount: number; // => approved payment amount
+  readonly currency: string; // => ISO 4217 currency code
+  readonly matchedAt: Date; // => UTC timestamp
+}
+
+// payments context: receives the event and schedules payment
+interface PaymentSchedule {
+  readonly invoiceId: string;
+  readonly amount: number;
+  readonly currency: string;
+  readonly dueDate: Date; // => computed from supplier payment terms
+}
+
+// Application service in payments context: handles InvoiceMatchedEvent
+function schedulePaymentFromEvent(
+  event: InvoiceMatchedEvent,
+  paymentTermsDays: number, // => from supplier record (e.g. NET_30 = 30 days)
+): PaymentSchedule {
+  const dueDate = new Date(event.matchedAt);
+  dueDate.setDate(dueDate.getDate() + paymentTermsDays);
+  // => due date = match date + payment terms; e.g. NET_30 → match date + 30 days
+
+  return {
+    invoiceId: event.invoiceId,
+    amount: event.amount,
+    currency: event.currency,
+    dueDate,
+  };
+}
+
+// Usage
+const event: InvoiceMatchedEvent = {
+  type: "InvoiceMatched",
+  invoiceId: "inv_001",
+  purchaseOrderId: "po_550e8400-0001",
+  grnId: "grn_abc",
+  amount: 5000.0,
+  currency: "USD",
+  matchedAt: new Date("2026-01-15"),
+};
+
+const schedule = schedulePaymentFromEvent(event, 30); // => NET_30 terms
+console.log(schedule.invoiceId); // => Output: inv_001
+console.log(schedule.amount); // => Output: 5000
+console.log(schedule.currency); // => Output: USD
+console.log(schedule.dueDate.toISOString().slice(0, 10)); // => Output: 2026-02-14
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain events decouple bounded contexts — invoicing and payments share only the event record, never implementation classes.
@@ -596,7 +797,7 @@ public static class EventIntegrationDemo
 
 The `purchasing` context exposes a published, versioned API (Open Host Service) that `receiving` and `invoicing` consume. Upstream never breaks its contract without a versioning strategy.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -783,6 +984,77 @@ public static class OhsDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Context Map: Open Host Service (OHS) pattern in TypeScript
+// => OHS publishes a stable, versioned API for external supplier consumers
+
+// Internal domain model (not exposed directly)
+interface InternalPurchaseOrder {
+  id: string;
+  supplierId: string;
+  status: string;
+  lines: Array<{ skuCode: string; quantity: number; unit: string; unitPrice: number }>;
+  totalAmount: number;
+  currency: string;
+}
+
+// Open Host Service: published language (stable contract for external consumers)
+// => Version prefix allows breaking changes without disrupting consumers
+interface SupplierPOViewV1 {
+  // => V1 = version 1 of the published language
+  readonly orderId: string; // => "orderId" not "id" — supplier vocabulary
+  readonly orderDate: string; // => ISO 8601 date string; no Date object across boundary
+  readonly items: SupplierItemV1[]; // => "items" not "lines" — supplier vocabulary
+  readonly totalUsd: number; // => flattened; no currency object in published API
+}
+interface SupplierItemV1 {
+  readonly sku: string;
+  readonly ordered: number;
+  readonly unit: string;
+}
+
+// OHS Translator: maps internal model to published language
+class PurchaseOrderOpenHostService {
+  toSupplierView(po: InternalPurchaseOrder, orderDate: Date): SupplierPOViewV1 {
+    return {
+      orderId: po.id, // => map internal id → orderId (supplier vocabulary)
+      orderDate: orderDate.toISOString().slice(0, 10), // => ISO date string
+      items: po.lines.map((l) => ({
+        sku: l.skuCode, // => map skuCode → sku (shorter, supplier-friendly)
+        ordered: l.quantity, // => map quantity → ordered (clearer for supplier)
+        unit: l.unit,
+      })),
+      totalUsd: po.totalAmount, // => flatten currency into field name (OHS simplification)
+    };
+  }
+}
+
+// Usage
+const internalPO: InternalPurchaseOrder = {
+  id: "po_550e8400-0001",
+  supplierId: "sup_001",
+  status: "ISSUED",
+  lines: [
+    { skuCode: "OFF-001234", quantity: 50, unit: "BOX", unitPrice: 20 },
+    { skuCode: "TLS-9999", quantity: 10, unit: "EACH", unitPrice: 150 },
+  ],
+  totalAmount: 2500,
+  currency: "USD",
+};
+
+const ohs = new PurchaseOrderOpenHostService();
+const view = ohs.toSupplierView(internalPO, new Date("2026-01-15"));
+console.log(view.orderId); // => Output: po_550e8400-0001
+console.log(view.orderDate); // => Output: 2026-01-15
+console.log(view.items.length); // => Output: 2
+console.log(view.items[0].sku); // => Output: OFF-001234
+console.log(view.items[0].ordered); // => Output: 50
+console.log(view.totalUsd); // => Output: 2500
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: An Open Host Service publishes a stable, versioned interface that downstream contexts consume without depending on the aggregate's internal structure.
@@ -797,7 +1069,7 @@ public static class OhsDemo
 
 A `GoodsReceiptNote` aggregate has complex construction rules: the PO must exist, quantities must be positive, and QC status must be determined. A factory method encapsulates this logic and keeps the constructor simple.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1040,6 +1312,112 @@ public static class FactoryDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Factory method: GoodsReceiptNote creation from validated inputs in TypeScript
+// => Static factory enforces creation-time business rules
+
+class GoodsReceiptNoteId {
+  private constructor(readonly value: string) {}
+  static of(v: string): GoodsReceiptNoteId {
+    if (!v.startsWith("grn_")) throw new Error("GoodsReceiptNoteId must start with grn_");
+    return new GoodsReceiptNoteId(v);
+  }
+}
+
+class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static of(v: string): PurchaseOrderId {
+    if (!v.startsWith("po_")) throw new Error("PurchaseOrderId must start with po_");
+    return new PurchaseOrderId(v);
+  }
+}
+
+type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
+
+interface ReceivedLine {
+  skuCode: string;
+  receivedQty: { value: number; unit: UnitOfMeasure };
+}
+
+type GRNStatus = "OPEN" | "PARTIALLY_RECEIVED" | "FULLY_RECEIVED";
+
+class GoodsReceiptNote {
+  readonly id: GoodsReceiptNoteId;
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly receivedBy: string;
+  readonly receivedAt: Date;
+  private _status: GRNStatus = "OPEN";
+  private readonly _lines: ReceivedLine[] = [];
+
+  // Private constructor: callers must use factory
+  private constructor(id: GoodsReceiptNoteId, purchaseOrderId: PurchaseOrderId, receivedBy: string, receivedAt: Date) {
+    this.id = id;
+    this.purchaseOrderId = purchaseOrderId;
+    this.receivedBy = receivedBy;
+    this.receivedAt = receivedAt;
+  }
+
+  // Factory method: validates creation-time business rules
+  static create(
+    id: GoodsReceiptNoteId,
+    purchaseOrderId: PurchaseOrderId,
+    receivedBy: string,
+    receivedAt: Date,
+  ): GoodsReceiptNote {
+    if (!receivedBy || receivedBy.trim() === "")
+      throw new Error("receivedBy required; goods receipt must be traceable to a person");
+    if (receivedAt > new Date()) throw new Error("receivedAt cannot be in the future");
+    // => Future: validate PO is in ISSUED state (repository check in application layer)
+    return new GoodsReceiptNote(id, purchaseOrderId, receivedBy, receivedAt);
+  }
+
+  get status(): GRNStatus {
+    return this._status;
+  }
+  get lines(): readonly ReceivedLine[] {
+    return [...this._lines];
+  }
+
+  recordLine(line: ReceivedLine): void {
+    if (this._status === "FULLY_RECEIVED") throw new Error("GRN already fully received");
+    this._lines.push(line);
+    this._status = "PARTIALLY_RECEIVED";
+  }
+
+  close(): void {
+    if (this._lines.length === 0) throw new Error("No lines recorded");
+    this._status = "FULLY_RECEIVED";
+  }
+}
+
+// Usage
+const grn = GoodsReceiptNote.create(
+  GoodsReceiptNoteId.of("grn_001"),
+  PurchaseOrderId.of("po_550e8400-0001"),
+  "warehouse-staff-007",
+  new Date("2026-01-20"),
+);
+grn.recordLine({ skuCode: "OFF-001234", receivedQty: { value: 45, unit: "BOX" } });
+console.log(grn.status); // => Output: PARTIALLY_RECEIVED
+grn.close();
+console.log(grn.status); // => Output: FULLY_RECEIVED
+
+// Invalid: future receivedAt
+try {
+  GoodsReceiptNote.create(
+    GoodsReceiptNoteId.of("grn_002"),
+    PurchaseOrderId.of("po_550e8400-0002"),
+    "staff-008",
+    new Date("2099-01-01"), // => future date rejected
+  );
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: receivedAt cannot be in the future
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Factory methods centralise complex construction rules so aggregate constructors stay thin and easy to test in isolation.
@@ -1052,7 +1430,7 @@ public static class FactoryDemo
 
 When registering an `Invoice`, several preconditions may fail independently. A sealed result type (`RegistrationResult`) communicates all failure reasons explicitly without throwing exceptions.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1333,6 +1711,113 @@ public static class InvoiceFactoryDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Abstract factory: constructing Invoice variants in TypeScript
+// => StandardInvoice vs MurabahaInvoice have different construction rules
+
+// Shared types
+class InvoiceId {
+  private constructor(readonly value: string) {}
+  static of(v: string): InvoiceId {
+    if (!v.startsWith("inv_")) throw new Error("InvoiceId must start with inv_");
+    return new InvoiceId(v);
+  }
+}
+
+interface Money {
+  amount: number;
+  currency: string;
+}
+
+// Base invoice type
+abstract class Invoice {
+  abstract readonly type: "Standard" | "Murabaha";
+  abstract readonly id: InvoiceId;
+  abstract readonly amount: Money;
+  abstract readonly supplierId: string;
+}
+
+// Standard invoice: straightforward payment
+class StandardInvoice extends Invoice {
+  readonly type = "Standard" as const;
+  private constructor(
+    readonly id: InvoiceId,
+    readonly amount: Money,
+    readonly supplierId: string,
+    readonly purchaseOrderId: string,
+  ) {
+    super();
+  }
+
+  static create(id: InvoiceId, amount: Money, supplierId: string, poId: string): StandardInvoice {
+    if (amount.amount <= 0) throw new Error("Invoice amount must be > 0");
+    if (!supplierId.startsWith("sup_")) throw new Error("Invalid supplierId");
+    return new StandardInvoice(id, amount, supplierId, poId);
+  }
+}
+
+// Murabaha invoice: Islamic finance instrument with markup
+class MurabahaInvoice extends Invoice {
+  readonly type = "Murabaha" as const;
+  private constructor(
+    readonly id: InvoiceId,
+    readonly amount: Money,
+    readonly supplierId: string,
+    readonly costPrice: Money, // => original cost (revealed in Murabaha contract)
+    readonly markupRate: number, // => profit markup percentage (e.g. 0.05 = 5%)
+  ) {
+    super();
+  }
+
+  static create(id: InvoiceId, costPrice: Money, markupRate: number, supplierId: string): MurabahaInvoice {
+    if (costPrice.amount <= 0) throw new Error("costPrice must be > 0");
+    if (markupRate <= 0 || markupRate > 1) throw new Error("markupRate must be > 0 and ≤ 1");
+    const totalAmount = costPrice.amount * (1 + markupRate);
+    return new MurabahaInvoice(
+      id,
+      { amount: totalAmount, currency: costPrice.currency },
+      supplierId,
+      costPrice,
+      markupRate,
+    );
+  }
+}
+
+// Abstract factory: selects the correct Invoice variant
+class InvoiceFactory {
+  static createStandard(id: InvoiceId, amount: Money, supplierId: string, poId: string): StandardInvoice {
+    return StandardInvoice.create(id, amount, supplierId, poId);
+  }
+
+  static createMurabaha(id: InvoiceId, costPrice: Money, markupRate: number, supplierId: string): MurabahaInvoice {
+    return MurabahaInvoice.create(id, costPrice, markupRate, supplierId);
+  }
+}
+
+// Usage
+const stdInv = InvoiceFactory.createStandard(
+  InvoiceId.of("inv_001"),
+  { amount: 5000, currency: "USD" },
+  "sup_001",
+  "po_001",
+);
+console.log(stdInv.type); // => Output: Standard
+console.log(stdInv.amount.amount); // => Output: 5000
+
+const murabahaInv = InvoiceFactory.createMurabaha(
+  InvoiceId.of("inv_002"),
+  { amount: 10000, currency: "MYR" }, // => cost price
+  0.05, // => 5% markup
+  "sup_002",
+);
+console.log(murabahaInv.type); // => Output: Murabaha
+console.log(murabahaInv.amount.amount); // => Output: 10500 (10000 * 1.05)
+console.log(murabahaInv.markupRate); // => Output: 0.05
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Sealed result types from factory methods make all failure modes explicit in the type system rather than hidden in exception documentation.
@@ -1345,7 +1830,7 @@ public static class InvoiceFactoryDemo
 
 Some factories need to validate against persisted state (e.g., checking the PO exists before creating a GRN). The factory takes repository interfaces as dependencies, keeping it testable.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1652,6 +2137,89 @@ public static class GrnFactoryWithRepoDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Repository interface: domain owns the contract; infrastructure provides the implementation
+// => TypeScript interface defined in domain layer; class in infrastructure layer
+
+class InvoiceId {
+  private constructor(readonly value: string) {}
+  static of(v: string): InvoiceId {
+    if (!v.startsWith("inv_")) throw new Error("InvoiceId must start with inv_");
+    return new InvoiceId(v);
+  }
+}
+
+interface Money {
+  amount: number;
+  currency: string;
+}
+
+class Invoice {
+  constructor(
+    readonly id: InvoiceId,
+    readonly supplierId: string,
+    readonly amount: Money,
+    readonly status: string = "PENDING_MATCH",
+  ) {}
+}
+
+// Repository port: defined in domain layer
+interface InvoiceRepository {
+  save(invoice: Invoice): Promise<void>;
+  findById(id: InvoiceId): Promise<Invoice | null>;
+  findBySupplier(supplierId: string): Promise<Invoice[]>;
+  findPendingMatch(): Promise<Invoice[]>;
+  remove(id: InvoiceId): Promise<void>;
+}
+
+// Infrastructure adapter: in-memory implementation
+class InMemoryInvoiceRepository implements InvoiceRepository {
+  private readonly _store = new Map<string, Invoice>();
+
+  async save(invoice: Invoice): Promise<void> {
+    this._store.set(invoice.id.value, invoice); // => upsert
+  }
+
+  async findById(id: InvoiceId): Promise<Invoice | null> {
+    return this._store.get(id.value) ?? null; // => null if not found
+  }
+
+  async findBySupplier(supplierId: string): Promise<Invoice[]> {
+    return [...this._store.values()].filter((i) => i.supplierId === supplierId);
+  }
+
+  async findPendingMatch(): Promise<Invoice[]> {
+    return [...this._store.values()].filter((i) => i.status === "PENDING_MATCH");
+  }
+
+  async remove(id: InvoiceId): Promise<void> {
+    this._store.delete(id.value); // => idempotent
+  }
+}
+
+// Usage
+async function demo(): Promise<void> {
+  const repo: InvoiceRepository = new InMemoryInvoiceRepository();
+
+  const inv1 = new Invoice(InvoiceId.of("inv_001"), "sup_001", { amount: 5000, currency: "USD" });
+  const inv2 = new Invoice(InvoiceId.of("inv_002"), "sup_001", { amount: 3000, currency: "USD" });
+  const inv3 = new Invoice(InvoiceId.of("inv_003"), "sup_002", { amount: 7000, currency: "USD" }, "MATCHED");
+
+  await repo.save(inv1);
+  await repo.save(inv2);
+  await repo.save(inv3);
+
+  console.log((await repo.findById(InvoiceId.of("inv_001")))?.amount.amount); // => Output: 5000
+  console.log((await repo.findBySupplier("sup_001")).length); // => Output: 2
+  console.log((await repo.findPendingMatch()).length); // => Output: 2
+  console.log(await repo.findById(InvoiceId.of("inv_999"))); // => Output: null
+}
+demo();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Factories can take repository interfaces as dependencies to validate against persisted state without coupling the domain layer to infrastructure.
@@ -1664,7 +2232,7 @@ public static class GrnFactoryWithRepoDemo
 
 Standard invoices and Murabaha (Sharia-compliant) invoices share structure but differ in validation: a Murabaha invoice must reference a signed `MurabahaContract`. An abstract factory selects the right construction strategy at runtime.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1954,6 +2522,128 @@ public static class AbstractFactoryDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Repository with Unit of Work: coordinating Invoice and GoodsReceiptNote updates
+// => UoW ensures both aggregates save atomically; partial updates are prevented
+
+interface DomainRepository<T, ID> {
+  save(entity: T): Promise<void>;
+  findById(id: ID): Promise<T | null>;
+}
+
+interface UnitOfWork {
+  begin(): Promise<void>;
+  commit(): Promise<void>;
+  rollback(): Promise<void>;
+}
+
+// Simplified Invoice and GRN types
+class InvoiceId {
+  constructor(readonly value: string) {}
+}
+class GRNId {
+  constructor(readonly value: string) {}
+}
+
+interface Invoice {
+  id: InvoiceId;
+  status: string;
+  matchedGrnId?: string;
+}
+interface GRN {
+  id: GRNId;
+  status: string;
+  matchedInvoiceId?: string;
+}
+
+// In-memory implementations with UoW simulation
+class InMemoryInvoiceRepo implements DomainRepository<Invoice, InvoiceId> {
+  readonly store = new Map<string, Invoice>();
+  async save(i: Invoice): Promise<void> {
+    this.store.set(i.id.value, i);
+  }
+  async findById(id: InvoiceId): Promise<Invoice | null> {
+    return this.store.get(id.value) ?? null;
+  }
+}
+
+class InMemoryGRNRepo implements DomainRepository<GRN, GRNId> {
+  readonly store = new Map<string, GRN>();
+  async save(g: GRN): Promise<void> {
+    this.store.set(g.id.value, g);
+  }
+  async findById(id: GRNId): Promise<GRN | null> {
+    return this.store.get(id.value) ?? null;
+  }
+}
+
+// Simple in-memory UoW (simulates transaction semantics)
+class InMemoryUnitOfWork implements UnitOfWork {
+  private _committed = false;
+  async begin(): Promise<void> {
+    this._committed = false;
+  }
+  async commit(): Promise<void> {
+    this._committed = true;
+    console.log("UoW: committed");
+  }
+  async rollback(): Promise<void> {
+    this._committed = false;
+    console.log("UoW: rolled back");
+  }
+}
+
+// Application service: match invoice to GRN within a UoW
+async function matchInvoiceToGRN(
+  invoiceRepo: DomainRepository<Invoice, InvoiceId>,
+  grnRepo: DomainRepository<GRN, GRNId>,
+  uow: UnitOfWork,
+  invoiceId: InvoiceId,
+  grnId: GRNId,
+): Promise<void> {
+  await uow.begin();
+  try {
+    const invoice = await invoiceRepo.findById(invoiceId);
+    if (!invoice) throw new Error(`Invoice not found: ${invoiceId.value}`);
+
+    const grn = await grnRepo.findById(grnId);
+    if (!grn) throw new Error(`GRN not found: ${grnId.value}`);
+
+    const updatedInvoice: Invoice = { ...invoice, status: "MATCHED", matchedGrnId: grnId.value };
+    const updatedGRN: GRN = { ...grn, status: "MATCHED", matchedInvoiceId: invoiceId.value };
+
+    await invoiceRepo.save(updatedInvoice);
+    await grnRepo.save(updatedGRN);
+    await uow.commit();
+    // => Both saves committed atomically
+  } catch (e) {
+    await uow.rollback();
+    throw e;
+  }
+}
+
+// Usage
+async function demo(): Promise<void> {
+  const invoiceRepo = new InMemoryInvoiceRepo();
+  const grnRepo = new InMemoryGRNRepo();
+  const uow = new InMemoryUnitOfWork();
+
+  await invoiceRepo.save({ id: new InvoiceId("inv_001"), status: "PENDING_MATCH" });
+  await grnRepo.save({ id: new GRNId("grn_001"), status: "OPEN" });
+
+  await matchInvoiceToGRN(invoiceRepo, grnRepo, uow, new InvoiceId("inv_001"), new GRNId("grn_001"));
+  // => Output: UoW: committed
+
+  const inv = await invoiceRepo.findById(new InvoiceId("inv_001"));
+  console.log(inv?.status); // => Output: MATCHED
+  console.log(inv?.matchedGrnId); // => Output: grn_001
+}
+demo();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Abstract factory selects the correct construction strategy at runtime while all callers use a single `InvoiceFactory` interface — business rules vary by invoice type, not by callers.
@@ -1968,7 +2658,7 @@ public static class AbstractFactoryDemo
 
 The `GoodsReceiptRepository` interface lives in the `receiving` domain package. The PostgreSQL implementation lives in infrastructure. The domain never imports infrastructure classes.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2339,6 +3029,103 @@ public static class RepositoryDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Repository with specification pattern: querying Invoice by business criteria
+// => Specifications are composable domain predicates; repository accepts them
+
+interface Invoice {
+  id: string;
+  supplierId: string;
+  status: string;
+  amount: number;
+  currency: string;
+  dueDate: Date;
+}
+
+// Specification type
+type InvoiceSpec = { isSatisfiedBy(invoice: Invoice): boolean };
+
+// Domain specifications
+const pendingMatchSpec: InvoiceSpec = {
+  isSatisfiedBy: (inv) => inv.status === "PENDING_MATCH",
+};
+
+const overdueSpec = (today: Date): InvoiceSpec => ({
+  isSatisfiedBy: (inv) => inv.dueDate < today && inv.status !== "PAID",
+  // => overdue: due date passed and not yet paid
+});
+
+const highValueSpec = (threshold: number): InvoiceSpec => ({
+  isSatisfiedBy: (inv) => inv.amount > threshold,
+});
+
+function andSpec(left: InvoiceSpec, right: InvoiceSpec): InvoiceSpec {
+  return { isSatisfiedBy: (inv) => left.isSatisfiedBy(inv) && right.isSatisfiedBy(inv) };
+}
+
+// Repository with specification support
+class InvoiceRepository {
+  private readonly _store: Invoice[] = [];
+
+  save(invoice: Invoice): void {
+    this._store.push(invoice);
+  }
+
+  findBySpec(spec: InvoiceSpec): Invoice[] {
+    return this._store.filter((inv) => spec.isSatisfiedBy(inv));
+    // => generic query: no SQL here; spec encapsulates the predicate
+  }
+}
+
+// Usage
+const repo = new InvoiceRepository();
+const today = new Date("2026-02-01");
+const invoices: Invoice[] = [
+  {
+    id: "inv_001",
+    supplierId: "sup_001",
+    status: "PENDING_MATCH",
+    amount: 15000,
+    currency: "USD",
+    dueDate: new Date("2026-01-15"),
+  },
+  {
+    id: "inv_002",
+    supplierId: "sup_001",
+    status: "PENDING_MATCH",
+    amount: 800,
+    currency: "USD",
+    dueDate: new Date("2026-03-01"),
+  },
+  {
+    id: "inv_003",
+    supplierId: "sup_002",
+    status: "MATCHED",
+    amount: 20000,
+    currency: "USD",
+    dueDate: new Date("2026-01-20"),
+  },
+  {
+    id: "inv_004",
+    supplierId: "sup_002",
+    status: "PENDING_MATCH",
+    amount: 12000,
+    currency: "USD",
+    dueDate: new Date("2026-02-20"),
+  },
+];
+invoices.forEach((i) => repo.save(i));
+
+// Find: pending + overdue + high value (> $10,000)
+const urgentSpec = andSpec(andSpec(pendingMatchSpec, overdueSpec(today)), highValueSpec(10000));
+const urgent = repo.findBySpec(urgentSpec);
+console.log(urgent.length); // => Output: 1 (inv_001: pending + overdue + high value)
+console.log(urgent[0].id); // => Output: inv_001
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: When the domain owns the repository interface and infrastructure provides the implementation, the dependency arrow points inward — infrastructure depends on domain, never the reverse.
@@ -2351,7 +3138,7 @@ public static class RepositoryDemo
 
 Three-way match updates both `Invoice` and `GoodsReceiptNote` atomically. A `UnitOfWork` interface keeps the domain free of transaction API details.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2760,6 +3547,105 @@ public static class UowDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Repository + domain event outbox: InvoiceMatched written atomically
+// => Outbox pattern ensures events are not lost if process crashes after save
+
+interface DomainEvent {
+  readonly id: string;
+  readonly type: string;
+  readonly payload: unknown;
+  readonly occurredAt: Date;
+}
+
+interface OutboxRepository {
+  saveEvent(event: DomainEvent): Promise<void>;
+  pullUnpublished(): Promise<DomainEvent[]>;
+  markPublished(id: string): Promise<void>;
+}
+
+// Invoice aggregate
+class Invoice {
+  readonly id: string;
+  private _status: string = "PENDING_MATCH";
+  private readonly _outboxEvents: DomainEvent[] = [];
+
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  get status(): string {
+    return this._status;
+  }
+
+  match(grnId: string): DomainEvent {
+    if (this._status !== "PENDING_MATCH") throw new Error("Can only match PENDING_MATCH invoices");
+    this._status = "MATCHED"; // => state transition
+
+    const event: DomainEvent = {
+      // => create outbox event
+      id: crypto.randomUUID?.() ?? `evt_${Date.now()}`,
+      type: "InvoiceMatched",
+      payload: { invoiceId: this.id, grnId, matchedAt: new Date() },
+      occurredAt: new Date(),
+    };
+    this._outboxEvents.push(event); // => collected; not dispatched inside aggregate
+    return event;
+  }
+
+  pullOutboxEvents(): DomainEvent[] {
+    const events = [...this._outboxEvents];
+    this._outboxEvents.length = 0; // => clear after pull; one-shot delivery
+    return events;
+  }
+}
+
+// In-memory outbox repository
+class InMemoryOutboxRepository implements OutboxRepository {
+  private readonly _events = new Map<string, { event: DomainEvent; published: boolean }>();
+
+  async saveEvent(event: DomainEvent): Promise<void> {
+    this._events.set(event.id, { event, published: false });
+  }
+
+  async pullUnpublished(): Promise<DomainEvent[]> {
+    return [...this._events.values()].filter((e) => !e.published).map((e) => e.event);
+  }
+
+  async markPublished(id: string): Promise<void> {
+    const entry = this._events.get(id);
+    if (entry) entry.published = true; // => mark as dispatched
+  }
+}
+
+// Application service: save invoice + outbox event atomically
+async function matchInvoice(invoice: Invoice, grnId: string, outboxRepo: OutboxRepository): Promise<void> {
+  const event = invoice.match(grnId); // => mutate aggregate; collect event
+  await outboxRepo.saveEvent(event); // => persist event (simulates atomic save in transaction)
+  // => In production: invoice save + outbox save in same DB transaction
+}
+
+// Usage
+async function demo(): Promise<void> {
+  const invoice = new Invoice("inv_001");
+  const outboxRepo = new InMemoryOutboxRepository();
+
+  await matchInvoice(invoice, "grn_001", outboxRepo);
+  console.log(invoice.status); // => Output: MATCHED
+
+  const pending = await outboxRepo.pullUnpublished();
+  console.log(pending.length); // => Output: 1
+  console.log(pending[0].type); // => Output: InvoiceMatched
+
+  await outboxRepo.markPublished(pending[0].id);
+  console.log((await outboxRepo.pullUnpublished()).length); // => Output: 0 (published)
+}
+demo();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `UnitOfWork` interface keeps atomic transaction semantics in the domain vocabulary without importing JDBC or Spring `@Transactional`.
@@ -2772,7 +3658,7 @@ public static class UowDemo
 
 Instead of adding a method for every possible query combination, a `Specification` object encapsulates business criteria and the repository accepts it as a parameter.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3049,6 +3935,118 @@ public static class SpecificationDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Dependency Inversion: PaymentSchedulingService depends on ports, not adapters
+// => TypeScript interfaces as ports; concrete classes injected at startup
+
+// ── Ports (domain / application layer) ────────────────────────────────────────
+
+interface Invoice {
+  id: string;
+  supplierId: string;
+  amount: number;
+  currency: string;
+  status: string;
+}
+
+interface Supplier {
+  id: string;
+  paymentTermsDays: number; // => e.g. 30 for NET_30
+}
+
+interface InvoiceQueryPort {
+  findMatchedInvoices(): Promise<Invoice[]>;
+}
+
+interface SupplierQueryPort {
+  findById(supplierId: string): Promise<Supplier | null>;
+}
+
+interface PaymentSchedulePort {
+  schedule(invoiceId: string, dueDate: Date, amount: number, currency: string): Promise<void>;
+}
+
+// ── Application Service (depends only on ports) ────────────────────────────────
+
+class PaymentSchedulingService {
+  constructor(
+    private readonly invoiceQuery: InvoiceQueryPort, // => injected port
+    private readonly supplierQuery: SupplierQueryPort, // => injected port
+    private readonly paymentSchedule: PaymentSchedulePort, // => injected port
+  ) {}
+
+  async scheduleAllPendingPayments(): Promise<void> {
+    const invoices = await this.invoiceQuery.findMatchedInvoices();
+    // => retrieve all matched invoices waiting for payment scheduling
+
+    for (const invoice of invoices) {
+      const supplier = await this.supplierQuery.findById(invoice.supplierId);
+      if (!supplier) {
+        console.warn(`Supplier not found: ${invoice.supplierId}; skipping invoice ${invoice.id}`);
+        continue;
+      }
+
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + supplier.paymentTermsDays);
+      // => due date = today + supplier payment terms
+
+      await this.paymentSchedule.schedule(invoice.id, dueDate, invoice.amount, invoice.currency);
+      // => schedule payment; adapter handles actual persistence / queue
+    }
+  }
+}
+
+// ── Adapters (infrastructure layer) ────────────────────────────────────────────
+
+class InMemoryInvoiceAdapter implements InvoiceQueryPort {
+  private readonly _invoices: Invoice[] = [];
+  addInvoice(inv: Invoice): void {
+    this._invoices.push(inv);
+  }
+  async findMatchedInvoices(): Promise<Invoice[]> {
+    return this._invoices.filter((i) => i.status === "MATCHED");
+  }
+}
+
+class InMemorySupplierAdapter implements SupplierQueryPort {
+  private readonly _suppliers = new Map<string, Supplier>();
+  addSupplier(s: Supplier): void {
+    this._suppliers.set(s.id, s);
+  }
+  async findById(id: string): Promise<Supplier | null> {
+    return this._suppliers.get(id) ?? null;
+  }
+}
+
+class LoggingPaymentScheduleAdapter implements PaymentSchedulePort {
+  readonly scheduled: Array<{ invoiceId: string; dueDate: Date; amount: number }> = [];
+  async schedule(invoiceId: string, dueDate: Date, amount: number, currency: string): Promise<void> {
+    this.scheduled.push({ invoiceId, dueDate, amount });
+    console.log(`Scheduled payment for ${invoiceId}: ${amount} ${currency} due ${dueDate.toISOString().slice(0, 10)}`);
+  }
+}
+
+// Usage
+async function demo(): Promise<void> {
+  const invoiceAdapter = new InMemoryInvoiceAdapter();
+  const supplierAdapter = new InMemorySupplierAdapter();
+  const paymentAdapter = new LoggingPaymentScheduleAdapter();
+
+  invoiceAdapter.addInvoice({ id: "inv_001", supplierId: "sup_001", amount: 5000, currency: "USD", status: "MATCHED" });
+  supplierAdapter.addSupplier({ id: "sup_001", paymentTermsDays: 30 }); // => NET_30
+
+  const service = new PaymentSchedulingService(invoiceAdapter, supplierAdapter, paymentAdapter);
+  await service.scheduleAllPendingPayments();
+  // => Output: Scheduled payment for inv_001: 5000 USD due YYYY-MM-DD
+
+  console.log(paymentAdapter.scheduled.length); // => Output: 1
+}
+demo();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Specification pattern externalises business queries from repositories, keeping repositories generic and business rules composable.
@@ -3061,7 +4059,7 @@ public static class SpecificationDemo
 
 When the `Invoice` transitions to `Matched`, the `InvoiceMatched` event must be persisted in the same transaction as the aggregate change — the outbox pattern achieves this without distributed transactions.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3352,6 +4350,101 @@ public static class OutboxDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// MurabahaContract aggregate: Sharia-compliant procurement financing in TypeScript
+// => Murabaha: bank buys goods at cost, sells to buyer at cost + disclosed markup
+
+class MurabahaContractId {
+  private constructor(readonly value: string) {}
+  static of(v: string): MurabahaContractId {
+    if (!v.startsWith("mur_")) throw new Error("MurabahaContractId must start with mur_");
+    return new MurabahaContractId(v);
+  }
+}
+
+interface Money {
+  amount: number;
+  currency: string;
+}
+
+// Murabaha-specific value objects
+class MarkupRate {
+  private constructor(readonly value: number) {} // => 0 < value ≤ 1 (e.g. 0.05 = 5%)
+  static of(rate: number): MarkupRate {
+    if (rate <= 0 || rate > 1) throw new Error(`MarkupRate must be > 0 and ≤ 1, got: ${rate}`);
+    return new MarkupRate(rate);
+  }
+}
+
+type MurabahaStatus = "PENDING" | "ACTIVE" | "SETTLED" | "DEFAULTED";
+
+class MurabahaContract {
+  readonly id: MurabahaContractId;
+  readonly costPrice: Money; // => amount bank paid to supplier (disclosed to buyer)
+  readonly markupRate: MarkupRate; // => disclosed profit margin (Sharia requires full disclosure)
+  readonly salePrice: Money; // => costPrice * (1 + markupRate); agreed price to buyer
+  readonly buyerId: string;
+  private _status: MurabahaStatus = "PENDING";
+
+  private constructor(id: MurabahaContractId, costPrice: Money, markupRate: MarkupRate, buyerId: string) {
+    this.id = id;
+    this.costPrice = costPrice;
+    this.markupRate = markupRate;
+    this.salePrice = {
+      amount: costPrice.amount * (1 + markupRate.value),
+      currency: costPrice.currency,
+    }; // => disclosed sale price; transparent to buyer
+    this.buyerId = buyerId;
+  }
+
+  static create(id: MurabahaContractId, costPrice: Money, markupRate: MarkupRate, buyerId: string): MurabahaContract {
+    if (costPrice.amount <= 0) throw new Error("costPrice must be > 0");
+    if (!buyerId.trim()) throw new Error("buyerId required");
+    return new MurabahaContract(id, costPrice, markupRate, buyerId);
+  }
+
+  get status(): MurabahaStatus {
+    return this._status;
+  }
+
+  activate(): void {
+    if (this._status !== "PENDING") throw new Error("Can only activate a PENDING contract");
+    this._status = "ACTIVE";
+  }
+
+  settle(): void {
+    if (this._status !== "ACTIVE") throw new Error("Can only settle an ACTIVE contract");
+    this._status = "SETTLED";
+  }
+
+  default_(): void {
+    if (this._status === "SETTLED" || this._status === "DEFAULTED")
+      throw new Error(`Cannot default a ${this._status} contract`);
+    this._status = "DEFAULTED";
+  }
+}
+
+// Usage
+const contract = MurabahaContract.create(
+  MurabahaContractId.of("mur_001"),
+  { amount: 10000, currency: "MYR" }, // => cost price
+  MarkupRate.of(0.05), // => 5% markup — disclosed to buyer
+  "buyer-001",
+);
+console.log(contract.costPrice.amount); // => Output: 10000
+console.log(contract.salePrice.amount); // => Output: 10500 (10000 * 1.05)
+console.log(contract.markupRate.value); // => Output: 0.05
+console.log(contract.status); // => Output: PENDING
+
+contract.activate();
+console.log(contract.status); // => Output: ACTIVE
+contract.settle();
+console.log(contract.status); // => Output: SETTLED
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The outbox pattern guarantees aggregate state and domain events are written atomically — no event is lost if the process crashes between save and publish.
@@ -3366,7 +4459,7 @@ public static class OutboxDemo
 
 The `payments` context schedules payments after receiving `InvoiceMatched` events. The application service depends on domain interfaces, not concrete infrastructure classes. Constructor injection wires everything — no framework annotation is visible in the domain layer.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3789,6 +4882,71 @@ public static class DependencyInversionDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Immutable aggregate state transitions in TypeScript: spread operator + readonly
+// => Equivalent to Kotlin data class copy() — new objects; no mutation
+
+// Readonly aggregate state (immutable value-style aggregate)
+interface GoodsReceiptNoteState {
+  readonly id: string;
+  readonly purchaseOrderId: string;
+  readonly status: "OPEN" | "PARTIALLY_RECEIVED" | "FULLY_RECEIVED";
+  readonly lines: readonly ReceivedLineState[];
+  readonly receivedBy: string;
+  readonly receivedAt: Date;
+}
+
+interface ReceivedLineState {
+  readonly lineId: string;
+  readonly skuCode: string;
+  readonly receivedQty: number;
+  readonly unit: string;
+}
+
+// Domain functions: return new state; no mutation
+function createGRN(id: string, purchaseOrderId: string, receivedBy: string): GoodsReceiptNoteState {
+  return Object.freeze({
+    id,
+    purchaseOrderId,
+    status: "OPEN" as const,
+    lines: [],
+    receivedBy,
+    receivedAt: new Date(),
+  }); // => Object.freeze: runtime enforcement of immutability
+}
+
+function addLine(grn: GoodsReceiptNoteState, line: ReceivedLineState): GoodsReceiptNoteState {
+  if (grn.status === "FULLY_RECEIVED") throw new Error("GRN is already fully received");
+  if (grn.lines.some((l) => l.lineId === line.lineId)) throw new Error(`Duplicate lineId: ${line.lineId}`);
+  return Object.freeze({
+    ...grn, // => spread: copy all fields
+    lines: Object.freeze([...grn.lines, line]), // => new frozen array with added line
+    status: "PARTIALLY_RECEIVED" as const, // => update status field
+  }); // => original grn is unchanged; new state returned
+}
+
+function closeGRN(grn: GoodsReceiptNoteState): GoodsReceiptNoteState {
+  if (grn.lines.length === 0) throw new Error("No lines recorded; cannot close");
+  return Object.freeze({ ...grn, status: "FULLY_RECEIVED" as const });
+  // => new state with updated status; original untouched
+}
+
+// Usage: immutable state pipeline
+let grn = createGRN("grn_001", "po_001", "warehouse-staff");
+console.log(grn.status); // => Output: OPEN
+
+grn = addLine(grn, { lineId: "L1", skuCode: "OFF-001234", receivedQty: 45, unit: "BOX" });
+console.log(grn.status); // => Output: PARTIALLY_RECEIVED
+console.log(grn.lines.length); // => Output: 1
+
+const closedGRN = closeGRN(grn);
+console.log(closedGRN.status); // => Output: FULLY_RECEIVED
+console.log(grn.status); // => Output: PARTIALLY_RECEIVED (original unchanged)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Constructor-injected domain interfaces make the application service free of infrastructure imports and 100% unit-testable with stubs.
@@ -3801,7 +4959,7 @@ public static class DependencyInversionDemo
 
 A `MurabahaContract` represents the bank acquiring an asset and reselling it to the buyer at a declared markup. It has its own sealed state machine independent of the `PurchaseOrder` lifecycle.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4142,6 +5300,77 @@ public static class MurabahaDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Immutable receiving aggregate in TypeScript: withXxx methods return new state
+// => Equivalent to C# 'with' expression for records
+
+interface ReceivedLine {
+  readonly lineId: string;
+  readonly skuCode: string;
+  readonly receivedQty: number;
+  readonly unit: string;
+}
+
+type GRNStatus = "OPEN" | "PARTIALLY_RECEIVED" | "FULLY_RECEIVED" | "OVER_RECEIVED";
+
+// Immutable GRN class: all mutations return new instances
+class GoodsReceiptNote {
+  // Private constructor: all construction through factory or withXxx methods
+  private constructor(
+    readonly id: string,
+    readonly purchaseOrderId: string,
+    readonly status: GRNStatus,
+    readonly lines: readonly ReceivedLine[],
+    readonly receivedBy: string,
+  ) {}
+
+  static create(id: string, purchaseOrderId: string, receivedBy: string): GoodsReceiptNote {
+    if (!id.startsWith("grn_")) throw new Error("id must start with grn_");
+    if (!purchaseOrderId.startsWith("po_")) throw new Error("purchaseOrderId must start with po_");
+    if (!receivedBy) throw new Error("receivedBy required");
+    return new GoodsReceiptNote(id, purchaseOrderId, "OPEN", [], receivedBy);
+  }
+
+  // withLine: returns new GRN with added line; original unchanged
+  withLine(line: ReceivedLine): GoodsReceiptNote {
+    if (this.status === "FULLY_RECEIVED") throw new Error("Cannot add lines to a fully received GRN");
+    if (this.lines.some((l) => l.lineId === line.lineId)) throw new Error(`Duplicate lineId: ${line.lineId}`);
+    return new GoodsReceiptNote(
+      this.id,
+      this.purchaseOrderId,
+      "PARTIALLY_RECEIVED", // => updated status
+      [...this.lines, line], // => new array with added line
+      this.receivedBy,
+    ); // => original GRN unchanged; new instance returned
+  }
+
+  // withStatus: returns new GRN with updated status
+  withStatus(status: GRNStatus): GoodsReceiptNote {
+    return new GoodsReceiptNote(this.id, this.purchaseOrderId, status, this.lines, this.receivedBy);
+  }
+
+  close(): GoodsReceiptNote {
+    if (this.lines.length === 0) throw new Error("No lines recorded");
+    return this.withStatus("FULLY_RECEIVED");
+  }
+}
+
+// Usage: immutable chain
+const original = GoodsReceiptNote.create("grn_001", "po_001", "staff-007");
+console.log(original.status); // => Output: OPEN
+
+const withLine1 = original.withLine({ lineId: "L1", skuCode: "OFF-001234", receivedQty: 45, unit: "BOX" });
+console.log(withLine1.status); // => Output: PARTIALLY_RECEIVED
+console.log(original.status); // => Output: OPEN (original unchanged)
+
+const closed = withLine1.close();
+console.log(closed.status); // => Output: FULLY_RECEIVED
+console.log(withLine1.status); // => Output: PARTIALLY_RECEIVED (withLine1 unchanged)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `MurabahaContract` owns its own sealed state machine; its lifecycle is completely independent of `PurchaseOrder` and integrates only through the shared `purchaseOrderId` reference.
@@ -4154,7 +5383,7 @@ public static class MurabahaDemo
 
 Kotlin's `data class` with `copy` enables immutable aggregate state — each transition returns a new instance instead of mutating in place. The tabs below show how the same pattern is expressed in Java (records + wither-style factory), Kotlin (the centerpiece), and C# (records with `with`).
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4408,6 +5637,104 @@ public static class ImmutableAggregateDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Three-way match domain service: receiving, invoicing, and purchasing contexts
+// => Domain service coordinates cross-aggregate match logic; doesn't belong to any aggregate
+
+// Cross-context types (each context exposes its own read model)
+interface POLine {
+  lineId: string;
+  skuCode: string;
+  orderedQty: number;
+  unitPrice: number;
+  currency: string;
+}
+interface GRNLine {
+  lineId: string;
+  skuCode: string;
+  receivedQty: number;
+}
+interface InvoiceLine {
+  lineId: string;
+  skuCode: string;
+  invoicedQty: number;
+  invoicedPrice: number;
+}
+
+interface ThreeWayMatchResult {
+  readonly matched: boolean;
+  readonly discrepancies: string[];
+}
+
+// Domain service: three-way match logic encapsulated here
+class ThreeWayMatchService {
+  match(
+    poLines: POLine[],
+    grnLines: GRNLine[],
+    invoiceLines: InvoiceLine[],
+    qtyTolerancePct: number = 5, // => 5% tolerance on quantity
+  ): ThreeWayMatchResult {
+    const discrepancies: string[] = [];
+
+    for (const poLine of poLines) {
+      const grn = grnLines.find((l) => l.skuCode === poLine.skuCode);
+      const invoice = invoiceLines.find((l) => l.skuCode === poLine.skuCode);
+
+      if (!grn) {
+        discrepancies.push(`GRN missing for SKU: ${poLine.skuCode}`);
+        continue;
+      }
+      if (!invoice) {
+        discrepancies.push(`Invoice missing for SKU: ${poLine.skuCode}`);
+        continue;
+      }
+
+      // Quantity tolerance check
+      const qtyDeltaPct = (Math.abs(grn.receivedQty - poLine.orderedQty) / poLine.orderedQty) * 100;
+      if (qtyDeltaPct > qtyTolerancePct) {
+        discrepancies.push(
+          `Quantity mismatch for ${poLine.skuCode}: ordered=${poLine.orderedQty}, received=${grn.receivedQty} (${qtyDeltaPct.toFixed(1)}% delta)`,
+        );
+      }
+
+      // Price check: invoiced price must match PO unit price
+      if (Math.abs(invoice.invoicedPrice - poLine.unitPrice) > 0.01) {
+        discrepancies.push(
+          `Price mismatch for ${poLine.skuCode}: PO=${poLine.unitPrice}, invoice=${invoice.invoicedPrice}`,
+        );
+      }
+    }
+
+    return { matched: discrepancies.length === 0, discrepancies };
+  }
+}
+
+// Usage
+const service = new ThreeWayMatchService();
+
+const poLines: POLine[] = [
+  { lineId: "L1", skuCode: "OFF-001234", orderedQty: 50, unitPrice: 20.0, currency: "USD" },
+  { lineId: "L2", skuCode: "TLS-9999", orderedQty: 10, unitPrice: 150.0, currency: "USD" },
+];
+const grnLines: GRNLine[] = [
+  { lineId: "L1", skuCode: "OFF-001234", receivedQty: 49 }, // => 2% under; within 5% tolerance
+  { lineId: "L2", skuCode: "TLS-9999", receivedQty: 10 },
+];
+const invoiceLines: InvoiceLine[] = [
+  { lineId: "L1", skuCode: "OFF-001234", invoicedQty: 49, invoicedPrice: 20.0 },
+  { lineId: "L2", skuCode: "TLS-9999", invoicedQty: 10, invoicedPrice: 155.0 }, // => price mismatch!
+];
+
+const result = service.match(poLines, grnLines, invoiceLines);
+console.log(result.matched); // => Output: false
+console.log(result.discrepancies.length); // => Output: 1
+console.log(result.discrepancies[0]);
+// => Output: Price mismatch for TLS-9999: PO=150, invoice=155
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Kotlin `data class` with `copy` delivers immutable aggregates — each state transition is a pure function returning a new instance, making event-sourcing and testing straightforward.
@@ -4420,7 +5747,7 @@ public static class ImmutableAggregateDemo
 
 C# positional records with `with` expressions mirror Kotlin's `copy` pattern, enabling immutable aggregate state transitions in the `receiving` context. All three languages express the same DDD principle — each state transition returns a new aggregate instance rather than mutating in place.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4687,6 +6014,102 @@ class Program
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Aggregate boundary decision: Invoice and GoodsReceiptNote as separate aggregates
+// => Each aggregate enforces its own invariants independently; match is a domain service concern
+
+// Invoice aggregate (invoicing context)
+class Invoice {
+  readonly id: string;
+  private _status: string = "PENDING_MATCH";
+  private _matchedGrnId: string | null = null;
+
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  get status(): string {
+    return this._status;
+  }
+  get matchedGrnId(): string | null {
+    return this._matchedGrnId;
+  }
+
+  // => Invoice enforces its own invariants: cannot double-match
+  markMatched(grnId: string): void {
+    if (this._status !== "PENDING_MATCH")
+      throw new Error(`Invoice ${this.id} is already ${this._status}; cannot match again`);
+    if (!grnId) throw new Error("grnId required for matching");
+    this._matchedGrnId = grnId;
+    this._status = "MATCHED";
+    // => Invoice boundary: only Invoice knows its own match rules
+  }
+}
+
+// GoodsReceiptNote aggregate (receiving context)
+class GoodsReceiptNote {
+  readonly id: string;
+  private _status: string = "OPEN";
+  private _matchedInvoiceId: string | null = null;
+
+  constructor(id: string) {
+    this.id = id;
+  }
+
+  get status(): string {
+    return this._status;
+  }
+  get matchedInvoiceId(): string | null {
+    return this._matchedInvoiceId;
+  }
+
+  // => GRN enforces its own invariants: cannot double-match
+  markMatched(invoiceId: string): void {
+    if (this._status === "MATCHED") throw new Error(`GRN ${this.id} is already matched; cannot match again`);
+    if (!invoiceId) throw new Error("invoiceId required for matching");
+    this._matchedInvoiceId = invoiceId;
+    this._status = "MATCHED";
+    // => GRN boundary: only GRN knows its own match rules
+  }
+}
+
+// Domain service: coordinates matching across both aggregates
+// => Neither aggregate reaches into the other; service updates both
+class InvoiceMatchingService {
+  match(invoice: Invoice, grn: GoodsReceiptNote): void {
+    // => Both must be in matchable state before we update either
+    if (invoice.status !== "PENDING_MATCH") throw new Error(`Invoice ${invoice.id} is not in PENDING_MATCH state`);
+    if (grn.status === "MATCHED") throw new Error(`GRN ${grn.id} is already matched`);
+
+    invoice.markMatched(grn.id); // => update invoice through its own boundary
+    grn.markMatched(invoice.id); // => update GRN through its own boundary
+    // => Both aggregates updated; service owns the coordination; neither owns the other
+  }
+}
+
+// Usage
+const invoice = new Invoice("inv_001");
+const grn = new GoodsReceiptNote("grn_001");
+const service = new InvoiceMatchingService();
+
+service.match(invoice, grn);
+console.log(invoice.status); // => Output: MATCHED
+console.log(invoice.matchedGrnId); // => Output: grn_001
+console.log(grn.status); // => Output: MATCHED
+console.log(grn.matchedInvoiceId); // => Output: inv_001
+
+// Guard: cannot match an already-matched invoice
+try {
+  service.match(invoice, new GoodsReceiptNote("grn_002"));
+} catch (e: unknown) {
+  console.log((e as Error).message);
+  // => Output: Invoice inv_001 is not in PENDING_MATCH state
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: C# positional records with `with` expressions achieve the same immutable aggregate pattern as Kotlin `data class` with `copy` and Java wither methods — the language primitives differ, the domain design principle is identical.
@@ -4699,7 +6122,7 @@ class Program
 
 Three-way matching is the core financial control in a P2P system: the invoice amount must match the GRN quantity times the PO unit price, within the declared tolerance. This domain service coordinates all three contexts via interfaces.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5085,6 +6508,74 @@ public static class ThreeWayMatchDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Temporal value object: ValidityPeriod for contract terms in TypeScript
+// => Encapsulates start/end date pair with domain-specific predicates
+
+class ValidityPeriod {
+  private constructor(
+    readonly startDate: Date,
+    readonly endDate: Date,
+  ) {}
+
+  static of(startDate: Date, endDate: Date): ValidityPeriod {
+    if (endDate <= startDate) throw new Error("endDate must be after startDate");
+    return new ValidityPeriod(
+      new Date(startDate), // => defensive copy; callers cannot mutate after construction
+      new Date(endDate),
+    );
+  }
+
+  // Domain predicates
+  isActiveOn(date: Date): boolean {
+    return date >= this.startDate && date <= this.endDate;
+    // => true if date falls within the validity window (inclusive)
+  }
+
+  hasExpired(asOf: Date): boolean {
+    return asOf > this.endDate;
+    // => true if the period has ended before asOf date
+  }
+
+  overlaps(other: ValidityPeriod): boolean {
+    return this.startDate < other.endDate && this.endDate > other.startDate;
+    // => true if intervals share any point; classic interval overlap formula
+  }
+
+  durationDays(): number {
+    const msPerDay = 1000 * 60 * 60 * 24;
+    return Math.round((this.endDate.getTime() - this.startDate.getTime()) / msPerDay);
+    // => number of days in the validity period (rounded to avoid DST artefacts)
+  }
+
+  toString(): string {
+    return `ValidityPeriod(${this.startDate.toISOString().slice(0, 10)} → ${this.endDate.toISOString().slice(0, 10)})`;
+  }
+}
+
+// Usage: contract validity period
+const contractPeriod = ValidityPeriod.of(new Date("2026-01-01"), new Date("2026-12-31"));
+
+console.log(contractPeriod.isActiveOn(new Date("2026-06-15"))); // => Output: true
+console.log(contractPeriod.isActiveOn(new Date("2025-12-31"))); // => Output: false
+console.log(contractPeriod.hasExpired(new Date("2027-01-01"))); // => Output: true
+console.log(contractPeriod.durationDays()); // => Output: 364
+
+// Overlap check: does renewal period overlap with current period?
+const renewalPeriod = ValidityPeriod.of(new Date("2026-10-01"), new Date("2027-09-30"));
+console.log(contractPeriod.overlaps(renewalPeriod)); // => Output: true (both cover Oct-Dec 2026)
+
+// Guard: end must be after start
+try {
+  ValidityPeriod.of(new Date("2026-12-31"), new Date("2026-01-01"));
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: endDate must be after startDate
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Three-way match is a cross-context domain service — it coordinates query ports from `purchasing`, `receiving`, and `invoicing` without owning any aggregate directly.
@@ -5097,7 +6588,7 @@ public static class ThreeWayMatchDemo
 
 A common design mistake is nesting `GoodsReceiptNote` inside `Invoice` or vice versa. This example illustrates why they are separate aggregates with cross-reference only by ID.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5365,6 +6856,105 @@ public static class AggregateBoundaryDemo
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Saga: coordinating PurchaseOrder issuance across purchasing and supplier contexts
+// => Saga manages distributed workflow; each step is compensatable
+
+type SagaStatus = "RUNNING" | "COMPLETED" | "COMPENSATING" | "FAILED";
+
+interface SagaEvent {
+  readonly type: string;
+  readonly payload: unknown;
+}
+
+// Saga state: immutable snapshot of saga progress
+interface IssuanceSagaState {
+  readonly sagaId: string;
+  readonly purchaseOrderId: string;
+  readonly supplierId: string;
+  readonly status: SagaStatus;
+  readonly completedSteps: string[];
+  readonly failureReason: string | null;
+}
+
+// Saga: coordinates PO issuance across contexts
+class PurchaseOrderIssuanceSaga {
+  private _state: IssuanceSagaState;
+
+  constructor(sagaId: string, purchaseOrderId: string, supplierId: string) {
+    this._state = {
+      sagaId,
+      purchaseOrderId,
+      supplierId,
+      status: "RUNNING",
+      completedSteps: [],
+      failureReason: null,
+    };
+  }
+
+  get state(): IssuanceSagaState {
+    return this._state;
+  }
+
+  // Step 1: verify supplier is approved
+  async verifySupplier(isApproved: boolean): Promise<void> {
+    if (!isApproved) {
+      this._state = { ...this._state, status: "FAILED", failureReason: "Supplier not approved" };
+      throw new Error("Saga failed: Supplier not approved");
+    }
+    this._state = { ...this._state, completedSteps: [...this._state.completedSteps, "supplier-verified"] };
+  }
+
+  // Step 2: issue the purchase order
+  async issuePurchaseOrder(issuedSuccessfully: boolean): Promise<void> {
+    if (this._state.status !== "RUNNING") throw new Error("Saga is not in RUNNING state");
+    if (!issuedSuccessfully) {
+      this._state = { ...this._state, status: "COMPENSATING", failureReason: "PO issuance failed" };
+      throw new Error("Saga compensating: PO issuance failed");
+    }
+    this._state = {
+      ...this._state,
+      completedSteps: [...this._state.completedSteps, "po-issued"],
+      status: "COMPLETED",
+    };
+  }
+
+  // Compensation: reverse completed steps on failure
+  async compensate(): Promise<void> {
+    console.log(`Compensating saga ${this._state.sagaId}: reversing steps ${this._state.completedSteps.join(", ")}`);
+    // => In production: each completed step has a compensation action (e.g. cancel PO)
+    this._state = { ...this._state, status: "FAILED" };
+  }
+}
+
+// Usage: happy path
+async function runHappyPath(): Promise<void> {
+  const saga = new PurchaseOrderIssuanceSaga("saga_001", "po_001", "sup_001");
+  await saga.verifySupplier(true); // => Step 1: supplier is approved
+  await saga.issuePurchaseOrder(true); // => Step 2: PO issued successfully
+  console.log(saga.state.status); // => Output: COMPLETED
+  console.log(saga.state.completedSteps); // => Output: ["supplier-verified", "po-issued"]
+}
+
+// Usage: failure + compensation
+async function runFailurePath(): Promise<void> {
+  const saga = new PurchaseOrderIssuanceSaga("saga_002", "po_002", "sup_002");
+  await saga.verifySupplier(true); // => Step 1 passes
+  try {
+    await saga.issuePurchaseOrder(false); // => Step 2 fails
+  } catch {
+    await saga.compensate(); // => compensate all completed steps
+  }
+  console.log(saga.state.status); // => Output: FAILED
+}
+
+runHappyPath();
+runFailurePath();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Aggregates in different bounded contexts never hold object references to each other — only typed ID strings cross boundaries, preventing accidental coupling between context lifecycles.
@@ -5379,7 +6969,7 @@ public static class AggregateBoundaryDemo
 
 Procurement contracts and Murabaha financing arrangements have explicit start and end dates. A `ValidityPeriod` value object encapsulates date-range logic — overlap detection, containment checks — and rejects invalid ranges at construction.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5639,6 +7229,126 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Event sourcing: replaying PurchaseRequisition history in TypeScript
+// => Aggregate state rebuilt by replaying ordered domain events
+
+type EventType =
+  | "RequisitionCreated"
+  | "LineAdded"
+  | "RequisitionSubmitted"
+  | "RequisitionApproved"
+  | "RequisitionRejected";
+
+interface DomainEvent {
+  readonly eventId: string;
+  readonly type: EventType;
+  readonly occurredAt: Date;
+  readonly payload: Record<string, unknown>;
+}
+
+// Event store: append-only log
+class EventStore {
+  private readonly _streams = new Map<string, DomainEvent[]>();
+
+  append(streamId: string, events: DomainEvent[]): void {
+    const existing = this._streams.get(streamId) ?? [];
+    this._streams.set(streamId, [...existing, ...events]);
+    // => append-only; no updates or deletes
+  }
+
+  loadStream(streamId: string): DomainEvent[] {
+    return this._streams.get(streamId) ?? [];
+  }
+}
+
+// Aggregate rebuilt from events (no ORM snapshot needed)
+class PurchaseRequisition {
+  id: string = "";
+  requesterId: string = "";
+  status: string = "DRAFT";
+  lines: Array<{ lineId: string; skuCode: string; quantity: number }> = [];
+  total: number = 0;
+
+  // Apply: advances state based on event type
+  apply(event: DomainEvent): void {
+    switch (event.type) {
+      case "RequisitionCreated":
+        this.id = event.payload.id as string;
+        this.requesterId = event.payload.requesterId as string;
+        this.status = "DRAFT";
+        break;
+      case "LineAdded":
+        this.lines.push({
+          lineId: event.payload.lineId as string,
+          skuCode: event.payload.skuCode as string,
+          quantity: event.payload.quantity as number,
+        });
+        this.total += event.payload.amount as number;
+        break;
+      case "RequisitionSubmitted":
+        this.status = "SUBMITTED";
+        break;
+      case "RequisitionApproved":
+        this.status = "APPROVED";
+        break;
+      case "RequisitionRejected":
+        this.status = "REJECTED";
+        break;
+    }
+  }
+
+  static reconstitute(events: DomainEvent[]): PurchaseRequisition {
+    const req = new PurchaseRequisition();
+    for (const event of events) {
+      req.apply(event);
+    }
+    return req; // => fully reconstituted from event history
+  }
+}
+
+// Usage
+const store = new EventStore();
+const streamId = "req_550e8400-e29b-41d4-a716-446655440000";
+
+store.append(streamId, [
+  {
+    eventId: "e1",
+    type: "RequisitionCreated",
+    occurredAt: new Date("2026-01-10"),
+    payload: { id: streamId, requesterId: "emp-42" },
+  },
+  {
+    eventId: "e2",
+    type: "LineAdded",
+    occurredAt: new Date("2026-01-10"),
+    payload: { lineId: "L1", skuCode: "OFF-001234", quantity: 500, amount: 250 },
+  },
+  {
+    eventId: "e3",
+    type: "LineAdded",
+    occurredAt: new Date("2026-01-10"),
+    payload: { lineId: "L2", skuCode: "PPR-8500", quantity: 10, amount: 250 },
+  },
+  { eventId: "e4", type: "RequisitionSubmitted", occurredAt: new Date("2026-01-11"), payload: {} },
+  {
+    eventId: "e5",
+    type: "RequisitionApproved",
+    occurredAt: new Date("2026-01-12"),
+    payload: { approvedBy: "manager-42" },
+  },
+]);
+
+const req = PurchaseRequisition.reconstitute(store.loadStream(streamId));
+console.log(req.id); // => Output: req_550e8400-e29b-41d4-a716-446655440000
+console.log(req.status); // => Output: APPROVED
+console.log(req.lines.length); // => Output: 2
+console.log(req.total); // => Output: 500
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Temporal value objects encapsulate date-range logic — overlap, containment, and validity — as named, tested predicates rather than scattered `if (date.before(end) && date.after(start))` expressions across the codebase.
@@ -5672,7 +7382,7 @@ graph LR
     classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5948,6 +7658,103 @@ Console.WriteLine(saga2.Outbox[1].GetType().Name);     // => Output: PurchaseOrd
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Anti-pattern: Anemic Domain Model in TypeScript procurement
+// => Business logic scattered across service classes; domain objects are data bags
+
+// ── ANTI-PATTERN: anemic domain objects ──────────────────────────────────────
+
+// Anemic: PurchaseOrder is just a data holder; all logic is in services
+class AnemicPurchaseOrder {
+  id: string = "";
+  supplierId: string = "";
+  status: string = "DRAFT";
+  totalAmount: number = 0;
+  lines: AnemicLine[] = [];
+  // => No domain methods; just public mutable fields
+}
+
+class AnemicLine {
+  lineId: string = "";
+  skuCode: string = "";
+  quantity: number = 0;
+  unitPrice: number = 0;
+}
+
+// Anemic: service does all the work; domain model provides no protection
+class POServiceAnemic {
+  submit(po: AnemicPurchaseOrder): void {
+    if (po.status !== "DRAFT")
+      // => business rule scattered here
+      throw new Error("Only DRAFT POs can be submitted");
+    if (po.lines.length === 0)
+      // => validation scattered here
+      throw new Error("PO must have at least one line");
+    po.status = "AWAITING_APPROVAL"; // => direct mutation from outside
+    po.totalAmount = po.lines.reduce((s, l) => s + l.quantity * l.unitPrice, 0);
+    // => total computed here, not in the domain object
+  }
+}
+
+// ── CORRECT PATTERN: rich domain model ───────────────────────────────────────
+
+class PurchaseOrderLine {
+  constructor(
+    readonly lineId: string,
+    readonly skuCode: string,
+    readonly quantity: number,
+    readonly unitPrice: number,
+  ) {}
+  lineTotal(): number {
+    return this.quantity * this.unitPrice;
+  }
+  // => domain behaviour lives here, not in a service
+}
+
+class PurchaseOrder {
+  private _status: string = "DRAFT";
+  private readonly _lines: PurchaseOrderLine[] = [];
+  constructor(
+    readonly id: string,
+    readonly supplierId: string,
+  ) {}
+
+  get status(): string {
+    return this._status;
+  }
+
+  addLine(line: PurchaseOrderLine): void {
+    if (this._status !== "DRAFT") throw new Error("Only in DRAFT"); // => guard in domain
+    this._lines.push(line);
+  }
+
+  estimatedTotal(): number {
+    return this._lines.reduce((s, l) => s + l.lineTotal(), 0); // => domain behaviour
+  }
+
+  submit(): void {
+    if (this._status !== "DRAFT") throw new Error("Only DRAFT POs can be submitted");
+    if (this._lines.length === 0) throw new Error("PO must have at least one line");
+    this._status = "AWAITING_APPROVAL"; // => status protected by method
+  }
+}
+
+// Compare
+const rich = new PurchaseOrder("po_001", "sup_001");
+rich.addLine(new PurchaseOrderLine("L1", "OFF-001234", 10, 25));
+rich.submit();
+console.log(rich.status); // => Output: AWAITING_APPROVAL
+console.log(rich.estimatedTotal()); // => Output: 250
+
+// Anemic: any caller can set status directly — no protection
+const anemic = new AnemicPurchaseOrder();
+anemic.status = "APPROVED"; // => ANTI-PATTERN: bypasses all business rules!
+console.log(anemic.status); // => Output: APPROVED (silently wrong)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: A saga models a long-running multi-context process as explicit state with compensating actions. Each step emits integration events; the saga reacts to replies and compensates on failure.
@@ -5960,7 +7767,7 @@ Console.WriteLine(saga2.Outbox[1].GetType().Name);     // => Output: PurchaseOrd
 
 In event sourcing, aggregate state is derived entirely from an ordered sequence of past events. There is no mutable database row; `apply` methods fold each event into state. The aggregate can be reconstituted at any point in time by replaying a subset of events.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6287,6 +8094,86 @@ Console.WriteLine(afterSubmit.Version);    // => Output: 2
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Anti-pattern: Leaky Abstraction and primitive obsession in TypeScript procurement
+// => Raw strings and numbers leak infrastructure concerns into domain
+
+// ── ANTI-PATTERN: primitive obsession ────────────────────────────────────────
+
+// Leaky: raw strings everywhere; compiler cannot detect wrong-argument-order bugs
+function processOrderAntiPattern(
+  orderId: string, // => could accidentally pass supplierId here
+  supplierId: string,
+  amount: number, // => no currency; no validation
+  currency: string, // => could pass "INVALID" — not caught until much later
+): void {
+  // => Deep in business logic, wrong argument silently produces corrupt data
+  console.log(`Processing ${orderId} for ${supplierId}: ${amount} ${currency}`);
+}
+
+// Accidentally swapped arguments — compiler cannot help
+processOrderAntiPattern("sup_001", "po_001", -500, "INVALID");
+// => Output: Processing sup_001 for po_001: -500 INVALID (wrong! but no error)
+
+// ── CORRECT PATTERN: typed value objects ──────────────────────────────────────
+
+class PurchaseOrderId {
+  private readonly _brand = "PurchaseOrderId" as const;
+  private constructor(readonly value: string) {}
+  static of(v: string): PurchaseOrderId {
+    if (!v.startsWith("po_")) throw new Error("PurchaseOrderId must start with po_");
+    return new PurchaseOrderId(v);
+  }
+}
+
+class SupplierId {
+  private readonly _brand = "SupplierId" as const;
+  private constructor(readonly value: string) {}
+  static of(v: string): SupplierId {
+    if (!v.startsWith("sup_")) throw new Error("SupplierId must start with sup_");
+    return new SupplierId(v);
+  }
+}
+
+class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+  static of(amount: number, currency: string): Money {
+    if (amount < 0) throw new Error("amount must be >= 0");
+    if (currency.length !== 3) throw new Error("currency must be 3-letter ISO code");
+    return new Money(amount, currency.toUpperCase());
+  }
+  toString(): string {
+    return `${this.amount} ${this.currency}`;
+  }
+}
+
+function processOrder(orderId: PurchaseOrderId, supplierId: SupplierId, amount: Money): void {
+  console.log(`Processing ${orderId.value} for ${supplierId.value}: ${amount}`);
+}
+
+// Correct usage — typed arguments prevent accidental swaps
+const poId = PurchaseOrderId.of("po_550e8400-0001");
+const supId = SupplierId.of("sup_660f9511-0001");
+const money = Money.of(5000, "USD");
+processOrder(poId, supId, money); // => Output: Processing po_550e8400-0001 for sup_660f9511-0001: 5000 USD
+
+// Swapped arguments: TypeScript compiler error (type brands prevent it)
+// processOrder(supId, poId, money); // => COMPILE ERROR: SupplierId is not assignable to PurchaseOrderId
+
+// Invalid money: caught at construction
+try {
+  Money.of(-500, "INVALID");
+} catch (e: unknown) {
+  console.log((e as Error).message); // => Output: amount must be >= 0
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Event-sourced aggregates have no mutable state column — `apply` methods are pure folds that derive current state from ordered event history. Point-in-time replay is free.
@@ -6299,7 +8186,7 @@ Console.WriteLine(afterSubmit.Version);    // => Output: 2
 
 The Anemic Domain Model places all business logic in services, leaving aggregates as plain data bags. This is one of the most prevalent DDD anti-patterns and the primary failure mode of Java EE / Spring layered architectures.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6622,6 +8509,110 @@ catch (InvalidOperationException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Static factory with Result type: Invoice.register returns success or error
+// => TypeScript discriminated union as Result<T, E> pattern
+
+// Result type: discriminated union
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+
+function Ok<T>(value: T): Result<T, never> {
+  return { ok: true, value };
+}
+function Err<E>(error: E): Result<never, E> {
+  return { ok: false, error };
+}
+
+// Registration error types
+type InvoiceRegistrationError =
+  | { readonly kind: "InvalidAmount"; readonly message: string }
+  | { readonly kind: "DuplicateInvoice"; readonly invoiceId: string }
+  | { readonly kind: "SupplierNotFound"; readonly supplierId: string };
+
+class InvoiceId {
+  private constructor(readonly value: string) {}
+  static of(v: string): InvoiceId {
+    if (!v.startsWith("inv_")) throw new Error("InvoiceId must start with inv_");
+    return new InvoiceId(v);
+  }
+}
+
+interface Money {
+  amount: number;
+  currency: string;
+}
+
+class Invoice {
+  private constructor(
+    readonly id: InvoiceId,
+    readonly supplierId: string,
+    readonly amount: Money,
+  ) {}
+
+  // Static factory with Result: caller handles errors explicitly; no exceptions for business rules
+  static register(
+    id: InvoiceId,
+    supplierId: string,
+    amount: Money,
+    existingInvoiceIds: Set<string>,
+    knownSupplierIds: Set<string>,
+  ): Result<Invoice, InvoiceRegistrationError> {
+    if (amount.amount <= 0) return Err({ kind: "InvalidAmount", message: `amount must be > 0, got: ${amount.amount}` });
+
+    if (existingInvoiceIds.has(id.value)) return Err({ kind: "DuplicateInvoice", invoiceId: id.value });
+    // => duplicate check: invoice already registered; return error, not exception
+
+    if (!knownSupplierIds.has(supplierId)) return Err({ kind: "SupplierNotFound", supplierId });
+    // => supplier existence check: fail explicitly
+
+    return Ok(new Invoice(id, supplierId, amount)); // => all checks passed; return invoice
+  }
+}
+
+// Usage
+const existingIds = new Set(["inv_001"]);
+const knownSuppliers = new Set(["sup_001"]);
+
+// Success case
+const result1 = Invoice.register(
+  InvoiceId.of("inv_002"),
+  "sup_001",
+  { amount: 5000, currency: "USD" },
+  existingIds,
+  knownSuppliers,
+);
+if (result1.ok) {
+  console.log(`Registered: ${result1.value.id.value}`); // => Output: Registered: inv_002
+}
+
+// Duplicate invoice
+const result2 = Invoice.register(
+  InvoiceId.of("inv_001"),
+  "sup_001",
+  { amount: 3000, currency: "USD" },
+  existingIds,
+  knownSuppliers,
+);
+if (!result2.ok && result2.error.kind === "DuplicateInvoice") {
+  console.log(`Duplicate: ${result2.error.invoiceId}`); // => Output: Duplicate: inv_001
+}
+
+// Supplier not found
+const result3 = Invoice.register(
+  InvoiceId.of("inv_003"),
+  "sup_unknown",
+  { amount: 1000, currency: "USD" },
+  existingIds,
+  knownSuppliers,
+);
+if (!result3.ok && result3.error.kind === "SupplierNotFound") {
+  console.log(`Supplier not found: ${result3.error.supplierId}`); // => Output: Supplier not found: sup_unknown
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Anemic Domain Model externalises all business logic into services, leaving aggregates as data bags. The Rich Domain Model encodes logic and invariants on the aggregate — invalid states become unrepresentable.
@@ -6634,7 +8625,7 @@ catch (InvalidOperationException e)
 
 Primitive obsession uses raw `String` and `int` where domain types should be used. It causes leaky abstractions — callers must know the format of the string, enabling subtle bugs that types would prevent at compile time.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6918,6 +8909,106 @@ catch (ArgumentException e)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Factory with external dependencies: GoodsReceiptNote using repository check
+// => Application-layer factory validates PO existence before creating GRN
+
+class GoodsReceiptNoteId {
+  private constructor(readonly value: string) {}
+  static of(v: string): GoodsReceiptNoteId {
+    if (!v.startsWith("grn_")) throw new Error("id must start with grn_");
+    return new GoodsReceiptNoteId(v);
+  }
+}
+
+class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static of(v: string): PurchaseOrderId {
+    if (!v.startsWith("po_")) throw new Error("id must start with po_");
+    return new PurchaseOrderId(v);
+  }
+}
+
+// Domain aggregate
+class GoodsReceiptNote {
+  readonly id: GoodsReceiptNoteId;
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly receivedBy: string;
+  readonly status = "OPEN" as const;
+
+  private constructor(id: GoodsReceiptNoteId, poId: PurchaseOrderId, receivedBy: string) {
+    this.id = id;
+    this.purchaseOrderId = poId;
+    this.receivedBy = receivedBy;
+  }
+
+  // Domain-only constructor validation (no external checks here)
+  static createFromValidatedInput(
+    id: GoodsReceiptNoteId,
+    purchaseOrderId: PurchaseOrderId,
+    receivedBy: string,
+  ): GoodsReceiptNote {
+    if (!receivedBy) throw new Error("receivedBy required");
+    return new GoodsReceiptNote(id, purchaseOrderId, receivedBy);
+  }
+}
+
+// Repository port for PO existence check
+interface PurchaseOrderExistsPort {
+  existsAndIsIssued(id: PurchaseOrderId): Promise<boolean>;
+}
+
+// Application-layer factory: coordinates domain + external validation
+class GoodsReceiptNoteApplicationFactory {
+  constructor(private readonly poCheck: PurchaseOrderExistsPort) {}
+
+  async create(
+    id: GoodsReceiptNoteId,
+    purchaseOrderId: PurchaseOrderId,
+    receivedBy: string,
+  ): Promise<GoodsReceiptNote> {
+    const exists = await this.poCheck.existsAndIsIssued(purchaseOrderId);
+    if (!exists) {
+      throw new Error(`PurchaseOrder ${purchaseOrderId.value} not found or not in ISSUED state`); // => external validation: PO must be ISSUED before GRN can be created
+    }
+    return GoodsReceiptNote.createFromValidatedInput(id, purchaseOrderId, receivedBy);
+    // => domain factory runs after external check; invariants guaranteed
+  }
+}
+
+// Usage
+async function demo(): Promise<void> {
+  const issuedPOs = new Set(["po_550e8400-0001"]);
+
+  const poCheck: PurchaseOrderExistsPort = {
+    existsAndIsIssued: async (id) => issuedPOs.has(id.value),
+  };
+
+  const factory = new GoodsReceiptNoteApplicationFactory(poCheck);
+
+  // Valid: PO exists and is ISSUED
+  const grn = await factory.create(
+    GoodsReceiptNoteId.of("grn_001"),
+    PurchaseOrderId.of("po_550e8400-0001"),
+    "warehouse-staff-007",
+  );
+  console.log(grn.status); // => Output: OPEN
+  console.log(grn.purchaseOrderId.value); // => Output: po_550e8400-0001
+
+  // Invalid: PO not in ISSUED state
+  try {
+    await factory.create(GoodsReceiptNoteId.of("grn_002"), PurchaseOrderId.of("po_unknown"), "staff-008");
+  } catch (e: unknown) {
+    console.log((e as Error).message);
+    // => Output: PurchaseOrder po_unknown not found or not in ISSUED state
+  }
+}
+demo();
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Primitive obsession uses `String` and `double` where domain types should be used. Strong types — `PurchaseOrderId`, `SupplierId`, `Money` — make argument-swap bugs compile errors and enforce format invariants at construction.
@@ -6947,7 +9038,7 @@ graph LR
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -7187,6 +9278,93 @@ Console.WriteLine(dto.SupplierId);    // => Output: sup_abc
 var suspended = ohs.FindSupplier(new SupplierId("sup_xyz"), suppliers);
 Console.WriteLine(suspended.IsApproved); // => Output: False
 // => BankAccount not in DTO — payment details protected from OHS consumers
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```typescript
+// Open Host Service: publishing a supplier-facing API in TypeScript
+// => OHS exposes a stable versioned API; internal model changes don't break consumers
+
+// Internal supplier domain model
+interface InternalSupplier {
+  readonly id: string;
+  readonly name: string;
+  readonly status: string;
+  readonly registrationDate: Date;
+  readonly paymentTermsDays: number;
+  readonly bankAccount: { accountNumber: string; bankCode: string; currency: string } | null;
+  readonly contacts: Array<{ name: string; email: string; role: string }>;
+}
+
+// Open Host Service: published language (stable, versioned contract)
+interface SupplierProfileV2 {
+  // => V2: added contacts in this version
+  readonly supplierId: string;
+  readonly supplierName: string; // => "name" → "supplierName" for clarity
+  readonly isActive: boolean; // => boolean instead of status string
+  readonly onboardedDate: string; // => ISO date string; no Date across API boundary
+  readonly paymentTerms: string; // => "NET_30", "NET_60" etc. (human-readable)
+  readonly bankDetails: { iban: string; swiftBic: string; currency: string } | null;
+  readonly primaryContact: { name: string; email: string } | null;
+}
+
+class SupplierOpenHostServiceV2 {
+  toPublishedView(supplier: InternalSupplier): SupplierProfileV2 {
+    return {
+      supplierId: supplier.id,
+      supplierName: supplier.name, // => "name" renamed to "supplierName" in published API
+      isActive: supplier.status === "APPROVED",
+      // => translate internal status string to stable boolean
+      onboardedDate: supplier.registrationDate.toISOString().slice(0, 10),
+      // => Date object → ISO string for stable serialization
+      paymentTerms: this.formatPaymentTerms(supplier.paymentTermsDays),
+      bankDetails: supplier.bankAccount
+        ? {
+            iban: supplier.bankAccount.accountNumber, // => map internal name to published name
+            swiftBic: supplier.bankAccount.bankCode,
+            currency: supplier.bankAccount.currency,
+          }
+        : null,
+      primaryContact: supplier.contacts.find((c) => c.role === "PRIMARY")
+        ? {
+            name: supplier.contacts.find((c) => c.role === "PRIMARY")!.name,
+            email: supplier.contacts.find((c) => c.role === "PRIMARY")!.email,
+          }
+        : null,
+    };
+  }
+
+  private formatPaymentTerms(days: number): string {
+    const map: Record<number, string> = { 0: "IMMEDIATE", 30: "NET_30", 60: "NET_60", 90: "NET_90" };
+    return map[days] ?? `NET_${days}`; // => fallback for non-standard terms
+  }
+}
+
+// Usage
+const internalSupplier: InternalSupplier = {
+  id: "sup_660f9511-0001",
+  name: "Acme Office Supplies",
+  status: "APPROVED",
+  registrationDate: new Date("2025-06-01"),
+  paymentTermsDays: 30,
+  bankAccount: { accountNumber: "GB29NWBK60161331926819", bankCode: "NWBKGB2L", currency: "GBP" },
+  contacts: [
+    { name: "Alice Smith", email: "alice@acme.example", role: "PRIMARY" },
+    { name: "Bob Jones", email: "bob@acme.example", role: "BILLING" },
+  ],
+};
+
+const ohs = new SupplierOpenHostServiceV2();
+const profile = ohs.toPublishedView(internalSupplier);
+
+console.log(profile.supplierId); // => Output: sup_660f9511-0001
+console.log(profile.supplierName); // => Output: Acme Office Supplies
+console.log(profile.isActive); // => Output: true
+console.log(profile.paymentTerms); // => Output: NET_30
+console.log(profile.bankDetails?.iban); // => Output: GB29NWBK60161331926819
+console.log(profile.primaryContact?.name); // => Output: Alice Smith
 ```
 
 {{< /tab >}}

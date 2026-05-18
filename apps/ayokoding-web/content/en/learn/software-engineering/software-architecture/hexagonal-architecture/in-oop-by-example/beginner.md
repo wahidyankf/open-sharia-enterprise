@@ -44,7 +44,7 @@ graph TD
     classDef orange fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -134,6 +134,37 @@ public sealed record PurchaseOrder(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Zone 1: Domain — zero framework imports allowed
+// => Module: src/purchasing/domain/
+// => Only TypeScript built-ins permitted; no NestJS, TypeORM, or Express
+
+// PurchaseOrder: plain TypeScript class — no @Entity, no @JsonProperty, no NestJS decorators
+// => compiles and runs without any framework on the module path
+export class PurchaseOrder {
+  // => readonly: TypeScript equivalent of immutability; fields set at construction only
+  constructor(
+    readonly id: PurchaseOrderId, // => strongly-typed identity value object (format: po_<uuid>)
+    readonly supplierId: SupplierId, // => distinct type; compiler prevents accidental swaps
+    readonly total: Money, // => Money carries both amount and ISO 4217 currency
+    readonly status: POStatus, // => enum; exhaustive switch enforced by TypeScript
+  ) {}
+}
+// => immutable by convention: all fields are readonly; spread-copy to derive new state
+
+// Zone 2: Application — imports domain only
+// => Module: src/purchasing/application/
+// => May import from domain/; must not import from adapter/ paths
+
+// Zone 3: Adapter — imports application and framework
+// => Module: src/purchasing/adapter/in/web/
+// => May import @nestjs/*, application/*
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain knows nothing, application knows domain, adapters know application and frameworks.
@@ -148,7 +179,7 @@ A domain entity contains only business state and behaviour. Framework annotation
 
 **Anti-pattern — framework annotation in the domain**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -203,11 +234,31 @@ public record PurchaseOrder(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// WRONG: @Column and class-transformer decorators leak infrastructure into the domain
+// => domain class now requires TypeORM at test time; cannot run without TypeORM
+import { Column, Entity, PrimaryColumn } from "typeorm"; // => infrastructure import in domain zone
+import { Expose } from "class-transformer"; // => serialisation concern in business class
+
+@Entity("purchase_orders") // => couples PurchaseOrder to TypeORM; forces DB in all domain tests
+export class PurchaseOrder {
+  @Expose({ name: "supplier_id" }) // => JSON naming belongs in an adapter DTO
+  @Column()
+  supplierId: string; // => raw string; typed safety lost
+}
+// Problem: every unit test must bootstrap a TypeORM DataSource and class-transformer
+// => coupling cost: framework deps forced into all domain tests
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Correct — clean domain record**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -288,6 +339,43 @@ public sealed record PurchaseOrder( // => sealed record: immutable; Equals/GetHa
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// PurchaseOrder: zero framework imports; compiles with only TypeScript
+// => No @Entity, no @Column, no @Injectable, no NestJS, no TypeORM
+// src/purchasing/domain/purchase-order.ts
+
+import { PurchaseOrderId } from "./purchase-order-id";
+import { SupplierId } from "./supplier-id";
+import { Money } from "./money";
+import { POStatus } from "./po-status";
+
+export class PurchaseOrder {
+  // => readonly fields: TypeScript enforces immutability at compile time
+  constructor(
+    readonly id: PurchaseOrderId, // => domain value object, not raw string
+    readonly supplierId: SupplierId, // => distinct type; prevents id-kind confusion
+    readonly total: Money, // => Money(amount, currency); richer than number alone
+    readonly status: POStatus, // => enum; exhaustive switch enforced by compiler
+  ) {}
+
+  // Domain behaviour: pure function, no I/O, no framework calls
+  submit(): PurchaseOrder {
+    // => returns new PurchaseOrder; this unchanged
+    if (this.status !== POStatus.DRAFT) {
+      // => guard: only DRAFT can be submitted
+      throw new Error("Can only submit a DRAFT PO"); // => domain rule
+    }
+    return new PurchaseOrder(this.id, this.supplierId, this.total, POStatus.AWAITING_APPROVAL);
+    // => state transition: DRAFT → AWAITING_APPROVAL
+  }
+}
+// Test: new PurchaseOrder(id, sup, money, POStatus.DRAFT) — no framework; sub-millisecond
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain records carry only business state and rules. Zero framework annotations means zero framework test dependencies.
@@ -300,7 +388,7 @@ public sealed record PurchaseOrder( // => sealed record: immutable; Equals/GetHa
 
 Value objects encapsulate a primitive value plus its invariants. They make illegal states unrepresentable at the type level and prevent the billion-dollar mistake of mixing up raw strings.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -478,6 +566,28 @@ public readonly record struct Money(decimal Amount, string CurrencyCode)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// TypeScript equivalent
+// => src/purchasing/
+// Domain value objects: PurchaseOrderId and Money
+// => package com.example.procurement.purchasing.domain
+// PurchaseOrderId: wraps a String but enforces the "po_<uuid>" format invariant
+// => record: compiler generates equals, hashCode, toString automatically
+// => value(): generated accessor — no need to hand-write getter
+// Compact canonical constructor: runs validation before the implicit record constructor
+// => compact form omits parameter list; implicit this.value = value assignment still runs
+// => null guard: fails fast at construction; no null PurchaseOrderId can exist
+// => format invariant: "po_" prefix + 36-char UUID = minimum 39 chars
+// => construction fails: caller sees the invalid value in the error message
+// => TypeScript implementation follows same hexagonal pattern
+// => ports: TypeScript interfaces; adapters: classes implementing interfaces
+// => composition root: NestJS @Module or manual bootstrap function
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Value objects enforce invariants at construction, making invalid states impossible to represent downstream.
@@ -492,7 +602,7 @@ The dependency rule is the single most important invariant in hexagonal architec
 
 **Legal imports (inward dependencies only)**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -540,11 +650,29 @@ using Procurement.Purchasing.Application; // => ok: inward; adapter knows about 
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Application zone: may import domain types — inward dependency is always legal
+// => Module: src/purchasing/application/
+import type { PurchaseOrder } from "../domain/purchase-order"; // => ok: inward dependency
+import type { PurchaseOrderId } from "../domain/purchase-order-id"; // => ok: inward direction
+import type { Money } from "../domain/money"; // => ok: domain value object
+// => TypeScript: import type avoids runtime coupling; still enforces structural typing
+
+// Adapter zone: may import application types — one step further outward
+// => Module: src/purchasing/adapter/in/web/
+import type { IssuePurchaseOrderUseCase } from "../../application/issue-purchase-order.usecase";
+// => ok: inward; adapter knows about use-case interfaces
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Illegal imports (outward dependencies — architecture violations)**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -592,11 +720,28 @@ using Procurement.Purchasing.Application; // => ok: inward; adapter knows about 
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Domain zone importing Application: FORBIDDEN
+// => Module: src/purchasing/domain/
+// import { IssuePurchaseOrderService } from '../application/issue-purchase-order.service'; // => NEVER
+// => domain would depend on orchestration; creates circular import in TypeScript module graph
+
+// Application zone importing Adapter: FORBIDDEN
+// => Module: src/purchasing/application/
+// import { PurchaseOrderController } from '../adapter/in/web/purchase-order.controller'; // => NEVER
+// => application logic coupled to NestJS; cannot test without HTTP context
+// => TypeScript module resolution would allow it — only import discipline prevents it
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **ArchUnit test enforcing the dependency rule in CI**:
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -741,6 +886,65 @@ public class HexagonDependencyTests
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// dependency-cruiser: dependency rule as config — enforced in CI
+// => Install: npm install --save-dev dependency-cruiser
+// => Config: .dependency-cruiser.json at project root
+
+// .dependency-cruiser.json (excerpt):
+// {
+//   "forbidden": [
+//     {
+//       "name": "domain-must-not-depend-on-application",
+//       "from": { "path": "src/purchasing/domain" },
+//       "to": { "path": "src/purchasing/application" }
+//     },
+//     {
+//       "name": "domain-must-not-depend-on-adapters",
+//       "from": { "path": "src/purchasing/domain" },
+//       "to": { "path": "src/purchasing/adapter" }
+//     },
+//     {
+//       "name": "application-must-not-depend-on-adapters",
+//       "from": { "path": "src/purchasing/application" },
+//       "to": { "path": "src/purchasing/adapter" }
+//     }
+//   ]
+// }
+
+// Jest test wrapping dependency-cruiser (runs in < 500ms)
+import { cruise } from "dependency-cruiser";
+
+describe("HexagonDependencyRules", () => {
+  const result = cruise(["src/purchasing"], {
+    /* config from .dependency-cruiser.json */
+  });
+  // => cruise: statically analyses all import/require statements in the source tree
+
+  it("domain must not depend on application", () => {
+    const violations = result.output.summary.violations.filter(
+      (v) => v.rule.name === "domain-must-not-depend-on-application",
+    );
+    // => violations: array of files that break the rule; should be empty
+    expect(violations).toHaveLength(0);
+    // => fails: any domain file that imports from application/ → test red in CI
+  });
+
+  it("application must not depend on adapters", () => {
+    const violations = result.output.summary.violations.filter(
+      (v) => v.rule.name === "application-must-not-depend-on-adapters",
+    );
+    expect(violations).toHaveLength(0);
+    // => fails: application service imports NestJS controller → caught immediately
+  });
+});
+// => all dependency-cruiser checks run as Jest unit tests; sub-second; zero infrastructure
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Dependencies always point inward — domain ← application ← adapters. The reverse direction is always an architectural violation.
@@ -755,7 +959,7 @@ public class HexagonDependencyTests
 
 An output port is a Java interface placed in the `domain.application` package. It expresses what the application needs from the outside world (e.g., persistence) using domain language. The interface has no knowledge of databases, SQL, or frameworks — it speaks only in domain types.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -859,6 +1063,39 @@ public interface IPurchaseOrderRepository
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Output port: lives in application module; speaks domain language only
+// src/purchasing/application/purchase-order-repository.port.ts
+
+import type { PurchaseOrder } from "../domain/purchase-order";
+import type { PurchaseOrderId } from "../domain/purchase-order-id";
+
+// PurchaseOrderRepository: output port for PO persistence
+// => TypeScript interface: no implementation here; adapters supply the "how"
+// => Adapters implement this; domain/application code only calls this
+export interface PurchaseOrderRepository {
+  // save: persist a PurchaseOrder; return the saved instance (may have generated id)
+  // => takes domain type; returns domain type; no ORM types visible
+  save(purchaseOrder: PurchaseOrder): Promise<PurchaseOrder>;
+  // => caller: await repository.save(po) — does not know if storage is Postgres or in-memory
+
+  // findById: retrieve a PurchaseOrder by its typed identity
+  // => Promise<PurchaseOrder | null>: null signals absence without throwing
+  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  // => returns null when PO does not exist — caller handles absence explicitly
+
+  // existsById: lightweight existence check without loading the full aggregate
+  // => useful for duplicate-check guard before saving a new PO
+  existsById(id: PurchaseOrderId): Promise<boolean>;
+  // => returns true if PO with given id is present; false otherwise
+}
+// => Application service imports only this interface; zero coupling to TypeORM/Prisma
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Output ports are interfaces in the application package that speak only in domain types — no SQL, no JPA/EF Core, no HTTP.
@@ -871,7 +1108,7 @@ public interface IPurchaseOrderRepository
 
 Time is an implicit dependency. Code that calls `LocalDateTime.now()` directly is non-deterministic and cannot be tested without mocking the JVM clock. Wrapping time behind a `Clock` output port makes the dependency explicit and swappable.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -990,6 +1227,41 @@ public sealed class IssuePurchaseOrderService
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Clock output port: time as an explicit dependency
+// src/purchasing/application/clock.port.ts
+
+// Clock: output port; returns current time as a domain-neutral Date
+// => Adapter in production: returns new Date() from system clock
+// => Adapter in tests: returns a fixed Date — deterministic, no setTimeout needed
+export interface Clock {
+  // now: returns the current point in time
+  // => caller never uses new Date() directly; always goes through this port
+  now(): Date;
+  // => test adapter: { now: () => new Date('2026-01-01T00:00:00Z') } — always same value
+}
+
+// Usage inside an application service:
+// => clock.now() instead of new Date() — the port is injected by the composition root
+// src/purchasing/application/issue-purchase-order.service.ts
+export class IssuePurchaseOrderService {
+  constructor(
+    private readonly repository: PurchaseOrderRepository,
+    private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
+  ) {}
+
+  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+    const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
+    // => issuedAt: the timestamp will be embedded in the issued PO or an event
+    return po.issue(issuedAt); // => delegates state transition to domain method
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Wrapping the system clock behind a `Clock` port makes time an explicit, swappable dependency — test adapters return fixed timestamps.
@@ -1002,7 +1274,7 @@ public sealed class IssuePurchaseOrderService
 
 An in-memory adapter implements the output port using a `HashMap`. It has no external dependencies, starts instantly, and is the default adapter for unit and integration tests. It is a first-class production artifact — not a test utility — that lives in an `adapter.out.persistence` package.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1141,6 +1413,46 @@ public sealed class InMemoryPurchaseOrderRepository : IPurchaseOrderRepository
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// In-memory adapter: implements PurchaseOrderRepository with a Map
+// src/purchasing/adapter/out/persistence/in-memory-purchase-order.repository.ts
+
+import type { PurchaseOrderRepository } from "../../../application/purchase-order-repository.port";
+import type { PurchaseOrder } from "../../../domain/purchase-order";
+import type { PurchaseOrderId } from "../../../domain/purchase-order-id";
+
+// InMemoryPurchaseOrderRepository: adapter implementing the output port
+// => No TypeORM, no Postgres; Map<string, PurchaseOrder> is the store
+// => Thread-safety not a concern in Node.js single-threaded event loop
+export class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository {
+  private readonly store = new Map<string, PurchaseOrder>();
+  // => store: Map keyed by PurchaseOrderId.value string — in-memory backing store
+
+  async save(po: PurchaseOrder): Promise<PurchaseOrder> {
+    this.store.set(po.id.value, po); // => key = raw string from typed PurchaseOrderId
+    // => overwrites existing entry if id already present; consistent with repository contract
+    return po; // => return the same instance; consistent with repository contract
+  }
+
+  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+    return this.store.get(id.value) ?? null;
+    // => ?? null: nullish coalescing; undefined becomes null; caller handles absence
+  }
+
+  async existsById(id: PurchaseOrderId): Promise<boolean> {
+    return this.store.has(id.value); // => O(1) lookup; returns true/false
+  }
+}
+// Usage in test:
+// const repo = new InMemoryPurchaseOrderRepository();
+// const service = new IssuePurchaseOrderService(repo, { now: () => new Date('2026-01-01') });
+// => wired in 2 lines; no NestJS context; starts in < 1ms
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The in-memory adapter implements the port with a `HashMap` — no framework, no database, instantiates in microseconds.
@@ -1153,7 +1465,7 @@ public sealed class InMemoryPurchaseOrderRepository : IPurchaseOrderRepository
 
 The JPA adapter implements `PurchaseOrderRepository` using Spring Data JPA. It lives in the adapter layer and contains all JPA-specific code: `@Entity`, `@Repository`, ORM mapping. The domain record remains annotation-free — the adapter maps between the domain record and a JPA entity class.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1444,6 +1756,93 @@ public sealed class EfCorePurchaseOrderRepository(PurchasingDbContext db)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// TypeORM adapter: persistence adapter implementing the output port
+// src/purchasing/adapter/out/persistence/typeorm-purchase-order.repository.ts
+
+import { Repository, DataSource } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
+import type { PurchaseOrderRepository } from "../../../application/purchase-order-repository.port";
+import type { PurchaseOrder as DomainPO } from "../../../domain/purchase-order";
+import { PurchaseOrderId } from "../../../domain/purchase-order-id";
+import { SupplierId } from "../../../domain/supplier-id";
+import { Money } from "../../../domain/money";
+import { POStatus } from "../../../domain/po-status";
+
+// TypeORM entity: lives in adapter layer; domain class stays decorator-free
+// => @Entity and @Column are adapter concerns; domain PurchaseOrder has no TypeORM decorators
+@Entity("purchase_orders")
+class PurchaseOrderEntity {
+  @PrimaryColumn()
+  id!: string; // => @PrimaryColumn: TypeORM primary key; raw string ok in adapter layer
+  @Column()
+  supplierId!: string; // => raw string; reconstructed to typed SupplierId on load
+  @Column("decimal", { precision: 19, scale: 4 })
+  totalAmount!: number; // => stored as DECIMAL; currency stored in separate column
+  @Column()
+  totalCurrency!: string; // => ISO 4217 code e.g. "USD"; combined with totalAmount into Money
+  @Column()
+  status!: string; // => enum name e.g. "AWAITING_APPROVAL"; string in DB for readability
+  // => no domain decorators leak to the domain PurchaseOrder class — boundary preserved
+}
+
+// TypeOrmPurchaseOrderRepository: the actual output port implementation used in production
+// => implements PurchaseOrderRepository (domain-facing interface) using TypeORM internally
+// => application service depends on PurchaseOrderRepository; never sees this class
+export class TypeOrmPurchaseOrderRepository implements PurchaseOrderRepository {
+  private readonly repo: Repository<PurchaseOrderEntity>;
+  constructor(dataSource: DataSource) {
+    this.repo = dataSource.getRepository(PurchaseOrderEntity);
+    // => dataSource: injected by composition root (NestJS module or manual wiring)
+  }
+
+  async save(po: DomainPO): Promise<DomainPO> {
+    await this.repo.save(this.toEntity(po)); // => toEntity(): domain → TypeORM entity mapping
+    // => TypeORM issues INSERT or UPDATE; entity never leaks past this method
+    return po; // => return original domain object; caller sees domain type only
+  }
+
+  async findById(id: PurchaseOrderId): Promise<DomainPO | null> {
+    const entity = await this.repo.findOneBy({ id: id.value });
+    // => id.value: raw string for the WHERE id=? clause
+    return entity ? this.toDomain(entity) : null;
+    // => null when row not found; toDomain() reconstructs typed domain object on hit
+  }
+
+  async existsById(id: PurchaseOrderId): Promise<boolean> {
+    return this.repo.existsBy({ id: id.value });
+    // => TypeORM issues SELECT EXISTS; returns boolean; O(1) cost
+  }
+
+  private toEntity(po: DomainPO): PurchaseOrderEntity {
+    const e = new PurchaseOrderEntity();
+    e.id = po.id.value; // => PurchaseOrderId.value → raw string
+    e.supplierId = po.supplierId.value; // => SupplierId.value → raw string
+    e.totalAmount = po.total.amount; // => Money.amount → number for DECIMAL column
+    e.totalCurrency = po.total.currency; // => Money.currency → string
+    e.status = po.status; // => POStatus enum value → string
+    return e;
+    // => e: fully populated TypeORM entity; adapter-internal only
+  }
+
+  private toDomain(e: PurchaseOrderEntity): DomainPO {
+    return new DomainPO(
+      PurchaseOrderId.create(e.id), // => raw string → typed PurchaseOrderId
+      SupplierId.create(e.supplierId), // => raw string → typed SupplierId
+      Money.create(e.totalAmount, e.totalCurrency), // => number + string → Money value object
+      e.status as POStatus, // => string → domain enum
+    );
+    // => domain object: fully reconstructed with typed value objects
+  }
+}
+// => domain PurchaseOrder has zero TypeORM decorators; compiles without typeorm
+// => swapping to Prisma: replace TypeORM entity + repo; application service unchanged
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The JPA adapter maps between the domain record and a JPA entity. All `@Entity` annotations stay in the adapter layer; the domain record remains annotation-free.
@@ -1458,7 +1857,7 @@ public sealed class EfCorePurchaseOrderRepository(PurchasingDbContext db)
 
 An input port is a Java interface that defines a use case the application exposes to the outside world. Primary adapters (HTTP controllers, CLI, event consumers) call input ports; they never call application service classes directly. This keeps the adapter decoupled from service implementation details.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1555,6 +1954,33 @@ public interface IIssuePurchaseOrderUseCase
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Input port: use-case interface in the application module
+// src/purchasing/application/issue-purchase-order.usecase.ts
+
+import type { PurchaseOrder } from "../domain/purchase-order";
+
+// IssuePurchaseOrderUseCase: input port; defines the contract for issuing a PO
+// => HTTP controller calls this interface; never the concrete service class
+export interface IssuePurchaseOrderUseCase {
+  execute(command: IssuePOCommand): Promise<PurchaseOrder>;
+  // => throws domain error on violation; calling adapter maps to HTTP 422
+}
+
+// IssuePOCommand: immutable command object carrying everything the use case needs
+// => readonly: TypeScript prevents mutation after construction; no class needed
+export interface IssuePOCommand {
+  readonly supplierId: string; // => raw string from HTTP layer; validated inside use case
+  readonly totalAmount: string; // => string from JSON; parsed to number in service
+  readonly totalCurrency: string; // => ISO 4217 currency code e.g. "USD"
+}
+// => Controller depends on IssuePurchaseOrderUseCase; can be replaced with CLI or test double
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Input ports are Java interfaces in the application package. Primary adapters depend on the interface, not the concrete service class.
@@ -1567,7 +1993,7 @@ public interface IIssuePurchaseOrderUseCase
 
 The application service is the orchestration layer. It implements the input port, coordinates the domain objects, and calls output ports. It contains no business rules itself — those live in the domain. It contains no framework annotations — those live in the adapter layer.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1726,6 +2152,58 @@ public sealed class IssuePurchaseOrderService(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Domain value objects: PurchaseOrderId and Money
+// src/purchasing/domain/
+
+// PurchaseOrderId: wraps a string but enforces the "po_<uuid>" format invariant
+// => class with private constructor + static create: enforces invariants at construction time
+export class PurchaseOrderId {
+  // => private constructor: only Create() can produce instances; invalid state impossible
+  private constructor(readonly value: string) {}
+
+  static create(value: string): PurchaseOrderId {
+    if (!value || !value.startsWith("po_") || value.length < 39) {
+      // => format invariant: "po_" prefix + 36-char UUID = minimum 39 chars
+      throw new Error(`Invalid PurchaseOrderId: ${value}`);
+      // => construction fails: caller sees the invalid value in the error message
+    }
+    return new PurchaseOrderId(value);
+    // => only valid instances are returned; invalid input never produces an instance
+  }
+  // => PurchaseOrderId.create("po_550e8400-e29b-41d4-a716-446655440000") — succeeds
+  // => PurchaseOrderId.create("abc") — throws Error; does not start with "po_"
+}
+
+// Money: immutable value object combining amount + ISO 4217 currency code
+// => richer than number alone: prevents silently mixing USD and EUR amounts
+export class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+
+  static create(amount: number, currency: string): Money {
+    if (amount < 0) {
+      // => invariant: negative money is not meaningful in the P2P domain
+      throw new Error("Money amount must be >= 0");
+    }
+    if (!currency || currency.length !== 3) {
+      // => ISO 4217: all currency codes are exactly 3 uppercase letters (USD, EUR, IDR)
+      throw new Error("Currency must be 3-letter ISO 4217 code");
+    }
+    return new Money(amount, currency);
+    // => only valid instances reach callers; invalid state cannot be constructed
+  }
+  // => Money.create(1000.00, "USD") — succeeds; amount >= 0, currency = 3 chars
+  // => Money.create(-1, "USD")      — throws; amount < 0 violates invariant
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The application service orchestrates domain objects and output ports. No business rules here; no framework annotations here.
@@ -1738,7 +2216,7 @@ public sealed class IssuePurchaseOrderService(
 
 Consistent naming is the map that makes the hexagonal codebase navigable. When every developer follows the same suffix conventions, the role of any class is immediately obvious from its name alone.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1845,6 +2323,41 @@ sealed class PurchaseOrderHttpController { }
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Clock output port: time as an explicit dependency
+// src/purchasing/application/clock.port.ts
+
+// Clock: output port; returns current time as a domain-neutral Date
+// => Adapter in production: returns new Date() from system clock
+// => Adapter in tests: returns a fixed Date — deterministic, no setTimeout needed
+export interface Clock {
+  // now: returns the current point in time
+  // => caller never uses new Date() directly; always goes through this port
+  now(): Date;
+  // => test adapter: { now: () => new Date('2026-01-01T00:00:00Z') } — always same value
+}
+
+// Usage inside an application service:
+// => clock.now() instead of new Date() — the port is injected by the composition root
+// src/purchasing/application/issue-purchase-order.service.ts
+export class IssuePurchaseOrderService {
+  constructor(
+    private readonly repository: PurchaseOrderRepository,
+    private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
+  ) {}
+
+  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+    const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
+    // => issuedAt: the timestamp will be embedded in the issued PO or an event
+    return po.issue(issuedAt); // => delegates state transition to domain method
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Output ports end in `Repository`/`Port`, input ports end in `UseCase`, services end in `Service`, adapters are prefixed with their technology (`InMemory`, `Pg`, `Http`).
@@ -1857,7 +2370,7 @@ sealed class PurchaseOrderHttpController { }
 
 The package structure enforces the three-zone separation at the filesystem level. A flat or disorganized package layout makes the dependency rule unenforceable and the architecture invisible to tooling.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1978,6 +2491,41 @@ The package structure enforces the three-zone separation at the filesystem level
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Clock output port: time as an explicit dependency
+// src/purchasing/application/clock.port.ts
+
+// Clock: output port; returns current time as a domain-neutral Date
+// => Adapter in production: returns new Date() from system clock
+// => Adapter in tests: returns a fixed Date — deterministic, no setTimeout needed
+export interface Clock {
+  // now: returns the current point in time
+  // => caller never uses new Date() directly; always goes through this port
+  now(): Date;
+  // => test adapter: { now: () => new Date('2026-01-01T00:00:00Z') } — always same value
+}
+
+// Usage inside an application service:
+// => clock.now() instead of new Date() — the port is injected by the composition root
+// src/purchasing/application/issue-purchase-order.service.ts
+export class IssuePurchaseOrderService {
+  constructor(
+    private readonly repository: PurchaseOrderRepository,
+    private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
+  ) {}
+
+  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+    const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
+    // => issuedAt: the timestamp will be embedded in the issued PO or an event
+    return po.issue(issuedAt); // => delegates state transition to domain method
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Package paths encode the hexagonal zone (`domain`, `application`, `adapter.in.*`, `adapter.out.*`). The directory tree is the architecture diagram.
@@ -1992,7 +2540,7 @@ The package structure enforces the three-zone separation at the filesystem level
 
 The HTTP controller is a primary (driving) adapter. Its job is to translate HTTP concepts (requests, status codes, error responses) into domain concepts (commands, domain objects, domain errors). It delegates all logic to an input port and must not contain any business rules.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2196,6 +2744,74 @@ public sealed class PurchaseOrderController(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Primary adapter: HTTP controller translating HTTP ↔ application layer
+// src/purchasing/adapter/in/web/purchase-order.controller.ts
+
+import { Controller, Post, Body, HttpCode } from "@nestjs/common";
+import type { IssuePurchaseOrderUseCase } from "../../../application/issue-purchase-order.usecase";
+
+// CreatePoRequest: inbound DTO — plain class; never crosses into domain
+// => all fields are string: raw JSON values; application service parses and validates them
+export class CreatePoRequest {
+  supplierId!: string; // => raw supplier UUID from client; validated in service
+  totalAmount!: string; // => "1500.00"; service parses to number
+  totalCurrency!: string; // => "USD"; service validates 3-letter ISO 4217
+}
+// => JSON example: {"supplierId":"550e...","totalAmount":"1500.00","totalCurrency":"USD"}
+
+// CreatePoResponse: outbound DTO — plain class; built from domain types
+// => domain typed fields are unwrapped to primitives for JSON serialisation
+export class CreatePoResponse {
+  constructor(
+    readonly id: string, // => po.id.value — strip typed wrapper for JSON
+    readonly supplierId: string, // => po.supplierId.value — strip SupplierId wrapper
+    readonly status: string, // => po.status — domain enum value as string
+  ) {}
+}
+
+// PurchaseOrderController: primary adapter — thin; zero business logic
+// => @Controller: NestJS annotation; marks this class as an HTTP adapter
+// => 'api/v1/purchase-orders': all endpoints in this controller share this prefix
+@Controller("api/v1/purchase-orders")
+export class PurchaseOrderController {
+  constructor(
+    private readonly useCase: IssuePurchaseOrderUseCase, // => input port interface; not concrete service
+    // => depends on interface: controller can be tested with a stub without NestJS context
+  ) {}
+
+  // create: handles POST /api/v1/purchase-orders
+  // => @Post: maps HTTP POST to this method; @Body: deserialises JSON body
+  @Post()
+  @HttpCode(201)
+  async create(@Body() req: CreatePoRequest): Promise<CreatePoResponse> {
+    // Step 1: Translate HTTP inbound DTO → application command (no business logic)
+    const command = {
+      supplierId: req.supplierId,
+      totalAmount: req.totalAmount,
+      totalCurrency: req.totalCurrency,
+    };
+    // => command: adapter-layer fields forwarded to application-layer command object
+
+    // Step 2: Delegate to use case — all business logic lives in the service
+    const po = await this.useCase.execute(command);
+    // => execute(): port call; returns domain PurchaseOrder; adapter never sees service impl
+
+    // Step 3: Translate domain result → HTTP outbound DTO
+    return new CreatePoResponse(
+      po.id.value, // => PurchaseOrderId → raw string for JSON "id" field
+      po.supplierId.value, // => SupplierId → raw string for JSON "supplierId" field
+      po.status, // => POStatus enum → string for JSON "status" field
+    );
+    // => HTTP 201 Created; JSON body: {"id":"po_...","supplierId":"sup_...","status":"AWAITING_APPROVAL"}
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The controller translates HTTP ↔ application layer. It holds `@RestController` but zero business logic — all logic lives in the use case.
@@ -2208,7 +2824,7 @@ public sealed class PurchaseOrderController(
 
 DTOs (Data Transfer Objects) at the adapter boundary prevent domain objects from leaking into the HTTP response and prevent HTTP concepts from leaking into the domain. The mapping is explicit and happens at the adapter boundary.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2329,6 +2945,47 @@ public sealed record CreatePOResponse(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Inbound DTO: adapter receives this from HTTP; converts to command before entering application
+// src/purchasing/adapter/in/web/create-po.request.ts
+
+// CreatePoRequest: raw HTTP body — all fields are string from JSON
+// => adapter converts to typed command; domain never sees this object
+export interface CreatePoRequest {
+  readonly supplierId: string; // => raw supplier UUID from client; validated in service
+  readonly totalAmount: string; // => "1500.00"; service parses to number
+  readonly totalCurrency: string; // => "USD"; service validates 3-letter ISO 4217
+}
+// => If a field is missing, the application service throws a domain validation error
+// => HTTP adapter catches it and returns 422 Unprocessable Entity
+
+// CreatePoResponse: outbound DTO — built from domain result for JSON serialisation
+// => domain types are unwrapped to JSON-serialisable primitives
+export interface CreatePoResponse {
+  readonly id: string; // => po.id.value — strip typed PurchaseOrderId wrapper for JSON
+  readonly supplierId: string; // => po.supplierId.value — strip SupplierId wrapper
+  readonly totalAmount: string; // => po.total.amount.toString() — number to string
+  readonly currency: string; // => po.total.currency — already a string
+  readonly status: string; // => po.status — domain enum to string
+}
+// => JSON output: {"id":"po_...","supplierId":"sup_...","totalAmount":"1500.00","currency":"USD","status":"AWAITING_APPROVAL"}
+
+// Mapping in controller (explicit, no magic):
+// function toResponse(po: PurchaseOrder): CreatePoResponse {
+//   return {
+//     id: po.id.value,
+//     supplierId: po.supplierId.value,
+//     totalAmount: po.total.amount.toString(),
+//     currency: po.total.currency,
+//     status: po.status,
+//   };
+// } // => one function; no reflection; no mapper library; trivially testable
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Inbound DTOs carry raw HTTP data into the adapter boundary; outbound DTOs carry serialisable data out. Domain objects never cross either boundary.
@@ -2341,7 +2998,7 @@ public sealed record CreatePOResponse(
 
 Because the application service implements a Java interface (the input port), any number of primary adapters can call it without the service knowing. This is the "multiple ports" promise of hexagonal architecture.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2479,6 +3136,50 @@ public sealed class PurchaseOrderCliAdapter(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Two primary adapters calling the same use case
+// => HTTP adapter and CLI adapter both call IssuePurchaseOrderUseCase
+
+// --- Adapter 1: HTTP (shown in previous example) ---
+// PurchaseOrderController depends on IssuePurchaseOrderUseCase
+// => receives HTTP POST; builds command; calls useCase.execute(command)
+
+// --- Adapter 2: CLI ---
+// src/purchasing/adapter/in/cli/purchase-order-cli.adapter.ts
+
+import type { IssuePurchaseOrderUseCase } from "../../../application/issue-purchase-order.usecase";
+
+// PurchaseOrderCliAdapter: second primary adapter — reads from process.argv instead of HTTP
+// => No @Controller; no NestJS; pure Node.js CLI adapter
+export class PurchaseOrderCliAdapter {
+  constructor(
+    private readonly useCase: IssuePurchaseOrderUseCase, // => same interface as HTTP controller
+    // => depends on interface, not concrete class: same wiring, different caller
+  ) {}
+
+  // run: parse CLI args and call the use case
+  // => process.argv[2] = supplierId, [3] = totalAmount, [4] = currency
+  async run(args: string[]): Promise<void> {
+    if (args.length < 3) {
+      process.stderr.write("Usage: issue-po <supplierId> <amount> <currency>\n");
+      // => usage error; no business logic here; adapter responsibility only
+      return;
+    }
+    const command = { supplierId: args[0], totalAmount: args[1], totalCurrency: args[2] };
+    // => build command from CLI args; same command type as HTTP adapter uses
+    const po = await this.useCase.execute(command); // => same use case, same application logic
+    process.stdout.write(`PO issued: ${po.id.value} status=${po.status}\n`);
+    // => output to stdout; CLI-specific presentation; domain unchanged
+  }
+}
+// => IssuePurchaseOrderService.execute() is called by both adapters
+// => Application logic runs once; adapters multiply without logic duplication
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Multiple primary adapters can call the same input port. Adding a CLI or Kafka consumer adapter requires zero changes to the application service.
@@ -2493,7 +3194,7 @@ public sealed class PurchaseOrderCliAdapter(
 
 The composition root is the single place in the application where adapters are selected and wired to ports. In a Spring Boot application, this is a `@Configuration` class. Outside Spring, it is a `main` method. The composition root is the only place that knows both sides of every port boundary.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2634,6 +3335,41 @@ public static class PurchasingServiceCollectionExtensions
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Clock output port: time as an explicit dependency
+// src/purchasing/application/clock.port.ts
+
+// Clock: output port; returns current time as a domain-neutral Date
+// => Adapter in production: returns new Date() from system clock
+// => Adapter in tests: returns a fixed Date — deterministic, no setTimeout needed
+export interface Clock {
+  // now: returns the current point in time
+  // => caller never uses new Date() directly; always goes through this port
+  now(): Date;
+  // => test adapter: { now: () => new Date('2026-01-01T00:00:00Z') } — always same value
+}
+
+// Usage inside an application service:
+// => clock.now() instead of new Date() — the port is injected by the composition root
+// src/purchasing/application/issue-purchase-order.service.ts
+export class IssuePurchaseOrderService {
+  constructor(
+    private readonly repository: PurchaseOrderRepository,
+    private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
+  ) {}
+
+  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+    const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
+    // => issuedAt: the timestamp will be embedded in the issued PO or an event
+    return po.issue(issuedAt); // => delegates state transition to domain method
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root is the only class that knows both port interfaces and their adapter implementations. All other classes are unaware of the wiring.
@@ -2646,7 +3382,7 @@ public static class PurchasingServiceCollectionExtensions
 
 For teams not using Spring, the hexagon can be wired manually in a `main` method. Constructor injection makes the wiring explicit and the dependency graph readable at a glance.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2784,6 +3520,41 @@ Console.WriteLine("Procurement platform started");
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Clock output port: time as an explicit dependency
+// src/purchasing/application/clock.port.ts
+
+// Clock: output port; returns current time as a domain-neutral Date
+// => Adapter in production: returns new Date() from system clock
+// => Adapter in tests: returns a fixed Date — deterministic, no setTimeout needed
+export interface Clock {
+  // now: returns the current point in time
+  // => caller never uses new Date() directly; always goes through this port
+  now(): Date;
+  // => test adapter: { now: () => new Date('2026-01-01T00:00:00Z') } — always same value
+}
+
+// Usage inside an application service:
+// => clock.now() instead of new Date() — the port is injected by the composition root
+// src/purchasing/application/issue-purchase-order.service.ts
+export class IssuePurchaseOrderService {
+  constructor(
+    private readonly repository: PurchaseOrderRepository,
+    private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
+  ) {}
+
+  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+    const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
+    // => issuedAt: the timestamp will be embedded in the issued PO or an event
+    return po.issue(issuedAt); // => delegates state transition to domain method
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The hexagon can be fully wired without a DI framework — constructor injection makes the dependency graph explicit and readable.
@@ -2798,7 +3569,7 @@ Console.WriteLine("Procurement platform started");
 
 The in-memory adapter enables the application service to be tested in a plain JUnit test without any framework bootstrap. This is the fastest, most reliable test level for business logic verification.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2983,6 +3754,58 @@ public class IssuePurchaseOrderServiceTests
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Domain value objects: PurchaseOrderId and Money
+// src/purchasing/domain/
+
+// PurchaseOrderId: wraps a string but enforces the "po_<uuid>" format invariant
+// => class with private constructor + static create: enforces invariants at construction time
+export class PurchaseOrderId {
+  // => private constructor: only Create() can produce instances; invalid state impossible
+  private constructor(readonly value: string) {}
+
+  static create(value: string): PurchaseOrderId {
+    if (!value || !value.startsWith("po_") || value.length < 39) {
+      // => format invariant: "po_" prefix + 36-char UUID = minimum 39 chars
+      throw new Error(`Invalid PurchaseOrderId: ${value}`);
+      // => construction fails: caller sees the invalid value in the error message
+    }
+    return new PurchaseOrderId(value);
+    // => only valid instances are returned; invalid input never produces an instance
+  }
+  // => PurchaseOrderId.create("po_550e8400-e29b-41d4-a716-446655440000") — succeeds
+  // => PurchaseOrderId.create("abc") — throws Error; does not start with "po_"
+}
+
+// Money: immutable value object combining amount + ISO 4217 currency code
+// => richer than number alone: prevents silently mixing USD and EUR amounts
+export class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+
+  static create(amount: number, currency: string): Money {
+    if (amount < 0) {
+      // => invariant: negative money is not meaningful in the P2P domain
+      throw new Error("Money amount must be >= 0");
+    }
+    if (!currency || currency.length !== 3) {
+      // => ISO 4217: all currency codes are exactly 3 uppercase letters (USD, EUR, IDR)
+      throw new Error("Currency must be 3-letter ISO 4217 code");
+    }
+    return new Money(amount, currency);
+    // => only valid instances reach callers; invalid state cannot be constructed
+  }
+  // => Money.create(1000.00, "USD") — succeeds; amount >= 0, currency = 3 chars
+  // => Money.create(-1, "USD")      — throws; amount < 0 violates invariant
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The in-memory adapter makes application service tests framework-free, instant, and 100% deterministic.
@@ -2995,7 +3818,7 @@ public class IssuePurchaseOrderServiceTests
 
 Domain violations should be expressed as typed exceptions, not raw strings or generic `RuntimeException`. A domain error hierarchy allows the adapter layer to catch specific types and map them to appropriate HTTP status codes without knowing what caused them.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3148,6 +3971,49 @@ public PurchaseOrder Submit()
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Domain error hierarchy at port boundaries
+// src/purchasing/domain/domain.error.ts
+
+// DomainError: base class for all domain violations
+// => extends Error: stack trace preserved; caught by adapter error handlers
+export class DomainError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
+    // => name: class name used by error handlers to classify the error
+  }
+}
+
+// PurchaseOrderNotFoundError: thrown when findById returns null and caller requires a value
+// => adapter catches this and returns HTTP 404
+export class PurchaseOrderNotFoundError extends DomainError {
+  constructor(id: string) {
+    super(`PurchaseOrder not found: ${id}`);
+    // => message includes the id for easy log correlation
+  }
+}
+
+// DomainValidationError: thrown when domain invariants are violated
+// => adapter catches this and returns HTTP 422 Unprocessable Entity
+export class DomainValidationError extends DomainError {
+  constructor(message: string) {
+    super(message);
+    // => e.g., "Can only submit a DRAFT PO" — from PurchaseOrder.submit()
+  }
+}
+
+// Usage in application service:
+// const po = await this.repository.findById(id);
+// if (!po) throw new PurchaseOrderNotFoundError(id.value);
+// => port boundary: adapter maps DomainError subclass → correct HTTP status code
+// => domain never imports Express or NestJS; adapter imports domain error types only
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain errors are typed exceptions. The adapter layer catches specific types and maps them to HTTP status codes — no domain logic in the error handler.
@@ -3160,7 +4026,7 @@ public PurchaseOrder Submit()
 
 This final example traces the complete request lifecycle from HTTP POST through every layer: adapter → input port → application service → domain → output port → response.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3334,6 +4200,58 @@ var response = new CreatePOResponse(
 );
 // => HTTP 201 Created; body: {"id":"po_...","supplierId":"sup_...","totalAmount":"1500.00","currency":"USD","status":"AwaitingApproval"}
 // => flow complete: HTTP → adapter → application → domain → output port → adapter → HTTP
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Domain value objects: PurchaseOrderId and Money
+// src/purchasing/domain/
+
+// PurchaseOrderId: wraps a string but enforces the "po_<uuid>" format invariant
+// => class with private constructor + static create: enforces invariants at construction time
+export class PurchaseOrderId {
+  // => private constructor: only Create() can produce instances; invalid state impossible
+  private constructor(readonly value: string) {}
+
+  static create(value: string): PurchaseOrderId {
+    if (!value || !value.startsWith("po_") || value.length < 39) {
+      // => format invariant: "po_" prefix + 36-char UUID = minimum 39 chars
+      throw new Error(`Invalid PurchaseOrderId: ${value}`);
+      // => construction fails: caller sees the invalid value in the error message
+    }
+    return new PurchaseOrderId(value);
+    // => only valid instances are returned; invalid input never produces an instance
+  }
+  // => PurchaseOrderId.create("po_550e8400-e29b-41d4-a716-446655440000") — succeeds
+  // => PurchaseOrderId.create("abc") — throws Error; does not start with "po_"
+}
+
+// Money: immutable value object combining amount + ISO 4217 currency code
+// => richer than number alone: prevents silently mixing USD and EUR amounts
+export class Money {
+  private constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+
+  static create(amount: number, currency: string): Money {
+    if (amount < 0) {
+      // => invariant: negative money is not meaningful in the P2P domain
+      throw new Error("Money amount must be >= 0");
+    }
+    if (!currency || currency.length !== 3) {
+      // => ISO 4217: all currency codes are exactly 3 uppercase letters (USD, EUR, IDR)
+      throw new Error("Currency must be 3-letter ISO 4217 code");
+    }
+    return new Money(amount, currency);
+    // => only valid instances reach callers; invalid state cannot be constructed
+  }
+  // => Money.create(1000.00, "USD") — succeeds; amount >= 0, currency = 3 chars
+  // => Money.create(-1, "USD")      — throws; amount < 0 violates invariant
+}
 ```
 
 {{< /tab >}}

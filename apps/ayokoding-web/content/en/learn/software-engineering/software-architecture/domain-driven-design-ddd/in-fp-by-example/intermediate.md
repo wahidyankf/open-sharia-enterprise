@@ -46,7 +46,7 @@ graph LR
     style P fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -146,6 +146,56 @@ printfn "Trim only: '%s'" (trimInput raw)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Function composition with pipe — left-to-right function chaining.
+// [F#: >> operator for left-to-right composition; TS uses explicit helper or chaining]
+// [Clojure: comp (right-to-left) or -> threading macro; TS mirrors the pipe pattern]
+
+// Compose helper: applies functions left-to-right (mirrors F# >>)
+const pipe =
+  <T>(...fns: Array<(x: T) => T>) =>
+  (x: T): T =>
+    fns.reduce((v, f) => f(v), x);
+// => pipe(f, g, h)(x) = h(g(f(x))) — matches F# f >> g >> h
+
+// Individual pipeline steps — each is a pure function, independently testable
+const trimInput = (s: string): string => s.trim();
+// => Removes leading and trailing whitespace from raw user input
+
+const toUpperCase = (s: string): string => s.toUpperCase();
+// => Normalises to uppercase for consistent storage in the requisition database
+
+const normaliseReqId = (s: string): string => `REQ_${s.replace(/-/g, "_")}`;
+// => Applies the canonical REQ_ prefix and replaces hyphens with underscores
+
+// Composing three steps into one function using pipe
+const normaliseRequisitionId = pipe(trimInput, toUpperCase, normaliseReqId);
+// => Reads left to right: trim, then uppercase, then normalise
+// => normaliseRequisitionId : string -> string — three functions become one
+
+// Test the composed function
+const raw = "  req-f4c2  ";
+// => raw : string = "  req-f4c2  " — has leading/trailing whitespace and hyphens
+const normalised = normaliseRequisitionId(raw);
+// => Step 1: trimInput "  req-f4c2  " = "req-f4c2"
+// => Step 2: toUpperCase "req-f4c2" = "REQ-F4C2"
+// => Step 3: normaliseReqId "REQ-F4C2" = "REQ_F4C2"
+// => normalised = "REQ_F4C2"
+
+console.log(`Raw: '${raw}'`);
+// => Output: Raw: '  req-f4c2  '
+console.log(`Normalised: '${normalised}'`);
+// => Output: Normalised: 'REQ_F4C2'
+
+// Each step can be tested independently
+console.log(`Trim only: '${trimInput(raw)}'`);
+// => Output: Trim only: 'req-f4c2'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `>>` operator composes functions left-to-right, producing a single function from a sequence of steps, each of which can be tested and reasoned about independently.
@@ -158,7 +208,7 @@ printfn "Trim only: '%s'" (trimInput raw)
 
 The `|>` (pipe) operator passes a value as the last argument to a function: `x |> f = f x`. It enables a left-to-right reading of data transformations, matching how procurement domain experts describe workflows — "take the requisition, validate it, compute the total, derive the approval level."
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -273,6 +323,69 @@ printfn "Same result: %A" approvalLevelNested
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Pipe operator — passes a value through a sequence of functions left-to-right.
+// [F#: x |> f = f(x) — built-in syntax; TS uses a pipe helper function]
+// [Clojure: -> threading macro — same left-to-right semantics; TS mirrors this with reduce]
+
+type ApprovalLevel = "L1" | "L2" | "L3";
+// => Three approval tiers in the procurement domain
+
+// Pure domain functions
+const validateNotEmpty = (s: string): string | null => (s.trim().length > 0 ? s.trim() : null);
+// => Returns null for blank/whitespace — mirrors F# None; string for valid input
+
+const computeLineTotal = (qty: number, price: number): number => qty * price;
+// => Pure arithmetic — no side effects
+
+const sumLineTotals = (totals: number[]): number => totals.reduce((a, b) => a + b, 0);
+// => Sum a list of number line totals into a requisition total
+
+const deriveLevel = (total: number): ApprovalLevel => (total <= 1000 ? "L1" : total <= 10000 ? "L2" : "L3");
+// => Pure derivation — same input always produces same output
+
+// Reading a pipeline left-to-right using explicit chaining
+const rawLines: Array<[number, number]> = [
+  [10, 8.5],
+  [3, 899.99],
+  [5, 25.0],
+];
+// => rawLines : [quantity, unitPrice][] — (quantity, unitPrice) pairs
+
+const approvalLevel = deriveLevel(
+  sumLineTotals(
+    rawLines.map(([qty, price]) => computeLineTotal(qty, price)),
+    // => Maps each [qty, price] to its line total: [85.00, 2699.97, 125.00]
+  ),
+  // => sumLineTotals([85.00, 2699.97, 125.00]) = 2909.97
+);
+// => deriveLevel(2909.97) — 2909.97 > 1000 and <= 10000 — "L2"
+
+console.log("Approval level:", approvalLevel);
+// => Output: Approval level: L2
+
+// Cleaner with an explicit pipe helper
+const pipe2 = <A, B, C, D>(a: A, f: (x: A) => B, g: (x: B) => C, h: (x: C) => D): D => h(g(f(a)));
+// => pipe2(value, step1, step2, step3) mirrors F# value |> step1 |> step2 |> step3
+
+const approvalLevelV2 = pipe2(
+  rawLines,
+  (lines) => lines.map(([qty, price]) => computeLineTotal(qty, price)),
+  // => [85.00, 2699.97, 125.00]
+  sumLineTotals,
+  // => 2909.97
+  deriveLevel,
+  // => "L2"
+);
+
+console.log("Approval level v2:", approvalLevelV2);
+// => Output: Approval level v2: L2
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `|>` operator enables left-to-right pipeline reading that matches how procurement domain experts describe workflows, making code readable without sacrificing functional purity.
@@ -285,7 +398,7 @@ printfn "Same result: %A" approvalLevelNested
 
 Every F# function technically takes one argument and returns a function or a value. This is currying. It enables partial application: supplying some arguments up front to produce a specialised function. In the procurement domain, partial application injects dependencies like approval thresholds into workflow functions.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -382,6 +495,53 @@ printfn "$50000: L2=%b, L3=%b" (requiresL2Approval total3) (requiresL3Approval t
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Currying via closures — functions that return functions.
+// [F#: automatic currying — every multi-arg fn is curried by default]
+// [Clojure: partial creates specialised functions; TS curries manually with arrow functions]
+
+// A curried threshold function — returns a (total -> boolean) when given a threshold
+const applyApprovalThreshold =
+  (threshold: number) =>
+  (total: number): boolean =>
+    total > threshold;
+// => applyApprovalThreshold : number -> (number -> boolean)
+// => First call binds the threshold; second call tests the total
+
+// Partial application: supply the threshold, get back a specialised function
+const requiresL2Approval = applyApprovalThreshold(1000);
+// => requiresL2Approval : (total: number) => boolean
+// => The threshold 1000 is baked in — only the total is needed at call time
+
+const requiresL3Approval = applyApprovalThreshold(10000);
+// => requiresL3Approval : (total: number) => boolean
+// => The threshold 10000 is baked in
+
+// Use the specialised functions
+const total1 = 500;
+// => under both thresholds
+const total2 = 5000;
+// => over L2 threshold but under L3
+const total3 = 50000;
+// => over both thresholds
+
+console.log(`$500: L2=${requiresL2Approval(total1)}, L3=${requiresL3Approval(total1)}`);
+// => 500 > 1000 = false; 500 > 10000 = false
+// => Output: $500: L2=false, L3=false
+
+console.log(`$5000: L2=${requiresL2Approval(total2)}, L3=${requiresL3Approval(total2)}`);
+// => 5000 > 1000 = true; 5000 > 10000 = false
+// => Output: $5000: L2=true, L3=false
+
+console.log(`$50000: L2=${requiresL2Approval(total3)}, L3=${requiresL3Approval(total3)}`);
+// => 50000 > 1000 = true; 50000 > 10000 = true
+// => Output: $50000: L2=true, L3=true
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Currying turns multi-argument functions into pipelines of one-argument functions, enabling partial application that bakes in dependencies (like approval thresholds) to produce specialised, reusable functions.
@@ -406,7 +566,7 @@ graph LR
     style D fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -593,6 +753,95 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// A complete procurement workflow assembled from pure composable steps.
+// [F#: composed via Result.map and |> — each step is pure; errors short-circuit]
+// [Clojure: threading macro with result maps; TS chains .map() on Result<T,E>]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const mapR = <T, U, E>(r: Result<T, E>, f: (v: T) => U): Result<U, E> => (r.ok ? okR(r.value) : r); // simplification — preserves error
+
+type ApprovalLevel = "L1" | "L2" | "L3";
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+interface RawLine {
+  sku: string;
+  qty: number;
+  price: number;
+}
+// => Unvalidated line arriving from the HTTP layer
+
+interface RequisitionSubmittedPayload {
+  readonly id: RequisitionId;
+  readonly approvalLevel: ApprovalLevel;
+  readonly requestedBy: string;
+  readonly totalAmount: number;
+}
+// => Event payload — everything a downstream consumer needs
+
+// Individual pure steps
+function validateLines(lines: RawLine[]): Result<RawLine[], string> {
+  if (lines.length === 0) return errR("At least one line item is required");
+  // => Business rule: blank requisitions cannot be submitted
+  if (lines.some((l) => l.qty <= 0)) return errR("All quantities must be > 0");
+  // => Business rule: zero or negative quantities are invalid
+  return okR(lines);
+  // => All lines pass basic validation
+}
+
+const computeTotal = (lines: RawLine[]): number => lines.reduce((sum, l) => sum + l.qty * l.price, 0);
+// => Pure arithmetic — sums all line totals
+
+const deriveLevel = (total: number): ApprovalLevel => (total <= 1000 ? "L1" : total <= 10000 ? "L2" : "L3");
+
+const buildEvent =
+  (requestedBy: string) =>
+  (level: ApprovalLevel) =>
+  (total: number): RequisitionSubmittedPayload => ({
+    id: asRequisitionId(`req_${Math.random().toString(36).slice(2, 10)}`),
+    approvalLevel: level,
+    requestedBy,
+    totalAmount: total,
+  });
+// => Curried builder — requestedBy bound first, level second, total third
+
+// Composed workflow
+function submitRequisition(requestedBy: string, lines: RawLine[]): Result<RequisitionSubmittedPayload, string> {
+  const validated = validateLines(lines);
+  // => Step 1: validate — returns Result; short-circuits on error
+  if (!validated.ok) return validated;
+  const total = computeTotal(validated.value);
+  // => Step 2: compute total from validated lines
+  const level = deriveLevel(total);
+  // => Step 3: derive approval level from total
+  return okR(buildEvent(requestedBy)(level)(total));
+  // => Step 4: build the event payload
+}
+
+// Test
+const lines: RawLine[] = [
+  { sku: "OFF-0042", qty: 10, price: 8.5 },
+  // => 10 x $8.50 = $85.00
+  { sku: "ELE-0099", qty: 3, price: 899.99 },
+  // => 3 x $899.99 = $2,699.97
+];
+
+const result = submitRequisition("emp_00456", lines);
+// => validateLines: ok; computeTotal: 2784.97; deriveLevel: "L2"; buildEvent: ok payload
+
+if (result.ok) console.log(`Submitted: level=${result.value.approvalLevel} total=${result.value.totalAmount}`);
+// => Output: Submitted: level=L2 total=2784.97
+else console.log("Error:", result.error);
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A procurement workflow assembled from pure composable steps is easier to test, extend, and reason about than a single monolithic function — each step is independently testable and the composition is explicit.
@@ -607,7 +856,7 @@ match result with
 
 `Result<'T, 'Error>` is F#'s built-in type for computations that can fail. It is a discriminated union with two cases: `Ok value` (success) and `Error err` (failure). Using `Result` instead of exceptions keeps failure handling in the type system and forces callers to acknowledge both paths.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -730,6 +979,52 @@ match budgetErr with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Result<T,E> type — explicit success/failure without exceptions.
+// [F#: built-in Result<'T,'E> with Ok/Error constructors and exhaustive match]
+// [Clojure: {:ok value}/{:error msg} maps; TS Result type provides same explicit contract]
+
+// Result type — either a success value or a failure
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+// => [F#: Ok and Error constructors; TS: plain object constructors]
+
+// Branded types
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+// A fallible smart constructor — returns Result instead of throwing
+function createRequisitionId(raw: string): Result<RequisitionId, string> {
+  if (!raw || raw.trim() === "") return errR("RequisitionId cannot be blank");
+  // => Error case: blank input
+  if (!raw.startsWith("req_")) return errR(`RequisitionId '${raw}' must start with 'req_'`);
+  // => Error case: wrong format
+  return okR(asRequisitionId(raw));
+  // => Ok case: valid branded ID
+}
+
+// Test cases
+const ok1 = createRequisitionId("req_f4c2a1b7");
+// => ok1 : Result<RequisitionId, string> = { ok: true, value: "req_f4c2a1b7" }
+const err1 = createRequisitionId("");
+// => err1 : Result<RequisitionId, string> = { ok: false, error: "RequisitionId cannot be blank" }
+const err2 = createRequisitionId("12345");
+// => err2 : Result<RequisitionId, string> = { ok: false, error: "RequisitionId '12345' must start with 'req_'" }
+
+// Consuming the result — explicit check required
+if (ok1.ok) console.log("Valid:", ok1.value);
+// => Output: Valid: req_f4c2a1b7
+if (!err1.ok) console.log("Error 1:", err1.error);
+// => Output: Error 1: RequisitionId cannot be blank
+if (!err2.ok) console.log("Error 2:", err2.error);
+// => Output: Error 2: RequisitionId '12345' must start with 'req_'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result<'T, 'Error>` makes the possibility of failure explicit in the type system, forcing callers to handle both success and failure paths rather than relying on exceptions that can be silently swallowed.
@@ -767,7 +1062,7 @@ graph LR
     style S3 fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -902,6 +1197,81 @@ printfn "Missing: %A" missing
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Result.bind — chains fallible steps, short-circuiting on error.
+// [F#: Result.bind f r — applies f to Ok value; Error passes through unchanged]
+// [Clojure: threading with cond on :ok/:error keys; TS bind mirrors railway-oriented programming]
+
+// Result type and bind
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// bind: applies f to Ok value; passes Error through unchanged
+function bind<T, U, E>(r: Result<T, E>, f: (v: T) => Result<U, E>): Result<U, E> {
+  return r.ok ? f(r.value) : r;
+  // => [F#: Result.bind f r — if Ok(v) then f(v) else Error passthrough]
+}
+
+// Branded types for the P2P domain
+type SkuCode = string & { readonly __brand: "SkuCode" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+
+// Individual fallible validation steps
+function validateSku(raw: string): Result<SkuCode, string> {
+  return /^[A-Z]{3}-\d{4,8}$/.test(raw) ? okR(raw as SkuCode) : errR(`Invalid SKU: '${raw}'`);
+  // => Ok when format matches; Error otherwise
+}
+
+function validateSupplier(raw: string): Result<SupplierId, string> {
+  return raw.startsWith("sup_") ? okR(raw as SupplierId) : errR(`Invalid SupplierId: '${raw}' must start with 'sup_'`);
+  // => Ok when starts with sup_; Error otherwise
+}
+
+interface ValidatedLine {
+  readonly sku: SkuCode;
+  readonly supplier: SupplierId;
+  readonly qty: number;
+}
+
+function validateQty(qty: number, sku: SkuCode, supplier: SupplierId): Result<ValidatedLine, string> {
+  return qty > 0 ? okR({ sku, supplier, qty }) : errR(`Quantity must be > 0, got ${qty}`);
+  // => Ok when positive; Error otherwise
+}
+
+// Chaining three fallible steps with bind
+function validateOrderLine(rawSku: string, rawSupplier: string, qty: number): Result<ValidatedLine, string> {
+  return bind(
+    bind(
+      validateSku(rawSku),
+      // => Step 1: validate SKU — short-circuits on invalid format
+      (sku) =>
+        bind(
+          validateSupplier(rawSupplier),
+          // => Step 2: validate supplier — short-circuits on wrong prefix
+          (supplier) => validateQty(qty, sku, supplier),
+          // => Step 3: validate quantity — all three steps chained
+        ),
+    ),
+    (line) => okR(line),
+  );
+}
+
+const good = validateOrderLine("OFF-0042", "sup_001", 10);
+// => All three guards pass — { ok: true, value: ValidatedLine }
+const bad = validateOrderLine("off-0042", "sup_001", 10);
+// => Step 1 fails — { ok: false, error: "Invalid SKU: 'off-0042'" }
+
+if (good.ok) console.log("Valid line:", good.value.sku, good.value.qty);
+// => Output: Valid line: OFF-0042 10
+if (!bad.ok) console.log("Error:", bad.error);
+// => Output: Error: Invalid SKU: 'off-0042'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.bind` creates a clean error-propagation pipeline where the first failure short-circuits the rest of the chain — no nested if/else, no try/catch, no null checks.
@@ -914,7 +1284,7 @@ printfn "Missing: %A" missing
 
 `Result.map` transforms the `Ok` value of a `Result` without touching the `Error` case. It is the non-fallible counterpart to `Result.bind` — use `map` when the transformation cannot fail, `bind` when it can.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1051,6 +1421,70 @@ match errorResult with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Result.map — transforms the success value without touching the error channel.
+// [F#: Result.map f r — applies f to Ok value; Error passes through unchanged]
+// [Clojure: (when-let [v (:ok r)] (f v)); TS map mirrors F# railway-oriented map]
+
+// Result type and map
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+function mapR<T, U, E>(r: Result<T, E>, f: (v: T) => U): Result<U, E> {
+  return r.ok ? okR(f(r.value)) : r;
+  // => [F#: Result.map f — applies f when Ok; Error passes through unchanged]
+}
+
+// Branded type
+type SkuCode = string & { readonly __brand: "SkuCode" };
+
+// A validated SKU code result
+function createSkuCode(raw: string): Result<SkuCode, string> {
+  return /^[A-Z]{3}-\d{4,8}$/.test(raw) ? okR(raw as SkuCode) : errR(`Invalid SKU: '${raw}'`);
+}
+
+// map: transform the success value — compute a label without touching the error
+const skuResult = createSkuCode("OFF-0042");
+// => skuResult : Result<SkuCode, string> = { ok: true, value: "OFF-0042" }
+
+const labelResult = mapR(skuResult, (sku) => `Label: ${sku}`);
+// => map applies the label function to the Ok value
+// => labelResult : Result<string, string> = { ok: true, value: "Label: OFF-0042" }
+
+const errResult = createSkuCode("bad");
+// => errResult : Result<SkuCode, string> = { ok: false, error: "Invalid SKU: 'bad'" }
+
+const errLabel = mapR(errResult, (sku) => `Label: ${sku}`);
+// => map does NOT call the function — error passes through unchanged
+// => errLabel : Result<string, string> = { ok: false, error: "Invalid SKU: 'bad'" }
+
+// Chaining maps — computing a line total from a valid SKU
+interface LineData {
+  readonly sku: SkuCode;
+  readonly qty: number;
+  readonly price: number;
+}
+const lineResult: Result<LineData, string> = mapR(
+  createSkuCode("ELE-0099"),
+  (sku) => ({ sku, qty: 3, price: 899.99 }),
+  // => Wraps the valid SKU into a line data record
+);
+const totalResult = mapR(lineResult, (line) => line.qty * line.price);
+// => maps the line to its total: 3 * 899.99 = 2699.97
+
+if (labelResult.ok) console.log(labelResult.value);
+// => Output: Label: OFF-0042
+if (totalResult.ok) console.log(`Line total: ${totalResult.value}`);
+// => Output: Line total: 2699.97
+if (!errLabel.ok) console.log("Error passes through:", errLabel.error);
+// => Output: Error passes through: Invalid SKU: 'bad'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.map` applies an infallible transformation to the `Ok` value and passes `Error` through unchanged — keeping the error channel clean without re-wrapping or unwrapping.
@@ -1063,7 +1497,7 @@ match errorResult with
 
 `Result.bind` short-circuits on the first error. But form validation requires collecting _all_ errors so the user can fix everything at once. Applicative validation accumulates errors using a custom `Validation` type.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1214,6 +1648,82 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Validation accumulation — collect ALL errors instead of short-circuiting on first.
+// [F#: list<ValidationError> with List.append; TS mirrors by collecting errors in an array]
+// [Clojure: reduce over fields collecting {:error ...} entries; TS uses similar reduce pattern]
+
+// Validation result: either a valid value or a list of all errors
+type ValidationResult<T> =
+  | { readonly valid: true; readonly value: T }
+  | { readonly valid: false; readonly errors: string[] };
+const validR = <T>(v: T): ValidationResult<T> => ({ valid: true, value: v });
+const invalidR = (errors: string[]): ValidationResult<never> => ({ valid: false, errors });
+// => [F#: Ok value vs Error (errors : string list) — full list of failures]
+
+// Validate a purchase order line and accumulate ALL errors
+interface UnvalidatedPOLine {
+  skuCode: string;
+  quantity: number;
+  unitPrice: number;
+  unit: string;
+}
+
+interface ValidatedPOLine {
+  readonly skuCode: string;
+  readonly quantity: number;
+  readonly unitPrice: number;
+  readonly unit: string;
+}
+
+function validatePOLine(raw: UnvalidatedPOLine): ValidationResult<ValidatedPOLine> {
+  const errors: string[] = [];
+  // => Accumulate all errors rather than short-circuiting
+  if (!raw.skuCode || !/^[A-Z]{3}-\d{4,8}$/.test(raw.skuCode)) {
+    errors.push(`SkuCode '${raw.skuCode}' must match ^[A-Z]{3}-\\d{4,8}$`);
+    // => Error 1: invalid SKU format
+  }
+  if (raw.quantity <= 0) {
+    errors.push(`Quantity must be > 0, got ${raw.quantity}`);
+    // => Error 2: invalid quantity
+  }
+  if (raw.unitPrice <= 0) {
+    errors.push(`UnitPrice must be > 0, got ${raw.unitPrice}`);
+    // => Error 3: invalid unit price
+  }
+  if (!["EACH", "BOX", "KG", "LITRE", "HOUR"].includes(raw.unit)) {
+    errors.push(`Unknown unit: '${raw.unit}'`);
+    // => Error 4: invalid unit of measure
+  }
+  if (errors.length > 0) return invalidR(errors);
+  // => Return ALL accumulated errors at once
+  return validR({ skuCode: raw.skuCode, quantity: raw.quantity, unitPrice: raw.unitPrice, unit: raw.unit });
+  // => All guards passed — return the validated line
+}
+
+// A fully invalid line — all four errors accumulate
+const badLine = validatePOLine({ skuCode: "bad", quantity: 0, unitPrice: -1, unit: "each" });
+// => badLine.valid = false; badLine.errors has all four error messages
+
+if (!badLine.valid) {
+  console.log(`${badLine.errors.length} errors found:`);
+  badLine.errors.forEach((e, i) => console.log(`  ${i + 1}. ${e}`));
+  // => Output: 4 errors found:
+  // => Output:   1. SkuCode 'bad' must match ...
+  // => Output:   2. Quantity must be > 0, got 0
+  // => Output:   3. UnitPrice must be > 0, got -1
+  // => Output:   4. Unknown unit: 'each'
+}
+
+const goodLine = validatePOLine({ skuCode: "OFF-0042", quantity: 10, unitPrice: 8.5, unit: "BOX" });
+if (goodLine.valid) console.log("Valid line:", goodLine.value.skuCode);
+// => Output: Valid line: OFF-0042
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Applicative validation accumulates all errors from all fields simultaneously, enabling user-facing form validation that reports every problem at once rather than one at a time.
@@ -1226,7 +1736,7 @@ match result with
 
 F#'s `result` computation expression (a.k.a. "do notation") lets you write `Result.bind` chains in imperative-looking syntax. The `let!` keyword desugars to `Result.bind`, making the pipeline read like sequential steps without explicit chaining.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1374,6 +1884,73 @@ printfn "%A" blocked
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Computation expression pattern — sequential composition of Result operations.
+// [F#: result { let! x = step1; let! y = step2 } — CE hides bind/map plumbing]
+// [Clojure: nested if-let chains; TS: explicit sequential binding mirrors CE semantics]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// A helper that sequences Result steps — mirrors F# result CE
+function resultOf<T, E>(steps: () => Result<T, E>): Result<T, E> {
+  try {
+    return steps();
+  } catch (e) {
+    return errR(e instanceof Error ? e.message : String(e)) as Result<T, E>;
+  }
+}
+// => resultOf(() => { const x = ...; const y = ... }) mirrors result { ... } CE block
+
+type SkuCode = string & { readonly __brand: "SkuCode" };
+const createSkuCode = (raw: string): Result<SkuCode, string> =>
+  /^[A-Z]{3}-\d{4,8}$/.test(raw) ? okR(raw as SkuCode) : errR(`Invalid SKU: '${raw}'`);
+
+const createQuantity = (qty: number): Result<number, string> =>
+  qty > 0 ? okR(qty) : errR(`Quantity must be > 0, got ${qty}`);
+
+const createUnitPrice = (price: number): Result<number, string> =>
+  price > 0 ? okR(price) : errR(`UnitPrice must be > 0, got ${price}`);
+
+interface ValidatedLine {
+  readonly sku: SkuCode;
+  readonly qty: number;
+  readonly price: number;
+}
+
+// Sequenced validation using explicit binding — mirrors F# result CE
+function validateLine(rawSku: string, rawQty: number, rawPrice: number): Result<ValidatedLine, string> {
+  const skuResult = createSkuCode(rawSku);
+  // => let! sku = createSkuCode rawSku
+  if (!skuResult.ok) return skuResult;
+  // => Propagates error — CE would auto-short-circuit here
+  const qtyResult = createQuantity(rawQty);
+  // => let! qty = createQuantity rawQty
+  if (!qtyResult.ok) return qtyResult;
+  const priceResult = createUnitPrice(rawPrice);
+  // => let! price = createUnitPrice rawPrice
+  if (!priceResult.ok) return priceResult;
+  return okR({ sku: skuResult.value, qty: qtyResult.value, price: priceResult.value });
+  // => return! { sku; qty; price } — all steps succeeded
+}
+
+const good = validateLine("OFF-0042", 10, 8.5);
+// => All three steps succeed — { ok: true, value: ValidatedLine }
+const bad = validateLine("bad", 10, 8.5);
+// => Step 1 fails — { ok: false, error: "Invalid SKU: 'bad'" }
+
+if (good.ok) console.log("Validated:", good.value.sku, "qty:", good.value.qty);
+// => Output: Validated: OFF-0042 qty: 10
+if (!bad.ok) console.log("Error:", bad.error);
+// => Output: Error: Invalid SKU: 'bad'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `result` computation expression writes `Result.bind` chains in familiar sequential syntax, making complex multi-step procurement pipelines readable without sacrificing functional error propagation.
@@ -1386,7 +1963,7 @@ printfn "%A" blocked
 
 Real procurement workflows involve I/O: loading a requisition from Postgres, calling the approval router API, publishing a domain event. `Async<Result<'T, 'Error>>` composes the two: `Async` handles the effect, `Result` handles the failure.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1519,6 +2096,62 @@ printfn "Result: %A" runResult
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Async Result — effects at the edges; pure core remains synchronous.
+// [F#: Async<Result<'T,'E>> — async CE with result CE composition]
+// [Clojure: core.async channels or Promises with {:ok ...}/{:error ...}; TS uses Promise<Result<T,E>>]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// Branded types
+type RequisitionId = string & { readonly __brand: "RequisitionId" };
+const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
+
+// Simulated async repository (effect at the edge)
+async function fetchRequisitionFromDb(
+  id: RequisitionId,
+): Promise<Result<{ id: RequisitionId; total: number }, string>> {
+  await new Promise((r) => setTimeout(r, 0));
+  // => Simulates async I/O — real implementation queries a database
+  if (!(id as string).startsWith("req_")) return errR(`Requisition ${id} not found`);
+  return okR({ id, total: 2784.97 });
+  // => Returns Ok with a requisition summary — the domain object
+}
+
+// Pure domain function — no async, no I/O
+function deriveApprovalLevel(total: number): "L1" | "L2" | "L3" {
+  return total <= 1000 ? "L1" : total <= 10000 ? "L2" : "L3";
+  // => Pure derivation — no side effects, no async
+}
+
+// Async Result chaining — effect wraps the pure core
+async function getApprovalLevel(rawId: string): Promise<Result<"L1" | "L2" | "L3", string>> {
+  if (!rawId.startsWith("req_")) return errR(`Invalid RequisitionId: '${rawId}'`);
+  // => Synchronous guard at the edge
+  const reqResult = await fetchRequisitionFromDb(asRequisitionId(rawId));
+  // => Async I/O at the edge — Promise<Result<...>>
+  if (!reqResult.ok) return reqResult;
+  // => Short-circuit on fetch error
+  return okR(deriveApprovalLevel(reqResult.value.total));
+  // => Pure core is called synchronously — no async needed inside domain logic
+}
+
+// Test
+const result = await getApprovalLevel("req_f4c2a1b7");
+// => Async I/O resolves; pure derivation runs; Result wraps outcome
+
+if (result.ok) console.log("Approval level:", result.value);
+// => Output: Approval level: L2
+else console.log("Error:", result.error);
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Async<Result<'T, 'Error>>` separates the concern of "this involves I/O" (Async) from "this can fail with a named error" (Result), composing both without losing either.
@@ -1551,7 +2184,7 @@ graph TD
     style I fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1705,6 +2338,81 @@ printfn "Status: %d — %A" (toHttpStatus err2) err2
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Domain Error union — every failure mode is a named, typed value.
+// [F#: DU type DomainError = ... | ... — exhaustive match forces handling all cases]
+// [Clojure: keyword set #{:error/...}; TS uses a closed tagged union with exhaustive switch]
+
+// Domain error union — closed set of all procurement failure modes
+type DomainError =
+  | { readonly kind: "RequisitionNotFound"; readonly id: string }
+  // => Requisition ID does not exist in the database
+  | { readonly kind: "DuplicateRequisition"; readonly id: string }
+  // => Requisition with this ID was already submitted
+  | { readonly kind: "InsufficientBudget"; readonly required: number; readonly available: number }
+  // => Line total exceeds the remaining budget for the cost centre
+  | { readonly kind: "SupplierNotApproved"; readonly supplierId: string }
+  // => Supplier has not passed the procurement approval process
+  | { readonly kind: "BudgetPeriodClosed"; readonly period: string }
+  // => Budget period is closed — no new requisitions can be submitted
+  | { readonly kind: "InvalidApprovalLevel"; readonly level: string };
+// => Approval level is not one of L1/L2/L3
+
+// Exhaustiveness helper
+function assertNever(x: never): never {
+  throw new Error(`Unhandled: ${String(x)}`);
+}
+
+// Exhaustive handler — TypeScript forces all cases to be covered
+function describeDomainError(error: DomainError): string {
+  switch (error.kind) {
+    case "RequisitionNotFound":
+      return `Requisition ${error.id} not found`;
+    case "DuplicateRequisition":
+      return `Requisition ${error.id} already submitted`;
+    case "InsufficientBudget":
+      return `Insufficient budget: need ${error.required}, have ${error.available}`;
+    case "SupplierNotApproved":
+      return `Supplier ${error.supplierId} has not been approved for procurement`;
+    case "BudgetPeriodClosed":
+      return `Budget period ${error.period} is closed`;
+    case "InvalidApprovalLevel":
+      return `Invalid approval level: '${error.level}'`;
+    default:
+      return assertNever(error);
+  }
+}
+
+// HTTP status mapping from domain error to API response code
+function httpStatusFor(error: DomainError): number {
+  switch (error.kind) {
+    case "RequisitionNotFound":
+      return 404;
+    case "DuplicateRequisition":
+      return 409;
+    case "InsufficientBudget":
+    case "SupplierNotApproved":
+    case "BudgetPeriodClosed":
+    case "InvalidApprovalLevel":
+      return 422;
+    default:
+      return assertNever(error);
+  }
+}
+
+const err1: DomainError = { kind: "RequisitionNotFound", id: "req_f4c2a1b7" };
+const err2: DomainError = { kind: "InsufficientBudget", required: 5000, available: 2000 };
+
+console.log(describeDomainError(err1), "->", httpStatusFor(err1));
+// => Output: Requisition req_f4c2a1b7 not found -> 404
+console.log(describeDomainError(err2), "->", httpStatusFor(err2));
+// => Output: Insufficient budget: need 5000, have 2000 -> 422
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A comprehensive named error DU makes every failure mode visible, testable, and precisely mappable to API responses — stringly-typed errors or generic exceptions cannot provide this level of precision.
@@ -1745,7 +2453,7 @@ graph LR
     style DI fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1871,6 +2579,93 @@ printfn "Submitted: %A" submitted
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// PurchaseOrder aggregate — full state machine encoded in the type system.
+// [F#: DU where each case carries state-specific payload — access to wrong field is compile error]
+// [Clojure: map with :status key dispatched by defmulti; TS uses tagged union with narrowing]
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+const asPOId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
+
+// Each state carries only the data meaningful in that state
+interface PODraftState {
+  readonly status: "Draft";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly lines: readonly { sku: string; qty: number; price: number }[];
+}
+// => Draft: assembled but not yet sent to supplier for approval
+
+interface POApprovedState {
+  readonly status: "Approved";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly approvedAt: string;
+  readonly approvedBy: string;
+}
+// => Approved: internal approval granted — ready to be issued
+
+interface POIssuedState {
+  readonly status: "Issued";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly issuedAt: string;
+  readonly expectedDelivery: string;
+}
+// => Issued: formally sent to supplier — delivery expected
+
+interface POCancelledState {
+  readonly status: "Cancelled";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly reason: string;
+  readonly cancelledAt: string;
+}
+// => Cancelled: PO voided — no delivery will occur
+
+// The full PO lifecycle union
+type PurchaseOrder = PODraftState | POApprovedState | POIssuedState | POCancelledState;
+
+// Typed transitions — each takes the correct state
+function approvePO(draft: PODraftState, approvedBy: string): POApprovedState {
+  return {
+    status: "Approved",
+    purchaseOrderId: draft.purchaseOrderId,
+    supplierId: draft.supplierId,
+    approvedAt: new Date().toISOString(),
+    approvedBy,
+  };
+  // => approvePO : PODraftState -> POApprovedState — cannot approve a cancelled PO
+}
+
+function issuePO(approved: POApprovedState, expectedDelivery: string): POIssuedState {
+  return {
+    status: "Issued",
+    purchaseOrderId: approved.purchaseOrderId,
+    supplierId: approved.supplierId,
+    issuedAt: new Date().toISOString(),
+    expectedDelivery,
+  };
+  // => issuePO : POApprovedState -> POIssuedState — cannot issue a draft PO
+}
+
+const draft: PODraftState = {
+  status: "Draft",
+  purchaseOrderId: asPOId("po_e3d1f8a0"),
+  supplierId: "sup_001" as SupplierId,
+  lines: [{ sku: "ELE-0099", qty: 3, price: 899.99 }],
+};
+const approved = approvePO(draft, "mgr_finance");
+const issued = issuePO(approved, "2026-06-15");
+
+console.log("PO status:", issued.status, "supplier:", issued.supplierId);
+// => Output: PO status: Issued supplier: sup_001
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling `PurchaseOrder` states as discriminated union cases with typed payloads enforces the state machine at the type level — a transition function that accepts `Draft` cannot be accidentally called with `Issued`.
@@ -1883,7 +2678,7 @@ printfn "Submitted: %A" submitted
 
 When a `PurchaseOrder` transitions to `Issued`, it emits a `PurchaseOrderIssued` event. Domain events are the outputs of aggregate state transitions — they notify downstream contexts (`receiving`, `invoicing`, `supplier-notifier`) that something happened.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2051,6 +2846,84 @@ printfn "Events: %d" events.Length
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Domain events from state transitions — each transition emits an immutable event.
+// [F#: state transition function returns (NewState * Event list) — events are the record of change]
+// [Clojure: transition function returns {:state new-state :events [...]}; TS mirrors this tuple]
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+const asPOId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
+
+// State types
+interface PODraftState {
+  readonly status: "Draft";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly lines: readonly { sku: string; qty: number; price: number }[];
+}
+interface POApprovedState {
+  readonly status: "Approved";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly approvedAt: string;
+}
+
+// Domain event union — past-tense, immutable facts
+type POEvent =
+  | { readonly type: "PurchaseOrderApproved"; readonly purchaseOrderId: PurchaseOrderId; readonly approvedAt: string }
+  // => Fired when the PO transitions from Draft to Approved
+  | {
+      readonly type: "PurchaseOrderIssued";
+      readonly purchaseOrderId: PurchaseOrderId;
+      readonly supplierId: SupplierId;
+      readonly issuedAt: string;
+    };
+// => Fired when the PO is formally sent to the supplier
+
+// Transition returns (NewState, Events[]) tuple — events are the audit trail
+function approvePO(draft: PODraftState): [POApprovedState, POEvent[]] {
+  const approvedAt = new Date().toISOString();
+  const newState: POApprovedState = {
+    status: "Approved",
+    purchaseOrderId: draft.purchaseOrderId,
+    // => Preserve identity through the transition
+    approvedAt,
+  };
+  const events: POEvent[] = [
+    {
+      type: "PurchaseOrderApproved",
+      purchaseOrderId: draft.purchaseOrderId,
+      approvedAt,
+      // => Event captures what changed and when — for downstream consumers
+    },
+  ];
+  return [newState, events];
+  // => Returns (new state, events) — mirrors F# (NewState * DomainEvent list)
+}
+
+// Usage
+const draft: PODraftState = {
+  status: "Draft",
+  purchaseOrderId: asPOId("po_e3d1f8a0"),
+  supplierId: "sup_001" as SupplierId,
+  lines: [{ sku: "ELE-0099", qty: 3, price: 899.99 }],
+};
+
+const [approvedState, events] = approvePO(draft);
+// => approvePO returns [new state, emitted events]
+
+console.log("New state:", approvedState.status);
+// => Output: New state: Approved
+console.log(`Events emitted: ${events.length}`);
+// => Output: Events emitted: 1
+console.log("Event type:", events[0].type);
+// => Output: Event type: PurchaseOrderApproved
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: State transition functions that return `(newState, events)` pairs keep event emission co-located with the state change — ensuring events are always emitted when the transition occurs, never accidentally omitted.
@@ -2074,7 +2947,7 @@ stateDiagram-v2
     Blacklisted --> [*] : permanent exclusion
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2236,6 +3109,94 @@ match approvalResult with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Supplier aggregate — lifecycle states as a tagged union.
+// [F#: DU SupplierState with payload per case — exhaustive match enforced by compiler]
+// [Clojure: map with :supplier/status keyword dispatched by multimethod; TS uses tagged union]
+
+type SupplierId = string & { readonly __brand: "SupplierId" };
+const asSupplierId = (s: string): SupplierId => s as SupplierId;
+
+// Supplier lifecycle states — each carries state-specific data
+interface SupplierPendingState {
+  readonly status: "Pending";
+  readonly supplierId: SupplierId;
+  readonly name: string;
+  readonly submittedAt: string;
+}
+// => Pending: application submitted — awaiting procurement approval
+
+interface SupplierApprovedState {
+  readonly status: "Approved";
+  readonly supplierId: SupplierId;
+  readonly name: string;
+  readonly approvedAt: string;
+  readonly currency: string;
+}
+// => Approved: qualified vendor — can receive POs
+
+interface SupplierSuspendedState {
+  readonly status: "Suspended";
+  readonly supplierId: SupplierId;
+  readonly reason: string;
+  readonly suspendedAt: string;
+}
+// => Suspended: temporarily blocked — quality/compliance issue
+
+interface SupplierBlacklistedState {
+  readonly status: "Blacklisted";
+  readonly supplierId: SupplierId;
+  readonly reason: string;
+  readonly blacklistedAt: string;
+}
+// => Blacklisted: permanently excluded — serious violation
+
+type Supplier = SupplierPendingState | SupplierApprovedState | SupplierSuspendedState | SupplierBlacklistedState;
+
+// Typed transition: Pending -> Approved
+function approveSupplier(pending: SupplierPendingState, currency: string): SupplierApprovedState {
+  return {
+    status: "Approved",
+    supplierId: pending.supplierId,
+    name: pending.name,
+    approvedAt: new Date().toISOString(),
+    currency,
+  };
+  // => approveSupplier only accepts SupplierPendingState — compiler enforces this
+}
+
+// Exhaustive description
+function describeSupplier(s: Supplier): string {
+  switch (s.status) {
+    case "Pending":
+      return `${s.name} pending approval`;
+    case "Approved":
+      return `${s.name} approved (${s.currency})`;
+    case "Suspended":
+      return `Suspended: ${s.reason}`;
+    case "Blacklisted":
+      return `Blacklisted: ${s.reason}`;
+  }
+}
+
+const pending: SupplierPendingState = {
+  status: "Pending",
+  supplierId: asSupplierId("sup_001"),
+  name: "ACME Supplies",
+  submittedAt: new Date().toISOString(),
+};
+const approved = approveSupplier(pending, "USD");
+
+console.log(describeSupplier(pending));
+// => Output: ACME Supplies pending approval
+console.log(describeSupplier(approved));
+// => Output: ACME Supplies approved (USD)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `Supplier` aggregate's discriminated union status makes eligibility checks (`isEligibleForNewPO`) compile-time safe — the purchasing context checks the status before creating a PO, and the status field cannot be in an undefined intermediate state.
@@ -2268,7 +3229,7 @@ graph TD
     style ReqRef fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2427,6 +3388,70 @@ match addResult with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Aggregate boundary — what belongs inside vs outside.
+// [F#: module with encapsulated types and functions — boundary enforced by type visibility]
+// [Clojure: namespace boundary with private helpers; TS uses class or module pattern]
+
+// The PurchaseOrder aggregate root — contains only what it owns
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+type SkuCode = string & { readonly __brand: "SkuCode" };
+
+interface POLine {
+  readonly lineNumber: number;
+  readonly skuCode: SkuCode;
+  readonly qty: number;
+  readonly unitPrice: number;
+}
+// => POLine is INSIDE the aggregate — owned and validated by PO
+
+interface PurchaseOrder {
+  readonly id: PurchaseOrderId;
+  // => Aggregate identity — drives all lookups
+  readonly supplierId: SupplierId;
+  // => Reference to Supplier aggregate — just the ID, not the full Supplier object
+  // => [F#: IDs only across aggregate boundaries — no deep object graphs]
+  readonly status: "Draft" | "Approved" | "Issued" | "Cancelled";
+  readonly lines: readonly POLine[];
+  // => Line items are INSIDE the aggregate — owned, not referenced
+  readonly createdAt: string;
+}
+// => PurchaseOrder is the aggregate root — lines are part of it, Supplier is external
+
+// Operations on the aggregate — enforced invariants
+function addLineToPO(po: PurchaseOrder, line: POLine): PurchaseOrder {
+  if (po.status !== "Draft") throw new Error(`Cannot add lines to a PO in ${po.status} state`);
+  // => Domain rule: lines can only be added to Draft POs
+  return { ...po, lines: [...po.lines, line] };
+  // => Immutable update — returns new PO with the line added
+}
+
+function computePOTotal(po: PurchaseOrder): number {
+  return po.lines.reduce((sum, l) => sum + l.qty * l.unitPrice, 0);
+  // => Aggregate encapsulates its own total computation
+}
+
+const po: PurchaseOrder = {
+  id: "po_e3d1f8a0" as PurchaseOrderId,
+  supplierId: "sup_001" as SupplierId,
+  // => Only the SupplierId — not the full Supplier object
+  status: "Draft",
+  lines: [],
+  createdAt: new Date().toISOString(),
+};
+
+const withLine = addLineToPO(po, { lineNumber: 1, skuCode: "ELE-0099" as SkuCode, qty: 3, unitPrice: 899.99 });
+console.log(`PO total: ${computePOTotal(withLine).toFixed(2)}`);
+// => Output: PO total: 2699.97
+console.log("Lines count:", withLine.lines.length);
+// => Output: Lines count: 1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An aggregate owns everything that must be consistent together and references other aggregates by ID only — this keeps transaction boundaries small and prevents cross-aggregate consistency violations.
@@ -2439,7 +3464,7 @@ match addResult with
 
 Primitive obsession is the anti-pattern of using raw `string`, `int`, or `decimal` where a domain type should be used. This example shows a before/after refactor of a PO approval function that suffers from primitive obsession and the improvement from introducing typed wrappers.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2560,6 +3585,60 @@ printfn "Record: %A" record
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Refactor primitive obsession — replacing raw strings with branded types.
+// [F#: replace string fields with single-case DU wrappers — type safety without overhead]
+// [Clojure: replace plain strings with spec-validated keys; TS replaces with branded types]
+
+// BEFORE: primitive obsession — all fields are raw strings
+interface POLineBefore {
+  skuCode: string; // raw — could be any string
+  supplierId: string; // raw — could be confused with a requisitionId
+  currency: string; // raw — could be "USD" or "dollars" or ""
+  qty: number;
+  unitPrice: number;
+}
+// => All string fields are indistinguishable — easy to swap them accidentally
+
+// AFTER: branded types eliminate primitive obsession
+type SkuCode = string & { readonly __brand: "SkuCode" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+type Currency = string & { readonly __brand: "Currency" };
+
+// Smart constructors — validation happens at the boundary
+const createSkuCode = (s: string): SkuCode | null => (/^[A-Z]{3}-\d{4,8}$/.test(s) ? (s as SkuCode) : null);
+const createSupplierId = (s: string): SupplierId | null => (s.startsWith("sup_") ? (s as SupplierId) : null);
+const createCurrency = (s: string): Currency | null => (/^[A-Z]{3}$/.test(s) ? (s as Currency) : null);
+// => Each constructor validates the invariant before branding
+
+// AFTER: all fields are distinct branded types
+interface POLineAfter {
+  readonly skuCode: SkuCode;
+  readonly supplierId: SupplierId;
+  // => Cannot accidentally swap skuCode and supplierId — different brands
+  readonly currency: Currency;
+  // => Cannot pass "dollars" — must be a valid ISO 4217 code
+  readonly qty: number;
+  readonly unitPrice: number;
+}
+
+// Constructing with validation at the boundary
+const sku = createSkuCode("OFF-0042");
+const supplier = createSupplierId("sup_001");
+const currency = createCurrency("USD");
+
+if (sku && supplier && currency) {
+  const line: POLineAfter = { skuCode: sku, supplierId: supplier, currency, qty: 10, unitPrice: 8.5 };
+  // => Valid by construction — all fields passed their smart constructors
+  console.log("Line:", line.skuCode, "@", line.currency, "x", line.qty);
+  // => Output: Line: OFF-0042 @ USD x 10
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Replacing raw primitives with named wrapper types eliminates the ID-confusion class of bugs at compile time — the cost is minimal syntactic overhead for a permanent correctness guarantee.
@@ -2572,7 +3651,7 @@ printfn "Record: %A" record
 
 The validation step of the approval workflow produces a `ValidatedPurchaseOrder` — a type that can only exist if all business rules passed. Downstream functions accept this type, not the raw `UnvalidatedPurchaseOrderCommand`, making the validation guarantee structural.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2751,6 +3830,62 @@ match validated with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ValidatedPurchaseOrder — a type emitted by the validation step of the workflow.
+// [F#: distinct type for each workflow stage — only the validate step produces this type]
+// [Clojure: separate map schemas per stage; TS uses distinct interfaces to encode stage]
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+type SkuCode = string & { readonly __brand: "SkuCode" };
+const asPOId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
+
+// The raw DTO arriving from the HTTP layer
+interface UnvalidatedPO {
+  readonly supplierId: string;
+  readonly lines: ReadonlyArray<{ skuCode: string; qty: number; unitPrice: number }>;
+}
+// => All fields are primitives — domain invariants not yet checked
+
+// The validated PO — emitted ONLY by the validation step
+interface ValidatedPurchaseOrder {
+  readonly __validated: true; // phantom field — prevents accidental construction
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly lines: ReadonlyArray<{ skuCode: SkuCode; qty: number; unitPrice: number }>;
+  readonly validatedAt: string;
+}
+// => ValidatedPurchaseOrder : emitted only by validatePO — downstream steps can trust it
+
+// The validation step — the only function that can produce a ValidatedPurchaseOrder
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+function validatePO(raw: UnvalidatedPO): Result<ValidatedPurchaseOrder, string> {
+  if (!raw.supplierId.startsWith("sup_")) return errR(`Invalid SupplierId: '${raw.supplierId}'`);
+  if (raw.lines.length === 0) return errR("PO must have at least one line");
+  const lines = raw.lines.map((l) => ({ skuCode: l.skuCode as SkuCode, qty: l.qty, unitPrice: l.unitPrice }));
+  return okR({
+    __validated: true,
+    purchaseOrderId: asPOId(`po_${Math.random().toString(36).slice(2, 10)}`),
+    supplierId: raw.supplierId as SupplierId,
+    lines,
+    validatedAt: new Date().toISOString(),
+  } as ValidatedPurchaseOrder);
+  // => __validated: true phantom field marks this as having passed validation
+}
+
+const raw: UnvalidatedPO = { supplierId: "sup_001", lines: [{ skuCode: "ELE-0099", qty: 3, unitPrice: 899.99 }] };
+const result = validatePO(raw);
+if (result.ok) console.log("Validated PO:", result.value.purchaseOrderId, result.value.lines.length, "lines");
+// => Output: Validated PO: po_... 1 lines
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Introducing a `ValidatedPurchaseOrder` type makes the validation guarantee structural — downstream functions that accept it cannot be called before validation runs, because the type cannot be constructed any other way.
@@ -2763,7 +3898,7 @@ match validated with
 
 After an `Approved` PO is issued to the supplier, it enters the `Issued` state. The `IssuedPurchaseOrder` type carries the issuance timestamp and the event that was emitted, providing a typed record that downstream steps (receiving context) can depend on.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2892,6 +4027,69 @@ printfn "Event total: %M" event.TotalAmount
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// IssuedPurchaseOrder — a type emitted only by the issue step of the workflow.
+// [F#: IssuedPurchaseOrder distinct type — can only be created by the issuePO function]
+// [Clojure: separate map schema per stage; TS uses distinct interface with phantom brand]
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+type SkuCode = string & { readonly __brand: "SkuCode" };
+
+// The approved PO — input to the issue step
+interface ApprovedPurchaseOrder {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly lines: ReadonlyArray<{ skuCode: SkuCode; qty: number; unitPrice: number }>;
+  readonly approvedAt: string;
+}
+
+// The issued PO — emitted ONLY by the issue step
+interface IssuedPurchaseOrder {
+  readonly __issued: true; // phantom field — marks this as issued
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly lines: ReadonlyArray<{ skuCode: SkuCode; qty: number; unitPrice: number }>;
+  readonly approvedAt: string;
+  readonly issuedAt: string;
+  readonly expectedDelivery: string;
+}
+// => IssuedPurchaseOrder can only be created by issuePO — downstream trusts it
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+// The issue step — the only function that can produce an IssuedPurchaseOrder
+function issuePO(approved: ApprovedPurchaseOrder, expectedDelivery: string): Result<IssuedPurchaseOrder, string> {
+  if (!expectedDelivery) return errR("Expected delivery date is required");
+  return okR({
+    __issued: true,
+    purchaseOrderId: approved.purchaseOrderId,
+    supplierId: approved.supplierId,
+    lines: approved.lines,
+    approvedAt: approved.approvedAt,
+    issuedAt: new Date().toISOString(),
+    expectedDelivery,
+  } as IssuedPurchaseOrder);
+  // => __issued: true marks this as having been formally issued to the supplier
+}
+
+const approved: ApprovedPurchaseOrder = {
+  purchaseOrderId: "po_e3d1f8a0" as PurchaseOrderId,
+  supplierId: "sup_001" as SupplierId,
+  lines: [{ skuCode: "ELE-0099" as SkuCode, qty: 3, unitPrice: 899.99 }],
+  approvedAt: new Date().toISOString(),
+};
+const result = issuePO(approved, "2026-06-15");
+if (result.ok) console.log("Issued PO:", result.value.purchaseOrderId, "delivery:", result.value.expectedDelivery);
+// => Output: Issued PO: po_e3d1f8a0 delivery: 2026-06-15
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Returning `(IssuedPurchaseOrder, PurchaseOrderIssuedEvent)` from the issue transition makes event emission inseparable from the state change — the caller cannot save the new state without also handling the event.
@@ -2921,7 +4119,7 @@ graph TD
     style Out fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3073,6 +4271,73 @@ printfn "ApprovePO workflow signature defined — dependencies are function para
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ApprovePO workflow signature with dependencies — function receives its dependencies.
+// [F#: type alias ApprovePO = Dependencies -> ApprovedPO -> Result<...>]
+// [Clojure: defn with injected function args; TS uses dependency parameter objects]
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+
+interface PendingApprovalPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly total: number;
+  readonly requestedBy: string;
+}
+interface ApprovedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly approvedBy: string;
+  readonly approvedAt: string;
+}
+type POApprovedEvent = {
+  readonly type: "POApproved";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly approvedBy: string;
+};
+
+// Dependencies the ApprovePO workflow needs — injected, not imported
+interface ApprovePODeps {
+  readonly getApprovalThreshold: (requestedBy: string) => Promise<number>;
+  // => Looks up the approval threshold for this employee's level — async I/O
+  readonly savePO: (po: ApprovedPO) => Promise<void>;
+  // => Persists the approved PO to the database — async I/O
+  readonly currentApprover: string;
+  // => The identity of the approver — injected at the edge
+}
+
+// The workflow function type — dependencies are explicit parameters
+type ApprovePOWorkflow = (deps: ApprovePODeps, po: PendingApprovalPO) => Promise<Result<POApprovedEvent, string>>;
+
+// Implementation
+const approvePO: ApprovePOWorkflow = async (deps, po) => {
+  const threshold = await deps.getApprovalThreshold(po.requestedBy);
+  // => Async I/O at the edge — pure domain logic follows
+  if (po.total > threshold) return errR(`Total ${po.total} exceeds approval threshold ${threshold}`);
+  // => Pure domain rule: amount must be within the approver's authority
+  const approvedPO: ApprovedPO = {
+    purchaseOrderId: po.purchaseOrderId,
+    approvedBy: deps.currentApprover,
+    approvedAt: new Date().toISOString(),
+  };
+  await deps.savePO(approvedPO);
+  // => Async I/O at the edge — persist the approved state
+  return okR({ type: "POApproved", purchaseOrderId: po.purchaseOrderId, approvedBy: deps.currentApprover });
+  // => Return the domain event — downstream consumers react to POApproved
+};
+
+console.log("ApprovePO workflow signature defined — dependencies are explicit parameters");
+// => Output: ApprovePO workflow signature defined — dependencies are explicit parameters
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Expressing workflow dependencies as function-type parameters makes the contract explicit — the caller must supply real or test implementations for every dependency, and the compiler verifies the types match.
@@ -3085,7 +4350,7 @@ printfn "ApprovePO workflow signature defined — dependencies are function para
 
 The `IssuePO` workflow composes four steps: load the approved PO, verify it is in `Approved` state, persist the `Issued` state, and publish the `PurchaseOrderIssued` event. Each dependency is a function type parameter.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3254,6 +4519,78 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// IssuePO workflow signature with dependencies — issued PO triggers supplier notification.
+// [F#: type alias IssuePO = IssuePODeps -> ApprovedPO -> AsyncResult<POIssuedEvent, DomainError>]
+// [Clojure: defn with injected function args; TS uses dependency parameter object]
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+
+interface ApprovedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly lines: readonly { sku: string; qty: number; price: number }[];
+  readonly total: number;
+}
+
+interface IssuedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly issuedAt: string;
+  readonly expectedDelivery: string;
+}
+
+type POIssuedEvent = {
+  readonly type: "POIssued";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+};
+
+// Dependencies the IssuePO workflow needs — injected, not imported
+interface IssuePODeps {
+  readonly validateSupplierStatus: (supplierId: SupplierId) => Promise<boolean>;
+  // => Checks that the supplier is still Approved — async I/O
+  readonly savePO: (po: IssuedPO) => Promise<void>;
+  // => Persists the issued PO — async I/O
+  readonly notifySupplier: (supplierId: SupplierId, poId: PurchaseOrderId) => Promise<void>;
+  // => Sends PO to supplier via EDI or email — async I/O
+  readonly computeExpectedDelivery: (supplierId: SupplierId) => string;
+  // => Computes delivery date from supplier SLA rules — pure function injected
+}
+
+type IssuePOWorkflow = (deps: IssuePODeps, approved: ApprovedPO) => Promise<Result<POIssuedEvent, string>>;
+
+const issuePO: IssuePOWorkflow = async (deps, approved) => {
+  const supplierOk = await deps.validateSupplierStatus(approved.supplierId);
+  // => I/O at the edge: verify supplier is still approved
+  if (!supplierOk) return errR(`Supplier ${approved.supplierId} is not approved`);
+  const expectedDelivery = deps.computeExpectedDelivery(approved.supplierId);
+  // => Pure function: computes delivery date from SLA — no I/O
+  const issued: IssuedPO = {
+    purchaseOrderId: approved.purchaseOrderId,
+    supplierId: approved.supplierId,
+    issuedAt: new Date().toISOString(),
+    expectedDelivery,
+  };
+  await deps.savePO(issued);
+  await deps.notifySupplier(approved.supplierId, approved.purchaseOrderId);
+  // => I/O at the edge: persist and notify
+  return okR({ type: "POIssued", purchaseOrderId: approved.purchaseOrderId, supplierId: approved.supplierId });
+};
+
+console.log("IssuePO workflow signature defined — all effects injected as dependencies");
+// => Output: IssuePO workflow signature defined — all effects injected as dependencies
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A four-step async workflow expressed with typed function dependencies is fully testable with in-memory stubs — no database, no Kafka, no network required to test the workflow logic.
@@ -3266,7 +4603,7 @@ match result with
 
 Once a `PurchaseOrder` is issued to the supplier, the supplier acknowledges receipt. The `AcknowledgePO` workflow transitions `Issued → Acknowledged` and emits `PurchaseOrderAcknowledged`, which opens a GRN expectation in the receiving context.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3475,6 +4812,76 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// AcknowledgePO workflow signature — supplier acknowledges receipt of the issued PO.
+// [F#: AcknowledgePO = AcknowledgePODeps -> IssuedPO -> AsyncResult<POAcknowledgedEvent, DomainError>]
+// [Clojure: defn with injected function args; TS explicit dependency parameter]
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+
+interface IssuedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly issuedAt: string;
+  readonly expectedDelivery: string;
+}
+
+interface AcknowledgedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly acknowledgedAt: string;
+  readonly confirmedDelivery: string;
+}
+
+type POAcknowledgedEvent = {
+  readonly type: "POAcknowledged";
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly confirmedDelivery: string;
+};
+// => Fired when the supplier formally acknowledges receiving and accepting the PO
+
+// Dependencies needed by the AcknowledgePO workflow
+interface AcknowledgePODeps {
+  readonly getCurrentTime: () => string;
+  // => Current UTC timestamp — injected so the workflow is deterministic in tests
+  readonly savePO: (po: AcknowledgedPO) => Promise<void>;
+  // => Persists the acknowledged state — async I/O at the edge
+  readonly sendAcknowledgmentNotification: (poId: PurchaseOrderId) => Promise<void>;
+  // => Notifies the purchasing team — async I/O at the edge
+}
+
+type AcknowledgePOWorkflow = (
+  deps: AcknowledgePODeps,
+  issued: IssuedPO,
+  confirmedDelivery: string,
+) => Promise<Result<POAcknowledgedEvent, string>>;
+
+const acknowledgePO: AcknowledgePOWorkflow = async (deps, issued, confirmedDelivery) => {
+  if (!confirmedDelivery) return errR("Confirmed delivery date is required");
+  // => Domain rule: supplier must commit to a specific delivery date
+  const acknowledged: AcknowledgedPO = {
+    purchaseOrderId: issued.purchaseOrderId,
+    acknowledgedAt: deps.getCurrentTime(),
+    // => Timestamp injected — no Date.now() inside domain function
+    confirmedDelivery,
+  };
+  await deps.savePO(acknowledged);
+  await deps.sendAcknowledgmentNotification(issued.purchaseOrderId);
+  return okR({ type: "POAcknowledged", purchaseOrderId: issued.purchaseOrderId, confirmedDelivery });
+};
+
+console.log("AcknowledgePO workflow signature defined — timestamp is an injected dependency");
+// => Output: AcknowledgePO workflow signature defined — timestamp is an injected dependency
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `AcknowledgePO` workflow is structurally identical to `IssuePO` — load, build, save, publish — demonstrating that the same composition pattern scales to every step in the PO lifecycle.
@@ -3499,7 +4906,7 @@ graph LR
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3676,6 +5083,89 @@ match errorResult with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Pipeline composition — wiring three workflow steps end-to-end.
+// [F#: validatePO >> approvePO >> issuePO chained via AsyncResult.bind]
+// [Clojure: sequential async operations; TS chains async/await with Result checks]
+
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+const asPOId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
+
+// Types for each workflow stage
+interface UnvalidatedPO {
+  readonly supplierId: string;
+  readonly total: number;
+  readonly requestedBy: string;
+}
+interface ValidatedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly total: number;
+  readonly requestedBy: string;
+}
+interface ApprovedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly approvedBy: string;
+}
+interface IssuedPO {
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly issuedAt: string;
+}
+
+// Individual workflow steps
+function validatePO(raw: UnvalidatedPO): Result<ValidatedPO, string> {
+  if (!raw.supplierId.startsWith("sup_")) return errR(`Invalid supplier: ${raw.supplierId}`);
+  return okR({
+    purchaseOrderId: asPOId(`po_${Math.random().toString(36).slice(2, 10)}`),
+    supplierId: raw.supplierId as SupplierId,
+    total: raw.total,
+    requestedBy: raw.requestedBy,
+  });
+}
+
+async function approvePO(validated: ValidatedPO): Promise<Result<ApprovedPO, string>> {
+  await new Promise((r) => setTimeout(r, 0));
+  // => Simulates async approval lookup
+  return okR({
+    purchaseOrderId: validated.purchaseOrderId,
+    supplierId: validated.supplierId,
+    approvedBy: "mgr_finance",
+  });
+}
+
+async function issuePO(approved: ApprovedPO): Promise<Result<IssuedPO, string>> {
+  await new Promise((r) => setTimeout(r, 0));
+  // => Simulates async EDI notification to supplier
+  return okR({ purchaseOrderId: approved.purchaseOrderId, issuedAt: new Date().toISOString() });
+}
+
+// Composed pipeline — validate >> approve >> issue
+async function submitAndIssuePO(raw: UnvalidatedPO): Promise<Result<IssuedPO, string>> {
+  const validated = validatePO(raw);
+  // => Step 1: synchronous validation — short-circuit on error
+  if (!validated.ok) return validated;
+  const approved = await approvePO(validated.value);
+  // => Step 2: async approval — short-circuit on error
+  if (!approved.ok) return approved;
+  return issuePO(approved.value);
+  // => Step 3: async issue — complete the pipeline
+}
+
+const result = await submitAndIssuePO({ supplierId: "sup_001", total: 2784.97, requestedBy: "emp_00456" });
+if (result.ok) console.log("Issued PO:", result.value.purchaseOrderId, "at", result.value.issuedAt.slice(0, 10));
+// => Output: Issued PO: po_... at 2026-...
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Composing three workflow steps into a pipeline using `|>` and `Result.map` produces a readable, linear representation of the PO lifecycle without nested conditionals or try/catch blocks.
@@ -3688,7 +5178,7 @@ match errorResult with
 
 A comprehensive `PurchasingContextError` DU covers every failure the purchasing workflows can produce — from field-level validation to infrastructure failures. This is the full error taxonomy for the context.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3894,6 +5384,78 @@ errors |> List.iter (fun e ->
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Domain Error union — every purchasing failure mode is a named, typed value.
+// [F#: DU PurchasingError with detailed cases — exhaustive match required; TS uses tagged union]
+// [Clojure: keyword set of error kinds; TS closed tagged union with exhaustive switch]
+
+// Comprehensive domain error union for the purchasing context
+type PurchasingError =
+  | { readonly kind: "RequisitionNotFound"; readonly requisitionId: string }
+  | { readonly kind: "PONotFound"; readonly purchaseOrderId: string }
+  | { readonly kind: "SupplierNotApproved"; readonly supplierId: string }
+  | { readonly kind: "BudgetExceeded"; readonly required: number; readonly available: number }
+  | { readonly kind: "DuplicatePO"; readonly purchaseOrderId: string }
+  | { readonly kind: "InvalidTransition"; readonly from: string; readonly to: string }
+  | { readonly kind: "LineItemValidationFailed"; readonly lineNumber: number; readonly message: string };
+
+function assertNever(x: never): never {
+  throw new Error(String(x));
+}
+
+// Exhaustive error description — TypeScript enforces all cases
+function describeError(e: PurchasingError): string {
+  switch (e.kind) {
+    case "RequisitionNotFound":
+      return `Requisition ${e.requisitionId} not found`;
+    case "PONotFound":
+      return `PO ${e.purchaseOrderId} not found`;
+    case "SupplierNotApproved":
+      return `Supplier ${e.supplierId} is not approved`;
+    case "BudgetExceeded":
+      return `Budget exceeded: need ${e.required}, have ${e.available}`;
+    case "DuplicatePO":
+      return `Duplicate PO: ${e.purchaseOrderId} already exists`;
+    case "InvalidTransition":
+      return `Invalid transition: ${e.from} -> ${e.to}`;
+    case "LineItemValidationFailed":
+      return `Line ${e.lineNumber}: ${e.message}`;
+    default:
+      return assertNever(e);
+  }
+}
+
+// HTTP status mapping — exhaustive switch ensures no case is missed
+function httpStatus(e: PurchasingError): number {
+  switch (e.kind) {
+    case "RequisitionNotFound":
+    case "PONotFound":
+      return 404;
+    case "DuplicatePO":
+      return 409;
+    case "SupplierNotApproved":
+    case "BudgetExceeded":
+    case "InvalidTransition":
+    case "LineItemValidationFailed":
+      return 422;
+    default:
+      return assertNever(e);
+  }
+}
+
+const err1: PurchasingError = { kind: "BudgetExceeded", required: 15000, available: 10000 };
+const err2: PurchasingError = { kind: "SupplierNotApproved", supplierId: "sup_999" };
+
+console.log(describeError(err1), "->", httpStatus(err1));
+// => Output: Budget exceeded: need 15000, have 10000 -> 422
+console.log(describeError(err2), "->", httpStatus(err2));
+// => Output: Supplier sup_999 is not approved -> 422
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A comprehensive named error DU enables precise, policy-driven handling at the API boundary — each error case maps to an exact HTTP status, alerting severity, and retry eligibility without string parsing or `instanceof` checks.
@@ -3906,7 +5468,7 @@ errors |> List.iter (fun e ->
 
 The API boundary translates `PurchasingContextError` into HTTP responses. This translation is a pure function that lives outside the domain — it is infrastructure, not domain logic.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4096,6 +5658,85 @@ printfn "Error:   %d %s" status2 body2
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Mapping domain errors to API errors at the HTTP boundary.
+// [F#: mapToHttpError : DomainError -> HttpApiError — translate at the controller layer]
+// [Clojure: domain-error->api-response function at the route handler; TS mirrors at controller]
+
+type PurchasingError =
+  | { readonly kind: "RequisitionNotFound"; readonly requisitionId: string }
+  | { readonly kind: "SupplierNotApproved"; readonly supplierId: string }
+  | { readonly kind: "BudgetExceeded"; readonly required: number; readonly available: number }
+  | { readonly kind: "InvalidTransition"; readonly from: string; readonly to: string };
+
+// API error format — what the HTTP layer returns to clients
+interface ApiError {
+  readonly statusCode: number;
+  readonly errorCode: string;
+  // => Machine-readable code for clients to handle programmatically
+  readonly message: string;
+  // => Human-readable message for developers
+  readonly details?: Record<string, unknown>;
+  // => Optional structured details for rich error responses
+}
+
+function assertNever(x: never): never {
+  throw new Error(String(x));
+}
+
+// Mapper: translate domain error to API error — runs at the HTTP boundary only
+function mapDomainErrorToApiError(error: PurchasingError): ApiError {
+  switch (error.kind) {
+    case "RequisitionNotFound":
+      return {
+        statusCode: 404,
+        errorCode: "REQUISITION_NOT_FOUND",
+        message: `Requisition ${error.requisitionId} not found`,
+      };
+    // => 404: resource doesn't exist
+    case "SupplierNotApproved":
+      return {
+        statusCode: 422,
+        errorCode: "SUPPLIER_NOT_APPROVED",
+        message: `Supplier ${error.supplierId} has not been approved for procurement`,
+      };
+    // => 422: business rule violation
+    case "BudgetExceeded":
+      return {
+        statusCode: 422,
+        errorCode: "BUDGET_EXCEEDED",
+        message: "Requisition total exceeds available budget",
+        details: { required: error.required, available: error.available },
+      };
+    // => 422: with structured details for the client to display
+    case "InvalidTransition":
+      return {
+        statusCode: 422,
+        errorCode: "INVALID_STATE_TRANSITION",
+        message: `Cannot transition from ${error.from} to ${error.to}`,
+      };
+    // => 422: workflow rule violation
+    default:
+      return assertNever(error);
+    // => All cases covered — no silent failures
+  }
+}
+
+const domainErr: PurchasingError = { kind: "BudgetExceeded", required: 5000, available: 2000 };
+const apiError = mapDomainErrorToApiError(domainErr);
+
+console.log("API Error:", apiError.statusCode, apiError.errorCode);
+// => Output: API Error: 422 BUDGET_EXCEEDED
+console.log("Message:", apiError.message);
+// => Output: Message: Requisition total exceeds available budget
+console.log("Details:", apiError.details);
+// => Output: Details: { required: 5000, available: 2000 }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The API boundary translation is a pure function from domain errors to HTTP responses — it lives outside the domain, is independently testable, and keeps HTTP concerns out of the domain layer.
@@ -4119,7 +5760,7 @@ graph TD
     style Core fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4303,6 +5944,83 @@ printfn "Approved at: %O" approved.ApprovedAt
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Pushing effects to the edges — I/O at the boundary, pure core in the middle.
+// [F#: async CE for I/O wrappers; pure domain functions have no async]
+// [Clojure: side effects in defn wrappers; pure core functions are plain defn; TS: async at edge]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+
+// ── Pure core — no I/O, no async, no side effects ────────────────────────────
+interface POLine {
+  readonly sku: string;
+  readonly qty: number;
+  readonly price: number;
+}
+interface PO {
+  readonly id: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly lines: readonly POLine[];
+}
+
+function computeTotal(po: PO): number {
+  return po.lines.reduce((sum, l) => sum + l.qty * l.price, 0);
+  // => Pure arithmetic — no I/O, deterministic, testable without infrastructure
+}
+
+function validateApprovalAmount(total: number, threshold: number): Result<number, string> {
+  return total <= threshold ? okR(total) : errR(`Total ${total} exceeds approval threshold ${threshold}`);
+  // => Pure domain rule — no database, no clock, no randomness
+}
+
+function buildApprovalEvent(id: PurchaseOrderId, approvedBy: string): Record<string, unknown> {
+  return { type: "POApproved", purchaseOrderId: id, approvedBy };
+  // => Pure event construction — no side effects
+}
+
+// ── Imperative shell — I/O wraps the pure core ───────────────────────────────
+interface ApprovePOPort {
+  readonly loadPO: (id: PurchaseOrderId) => Promise<PO | null>;
+  readonly getThreshold: (approver: string) => Promise<number>;
+  readonly saveApproval: (event: Record<string, unknown>) => Promise<void>;
+}
+
+async function approvePOShell(
+  port: ApprovePOPort,
+  id: PurchaseOrderId,
+  approver: string,
+): Promise<Result<string, string>> {
+  const po = await port.loadPO(id);
+  // => I/O at the edge: load from database
+  if (!po) return errR(`PO ${id} not found`);
+  const threshold = await port.getThreshold(approver);
+  // => I/O at the edge: fetch approval threshold
+  const total = computeTotal(po);
+  // => Pure core: compute total — no I/O
+  const validation = validateApprovalAmount(total, threshold);
+  // => Pure core: validate — no I/O
+  if (!validation.ok) return validation;
+  const event = buildApprovalEvent(id, approver);
+  // => Pure core: build event — no I/O
+  await port.saveApproval(event);
+  // => I/O at the edge: persist
+  return okR(`PO ${id} approved`);
+}
+
+console.log("Pure core defined — effects pushed to the shell");
+// => Output: Pure core defined — effects pushed to the shell
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Separating pure domain logic (decisions, transitions) from I/O effects (database, events, notifications) produces a domain core that is testable without infrastructure and a shell that is straightforward to replace or adapt.
@@ -4327,7 +6045,7 @@ graph LR
     style Pub fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4493,6 +6211,78 @@ match coreResult with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Pure core wrapped at the edge — the application service layer.
+// [F#: async functions at the edge call pure domain functions in the core]
+// [Clojure: route handler calls pure domain fns; TS async handler wraps pure core]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+const asPOId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
+
+// ── Pure domain core ─────────────────────────────────────────────────────────
+interface RequisitionLine {
+  readonly sku: string;
+  readonly qty: number;
+  readonly price: number;
+}
+interface ValidatedRequisition {
+  readonly requestedBy: string;
+  readonly lines: readonly RequisitionLine[];
+  readonly total: number;
+}
+type ApprovalLevel = "L1" | "L2" | "L3";
+
+function validateRequisition(requestedBy: string, lines: RequisitionLine[]): Result<ValidatedRequisition, string> {
+  if (!requestedBy.trim()) return errR("RequestedBy is required");
+  if (lines.length === 0) return errR("At least one line required");
+  return okR({ requestedBy, lines, total: lines.reduce((s, l) => s + l.qty * l.price, 0) });
+}
+
+function deriveApprovalLevel(total: number): ApprovalLevel {
+  return total <= 1000 ? "L1" : total <= 10000 ? "L2" : "L3";
+}
+
+// ── Application service (the "edge wrapper") ─────────────────────────────────
+interface SubmitRequisitionPort {
+  readonly generateId: () => PurchaseOrderId;
+  readonly persistEvent: (event: Record<string, unknown>) => Promise<void>;
+}
+
+async function submitRequisitionHandler(
+  port: SubmitRequisitionPort,
+  requestedBy: string,
+  lines: RequisitionLine[],
+): Promise<Result<Record<string, unknown>, string>> {
+  // ── Edge: resolve dependencies ────────────────────────────────────────────
+  const id = port.generateId();
+  // => I/O: generate ID (could involve a sequence in the DB)
+
+  // ── Pure core: validate and derive ───────────────────────────────────────
+  const validated = validateRequisition(requestedBy, lines);
+  if (!validated.ok) return validated;
+  const level = deriveApprovalLevel(validated.value.total);
+
+  // ── Edge: persist and emit ────────────────────────────────────────────────
+  const event = { type: "RequisitionSubmitted", id, requestedBy, level, total: validated.value.total };
+  await port.persistEvent(event);
+  // => I/O: persist the domain event
+
+  return okR(event);
+}
+
+console.log("Pure core wrapped at the edge — application service pattern");
+// => Output: Pure core wrapped at the edge — application service pattern
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The composition point has a clear three-phase structure: I/O read → pure core → I/O write. This structure makes the boundary visible, testable, and replaceable at each phase independently.
@@ -4505,7 +6295,7 @@ match coreResult with
 
 Partial application wires the production implementations of port functions into workflow functions at the composition root. The workflow is defined with all dependencies as parameters; the composition root supplies the real implementations.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4657,6 +6447,69 @@ printfn "Result: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Dependency injection via currying — partial application bakes in dependencies.
+// [F#: partial application with curried functions — dependencies bound first]
+// [Clojure: partial or closure captures dependencies; TS uses curried arrow functions]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+
+// Dependency interfaces (ports)
+interface PORepository {
+  readonly findById: (
+    id: PurchaseOrderId,
+  ) => Promise<{ id: PurchaseOrderId; supplierId: SupplierId; total: number } | null>;
+  readonly save: (po: Record<string, unknown>) => Promise<void>;
+}
+interface ApprovalService {
+  readonly getThreshold: (approver: string) => Promise<number>;
+}
+
+// Pure domain function — no dependencies, no async
+function validateApprovalThreshold(total: number, threshold: number): Result<number, string> {
+  return total <= threshold ? okR(total) : errR(`${total} exceeds threshold ${threshold}`);
+}
+
+// Curried workflow factory — takes dependencies first, returns the workflow function
+const makeApprovePOWorkflow =
+  (repo: PORepository, approval: ApprovalService) =>
+  async (id: PurchaseOrderId, approver: string): Promise<Result<string, string>> => {
+    const po = await repo.findById(id);
+    // => I/O: load PO from repo
+    if (!po) return errR(`PO ${id} not found`);
+    const threshold = await approval.getThreshold(approver);
+    // => I/O: fetch threshold from approval service
+    const result = validateApprovalThreshold(po.total, threshold);
+    // => Pure domain rule: no I/O
+    if (!result.ok) return result;
+    await repo.save({ ...po, status: "Approved", approvedBy: approver });
+    // => I/O: persist
+    return okR(`PO ${id} approved`);
+  };
+// => makeApprovePOWorkflow : (repo, approval) => (id, approver) => Promise<Result<string, string>>
+// => Dependencies are baked in at composition time; only business args needed at call time
+
+// Wiring at the composition root
+const mockRepo: PORepository = { findById: async () => null, save: async () => {} };
+const mockApproval: ApprovalService = { getThreshold: async () => 10000 };
+const approvePO = makeApprovePOWorkflow(mockRepo, mockApproval);
+// => approvePO : (id, approver) => Promise<Result<string, string>>
+// => Dependencies are fully bound — only business parameters remain
+
+console.log("Dependency injection via currying — dependencies baked in at composition root");
+// => Output: Dependency injection via currying — dependencies baked in at composition root
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Partial application binds dependencies to workflows at the composition root — the workflow function itself never changes, only the implementations supplied to it, making production and test configurations a matter of which functions are partially applied.
@@ -4669,7 +6522,7 @@ printfn "Result: %A" result
 
 In functional F#, a repository is not an interface or an abstract class — it is a record of functions. This record is the port; the PostgreSQL implementation is one value of this record type; the in-memory test implementation is another.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4838,6 +6691,72 @@ Async.RunSynchronously (loadAndPrint repo (PurchaseOrderId "po_missing"))
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Persistence interface as an object of functions — the repository pattern.
+// [F#: persistence as a record of functions — no classes, no inheritance]
+// [Clojure: protocol or map of functions; TS uses an interface of functions as the abstraction]
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+type SupplierId = string & { readonly __brand: "SupplierId" };
+
+// Domain aggregate
+interface PurchaseOrder {
+  readonly id: PurchaseOrderId;
+  readonly supplierId: SupplierId;
+  readonly status: "Draft" | "Approved" | "Issued" | "Cancelled";
+  readonly total: number;
+}
+
+// Repository interface — an object of typed functions
+interface PORepository {
+  readonly findById: (id: PurchaseOrderId) => Promise<PurchaseOrder | null>;
+  // => Loads a PO by its identity — null when not found
+  readonly save: (po: PurchaseOrder) => Promise<void>;
+  // => Persists a PO (insert or update)
+  readonly findBySupplier: (supplierId: SupplierId) => Promise<readonly PurchaseOrder[]>;
+  // => Lists all POs for a given supplier — for supplier portal view
+  readonly delete: (id: PurchaseOrderId) => Promise<boolean>;
+  // => Removes a cancelled PO — returns true if deleted, false if not found
+}
+// => [F#: type PORepository = { findById: ...; save: ...; ... } — record of functions]
+
+// In-memory implementation for testing — satisfies the interface
+function makeInMemoryPORepository(): PORepository {
+  const store = new Map<string, PurchaseOrder>();
+  // => In-memory store — state is encapsulated in the closure
+  return {
+    findById: async (id) => store.get(id as string) ?? null,
+    save: async (po) => {
+      store.set(po.id as string, po);
+    },
+    findBySupplier: async (supplierId) => [...store.values()].filter((po) => po.supplierId === supplierId),
+    delete: async (id) => {
+      const existed = store.has(id as string);
+      store.delete(id as string);
+      return existed;
+    },
+  };
+}
+
+// Wiring and usage
+const repo = makeInMemoryPORepository();
+const po: PurchaseOrder = {
+  id: "po_001" as PurchaseOrderId,
+  supplierId: "sup_001" as SupplierId,
+  status: "Draft",
+  total: 2784.97,
+};
+
+await repo.save(po);
+const loaded = await repo.findById("po_001" as PurchaseOrderId);
+console.log("Loaded PO status:", loaded?.status);
+// => Output: Loaded PO status: Draft
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A record of functions is the idiomatic F# port — it groups related I/O operations into a cohesive unit that can be swapped between test and production implementations without changing the workflow code.
@@ -4850,7 +6769,7 @@ Async.RunSynchronously (loadAndPrint repo (PurchaseOrderId "po_missing"))
 
 The invariant "a PO with total > $10,000 must be approved at L3" is a domain rule. It is checked inside the approval workflow, not in the controller or the database. If the approver's level is L1 or L2, the workflow returns a named error before any persistence occurs.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4999,6 +6918,69 @@ printfn "Large PO: %A" largePO
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Approval level enforcement — invariant encoded in the domain layer.
+// [F#: approvalRequired : PurchaseOrder -> Result<ApprovalLevel, DomainError>]
+// [Clojure: pure defn returning :ok/:error; TS pure function with Result type]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type ApprovalLevel = "L1" | "L2" | "L3";
+
+interface PurchaseOrder {
+  readonly status: "Draft" | "PendingApproval" | "Approved" | "Issued" | "Cancelled";
+  readonly total: number;
+  readonly requestedBy: string;
+}
+
+// Approval invariant: enforced in the domain layer, not in the HTTP layer
+function requiresApproval(po: PurchaseOrder): Result<ApprovalLevel, string> {
+  if (po.status !== "PendingApproval") {
+    return errR(`Approval only valid in PendingApproval state; got ${po.status}`);
+    // => Invariant: approval only applies to the correct state
+  }
+  if (po.total <= 0) {
+    return errR("PO total must be > 0 to determine approval level");
+    // => Guard: degenerate PO
+  }
+  if (po.total <= 1000) return okR("L1");
+  // => L1: direct manager approval
+  if (po.total <= 10000) return okR("L2");
+  // => L2: department head approval
+  return okR("L3");
+  // => L3: CFO-level approval
+}
+
+// Approval router: uses the domain result to determine next action
+function routeForApproval(po: PurchaseOrder): string {
+  const result = requiresApproval(po);
+  if (!result.ok) return `Cannot route: ${result.error}`;
+  switch (result.value) {
+    case "L1":
+      return `Route to direct manager`;
+    case "L2":
+      return `Route to department head`;
+    case "L3":
+      return `Route to CFO committee`;
+  }
+}
+
+const pending: PurchaseOrder = { status: "PendingApproval", total: 2784.97, requestedBy: "emp_00456" };
+const draft: PurchaseOrder = { status: "Draft", total: 2784.97, requestedBy: "emp_00456" };
+
+console.log(routeForApproval(pending));
+// => Output: Route to department head
+console.log(routeForApproval(draft));
+// => Output: Cannot route: Approval only valid in PendingApproval state; got Draft
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Domain invariants enforced as pure functions in the domain layer are independently testable and guaranteed consistent — the same rule applies whether the approval request comes from the web UI, a batch job, or an API integration.
@@ -5011,7 +6993,7 @@ printfn "Large PO: %A" largePO
 
 The cancellation off-ramp applies to any PO in a pre-`Paid` state. Modelling cancellation as a typed transition that accepts a union of cancellable states prevents it from being accidentally called on a `Paid` or `Closed` PO.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -5166,6 +7148,72 @@ printfn "Event: %A at %O" event.PurchaseOrderId event.CancelledAt
   (println "Event:" (:po-cancelled-event/purchase-order-id event)
            "at" (:po-cancelled-event/cancelled-at event)))
   ;; => Output: Event: po_e3d1 at 2026-...
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Cancellation workflow — off-ramp from any pre-paid state.
+// [F#: cancel : PurchaseOrder -> Result<CancelledPO, DomainError> — handles all cancellable states]
+// [Clojure: cancel fn with cond guard on :status; TS uses tagged union narrowing]
+
+// Result type
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+
+type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+
+// States — only some can be cancelled
+type CancellableState = "Draft" | "PendingApproval" | "Approved";
+type NonCancellableState = "Issued" | "Cancelled" | "Closed";
+type POStatus = CancellableState | NonCancellableState;
+
+interface PurchaseOrder {
+  readonly id: PurchaseOrderId;
+  readonly status: POStatus;
+  readonly total: number;
+}
+interface CancelledPO {
+  readonly id: PurchaseOrderId;
+  readonly cancelledAt: string;
+  readonly reason: string;
+}
+type POCancelledEvent = { readonly type: "POCancelled"; readonly id: PurchaseOrderId; readonly reason: string };
+
+// Domain rule: which states allow cancellation?
+const cancellableStatuses: Set<CancellableState> = new Set(["Draft", "PendingApproval", "Approved"]);
+
+function cancelPO(po: PurchaseOrder, reason: string): Result<[CancelledPO, POCancelledEvent], string> {
+  if (!cancellableStatuses.has(po.status as CancellableState)) {
+    return errR(
+      `Cannot cancel a PO in ${po.status} state — only Draft, PendingApproval, and Approved can be cancelled`,
+    );
+    // => Domain invariant: Issued/Closed POs cannot be cancelled
+  }
+  if (!reason.trim()) {
+    return errR("Cancellation reason is required");
+    // => Business rule: every cancellation must have a documented reason
+  }
+  const cancelledAt = new Date().toISOString();
+  const cancelledPO: CancelledPO = { id: po.id, cancelledAt, reason };
+  const event: POCancelledEvent = { type: "POCancelled", id: po.id, reason };
+  return okR([cancelledPO, event]);
+  // => Returns (new state, event) tuple — mirrors F# (CancelledPO * DomainEvent list)
+}
+
+const draftPO: PurchaseOrder = { id: "po_001" as PurchaseOrderId, status: "Draft", total: 500 };
+const issuedPO: PurchaseOrder = { id: "po_002" as PurchaseOrderId, status: "Issued", total: 2784.97 };
+
+const r1 = cancelPO(draftPO, "Budget cut — Q3 freeze");
+const r2 = cancelPO(issuedPO, "Duplicate order");
+
+if (r1.ok) console.log("Cancelled:", r1.value[1].type, "reason:", r1.value[1].reason);
+// => Output: Cancelled: POCancelled reason: Budget cut — Q3 freeze
+if (!r2.ok) console.log("Error:", r2.error);
+// => Output: Error: Cannot cancel a PO in Issued state — only Draft, PendingApproval, and Approved can be cancelled
 ```
 
 {{< /tab >}}

@@ -45,7 +45,7 @@ graph LR
     style D fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -170,6 +170,67 @@ printfn "%s" (match found with Some u -> u.Email | None -> "not found")
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: function-type ports + partial application wiring — TypeScript uses function types]
+
+// => Domain entity — pure type, no infrastructure awareness
+type User29 = Readonly<{ id: string; email: string; name: string }>;
+
+// => PORT types: function types that define what the core needs from infrastructure
+type SaveUser = (user: User29) => void; // => persistence contract
+type FindUser = (id: string) => User29 | undefined; // => retrieval contract
+type SendWelcome = (email: string) => void; // => notification contract
+
+// => APPLICATION CORE: depends only on the port function types, never on concrete code
+const register = (save: SaveUser, notify: SendWelcome, id: string, email: string, name: string): User29 => {
+  const user: User29 = { id, email, name };
+  // => Create the domain entity — pure data construction
+  save(user);
+  // => Persist via the injected SaveUser port — could be DB or in-memory
+  notify(email);
+  // => Notify via the injected SendWelcome port — could be email or console
+  return user;
+  // => Return domain object; callers receive clean domain data, not a DTO
+};
+
+// => ADAPTER (driven): in-memory implementation
+const makeInMemoryRepo29 = (): { save: SaveUser; find: FindUser } => {
+  const store = new Map<string, User29>();
+  // => Mutable Map captured in closure — invisible to the core
+  return {
+    save: (u) => {
+      store.set(u.id, u);
+    },
+    // => SaveUser adapter: stores user by id
+    find: (id) => store.get(id),
+    // => FindUser adapter: returns undefined for missing ids
+  };
+};
+
+// => ADAPTER (driven): console notification
+const consoleNotifier: SendWelcome = (email) => console.log(`Welcome email sent to ${email}`);
+// => SendWelcome adapter: simulates sending email via console output
+
+// wire up adapters and call the core
+const { save: save29, find: find29 } = makeInMemoryRepo29();
+// => Destructure the two port functions
+const registerUser29 = (id: string, email: string, name: string) => register(save29, consoleNotifier, id, email, name);
+// => Partially apply the core function with the concrete adapters
+
+const alice29 = registerUser29("u1", "alice@example.com", "Alice");
+// => Output: Welcome email sent to alice@example.com
+// => alice29: User29 = { id: "u1", email: "alice@example.com", name: "Alice" }
+
+const found29 = find29("u1");
+// => found29: User29 | undefined = { id: "u1", ... }
+console.log(found29 ? found29.email : "not found");
+// => Output: alice@example.com
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** In F#, ports are function types; adapters are functions that match those types. Partial application wires them into the core without any dependency injection framework.
@@ -200,7 +261,7 @@ graph TD
     style D fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -366,6 +427,73 @@ printfn "OrderId: %s, Total: %M" resp.OrderId resp.Total
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: four modules with inward-only dependency rule — TypeScript uses namespaced const objects]
+
+// ── ENTITIES LAYER ────────────────────────────────────────────────────────────
+// => Innermost ring: pure domain types and rules, zero external dependencies
+type OrderItem30 = Readonly<{ productId: string; price: number; qty: number }>;
+type Order30 = Readonly<{ id: string; items: readonly OrderItem30[]; customerId: string }>;
+
+const orderTotal = (order: Order30): number => order.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+// => Business rule lives in the entity layer — not in a controller or use case
+
+// ── USE CASES LAYER ───────────────────────────────────────────────────────────
+// => Second ring: application business rules; depends only on domain types
+type SaveOrder30 = (order: Order30) => void;
+// => Repository port: defined in use-cases layer, implemented in frameworks layer
+// => This is the Dependency Inversion Principle expressed as a function type
+
+const placeOrder30 = (save: SaveOrder30, customerId: string, items: readonly OrderItem30[]): Order30 => {
+  const id = `ord-${Date.now()}`;
+  // => Generate an id — deterministic enough for demo purposes
+  const order: Order30 = { id, items, customerId };
+  // => Construct entity using the domain type — no DB concern here
+  save(order);
+  // => Persist via the injected SaveOrder30 port
+  return order;
+  // => Return entity: callers receive domain data, not a DB row
+};
+
+// ── INTERFACE ADAPTERS LAYER ──────────────────────────────────────────────────
+// => Third ring: translates between use-case types and framework representations
+type HttpRequest30 = Readonly<{ customerId: string; items: readonly OrderItem30[] }>;
+type HttpResponse30 = Readonly<{ orderId: string; total: number }>;
+
+const handlePlaceOrder30 = (save: SaveOrder30, req: HttpRequest30): HttpResponse30 => {
+  const order = placeOrder30(save, req.customerId, req.items);
+  // => Delegates to use case with domain-shaped input
+  return { orderId: order.id, total: orderTotal(order) };
+  // => Presenter maps entity → HTTP response — adapter concern, not domain concern
+};
+
+// ── FRAMEWORKS LAYER ──────────────────────────────────────────────────────────
+// => Outermost ring: concrete implementations; depends on all inner rings
+const makeInMemoryRepo30 = (): SaveOrder30 => {
+  const store = new Map<string, Order30>();
+  // => Concrete storage — invisible to inner rings
+  return (order) => {
+    store.set(order.id, order);
+  };
+  // => Returns a SaveOrder30 function — matches the port type exactly
+};
+
+// wiring (frameworks layer assembles everything)
+const save30 = makeInMemoryRepo30();
+// => Concrete adapter created in the outermost layer
+const req30: HttpRequest30 = {
+  customerId: "c1",
+  items: [{ productId: "p1", price: 10.0, qty: 2 }],
+};
+const resp30 = handlePlaceOrder30(save30, req30);
+console.log(`OrderId: ${resp30.orderId}, Total: ${resp30.total}`);
+// => Output: OrderId: ord-..., Total: 20
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The dependency rule — source code dependencies pointing inward only — is enforced in F# by the module declaration order. Inner modules appear first; outer modules `open` them, never the reverse.
@@ -378,7 +506,7 @@ printfn "OrderId: %s, Total: %M" resp.OrderId resp.Total
 
 Onion Architecture places the domain model at the very center, surrounded by domain services, then application services, then infrastructure. Every dependency points inward. In F#, the concentric rings map naturally to module ordering: domain types first, then functions that operate on them, then infrastructure last.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -541,6 +669,75 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: four rings with inward-only dependencies — TypeScript uses pure functions + factory]
+
+// ── DOMAIN MODEL (innermost ring) ─────────────────────────────────────────────
+type Money31 = Readonly<{ amount: number; currency: string }>;
+// => Money is a value object: equality by value, not by reference
+
+type Product31 = Readonly<{ id: string; name: string; price: Money31 }>;
+// => Product entity: owns its identity and price as a domain concept
+type Result31<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => Domain rule: adding money of different currencies is a domain-level error
+const addMoney31 = (a: Money31, b: Money31): Result31<Money31, string> => {
+  if (a.currency !== b.currency) return { ok: false, error: `Currency mismatch: ${a.currency} vs ${b.currency}` };
+  // => Domain rule enforced at the innermost ring — not in a controller
+  return { ok: true, value: { amount: a.amount + b.amount, currency: a.currency } };
+  // => Returns Result to make the error case explicit
+};
+
+// ── DOMAIN SERVICES (second ring) ─────────────────────────────────────────────
+// => Stateless pure functions on domain objects; no infrastructure calls
+const applyDiscount31 = (price: Money31, discountPct: number): Money31 => {
+  const discounted = price.amount * (1 - discountPct / 100);
+  // => Compute discounted amount: 10% off $100 → $90
+  return { ...price, amount: Math.round(discounted * 100) / 100 };
+  // => Spread preserves currency; amount updated to discounted value
+};
+
+// ── APPLICATION SERVICES (third ring) ─────────────────────────────────────────
+type FindProduct31 = (id: string) => Product31 | undefined;
+// => Port type: application layer defines what it needs from infrastructure
+
+const getDiscountedPrice31 = (find: FindProduct31, productId: string, pct: number): Result31<Money31, string> => {
+  const product = find(productId);
+  // => delegates data retrieval to the injected port
+  if (!product) return { ok: false, error: `Product ${productId} not found` };
+  // => Application-level error: missing product is an expected business outcome
+  return { ok: true, value: applyDiscount31(product.price, pct) };
+  // => Delegates price logic to the domain service — application just orchestrates
+};
+
+// ── INFRASTRUCTURE (outermost ring) ───────────────────────────────────────────
+const makeProductRepo31 = () => {
+  const data = new Map<string, Product31>();
+  // => Mutable Map: infrastructure detail, invisible to inner rings
+  const add = (p: Product31) => {
+    data.set(p.id, p);
+  };
+  const find: FindProduct31 = (id) => data.get(id);
+  // => Returns None for missing ids — matches FindProduct31 port type
+  return { add, find };
+};
+
+// wiring
+const { add: add31, find: find31 } = makeProductRepo31();
+add31({ id: "p1", name: "Widget", price: { amount: 100.0, currency: "USD" } });
+// => Seed the in-memory repo with one product
+
+const result31 = getDiscountedPrice31(find31, "p1", 10.0);
+// => Application service call with injected FindProduct31 adapter
+if (result31.ok) console.log(`${result31.value.currency} ${result31.value.amount.toFixed(2)}`);
+// => Output: USD 90.00
+else console.log(`Error: ${result31.error}`);
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each ring depends only on rings closer to the center. The domain model at the center has zero dependencies; infrastructure at the edge depends on everything but is depended on by nothing.
@@ -573,7 +770,7 @@ graph LR
     style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -696,6 +893,64 @@ publish (OrderPlaced ("ord-1", 99.0m))
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: list of handler functions + make-event-bus — TypeScript version]
+
+// => Event type: tagged union models all domain events in a type-safe set
+type AppEvent = { tag: "UserRegistered"; email: string } | { tag: "OrderPlaced"; orderId: string; total: number };
+// => Each case carries exactly the data its handlers need — no generic object
+
+// => EventBus: a function registry — subscribers register handler functions
+const makeEventBus32 = () => {
+  const handlers: ((event: AppEvent) => void)[] = [];
+  // => Mutable array of handler functions — the "observer" list
+
+  const subscribe = (handler: (event: AppEvent) => void) => {
+    handlers.push(handler);
+    // => Registration: add function reference to the array
+  };
+
+  const publish = (event: AppEvent) => {
+    for (const handler of handlers) handler(event);
+    // => Dispatch: iterate and call each registered handler function
+  };
+
+  return { subscribe, publish };
+};
+
+const { subscribe: sub32, publish: pub32 } = makeEventBus32();
+
+// => OBSERVER 1: email handler — reacts only to UserRegistered events
+sub32((event) => {
+  if (event.tag === "UserRegistered") console.log(`Email sent to ${event.email}`);
+  // => TypeScript narrows the type — event.email is accessible here
+  // => Other events are simply ignored — handled by other observers
+});
+
+// => OBSERVER 2: audit handler — logs all events generically
+sub32((event) => {
+  console.log(`AUDIT: ${JSON.stringify(event)}`);
+  // => Logs every event as a JSON string — no filtering needed
+});
+
+// => OBSERVER 3: stats handler — reacts only to OrderPlaced events
+sub32((event) => {
+  if (event.tag === "OrderPlaced") console.log(`Stats: order ${event.orderId}, total ${event.total}`);
+});
+
+pub32({ tag: "UserRegistered", email: "bob@example.com" });
+// => Output: Email sent to bob@example.com
+// => Output: AUDIT: {"tag":"UserRegistered","email":"bob@example.com"}
+
+pub32({ tag: "OrderPlaced", orderId: "ord-1", total: 99.0 });
+// => Output: AUDIT: {"tag":"OrderPlaced","orderId":"ord-1","total":99}
+// => Output: Stats: order ord-1, total 99
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Observer in F# is a list of functions. The discriminated union event type gives handlers compile-time safety to pattern-match only the cases they care about.
@@ -708,7 +963,7 @@ publish (OrderPlaced ("ord-1", 99.0m))
 
 Domain events represent something significant that happened in the domain — past tense, immutable facts. In F#, domain events are discriminated union cases collected as a list alongside the updated state. Functions return `(newState, events)` tuples rather than firing side effects directly.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -834,6 +1089,79 @@ match deposit account 250.0m with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: state + events list return pattern — TypeScript uses readonly arrays and tagged unions]
+type Result33<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => Domain entity types
+type AccountId33 = Readonly<{ value: string; _brand: "AccountId" }>;
+type Account33 = Readonly<{ id: AccountId33; balance: number; owner: string }>;
+
+// => Domain event type: past-tense facts about what happened
+type AccountEvent =
+  | { tag: "AccountOpened"; accountId: AccountId33; owner: string; initialBalance: number }
+  | { tag: "MoneyDeposited"; accountId: AccountId33; amount: number }
+  | { tag: "MoneyWithdrawn"; accountId: AccountId33; amount: number };
+// => Each case is a named fact — tagged union prevents invalid event types
+
+const accountId33 = (value: string): AccountId33 => ({ value, _brand: "AccountId" });
+// => Smart constructor: wraps raw string to prevent Id/Name mix-ups
+
+// => Command result: returns updated state AND events raised — no side effects yet
+const openAccount33 = (
+  id: string,
+  owner: string,
+  initialBalance: number,
+): readonly [Account33, readonly AccountEvent[]] => {
+  const aid = accountId33(id);
+  const account: Account33 = { id: aid, balance: initialBalance, owner };
+  // => Create the entity — pure construction, no I/O
+  const event: AccountEvent = { tag: "AccountOpened", accountId: aid, owner, initialBalance };
+  // => Raise the domain event as a value — not yet published anywhere
+  return [account, [event]] as const;
+  // => Return tuple: new state + list of domain events
+};
+
+const deposit33 = (
+  account: Account33,
+  amount: number,
+): Result33<readonly [Account33, readonly AccountEvent[]], string> => {
+  if (amount <= 0) return { ok: false, error: "Deposit amount must be positive" };
+  // => Domain rule violation: return Error — never throw for business rules
+  const updated: Account33 = { ...account, balance: account.balance + amount };
+  // => Immutable update: spread creates a new Account33 record
+  const event: AccountEvent = { tag: "MoneyDeposited", accountId: account.id, amount };
+  return { ok: true, value: [updated, [event]] };
+  // => Success: return updated account and the domain event it raised
+};
+
+// event publisher: infrastructure function that acts on collected events
+const publishEvents33 = (events: readonly AccountEvent[]): void => {
+  for (const e of events) console.log(`EVENT: ${JSON.stringify(e)}`);
+  // => In production: write to event store, put on message bus, etc.
+};
+
+// demo
+const [account33, openEvents] = openAccount33("acc-1", "Alice", 1000.0);
+publishEvents33(openEvents);
+// => EVENT: {"tag":"AccountOpened","accountId":...,"owner":"Alice","initialBalance":1000}
+
+const depositResult = deposit33(account33, 250.0);
+if (depositResult.ok) {
+  const [updated33, events33] = depositResult.value;
+  publishEvents33(events33);
+  // => EVENT: {"tag":"MoneyDeposited","accountId":...,"amount":250}
+  console.log(`Balance: ${updated33.balance}`);
+  // => Output: Balance: 1250
+} else {
+  console.log(`Error: ${depositResult.error}`);
+}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Functions return `(newState, events list)` tuples. Domain events are values collected during business logic and published by infrastructure — business logic stays free of I/O.
@@ -846,7 +1174,7 @@ match deposit account 250.0m with
 
 Event-driven architecture routes events through a central bus so services communicate without direct coupling. In F#, the bus is modelled as a simple in-memory dispatch function; real systems replace it with Kafka, RabbitMQ, or Azure Service Bus while keeping the handler function signatures identical.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -984,6 +1312,68 @@ publish "payment.processed" (PaymentProcessed ("u1", 29.99m))
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: in-memory message bus with topic registry — TypeScript version]
+
+// => Message type: tagged union of all inter-service events
+type ServiceEvent =
+  | { tag: "UserSignedUp"; userId: string; email: string }
+  | { tag: "SubscriptionStarted"; userId: string; plan: string }
+  | { tag: "PaymentProcessed"; userId: string; amount: number };
+// => Tagged union enforces that all event types are known at compile time
+
+type EventHandler34 = (event: ServiceEvent) => void;
+
+// => In-memory message bus: stores handlers per event topic name
+const makeMessageBus34 = () => {
+  const registry = new Map<string, EventHandler34[]>();
+  // => topic (string) → array of handlers
+
+  const subscribe = (topic: string, handler: EventHandler34) => {
+    const handlers = registry.get(topic) ?? [];
+    registry.set(topic, [...handlers, handler]);
+    // => Append handler to the topic's handler list
+  };
+
+  const publish = (topic: string, event: ServiceEvent) => {
+    const handlers = registry.get(topic) ?? [];
+    for (const h of handlers) h(event);
+    // => Dispatch event to all handlers registered on this topic
+  };
+
+  return { subscribe, publish };
+};
+
+const { subscribe: sub34, publish: pub34 } = makeMessageBus34();
+
+// => SERVICE A: notification service subscribes to user.signup
+sub34("user.signup", (event) => {
+  if (event.tag === "UserSignedUp") console.log(`Notification: welcome email → ${event.email} (${event.userId})`);
+});
+
+// => SERVICE B: billing service subscribes to user.signup to start trial
+sub34("user.signup", (event) => {
+  if (event.tag === "UserSignedUp") console.log(`Billing: trial started for ${event.userId}`);
+});
+
+// => SERVICE C: analytics service subscribes to payment events
+sub34("payment.processed", (event) => {
+  if (event.tag === "PaymentProcessed") console.log(`Analytics: $${event.amount} payment from ${event.userId}`);
+});
+
+// publish events — producers know only the topic name, never the subscribers
+pub34("user.signup", { tag: "UserSignedUp", userId: "u1", email: "carol@example.com" });
+// => Output: Notification: welcome email → carol@example.com (u1)
+// => Output: Billing: trial started for u1
+
+pub34("payment.processed", { tag: "PaymentProcessed", userId: "u1", amount: 29.99 });
+// => Output: Analytics: $29.99 payment from u1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Event-driven architecture decouples producers from consumers through a named topic. Producers publish events; consumers subscribe independently — neither knows about the other.
@@ -998,7 +1388,7 @@ publish "payment.processed" (PaymentProcessed ("u1", 29.99m))
 
 The Strategy pattern defines a family of algorithms and makes them interchangeable. In F#, strategies are simply functions with the same signature — no interface, no class hierarchy. Higher-order functions accept the strategy as a parameter.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1114,6 +1504,48 @@ printfn "Percentage total: %M" total3
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: ShippingStrategy type alias + higher-order function — TypeScript version]
+
+// => Strategy type: any (total: number) => number function qualifies
+type ShippingStrategy35 = (total: number) => number;
+
+// => Strategy 1: flat rate — constant cost regardless of order size
+const flatRateShipping: ShippingStrategy35 = (_total) => 5.99;
+// => Ignores order total; returns fixed $5.99
+
+// => Strategy 2: free shipping threshold — free above $50, else $7.99
+const freeOverFiftyShipping: ShippingStrategy35 = (total) => (total >= 50.0 ? 0.0 : 7.99);
+// => Orders >= $50 get free shipping; orders < $50 pay $7.99
+
+// => Strategy 3: percentage-based — 8% of order total
+const percentageShipping: ShippingStrategy35 = (total) => Math.round(total * 0.08 * 100) / 100;
+// => 8% of order total, rounded to cents
+
+// => Context function: accepts any ShippingStrategy35 as a parameter
+const calculateOrderTotal35 = (strategy: ShippingStrategy35, items: readonly number[]): number => {
+  const subtotal = items.reduce((a, b) => a + b, 0);
+  // => Sum all item prices to get subtotal
+  const shipping = strategy(subtotal);
+  // => Delegate shipping calculation to the injected strategy function
+  return subtotal + shipping;
+  // => Total = subtotal + shipping cost
+};
+
+const items35 = [20.0, 15.0, 10.0]; // => subtotal = 45.0
+
+console.log(`Flat rate total: ${calculateOrderTotal35(flatRateShipping, items35).toFixed(2)}`);
+// => Output: Flat rate total: 50.99
+console.log(`Threshold total: ${calculateOrderTotal35(freeOverFiftyShipping, items35).toFixed(2)}`);
+// => Output: Threshold total: 52.99  (45 < 50, so $7.99 shipping)
+console.log(`Percentage total: ${calculateOrderTotal35(percentageShipping, items35).toFixed(2)}`);
+// => Output: Percentage total: 48.60  (45 + 45*0.08 = 45 + 3.60)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** In F#, strategies are functions. Passing a function as an argument is equivalent to injecting a strategy object — with no class hierarchy required.
@@ -1126,7 +1558,7 @@ printfn "Percentage total: %M" total3
 
 The Factory pattern centralises object creation, hiding construction logic from callers. In F#, factories are smart constructor functions that return `Result` types, surfacing validation errors without exceptions.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1267,6 +1699,73 @@ channels |> List.iter (fun r ->
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: private Email DU + Result-returning factory — TypeScript uses branded types + Result]
+type Result36<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => Branded Email type: prevents raw-string-as-email abuse
+type Email36 = Readonly<{ address: string; _brand: "Email" }>;
+
+// => Notification channel variants as a tagged union
+type NotificationChannel =
+  | { tag: "EmailChannel"; email: Email36 }
+  | { tag: "SmsChannel"; phone: string }
+  | { tag: "PushChannel"; token: string };
+
+// => Smart constructor for Email: validates and wraps — returns Result, never throws
+const createEmail36 = (raw: string): Result36<Email36, string> => {
+  if (!raw || !raw.trim()) return { ok: false, error: "Email cannot be blank" };
+  // => Guard: empty strings are invalid before even checking format
+  if (!raw.includes("@")) return { ok: false, error: `'${raw}' is not a valid email address` };
+  // => Structural check: must contain @
+  return { ok: true, value: { address: raw, _brand: "Email" } };
+  // => Wrap validated string in the branded Email type
+};
+
+// => Factory function: builds a NotificationChannel from raw inputs
+const createChannel36 = (channelType: string, address: string): Result36<NotificationChannel, string> => {
+  switch (channelType) {
+    case "email": {
+      const r = createEmail36(address);
+      // => Delegate email validation to the smart constructor
+      return r.ok ? { ok: true, value: { tag: "EmailChannel", email: r.value } } : r;
+      // => Propagate error unchanged — same short-circuit as F# Result.map
+    }
+    case "sms":
+      return address.length < 7
+        ? { ok: false, error: "Phone number too short" }
+        : { ok: true, value: { tag: "SmsChannel", phone: address } };
+    case "push":
+      return address.length < 10
+        ? { ok: false, error: "Device token too short" }
+        : { ok: true, value: { tag: "PushChannel", token: address } };
+    default:
+      return { ok: false, error: `Unknown channel type '${channelType}'` };
+    // => Unknown types produce a descriptive error at construction time
+  }
+};
+
+const channels36 = [
+  createChannel36("email", "diana@example.com"),
+  createChannel36("sms", "+15551234567"),
+  createChannel36("email", "not-an-email"),
+  createChannel36("fax", "555-1234"),
+];
+
+for (const r of channels36) {
+  if (r.ok) console.log(`OK: ${JSON.stringify(r.value)}`);
+  else console.log(`ERROR: ${r.error}`);
+}
+// => OK: {"tag":"EmailChannel","email":{"address":"diana@example.com",...}}
+// => OK: {"tag":"SmsChannel","phone":"+15551234567"}
+// => ERROR: 'not-an-email' is not a valid email address
+// => ERROR: Unknown channel type 'fax'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Smart constructor functions return `Result` types, making invalid states unrepresentable. The factory hides construction complexity and surfaces validation errors as typed values rather than exceptions.
@@ -1279,7 +1778,7 @@ channels |> List.iter (fun r ->
 
 The Builder pattern constructs complex objects step by step. In F#, the builder is a pipeline of record-update functions — each step returns an updated intermediate record, and the final `build` function validates and seals it.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1436,6 +1935,86 @@ match email with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: record-update pipeline + build validation — TypeScript uses fluent object composition]
+type Result37<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => Configuration type with many optional fields
+type EmailConfig37 = Readonly<{
+  to: readonly string[];
+  subject: string;
+  body: string;
+  cc: readonly string[];
+  bcc: readonly string[];
+  replyTo: string | undefined;
+  isHtml: boolean;
+}>;
+
+// => Builder accumulator: intermediate state with sensible defaults
+type EmailBuilder37 = {
+  to: readonly string[];
+  subject: string;
+  body: string;
+  cc: readonly string[];
+  bcc: readonly string[];
+  replyTo: string | undefined;
+  isHtml: boolean;
+};
+
+// => Start with an empty builder — all defaults
+const emptyEmail37: EmailBuilder37 = {
+  to: [],
+  subject: "",
+  body: "",
+  cc: [],
+  bcc: [],
+  replyTo: undefined,
+  isHtml: false,
+  // => Zero-value defaults; builder steps fill in meaningful values
+};
+
+// => Step functions: each takes a builder and returns a modified builder
+// => These are the "set" operations — here they are plain pure functions
+const withTo37 = (addresses: readonly string[], b: EmailBuilder37): EmailBuilder37 => ({ ...b, to: addresses });
+// => Spread update: all other fields unchanged
+const withSubject37 = (s: string, b: EmailBuilder37): EmailBuilder37 => ({ ...b, subject: s });
+const withBody37 = (body: string, b: EmailBuilder37): EmailBuilder37 => ({ ...b, body });
+const withCc37 = (addresses: readonly string[], b: EmailBuilder37): EmailBuilder37 => ({ ...b, cc: addresses });
+const withHtml37 = (b: EmailBuilder37): EmailBuilder37 => ({ ...b, isHtml: true });
+// => withHtml37 takes no value — it just sets the flag
+
+// => Build step: validates required fields and produces the final sealed value
+const build37 = (b: EmailBuilder37): Result37<EmailConfig37, string> => {
+  if (b.to.length === 0) return { ok: false, error: "At least one recipient is required" };
+  if (!b.subject.trim()) return { ok: false, error: "Subject is required" };
+  if (!b.body.trim()) return { ok: false, error: "Body is required" };
+  return { ok: true, value: Object.freeze({ ...b }) as EmailConfig37 };
+  // => Produce the sealed EmailConfig37 — all validation passed
+};
+
+// pipeline construction — reads left to right like F# |>
+const email37 = build37(
+  withHtml37(
+    withCc37(
+      ["boss@example.com"],
+      withBody37(
+        "<h1>Report attached</h1>",
+        withSubject37("Monthly Report", withTo37(["eve@example.com", "frank@example.com"], emptyEmail37)),
+      ),
+    ),
+  ),
+);
+// => Each step returns a new EmailBuilder37; build37 produces Result37<EmailConfig37, string>
+
+if (email37.ok) console.log(`Email to ${JSON.stringify(email37.value.to)}, HTML: ${email37.value.isHtml}`);
+// => Output: Email to ["eve@example.com","frank@example.com"], HTML: true
+else console.log(`Error: ${email37.error}`);
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Piped record-update functions replace the OOP Builder class. The `|>` operator gives a left-to-right readability identical to a fluent API, with immutable intermediates and a `Result`-returning `build` step.
@@ -1448,7 +2027,7 @@ match email with
 
 The Adapter pattern wraps an incompatible interface to make it compatible with a caller's expected interface. In F#, an adapter is a function that wraps another function, converting its signature.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1567,6 +2146,64 @@ displayWeather modernWeatherAdapter "LON"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: adapter functions that convert between incompatible signatures — TypeScript version]
+
+// => EXISTING (legacy) API: returns a positional tuple
+// => We cannot change this — it belongs to a third-party or legacy module
+const legacyWeatherApi38 = (cityCode: string): readonly [number, string] => {
+  // => Simulates a legacy service call — returns [temperature, condition]
+  if (cityCode === "NYC") return [22.5, "Sunny"];
+  if (cityCode === "LON") return [15.0, "Cloudy"];
+  return [0.0, "Unknown"];
+  // => Returns [temp: number, condition: string] — not our preferred shape
+};
+
+// => TARGET (domain) type: what our application expects
+type WeatherReport = Readonly<{ city: string; tempCelsius: number; condition: string }>;
+// => Named fields are clearer and safer than positional arrays
+
+// => ADAPTER FUNCTION: converts the legacy interface to the target interface
+const weatherAdapter38 = (cityCode: string): WeatherReport => {
+  const [temp, condition] = legacyWeatherApi38(cityCode);
+  // => Call legacy API; destructure the tuple return value
+  return { city: cityCode, tempCelsius: temp, condition };
+  // => Construct the domain record — adapter owns this conversion
+};
+
+// => New third-party API (different shape again)
+const modernWeatherApi38 = (city: string) => ({
+  temperature: 18.3,
+  desc: "Partly cloudy",
+  unit: "C",
+  // => Object with different field names
+});
+
+// => Second adapter: wraps modernWeatherApi38 into the same WeatherReport shape
+const modernWeatherAdapter38 = (cityCode: string): WeatherReport => {
+  const data = modernWeatherApi38(cityCode);
+  // => Call the modern API
+  return { city: cityCode, tempCelsius: data.temperature, condition: data.desc };
+  // => Convert object fields to named WeatherReport fields
+};
+
+// => Application code depends only on WeatherReport — adapters are invisible
+const displayWeather38 = (getWeather: (city: string) => WeatherReport, city: string) => {
+  const report = getWeather(city);
+  // => Calls whichever adapter was injected — application is adapter-agnostic
+  console.log(`${report.city}: ${report.tempCelsius.toFixed(1)}°C, ${report.condition}`);
+};
+
+displayWeather38(weatherAdapter38, "NYC");
+// => Output: NYC: 22.5°C, Sunny
+displayWeather38(modernWeatherAdapter38, "NYC");
+// => Output: NYC: 18.3°C, Partly cloudy
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** An adapter in F# is a wrapper function that converts one function's signature into another. The application depends on the target signature; the adapter owns the conversion.
@@ -1579,7 +2216,7 @@ displayWeather modernWeatherAdapter "LON"
 
 The Decorator pattern attaches additional behaviour to an object without modifying the original. In F#, decorators are higher-order functions: a decorator takes a function and returns a new function with the same signature but augmented behaviour.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1717,6 +2354,62 @@ let _ = cachedLoggingLookup "p99"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: function wrapping to add behavior — TypeScript uses higher-order functions]
+
+// => BASE function type: a simple logger that writes a message
+type Logger39 = (message: string) => void;
+
+// => BASE implementation — just writes to console
+const consoleLogger39: Logger39 = (message) => console.log(message);
+// => Plain output — no prefix, no timestamp
+
+// => DECORATOR 1: adds timestamp prefix — wraps any Logger39
+const withTimestamp39 =
+  (logger: Logger39): Logger39 =>
+  (message) => {
+    const ts = new Date().toISOString().slice(11, 23);
+    // => Extract HH:MM:SS.mmm from ISO string
+    logger(`[${ts}] ${message}`);
+    // => Delegates to the wrapped logger with timestamp prepended
+    // => Output: "[12:34:56.789] Hello"
+  };
+
+// => DECORATOR 2: adds log level prefix — wraps any Logger39
+const withLevel39 =
+  (level: string, logger: Logger39): Logger39 =>
+  (message) => {
+    logger(`[${level.toUpperCase()}] ${message}`);
+    // => Delegates to the wrapped logger with level prepended
+    // => Output: "[INFO] Hello"
+  };
+
+// => DECORATOR 3: adds a persistent prefix — wraps any Logger39
+const withPrefix39 =
+  (prefix: string, logger: Logger39): Logger39 =>
+  (message) => {
+    logger(`${prefix} ${message}`);
+    // => Delegates to the wrapped logger with a static prefix prepended
+  };
+
+// => Compose decorators: the result is still a Logger39 — no class, no inheritance
+const productionLogger39: Logger39 = withPrefix39("[MyApp]", withLevel39("INFO", withTimestamp39(consoleLogger39)));
+// => Each decorator wraps the previous — composition stack, not class hierarchy
+
+productionLogger39("Server started");
+// => Output: [MyApp] [INFO] [12:34:56.789] Server started
+// => All decorators fire in composition order
+
+// => Individual decorators are reusable independently
+const errorLogger39 = withLevel39("ERROR", consoleLogger39);
+errorLogger39("Something went wrong");
+// => Output: [ERROR] Something went wrong
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Decorators in F# are higher-order functions: `(inner: T) -> T` where `T` is a function type. They compose with `|>` and can be stacked in any order.
@@ -1729,7 +2422,7 @@ let _ = cachedLoggingLookup "p99"
 
 The Facade pattern provides a simplified interface to a complex subsystem. In F#, a facade is a module or record-of-functions that exposes a small, coherent API and delegates to multiple specialised internal functions.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1864,6 +2557,79 @@ match placeOrder "c1" "grace@example.com" "p1" 2 59.98m with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: single simplified function over a complex subsystem — TypeScript version]
+
+// ── COMPLEX SUBSYSTEM — individual components with their own APIs ─────────────
+const auth40 = {
+  // => Authentication subsystem: validates credentials
+  validate: (userId: string, token: string): boolean => {
+    // => Simulates token validation — real impl calls auth service
+    return token === `token-${userId}`;
+    // => true if token matches expected format
+  },
+};
+
+const rateLimit40 = {
+  // => Rate limiting subsystem: tracks and enforces request quotas
+  check: (userId: string): boolean => {
+    // => Simulates rate limit check — real impl checks Redis counter
+    return !userId.startsWith("blocked-");
+    // => "blocked-" prefix simulates a rate-limited user
+  },
+};
+
+const database40 = {
+  // => Data access subsystem: retrieves user data
+  fetchUser: (userId: string): { name: string; email: string } | undefined => {
+    const users = new Map([["u1", { name: "Alice", email: "alice@example.com" }]]);
+    return users.get(userId);
+    // => returns user record or undefined — raw DB concern
+  },
+};
+
+const audit40 = {
+  // => Audit subsystem: records all access events
+  log: (userId: string, action: string): void => {
+    console.log(`AUDIT: user=${userId} action=${action}`);
+    // => In production: write to audit log service
+  },
+};
+
+// ── FACADE — single simplified function that hides all subsystem complexity ────
+// => [F#: one function that coordinates four subsystem calls — same concept]
+type FacadeResult40 = { tag: "Success"; user: { name: string; email: string } } | { tag: "Failure"; reason: string };
+
+const getUserFacade40 = (userId: string, token: string): FacadeResult40 => {
+  // => Step 1: authenticate — caller doesn't know auth subsystem exists
+  if (!auth40.validate(userId, token)) return { tag: "Failure", reason: "Invalid token" };
+  // => Facade returns a simple result; caller never sees the auth module
+  // => Step 2: check rate limit
+  if (!rateLimit40.check(userId)) return { tag: "Failure", reason: "Rate limit exceeded" };
+  // => Step 3: fetch user data
+  const user = database40.fetchUser(userId);
+  if (!user) return { tag: "Failure", reason: "User not found" };
+  // => Step 4: audit the access
+  audit40.log(userId, "getUserFacade");
+  // => Side effect: logged, but caller is shielded from the audit module
+  return { tag: "Success", user };
+  // => Clean result: caller only sees Success/Failure, not four subsystem APIs
+};
+
+const r40a = getUserFacade40("u1", "token-u1");
+if (r40a.tag === "Success") console.log(`Hello ${r40a.user.name}`);
+// => AUDIT: user=u1 action=getUserFacade
+// => Hello Alice
+
+const r40b = getUserFacade40("u1", "wrong-token");
+if (r40b.tag === "Failure") console.log(`Error: ${r40b.reason}`);
+// => Error: Invalid token
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** A facade function orchestrates a complex subsystem through a single, clean entry point. `Result.bind` chains the steps so any failure short-circuits the pipeline without nested if-statements.
@@ -1878,7 +2644,7 @@ match placeOrder "c1" "grace@example.com" "p1" 2 59.98m with
 
 The Command pattern encapsulates a request as an object, supporting undo/redo, queuing, and logging. In F#, commands are discriminated union cases (defunctionalisation); a `reduce` function interprets them against a state.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2017,6 +2783,60 @@ printfn "After undo: '%s'" s3.Text
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: commands as discriminated union cases — TypeScript uses tagged union + execute function]
+
+// => Command type: tagged union models all executable actions in a type-safe set
+type Command41 =
+  | { tag: "CreateOrder"; customerId: string; total: number }
+  | { tag: "CancelOrder"; orderId: string }
+  | { tag: "UpdatePayment"; orderId: string; amount: number };
+// => Commands are values — they can be logged, queued, replayed, undone
+
+// => Command handler: pure function that executes a command
+type CommandResult41 = { success: boolean; message: string };
+
+const executeCommand41 = (cmd: Command41): CommandResult41 => {
+  switch (cmd.tag) {
+    case "CreateOrder":
+      console.log(`Creating order for customer ${cmd.customerId}, total: $${cmd.total}`);
+      // => Each case handles one command type — pattern match mirrors F# match
+      return { success: true, message: `Order created for ${cmd.customerId}` };
+
+    case "CancelOrder":
+      console.log(`Cancelling order ${cmd.orderId}`);
+      return { success: true, message: `Order ${cmd.orderId} cancelled` };
+
+    case "UpdatePayment":
+      console.log(`Updating payment for ${cmd.orderId}: $${cmd.amount}`);
+      return { success: true, message: `Payment updated: $${cmd.amount}` };
+  }
+};
+
+// => Command queue: commands are values — can be stored, replayed, batched
+const commandQueue41: Command41[] = [
+  { tag: "CreateOrder", customerId: "c1", total: 99.0 },
+  { tag: "UpdatePayment", orderId: "ord-1", amount: 99.0 },
+  { tag: "CancelOrder", orderId: "ord-2" },
+];
+// => Commands stored as plain data — infrastructure decides when to execute them
+
+for (const cmd of commandQueue41) {
+  const result = executeCommand41(cmd);
+  console.log(result.message);
+}
+// => Creating order for customer c1, total: $99
+// => Order created for c1
+// => Updating payment for ord-1: $99
+// => Payment updated: $99
+// => Cancelling order ord-2
+// => Order ord-2 cancelled
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Defunctionalisation — encoding commands as data (DU cases) and interpreting them with a `reduce` function — gives you undo/redo, logging, and replay for free, because commands are values you can store and replay.
@@ -2029,7 +2849,7 @@ printfn "After undo: '%s'" s3.Text
 
 The Mediator pattern centralises communication between components, reducing direct coupling. In F#, the mediator is a dispatch function: components send typed requests to the mediator, which routes them to the correct handler.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2167,6 +2987,70 @@ printfn "%A | %A | %A" nameResp orderResp notifResp
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: central request/response dispatcher — TypeScript version]
+
+// => Request types as a tagged union
+type MediatorRequest42 =
+  | { tag: "GetUserRequest"; userId: string }
+  | { tag: "CreateUserRequest"; name: string; email: string }
+  | { tag: "DeleteUserRequest"; userId: string };
+// => Each request carries exactly the data it needs
+
+// => Response types as a tagged union
+type MediatorResponse42 =
+  | { tag: "UserResult"; user: { id: string; name: string; email: string } | undefined }
+  | { tag: "CreateResult"; userId: string }
+  | { tag: "DeleteResult"; success: boolean };
+
+// => MEDIATOR: central dispatcher — components send requests, mediator routes them
+const makeMediator42 = () => {
+  const users = new Map<string, { name: string; email: string }>();
+  let nextId = 1;
+  // => Mediator owns the shared state — components never share state directly
+
+  return (request: MediatorRequest42): MediatorResponse42 => {
+    switch (request.tag) {
+      case "GetUserRequest": {
+        const user = users.get(request.userId);
+        return { tag: "UserResult", user: user ? { id: request.userId, ...user } : undefined };
+        // => Returns the user or undefined — mediator shields callers from raw Map access
+      }
+      case "CreateUserRequest": {
+        const userId = `u${nextId++}`;
+        users.set(userId, { name: request.name, email: request.email });
+        return { tag: "CreateResult", userId };
+        // => Mediator assigns the id — callers just provide name/email
+      }
+      case "DeleteUserRequest": {
+        const existed = users.has(request.userId);
+        users.delete(request.userId);
+        return { tag: "DeleteResult", success: existed };
+        // => Mediator handles the delete — success reflects whether it existed
+      }
+    }
+  };
+};
+
+const mediator42 = makeMediator42();
+
+const r42a = mediator42({ tag: "CreateUserRequest", name: "Alice", email: "alice@example.com" });
+if (r42a.tag === "CreateResult") console.log(`Created: ${r42a.userId}`);
+// => Created: u1
+
+const r42b = mediator42({ tag: "GetUserRequest", userId: "u1" });
+if (r42b.tag === "UserResult") console.log(JSON.stringify(r42b.user));
+// => {"id":"u1","name":"Alice","email":"alice@example.com"}
+
+const r42c = mediator42({ tag: "DeleteUserRequest", userId: "u1" });
+if (r42c.tag === "DeleteResult") console.log(`Deleted: ${r42c.success}`);
+// => Deleted: true
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The mediator is a dispatch function: a pattern match on the request DU that routes to the correct handler. Components depend only on the request/response types, not on each other.
@@ -2199,7 +3083,7 @@ graph LR
     style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2350,6 +3234,70 @@ states |> List.iter (fun s -> printfn "%A" s)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: discriminated union state + transition functions — TypeScript uses tagged union + pure transitions]
+
+// => State type: tagged union models all valid states explicitly
+type OrderState43 =
+  | { tag: "Pending" }
+  | { tag: "Confirmed"; confirmedAt: string }
+  | { tag: "Shipped"; trackingCode: string }
+  | { tag: "Cancelled"; reason: string };
+// => Each state carries exactly the data relevant to that state
+
+// => Transition functions: pure functions that return the next state
+// => Each function returns Result so invalid transitions are explicit
+type Result43<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+const confirmOrder43 = (state: OrderState43): Result43<OrderState43, string> => {
+  if (state.tag !== "Pending") return { ok: false, error: `Cannot confirm order in state: ${state.tag}` };
+  // => Guard: only Pending orders can be confirmed
+  return { ok: true, value: { tag: "Confirmed", confirmedAt: new Date().toISOString() } };
+  // => Returns new Confirmed state — old state is never mutated
+};
+
+const shipOrder43 = (state: OrderState43, trackingCode: string): Result43<OrderState43, string> => {
+  if (state.tag !== "Confirmed") return { ok: false, error: `Cannot ship order in state: ${state.tag}` };
+  // => Guard: only Confirmed orders can be shipped
+  return { ok: true, value: { tag: "Shipped", trackingCode } };
+  // => Returns new Shipped state carrying the tracking code
+};
+
+const cancelOrder43 = (state: OrderState43, reason: string): Result43<OrderState43, string> => {
+  if (state.tag === "Shipped" || state.tag === "Cancelled")
+    return { ok: false, error: `Cannot cancel order in state: ${state.tag}` };
+  // => Guard: shipped or already-cancelled orders cannot be cancelled
+  return { ok: true, value: { tag: "Cancelled", reason } };
+};
+
+// Demo: valid state progression
+let state43: OrderState43 = { tag: "Pending" };
+console.log(`State: ${state43.tag}`); // => State: Pending
+
+const r43a = confirmOrder43(state43);
+if (r43a.ok) {
+  state43 = r43a.value;
+  console.log(`State: ${state43.tag}`);
+}
+// => State: Confirmed
+
+const r43b = shipOrder43(state43, "TRACK-123");
+if (r43b.ok) {
+  state43 = r43b.value;
+  console.log(`State: ${state43.tag}`);
+}
+// => State: Shipped
+
+// Demo: invalid transition
+const r43c = cancelOrder43(state43, "customer request");
+if (!r43c.ok) console.log(`Error: ${r43c.error}`);
+// => Error: Cannot cancel order in state: Shipped
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Discriminated unions model valid states; a transition function maps (state, event) pairs to `Result<newState, error>`. Invalid transitions become `Error` values, not runtime exceptions.
@@ -2362,7 +3310,7 @@ states |> List.iter (fun s -> printfn "%A" s)
 
 Template Method defines an algorithm skeleton with certain steps deferred to subclasses. In F#, the equivalent is a higher-order function that accepts the variable steps as function arguments — "holes" filled by the caller. In Clojure the same skeleton is a function that receives other functions as arguments and threads data through them with `->>`.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2488,6 +3436,56 @@ printfn "%s" numberedResult
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: higher-order function with configurable pipeline steps — TypeScript version]
+
+// => PIPELINE STEP type: any (value: T) => T function that transforms a value
+type PipelineStep<T> = (value: T) => T;
+
+// => HIGHER-ORDER PIPELINE: accepts a list of steps and returns a composed function
+const makePipeline =
+  <T>(steps: readonly PipelineStep<T>[]): ((initial: T) => T) =>
+  (initial) =>
+    steps.reduce((acc, step) => step(acc), initial);
+// => reduce folds all steps left to right — each step feeds its output to the next
+
+// => CONCRETE STEPS for string processing
+const trim44: PipelineStep<string> = (s) => s.trim();
+// => Remove leading/trailing whitespace
+const toLowerCase44: PipelineStep<string> = (s) => s.toLowerCase();
+// => Normalise to lowercase
+const addSuffix44 =
+  (suffix: string): PipelineStep<string> =>
+  (s) =>
+    `${s}${suffix}`;
+// => HOF: returns a step that appends a suffix — configurable via closure
+const truncate44 =
+  (max: number): PipelineStep<string> =>
+  (s) =>
+    s.length > max ? s.slice(0, max) + "…" : s;
+// => HOF: returns a step that truncates at max length — configurable via closure
+
+// => Compose a pipeline from selected steps — callers choose which steps to apply
+const processSlug44 = makePipeline<string>([trim44, toLowerCase44, addSuffix44("-post"), truncate44(20)]);
+// => Pipeline: trim → lowercase → add suffix → truncate
+
+console.log(processSlug44("  Hello World  "));
+// => Steps: "  Hello World  " → "Hello World" → "hello world" → "hello world-post" → "hello world-post"
+// => Output: hello world-post
+
+console.log(processSlug44("  A Very Long Title For A Blog Post  "));
+// => Output: a very long title f… (truncated at 20)
+
+// => HOF pattern: steps are first-class values — add, remove, reorder without editing the pipeline function
+const processTag44 = makePipeline<string>([trim44, toLowerCase44]);
+console.log(processTag44("  TypeScript  "));
+// => Output: typescript
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** A higher-order function with function-type parameters IS the Template Method pattern. The skeleton is fixed in the HOF body; callers fill the holes with their own functions.
@@ -2502,7 +3500,7 @@ printfn "%s" numberedResult
 
 Value objects represent domain concepts defined entirely by their attributes. In F#, value objects are immutable records (equality by structural value) or single-case discriminated unions (opaque wrappers that prevent misuse). In Clojure the same concept is expressed as validated maps with namespaced keywords and spec-based construction.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2655,6 +3653,60 @@ match addMoney m1 m2 with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: single-case DU or record with no mutable fields + smart constructor — TypeScript version]
+type Result45<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => VALUE OBJECT: Money — equality by value, not by reference
+type Money45 = Readonly<{ amount: number; currency: string; _brand: "Money" }>;
+
+const createMoney45 = (amount: number, currency: string): Result45<Money45, string> => {
+  if (amount < 0) return { ok: false, error: "Amount cannot be negative" };
+  // => Business invariant enforced at construction time
+  if (currency.length !== 3) return { ok: false, error: `Invalid currency code: ${currency}` };
+  // => ISO 4217: currency codes are exactly 3 characters
+  return { ok: true, value: { amount, currency: currency.toUpperCase(), _brand: "Money" } };
+  // => Branded type: only createMoney45 can produce a Money45 value
+};
+
+const addMoney45 = (a: Money45, b: Money45): Result45<Money45, string> => {
+  if (a.currency !== b.currency) return { ok: false, error: `Currency mismatch: ${a.currency} vs ${b.currency}` };
+  // => Domain rule: cannot add money of different currencies
+  return { ok: true, value: { ...a, amount: a.amount + b.amount } };
+  // => Returns a NEW Money45 — original values unchanged (immutable update)
+};
+
+// => VALUE OBJECT: EmailAddress
+type EmailAddress45 = Readonly<{ address: string; _brand: "EmailAddress" }>;
+
+const createEmail45 = (raw: string): Result45<EmailAddress45, string> => {
+  const trimmed = raw.trim().toLowerCase();
+  if (!trimmed.includes("@") || !trimmed.includes(".")) return { ok: false, error: `Invalid email: ${raw}` };
+  return { ok: true, value: { address: trimmed, _brand: "EmailAddress" } };
+};
+
+// Demo
+const m1r = createMoney45(100.0, "USD");
+const m2r = createMoney45(50.0, "USD");
+if (m1r.ok && m2r.ok) {
+  const sumR = addMoney45(m1r.value, m2r.value);
+  if (sumR.ok) console.log(`Sum: ${sumR.value.currency} ${sumR.value.amount.toFixed(2)}`);
+  // => Output: Sum: USD 150.00
+}
+
+const errR = createMoney45(-5.0, "USD");
+if (!errR.ok) console.log(`Error: ${errR.error}`);
+// => Output: Error: Amount cannot be negative
+
+const emailR = createEmail45("Alice@EXAMPLE.COM");
+if (emailR.ok) console.log(`Email: ${emailR.value.address}`);
+// => Output: Email: alice@example.com
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Use single-case DUs for opaque validated wrappers; use records for value objects with multiple fields. Both enforce immutability and structural equality automatically in F#.
@@ -2667,7 +3719,7 @@ match addMoney m1 m2 with
 
 An Aggregate Root is the entry point to a cluster of related objects. All modifications to the cluster go through the root, which enforces invariants. In F#, the aggregate is a record with a module exposing command functions that return `Result`. In Clojure the aggregate is a plain map and the "module boundary" is enforced through a namespace of pure command functions.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2825,6 +3877,68 @@ match result with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: opaque type + smart constructor + Result-returning commands — TypeScript version]
+type Result46<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => AGGREGATE ROOT: Cart — controls all modifications to its items
+// => _brand makes Cart opaque — callers cannot construct it directly
+type CartItem46 = Readonly<{ productId: string; qty: number; unitPrice: number }>;
+type Cart46 = Readonly<{ id: string; items: readonly CartItem46[]; _brand: "Cart" }>;
+
+// => Smart constructor: only way to create a valid Cart46
+const createCart46 = (id: string): Cart46 => ({
+  id,
+  items: [],
+  _brand: "Cart",
+  // => starts with empty items — callers must use addItem to modify
+});
+
+// => All mutations go through the aggregate root's commands
+const addItem46 = (cart: Cart46, productId: string, qty: number, unitPrice: number): Result46<Cart46, string> => {
+  if (qty <= 0) return { ok: false, error: "Quantity must be positive" };
+  // => Invariant: zero or negative quantities are invalid
+  const existing = cart.items.find((i) => i.productId === productId);
+  const newItems = existing
+    ? cart.items.map((i) => (i.productId === productId ? { ...i, qty: i.qty + qty } : i))
+    : // => Merge with existing: increment qty rather than duplicate the item
+      [...cart.items, { productId, qty, unitPrice }];
+  // => New item: append to items array
+  return { ok: true, value: { ...cart, items: newItems } };
+  // => Returns a NEW Cart46 — original cart unchanged
+};
+
+const removeItem46 = (cart: Cart46, productId: string): Result46<Cart46, string> => {
+  if (!cart.items.some((i) => i.productId === productId))
+    return { ok: false, error: `Product ${productId} not in cart` };
+  // => Invariant: cannot remove an item that doesn't exist
+  return { ok: true, value: { ...cart, items: cart.items.filter((i) => i.productId !== productId) } };
+  // => Returns new Cart46 without the removed item
+};
+
+const cartTotal46 = (cart: Cart46): number => cart.items.reduce((sum, i) => sum + i.qty * i.unitPrice, 0);
+// => Computed from items — no cached field that could drift
+
+// Demo
+let cart46 = createCart46("cart-1");
+// => cart46: Cart46 = { id: "cart-1", items: [], _brand: "Cart" }
+
+const r46a = addItem46(cart46, "p1", 2, 30.0);
+if (r46a.ok) cart46 = r46a.value;
+// => cart46.items = [{ productId: "p1", qty: 2, unitPrice: 30 }]
+
+const r46b = addItem46(cart46, "p1", 1, 30.0);
+if (r46b.ok) cart46 = r46b.value;
+// => Merged: qty is now 3
+
+console.log(`Total: $${cartTotal46(cart46).toFixed(2)}`);
+// => Output: Total: $90.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The aggregate module is the only place where invariants are enforced. Commands return `Result<Order, string>`; callers chain them with `Result.bind` to build pipelines that fail fast on any invariant violation.
@@ -2837,7 +3951,7 @@ match result with
 
 A Bounded Context is an explicit boundary within which a domain model applies. Different contexts model the same real-world concept differently because they serve different purposes. In F#, bounded contexts are separate modules with their own types. In Clojure they are separate namespaces with their own namespaced keyword vocabularies.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2972,6 +4086,73 @@ printfn "Sales stock check: %b" stockCheck
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: separate namespace modules with different User types — TypeScript uses separate namespaces]
+
+// ── IDENTITY BOUNDED CONTEXT: manages authentication only ─────────────────────
+namespace Identity47 {
+  export type User = Readonly<{
+    userId: string;
+    email: string;
+    passwordHash: string;
+    // => Identity context owns authentication data
+  }>;
+
+  export const createUser = (userId: string, email: string, passwordHash: string): User => ({
+    userId,
+    email,
+    passwordHash,
+    // => Smart constructor: identity-bounded creation
+  });
+
+  export const authenticate = (user: User, passwordHash: string): boolean => user.passwordHash === passwordHash;
+  // => Authentication rule lives in Identity context — not in other contexts
+}
+
+// ── CATALOG BOUNDED CONTEXT: manages product listings only ────────────────────
+namespace Catalog47 {
+  export type User = Readonly<{
+    userId: string;
+    displayName: string;
+    preferredCurrency: string;
+    // => Catalog context needs different User fields — displayName, currency
+  }>;
+
+  export const createUser = (userId: string, displayName: string): User => ({
+    userId,
+    displayName,
+    preferredCurrency: "USD",
+    // => Catalog-specific defaults — no password, no auth data
+  });
+
+  export const formatWelcome = (user: User): string =>
+    `Welcome back, ${user.displayName}! Currency: ${user.preferredCurrency}`;
+  // => Catalog-specific behavior — unrelated to authentication
+}
+
+// ── ANTI-CORRUPTION LAYER: translates between contexts ────────────────────────
+const toIdentityUser47 = (identityUser: Identity47.User, displayName: string): Catalog47.User => ({
+  userId: identityUser.userId,
+  displayName,
+  preferredCurrency: "USD",
+  // => Map Identity fields to Catalog fields — no password hash leaks to Catalog
+});
+
+// Demo: Identity context authenticates, Catalog context personalises
+const identityUser = Identity47.createUser("u1", "alice@example.com", "hashed-pw");
+console.log(`Authenticated: ${Identity47.authenticate(identityUser, "hashed-pw")}`);
+// => Authenticated: true
+
+const catalogUser = toIdentityUser47(identityUser, "Alice");
+// => Translate across the context boundary via anti-corruption layer
+console.log(Catalog47.formatWelcome(catalogUser));
+// => Welcome back, Alice! Currency: USD
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each Bounded Context owns its own type definitions for shared real-world concepts. An Anti-Corruption Layer translates between contexts at integration boundaries — neither context imports the other's types directly.
@@ -2984,7 +4165,7 @@ printfn "Sales stock check: %b" stockCheck
 
 The Anti-Corruption Layer (ACL) is a translation boundary that prevents an external system's model from polluting the internal domain model. In F#, the ACL is a module with translation functions that map external types to internal types and vice versa. In Clojure the ACL is a pure function that transforms an external raw map into an internal namespaced-keyword map.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3121,6 +4302,65 @@ printfn "Status: %A" payment.Status
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: translation functions that isolate domain from external models — TypeScript version]
+
+// => EXTERNAL model: shape returned by a third-party weather API
+// => We don't control this shape — it can change without notice
+type ExternalWeatherResponse = {
+  temp_celsius: number; // => snake_case field names from external API
+  weather_desc: string;
+  city_name: string;
+  feels_like: number;
+};
+
+// => DOMAIN model: our internal clean representation
+type DomainWeatherReport = Readonly<{
+  city: string;
+  temperature: number;
+  condition: string;
+  // => feelsLike intentionally omitted — our domain doesn't need it
+}>;
+
+// => ANTI-CORRUPTION LAYER: translates external → domain model
+// => Shields domain from external naming conventions and irrelevant fields
+const fromExternalWeather48 = (external: ExternalWeatherResponse): DomainWeatherReport => ({
+  city: external.city_name, // => rename: city_name → city
+  temperature: external.temp_celsius, // => rename: temp_celsius → temperature
+  condition: external.weather_desc, // => rename: weather_desc → condition
+  // => feels_like is intentionally dropped — our domain ignores it
+});
+
+// => ADAPTER: calls external service and translates via ACL
+const fetchWeather48 = (cityCode: string): DomainWeatherReport => {
+  // => Simulates external API call — real impl would use fetch/axios
+  const externalResponse: ExternalWeatherResponse = {
+    temp_celsius: 22.5,
+    weather_desc: "Sunny",
+    city_name: cityCode,
+    feels_like: 20.0,
+    // => External API returns snake_case with extra fields our domain ignores
+  };
+  return fromExternalWeather48(externalResponse);
+  // => ACL converts external shape to domain shape — domain never sees external names
+};
+
+// => DOMAIN CODE: works only with DomainWeatherReport — never with external shape
+const displayWeather48 = (report: DomainWeatherReport): void => {
+  console.log(`${report.city}: ${report.temperature}°C, ${report.condition}`);
+  // => Domain code uses clean names — doesn't know about temp_celsius or city_name
+};
+
+const report48 = fetchWeather48("NYC");
+displayWeather48(report48);
+// => Output: NYC: 22.5°C, Sunny
+// => If external API renames temp_celsius → temperature_c, only fromExternalWeather48 changes
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The ACL module owns all translations between external and internal types. No code outside the ACL module ever touches the external types directly — the domain model is permanently isolated from external naming and encoding conventions.
@@ -3135,7 +4375,7 @@ printfn "Status: %A" payment.Status
 
 CQRS (Command Query Responsibility Segregation) uses separate models for writes (commands) and reads (queries). Commands return `Result<unit, error>` or a domain event; queries return read-optimised data shapes. In F#, the separation is enforced by distinct module namespaces. In Clojure it is enforced by separating atom-mutating command functions from pure read projections.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3309,6 +4549,85 @@ catalogue.Products |> List.iter (fun p -> printfn "%s: %s" p.Name p.FormattedPri
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: separate read and write models — TypeScript uses separate functions with distinct types]
+
+// ── WRITE SIDE: commands that mutate state ─────────────────────────────────────
+type WriteCommand49 =
+  | { tag: "AddTask"; title: string; priority: "high" | "normal" }
+  | { tag: "CompleteTask"; taskId: string }
+  | { tag: "DeleteTask"; taskId: string };
+// => Commands are intentions — they change the write model
+
+type TaskWriteModel49 = Readonly<{
+  id: string;
+  title: string;
+  priority: string;
+  done: boolean;
+  createdAt: string;
+}>;
+
+// Write store: append-only log of tasks
+const writeStore49 = new Map<string, TaskWriteModel49>();
+let nextId49 = 1;
+
+const handleCommand49 = (cmd: WriteCommand49): void => {
+  switch (cmd.tag) {
+    case "AddTask":
+      writeStore49.set(`t${nextId49}`, {
+        id: `t${nextId49++}`,
+        title: cmd.title,
+        priority: cmd.priority,
+        done: false,
+        createdAt: new Date().toISOString(),
+        // => Write model stores everything — not optimised for any query
+      });
+      break;
+    case "CompleteTask": {
+      const task = writeStore49.get(cmd.taskId);
+      if (task) writeStore49.set(cmd.taskId, { ...task, done: true });
+      break;
+    }
+    case "DeleteTask":
+      writeStore49.delete(cmd.taskId);
+      break;
+  }
+};
+
+// ── READ SIDE: queries that return projections — never mutate state ────────────
+// => Read models are optimised for specific query needs
+type TaskSummary49 = Readonly<{ id: string; title: string; done: boolean }>;
+type PriorityGroup49 = Readonly<{ priority: string; count: number; tasks: readonly string[] }>;
+
+const queryAllTasks49 = (): readonly TaskSummary49[] =>
+  [...writeStore49.values()].map((t) => ({ id: t.id, title: t.title, done: t.done }));
+// => Read model strips priority and createdAt — caller only needs summary
+
+const queryByPriority49 = (): readonly PriorityGroup49[] => {
+  const groups = new Map<string, string[]>();
+  for (const t of writeStore49.values()) {
+    const grp = groups.get(t.priority) ?? [];
+    groups.set(t.priority, [...grp, t.title]);
+  }
+  return [...groups.entries()].map(([priority, tasks]) => ({ priority, count: tasks.length, tasks }));
+  // => Different projection: grouped by priority — write store is not shaped for this
+};
+
+// Demo: commands go to write side, queries to read side
+handleCommand49({ tag: "AddTask", title: "Fix bug", priority: "high" });
+handleCommand49({ tag: "AddTask", title: "Write docs", priority: "normal" });
+handleCommand49({ tag: "CompleteTask", taskId: "t1" });
+
+console.log(`All tasks: ${queryAllTasks49().length}`);
+// => All tasks: 2
+console.log(JSON.stringify(queryByPriority49()));
+// => [{"priority":"high","count":1,"tasks":["Fix bug"]},{"priority":"normal","count":1,...}]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Command functions write and validate; query functions read and project into display-optimised shapes. The two models evolve independently — adding a display field to the read model does not touch the write model or command handlers.
@@ -3321,7 +4640,7 @@ catalogue.Products |> List.iter (fun p -> printfn "%s: %s" p.Name p.FormattedPri
 
 The Middleware pattern chains functions that each perform one cross-cutting concern (logging, auth, rate limiting) and then delegate to the next handler. In F#, middleware is function composition: each middleware wraps the next with `>>` or explicit lambda. In Clojure, Ring-style middleware wraps handler functions with threading macros for pipeline assembly.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3478,6 +4797,65 @@ printfn "Response: %d" resp2.Status
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: function composition pipeline for cross-cutting concerns — TypeScript version]
+
+// => Middleware type: wraps a handler to add cross-cutting behavior
+type Handler50 = (req: Record<string, unknown>) => string;
+type Middleware50 = (next: Handler50) => Handler50;
+// => Middleware receives the next handler and returns a new handler — composable
+
+// => MIDDLEWARE 1: authentication check
+const authMiddleware50: Middleware50 = (next) => (req) => {
+  if (!req["token"]) return "Unauthorized: missing token";
+  // => Short-circuits: next handler never called without a token
+  return next(req);
+  // => Authenticated: pass request to the next handler in the chain
+};
+
+// => MIDDLEWARE 2: rate limiting
+const rateLimitMiddleware50: Middleware50 = (next) => (req) => {
+  const userId = req["userId"] as string | undefined;
+  if (userId?.startsWith("blocked-")) return "Rate limit exceeded";
+  // => Short-circuits: blocked users never reach the business handler
+  return next(req);
+};
+
+// => MIDDLEWARE 3: audit logging
+const auditMiddleware50: Middleware50 = (next) => (req) => {
+  const result = next(req);
+  // => Let the inner handlers run first
+  console.log(`AUDIT: userId=${req["userId"]} result=${result}`);
+  // => Log after the inner handlers complete
+  return result;
+};
+
+// => BASE HANDLER: core business logic — knows nothing about auth or logging
+const businessHandler50: Handler50 = (req) => `Hello, user ${req["userId"] ?? "unknown"}!`;
+
+// => COMPOSE middleware — each wraps the previous, outermost runs first
+const applyMiddleware50 = (handler: Handler50, middlewares: readonly Middleware50[]): Handler50 =>
+  [...middlewares].reverse().reduce((h, m) => m(h), handler);
+// => reverse() so that first middleware in array runs first
+
+const composedHandler50 = applyMiddleware50(businessHandler50, [
+  authMiddleware50,
+  rateLimitMiddleware50,
+  auditMiddleware50,
+]);
+
+console.log(composedHandler50({ token: "abc", userId: "u1" }));
+// => AUDIT: userId=u1 result=Hello, user u1!
+// => Hello, user u1!
+
+console.log(composedHandler50({ userId: "u2" }));
+// => Unauthorized: missing token
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each middleware wraps the next with `(next: Handler) -> Handler` in F# or `(fn [handler] (fn [req] ...))` in Clojure. The pipeline is assembled by composing these wrapping functions with `|>` (F#) or `->` (Clojure), making the chain order explicit and readable.
@@ -3490,7 +4868,7 @@ printfn "Response: %d" resp2.Status
 
 Plugin architecture allows extending system behaviour by adding new plugins without modifying the core system. In F#, plugins are record-of-functions (capabilities) registered at startup and discovered dynamically by the core. In Clojure, plugins are plain maps of functions registered in a vector — idiomatic data-oriented extensibility.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3625,6 +5003,76 @@ results |> List.iter (fun (name, result) -> printfn "[%s] %s" name result)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: record-of-functions plugin registry — TypeScript uses interface + dynamic registration]
+
+// => PLUGIN interface: any object implementing this can be registered
+interface Plugin52 {
+  readonly name: string;
+  readonly version: string;
+  execute: (payload: unknown) => string;
+  // => execute is the single required entry point — plugins are self-contained
+}
+
+// => PLUGIN REGISTRY: manages loading and execution of plugins
+const makePluginRegistry52 = () => {
+  const plugins = new Map<string, Plugin52>();
+  // => Registry maps plugin name to plugin implementation
+
+  const register = (plugin: Plugin52): void => {
+    plugins.set(plugin.name, plugin);
+    // => Registration: add plugin to the registry — no core modification needed
+    console.log(`Plugin registered: ${plugin.name} v${plugin.version}`);
+  };
+
+  const execute = (name: string, payload: unknown): string => {
+    const plugin = plugins.get(name);
+    // => Look up plugin by name — open/closed: caller adds new plugins, not the registry
+    if (!plugin) return `Plugin '${name}' not found`;
+    // => Unknown plugin produces a descriptive error — no exception thrown
+    return plugin.execute(payload);
+    // => Delegate execution to the plugin — registry is adapter-agnostic
+  };
+
+  const list = (): readonly string[] => [...plugins.keys()];
+  // => Returns all registered plugin names — useful for introspection
+
+  return { register, execute, list };
+};
+
+// => CONCRETE PLUGINS — each extends the system without modifying the registry
+const jsonPlugin52: Plugin52 = {
+  name: "json-formatter",
+  version: "1.0",
+  execute: (payload) => `JSON: ${JSON.stringify(payload)}`,
+  // => Formats any payload as JSON string
+};
+
+const uppercasePlugin52: Plugin52 = {
+  name: "uppercase-transformer",
+  version: "2.1",
+  execute: (payload) => `UPPER: ${String(payload).toUpperCase()}`,
+  // => Transforms string payloads to uppercase
+};
+
+const registry52 = makePluginRegistry52();
+registry52.register(jsonPlugin52);
+registry52.register(uppercasePlugin52);
+// => Plugin registered: json-formatter v1.0
+// => Plugin registered: uppercase-transformer v2.1
+
+console.log(registry52.execute("json-formatter", { id: 1, name: "test" }));
+// => JSON: {"id":1,"name":"test"}
+console.log(registry52.execute("uppercase-transformer", "hello world"));
+// => UPPER: HELLO WORLD
+console.log(registry52.execute("unknown-plugin", "test"));
+// => Plugin 'unknown-plugin' not found
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Plugins are records of functions in F# and plain maps of functions in Clojure. The core iterates over the registry and calls each plugin's `Process`/`:process` function; `List.choose` (F#) and `keep` (Clojure) filter plugins that opt out. Adding a new plugin requires zero changes to the core.
@@ -3637,7 +5085,7 @@ results |> List.iter (fun (name, result) -> printfn "[%s] %s" name result)
 
 The Repository pattern abstracts data access behind a clean interface, keeping domain logic free of persistence concerns. In F#, the repository is a record-of-functions whose implementations are swapped at startup. In Clojure, the repository is a protocol with `reify`-constructed implementations — idiomatic polymorphism over the same data access contract.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3791,6 +5239,74 @@ printfn "Active customers: %d" (repo.FindActive() |> List.length)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: typed repository record with port functions — TypeScript version with generics]
+
+// => Generic repository interface: works for any entity type
+interface Repository53<T, ID> {
+  findById: (id: ID) => T | undefined;
+  save: (entity: T) => void;
+  findAll: () => readonly T[];
+  delete: (id: ID) => boolean;
+  // => boolean return: true if entity existed and was deleted
+}
+
+type Task53 = Readonly<{ id: string; title: string; done: boolean }>;
+
+// => IN-MEMORY IMPLEMENTATION: satisfies the repository interface
+const makeInMemoryRepo53 = <T extends { id: string }>(): Repository53<T, string> => {
+  const store = new Map<string, T>();
+  return {
+    findById: (id) => store.get(id),
+    save: (entity) => {
+      store.set(entity.id, entity);
+    },
+    findAll: () => [...store.values()],
+    delete: (id) => {
+      const existed = store.has(id);
+      store.delete(id);
+      return existed;
+      // => returns true if the entity existed before deletion
+    },
+  };
+};
+
+// => SERVICE: depends only on the repository interface — not on the implementation
+const taskService53 = (repo: Repository53<Task53, string>) => ({
+  addTask: (id: string, title: string): Task53 => {
+    const task: Task53 = { id, title, done: false };
+    repo.save(task);
+    return task;
+    // => delegates persistence to repository
+  },
+  completeTask: (id: string): boolean => {
+    const task = repo.findById(id);
+    if (!task) return false;
+    repo.save({ ...task, done: true });
+    return true;
+    // => delegates state update to repository
+  },
+  listPending: (): readonly Task53[] => repo.findAll().filter((t) => !t.done),
+  // => uses repository's findAll, then filters in the service layer
+});
+
+const repo53 = makeInMemoryRepo53<Task53>();
+const svc53 = taskService53(repo53);
+
+svc53.addTask("t1", "Write tests");
+svc53.addTask("t2", "Fix bug");
+svc53.completeTask("t1");
+
+console.log(`Pending: ${svc53.listPending().length}`);
+// => Pending: 1  (only t2 is pending)
+console.log(svc53.listPending()[0].title);
+// => Fix bug
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** A record-of-functions IS the repository interface in F#; a `defprotocol` + `reify` IS the repository interface in Clojure. Swapping implementations means constructing a different record (F#) or calling a different factory function (Clojure) — the domain service code is unaffected in both cases.
@@ -3803,7 +5319,7 @@ printfn "Active customers: %d" (repo.FindActive() |> List.length)
 
 The Unit of Work pattern tracks changes and commits them as a single atomic transaction. In F#, this is modelled as a transactional Result chain: operations accumulate in a list; a final `commit` either applies all or rolls back on any failure. In Clojure, operations are plain maps accumulated in a vector; `commit` uses `reduce` to apply them and `reduced` to short-circuit on failure.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3955,6 +5471,77 @@ match commit badUow with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: Unit of Work that groups mutations into an atomic transaction — TypeScript version]
+
+// => Represents a unit of work: collects operations and commits atomically
+type UnitOfWork54<T> = {
+  add: (entity: T) => void;
+  update: (entity: T) => void;
+  remove: (id: string) => void;
+  commit: () => void;
+  rollback: () => void;
+};
+
+type Item54 = Readonly<{ id: string; name: string; stock: number }>;
+
+const makeUnitOfWork54 = (store: Map<string, Item54>): UnitOfWork54<Item54> => {
+  // => Snapshot of the store before any changes — for rollback
+  const snapshot = new Map(store);
+  const pending = new Map(store);
+  // => pending tracks all in-flight changes before commit
+
+  return {
+    add: (entity) => {
+      pending.set(entity.id, entity);
+      // => Stage the add — not visible to other readers yet
+    },
+    update: (entity) => {
+      if (!pending.has(entity.id)) throw new Error(`Entity ${entity.id} not found`);
+      pending.set(entity.id, entity);
+      // => Stage the update — original pending map entry replaced
+    },
+    remove: (id) => {
+      pending.delete(id);
+      // => Stage the removal — entity disappears from pending map
+    },
+    commit: () => {
+      store.clear();
+      for (const [k, v] of pending) store.set(k, v);
+      // => Atomically apply all pending changes to the shared store
+      console.log(`Committed ${pending.size} entities`);
+    },
+    rollback: () => {
+      pending.clear();
+      for (const [k, v] of snapshot) pending.set(k, v);
+      // => Discard all pending changes — restore from snapshot
+      console.log("Rolled back");
+    },
+  };
+};
+
+const store54 = new Map<string, Item54>([["i1", { id: "i1", name: "Widget", stock: 10 }]]);
+
+// Success path: commit
+const uow1 = makeUnitOfWork54(store54);
+uow1.add({ id: "i2", name: "Gadget", stock: 5 });
+uow1.update({ id: "i1", name: "Widget", stock: 8 });
+uow1.commit();
+// => Committed 2 entities
+console.log(`Items: ${store54.size}`); // => Items: 2
+
+// Failure path: rollback
+const uow2 = makeUnitOfWork54(store54);
+uow2.add({ id: "i3", name: "Thingamajig", stock: 3 });
+uow2.rollback();
+// => Rolled back
+console.log(`Items after rollback: ${store54.size}`); // => Items after rollback: 2
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Operations are accumulated as data values (DU list in F#, map vector in Clojure); `commit` applies them in order and short-circuits on the first failure using recursive pattern matching (F#) or `reduce` + `reduced` (Clojure). The immutable UoW is safe to inspect before committing.
@@ -3967,7 +5554,7 @@ match commit badUow with
 
 The Specification pattern encapsulates a business rule as a predicate and supports composing rules with `and`, `or`, and `not`. In F#, specifications are functions of type `'a -> bool`, composed with custom operators. In Clojure, specifications are plain predicate functions composed with `every-pred`, `some-fn`, and `complement` — idiomatic higher-order function combinators.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4121,6 +5708,69 @@ classified |> List.iter (fun (id, tier) -> printfn "%s → %s" id tier)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: composable predicate functions — TypeScript uses typed specification objects]
+
+// => SPECIFICATION type: a composable predicate with named combinators
+type Spec54<T> = {
+  isSatisfiedBy: (candidate: T) => boolean;
+  // => Returns true if the candidate satisfies this specification
+  and: (other: Spec54<T>) => Spec54<T>;
+  // => Combines with another spec: both must be true
+  or: (other: Spec54<T>) => Spec54<T>;
+  // => Combines with another spec: either must be true
+  not: () => Spec54<T>;
+  // => Negates this spec
+};
+
+// => Factory: creates a Specification from a plain predicate function
+const makeSpec54 = <T>(predicate: (t: T) => boolean): Spec54<T> => {
+  const spec: Spec54<T> = {
+    isSatisfiedBy: predicate,
+    and: (other) => makeSpec54((t) => spec.isSatisfiedBy(t) && other.isSatisfiedBy(t)),
+    // => Conjunction: both predicates must pass
+    or: (other) => makeSpec54((t) => spec.isSatisfiedBy(t) || other.isSatisfiedBy(t)),
+    // => Disjunction: either predicate may pass
+    not: () => makeSpec54((t) => !spec.isSatisfiedBy(t)),
+    // => Negation: predicate must fail
+  };
+  return spec;
+};
+
+// => DOMAIN: product filtering specifications
+type Product54 = Readonly<{ name: string; price: number; category: string; inStock: boolean }>;
+
+const inStockSpec54 = makeSpec54<Product54>((p) => p.inStock);
+// => Products that are currently in stock
+const affordableSpec54 = makeSpec54<Product54>((p) => p.price < 50.0);
+// => Products under $50
+const electronicsSpec54 = makeSpec54<Product54>((p) => p.category === "electronics");
+// => Products in the electronics category
+
+// => COMPOSE specifications — readable business rules without if-else chains
+const featuredSpec54 = inStockSpec54.and(affordableSpec54).and(electronicsSpec54);
+// => Featured: in stock AND under $50 AND electronics — composable business rule
+
+const products54: readonly Product54[] = [
+  { name: "USB Cable", price: 9.99, category: "electronics", inStock: true },
+  { name: "Headphones", price: 79.99, category: "electronics", inStock: true },
+  { name: "Notebook", price: 4.99, category: "stationery", inStock: true },
+  { name: "Webcam", price: 39.99, category: "electronics", inStock: false },
+];
+
+const featured54 = products54.filter((p) => featuredSpec54.isSatisfiedBy(p));
+console.log(`Featured products: ${featured54.map((p) => p.name).join(", ")}`);
+// => Featured products: USB Cable  (only it: in stock + <$50 + electronics)
+
+const budget54 = products54.filter((p) => inStockSpec54.and(affordableSpec54).isSatisfiedBy(p));
+console.log(`Budget items: ${budget54.map((p) => p.name).join(", ")}`);
+// => Budget items: USB Cable, Notebook  (in stock AND <$50, any category)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Specifications are predicate functions composed with `&&&`/`notSpec` (F#) or `every-pred`/`complement` (Clojure). Each atomic rule is one function; complex business policies are composed from them without modifying the originals.
@@ -4133,7 +5783,7 @@ classified |> List.iter (fun (id, tier) -> printfn "%s → %s" id tier)
 
 Event Sourcing stores state as an append-only log of events. Current state is derived by replaying the event log. Combined with CQRS, events are the write model; projected views are the read model. In F#, the `fold` function replays events to reconstruct state via pattern-matched DU transitions. In Clojure, `reduce` replays events over plain maps with multimethod dispatch — idiomatic data-oriented event sourcing.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4295,6 +5945,77 @@ printfn "Event log: %d events" (Seq.length eventStore)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: event log as source of truth + fold to reconstruct state — TypeScript version]
+type Result55<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => Event log: append-only list of domain events
+type AccountEvent55 =
+  | { tag: "Opened"; id: string; owner: string; initial: number }
+  | { tag: "Deposited"; id: string; amount: number }
+  | { tag: "Withdrawn"; id: string; amount: number };
+// => Each event is an immutable fact — never updated, only appended
+
+type AccountState55 = Readonly<{ id: string; balance: number; owner: string }>;
+
+// => FOLD: reconstruct current state from event log
+const applyEvent55 = (state: AccountState55 | undefined, event: AccountEvent55): AccountState55 => {
+  switch (event.tag) {
+    case "Opened":
+      return { id: event.id, balance: event.initial, owner: event.owner };
+    // => Opened event creates initial state from scratch
+    case "Deposited":
+      return { ...state!, balance: state!.balance + event.amount };
+    // => Deposited: add to balance — spread preserves id and owner
+    case "Withdrawn":
+      return { ...state!, balance: state!.balance - event.amount };
+    // => Withdrawn: subtract from balance
+  }
+};
+
+const rebuildState55 = (events: readonly AccountEvent55[]): AccountState55 | undefined =>
+  events.reduce<AccountState55 | undefined>((s, e) => applyEvent55(s, e), undefined);
+// => Fold all events from the beginning — final state is the source of truth
+
+// => COMMAND HANDLERS: validate and append events
+const eventLog55: AccountEvent55[] = [];
+
+const openAccount55 = (id: string, owner: string, initial: number): void => {
+  eventLog55.push({ tag: "Opened", id, owner, initial });
+  // => Append event to log — no mutable domain state touched
+};
+
+const deposit55 = (id: string, amount: number): Result55<void, string> => {
+  if (amount <= 0) return { ok: false, error: "Deposit must be positive" };
+  eventLog55.push({ tag: "Deposited", id, amount });
+  return { ok: true, value: undefined };
+  // => Append event; state will be derived by rebuildState55
+};
+
+const withdraw55 = (id: string, amount: number): Result55<void, string> => {
+  const state = rebuildState55(eventLog55.filter((e) => e.id === id));
+  if (!state || state.balance < amount) return { ok: false, error: "Insufficient funds" };
+  // => Rebuild state to check balance before appending withdraw event
+  eventLog55.push({ tag: "Withdrawn", id, amount });
+  return { ok: true, value: undefined };
+};
+
+// Demo
+openAccount55("acc-1", "Alice", 1000.0);
+deposit55("acc-1", 500.0);
+withdraw55("acc-1", 200.0);
+
+const state55 = rebuildState55(eventLog55);
+console.log(`Balance: ${state55?.balance}`);
+// => Balance: 1300
+console.log(`Events: ${eventLog55.length}`);
+// => Events: 3  (Opened + Deposited + Withdrawn)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** State is never stored directly — only events are appended. `Seq.fold` (F#) and `reduce` (Clojure) replay the event log to reconstruct current state. F# uses DU pattern matching for exhaustive dispatch; Clojure uses `defmulti`/`defmethod` for open dispatch on event type pairs.
@@ -4307,7 +6028,7 @@ printfn "Event log: %d events" (Seq.length eventStore)
 
 The Saga pattern manages multi-step distributed transactions by defining a sequence of local transactions and compensating actions for rollback. In F#, each saga step is a `Result`-returning function; compensation functions are paired with each step. In Clojure, saga steps are plain maps of functions; `reduce` drives execution and `reduced` short-circuits on failure — idiomatic data-oriented saga orchestration.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4506,6 +6227,91 @@ match executeSaga saga badState with
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// [F#: saga as a sequence of steps with compensation functions — TypeScript version]
+type Result56<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+// => SAGA STEP: a forward action paired with its compensating action
+type SagaStep56<T> = {
+  execute: () => Result56<T, string>;
+  compensate: () => void;
+  // => compensate undoes the execute action if a later step fails
+};
+
+// => SAGA RUNNER: executes all steps; runs compensations on failure
+const runSaga56 = (steps: readonly SagaStep56<unknown>[]): Result56<string, string> => {
+  const completed: SagaStep56<unknown>[] = [];
+  // => Track completed steps for rollback purposes
+
+  for (const step of steps) {
+    const result = step.execute();
+    if (!result.ok) {
+      // => Step failed: compensate all completed steps in reverse order
+      for (const done of [...completed].reverse()) done.compensate();
+      // => Compensation runs in LIFO order — most recent first
+      return { ok: false, error: result.error };
+    }
+    completed.push(step);
+    // => Step succeeded: add to completed list
+  }
+  return { ok: true, value: "Saga completed successfully" };
+};
+
+// => DOMAIN SERVICES: simulate order saga steps
+let orderCreated56 = false;
+let paymentCharged56 = false;
+let inventoryReserved56 = false;
+
+const orderStep56: SagaStep56<string> = {
+  execute: () => {
+    orderCreated56 = true;
+    console.log("Step 1: Order created");
+    return { ok: true, value: "order-1" };
+  },
+  compensate: () => {
+    orderCreated56 = false;
+    console.log("Compensate 1: Order cancelled");
+  },
+};
+
+const paymentStep56: SagaStep56<string> = {
+  execute: () => {
+    paymentCharged56 = true;
+    console.log("Step 2: Payment charged $99");
+    return { ok: true, value: "payment-1" };
+  },
+  compensate: () => {
+    paymentCharged56 = false;
+    console.log("Compensate 2: Payment refunded");
+  },
+};
+
+const inventoryStepFail56: SagaStep56<string> = {
+  execute: () => {
+    console.log("Step 3: Inventory reservation — OUT OF STOCK");
+    return { ok: false, error: "Item out of stock" };
+    // => Simulates a failed step
+  },
+  compensate: () => console.log("Compensate 3: (no-op)"),
+};
+
+const result56 = runSaga56([orderStep56, paymentStep56, inventoryStepFail56]);
+// => Step 1: Order created
+// => Step 2: Payment charged $99
+// => Step 3: Inventory reservation — OUT OF STOCK
+// => Compensate 2: Payment refunded
+// => Compensate 1: Order cancelled
+
+console.log(`Success: ${result56.ok}`);
+// => Success: false
+console.log(`Order created: ${orderCreated56}, Payment charged: ${paymentCharged56}`);
+// => Order created: false, Payment charged: false
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each saga step pairs an `Execute`/`:execute` function with a `Compensate`/`:compensate` function. The executor accumulates completed steps; on failure it calls compensate on each in reverse order, achieving eventual consistency without a distributed transaction coordinator. F# uses recursive pattern matching; Clojure uses `reduce` + `reduced` for the same short-circuit behaviour.
@@ -4535,7 +6341,7 @@ graph LR
     style C fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4707,6 +6513,99 @@ let r3 = execute cb failingService; printfn "3: %A" r3
 (let [r3 (execute cb failing-service)]
   (println "3:" r3))
 ;; => 3: {:error Circuit Open — call rejected}  (open: dependency not called)
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// [F#: circuit breaker with state machine — TypeScript uses tagged union state]
+
+// => Circuit breaker state machine: Closed → Open → HalfOpen → Closed
+type CircuitState57 = { tag: "Closed"; failureCount: number } | { tag: "Open"; openedAt: number } | { tag: "HalfOpen" };
+// => Closed: normal operation; Open: blocking calls; HalfOpen: testing recovery
+
+type CircuitBreaker57 = {
+  call: <T>(fn: () => T) => T | "CIRCUIT_OPEN";
+  state: () => CircuitState57;
+};
+
+const makeCircuitBreaker57 = (
+  failureThreshold: number, // => Open after this many consecutive failures
+  resetTimeoutMs: number, // => Try HalfOpen after this many ms
+): CircuitBreaker57 => {
+  let state: CircuitState57 = { tag: "Closed", failureCount: 0 };
+
+  return {
+    state: () => state,
+    call: <T>(fn: () => T): T | "CIRCUIT_OPEN" => {
+      // => Check if circuit is open and timeout has elapsed
+      if (state.tag === "Open") {
+        const elapsed = Date.now() - state.openedAt;
+        if (elapsed < resetTimeoutMs) {
+          console.log("Circuit OPEN — call blocked");
+          return "CIRCUIT_OPEN";
+          // => Still within timeout: block the call
+        }
+        state = { tag: "HalfOpen" };
+        // => Timeout elapsed: transition to HalfOpen to test recovery
+      }
+
+      try {
+        const result = fn();
+        // => Attempt the real call
+        if (state.tag === "HalfOpen" || state.tag === "Closed") {
+          state = { tag: "Closed", failureCount: 0 };
+          // => Success: reset to Closed with zero failure count
+        }
+        return result;
+      } catch (e) {
+        // => Call failed: increment failure count or open circuit
+        if (state.tag === "Closed") {
+          const newCount = state.failureCount + 1;
+          if (newCount >= failureThreshold) {
+            state = { tag: "Open", openedAt: Date.now() };
+            console.log(`Circuit OPENED after ${newCount} failures`);
+          } else {
+            state = { tag: "Closed", failureCount: newCount };
+          }
+        } else if (state.tag === "HalfOpen") {
+          state = { tag: "Open", openedAt: Date.now() };
+          console.log("Circuit re-OPENED: recovery attempt failed");
+        }
+        throw e;
+      }
+    },
+  };
+};
+
+const cb57 = makeCircuitBreaker57(2, 5000);
+// => Opens after 2 failures; resets after 5 seconds
+
+const failingService57 = (): string => {
+  throw new Error("Service unavailable");
+};
+
+// Simulate failures
+try {
+  cb57.call(failingService57);
+} catch {
+  console.log(`State: ${cb57.state().tag}`);
+}
+// => State: Closed (failureCount: 1)
+try {
+  cb57.call(failingService57);
+} catch {
+  console.log(`State: ${cb57.state().tag}`);
+}
+// => Circuit OPENED after 2 failures
+// => State: Open
+
+const r57 = cb57.call(failingService57);
+console.log(`Blocked: ${r57 === "CIRCUIT_OPEN"}`);
+// => Circuit OPEN — call blocked
+// => Blocked: true
 ```
 
 {{< /tab >}}

@@ -19,7 +19,7 @@ Separation of concerns means grouping code by responsibility so that each module
 
 **Tightly coupled approach (no separation):**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -101,13 +101,38 @@ public class CoupledExample
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => This function handles THREE distinct responsibilities at once:
+// => 1. Data access (reading from a map)
+// => 2. Business logic (computing discount)
+// => 3. Presentation (formatting a string for display)
+
+function getUserDiscountMessage(userId: number): string {
+  // => userDb simulates a database lookup — data access concern
+  const userDb: Record<number, { name: string; purchases: number }> = {
+    1: { name: "Alice", purchases: 12 },
+  };
+  // => user is { name: "Alice", purchases: 12 }
+  const user = userDb[userId];
+  // => Business rule embedded directly here — hard to change independently
+  const discount = user.purchases > 10 ? 0.15 : 0.05;
+  // => discount is 0.15 (15%) because purchases > 10
+  // => Presentation formatted inline — impossible to reuse discount logic elsewhere
+  return `Hello ${user.name}, your discount is ${Math.round(discount * 100)}%`;
+  // => Output: "Hello Alice, your discount is 15%"
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 Mixing all three responsibilities means any change — a new discount rule, a different greeting format, or a different data source — requires editing the same function.
 
 **Separated approach (three distinct layers):**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -228,6 +253,42 @@ public class SeparatedExample
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DATA ACCESS — only knows how to retrieve users
+const USER_DB: Record<number, { name: string; purchases: number }> = {
+  1: { name: "Alice", purchases: 12 },
+};
+
+function findUser(userId: number): { name: string; purchases: number } | undefined {
+  return USER_DB[userId]; // => returns user or undefined
+}
+
+// => BUSINESS LOGIC — only knows discount rules, not storage or display
+function calculateDiscount(purchases: number): number {
+  if (purchases > 10) return 0.15; // => 15% for loyal customers (>10 purchases)
+  return 0.05; // => 5% default discount
+}
+
+// => PRESENTATION — only knows how to format, not how to compute or fetch
+function formatDiscountMessage(name: string, discount: number): string {
+  return `Hello ${name}, your discount is ${Math.round(discount * 100)}%`;
+  // => Output: "Hello Alice, your discount is 15%"
+}
+
+// => ORCHESTRATION — thin coordinator that wires the three layers together
+function getUserDiscountMessageSep(userId: number): string {
+  const user = findUser(userId)!; // => delegates data access
+  const discount = calculateDiscount(user.purchases); // => delegates business rule
+  return formatDiscountMessage(user.name, discount); // => delegates formatting
+}
+
+console.log(getUserDiscountMessageSep(1));
+// => Output: Hello Alice, your discount is 15%
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 Each function now has one reason to change: swap the database without touching the discount rule, change the discount formula without touching the message format.
@@ -244,7 +305,7 @@ The Single Responsibility Principle (SRP) states that a class or module should h
 
 **Violating SRP — one class does too much:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -359,11 +420,46 @@ public class UserManager
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => UserManager handles user data AND email sending AND password logic
+// => This class has THREE reasons to change: user schema, email templates, auth rules
+
+class UserManager {
+  private users: Map<number, { name: string; email: string }> = new Map();
+  // => users stores id → { name, email }
+
+  addUser(id: number, name: string, email: string): void {
+    this.users.set(id, { name, email });
+    // => stores user under id key
+  }
+
+  // => EMAIL CONCERN embedded in user class — mixing responsibilities
+  sendWelcomeEmail(userId: number): void {
+    const user = this.users.get(userId); // => retrieves user or undefined
+    if (user) {
+      console.log(`Sending email to ${user.email}: Welcome, ${user.name}!`);
+      // => Output: Sending email to alice@example.com: Welcome, Alice!
+    }
+  }
+
+  // => PASSWORD CONCERN also embedded — a third responsibility
+  resetPassword(userId: number): string {
+    const newPassword = Math.random().toString(36).substring(2, 10);
+    // => newPassword is a random 8-char string
+    console.log(`Password reset for user ${userId}: ${newPassword}`);
+    return newPassword; // => returns the new password string
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Applying SRP — one class, one responsibility:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -488,6 +584,43 @@ class PasswordService
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => RESPONSIBILITY 1: User data management only
+class UserRepository {
+  private users: Map<number, { name: string; email: string }> = new Map();
+
+  add(id: number, name: string, email: string): void {
+    this.users.set(id, { name, email });
+    // => stores user record under id key
+  }
+
+  get(id: number): { name: string; email: string } | undefined {
+    return this.users.get(id); // => returns user or undefined
+  }
+}
+
+// => RESPONSIBILITY 2: Email notifications only
+class EmailService {
+  sendWelcome(name: string, email: string): void {
+    console.log(`Sending email to ${email}: Welcome, ${name}!`);
+    // => Output: Sending email to alice@example.com: Welcome, Alice!
+  }
+}
+
+// => RESPONSIBILITY 3: Password management only
+class PasswordService {
+  reset(userId: number): string {
+    const newPassword = Math.random().toString(36).substring(2, 10);
+    // => newPassword is a random 8-char string
+    console.log(`Password reset for user ${userId}: ${newPassword}`);
+    return newPassword; // => returns the generated password
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Each class should have exactly one reason to change. When you add email template logic, only `EmailService` changes. When you change password policy, only `PasswordService` changes.
@@ -518,7 +651,7 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -730,6 +863,74 @@ class ProductController
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ============================================================
+// DATA ACCESS LAYER — only knows about storage
+// ============================================================
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+}
+
+class ProductRepository {
+  // => in-memory store simulating a database table
+  private readonly products: Map<number, Product> = new Map([
+    [1, { id: 1, name: "Laptop", price: 1200.0, stock: 5 }],
+    [2, { id: 2, name: "Mouse", price: 25.0, stock: 0 }],
+  ]);
+
+  findById(productId: number): Product | undefined {
+    return this.products.get(productId);
+    // => returns product or undefined if not found
+  }
+}
+
+// ============================================================
+// BUSINESS LOGIC LAYER — only knows about rules
+// ============================================================
+class ProductService {
+  constructor(private readonly repo: ProductRepository) {
+    // => repo is injected, not created here (dependency injection)
+  }
+
+  getAvailableProduct(productId: number): Product {
+    const product = this.repo.findById(productId);
+    if (!product) throw new Error(`Product ${productId} not found`);
+    // => throws if not found — presentation layer will catch this
+    if (product.stock === 0) {
+      throw new Error(`Product '${product.name}' is out of stock`);
+      // => business rule: zero stock means unavailable
+    }
+    return product; // => returns valid product
+  }
+}
+
+// ============================================================
+// PRESENTATION LAYER — only knows about formatting responses
+// ============================================================
+function handleGetProduct(productId: number): string {
+  const repo = new ProductRepository(); // => creates data layer
+  const service = new ProductService(repo); // => creates business layer, injects repo
+  try {
+    const p = service.getAvailableProduct(productId);
+    // => delegates all business logic to service
+    return `Available: ${p.name} at $${p.price.toFixed(2)}`;
+    // => Output (id=1): "Available: Laptop at $1200.00"
+  } catch (e: unknown) {
+    return `Error: ${(e as Error).message}`;
+    // => Output (id=2): "Error: Product 'Mouse' is out of stock"
+  }
+}
+
+console.log(handleGetProduct(1)); // => Available: Laptop at $1200.00
+console.log(handleGetProduct(2)); // => Error: Product 'Mouse' is out of stock
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Each layer communicates only with the layer directly below it. Presentation never touches the database; data access never formats strings for users.
@@ -742,7 +943,7 @@ class ProductController
 
 The presentation layer should translate raw input into domain calls and translate domain results into output format. It should contain no business logic and no data access code.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -907,6 +1108,54 @@ class OrderController
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DATA LAYER — retrieves raw records
+interface Order {
+  id: number;
+  total: number;
+  status: string;
+}
+
+// => orderDb simulates a database table with two records
+const orderDb: Map<number, Order> = new Map([
+  [101, { id: 101, total: 299.99, status: "shipped" }],
+  [102, { id: 102, total: 49.0, status: "pending" }],
+]);
+
+function findOrder(id: number): Order | undefined {
+  return orderDb.get(id); // => returns order or undefined
+}
+
+// => BUSINESS LAYER — applies domain rules
+function isEligibleForCancellation(order: Order): boolean {
+  return order.status === "pending" && order.total < 500;
+  // => true only when pending AND total below cancellation threshold
+}
+
+// => PRESENTATION LAYER — translates, never decides
+function handleCancelRequest(orderId: number): string {
+  const order = findOrder(orderId);
+  // => fetches from data layer
+  if (!order) return `Order ${orderId} not found`;
+  // => presentation transforms absence to user-readable message
+  const eligible = isEligibleForCancellation(order);
+  // => business logic evaluated in business layer, result consumed here
+  if (eligible) {
+    return `Order ${orderId} cancelled successfully`;
+    // => Output (id=102): "Order 102 cancelled successfully"
+  }
+  return `Order ${orderId} cannot be cancelled (status: ${order.status})`;
+  // => Output (id=101): "Order 101 cannot be cancelled (status: shipped)"
+}
+
+console.log(handleCancelRequest(101)); // => Order 101 cannot be cancelled (status: shipped)
+console.log(handleCancelRequest(102)); // => Order 102 cancelled successfully
+console.log(handleCancelRequest(999)); // => Order 999 not found
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** The presentation layer transforms but never decides. All decisions live in the business layer where they can be tested without a UI or HTTP context.
@@ -940,7 +1189,7 @@ graph LR
     style V fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1255,6 +1504,108 @@ class TodoController
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ============================================================
+// MODEL — data container + business validation
+// ============================================================
+interface TodoItem {
+  id: number;
+  title: string;
+  done: boolean;
+}
+
+class TodoModel {
+  private items: TodoItem[] = [];
+  // => internal list of todo items
+  private nextId = 1;
+  // => auto-incrementing id counter
+
+  add(title: string): TodoItem {
+    const item: TodoItem = { id: this.nextId++, title, done: false };
+    // => item is { id: 1, title: "Buy milk", done: false }
+    this.items.push(item); // => appended to internal list
+    return item; // => returns the created item
+  }
+
+  getAll(): TodoItem[] {
+    return [...this.items]; // => returns a copy to prevent external mutation
+  }
+
+  complete(itemId: number): boolean {
+    const index = this.items.findIndex((i) => i.id === itemId);
+    // => finds index of matching item, -1 if not found
+    if (index === -1) return false; // => returns false = item not found
+    this.items[index] = { ...this.items[index], done: true };
+    // => replaces with done=true copy (spread preserves immutable pattern)
+    return true; // => returns true = success
+  }
+}
+
+// ============================================================
+// VIEW — formats data for display, no logic
+// ============================================================
+class TodoView {
+  renderList(items: TodoItem[]): string {
+    if (items.length === 0) return "No todos yet.";
+    // => Output when empty list
+    return items
+      .map((item) => {
+        const status = item.done ? "✓" : "○";
+        // => status is "✓" for done items, "○" for pending
+        return `[${status}] ${item.id}. ${item.title}`;
+      })
+      .join("\n"); // => joined with newlines
+  }
+
+  renderCreated(item: TodoItem): string {
+    return `Created todo #${item.id}: ${item.title}`;
+    // => Output: "Created todo #1: Buy milk"
+  }
+}
+
+// ============================================================
+// CONTROLLER — coordinates model and view
+// ============================================================
+class TodoController {
+  constructor(
+    private readonly model: TodoModel,
+    private readonly view: TodoView,
+  ) {
+    // => model and view are injected — controller never creates them
+  }
+
+  create(title: string): string {
+    const item = this.model.add(title); // => delegates creation to model
+    return this.view.renderCreated(item); // => delegates formatting to view
+  }
+
+  listAll(): string {
+    return this.view.renderList(this.model.getAll());
+    // => fetches all items from model, delegates rendering to view
+  }
+
+  done(itemId: number): string {
+    const success = this.model.complete(itemId); // => delegates completion to model
+    return success ? `Todo #${itemId} marked as done` : `Todo #${itemId} not found`;
+  }
+}
+
+// => Wire the MVC triad together
+const model = new TodoModel();
+const view = new TodoView();
+const controller = new TodoController(model, view);
+
+console.log(controller.create("Buy milk")); // => Created todo #1: Buy milk
+console.log(controller.create("Write tests")); // => Created todo #2: Write tests
+console.log(controller.done(1)); // => Todo #1 marked as done
+console.log(controller.listAll());
+// => [✓] 1. Buy milk
+// => [○] 2. Write tests
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** The Controller handles input and coordinates. The Model owns data and rules. The View formats output. None of these three should reach into the others' domain.
@@ -1267,7 +1618,7 @@ class TodoController
 
 The Model is responsible for enforcing its own invariants. If validation logic leaks into controllers or views, the same rule must be duplicated everywhere the data is modified, creating drift over time.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1448,6 +1799,62 @@ public class BankAccount
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => MODEL with self-contained validation — the model is the single source of truth
+class BankAccount {
+  private balance: number; // => private: external code cannot bypass validation
+  private static readonly MINIMUM_BALANCE = 0; // => business rule: no overdrafts
+
+  constructor(initialBalance: number) {
+    if (initialBalance < 0) {
+      throw new Error("Initial balance cannot be negative");
+      // => enforced at construction time, not by the caller
+    }
+    this.balance = initialBalance; // => balance is initialBalance (e.g., 100)
+  }
+
+  deposit(amount: number): void {
+    if (amount <= 0) throw new Error("Deposit amount must be positive");
+    // => model rejects invalid inputs without controller involvement
+    this.balance += amount; // => balance increases by amount
+  }
+
+  withdraw(amount: number): void {
+    if (amount <= 0) throw new Error("Withdrawal amount must be positive");
+    // => reject non-positive withdrawal at the gate
+    if (this.balance - amount < BankAccount.MINIMUM_BALANCE) {
+      throw new Error(`Insufficient funds: balance is ${this.balance}`);
+      // => business rule enforced in model, not leaked to controller
+    }
+    this.balance -= amount; // => balance decreases by amount
+  }
+
+  getBalance(): number {
+    return this.balance;
+  }
+  // => read-only access to private state
+}
+
+// => CONTROLLER — delegates entirely to model, no duplicate validation
+function handleWithdraw(account: BankAccount, amount: number): string {
+  try {
+    account.withdraw(amount); // => model enforces all rules
+    return `Withdrawal successful. Balance: $${account.getBalance()}`;
+    // => Output: "Withdrawal successful. Balance: $50"
+  } catch (e: unknown) {
+    return `Withdrawal failed: ${(e as Error).message}`;
+    // => Output: "Withdrawal failed: Insufficient funds: balance is 50"
+  }
+}
+
+const account = new BankAccount(100);
+console.log(handleWithdraw(account, 50)); // => Withdrawal successful. Balance: $50
+console.log(handleWithdraw(account, 200)); // => Withdrawal failed: Insufficient funds: balance is 50
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Models that enforce their own invariants are impossible to put into invalid states, regardless of which controller or API endpoint calls them.
@@ -1479,7 +1886,7 @@ graph TD
 
 **Without dependency injection (hard to test):**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1529,11 +1936,30 @@ class HardcodedUserService
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => UserService creates its own database connection — cannot be tested without real DB
+class HardcodedUserService {
+  // => hardcoded dependency: impossible to substitute a fake in tests
+  private readonly db: Map<number, string> = new Map([
+    [1, "Alice"],
+    [2, "Bob"],
+  ]);
+
+  getName(userId: number): string | undefined {
+    return this.db.get(userId);
+    // => returns name or undefined — no DI, no seam for testing
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **With dependency injection (easy to test with any backend):**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1702,6 +2128,59 @@ class UserService
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => INTERFACE defines what UserService needs from storage
+interface UserStore {
+  fetch(userId: number): string | undefined;
+  // => any class implementing fetch(number) -> string | undefined satisfies this contract
+}
+
+// => REAL implementation for production
+class DictUserStore implements UserStore {
+  private readonly data: Map<number, string> = new Map([
+    [1, "Alice"],
+    [2, "Bob"],
+  ]);
+  // => simulates a real DB
+
+  fetch(userId: number): string | undefined {
+    return this.data.get(userId); // => returns name or undefined
+  }
+}
+
+// => FAKE implementation for tests — no DB required
+class FakeUserStore implements UserStore {
+  fetch(_userId: number): string {
+    return "TestUser"; // => always returns a fixed value for testing
+  }
+}
+
+// => SERVICE accepts any UserStore — decoupled from specific implementation
+class UserService {
+  constructor(private readonly store: UserStore) {
+    // => store is injected, not created here
+  }
+
+  greet(userId: number): string {
+    const name = this.store.fetch(userId); // => delegates to whatever store was injected
+    if (name === undefined) return `User ${userId} not found`;
+    return `Hello, ${name}!`; // => Output: "Hello, Alice!"
+  }
+}
+
+// => PRODUCTION: inject real store
+const service = new UserService(new DictUserStore());
+console.log(service.greet(1)); // => Hello, Alice!
+console.log(service.greet(99)); // => User 99 not found
+
+// => TEST: inject fake store — no database needed
+const testService = new UserService(new FakeUserStore());
+console.log(testService.greet(1)); // => Hello, TestUser!
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Inject dependencies from the outside rather than creating them inside. The service only knows the interface it needs, not which implementation provides it.
@@ -1714,7 +2193,7 @@ class UserService
 
 There are two common styles of dependency injection: constructor injection (dependencies passed when the object is created) and method injection (dependencies passed per-call). Constructor injection is the default for stable dependencies; method injection suits per-request context like loggers or user sessions.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1905,6 +2384,59 @@ class InjectionExample : IPaymentGateway
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => CONSTRUCTOR INJECTION — dependency lives for the object's lifetime
+// => Use when: dependency is always required and does not change per call
+interface PaymentGateway {
+  charge(amount: number): boolean; // => contract: charge(amount) -> approved or declined
+}
+
+class OrderProcessor {
+  constructor(private readonly paymentGateway: PaymentGateway) {
+    // => paymentGateway stored for the lifetime of OrderProcessor
+    // => caller decides which gateway to inject — OrderProcessor is gateway-agnostic
+  }
+
+  processOrder(orderId: number, amount: number): string {
+    const success = this.paymentGateway.charge(amount);
+    // => delegates to whatever gateway was injected at construction
+    return success ? `Order ${orderId} paid ($${amount})` : `Order ${orderId} payment failed`;
+    // => Output (amount=500):  "Order 1 paid ($500)"
+    // => Output (amount=1500): "Order 2 payment failed"
+  }
+}
+
+// => METHOD INJECTION — dependency passed per call
+// => Use when: dependency varies per request (e.g., per-user logger, per-request context)
+type OutputSink = (msg: string) => void;
+// => OutputSink is a function type — caller supplies the sink
+
+class AuditLogger {
+  log(message: string, output: OutputSink): void {
+    // => output is injected per call — can be console.log, file, or database
+    output(`[AUDIT] ${message}`);
+    // => delegates writing to whatever OutputSink was passed in
+  }
+}
+
+// => CONSTRUCTOR INJECTION: gateway wired once at composition root
+const fakeGateway: PaymentGateway = { charge: (amount) => amount < 1000 };
+// => fakeGateway approves amounts below 1000 (simulates approval limit)
+const processor = new OrderProcessor(fakeGateway);
+console.log(processor.processOrder(1, 500)); // => Order 1 paid ($500)
+console.log(processor.processOrder(2, 1500)); // => Order 2 payment failed
+
+// => METHOD INJECTION: output sink supplied per call
+const logger = new AuditLogger();
+logger.log("User login", (msg) => console.log(msg));
+// => Output: [AUDIT] User login
+logger.log("File export", (msg) => console.log(`>> ${msg}`));
+// => Output: >> [AUDIT] File export
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Prefer constructor injection for required, stable dependencies. Use method injection when the dependency varies per invocation.
@@ -1921,7 +2453,7 @@ The Interface Segregation Principle says that classes should not be forced to im
 
 **Fat interface — forces implementors to define methods they do not need:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2011,11 +2543,46 @@ class Contractor : IEmployeeOperations
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => FAT interface: all implementors must provide ALL four methods
+// => even when most methods are irrelevant to that implementor
+interface EmployeeOperations {
+  calculateSalary(): number; // => relevant for paid employees
+  clockIn(): void; // => relevant for hourly workers
+  generateReport(): string; // => relevant for managers
+  requestLeave(days: number): void; // => relevant for all employees
+}
+
+// => CONTRACTOR only needs salary, yet must implement the other three
+class Contractor implements EmployeeOperations {
+  calculateSalary(): number {
+    return 500;
+  }
+  // => useful — flat daily rate
+
+  clockIn(): void {
+    /* not applicable */
+  }
+  // => forced but meaningless — contractors don't clock in
+
+  generateReport(): string {
+    return "";
+  }
+  // => forced but meaningless — contractors don't generate reports
+
+  requestLeave(_days: number): void {}
+  // => forced but meaningless — contractors don't use this leave system
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Segregated interfaces — each implementor picks only what applies:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2184,6 +2751,73 @@ class ISPExample
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => FOCUSED interfaces: each covers exactly one capability
+interface Payable {
+  calculateSalary(): number;
+} // => pay calculation only
+interface Trackable {
+  clockIn(): void;
+} // => time tracking only
+interface Reportable {
+  generateReport(): string;
+} // => reporting only
+interface LeaveEligible {
+  requestLeave(days: number): void;
+} // => leave management only
+
+// => CONTRACTOR: only salary matters — no forced empty methods
+class SegregatedContractor implements Payable {
+  calculateSalary(): number {
+    return 500;
+  }
+  // => flat daily rate — no other obligations
+}
+
+// => FULL-TIME EMPLOYEE: salary + time tracking + leave
+class FullTimeEmployee implements Payable, Trackable, LeaveEligible {
+  private hoursWorked = 0; // => tracks hours for this period
+
+  calculateSalary(): number {
+    return this.hoursWorked * 25;
+  }
+  // => $25/hour rate applied to tracked hours
+
+  clockIn(): void {
+    this.hoursWorked += 8;
+  }
+  // => adds one full work day (8 hours)
+
+  requestLeave(days: number): void {
+    console.log(`Leave requested: ${days} day(s)`);
+    // => Output: Leave requested: 5 day(s)
+  }
+}
+
+// => MANAGER: salary + reporting — no clock-in, no leave tracked here
+class Manager implements Payable, Reportable {
+  calculateSalary(): number {
+    return 8000;
+  }
+  // => fixed monthly salary
+
+  generateReport(): string {
+    return "Team performance: on track";
+  }
+  // => manager-specific report string
+}
+
+const contractor = new SegregatedContractor();
+console.log(contractor.calculateSalary()); // => 500
+
+const emp = new FullTimeEmployee();
+emp.clockIn(); // => hoursWorked is now 8
+console.log(emp.calculateSalary()); // => 200 (8 * 25)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Split interfaces by cohesive capability, not by the most complex implementor. Implementors import only the interfaces they genuinely fulfill.
@@ -2220,7 +2854,7 @@ graph TD
 
 **Closed approach — requires modifying existing code for every new discount:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2273,11 +2907,28 @@ public static class ClosedViolation
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => VIOLATION: adding a new discount type requires editing this function
+// => Every new case expands this if-else chain — "open for modification" anti-pattern
+function calculateDiscount(price: number, discountType: string): number {
+  if (discountType === "regular") {
+    return price * 0.1; // => 10% off
+  } else if (discountType === "loyalty") {
+    return price * 0.2; // => 20% off for loyal customers
+  }
+  // => Every new discount type forces an edit here — risky regression surface
+  return 0.0;
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Open/Closed approach — extend by adding new classes, never editing existing ones:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2442,6 +3093,59 @@ class PriceCalculator
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => ABSTRACT BASE — defines the contract, never changes
+abstract class DiscountStrategy {
+  abstract calculate(price: number): number;
+  // => all strategies must implement calculate(price) -> number
+}
+
+// => CONCRETE STRATEGIES — add new ones without touching existing code
+class RegularDiscount extends DiscountStrategy {
+  calculate(price: number): number {
+    return price * 0.1;
+  }
+  // => 10% discount
+}
+
+class LoyaltyDiscount extends DiscountStrategy {
+  calculate(price: number): number {
+    return price * 0.2;
+  }
+  // => 20% discount for loyal customers
+}
+
+// => EXTENSION: new discount type — existing code is UNTOUCHED
+class SeasonalDiscount extends DiscountStrategy {
+  calculate(price: number): number {
+    return price * 0.3;
+  }
+  // => 30% seasonal sale discount — added without modifying existing classes
+}
+
+// => CLIENT: depends on the abstract base, not concrete classes
+class PriceCalculator {
+  constructor(private readonly strategy: DiscountStrategy) {
+    // => strategy is injected — PriceCalculator never changes when new discounts arrive
+  }
+
+  finalPrice(price: number): number {
+    const discount = this.strategy.calculate(price);
+    // => delegates discount computation to injected strategy
+    return price - discount; // => price minus discount amount
+  }
+}
+
+const calc = new PriceCalculator(new RegularDiscount());
+console.log(calc.finalPrice(100.0)); // => 90 (100 - 10)
+
+const calc2 = new PriceCalculator(new SeasonalDiscount());
+console.log(calc2.finalPrice(100.0)); // => 70 (100 - 30)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Depend on abstractions and inject concrete strategies from outside. Adding new behavior means writing a new class, not modifying existing ones.
@@ -2458,7 +3162,7 @@ The Liskov Substitution Principle (LSP) says that any subclass instance must be 
 
 **LSP violation — subclass breaks the contract:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2610,11 +3314,67 @@ static void Main()
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => BASE CLASS: Rectangle assumes width and height are independent
+class Rectangle {
+  protected width: number;
+  protected height: number;
+
+  constructor(width: number, height: number) {
+    this.width = width; // => width is set independently
+    this.height = height; // => height is set independently
+  }
+
+  setWidth(w: number): void {
+    this.width = w;
+  } // => changes ONLY width
+  setHeight(h: number): void {
+    this.height = h;
+  } // => changes ONLY height
+
+  area(): number {
+    return this.width * this.height;
+  } // => width * height
+}
+
+// => SQUARE forces both dimensions equal — violates Rectangle's contract
+class Square extends Rectangle {
+  constructor(side: number) {
+    super(side, side);
+  }
+
+  setWidth(w: number): void {
+    this.width = w; // => changes width
+    this.height = w; // => ALSO changes height — breaks Rectangle's contract
+  }
+
+  setHeight(h: number): void {
+    this.height = h; // => changes height
+    this.width = h; // => ALSO changes width — breaks Rectangle's contract
+  }
+}
+
+// => CALLER written for Rectangle — breaks silently when given Square
+function testRectangle(r: Rectangle): void {
+  r.setWidth(5);
+  r.setHeight(3);
+  // => For Rectangle: area is 5 * 3 = 15 (expected)
+  // => For Square:    area is 3 * 3 = 9  (unexpected — LSP violated)
+  console.log(`Area: ${r.area()}`);
+}
+
+testRectangle(new Rectangle(1, 1)); // => Area: 15 (correct)
+testRectangle(new Square(1)); // => Area: 9  (violates LSP)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **LSP-compliant design — use a shared interface, not inheritance:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2736,6 +3496,51 @@ static void Main()
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SHAPE interface: defines area() contract without assuming dimension independence
+interface Shape {
+  area(): number;
+}
+
+// => RECTANGLE: independent width and height — no coupling to Square behavior
+class ProperRectangle implements Shape {
+  constructor(
+    private readonly width: number,
+    private readonly height: number,
+  ) {
+    // => width and height stored independently
+  }
+
+  area(): number {
+    return this.width * this.height;
+  }
+  // => width * height — always correct for any width/height pair
+}
+
+// => SQUARE: single side length, no inherited width/height confusion
+class ProperSquare implements Shape {
+  constructor(private readonly side: number) {
+    // => only one dimension: side — square invariant enforced by design
+  }
+
+  area(): number {
+    return this.side * this.side;
+  }
+  // => side * side — always correct
+}
+
+// => CALLER: works for any Shape — LSP satisfied
+function printArea(shape: Shape): void {
+  console.log(`Area: ${shape.area()}`);
+}
+
+printArea(new ProperRectangle(5, 3)); // => Area: 15
+printArea(new ProperSquare(4)); // => Area: 16
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Prefer interface composition over inheritance when subclass behavior diverges from parent behavior. Subtypes must honor the behavioral contract of the type they replace.
@@ -2752,7 +3557,7 @@ DRY (Don't Repeat Yourself) means every piece of knowledge should have a single 
 
 **Violation — business rule duplicated in three places:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2845,11 +3650,43 @@ public static class DryViolation
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => VIOLATION: the "eligible user" rule is duplicated in every function
+// => If the rule changes (e.g., add emailVerified check), all three must be updated
+interface User {
+  name: string;
+  active: boolean;
+  age: number;
+}
+
+function sendNotification(user: User): void {
+  if (user.active && user.age >= 18) {
+    // => rule duplicated here — must be changed in all three places if rule evolves
+    console.log(`Notifying ${user.name}`);
+  }
+}
+
+function generateReport(user: User): void {
+  if (user.active && user.age >= 18) {
+    // => same rule repeated — divergence risk if one copy is missed
+    console.log(`Report for ${user.name}`);
+  }
+}
+
+function allowPurchase(user: User): boolean {
+  // => rule duplicated a third time
+  return user.active && user.age >= 18;
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **DRY — single authoritative location for the rule:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2969,6 +3806,48 @@ public static class DryCompliant
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SINGLE SOURCE OF TRUTH: eligibility rule defined once
+interface User {
+  name: string;
+  active: boolean;
+  age: number;
+}
+
+// => isEligibleUser is the one and only definition of the business rule
+function isEligibleUser(user: User): boolean {
+  return user.active && user.age >= 18;
+  // => returns true only if active AND adult
+  // => changing this rule updates all three callers automatically
+}
+
+function sendNotification(user: User): void {
+  if (isEligibleUser(user)) {
+    // => delegates to single rule
+    console.log(`Notifying ${user.name}`);
+    // => Output: Notifying Alice
+  }
+}
+
+function generateReport(user: User): void {
+  if (isEligibleUser(user)) {
+    // => same single rule — no duplication
+    console.log(`Report for ${user.name}`);
+  }
+}
+
+function allowPurchase(user: User): boolean {
+  return isEligibleUser(user); // => single rule, zero duplication
+}
+
+const user: User = { name: "Alice", active: true, age: 25 };
+sendNotification(user); // => Notifying Alice
+console.log(allowPurchase(user)); // => true
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Extract repeated decisions into named functions or constants. Code duplication is a symptom of knowledge duplication — fix the knowledge location, not just the syntax.
@@ -2983,7 +3862,7 @@ KISS means preferring the simplest design that satisfies the requirements. Compl
 
 **Over-engineered — excessive abstraction for a simple task:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3130,11 +4009,55 @@ class KissViolation
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => OVER-ENGINEERED: factory + strategy + builder for a simple greeting
+// => Five classes to accomplish what one function can do
+interface GreetingStrategy {
+  greet(name: string): string; // => contract for producing a greeting string
+}
+
+class FormalGreetingStrategy implements GreetingStrategy {
+  greet(name: string): string {
+    return `Good day, ${name}.`; // => produces formal greeting
+  }
+}
+
+class GreetingFactory {
+  // => factory adds a layer of indirection over strategy instantiation
+  static create(type: string): GreetingStrategy {
+    if (type === "formal") return new FormalGreetingStrategy();
+    throw new Error(`Unknown greeting type: ${type}`);
+    // => throws for any type other than "formal" — fragile extension point
+  }
+}
+
+class GreetingBuilder {
+  private type = "formal"; // => default type
+
+  withType(type: string): GreetingBuilder {
+    this.type = type; // => allows chaining: new GreetingBuilder().withType("formal")
+    return this; // => returns this for fluent API
+  }
+
+  build(): GreetingStrategy {
+    return GreetingFactory.create(this.type);
+    // => delegates to factory — extra hop with no added value here
+  }
+}
+
+// => 4 collaborating classes just to print one greeting line
+const greeting = new GreetingBuilder().withType("formal").build().greet("Alice");
+console.log(greeting); // => Good day, Alice.
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **KISS — simplest solution that works:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3189,6 +4112,21 @@ static class KissCompliant
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SIMPLE: one function, zero ceremony, achieves the same result
+// => No interface, no factory, no builder — plain function
+function greet(name: string): string {
+  return `Good day, ${name}.`;
+  // => Output: Good day, Alice.
+  // => If greeting types are needed later, add them then (YAGNI)
+}
+
+console.log(greet("Alice")); // => Good day, Alice.
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Add abstractions only when complexity is demonstrated, not anticipated. The second solution is easier to read, debug, test, extend, and hand off.
@@ -3201,7 +4139,7 @@ static class KissCompliant
 
 YAGNI means do not add functionality until it is actually needed. Speculative features add code complexity without delivering current value, and they are often built for a requirement that never arrives in the form anticipated.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3363,6 +4301,54 @@ class SimpleUserProfile
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => YAGNI VIOLATION: speculative features not required by any current use case
+class UserProfile {
+  readonly name: string; // => required today
+  readonly email: string; // => required today
+
+  // => SPECULATIVE: no current feature requires these fields
+  theme = "light"; // => "might need dark mode someday"
+  preferredLanguage = "en"; // => "maybe we'll go international"
+  newsletterFrequency = "weekly"; // => "for a newsletter we haven't built"
+  aiRecommendations = true; // => "for an AI feature in the roadmap"
+
+  constructor(name: string, email: string) {
+    this.name = name;
+    this.email = email;
+  }
+
+  // => SPECULATIVE: no current caller uses this — dead code increasing maintenance burden
+  exportToXml(): string {
+    return `<user><name>${this.name}</name></user>`;
+    // => XML export for a feature that hasn't been requested yet
+  }
+
+  // => SPECULATIVE: no current caller needs analytics integration
+  trackEngagement(event: string): void {
+    console.log(`[Analytics] ${this.name}: ${event}`);
+    // => analytics hook for a system that doesn't exist yet
+  }
+}
+
+// => YAGNI COMPLIANT: only what the application actually needs right now
+class SimpleUserProfile {
+  constructor(
+    readonly name: string, // => required today
+    readonly email: string, // => required today
+  ) {
+    // => No speculative fields — add when a feature actually needs them
+  }
+
+  displayName(): string {
+    return this.name; // => required today for display
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Ship only what the current sprint requires. Code that is never executed in production still costs maintenance, testing, and cognitive load.
@@ -3377,7 +4363,7 @@ class SimpleUserProfile
 
 Coupling measures how much one module depends on the internals of another. High coupling means a change in one module forces changes in others, making the system brittle and hard to evolve.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3540,6 +4526,57 @@ class TightlyCoupledOrderService
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => HIGH COUPLING: OrderService reaches into the internals of Customer and Inventory
+
+// => public fields expose internals — any caller can read or mutate them
+class Customer {
+  name: string;
+  creditLimit: number; // => exposed internal detail
+  outstandingBalance: number = 0.0; // => mutable state visible to all
+
+  constructor(name: string, creditLimit: number) {
+    this.name = name;
+    this.creditLimit = creditLimit; // => set at construction
+  }
+}
+
+class Inventory {
+  // => public map exposes backing data structure — callers can manipulate it directly
+  items: Map<string, number> = new Map([["Laptop", 5]]);
+  // => raw mutable map exposed to all callers
+}
+
+// => OrderService KNOWS about Customer's internals AND Inventory's internals
+class TightlyCoupledOrderService {
+  placeOrder(customer: Customer, inventory: Inventory, item: string, price: number): string {
+    // => directly reads customer's internal fields — tight coupling
+    if (customer.outstandingBalance + price > customer.creditLimit) {
+      return "Credit limit exceeded"; // => caller must know field names
+    }
+    // => directly reads inventory's internal map — tight coupling
+    if ((inventory.items.get(item) ?? 0) <= 0) {
+      return `${item} is out of stock`; // => coupled to Map implementation
+    }
+    customer.outstandingBalance += price; // => mutates customer state directly
+    inventory.items.set(item, inventory.items.get(item)! - 1); // => mutates inventory state
+    return `Order placed: ${item} for ${customer.name}`;
+    // => Output: "Order placed: Laptop for Alice"
+    // => If Customer renames creditLimit, this line breaks
+    // => If Inventory switches to a database, this line breaks
+  }
+}
+
+const customer = new Customer("Alice", 2000.0);
+const inventory = new Inventory();
+const svc = new TightlyCoupledOrderService();
+console.log(svc.placeOrder(customer, inventory, "Laptop", 1200.0));
+// => Order placed: Laptop for Alice
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** When one module directly reads or mutates another module's internal fields, every internal change cascades as a breaking change throughout the codebase.
@@ -3568,7 +4605,7 @@ graph LR
     style I fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3790,6 +4827,72 @@ class LooselyCoupldeOrderService
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => ENCAPSULATED Customer — hides internals behind stable methods
+class EncapsulatedCustomer {
+  private readonly creditLimit: number;
+  private balance = 0.0; // => private: external code cannot touch directly
+
+  constructor(
+    readonly name: string,
+    creditLimit: number,
+  ) {
+    this.creditLimit = creditLimit; // => stored privately
+  }
+
+  canAcceptCharge(amount: number): boolean {
+    return this.balance + amount <= this.creditLimit;
+    // => hides the credit formula — callers don't know the field names
+  }
+
+  recordCharge(amount: number): void {
+    this.balance += amount; // => only method that mutates balance
+    // => internal representation can change without affecting callers
+  }
+}
+
+// => ENCAPSULATED Inventory — hides the backing data structure
+class EncapsulatedInventory {
+  private readonly stock: Map<string, number> = new Map([["Laptop", 5]]);
+  // => private backing map
+
+  isAvailable(item: string): boolean {
+    return (this.stock.get(item) ?? 0) > 0;
+    // => hides how stock is stored — could be a database call tomorrow
+  }
+
+  decrement(item: string): void {
+    const qty = this.stock.get(item) ?? 0;
+    if (qty > 0) this.stock.set(item, qty - 1);
+    // => only method that mutates stock — controlled access
+  }
+}
+
+// => LOOSELY COUPLED OrderService — talks only through public interfaces
+class LooselyCoupldeOrderService {
+  placeOrder(customer: EncapsulatedCustomer, inventory: EncapsulatedInventory, item: string, price: number): string {
+    if (!customer.canAcceptCharge(price)) return "Credit limit exceeded";
+    // => no internal field access
+    if (!inventory.isAvailable(item)) return `${item} is out of stock`;
+    // => no map access
+    customer.recordCharge(price); // => delegates mutation to owner
+    inventory.decrement(item); // => delegates mutation to owner
+    return `Order placed: ${item} for ${customer.name}`;
+    // => Output: "Order placed: Laptop for Alice"
+    // => Renaming private fields has ZERO impact on this service
+  }
+}
+
+const cust = new EncapsulatedCustomer("Alice", 2000.0);
+const inv = new EncapsulatedInventory();
+const looseSvc = new LooselyCoupldeOrderService();
+console.log(looseSvc.placeOrder(cust, inv, "Laptop", 1200.0));
+// => Order placed: Laptop for Alice
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Define stable public methods that express what the object can do, not what it contains. Callers depend on behavior, not representation.
@@ -3804,7 +4907,7 @@ Cohesion measures how related the responsibilities within a module are. High coh
 
 **Low cohesion — one class mixes unrelated domains:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3876,11 +4979,35 @@ class MixedUtilities
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => LOW COHESION: MixedUtilities handles three completely unrelated domains
+class MixedUtilities {
+  // => string manipulation
+  formatTitle(title: string): string {
+    return title.toUpperCase(); // => "hello" → "HELLO"
+  }
+
+  // => financial calculation — unrelated to strings
+  calculateTax(price: number, rate: number): number {
+    return price * rate; // => 100 * 0.1 = 10.0
+  }
+
+  // => date manipulation — unrelated to both of the above
+  getDayOfWeek(date: Date): string {
+    return date.toLocaleDateString("en-US", { weekday: "long" });
+    // => "Monday", "Tuesday", etc.
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **High cohesion — each class groups only related behavior:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4034,6 +5161,57 @@ class DateHelper
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => HIGH COHESION: each class groups only related behavior
+// => REASON: when formatTitle changes, it does not affect tax or date logic
+
+class StringFormatter {
+  // => All methods relate to text formatting
+  formatTitle(title: string): string {
+    return title.toUpperCase(); // => "hello" → "HELLO"
+  }
+
+  truncate(text: string, maxLength: number): string {
+    return text.length > maxLength ? text.slice(0, maxLength) + "…" : text;
+    // => "Hello World" with maxLength=5 → "Hello…"
+  }
+}
+
+class TaxCalculator {
+  // => All methods relate to tax computation
+  calculate(price: number, rate: number): number {
+    return price * rate; // => 100 * 0.1 = 10.0
+  }
+
+  calculateWithCap(price: number, rate: number, cap: number): number {
+    const tax = price * rate; // => 100 * 0.15 = 15.0
+    return Math.min(tax, cap); // => min(15.0, 10.0) = 10.0 — capped
+  }
+}
+
+class DateHelper {
+  // => All methods relate to date operations
+  getDayOfWeek(date: Date): string {
+    return date.toLocaleDateString("en-US", { weekday: "long" });
+    // => "Monday" or "Tuesday" etc.
+  }
+
+  isWeekend(date: Date): boolean {
+    const day = date.getDay();
+    return day === 0 || day === 6; // => 0=Sunday, 6=Saturday
+  }
+}
+
+const fmt = new StringFormatter();
+console.log(fmt.formatTitle("hello world")); // => HELLO WORLD
+
+const tax = new TaxCalculator();
+console.log(tax.calculate(200, 0.1)); // => 20
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Group code by what it does, not by convenience. A class with high cohesion has one clear job, making it easy to name, test, and locate.
@@ -4050,7 +5228,7 @@ Encapsulation means bundling data and the methods that operate on it, then hidin
 
 **Poor encapsulation — public mutable fields:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4128,11 +5306,34 @@ public class PoorTemperature
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => POOR ENCAPSULATION: mutable public fields invite inconsistent state
+class PoorTemperature {
+  celsius: number; // => public: anyone can set this to -999
+  fahrenheit: number; // => computed at construction only
+
+  constructor(celsius: number) {
+    this.celsius = celsius;
+    this.fahrenheit = (celsius * 9.0) / 5 + 32;
+    // => Problem: if caller sets celsius later, fahrenheit stays stale
+  }
+}
+
+const poor = new PoorTemperature(100);
+console.log(poor.celsius); // => 100
+console.log(poor.fahrenheit); // => 212
+poor.celsius = 50; // => direct mutation — fahrenheit is now stale!
+console.log(poor.fahrenheit); // => 212 (wrong! should be 122)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Encapsulated — state changes only through controlled methods:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4265,6 +5466,53 @@ public class Temperature
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => WELL ENCAPSULATED: private field, derived properties computed on demand
+class Temperature {
+  private readonly _celsius: number; // => private: external code cannot set directly
+
+  constructor(celsius: number) {
+    Temperature.validate(celsius); // => validates at construction time
+    this._celsius = celsius; // => stored once, never exposed for direct write
+  }
+
+  private static validate(celsius: number): void {
+    if (celsius < -273.15) {
+      throw new Error(`Temperature below absolute zero: ${celsius}`);
+      // => physics constraint enforced by the class, not by callers
+    }
+  }
+
+  get celsius(): number {
+    return this._celsius;
+  }
+  // => read-only getter — no setter means no stale risk
+
+  get fahrenheit(): number {
+    return (this._celsius * 9.0) / 5 + 32;
+    // => computed getter — always derived from _celsius, never stale
+    // => celsius=100 → fahrenheit=212
+  }
+
+  get kelvin(): number {
+    return this._celsius + 273.15; // => always derived from single source of truth
+  }
+
+  toCelsius(value: number): Temperature {
+    return new Temperature(value); // => returns NEW instance — immutable pattern
+  }
+}
+
+const t = new Temperature(100);
+console.log(t.celsius); // => 100
+console.log(t.fahrenheit); // => 212
+console.log(t.kelvin); // => 373.15
+// => t._celsius = 50 ← TypeScript compile error: private field
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Hide mutable state behind methods. Derived values should always be computed from a single source of truth rather than cached in parallel fields.
@@ -4303,7 +5551,7 @@ graph TD
 
 **Inheritance approach — rigid hierarchy:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4378,11 +5626,37 @@ class PenguinInheritance : Bird
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => INHERITANCE: rigid "is-a" hierarchy that breaks when adding Penguin
+class Bird {
+  fly(): string {
+    return "Flying"; // => default fly behavior for all Birds
+  }
+}
+
+class DuckInheritance extends Bird {
+  quack(): string {
+    return "Quack"; // => duck-specific behavior
+  }
+}
+
+class PenguinInheritance extends Bird {
+  fly(): string {
+    throw new Error("Penguins cannot fly");
+    // => Penguin is-a Bird, but must break the Bird contract
+    // => This is an LSP violation — any code using Bird.fly() breaks for Penguin
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Composition approach — flexible assembly:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4567,6 +5841,76 @@ class BirdCompositionDemo {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => BEHAVIOR INTERFACES — define what behaviors exist
+interface FlyBehavior {
+  fly(): string;
+} // => contract for any flying behavior
+interface SwimBehavior {
+  swim(): string;
+} // => contract for any swimming behavior
+
+// => CONCRETE BEHAVIORS — small, focused, reusable
+class CanFly implements FlyBehavior {
+  fly(): string {
+    return "Flapping wings";
+  } // => standard flying behavior
+}
+
+class CannotFly implements FlyBehavior {
+  fly(): string {
+    return "Cannot fly";
+  } // => used by non-flying birds — no exception
+}
+
+class CanSwim implements SwimBehavior {
+  swim(): string {
+    return "Swimming";
+  } // => used by aquatic birds
+}
+
+// => COMPOSED BIRDS — each bird assembles the behaviors it actually has
+class Eagle {
+  private readonly flyBehavior: FlyBehavior = new CanFly(); // => eagles can fly
+  fly(): string {
+    return this.flyBehavior.fly();
+  }
+  // => delegates to behavior object — Output: "Flapping wings"
+}
+
+class Duck {
+  private readonly flyBehavior: FlyBehavior = new CanFly(); // => ducks can fly
+  private readonly swimBehavior: SwimBehavior = new CanSwim(); // => and swim
+  fly(): string {
+    return this.flyBehavior.fly();
+  } // => Output: "Flapping wings"
+  swim(): string {
+    return this.swimBehavior.swim();
+  } // => Output: "Swimming"
+}
+
+class Penguin {
+  private readonly flyBehavior: FlyBehavior = new CannotFly(); // => cannot fly
+  private readonly swimBehavior: SwimBehavior = new CanSwim(); // => but can swim
+  fly(): string {
+    return this.flyBehavior.fly();
+  } // => Output: "Cannot fly"
+  swim(): string {
+    return this.swimBehavior.swim();
+  } // => Output: "Swimming"
+}
+
+const duck = new Duck();
+console.log(duck.fly()); // => Flapping wings
+console.log(duck.swim()); // => Swimming
+
+const penguin = new Penguin();
+console.log(penguin.fly()); // => Cannot fly (no exception thrown)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Model "has-a" relationships with composition and "is-a" relationships with interfaces. Composition lets you mix and match behaviors without inheriting unwanted methods.
@@ -4581,7 +5925,7 @@ Interfaces with default methods in Java, Kotlin, and C# serve the same role Pyth
 
 **Interface-with-default-methods approach — reuses capability without deep inheritance:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4715,11 +6059,49 @@ class Product : IJsonSerializable, ITimestamped
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => MIXIN PATTERN: adds serialization and timestamp capabilities to classes
+// => TypeScript achieves this via interfaces + mixin functions
+
+interface JsonSerializable {
+  toJson(): string; // => contract: any implementing class must provide serialization
+}
+
+interface Timestamped {
+  readonly createdAt: number; // => contract: implementing class records creation time
+}
+
+// => Product implements BOTH interfaces, gains both capabilities
+class Product implements JsonSerializable, Timestamped {
+  readonly createdAt: number = Date.now();
+  // => creation time recorded at construction — satisfies Timestamped contract
+
+  constructor(
+    private readonly name: string,
+    private readonly price: number,
+  ) {}
+
+  toJson(): string {
+    return JSON.stringify({ name: this.name, price: this.price, createdAt: this.createdAt });
+    // => serializes to JSON — Product provides own toJson implementation
+    // => Output: {"name":"Laptop","price":1200,"createdAt":...}
+  }
+}
+
+const product = new Product("Laptop", 1200.0);
+console.log(product.toJson());
+// => {"name":"Laptop","price":1200,"createdAt":...}
+// => toJson is defined once in Product — no duplication
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Composition as explicit dependency:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4882,6 +6264,58 @@ class Order
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => EXPLICIT COMPOSITION: behaviors are injected, not inherited
+interface Serializer {
+  serialize(data: Record<string, unknown>): string; // => contract for serialization
+}
+
+interface Clock {
+  now(): number; // => contract for time retrieval
+}
+
+// => CONCRETE IMPLEMENTATIONS — swappable in tests
+class SimpleSerializer implements Serializer {
+  serialize(data: Record<string, unknown>): string {
+    return JSON.stringify(data); // => uses JSON.stringify for serialization
+    // => Output: {"id":1,"amount":99.9,"createdAt":...}
+  }
+}
+
+class SystemClock implements Clock {
+  now(): number {
+    return Date.now();
+  }
+  // => returns current Unix timestamp in milliseconds
+}
+
+class Order {
+  private readonly createdAt: number; // => recorded via injected clock
+
+  constructor(
+    private readonly id: number,
+    private readonly amount: number,
+    private readonly serializer: Serializer, // => injected behavior
+    clock: Clock, // => injected clock — testable
+  ) {
+    this.createdAt = clock.now(); // => delegates time to clock
+  }
+
+  toJson(): string {
+    return this.serializer.serialize({ id: this.id, amount: this.amount, createdAt: this.createdAt });
+    // => Output: {"id":1,"amount":99.9,"createdAt":...}
+  }
+}
+
+const order = new Order(1, 99.9, new SimpleSerializer(), new SystemClock());
+console.log(order.toJson());
+// => {"id":1,"amount":99.9,"createdAt":...}
+// => In tests: inject FakeClock that returns a fixed timestamp — fully deterministic
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Use mixins for optional, non-configurable capabilities shared across unrelated classes. Use explicit composition when the behavior needs to be swapped, tested, or configured.
@@ -4913,7 +6347,7 @@ graph LR
     style ImplB fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5103,6 +6537,68 @@ class ProductService
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => REPOSITORY INTERFACE — defines the contract; no storage details
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+interface ProductRepository {
+  findById(productId: number): Product | undefined; // => undefined if not found
+  save(product: Product): void; // => upsert by id
+  findAll(): Product[]; // => returns all stored products
+}
+
+// => IN-MEMORY IMPLEMENTATION — for tests and fast prototyping
+class InMemoryProductRepository implements ProductRepository {
+  private readonly store: Map<number, Product> = new Map();
+  // => in-memory map as backing store
+
+  findById(productId: number): Product | undefined {
+    return this.store.get(productId); // => returns product or undefined
+  }
+
+  save(product: Product): void {
+    this.store.set(product.id, product); // => upsert by id key
+  }
+
+  findAll(): Product[] {
+    return [...this.store.values()]; // => snapshot copy — callers cannot mutate the store
+  }
+}
+
+// => SERVICE — uses only the repository interface, not any concrete implementation
+class ProductService {
+  constructor(private readonly repo: ProductRepository) {
+    // => injected repository — service never knows the backing store type
+  }
+
+  addProduct(id: number, name: string, price: number): Product {
+    const product: Product = { id, name, price };
+    this.repo.save(product); // => delegates persistence to repository
+    return product; // => returns the saved product
+  }
+
+  getProduct(id: number): Product | undefined {
+    return this.repo.findById(id);
+    // => delegates retrieval — business layer never imports a DB driver
+  }
+}
+
+const repo: ProductRepository = new InMemoryProductRepository();
+const svc = new ProductService(repo);
+
+const p = svc.addProduct(1, "Laptop", 1200.0);
+console.log(p); // => { id: 1, name: 'Laptop', price: 1200 }
+console.log(svc.getProduct(1)); // => { id: 1, name: 'Laptop', price: 1200 }
+console.log(svc.getProduct(99)); // => undefined
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Define a collection-like interface for persistence and inject the implementation. The business layer never imports a database driver.
@@ -5115,7 +6611,7 @@ class ProductService
 
 Real repositories go beyond simple CRUD. They expose domain-meaningful query methods that express business questions as named methods rather than raw queries embedded in business logic.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5314,6 +6810,64 @@ class Example22
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN-SPECIFIC REPOSITORY — queries named for business intent
+interface OrderRecord {
+  id: number;
+  customerId: number;
+  total: number;
+  status: string;
+}
+
+interface OrderRepository {
+  save(order: OrderRecord): void;
+  // => save: upsert an order by its id
+  findById(id: number): OrderRecord | undefined;
+  // => findById: returns order or undefined if not found
+  findByCustomerId(customerId: number): OrderRecord[];
+  // => findByCustomerId: named for business question "which orders belong to this customer?"
+  findPendingAbove(threshold: number): OrderRecord[];
+  // => findPendingAbove: named for business question "which pending orders exceed this threshold?"
+}
+
+// => IN-MEMORY IMPLEMENTATION — satisfies all query methods without a real database
+class InMemoryOrderRepository implements OrderRepository {
+  private readonly orders: Map<number, OrderRecord> = new Map();
+  // => backing store: order id -> order record
+
+  save(order: OrderRecord): void {
+    this.orders.set(order.id, order); // => upsert: overwrites if id already exists
+  }
+
+  findById(id: number): OrderRecord | undefined {
+    return this.orders.get(id); // => returns order or undefined
+  }
+
+  findByCustomerId(customerId: number): OrderRecord[] {
+    // => filter all orders, keep only those matching the given customerId
+    return [...this.orders.values()].filter((o) => o.customerId === customerId);
+    // => result contains only orders for customerId
+  }
+
+  findPendingAbove(threshold: number): OrderRecord[] {
+    // => keep orders that are pending AND exceed the threshold amount
+    return [...this.orders.values()].filter((o) => o.status === "pending" && o.total > threshold);
+    // => result contains only qualifying pending orders
+  }
+}
+
+const orderRepo = new InMemoryOrderRepository();
+orderRepo.save({ id: 1, customerId: 10, total: 150.0, status: "pending" });
+orderRepo.save({ id: 2, customerId: 10, total: 800.0, status: "pending" });
+orderRepo.save({ id: 3, customerId: 20, total: 200.0, status: "shipped" });
+
+console.log(orderRepo.findByCustomerId(10).length); // => 2 (orders 1 and 2 belong to customer 10)
+console.log(orderRepo.findPendingAbove(500).length); // => 1 (only order 2: total 800 > 500)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Repository methods should read as business questions. Avoid exposing generic `query(sql)` methods; every query method should have a domain-meaningful name.
@@ -5328,7 +6882,7 @@ class Example22
 
 The Service Layer pattern centralizes application use cases in dedicated service classes. A use case (like "place an order") typically involves multiple domain objects and repositories. The service coordinates them without embedding that coordination logic in controllers or domain objects.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5621,6 +7175,103 @@ class Example23
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ============================================================
+// DOMAIN OBJECTS — each owns its own rules and state
+// ============================================================
+class Customer {
+  private credit: number;
+  // => credit tracks available spending power for this customer
+
+  constructor(
+    readonly id: number,
+    credit: number,
+  ) {
+    this.credit = credit; // => initial credit balance
+  }
+
+  canAfford(amount: number): boolean {
+    return this.credit >= amount; // => true if credit covers amount
+  }
+
+  deduct(amount: number): void {
+    this.credit -= amount; // => reduces available credit by amount
+  }
+}
+
+class Product {
+  private stock: number;
+  // => stock tracks how many units remain
+
+  constructor(
+    readonly id: number,
+    readonly name: string,
+    readonly price: number,
+    stock: number,
+  ) {
+    this.stock = stock; // => initial inventory count
+  }
+
+  isAvailable(): boolean {
+    return this.stock > 0; // => true when at least one unit remains
+  }
+
+  reserve(): void {
+    this.stock -= 1; // => decrements stock by one when an order is placed
+  }
+}
+
+// ============================================================
+// SERVICE LAYER — orchestrates the "place order" use case
+// ============================================================
+class OrderService {
+  constructor(
+    private readonly customers: Map<number, Customer>,
+    private readonly products: Map<number, Product>,
+    // => injected maps act as simple in-memory repositories
+  ) {}
+
+  placeOrder(customerId: number, productId: number): string {
+    // => STEP 1: retrieve both domain objects — guard if missing
+    const customer = this.customers.get(customerId);
+    const product = this.products.get(productId);
+    if (!customer || !product) return "Customer or product not found";
+    // => exit early if either entity is missing
+
+    // => STEP 2: apply business rules via domain object methods
+    if (!product.isAvailable()) return `'${product.name}' is out of stock`;
+    // => domain object owns the availability rule
+
+    if (!customer.canAfford(product.price))
+      return `Insufficient credit for '${product.name}' ($${product.price.toFixed(2)})`;
+    // => domain object owns the affordability rule
+
+    // => STEP 3: execute state changes — service coordinates, domain mutates
+    product.reserve(); // => domain: decrements stock
+    customer.deduct(product.price); // => domain: deducts credit
+    return `Order placed: ${product.name} for customer ${customerId}`;
+    // => Output: "Order placed: Laptop for customer 1"
+  }
+}
+
+const customers = new Map([
+  [1, new Customer(1, 2000.0)], // => customer 1 has $2000 credit
+  [2, new Customer(2, 100.0)], // => customer 2 has $100 credit
+]);
+const products = new Map([
+  [10, new Product(10, "Laptop", 1200.0, 2)], // => 2 in stock
+  [11, new Product(11, "Headphones", 150.0, 0)], // => out of stock
+]);
+const orderService = new OrderService(customers, products);
+
+console.log(orderService.placeOrder(1, 10)); // => Order placed: Laptop for customer 1
+console.log(orderService.placeOrder(2, 10)); // => Insufficient credit for 'Laptop' ($1200.00)
+console.log(orderService.placeOrder(1, 11)); // => 'Headphones' is out of stock
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** The service layer owns the sequence of steps for a use case. Domain objects own their own rules. Neither should cross into the other's territory.
@@ -5633,7 +7284,7 @@ class Example23
 
 A mature service layer handles errors explicitly, returning structured results rather than leaking exceptions to the presentation layer. This makes error handling consistent across all callers (web controller, CLI, background job).
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5832,6 +7483,62 @@ class Example24
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => TypeScript uses discriminated unions to model success/failure without exceptions
+// => Compiler-enforced exhaustive handling of every branch
+
+// => RESULT TYPE: discriminated union represents success or failure as a value
+type ReservationResult =
+  | { ok: true; item: string; reserved: number } // => Success carries reservation data
+  | { ok: false; error: string }; // => Failure carries the error message
+// => callers must check ok before accessing item/reserved — type system enforces this
+
+// => INVENTORY: simple in-memory stock store
+class InventoryService {
+  // => inventory maps item name to available quantity
+  private readonly inventory: Map<string, number> = new Map([
+    ["Widget", 10],
+    ["Gadget", 0],
+  ]);
+
+  // => reserve: returns ReservationResult — no exceptions escape to callers
+  reserve(item: string, quantity: number): ReservationResult {
+    const stock = this.inventory.get(item);
+    if (stock === undefined) {
+      return { ok: false, error: `Item '${item}' does not exist` };
+      // => explicit failure: item not in catalog
+    }
+    if (stock < quantity) {
+      return { ok: false, error: `Insufficient stock for '${item}': have ${stock}, requested ${quantity}` };
+      // => explicit failure: not enough stock
+    }
+    this.inventory.set(item, stock - quantity); // => decrements stock by requested quantity
+    return { ok: true, item, reserved: quantity };
+    // => explicit success with reservation data
+  }
+}
+
+// => CONTROLLER: checks ok — error path is always visible, no try/catch needed
+function handleReserve(service: InventoryService, item: string, quantity: number): string {
+  const result = service.reserve(item, quantity);
+  // => result.ok determines which branch to take
+  if (result.ok) {
+    return `Reserved ${result.reserved}x ${result.item}`;
+    // => Output: "Reserved 3x Widget"
+  }
+  return `Reservation failed: ${result.error}`;
+  // => Output: "Reservation failed: Insufficient stock for 'Gadget': have 0, requested 1"
+}
+
+const invService = new InventoryService();
+console.log(handleReserve(invService, "Widget", 3)); // => Reserved 3x Widget
+console.log(handleReserve(invService, "Gadget", 1)); // => Reservation failed: Insufficient stock...
+console.log(handleReserve(invService, "Unknown", 1)); // => Reservation failed: Item 'Unknown' does not exist
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Returning Result types forces callers to handle both success and failure paths. Unhandled errors become a compile-time concern rather than a production incident.
@@ -5867,7 +7574,7 @@ graph LR
     style RespDTO fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6067,6 +7774,69 @@ class Example25
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => REQUEST DTO — represents data coming IN from the external world
+// => TypeScript interface: pure shape definition with no runtime overhead
+interface CreateUserRequest {
+  readonly name: string;
+  readonly email: string;
+  // => no domain logic: just carries data across the HTTP boundary
+}
+
+// => RESPONSE DTO — represents data going OUT to the external world
+interface UserResponse {
+  readonly userId: number;
+  readonly name: string;
+  readonly email: string;
+  // => notably MISSING: passwordHash, internalFlags, auditTrail
+  // => DTOs shape what external clients are allowed to see
+}
+
+// => DOMAIN OBJECT — internal representation with full context
+interface User {
+  userId: number;
+  name: string;
+  email: string;
+  passwordHash: string; // => internal only — never copied to response DTO
+  isAdmin: boolean; // => internal only — never copied to response DTO
+}
+
+// => SERVICE — maps between DTOs and domain objects
+class UserService {
+  private readonly users: Map<number, User> = new Map();
+  // => in-memory user store
+  private nextId = 1;
+
+  createUser(request: CreateUserRequest): UserResponse {
+    // => MAP: Request DTO → Domain Object
+    const user: User = {
+      userId: this.nextId,
+      name: request.name, // => copied from DTO
+      email: request.email, // => copied from DTO
+      passwordHash: "hashed_secret", // => generated internally — NOT from DTO
+      isAdmin: false, // => default: new users are not admins
+    };
+    this.users.set(this.nextId++, user); // => persist domain object
+
+    // => MAP: Domain Object → Response DTO (selective field copy)
+    const response: UserResponse = { userId: user.userId, name: user.name, email: user.email };
+    return response;
+    // => passwordHash and isAdmin intentionally EXCLUDED from response
+  }
+}
+
+const userService = new UserService();
+const request: CreateUserRequest = { name: "Alice", email: "alice@example.com" };
+// => request carries only what the caller provides
+const response = userService.createUser(request);
+console.log(response);
+// => { userId: 1, name: 'Alice', email: 'alice@example.com' }
+// => passwordHash is NOT in the response — protected by DTO boundary
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** DTOs are the shape of data at a boundary — they protect internal domain structure from external exposure and decouple serialization from business logic.
@@ -6079,7 +7849,7 @@ class Example25
 
 DTOs are also the right place to validate external input before it enters the domain layer. Centralizing validation in the DTO prevents invalid data from reaching business logic.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6261,6 +8031,61 @@ class Example26
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => REQUEST DTO with built-in validation in the constructor
+// => If the constructor returns, every field is guaranteed valid
+class CreateProductRequest {
+  readonly name: string; // => validated: non-empty, trimmed
+  readonly price: number; // => validated: positive
+  readonly stock: number; // => validated: non-negative integer
+
+  constructor(rawName: string, rawPrice: number, rawStock: number) {
+    // => validate name: must not be empty
+    if (!rawName || rawName.trim().length === 0) {
+      throw new Error("name must be a non-empty string");
+      // => invalid name rejected at DTO boundary
+    }
+    // => validate price: must be positive
+    if (rawPrice <= 0) {
+      throw new Error("price must be a positive number");
+      // => negative prices rejected at DTO boundary
+    }
+    // => validate stock: must be non-negative
+    if (rawStock < 0) {
+      throw new Error("stock must be a non-negative integer");
+      // => negative stock rejected at DTO boundary
+    }
+
+    this.name = rawName.trim(); // => normalized: leading/trailing spaces removed
+    this.price = rawPrice; // => valid positive price
+    this.stock = rawStock; // => valid non-negative integer
+  }
+}
+
+// => SERVICE receives only validated DTOs — no re-validation needed inside service
+function createProduct(rawName: string, rawPrice: number, rawStock: number): string {
+  try {
+    const request = new CreateProductRequest(rawName, rawPrice, rawStock);
+    // => if constructor succeeds, all fields are guaranteed valid
+    return `Product created: ${request.name} at $${request.price.toFixed(2)} (stock: ${request.stock})`;
+    // => Output: "Product created: Widget at $9.99 (stock: 100)"
+  } catch (e: unknown) {
+    return `Validation failed: ${(e as Error).message}`;
+    // => Output: "Validation failed: price must be a positive number"
+  }
+}
+
+console.log(createProduct("Widget", 9.99, 100));
+// => Product created: Widget at $9.99 (stock: 100)
+console.log(createProduct("", 9.99, 100));
+// => Validation failed: name must be a non-empty string
+console.log(createProduct("Widget", -5, 100));
+// => Validation failed: price must be a positive number
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Validate external input in the DTO constructor so that a successfully constructed DTO is guaranteed valid. Business logic should never need to re-validate the same fields.
@@ -6275,7 +8100,7 @@ class Example26
 
 This example combines the patterns introduced in Examples 1-26 into a minimal but realistic layered application: a product catalog with separation of concerns, repository, service, and DTO layers all working together.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6593,6 +8418,114 @@ class Example27
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ============================================================
+// DTOs — data shapes at the boundary
+// ============================================================
+interface AddProductRequest {
+  name: string;
+  price: number;
+}
+// => input DTO: carries data from caller to service — no business logic
+
+interface ProductSummary {
+  productId: number;
+  name: string;
+  price: number;
+}
+// => output DTO: carries safe data from service to caller — isFeatured intentionally absent
+
+// ============================================================
+// DOMAIN — internal representation with full context
+// ============================================================
+interface ProductDomain {
+  productId: number;
+  name: string;
+  price: number;
+  isFeatured: boolean; // => internal flag — intentionally absent from ProductSummary DTO
+}
+
+// ============================================================
+// REPOSITORY — data access abstraction
+// ============================================================
+interface ProductRepo {
+  save(product: ProductDomain): void; // => persist or update a product
+  findAll(): ProductDomain[]; // => retrieve all products
+  nextId(): number; // => auto-increment id
+}
+
+class InMemoryProductRepo implements ProductRepo {
+  private readonly data: Map<number, ProductDomain> = new Map();
+  // => in-memory backing store
+  private counter = 1;
+
+  save(product: ProductDomain): void {
+    this.data.set(product.productId, product); // => upsert by productId
+  }
+
+  findAll(): ProductDomain[] {
+    return [...this.data.values()]; // => returns all products as a list
+  }
+
+  nextId(): number {
+    return this.counter++; // => auto-increment: returns current then increments
+  }
+}
+
+// ============================================================
+// SERVICE — coordinates use cases
+// ============================================================
+class ProductCatalogService {
+  constructor(private readonly repo: ProductRepo) {
+    // => injected repository — service delegates all persistence to it
+  }
+
+  add(request: AddProductRequest): ProductSummary {
+    if (request.price <= 0) throw new Error("Price must be positive");
+    // => business rule: no free or negative-priced products
+
+    const product: ProductDomain = {
+      productId: this.repo.nextId(),
+      name: request.name,
+      price: request.price,
+      isFeatured: false, // => isFeatured defaults to false — caller cannot set it via DTO
+    };
+    this.repo.save(product); // => delegates persistence to repo
+
+    return { productId: product.productId, name: product.name, price: product.price };
+    // => maps domain → output DTO; isFeatured excluded from response
+  }
+
+  listAll(): ProductSummary[] {
+    return this.repo.findAll().map((p) => ({
+      productId: p.productId,
+      name: p.name,
+      price: p.price,
+    }));
+    // => maps each domain object to output DTO; isFeatured excluded
+  }
+}
+
+// ============================================================
+// PRESENTATION — wires and calls; does nothing else
+// ============================================================
+const productRepo = new InMemoryProductRepo();
+const catalogService = new ProductCatalogService(productRepo);
+// => DI: repo injected into service
+
+catalogService.add({ name: "Laptop", price: 1200.0 });
+catalogService.add({ name: "Mouse", price: 25.0 });
+
+for (const summary of catalogService.listAll()) {
+  console.log(`  ${summary.productId}. ${summary.name}: $${summary.price.toFixed(2)}`);
+}
+// => 1. Laptop: $1200.00
+// => 2. Mouse: $25.00
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway:** Each layer has a clear job: DTOs carry data at boundaries, the domain holds rules, the repository manages storage, and the service coordinates use cases. The presentation layer does nothing but wire and call.
@@ -6627,7 +8560,7 @@ graph TD
 
 **Smell 1: God Object — one class knows everything:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6677,11 +8610,35 @@ class ApplicationManager
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => GOD OBJECT: one class handles users, orders, payments, and reports
+// => Signs: class has methods spanning many unrelated domains
+class ApplicationManager {
+  createUser(name: string): void {
+    /* ... */
+  } // => user concern
+  placeOrder(userId: number): void {
+    /* ... */
+  } // => order concern
+  chargeCard(amount: number): void {
+    /* ... */
+  } // => payment concern
+  generateMonthlyReport(): string {
+    return "";
+  } // => reporting concern
+  // => Every new feature gets added here — grows without bound
+  // => Fix: split into UserService, OrderService, PaymentService, ReportService
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Smell 2: Layer leakage — SQL in the controller:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6758,11 +8715,31 @@ class UserController
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => LAYER LEAK: HTTP handler directly queries a database
+// => Controller should never see SQL or database connections
+class UserController {
+  async handleGetUser(userId: number): Promise<Record<string, unknown>> {
+    // => data access in presentation layer — crosses a layer boundary
+    // => In Node.js this would use a DB driver like 'pg' or 'better-sqlite3' directly
+    const db = { query: (_sql: string, _params: unknown[]) => Promise.resolve({ rows: [] }) };
+    // => SQL embedded in the controller — impossible to swap storage without touching this class
+    const result = await db.query("SELECT id, name FROM users WHERE id = $1", [userId]);
+    // => Fix: extract to UserRepository.findById() and call from a service
+    const row = (result.rows as Array<{ id: number; name: string }>)[0];
+    return row ? { id: row.id, name: row.name } : {};
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Smell 3: Anemic domain — domain objects with no behavior:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6840,11 +8817,39 @@ class RichOrder
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => ANEMIC DOMAIN: Order is just a data bag — all logic lives in the service
+interface AnemicOrder {
+  id: number;
+  total: number;
+  status: string;
+  // => No methods, no rules — just fields
+  // => All business logic forced into OrderService, which becomes a God Object
+}
+
+// => FIX: move behavior INTO the domain object where it belongs
+class RichOrder {
+  constructor(
+    readonly id: number,
+    readonly total: number,
+    readonly status: string,
+  ) {}
+
+  canCancel(): boolean {
+    return this.status === "pending"; // => business rule lives with the data
+    // => OrderService calls order.canCancel() instead of repeating the rule
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Smell 4: Implicit coupling via global state:**
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6909,6 +8914,25 @@ public static class SessionGlobal
     // => Fix: pass user as a parameter or inject an ISessionContext via DI
     // => Global state makes execution order matter invisibly — testing and concurrency hazard
 }
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => GLOBAL STATE: any module can read or write this — invisible coupling
+let currentUser: Record<string, unknown> | null = null;
+// => global mutable state — shared across the entire application
+
+function login(user: Record<string, unknown>): void {
+  currentUser = user; // => mutates shared global — side effect hidden from callers
+}
+
+function getCurrentUser(): Record<string, unknown> | null {
+  return currentUser; // => any module can call this anytime — invisible dependency
+}
+// => Fix: pass user as a parameter or inject a SessionContext object
+// => Global state makes execution order matter invisibly — testing and concurrency hazard
 ```
 
 {{< /tab >}}

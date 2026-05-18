@@ -33,7 +33,7 @@ graph TD
     classDef purple fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -198,6 +198,63 @@ public interface IGoodsReceiptRepository
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Receiving context — GoodsReceiptNote aggregate and port
+// src/receiving/domain/
+
+// PurchaseOrderId: local value object (copy by value from purchasing context)
+// => private constructor + static create: enforces "po_" format invariant
+export class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static create(v: string): PurchaseOrderId {
+    if (!v?.startsWith("po_")) throw new Error(`PurchaseOrderId must start with po_: ${v}`);
+    return new PurchaseOrderId(v);
+  }
+}
+
+export class GrnId {
+  private constructor(readonly value: string) {}
+  static create(v: string): GrnId {
+    if (!v?.startsWith("grn_")) throw new Error(`GrnId must start with grn_: ${v}`);
+    return new GrnId(v);
+  }
+}
+
+export interface Quantity {
+  readonly value: number;
+  readonly unit: string;
+}
+// => unit: EACH, BOX, KG, LITRE, HOUR
+
+// GoodsReceiptNote aggregate: immutable class; all fields set at construction
+export class GoodsReceiptNote {
+  private constructor(
+    readonly id: GrnId,
+    readonly poId: PurchaseOrderId, // => links to the purchasing PO; value only, no PO object
+    readonly received: Quantity, // => actual quantity delivered
+    readonly discrepancy: boolean, // => true if received qty differs from ordered qty
+  ) {}
+
+  // Factory method: keeps construction logic out of callers
+  static record(id: GrnId, poId: PurchaseOrderId, received: Quantity, orderedQty: number): GoodsReceiptNote {
+    const discrepancy = received.value !== orderedQty;
+    // => discrepancy flag triggers GoodsReceiptDiscrepancyDetected event downstream
+    return new GoodsReceiptNote(id, poId, received, discrepancy);
+    // => returns immutable aggregate; caller persists via GoodsReceiptRepository port
+  }
+}
+
+// Output port: store and load GoodsReceiptNotes
+export interface GoodsReceiptRepository {
+  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
+  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `receiving` imports `PurchaseOrderId` as a value object only — the context boundary stays clean because no `PurchaseOrder` aggregate object crosses the line.
@@ -210,7 +267,7 @@ public interface IGoodsReceiptRepository
 
 `invoicing` registers a supplier invoice and attempts to match it against a `PurchaseOrder` and a `GoodsReceiptNote`. The matching logic lives entirely inside the domain; the three IDs arrive as plain values, and the `InvoiceMatchingPort` output port abstracts the cross-context data fetch needed by the application service.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -394,6 +451,63 @@ public interface IInvoiceMatchingPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Receiving context — GoodsReceiptNote aggregate and port
+// src/receiving/domain/
+
+// PurchaseOrderId: local value object (copy by value from purchasing context)
+// => private constructor + static create: enforces "po_" format invariant
+export class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static create(v: string): PurchaseOrderId {
+    if (!v?.startsWith("po_")) throw new Error(`PurchaseOrderId must start with po_: ${v}`);
+    return new PurchaseOrderId(v);
+  }
+}
+
+export class GrnId {
+  private constructor(readonly value: string) {}
+  static create(v: string): GrnId {
+    if (!v?.startsWith("grn_")) throw new Error(`GrnId must start with grn_: ${v}`);
+    return new GrnId(v);
+  }
+}
+
+export interface Quantity {
+  readonly value: number;
+  readonly unit: string;
+}
+// => unit: EACH, BOX, KG, LITRE, HOUR
+
+// GoodsReceiptNote aggregate: immutable class; all fields set at construction
+export class GoodsReceiptNote {
+  private constructor(
+    readonly id: GrnId,
+    readonly poId: PurchaseOrderId, // => links to the purchasing PO; value only, no PO object
+    readonly received: Quantity, // => actual quantity delivered
+    readonly discrepancy: boolean, // => true if received qty differs from ordered qty
+  ) {}
+
+  // Factory method: keeps construction logic out of callers
+  static record(id: GrnId, poId: PurchaseOrderId, received: Quantity, orderedQty: number): GoodsReceiptNote {
+    const discrepancy = received.value !== orderedQty;
+    // => discrepancy flag triggers GoodsReceiptDiscrepancyDetected event downstream
+    return new GoodsReceiptNote(id, poId, received, discrepancy);
+    // => returns immutable aggregate; caller persists via GoodsReceiptRepository port
+  }
+}
+
+// Output port: store and load GoodsReceiptNotes
+export interface GoodsReceiptRepository {
+  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
+  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Three-way match logic lives in the domain; the `InvoiceMatchingPort` output port abstracts where the PO and GRN amounts come from.
@@ -406,7 +520,7 @@ public interface IInvoiceMatchingPort
 
 `payments` schedules and disburses supplier payments. `BankingPort` is the critical output port that abstracts the bank API. The application service calls `BankingPort.disburse()` without knowing whether the underlying adapter uses REST, SWIFT, or an in-memory stub.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -633,6 +747,87 @@ public class DisbursementService(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Payments context — Payment aggregate and BankingPort
+// src/payments/domain/
+
+export class PaymentId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// BankAccount: value object enforcing IBAN/BIC format
+export class BankAccount {
+  private constructor(
+    readonly iban: string,
+    readonly bic: string,
+  ) {}
+  static of(iban: string, bic: string): BankAccount {
+    if (!iban?.trim()) throw new Error("IBAN required");
+    if (bic?.length !== 8 && bic?.length !== 11) throw new Error("BIC must be 8 or 11 chars");
+    return new BankAccount(iban, bic);
+  }
+}
+
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+}
+export enum PaymentStatus {
+  SCHEDULED = "SCHEDULED",
+  DISBURSED = "DISBURSED",
+  FAILED = "FAILED",
+}
+
+export class Payment {
+  constructor(
+    readonly id: PaymentId,
+    readonly invoiceId: InvoiceId, // => which invoice this payment settles
+    readonly amount: Money, // => amount disbursed in minor units
+    readonly destination: BankAccount, // => supplier's bank account
+    readonly status: PaymentStatus, // => domain enum; never a string
+  ) {}
+}
+
+export interface DisbursementResult {
+  readonly transactionRef: string; // => bank's own reference for reconciliation
+  readonly accepted: boolean; // => false: bank rejected (insufficient funds, invalid IBAN)
+}
+
+// BankingPort: output port — application depends on this; never on bank API directly
+export interface BankingPort {
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+}
+
+// DisbursementService: application service orchestrating payment disbursement
+export class DisbursementService {
+  constructor(
+    private readonly bankingPort: BankingPort, // => injected at composition root
+    private readonly paymentRepo: PaymentRepository, // => output port for persistence
+    private readonly events: EventPublisher, // => output port for domain events
+  ) {}
+
+  async disburse(scheduled: Payment): Promise<Payment> {
+    const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
+    // => result: DisbursementResult with transactionRef and accepted flag
+    const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
+    const next = new Payment(scheduled.id, scheduled.invoiceId, scheduled.amount, scheduled.destination, newStatus);
+    // => new Payment instance with updated status; original unchanged
+    await this.paymentRepo.save(next);
+    if (result.accepted) await this.events.publish({ aggregateId: scheduled.id.value, occurredAt: new Date() });
+    return next;
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `BankingPort` decouples the payments application service from any specific banking technology — swap REST for SWIFT by providing a new adapter, no service change needed.
@@ -645,7 +840,7 @@ public class DisbursementService(
 
 `SupplierNotifierPort` abstracts outbound notifications to suppliers. One adapter uses SMTP; a fallback adapter uses EDI. The application service never knows which transport is active.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -843,6 +1038,63 @@ public class SmtpSupplierNotifierAdapter(ISmtpClient smtp) : ISupplierNotifierPo
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Receiving context — GoodsReceiptNote aggregate and port
+// src/receiving/domain/
+
+// PurchaseOrderId: local value object (copy by value from purchasing context)
+// => private constructor + static create: enforces "po_" format invariant
+export class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static create(v: string): PurchaseOrderId {
+    if (!v?.startsWith("po_")) throw new Error(`PurchaseOrderId must start with po_: ${v}`);
+    return new PurchaseOrderId(v);
+  }
+}
+
+export class GrnId {
+  private constructor(readonly value: string) {}
+  static create(v: string): GrnId {
+    if (!v?.startsWith("grn_")) throw new Error(`GrnId must start with grn_: ${v}`);
+    return new GrnId(v);
+  }
+}
+
+export interface Quantity {
+  readonly value: number;
+  readonly unit: string;
+}
+// => unit: EACH, BOX, KG, LITRE, HOUR
+
+// GoodsReceiptNote aggregate: immutable class; all fields set at construction
+export class GoodsReceiptNote {
+  private constructor(
+    readonly id: GrnId,
+    readonly poId: PurchaseOrderId, // => links to the purchasing PO; value only, no PO object
+    readonly received: Quantity, // => actual quantity delivered
+    readonly discrepancy: boolean, // => true if received qty differs from ordered qty
+  ) {}
+
+  // Factory method: keeps construction logic out of callers
+  static record(id: GrnId, poId: PurchaseOrderId, received: Quantity, orderedQty: number): GoodsReceiptNote {
+    const discrepancy = received.value !== orderedQty;
+    // => discrepancy flag triggers GoodsReceiptDiscrepancyDetected event downstream
+    return new GoodsReceiptNote(id, poId, received, discrepancy);
+    // => returns immutable aggregate; caller persists via GoodsReceiptRepository port
+  }
+}
+
+// Output port: store and load GoodsReceiptNotes
+export interface GoodsReceiptRepository {
+  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
+  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: `SupplierNotifierPort` hides email vs EDI behind a single interface; swapping transport is an adapter replacement, not a domain change.
@@ -855,7 +1107,7 @@ public class SmtpSupplierNotifierAdapter(ISmtpClient smtp) : ISupplierNotifierPo
 
 An `Observability` output port abstracts OpenTelemetry, Prometheus, or any tracing library from the application service. The service reports business metrics without importing OTel classes.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1064,6 +1316,72 @@ public class MatchInvoiceService(IObservability obs, IInvoiceRepository repo)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Invoicing context — three-way match port
+// src/invoicing/domain/
+
+export class PurchaseOrderId {
+  constructor(readonly value: string) {}
+}
+export class GrnId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// Money: financial value object; centAmount avoids floating-point rounding
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+
+  isWithinTolerance(other: Money, maxPct: number): boolean {
+    const diff = Math.abs(this.centAmount - other.centAmount);
+    return diff <= Math.floor(other.centAmount * maxPct);
+    // => tolerance check: |this - other| / other ≤ maxPct; integer arithmetic
+  }
+}
+
+export enum InvoiceStatus {
+  REGISTERED = "REGISTERED",
+  MATCHING = "MATCHING",
+  MATCHED = "MATCHED",
+  DISPUTED = "DISPUTED",
+}
+
+// Invoice aggregate: immutable class; domain transitions return new instances
+export class Invoice {
+  constructor(
+    readonly id: InvoiceId,
+    readonly poId: PurchaseOrderId, // => the PO this invoice covers
+    readonly grnId: GrnId, // => the GRN proving delivery occurred
+    readonly invoicedAmount: Money, // => what the supplier claims
+    readonly status: InvoiceStatus, // => domain enum; never a string
+  ) {}
+
+  // attemptMatch: domain method returning new Invoice with updated status
+  attemptMatch(poAmount: Money, grnVerifiedAmount: Money, tolerancePct: number): Invoice {
+    const poMatch = this.invoicedAmount.isWithinTolerance(poAmount, tolerancePct);
+    const grnMatch = this.invoicedAmount.isWithinTolerance(grnVerifiedAmount, tolerancePct);
+    const next = poMatch && grnMatch ? InvoiceStatus.MATCHED : InvoiceStatus.DISPUTED;
+    return new Invoice(this.id, this.poId, this.grnId, this.invoicedAmount, next);
+    // => new instance; only status changes; all other fields preserved
+  }
+}
+
+// Output port: fetch amounts needed for three-way match from other contexts
+export interface InvoiceMatchingPort {
+  fetchPoCommittedAmount(poId: PurchaseOrderId): Promise<Money>; // => purchasing context data
+  fetchGrnVerifiedAmount(grnId: GrnId): Promise<Money>; // => receiving context data
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `Observability` port keeps OTel imports out of the application layer, making the service testable with a no-op adapter and portable across monitoring backends.
@@ -1096,7 +1414,7 @@ graph LR
     classDef purple fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1270,6 +1588,87 @@ static class PaymentsCompositionRoot
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Payments context — Payment aggregate and BankingPort
+// src/payments/domain/
+
+export class PaymentId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// BankAccount: value object enforcing IBAN/BIC format
+export class BankAccount {
+  private constructor(
+    readonly iban: string,
+    readonly bic: string,
+  ) {}
+  static of(iban: string, bic: string): BankAccount {
+    if (!iban?.trim()) throw new Error("IBAN required");
+    if (bic?.length !== 8 && bic?.length !== 11) throw new Error("BIC must be 8 or 11 chars");
+    return new BankAccount(iban, bic);
+  }
+}
+
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+}
+export enum PaymentStatus {
+  SCHEDULED = "SCHEDULED",
+  DISBURSED = "DISBURSED",
+  FAILED = "FAILED",
+}
+
+export class Payment {
+  constructor(
+    readonly id: PaymentId,
+    readonly invoiceId: InvoiceId, // => which invoice this payment settles
+    readonly amount: Money, // => amount disbursed in minor units
+    readonly destination: BankAccount, // => supplier's bank account
+    readonly status: PaymentStatus, // => domain enum; never a string
+  ) {}
+}
+
+export interface DisbursementResult {
+  readonly transactionRef: string; // => bank's own reference for reconciliation
+  readonly accepted: boolean; // => false: bank rejected (insufficient funds, invalid IBAN)
+}
+
+// BankingPort: output port — application depends on this; never on bank API directly
+export interface BankingPort {
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+}
+
+// DisbursementService: application service orchestrating payment disbursement
+export class DisbursementService {
+  constructor(
+    private readonly bankingPort: BankingPort, // => injected at composition root
+    private readonly paymentRepo: PaymentRepository, // => output port for persistence
+    private readonly events: EventPublisher, // => output port for domain events
+  ) {}
+
+  async disburse(scheduled: Payment): Promise<Payment> {
+    const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
+    // => result: DisbursementResult with transactionRef and accepted flag
+    const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
+    const next = new Payment(scheduled.id, scheduled.invoiceId, scheduled.amount, scheduled.destination, newStatus);
+    // => new Payment instance with updated status; original unchanged
+    await this.paymentRepo.save(next);
+    if (result.accepted) await this.events.publish({ aggregateId: scheduled.id.value, occurredAt: new Date() });
+    return next;
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The decorator pattern adds cross-cutting behaviour (retry) by wrapping the adapter, not by modifying the port interface or the application service.
@@ -1282,7 +1681,7 @@ static class PaymentsCompositionRoot
 
 A circuit-breaker decorator sits around the retry decorator and prevents cascading failures. When the bank API fails repeatedly, the circuit opens and subsequent calls fail fast without hitting the API, giving the bank time to recover.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1511,6 +1910,87 @@ static class PaymentsCompositionRoot
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Payments context — Payment aggregate and BankingPort
+// src/payments/domain/
+
+export class PaymentId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// BankAccount: value object enforcing IBAN/BIC format
+export class BankAccount {
+  private constructor(
+    readonly iban: string,
+    readonly bic: string,
+  ) {}
+  static of(iban: string, bic: string): BankAccount {
+    if (!iban?.trim()) throw new Error("IBAN required");
+    if (bic?.length !== 8 && bic?.length !== 11) throw new Error("BIC must be 8 or 11 chars");
+    return new BankAccount(iban, bic);
+  }
+}
+
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+}
+export enum PaymentStatus {
+  SCHEDULED = "SCHEDULED",
+  DISBURSED = "DISBURSED",
+  FAILED = "FAILED",
+}
+
+export class Payment {
+  constructor(
+    readonly id: PaymentId,
+    readonly invoiceId: InvoiceId, // => which invoice this payment settles
+    readonly amount: Money, // => amount disbursed in minor units
+    readonly destination: BankAccount, // => supplier's bank account
+    readonly status: PaymentStatus, // => domain enum; never a string
+  ) {}
+}
+
+export interface DisbursementResult {
+  readonly transactionRef: string; // => bank's own reference for reconciliation
+  readonly accepted: boolean; // => false: bank rejected (insufficient funds, invalid IBAN)
+}
+
+// BankingPort: output port — application depends on this; never on bank API directly
+export interface BankingPort {
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+}
+
+// DisbursementService: application service orchestrating payment disbursement
+export class DisbursementService {
+  constructor(
+    private readonly bankingPort: BankingPort, // => injected at composition root
+    private readonly paymentRepo: PaymentRepository, // => output port for persistence
+    private readonly events: EventPublisher, // => output port for domain events
+  ) {}
+
+  async disburse(scheduled: Payment): Promise<Payment> {
+    const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
+    // => result: DisbursementResult with transactionRef and accepted flag
+    const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
+    const next = new Payment(scheduled.id, scheduled.invoiceId, scheduled.amount, scheduled.destination, newStatus);
+    // => new Payment instance with updated status; original unchanged
+    await this.paymentRepo.save(next);
+    if (result.accepted) await this.events.publish({ aggregateId: scheduled.id.value, occurredAt: new Date() });
+    return next;
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Stack circuit-breaker over retry over the real adapter using the decorator pattern — each layer is independently testable and composable.
@@ -1523,7 +2003,7 @@ static class PaymentsCompositionRoot
 
 When `receiving` consumes `PurchaseOrderIssued` from the purchasing context event bus, it must not import purchasing's domain types. An anti-corruption layer (ACL) in the adapter layer translates the external event DTO into receiving's own commands.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1732,6 +2212,58 @@ public class PurchaseOrderIssuedConsumer(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Anti-corruption layer — receiving context translating purchasing events
+// src/receiving/adapter/out/purchasing-acl/purchasing-acl.adapter.ts
+
+import type { PurchaseOrderPort } from "../../application/purchase-order.port";
+import type { PurchaseOrderId } from "../../domain/purchase-order-id";
+
+// PurchaseOrderPort: receiving context's own port (its language, its types)
+// => receiving never imports from purchasing domain directly
+export interface PurchaseOrderPort {
+  fetchCommittedQuantity(poId: PurchaseOrderId): Promise<number>;
+  // => receiving only needs the quantity; not the full PurchaseOrder aggregate
+}
+
+// PurchasingContextAcl: ACL adapter translating purchasing API → receiving port
+// => receiving knows PurchaseOrderPort; never knows purchasing's PurchaseOrderRepository
+export class PurchasingContextAcl implements PurchaseOrderPort {
+  constructor(
+    private readonly purchasingClient: any, // => purchasing API client (REST or direct service call)
+  ) {}
+
+  async fetchCommittedQuantity(poId: PurchaseOrderId): Promise<number> {
+    // Translate receiving's PurchaseOrderId → purchasing's wire format
+    const response = await this.purchasingClient.get(`/purchase-orders/${poId.value}`);
+    // => HTTP GET to purchasing microservice (or direct TypeORM query in monolith)
+
+    return response.orderedQuantity;
+    // => translate purchasing response field → receiving domain concept
+    // => receiving never sees purchasing's PurchaseOrder aggregate; ACL mediates
+  }
+}
+
+// InMemoryPurchasingAcl: test adapter for receiving context tests
+export class InMemoryPurchasingAcl implements PurchaseOrderPort {
+  private readonly quantities = new Map<string, number>();
+  // => keyed by PurchaseOrderId.value; pre-seeded in test setup
+
+  seed(poId: string, quantity: number): void {
+    this.quantities.set(poId, quantity);
+  }
+
+  async fetchCommittedQuantity(poId: PurchaseOrderId): Promise<number> {
+    return this.quantities.get(poId.value) ?? 0;
+    // => in-memory lookup; no HTTP call; purchasing context not needed in receiving tests
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The ACL in the adapter layer translates external event DTOs into the receiving context's own commands — purchasing types never enter the domain or application layers of receiving.
@@ -1744,7 +2276,7 @@ public class PurchaseOrderIssuedConsumer(
 
 When a port interface needs a new method, default interface methods allow adding behaviour without forcing every adapter to change. This is the minimal-impact port evolution strategy.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1931,6 +2463,87 @@ public class SchedulingRestBankingAdapter : IBankingPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Payments context — Payment aggregate and BankingPort
+// src/payments/domain/
+
+export class PaymentId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// BankAccount: value object enforcing IBAN/BIC format
+export class BankAccount {
+  private constructor(
+    readonly iban: string,
+    readonly bic: string,
+  ) {}
+  static of(iban: string, bic: string): BankAccount {
+    if (!iban?.trim()) throw new Error("IBAN required");
+    if (bic?.length !== 8 && bic?.length !== 11) throw new Error("BIC must be 8 or 11 chars");
+    return new BankAccount(iban, bic);
+  }
+}
+
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+}
+export enum PaymentStatus {
+  SCHEDULED = "SCHEDULED",
+  DISBURSED = "DISBURSED",
+  FAILED = "FAILED",
+}
+
+export class Payment {
+  constructor(
+    readonly id: PaymentId,
+    readonly invoiceId: InvoiceId, // => which invoice this payment settles
+    readonly amount: Money, // => amount disbursed in minor units
+    readonly destination: BankAccount, // => supplier's bank account
+    readonly status: PaymentStatus, // => domain enum; never a string
+  ) {}
+}
+
+export interface DisbursementResult {
+  readonly transactionRef: string; // => bank's own reference for reconciliation
+  readonly accepted: boolean; // => false: bank rejected (insufficient funds, invalid IBAN)
+}
+
+// BankingPort: output port — application depends on this; never on bank API directly
+export interface BankingPort {
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+}
+
+// DisbursementService: application service orchestrating payment disbursement
+export class DisbursementService {
+  constructor(
+    private readonly bankingPort: BankingPort, // => injected at composition root
+    private readonly paymentRepo: PaymentRepository, // => output port for persistence
+    private readonly events: EventPublisher, // => output port for domain events
+  ) {}
+
+  async disburse(scheduled: Payment): Promise<Payment> {
+    const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
+    // => result: DisbursementResult with transactionRef and accepted flag
+    const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
+    const next = new Payment(scheduled.id, scheduled.invoiceId, scheduled.amount, scheduled.destination, newStatus);
+    // => new Payment instance with updated status; original unchanged
+    await this.paymentRepo.save(next);
+    if (result.accepted) await this.events.publish({ aggregateId: scheduled.id.value, occurredAt: new Date() });
+    return next;
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Java default interface methods (Kotlin interface default bodies, C# default interface members) let ports evolve with new capabilities while all existing adapters continue compiling and running unchanged.
@@ -1945,7 +2558,7 @@ public class SchedulingRestBankingAdapter : IBankingPort
 
 The `EventPublisher` output port hides the outbox pattern. The application service calls `publish()` once; the adapter writes the event to an outbox table in the same database transaction as the aggregate, guaranteeing at-least-once delivery even if the Kafka broker is unavailable.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2119,6 +2732,63 @@ public class OutboxEventPublisherAdapter(IOutboxRepository outbox) : IEventPubli
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Receiving context — GoodsReceiptNote aggregate and port
+// src/receiving/domain/
+
+// PurchaseOrderId: local value object (copy by value from purchasing context)
+// => private constructor + static create: enforces "po_" format invariant
+export class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static create(v: string): PurchaseOrderId {
+    if (!v?.startsWith("po_")) throw new Error(`PurchaseOrderId must start with po_: ${v}`);
+    return new PurchaseOrderId(v);
+  }
+}
+
+export class GrnId {
+  private constructor(readonly value: string) {}
+  static create(v: string): GrnId {
+    if (!v?.startsWith("grn_")) throw new Error(`GrnId must start with grn_: ${v}`);
+    return new GrnId(v);
+  }
+}
+
+export interface Quantity {
+  readonly value: number;
+  readonly unit: string;
+}
+// => unit: EACH, BOX, KG, LITRE, HOUR
+
+// GoodsReceiptNote aggregate: immutable class; all fields set at construction
+export class GoodsReceiptNote {
+  private constructor(
+    readonly id: GrnId,
+    readonly poId: PurchaseOrderId, // => links to the purchasing PO; value only, no PO object
+    readonly received: Quantity, // => actual quantity delivered
+    readonly discrepancy: boolean, // => true if received qty differs from ordered qty
+  ) {}
+
+  // Factory method: keeps construction logic out of callers
+  static record(id: GrnId, poId: PurchaseOrderId, received: Quantity, orderedQty: number): GoodsReceiptNote {
+    const discrepancy = received.value !== orderedQty;
+    // => discrepancy flag triggers GoodsReceiptDiscrepancyDetected event downstream
+    return new GoodsReceiptNote(id, poId, received, discrepancy);
+    // => returns immutable aggregate; caller persists via GoodsReceiptRepository port
+  }
+}
+
+// Output port: store and load GoodsReceiptNotes
+export interface GoodsReceiptRepository {
+  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
+  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The outbox adapter writes events to the database in the same transaction as the aggregate, providing at-least-once delivery guarantees without exposing the implementation to the application service.
@@ -2131,7 +2801,7 @@ public class OutboxEventPublisherAdapter(IOutboxRepository outbox) : IEventPubli
 
 The `Clock` output port replaces direct `LocalDate.now()` calls. The application service asks the clock for the current date; production wires the system clock; tests inject a fixed date. This makes time-dependent payment scheduling rules completely deterministic in tests.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2311,6 +2981,55 @@ public sealed class PaymentScheduler(ITimeProvider clock)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Clock port — deterministic time in payments scheduling
+// src/payments/application/clock.port.ts
+
+// Clock: output port; returns current time as a domain-neutral Date
+// => production adapter: { now: () => new Date() } — system wall clock
+// => test adapter: { now: () => new Date('2026-01-15T09:00:00Z') } — pinned date
+export interface Clock {
+  now(): Date;
+}
+
+// PaymentScheduler: application service using Clock port for scheduling
+export class PaymentScheduler {
+  constructor(
+    private readonly paymentRepo: PaymentRepository,
+    private readonly clock: Clock, // => explicit dependency; no hidden new Date() calls
+  ) {}
+
+  // schedulePayment: creates a SCHEDULED payment with an explicit due date
+  async schedulePayment(invoiceId: InvoiceId, amount: Money, dueAt: Date): Promise<Payment> {
+    const now = this.clock.now();
+    // => clock.now(): explicit call; test can verify payment was scheduled at expected time
+    if (dueAt < now) {
+      throw new Error(`Payment due date ${dueAt.toISOString()} is in the past`);
+      // => domain rule: cannot schedule a payment in the past; clock.now() makes this testable
+    }
+    const payment = new Payment(
+      PaymentId.create(`pay_${crypto.randomUUID()}`),
+      invoiceId,
+      amount,
+      BankAccount.of("GB29NWBK60161331926819", "NWBKGB2L"), // => placeholder; real from invoice
+      PaymentStatus.SCHEDULED,
+    );
+    return this.paymentRepo.save(payment);
+  }
+}
+
+// Test: deterministic time; no Date.now() or new Date() in business code
+// const clock = { now: () => new Date('2026-01-01T00:00:00Z') };
+// const scheduler = new PaymentScheduler(repo, clock);
+// const payment = await scheduler.schedulePayment(invoiceId, amount, new Date('2026-01-15'));
+// => test runs at any wall-clock time and produces the same result
+// => no flaky tests; no sleep(); no Date mocking library needed
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The `Clock` port (or `ITimeProvider` in C#) makes time-dependent business rules deterministic in tests by injecting a fixed-date adapter.
@@ -2323,7 +3042,7 @@ public sealed class PaymentScheduler(ITimeProvider clock)
 
 A real-world application service for invoice matching orchestrates three output ports: `InvoiceRepository`, `InvoiceMatchingPort` (cross-context data fetch), and `EventPublisher`. This example shows how multi-port orchestration stays clean when every dependency is injected as a port.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2601,6 +3320,63 @@ public interface IObservability { T Span<T>(string name, Func<T> block); void In
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Receiving context — GoodsReceiptNote aggregate and port
+// src/receiving/domain/
+
+// PurchaseOrderId: local value object (copy by value from purchasing context)
+// => private constructor + static create: enforces "po_" format invariant
+export class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static create(v: string): PurchaseOrderId {
+    if (!v?.startsWith("po_")) throw new Error(`PurchaseOrderId must start with po_: ${v}`);
+    return new PurchaseOrderId(v);
+  }
+}
+
+export class GrnId {
+  private constructor(readonly value: string) {}
+  static create(v: string): GrnId {
+    if (!v?.startsWith("grn_")) throw new Error(`GrnId must start with grn_: ${v}`);
+    return new GrnId(v);
+  }
+}
+
+export interface Quantity {
+  readonly value: number;
+  readonly unit: string;
+}
+// => unit: EACH, BOX, KG, LITRE, HOUR
+
+// GoodsReceiptNote aggregate: immutable class; all fields set at construction
+export class GoodsReceiptNote {
+  private constructor(
+    readonly id: GrnId,
+    readonly poId: PurchaseOrderId, // => links to the purchasing PO; value only, no PO object
+    readonly received: Quantity, // => actual quantity delivered
+    readonly discrepancy: boolean, // => true if received qty differs from ordered qty
+  ) {}
+
+  // Factory method: keeps construction logic out of callers
+  static record(id: GrnId, poId: PurchaseOrderId, received: Quantity, orderedQty: number): GoodsReceiptNote {
+    const discrepancy = received.value !== orderedQty;
+    // => discrepancy flag triggers GoodsReceiptDiscrepancyDetected event downstream
+    return new GoodsReceiptNote(id, poId, received, discrepancy);
+    // => returns immutable aggregate; caller persists via GoodsReceiptRepository port
+  }
+}
+
+// Output port: store and load GoodsReceiptNotes
+export interface GoodsReceiptRepository {
+  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
+  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Multi-port orchestration stays clean when every external dependency arrives via constructor injection — the service expresses intent; adapters handle implementation.
@@ -2613,7 +3389,7 @@ public interface IObservability { T Span<T>(string name, Func<T> block); void In
 
 `murabaha-finance` is an optional context introduced at the advanced tier. Its `MurabahaContract` links a `PurchaseOrder` to a bank-financed purchase. This example shows how an optional context adds ports without touching any existing contexts.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2840,6 +3616,72 @@ public interface IMurabahaBankPort
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Murabaha context (optional) — port extension for Sharia financing
+// src/murabaha/domain/
+
+// Murabaha: Sharia-compliant cost-plus-profit financing structure
+// => Bank purchases asset from supplier, sells to client at cost + agreed profit margin
+// => Domain rules: profit rate must be disclosed upfront; no compound interest
+
+export class MurabahaId {
+  constructor(readonly value: string) {}
+}
+export class PurchaseOrderId {
+  constructor(readonly value: string) {}
+}
+
+// ProfitMargin: value object ensuring Sharia compliance
+export class ProfitMargin {
+  private constructor(readonly rate: number) {} // => e.g., 0.05 = 5%
+
+  static create(rate: number): ProfitMargin {
+    if (rate < 0) throw new Error("Profit margin must be non-negative (Sharia requirement)");
+    if (rate > 1) throw new Error("Profit margin must be <= 100%");
+    // => Sharia: profit is fixed at contract inception; cannot exceed reasonable commercial rate
+    return new ProfitMargin(rate);
+  }
+}
+
+export enum MurabahaStatus {
+  PROPOSED = "PROPOSED", // => bank reviewing the transaction
+  ACCEPTED = "ACCEPTED", // => both parties agreed on cost + profit
+  EXECUTED = "EXECUTED", // => bank purchased and sold to client
+  SETTLED = "SETTLED", // => client paid in full
+}
+
+// MurabahaTransaction: aggregate root
+export class MurabahaTransaction {
+  constructor(
+    readonly id: MurabahaId,
+    readonly poId: PurchaseOrderId, // => the underlying procurement PO
+    readonly cost: Money, // => bank's purchase price from supplier
+    readonly margin: ProfitMargin, // => disclosed profit margin (Sharia requirement)
+    readonly status: MurabahaStatus,
+  ) {}
+
+  get clientPrice(): Money {
+    return new Money(Math.round(this.cost.amount * (1 + this.margin.rate)), this.cost.currency);
+    // => clientPrice = cost × (1 + margin); fixed at acceptance; no subsequent changes
+  }
+
+  accept(): MurabahaTransaction {
+    if (this.status !== MurabahaStatus.PROPOSED) throw new Error("Only PROPOSED transactions can be accepted");
+    return new MurabahaTransaction(this.id, this.poId, this.cost, this.margin, MurabahaStatus.ACCEPTED);
+  }
+}
+
+// MurabahaPort: output port for Sharia board compliance check
+export interface MurabahaPort {
+  validateShariahCompliance(transaction: MurabahaTransaction): Promise<boolean>;
+  // => adapter calls Shariah compliance service or rule engine
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Optional contexts like `murabaha-finance` introduce their own ports without modifying existing contexts — purchasing remains unaware of murabaha unless explicitly linked.
@@ -2854,7 +3696,7 @@ public interface IMurabahaBankPort
 
 Placing framework annotations in the domain zone couples domain classes to a specific framework. This is the single most common hexagonal architecture violation.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 **Violation: @Entity in the domain**:
@@ -3021,6 +3863,18 @@ internal class InvoiceDbEntity                // => internal: invisible outside 
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ❌ WRONG: domain class imports JPA — now coupled to Hibernate
+// => TypeScript equivalent follows the same hexagonal pattern
+// => ports: TypeScript interfaces | adapters: classes implementing interfaces
+// => async/await + Promise<T> replaces synchronous Java/Kotlin returns
+// => Map<string, T> as in-memory store; NestJS @Module or manual bootstrap
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Framework annotations belong in the adapter layer's mapping classes, not in domain records or value objects.
@@ -3033,7 +3887,7 @@ internal class InvoiceDbEntity                // => internal: invisible outside 
 
 When the application service instantiates its own infrastructure dependencies, it bypasses the port abstraction and becomes untestable.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 **Violation: `new` inside application service**:
@@ -3148,6 +4002,20 @@ public sealed class DisbursementService(IBankingPort bankingPort)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ❌ WRONG: application service creates its own adapter
+// => RestBankingAdapter instantiated here: cannot inject a test double
+// => service is now coupled to a real bank URL; unit tests hit production bank
+// => TypeScript equivalent follows the same hexagonal pattern
+// => ports: TypeScript interfaces | adapters: classes implementing interfaces
+// => async/await + Promise<T> replaces synchronous Java/Kotlin returns
+// => Map<string, T> as in-memory store; NestJS @Module or manual bootstrap
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Application services receive ports through constructors — they never instantiate adapters.
@@ -3160,7 +4028,7 @@ public sealed class DisbursementService(IBankingPort bankingPort)
 
 The domain should never import or reference any adapter. This anti-pattern arises when a developer "shortcut" calls an adapter method directly from a domain method.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 **Violation: domain imports adapter**:
@@ -3313,6 +4181,19 @@ public sealed class DisbursementService(IBankingPort bankingPort)
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// ❌ WRONG: domain method calls an adapter directly
+// => calling adapter directly from domain method: bypasses port; couples domain to HTTP
+// => TypeScript equivalent follows the same hexagonal pattern
+// => ports: TypeScript interfaces | adapters: classes implementing interfaces
+// => async/await + Promise<T> replaces synchronous Java/Kotlin returns
+// => Map<string, T> as in-memory store; NestJS @Module or manual bootstrap
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain methods are pure state transitions; all I/O flows through ports called by the application service, never by the domain itself.
@@ -3325,7 +4206,7 @@ public sealed class DisbursementService(IBankingPort bankingPort)
 
 Adapters should translate; they should not contain business logic. Business logic in adapters is invisible to the domain, untestable in isolation, and duplicated when a second adapter is needed.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 **Violation: matching logic in JPA adapter**:
@@ -3475,6 +4356,63 @@ internal sealed class EfInvoiceRepository(ProcurementDbContext db) : IInvoiceRep
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Receiving context — GoodsReceiptNote aggregate and port
+// src/receiving/domain/
+
+// PurchaseOrderId: local value object (copy by value from purchasing context)
+// => private constructor + static create: enforces "po_" format invariant
+export class PurchaseOrderId {
+  private constructor(readonly value: string) {}
+  static create(v: string): PurchaseOrderId {
+    if (!v?.startsWith("po_")) throw new Error(`PurchaseOrderId must start with po_: ${v}`);
+    return new PurchaseOrderId(v);
+  }
+}
+
+export class GrnId {
+  private constructor(readonly value: string) {}
+  static create(v: string): GrnId {
+    if (!v?.startsWith("grn_")) throw new Error(`GrnId must start with grn_: ${v}`);
+    return new GrnId(v);
+  }
+}
+
+export interface Quantity {
+  readonly value: number;
+  readonly unit: string;
+}
+// => unit: EACH, BOX, KG, LITRE, HOUR
+
+// GoodsReceiptNote aggregate: immutable class; all fields set at construction
+export class GoodsReceiptNote {
+  private constructor(
+    readonly id: GrnId,
+    readonly poId: PurchaseOrderId, // => links to the purchasing PO; value only, no PO object
+    readonly received: Quantity, // => actual quantity delivered
+    readonly discrepancy: boolean, // => true if received qty differs from ordered qty
+  ) {}
+
+  // Factory method: keeps construction logic out of callers
+  static record(id: GrnId, poId: PurchaseOrderId, received: Quantity, orderedQty: number): GoodsReceiptNote {
+    const discrepancy = received.value !== orderedQty;
+    // => discrepancy flag triggers GoodsReceiptDiscrepancyDetected event downstream
+    return new GoodsReceiptNote(id, poId, received, discrepancy);
+    // => returns immutable aggregate; caller persists via GoodsReceiptRepository port
+  }
+}
+
+// Output port: store and load GoodsReceiptNotes
+export interface GoodsReceiptRepository {
+  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
+  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Adapters translate data formats; domain methods contain all business rules.
@@ -3489,7 +4427,7 @@ internal sealed class EfInvoiceRepository(ProcurementDbContext db) : IInvoiceRep
 
 The composition root is the only place where concrete adapter classes are instantiated and wired together. Spring `@Configuration` classes serve as the composition root in a Spring application; C# uses `IServiceCollection` extension methods as the idiomatic equivalent.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3672,6 +4610,72 @@ public static class InvoicingContextServiceCollectionExtensions
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Invoicing context — three-way match port
+// src/invoicing/domain/
+
+export class PurchaseOrderId {
+  constructor(readonly value: string) {}
+}
+export class GrnId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// Money: financial value object; centAmount avoids floating-point rounding
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+
+  isWithinTolerance(other: Money, maxPct: number): boolean {
+    const diff = Math.abs(this.centAmount - other.centAmount);
+    return diff <= Math.floor(other.centAmount * maxPct);
+    // => tolerance check: |this - other| / other ≤ maxPct; integer arithmetic
+  }
+}
+
+export enum InvoiceStatus {
+  REGISTERED = "REGISTERED",
+  MATCHING = "MATCHING",
+  MATCHED = "MATCHED",
+  DISPUTED = "DISPUTED",
+}
+
+// Invoice aggregate: immutable class; domain transitions return new instances
+export class Invoice {
+  constructor(
+    readonly id: InvoiceId,
+    readonly poId: PurchaseOrderId, // => the PO this invoice covers
+    readonly grnId: GrnId, // => the GRN proving delivery occurred
+    readonly invoicedAmount: Money, // => what the supplier claims
+    readonly status: InvoiceStatus, // => domain enum; never a string
+  ) {}
+
+  // attemptMatch: domain method returning new Invoice with updated status
+  attemptMatch(poAmount: Money, grnVerifiedAmount: Money, tolerancePct: number): Invoice {
+    const poMatch = this.invoicedAmount.isWithinTolerance(poAmount, tolerancePct);
+    const grnMatch = this.invoicedAmount.isWithinTolerance(grnVerifiedAmount, tolerancePct);
+    const next = poMatch && grnMatch ? InvoiceStatus.MATCHED : InvoiceStatus.DISPUTED;
+    return new Invoice(this.id, this.poId, this.grnId, this.invoicedAmount, next);
+    // => new instance; only status changes; all other fields preserved
+  }
+}
+
+// Output port: fetch amounts needed for three-way match from other contexts
+export interface InvoiceMatchingPort {
+  fetchPoCommittedAmount(poId: PurchaseOrderId): Promise<Money>; // => purchasing context data
+  fetchGrnVerifiedAmount(grnId: GrnId): Promise<Money>; // => receiving context data
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root is the only place that imports both adapter and application classes — it wires them together at startup, keeping all other layers clean.
@@ -3684,7 +4688,7 @@ public static class InvoicingContextServiceCollectionExtensions
 
 A hexagonal integration test wires real application services with in-memory adapters, providing full use-case coverage without a database or network. This is the fastest feedback loop for multi-context integration.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3904,6 +4908,87 @@ public sealed class DisbursementIntegrationTest
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Payments context — Payment aggregate and BankingPort
+// src/payments/domain/
+
+export class PaymentId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// BankAccount: value object enforcing IBAN/BIC format
+export class BankAccount {
+  private constructor(
+    readonly iban: string,
+    readonly bic: string,
+  ) {}
+  static of(iban: string, bic: string): BankAccount {
+    if (!iban?.trim()) throw new Error("IBAN required");
+    if (bic?.length !== 8 && bic?.length !== 11) throw new Error("BIC must be 8 or 11 chars");
+    return new BankAccount(iban, bic);
+  }
+}
+
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+}
+export enum PaymentStatus {
+  SCHEDULED = "SCHEDULED",
+  DISBURSED = "DISBURSED",
+  FAILED = "FAILED",
+}
+
+export class Payment {
+  constructor(
+    readonly id: PaymentId,
+    readonly invoiceId: InvoiceId, // => which invoice this payment settles
+    readonly amount: Money, // => amount disbursed in minor units
+    readonly destination: BankAccount, // => supplier's bank account
+    readonly status: PaymentStatus, // => domain enum; never a string
+  ) {}
+}
+
+export interface DisbursementResult {
+  readonly transactionRef: string; // => bank's own reference for reconciliation
+  readonly accepted: boolean; // => false: bank rejected (insufficient funds, invalid IBAN)
+}
+
+// BankingPort: output port — application depends on this; never on bank API directly
+export interface BankingPort {
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+}
+
+// DisbursementService: application service orchestrating payment disbursement
+export class DisbursementService {
+  constructor(
+    private readonly bankingPort: BankingPort, // => injected at composition root
+    private readonly paymentRepo: PaymentRepository, // => output port for persistence
+    private readonly events: EventPublisher, // => output port for domain events
+  ) {}
+
+  async disburse(scheduled: Payment): Promise<Payment> {
+    const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
+    // => result: DisbursementResult with transactionRef and accepted flag
+    const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
+    const next = new Payment(scheduled.id, scheduled.invoiceId, scheduled.amount, scheduled.destination, newStatus);
+    // => new Payment instance with updated status; original unchanged
+    await this.paymentRepo.save(next);
+    if (result.accepted) await this.events.publish({ aggregateId: scheduled.id.value, occurredAt: new Date() });
+    return next;
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: In-memory adapters enable full integration slice tests that execute in milliseconds — no containers, no network, no database required.
@@ -3916,7 +5001,7 @@ public sealed class DisbursementIntegrationTest
 
 Every concrete adapter should pass a shared contract test that verifies it meets the port's behavioural guarantees. This ensures that swapping adapters does not silently break behaviour.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4091,6 +5176,87 @@ public sealed class InMemoryBankingAdapterContractTest : BankingPortContractTest
 }
 // => RestBankingAdapterContractTest : BankingPortContractTest overrides CreateAdapter() the same way
 // => C# inheritance: both contracts run without duplication across adapter implementations
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Payments context — Payment aggregate and BankingPort
+// src/payments/domain/
+
+export class PaymentId {
+  constructor(readonly value: string) {}
+}
+export class InvoiceId {
+  constructor(readonly value: string) {}
+}
+
+// BankAccount: value object enforcing IBAN/BIC format
+export class BankAccount {
+  private constructor(
+    readonly iban: string,
+    readonly bic: string,
+  ) {}
+  static of(iban: string, bic: string): BankAccount {
+    if (!iban?.trim()) throw new Error("IBAN required");
+    if (bic?.length !== 8 && bic?.length !== 11) throw new Error("BIC must be 8 or 11 chars");
+    return new BankAccount(iban, bic);
+  }
+}
+
+export class Money {
+  constructor(
+    readonly centAmount: number,
+    readonly currency: string,
+  ) {}
+}
+export enum PaymentStatus {
+  SCHEDULED = "SCHEDULED",
+  DISBURSED = "DISBURSED",
+  FAILED = "FAILED",
+}
+
+export class Payment {
+  constructor(
+    readonly id: PaymentId,
+    readonly invoiceId: InvoiceId, // => which invoice this payment settles
+    readonly amount: Money, // => amount disbursed in minor units
+    readonly destination: BankAccount, // => supplier's bank account
+    readonly status: PaymentStatus, // => domain enum; never a string
+  ) {}
+}
+
+export interface DisbursementResult {
+  readonly transactionRef: string; // => bank's own reference for reconciliation
+  readonly accepted: boolean; // => false: bank rejected (insufficient funds, invalid IBAN)
+}
+
+// BankingPort: output port — application depends on this; never on bank API directly
+export interface BankingPort {
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+}
+
+// DisbursementService: application service orchestrating payment disbursement
+export class DisbursementService {
+  constructor(
+    private readonly bankingPort: BankingPort, // => injected at composition root
+    private readonly paymentRepo: PaymentRepository, // => output port for persistence
+    private readonly events: EventPublisher, // => output port for domain events
+  ) {}
+
+  async disburse(scheduled: Payment): Promise<Payment> {
+    const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
+    // => result: DisbursementResult with transactionRef and accepted flag
+    const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
+    const next = new Payment(scheduled.id, scheduled.invoiceId, scheduled.amount, scheduled.destination, newStatus);
+    // => new Payment instance with updated status; original unchanged
+    await this.paymentRepo.save(next);
+    if (result.accepted) await this.events.publish({ aggregateId: scheduled.id.value, occurredAt: new Date() });
+    return next;
+  }
+}
 ```
 
 {{< /tab >}}

@@ -49,7 +49,7 @@ graph LR
     style E fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -319,6 +319,89 @@ Console.WriteLine(found?.Email); // => Output: alice@example.com
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => PORT: defines what the application NEEDS from storage
+// => The core depends on this abstraction, never on a real DB class
+interface UserRepository {
+  save(user: User): void; // => persistence contract
+  findById(userId: string): User | undefined; // => retrieval contract
+}
+
+// => PORT: defines what the application NEEDS from notifications
+interface NotifierPort {
+  sendWelcome(email: string): void; // => notification contract
+}
+
+// => ENTITY: pure domain data, no infrastructure knowledge
+interface User {
+  id: string; // => domain identity
+  email: string; // => entity attribute, not a DB column
+  name: string; // => owned by the application core
+}
+
+// => APPLICATION SERVICE: orchestrates domain logic using ports only
+// => Never imports DB drivers, nodemailer, or HTTP — only port interfaces
+class UserService {
+  constructor(
+    private readonly repo: UserRepository,
+    // => injected port — could be DB or in-memory
+    private readonly notifier: NotifierPort,
+    // => injected port — could be email or SMS
+  ) {}
+
+  register(userId: string, email: string, name: string): User {
+    const user: User = { id: userId, email, name }; // => create domain object
+    this.repo.save(user); // => persist via port
+    this.notifier.sendWelcome(email); // => notify via port
+    return user; // => return domain object, not DTO
+  }
+}
+
+// => ADAPTER (driven): concrete implementation of UserRepository port
+// => Lives in infrastructure layer — swappable without changing UserService
+class InMemoryUserRepository implements UserRepository {
+  private readonly store: Map<string, User> = new Map();
+  // => in-memory store for tests/demos
+
+  save(user: User): void {
+    this.store.set(user.id, user); // => stores by ID key
+  }
+
+  findById(userId: string): User | undefined {
+    return this.store.get(userId); // => returns undefined if not found
+  }
+}
+
+// => ADAPTER (driven): concrete implementation of NotifierPort
+class ConsoleNotifier implements NotifierPort {
+  sendWelcome(email: string): void {
+    console.log(`Welcome email sent to ${email}`);
+    // => simulates email send; swap with SmtpNotifier in production
+  }
+}
+
+// => ADAPTER (driving): CLI adapter calls the application core via UserService
+function cliRegister(service: UserService, userId: string, email: string, name: string): void {
+  const user = service.register(userId, email, name); // => delegates to core
+  console.log(`Registered: ${user.name}`); // => adapter formats output
+}
+
+// wire up adapters
+const repo = new InMemoryUserRepository(); // => swap to DbUserRepository in production
+const notifier = new ConsoleNotifier(); // => swap to SmtpNotifier in production
+const userService = new UserService(repo, notifier); // => core receives ports via DI
+
+cliRegister(userService, "u1", "alice@example.com", "Alice");
+// => Output: Welcome email sent to alice@example.com
+// => Output: Registered: Alice
+
+const found = repo.findById("u1");
+console.log(found?.email); // => Output: alice@example.com
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Ports are interfaces owned by the application core; adapters are infrastructure implementations owned by outer layers. This boundary makes the core independently testable and infrastructure-swappable.
@@ -349,7 +432,7 @@ graph TD
     style D fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -626,6 +709,86 @@ Console.WriteLine(result["total"]);   // => Output: 20
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// ENTITIES LAYER — enterprise business rules, no imports from outer layers
+// => Entity encapsulates core business rules independent of any framework
+interface OrderItem {
+  productId: string; // => value by identity, not by object reference
+  price: number; // => snapshot price at order time
+  qty: number; // => quantity ordered
+}
+
+class Order {
+  constructor(
+    readonly id: string, // => entity identity
+    readonly items: OrderItem[], // => domain data
+    readonly customerId: string, // => relationship by ID, not object reference
+  ) {}
+
+  // => business rule lives here, not in the use case or controller
+  getTotal(): number {
+    return this.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+    // => accumulates price * qty for each item
+  }
+}
+
+// USE CASES LAYER — application business rules, depends only on entities
+// => Repository interface belongs to use cases layer (dependency inversion)
+interface OrderRepository {
+  save(order: Order): void; // => persistence abstraction
+}
+
+// => Use case implementation — pure business orchestration, no HTTP/DB code
+class PlaceOrderInteractor {
+  constructor(private readonly repo: OrderRepository) {
+    // => repo injected, satisfies dependency inversion
+  }
+
+  execute(customerId: string, items: OrderItem[]): Order {
+    const id = `ord-${Date.now()}`; // => generate order ID
+    const order = new Order(id, items, customerId); // => create entity
+    this.repo.save(order); // => persist via repository port
+    return order; // => return entity, not DB row
+  }
+}
+
+// INTERFACE ADAPTERS LAYER — converts data between use cases and frameworks
+// => Controller translates HTTP request into use case input
+class OrderController {
+  constructor(private readonly useCase: PlaceOrderInteractor) {
+    // => depends on use case class, not infrastructure
+  }
+
+  handleRequest(customerId: string, items: OrderItem[]): Record<string, unknown> {
+    const order = this.useCase.execute(customerId, items);
+    // => invoke use case with domain-shaped input
+    return { orderId: order.id, total: order.getTotal() };
+    // => presenter maps entity to HTTP-shaped output
+  }
+}
+
+// FRAMEWORKS LAYER — in-memory adapter (stands in for a real DB adapter)
+class InMemoryOrderRepo implements OrderRepository {
+  private readonly store: Map<string, Order> = new Map();
+  // => storage detail hidden from use cases
+
+  save(order: Order): void {
+    this.store.set(order.id, order); // => concrete persistence
+  }
+}
+
+// wire layers together (this wiring itself lives in the frameworks layer)
+const orderRepo = new InMemoryOrderRepo(); // => outer layer provides implementation
+const interactor = new PlaceOrderInteractor(orderRepo); // => use case receives repo
+const orderController = new OrderController(interactor); // => adapter receives use case
+
+const result = orderController.handleRequest("c1", [{ productId: "p1", price: 10.0, qty: 2 }]);
+console.log(result); // => Output: { orderId: 'ord-...', total: 20 }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The dependency rule is the single most important rule in Clean Architecture — outer layers depend on inner layers, never the reverse. Enforce it by ensuring entities and use cases have zero imports from controllers or databases.
@@ -638,7 +801,7 @@ Console.WriteLine(result["total"]);   // => Output: 20
 
 Onion Architecture is a variant of Clean Architecture where the domain model sits at the very center, surrounded by domain services, then application services, then infrastructure. Unlike layered architecture, every layer depends only on layers closer to the center, and infrastructure is always the outermost layer.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -905,6 +1068,92 @@ Console.WriteLine($"{discounted.Currency} {discounted.Amount}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN MODEL (innermost ring) — pure business objects, zero dependencies
+class Money {
+  constructor(
+    readonly amount: number,
+    readonly currency: string,
+  ) {}
+  // => immutable: constructor sets all fields
+
+  add(other: Money): Money {
+    if (this.currency !== other.currency) throw new Error("Currency mismatch");
+    // => domain rule enforced here
+    return new Money(Math.round((this.amount + other.amount) * 100) / 100, this.currency);
+    // => returns new Money (immutable pattern)
+  }
+}
+
+// => ENTITY: product with a domain-typed price
+interface Product {
+  id: string; // => identity
+  name: string; // => display name
+  price: Money; // => price is a domain concept, not a raw number
+}
+
+// => DOMAIN SERVICES (second ring) — stateless operations on domain objects
+// => Domain services operate on domain entities; they have no infrastructure calls
+class PricingService {
+  applyDiscount(price: Money, discountPct: number): Money {
+    const discounted = price.amount * (1 - discountPct / 100);
+    // => computes discounted amount
+    return new Money(Math.round(discounted * 100) / 100, price.currency);
+    // => preserves currency, rounds to cents
+  }
+}
+
+// => APPLICATION SERVICES (third ring) — orchestrates domain + domain services
+// => Depends on domain model and domain services; not on infrastructure
+class ProductCatalogService {
+  constructor(private readonly pricer: PricingService) {
+    // => domain service injected
+  }
+
+  getDiscountedPrice(product: Product, discountPct: number): Money {
+    return this.pricer.applyDiscount(product.price, discountPct);
+    // => application logic: which domain service to call and when
+  }
+}
+
+// => REPOSITORY PORT (third ring, owned by application) — infrastructure contract
+// => Defined here so infrastructure depends inward on this interface
+interface ProductRepository {
+  find(productId: string): Product | undefined; // => contract
+}
+
+// => INFRASTRUCTURE (outermost ring) — implements repository port
+class InMemoryProductRepository implements ProductRepository {
+  private readonly data: Map<string, Product> = new Map();
+  // => in-memory store
+
+  find(productId: string): Product | undefined {
+    return this.data.get(productId); // => concrete retrieval
+  }
+
+  add(product: Product): void {
+    this.data.set(product.id, product); // => concrete persistence
+  }
+}
+
+// demo wiring — infrastructure created last, domain created first
+const productRepo = new InMemoryProductRepository();
+productRepo.add({ id: "p1", name: "Widget", price: new Money(100.0, "USD") });
+// => seed data
+
+const pricer = new PricingService(); // => domain service, no infra
+const catalog = new ProductCatalogService(pricer); // => app service
+
+const product = productRepo.find("p1")!; // => retrieve from outer ring
+const discounted = catalog.getDiscountedPrice(product, 10);
+// => applies 10% discount via domain service
+console.log(`${discounted.currency} ${discounted.amount}`);
+// => Output: USD 90
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Onion Architecture places the domain model at the center and makes infrastructure an outermost detail, ensuring business logic is the most stable and reusable part of the codebase.
@@ -937,7 +1186,7 @@ graph LR
     style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1146,6 +1395,87 @@ bus.Publish(new UserRegistered("u1", "alice@example.com", DateTimeOffset.UtcNow)
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN EVENT: immutable record of something that happened
+interface DomainEvent {
+  readonly type: string; // => event type discriminant
+  readonly occurredAt: number; // => timestamp when event happened
+}
+
+interface AccountOpened extends DomainEvent {
+  readonly type: "AccountOpened";
+  readonly accountId: string;
+  readonly initialBalance: number; // => opening balance
+}
+
+interface MoneyDeposited extends DomainEvent {
+  readonly type: "MoneyDeposited";
+  readonly accountId: string;
+  readonly amount: number; // => amount deposited
+}
+
+interface MoneyWithdrawn extends DomainEvent {
+  readonly type: "MoneyWithdrawn";
+  readonly accountId: string;
+  readonly amount: number; // => amount withdrawn
+}
+
+type BankEvent = AccountOpened | MoneyDeposited | MoneyWithdrawn;
+
+// => AGGREGATE: reconstructed by replaying events
+class BankAccount {
+  private balance = 0; // => current balance derived from event history
+  private accountId = ""; // => identity derived from first event
+
+  // => apply: updates state for each event type
+  apply(event: BankEvent): void {
+    switch (event.type) {
+      case "AccountOpened":
+        this.accountId = event.accountId;
+        this.balance = event.initialBalance;
+        // => balance initialized from AccountOpened event
+        break;
+      case "MoneyDeposited":
+        this.balance += event.amount;
+        // => balance increases by deposited amount
+        break;
+      case "MoneyWithdrawn":
+        this.balance -= event.amount;
+        // => balance decreases by withdrawn amount
+        break;
+    }
+  }
+
+  getBalance(): number {
+    return this.balance;
+  }
+  // => balance is always derived from event history — never stored directly
+
+  getAccountId(): string {
+    return this.accountId;
+  }
+}
+
+// => EVENT STORE: append-only log — events never deleted or modified
+const eventStore: BankEvent[] = [];
+
+// => record events as they happen
+eventStore.push({ type: "AccountOpened", accountId: "acc1", initialBalance: 0, occurredAt: Date.now() });
+eventStore.push({ type: "MoneyDeposited", accountId: "acc1", amount: 1000, occurredAt: Date.now() });
+eventStore.push({ type: "MoneyDeposited", accountId: "acc1", amount: 500, occurredAt: Date.now() });
+eventStore.push({ type: "MoneyWithdrawn", accountId: "acc1", amount: 200, occurredAt: Date.now() });
+
+// => RECONSTRUCT: replay all events to get current state
+const account = new BankAccount();
+for (const event of eventStore) {
+  account.apply(event); // => each event transitions state
+}
+console.log(account.getBalance()); // => 1300 (0 + 1000 + 500 - 200)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Observer pattern decouples event producers from event consumers — the source publishes events without knowing what handles them, and handlers register without knowing who triggers them.
@@ -1158,7 +1488,7 @@ bus.Publish(new UserRegistered("u1", "alice@example.com", DateTimeOffset.UtcNow)
 
 Domain Events capture the fact that something meaningful happened in the domain. Unlike technical events, domain events are named in business language and carry enough data for handlers to act without querying back. They enable reactive workflows within and across bounded contexts.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1461,6 +1791,94 @@ dispatcher.Dispatch(order.PopEvents());
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN EVENT: records something significant that happened in the domain
+interface DomainEvent {
+  readonly type: string;
+  readonly occurredAt: number;
+}
+
+interface OrderPlaced extends DomainEvent {
+  readonly type: "OrderPlaced";
+  readonly orderId: string;
+  readonly customerId: string;
+  readonly total: number; // => order total at placement time
+}
+
+interface PaymentProcessed extends DomainEvent {
+  readonly type: "PaymentProcessed";
+  readonly orderId: string;
+  readonly amount: number; // => amount charged
+}
+
+type AppEvent = OrderPlaced | PaymentProcessed;
+
+// => EVENT BUS: dispatches events to registered handlers
+class EventBus {
+  private readonly handlers: Map<string, Array<(event: AppEvent) => void>> = new Map();
+  // => handlers map: event type → list of subscribers
+
+  subscribe(eventType: string, handler: (event: AppEvent) => void): void {
+    const existing = this.handlers.get(eventType) ?? [];
+    this.handlers.set(eventType, [...existing, handler]);
+    // => append handler for the given event type
+  }
+
+  publish(event: AppEvent): void {
+    const eventHandlers = this.handlers.get(event.type) ?? [];
+    for (const handler of eventHandlers) {
+      handler(event); // => each subscriber receives the event
+    }
+  }
+}
+
+// => DOMAIN: order aggregate emits events when state changes
+class Order {
+  constructor(
+    readonly id: string,
+    readonly customerId: string,
+    readonly total: number,
+    private readonly bus: EventBus,
+  ) {}
+
+  place(): void {
+    // => domain logic executes, then event is published
+    const event: OrderPlaced = {
+      type: "OrderPlaced",
+      orderId: this.id,
+      customerId: this.customerId,
+      total: this.total,
+      occurredAt: Date.now(),
+    };
+    this.bus.publish(event);
+    // => other parts of the system react without tight coupling
+  }
+}
+
+// => HANDLERS: independent reactions to the domain event
+const bus = new EventBus();
+
+bus.subscribe("OrderPlaced", (evt) => {
+  const e = evt as OrderPlaced;
+  console.log(`[Inventory] Reserve items for order ${e.orderId}`);
+  // => inventory reacts without knowing about OrderService
+});
+
+bus.subscribe("OrderPlaced", (evt) => {
+  const e = evt as OrderPlaced;
+  console.log(`[Email] Send confirmation for order ${e.orderId} to customer ${e.customerId}`);
+  // => email handler reacts independently
+});
+
+const order = new Order("ord-1", "cust-42", 150.0, bus);
+order.place();
+// => Output: [Inventory] Reserve items for order ord-1
+// => Output: [Email] Send confirmation for order ord-1 to customer cust-42
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Domain events use past-tense business language, carry sufficient data for handlers, and are raised by aggregates as part of state transitions — not as raw technical notifications.
@@ -1473,7 +1891,7 @@ dispatcher.Dispatch(order.PopEvents());
 
 Event-driven architecture connects services through asynchronous messages on a message broker. Producers publish events without waiting for consumers; consumers process events at their own pace. This delivers temporal decoupling and horizontal scalability.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1734,6 +2152,91 @@ orderService.ShipOrder("o1", "TRK-9876");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN EVENT: immutable value published to the event bus
+interface DomainEvent {
+  type: string;
+  occurredAt: number;
+}
+
+interface UserRegistered extends DomainEvent {
+  type: "UserRegistered";
+  userId: string;
+  email: string;
+  name: string;
+}
+
+interface OrderShipped extends DomainEvent {
+  type: "OrderShipped";
+  orderId: string;
+  trackingNumber: string;
+}
+
+type AppEvent = UserRegistered | OrderShipped;
+
+// => ASYNC EVENT BUS: simulates message broker (Kafka, RabbitMQ) in-process
+class EventBus {
+  private readonly handlers: Map<string, Array<(e: AppEvent) => Promise<void>>> = new Map();
+
+  subscribe(type: string, handler: (e: AppEvent) => Promise<void>): void {
+    const existing = this.handlers.get(type) ?? [];
+    this.handlers.set(type, [...existing, handler]);
+    // => register async handler for this event type
+  }
+
+  async publish(event: AppEvent): Promise<void> {
+    const eventHandlers = this.handlers.get(event.type) ?? [];
+    await Promise.all(eventHandlers.map((h) => h(event)));
+    // => all handlers run concurrently — producers don't wait for consumers
+  }
+}
+
+// => PRODUCER: user registration service publishes event after saving
+class UserRegistrationService {
+  constructor(private readonly bus: EventBus) {}
+
+  async register(userId: string, email: string, name: string): Promise<void> {
+    // => save user to DB (simulated)
+    console.log(`[UserService] User ${name} registered`);
+
+    // => publish event — no knowledge of who consumes it
+    const event: UserRegistered = {
+      type: "UserRegistered",
+      userId,
+      email,
+      name,
+      occurredAt: Date.now(),
+    };
+    await this.bus.publish(event);
+    // => event published; registration service is done
+  }
+}
+
+// => CONSUMERS: independent services subscribing to events
+const bus = new EventBus();
+
+bus.subscribe("UserRegistered", async (evt) => {
+  const e = evt as UserRegistered;
+  console.log(`[EmailService] Sending welcome email to ${e.email}`);
+  // => email service reacts independently without coupling to UserService
+});
+
+bus.subscribe("UserRegistered", async (evt) => {
+  const e = evt as UserRegistered;
+  console.log(`[AuditService] Recording registration for user ${e.userId}`);
+  // => audit service reacts independently
+});
+
+const regService = new UserRegistrationService(bus);
+await regService.register("u1", "alice@example.com", "Alice");
+// => Output: [UserService] User Alice registered
+// => Output: [EmailService] Sending welcome email to alice@example.com
+// => Output: [AuditService] Recording registration for user u1
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Event-driven architecture decouples producers from consumers through a message broker — the OrderService publishes once, and any number of consumers can independently react without the producer knowing about them.
@@ -1769,7 +2272,7 @@ graph TD
     style E fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -1999,6 +2502,70 @@ Console.WriteLine($"Weight-based cost: ${cost2:F2}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => STRATEGY INTERFACE: defines the algorithm contract
+interface ShippingStrategy {
+  calculate(weightKg: number, distanceKm: number): number;
+  // => returns shipping cost in dollars
+}
+
+// => CONCRETE STRATEGIES — each encapsulates one algorithm variant
+class StandardShipping implements ShippingStrategy {
+  calculate(weightKg: number, distanceKm: number): number {
+    return weightKg * 1.5 + distanceKm * 0.01;
+    // => $1.50/kg + $0.01/km — economy shipping formula
+  }
+}
+
+class ExpressShipping implements ShippingStrategy {
+  calculate(weightKg: number, distanceKm: number): number {
+    return weightKg * 3.0 + distanceKm * 0.05 + 10;
+    // => $3.00/kg + $0.05/km + $10 base — premium for speed
+  }
+}
+
+class FlatRateShipping implements ShippingStrategy {
+  private readonly rate: number;
+  // => fixed rate regardless of weight or distance
+
+  constructor(rate: number) {
+    this.rate = rate;
+  }
+
+  calculate(_weightKg: number, _distanceKm: number): number {
+    return this.rate; // => flat rate — simple for subscription models
+  }
+}
+
+// => CONTEXT: ShippingCalculator delegates to whichever strategy is injected
+class ShippingCalculator {
+  constructor(private strategy: ShippingStrategy) {
+    // => strategy is injected — calculator never hard-codes an algorithm
+  }
+
+  setStrategy(strategy: ShippingStrategy): void {
+    this.strategy = strategy; // => allows runtime switching of strategy
+  }
+
+  calculateCost(weightKg: number, distanceKm: number): number {
+    return this.strategy.calculate(weightKg, distanceKm);
+    // => delegates entirely to injected strategy
+  }
+}
+
+const calc = new ShippingCalculator(new StandardShipping());
+console.log(calc.calculateCost(5, 100).toFixed(2)); // => 8.50 (5*1.5 + 100*0.01)
+
+calc.setStrategy(new ExpressShipping()); // => switch at runtime
+console.log(calc.calculateCost(5, 100).toFixed(2)); // => 30.00 (5*3 + 100*0.05 + 10)
+
+calc.setStrategy(new FlatRateShipping(15));
+console.log(calc.calculateCost(5, 100).toFixed(2)); // => 15.00 (flat rate)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Strategy pattern replaces conditional logic (if/elif/switch on algorithm type) with polymorphism — each algorithm lives in its own class and is selected by the client at runtime.
@@ -2011,7 +2578,7 @@ Console.WriteLine($"Weight-based cost: ${cost2:F2}");
 
 The Factory pattern centralizes object creation logic, hiding which concrete class is instantiated from the caller. The caller specifies what it wants (by type, key, or configuration), and the factory decides how to build it. This decouples creation from use.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2267,6 +2834,74 @@ var txId = processor.Process(99.99);
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => PRODUCT INTERFACE — common type for all created objects
+interface Notification {
+  send(message: string): void; // => contract: each notification type sends a message
+}
+
+// => CONCRETE PRODUCTS — each implements the notification contract
+class EmailNotification implements Notification {
+  constructor(private readonly address: string) {}
+  // => address stored for sending
+
+  send(message: string): void {
+    console.log(`Email to ${this.address}: ${message}`);
+    // => Output: Email to alice@example.com: Your order has shipped
+  }
+}
+
+class SmsNotification implements Notification {
+  constructor(private readonly phoneNumber: string) {}
+
+  send(message: string): void {
+    console.log(`SMS to ${this.phoneNumber}: ${message}`);
+    // => Output: SMS to +1555123456: Your order has shipped
+  }
+}
+
+class PushNotification implements Notification {
+  constructor(private readonly deviceToken: string) {}
+
+  send(message: string): void {
+    console.log(`Push to ${this.deviceToken}: ${message}`);
+    // => Output: Push to device-abc: Your order has shipped
+  }
+}
+
+// => FACTORY: centralizes creation logic — callers never use new directly
+class NotificationFactory {
+  static create(type: string, target: string): Notification {
+    switch (type) {
+      case "email":
+        return new EmailNotification(target);
+      // => email notification created with address
+      case "sms":
+        return new SmsNotification(target);
+      // => SMS notification created with phone number
+      case "push":
+        return new PushNotification(target);
+      // => push notification created with device token
+      default:
+        throw new Error(`Unknown notification type: ${type}`);
+      // => unknown types rejected at factory boundary
+    }
+  }
+}
+
+// => USAGE: callers depend on Notification interface, not concrete classes
+const notif = NotificationFactory.create("email", "alice@example.com");
+notif.send("Your order has shipped");
+// => Email to alice@example.com: Your order has shipped
+
+const sms = NotificationFactory.create("sms", "+1555123456");
+sms.send("Your order has shipped");
+// => SMS to +1555123456: Your order has shipped
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Factory pattern centralizes object creation using a registry or conditional logic, so callers depend only on the product interface and never on concrete classes — adding a new product requires only updating the factory.
@@ -2279,7 +2914,7 @@ var txId = processor.Process(99.99);
 
 The Builder pattern separates the construction of a complex object from its representation, allowing the same construction process to create different representations. It eliminates telescoping constructors and makes object creation readable when many optional parameters exist.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2573,6 +3208,77 @@ Console.WriteLine(request.Retries);         // => Output: 3
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => PRODUCT: complex object with many optional fields
+interface QueryConfig {
+  readonly table: string; // => required: target table
+  readonly conditions: string[]; // => WHERE clauses, may be empty
+  readonly orderBy: string | null; // => ORDER BY clause, optional
+  readonly limit: number | null; // => LIMIT value, optional
+  readonly fields: string[]; // => SELECT fields, defaults to all
+}
+
+// => BUILDER: accumulates configuration step by step, then builds
+class QueryBuilder {
+  private readonly conditions: string[] = [];
+  private orderBy: string | null = null;
+  private limit: number | null = null;
+  private fields: string[] = ["*"];
+  // => default: select all fields
+
+  constructor(private readonly table: string) {
+    // => table is the only required parameter
+  }
+
+  where(condition: string): QueryBuilder {
+    this.conditions.push(condition);
+    return this; // => returns this for fluent chaining
+  }
+
+  orderByField(field: string): QueryBuilder {
+    this.orderBy = field;
+    return this; // => returns this for fluent chaining
+  }
+
+  limitTo(n: number): QueryBuilder {
+    this.limit = n;
+    return this; // => returns this for fluent chaining
+  }
+
+  select(...fields: string[]): QueryBuilder {
+    this.fields = fields;
+    return this; // => returns this for fluent chaining
+  }
+
+  build(): QueryConfig {
+    return {
+      table: this.table,
+      conditions: [...this.conditions],
+      orderBy: this.orderBy,
+      limit: this.limit,
+      fields: [...this.fields],
+    };
+    // => returns immutable snapshot of accumulated config
+  }
+}
+
+// => USAGE: fluent API reads like natural language
+const query = new QueryBuilder("orders")
+  .where("status = 'pending'")
+  .where("total > 100")
+  .orderByField("created_at")
+  .limitTo(20)
+  .build();
+
+console.log(query.table); // => orders
+console.log(query.conditions.length); // => 2 (two WHERE clauses)
+console.log(query.limit); // => 20
+console.log(query.orderBy); // => created_at
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Builder pattern makes complex object construction readable by providing a fluent API where each method name describes what it sets — far more maintainable than constructors with many positional parameters.
@@ -2585,7 +3291,7 @@ Console.WriteLine(request.Retries);         // => Output: 3
 
 The Adapter pattern converts the interface of a class into another interface that clients expect. It lets classes work together that could not otherwise because of incompatible interfaces. The adapter wraps the incompatible class and translates calls.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -2808,6 +3514,59 @@ TrackCheckout(adapter, "42", 99.99);
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => EXISTING EXTERNAL LIBRARY: third-party analytics SDK with its own interface
+// => Cannot modify this — it's from an external package
+class LegacyAnalyticsSDK {
+  trackEvent(eventName: string, payload: Record<string, unknown>): void {
+    console.log(`[LegacySDK] Event: ${eventName}, Data: ${JSON.stringify(payload)}`);
+    // => simulates the external SDK's tracking call
+  }
+}
+
+// => TARGET INTERFACE: what our application code expects
+// => Our code is written against this contract, not the external SDK
+interface AnalyticsService {
+  recordPageView(page: string, userId: string): void;
+  // => our interface: page and userId are named parameters
+  recordPurchase(productId: string, amount: number): void;
+  // => our interface: product and amount
+}
+
+// => ADAPTER: translates our interface calls into legacy SDK calls
+class AnalyticsAdapter implements AnalyticsService {
+  constructor(private readonly sdk: LegacyAnalyticsSDK) {
+    // => wraps the external SDK
+  }
+
+  recordPageView(page: string, userId: string): void {
+    // => TRANSLATION: our method → SDK's different signature
+    this.sdk.trackEvent("page_view", { page, user_id: userId });
+    // => SDK uses "user_id" not "userId" — adapter handles the mismatch
+  }
+
+  recordPurchase(productId: string, amount: number): void {
+    // => TRANSLATION: our method → SDK's different signature
+    this.sdk.trackEvent("purchase", { product: productId, revenue: amount });
+    // => SDK uses "product" and "revenue" — adapter handles the mismatch
+  }
+}
+
+// => USAGE: application code only knows AnalyticsService — SDK is hidden
+const sdk = new LegacyAnalyticsSDK(); // => external library
+const analytics: AnalyticsService = new AnalyticsAdapter(sdk);
+// => application depends on interface, not on SDK
+
+analytics.recordPageView("/checkout", "user-99");
+// => [LegacySDK] Event: page_view, Data: {"page":"/checkout","user_id":"user-99"}
+
+analytics.recordPurchase("prod-42", 149.99);
+// => [LegacySDK] Event: purchase, Data: {"product":"prod-42","revenue":149.99}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Adapter wraps an incompatible class and translates its interface to match what callers expect — callers depend on the adapter's interface, never on the adaptee's interface.
@@ -2838,7 +3597,7 @@ graph LR
     style D fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3179,6 +3938,87 @@ loggingRepo.FindById("u1"); // => second call — cache hit
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => COMPONENT INTERFACE: defines the operation that decorators wrap
+interface DataService {
+  getData(key: string): string | undefined; // => retrieve a value by key
+  setData(key: string, value: string): void; // => store a key-value pair
+}
+
+// => CONCRETE COMPONENT: base implementation with no cross-cutting concerns
+class InMemoryDataService implements DataService {
+  private readonly store: Map<string, string> = new Map();
+
+  getData(key: string): string | undefined {
+    return this.store.get(key); // => returns value or undefined
+  }
+
+  setData(key: string, value: string): void {
+    this.store.set(key, value); // => stores key-value pair
+  }
+}
+
+// => DECORATOR 1: adds logging around every operation
+class LoggingDecorator implements DataService {
+  constructor(private readonly wrapped: DataService) {
+    // => wraps any DataService — stacks with other decorators
+  }
+
+  getData(key: string): string | undefined {
+    console.log(`[Log] getData("${key}")`);
+    // => logs before delegating — cross-cutting concern stays out of InMemoryDataService
+    const result = this.wrapped.getData(key);
+    console.log(`[Log] result: ${result ?? "undefined"}`);
+    return result; // => passes through result unchanged
+  }
+
+  setData(key: string, value: string): void {
+    console.log(`[Log] setData("${key}", "${value}")`);
+    // => logs before delegating
+    this.wrapped.setData(key, value);
+  }
+}
+
+// => DECORATOR 2: adds caching layer on top of logging
+class CachingDecorator implements DataService {
+  private readonly cache: Map<string, string> = new Map();
+  // => in-memory cache independent of wrapped service
+
+  constructor(private readonly wrapped: DataService) {}
+
+  getData(key: string): string | undefined {
+    if (this.cache.has(key)) {
+      return this.cache.get(key); // => cache hit — skip wrapped call
+    }
+    const result = this.wrapped.getData(key);
+    if (result !== undefined) {
+      this.cache.set(key, result); // => populate cache on miss
+    }
+    return result; // => returns result (may be undefined)
+  }
+
+  setData(key: string, value: string): void {
+    this.cache.delete(key); // => invalidate stale cache entry
+    this.wrapped.setData(key, value); // => delegate to wrapped service
+  }
+}
+
+// => STACK: CachingDecorator → LoggingDecorator → InMemoryDataService
+const base = new InMemoryDataService();
+const logged = new LoggingDecorator(base);
+const service: DataService = new CachingDecorator(logged);
+// => decorators are transparent to callers — same interface throughout
+
+service.setData("user:1", "Alice");
+// => [Log] setData("user:1", "Alice")
+const name = service.getData("user:1");
+// => cache miss: [Log] getData("user:1") / [Log] result: Alice
+console.log(service.getData("user:1")); // => cache hit: returns Alice immediately
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Decorators stack behaviors (logging, caching, retry) around a core component without modifying it — each decorator adds one concern and composes cleanly with others.
@@ -3191,7 +4031,7 @@ loggingRepo.FindById("u1"); // => second call — cache hit
 
 The Facade pattern provides a unified, simplified interface to a complex subsystem. The facade hides the complexity of coordinating multiple components and gives callers a single entry point. It does not add new behavior — it orchestrates existing behavior with a cleaner API.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3537,6 +4377,86 @@ Console.WriteLine($"success={result.Success}, tracking={result.TrackingId}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SUBSYSTEM CLASS 1: manages inventory reservations
+// => Has its own complex API; callers should not call this directly
+class InventoryService {
+  reserveItem(productId: string, qty: number): boolean {
+    console.log(`[Inventory] Reserve ${qty}x ${productId}`);
+    return true; // => simulates successful reservation
+  }
+
+  releaseItem(productId: string, qty: number): void {
+    console.log(`[Inventory] Release ${qty}x ${productId}`);
+    // => rolls back reservation on failure
+  }
+}
+
+// => SUBSYSTEM CLASS 2: handles payment processing
+class PaymentService {
+  charge(customerId: string, amount: number): boolean {
+    console.log(`[Payment] Charge $${amount} to customer ${customerId}`);
+    return true; // => simulates successful charge
+  }
+
+  refund(customerId: string, amount: number): void {
+    console.log(`[Payment] Refund $${amount} to customer ${customerId}`);
+  }
+}
+
+// => SUBSYSTEM CLASS 3: sends order confirmation
+class NotificationService {
+  sendOrderConfirmation(customerId: string, orderId: string): void {
+    console.log(`[Notification] Confirm order ${orderId} to customer ${customerId}`);
+    // => simulates email/push notification
+  }
+}
+
+// => FACADE: provides a single simplified interface to the entire subsystem
+// => Callers use one method instead of coordinating three services
+class OrderFacade {
+  private readonly inventory: InventoryService;
+  private readonly payment: PaymentService;
+  private readonly notification: NotificationService;
+
+  constructor() {
+    this.inventory = new InventoryService();
+    this.payment = new PaymentService();
+    this.notification = new NotificationService();
+    // => facade creates and manages subsystem objects
+  }
+
+  placeOrder(customerId: string, productId: string, qty: number, amount: number): string {
+    // => STEP 1: reserve inventory
+    if (!this.inventory.reserveItem(productId, qty)) {
+      return "Order failed: out of stock";
+      // => fail fast if inventory unavailable
+    }
+    // => STEP 2: charge payment
+    if (!this.payment.charge(customerId, amount)) {
+      this.inventory.releaseItem(productId, qty); // => compensate on payment failure
+      return "Order failed: payment declined";
+    }
+    // => STEP 3: notify customer — only reached if both previous steps succeed
+    const orderId = `ord-${Date.now()}`;
+    this.notification.sendOrderConfirmation(customerId, orderId);
+    return `Order ${orderId} placed successfully`;
+    // => caller receives one clean result string, not three partial results
+  }
+}
+
+// => USAGE: single method call replaces three coordinated service calls
+const facade = new OrderFacade();
+console.log(facade.placeOrder("cust-1", "prod-42", 2, 99.99));
+// => [Inventory] Reserve 2x prod-42
+// => [Payment] Charge $99.99 to customer cust-1
+// => [Notification] Confirm order ord-... to customer cust-1
+// => Order ord-... placed successfully
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Facade pattern gives callers a single, simplified method that hides the coordination complexity of multiple subsystem components — callers depend on the facade interface, not on the individual subsystem classes.
@@ -3577,7 +4497,7 @@ graph LR
     style F fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -3951,6 +4871,92 @@ Console.WriteLine(string.Join(", ", store.All())); // => Output: [u1, alice@exam
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => COMMAND INTERFACE: every command implements execute() and undo()
+interface Command {
+  execute(): void; // => perform the action
+  undo(): void; // => reverse the action
+}
+
+// => RECEIVER: the object that knows how to perform the actual work
+class TextEditor {
+  private text = "";
+  // => mutable document content
+
+  insertText(position: number, newText: string): void {
+    this.text = this.text.slice(0, position) + newText + this.text.slice(position);
+    // => inserts newText at position
+  }
+
+  deleteText(position: number, length: number): void {
+    this.text = this.text.slice(0, position) + this.text.slice(position + length);
+    // => removes length characters starting at position
+  }
+
+  getText(): string {
+    return this.text;
+  }
+  // => read-only access to current content
+}
+
+// => CONCRETE COMMAND: encapsulates one edit operation with its undo data
+class InsertCommand implements Command {
+  constructor(
+    private readonly editor: TextEditor,
+    private readonly position: number,
+    private readonly text: string,
+  ) {}
+
+  execute(): void {
+    this.editor.insertText(this.position, this.text);
+    // => delegates to receiver — command does not duplicate editor logic
+  }
+
+  undo(): void {
+    this.editor.deleteText(this.position, this.text.length);
+    // => reverses by deleting exactly what was inserted
+  }
+}
+
+// => INVOKER: executes commands and maintains history for undo
+class CommandHistory {
+  private readonly history: Command[] = [];
+  // => stack of executed commands
+
+  execute(command: Command): void {
+    command.execute(); // => perform the action
+    this.history.push(command); // => record for undo
+  }
+
+  undo(): void {
+    const command = this.history.pop();
+    // => retrieve last executed command
+    if (command) {
+      command.undo(); // => reverse last action
+    }
+  }
+}
+
+// => wire and use
+const editor = new TextEditor();
+const history = new CommandHistory();
+
+history.execute(new InsertCommand(editor, 0, "Hello"));
+console.log(editor.getText()); // => Hello
+
+history.execute(new InsertCommand(editor, 5, " World"));
+console.log(editor.getText()); // => Hello World
+
+history.undo();
+console.log(editor.getText()); // => Hello (World removed)
+
+history.undo();
+console.log(editor.getText()); // => (empty — Hello removed)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Command pattern encapsulates an action and its parameters as an object — this object can be stored in a queue, logged, replicated, or reversed, enabling features like undo/redo, job queues, and audit trails.
@@ -3963,7 +4969,7 @@ Console.WriteLine(string.Join(", ", store.All())); // => Output: [u1, alice@exam
 
 The Mediator pattern defines an object that encapsulates how a set of objects interact. It promotes loose coupling by keeping objects from referring to each other explicitly and allows you to vary their interaction independently. The mediator becomes the hub; components become spokes.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4317,6 +5323,107 @@ mediator.SearchBox.Search("architecture patterns");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => MEDIATOR INTERFACE: defines how components talk to the mediator
+interface Mediator {
+  notify(sender: string, event: string, data?: unknown): void;
+  // => sender reports an event; mediator decides what happens next
+}
+
+// => COMPONENT BASE: each component holds a mediator reference
+abstract class Component {
+  constructor(protected mediator: Mediator) {}
+  // => mediator is injected — component never talks directly to other components
+}
+
+// => CONCRETE COMPONENTS: each knows only about its own state and the mediator
+class LoginForm extends Component {
+  private username = "";
+
+  setUsername(value: string): void {
+    this.username = value;
+    // => after setting, notify mediator so it can update related components
+    this.mediator.notify("LoginForm", "usernameChanged", this.username);
+  }
+
+  submit(): void {
+    this.mediator.notify("LoginForm", "submitted", this.username);
+    // => mediator decides what "submit" triggers — LoginForm stays ignorant
+  }
+}
+
+class SubmitButton extends Component {
+  private enabled = false;
+  // => starts disabled — enabled once username is valid
+
+  enable(): void {
+    this.enabled = true;
+    console.log("[Button] enabled");
+  }
+  disable(): void {
+    this.enabled = false;
+    console.log("[Button] disabled");
+  }
+  isEnabled(): boolean {
+    return this.enabled;
+  }
+}
+
+class StatusLabel extends Component {
+  setMessage(msg: string): void {
+    console.log(`[Status] ${msg}`);
+    // => displays mediator-directed messages without knowing their origin
+  }
+}
+
+// => CONCRETE MEDIATOR: orchestrates all component interactions
+class LoginMediator implements Mediator {
+  private readonly form: LoginForm;
+  private readonly button: SubmitButton;
+  private readonly status: StatusLabel;
+
+  constructor() {
+    this.form = new LoginForm(this);
+    this.button = new SubmitButton(this);
+    this.status = new StatusLabel(this);
+    // => mediator creates and wires all components
+  }
+
+  notify(sender: string, event: string, data?: unknown): void {
+    if (sender === "LoginForm" && event === "usernameChanged") {
+      const username = data as string;
+      if (username.length >= 3) {
+        this.button.enable(); // => enable button when username is long enough
+        this.status.setMessage("Username looks good");
+      } else {
+        this.button.disable(); // => keep button disabled for short usernames
+        this.status.setMessage("Username too short");
+      }
+    } else if (sender === "LoginForm" && event === "submitted") {
+      this.status.setMessage(`Logging in as: ${data}`);
+      // => mediator decides submission behavior
+    }
+  }
+
+  getForm(): LoginForm {
+    return this.form;
+  }
+  getButton(): SubmitButton {
+    return this.button;
+  }
+}
+
+const mediator = new LoginMediator();
+const form = mediator.getForm();
+
+form.setUsername("al"); // => [Button] disabled / [Status] Username too short
+form.setUsername("alice"); // => [Button] enabled  / [Status] Username looks good
+form.submit(); // => [Status] Logging in as: alice
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Mediator centralizes all coordination logic — components emit events and receive instructions only through the mediator, preventing the web of direct cross-references that emerges when N components communicate peer-to-peer.
@@ -4329,7 +5436,7 @@ mediator.SearchBox.Search("architecture patterns");
 
 The State pattern allows an object to change its behavior when its internal state changes. The object will appear to change its class. Instead of using if/elif chains to check state, each state is a class that implements the behavior for that state.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4684,6 +5791,123 @@ Console.WriteLine(order.Status()); // => Output: SHIPPED
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => STATE INTERFACE: defines behavior for every possible order state
+interface OrderState {
+  pay(order: OrderContext): void; // => attempt to pay
+  ship(order: OrderContext): void; // => attempt to ship
+  cancel(order: OrderContext): void; // => attempt to cancel
+  describe(): string; // => describe current state
+}
+
+// => CONTEXT: holds a reference to the current state object
+class OrderContext {
+  private state: OrderState;
+  // => current state — transitions change this reference
+
+  constructor() {
+    this.state = new PendingState(); // => orders start as pending
+  }
+
+  setState(state: OrderState): void {
+    this.state = state; // => state object replaces itself via this method
+  }
+
+  pay(): void {
+    this.state.pay(this);
+  }
+  ship(): void {
+    this.state.ship(this);
+  }
+  cancel(): void {
+    this.state.cancel(this);
+  }
+
+  describe(): string {
+    return this.state.describe();
+  }
+}
+
+// => CONCRETE STATES: each defines what each action means in that state
+class PendingState implements OrderState {
+  pay(order: OrderContext): void {
+    console.log("Payment received — order confirmed");
+    order.setState(new PaidState()); // => transition to PaidState
+  }
+  ship(order: OrderContext): void {
+    console.log("Cannot ship: order not paid yet");
+    // => invalid transition — no state change
+  }
+  cancel(order: OrderContext): void {
+    console.log("Order cancelled");
+    order.setState(new CancelledState()); // => transition to CancelledState
+  }
+  describe(): string {
+    return "Pending";
+  }
+}
+
+class PaidState implements OrderState {
+  pay(_order: OrderContext): void {
+    console.log("Already paid");
+    // => idempotent — no state change
+  }
+  ship(order: OrderContext): void {
+    console.log("Order shipped");
+    order.setState(new ShippedState()); // => transition to ShippedState
+  }
+  cancel(order: OrderContext): void {
+    console.log("Refund issued — order cancelled");
+    order.setState(new CancelledState()); // => transition to CancelledState
+  }
+  describe(): string {
+    return "Paid";
+  }
+}
+
+class ShippedState implements OrderState {
+  pay(_order: OrderContext): void {
+    console.log("Already paid");
+  }
+  ship(_order: OrderContext): void {
+    console.log("Already shipped");
+  }
+  cancel(_order: OrderContext): void {
+    console.log("Cannot cancel: order already shipped");
+    // => terminal state — no cancellation allowed
+  }
+  describe(): string {
+    return "Shipped";
+  }
+}
+
+class CancelledState implements OrderState {
+  pay(_order: OrderContext): void {
+    console.log("Order cancelled — cannot pay");
+  }
+  ship(_order: OrderContext): void {
+    console.log("Order cancelled — cannot ship");
+  }
+  cancel(_order: OrderContext): void {
+    console.log("Already cancelled");
+  }
+  describe(): string {
+    return "Cancelled";
+  }
+}
+
+const order = new OrderContext();
+console.log(order.describe()); // => Pending
+order.pay(); // => Payment received — order confirmed
+console.log(order.describe()); // => Paid
+order.ship(); // => Order shipped
+console.log(order.describe()); // => Shipped
+order.cancel(); // => Cannot cancel: order already shipped
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The State pattern eliminates complex if/elif chains on state variables by giving each state its own class that implements the valid behaviors for that state — invalid transitions are handled within each state class, not scattered across conditional logic.
@@ -4696,7 +5920,7 @@ Console.WriteLine(order.Status()); // => Output: SHIPPED
 
 The Template Method pattern defines the skeleton of an algorithm in a base class, deferring some steps to subclasses. Subclasses can override specific steps without changing the algorithm's overall structure. This enforces a consistent process while allowing customization of individual steps.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -4987,6 +6211,77 @@ Console.WriteLine(json.Export(sampleData));
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => ABSTRACT CLASS: defines the algorithm skeleton via a template method
+abstract class DataExporter {
+    // => TEMPLATE METHOD: fixed sequence of steps; some steps are abstract
+    export(): string {
+        const data = this.fetchData();     // => step 1: get data (abstract)
+        const formatted = this.format(data); // => step 2: format (abstract)
+        const output = this.writeOutput(formatted); // => step 3: write (has default)
+        return output;
+        // => sequence is invariant; concrete classes customize individual steps
+    }
+
+    protected abstract fetchData(): unknown[];
+    // => subclass must supply how to get data
+
+    protected abstract format(data: unknown[]): string;
+    // => subclass must supply how to format
+
+    protected writeOutput(content: string): string {
+        return `--- EXPORT ---
+${content}
+--- END ---`;
+        // => default wrapper — subclass can override if needed
+    }
+}
+
+// => CONCRETE SUBCLASS 1: CSV exporter
+class CsvExporter extends DataExporter {
+    protected fetchData(): { name: string; score: number }[] {
+        return [{ name: "Alice", score: 95 }, { name: "Bob", score: 82 }];
+        // => returns hardcoded data (real impl queries DB)
+    }
+
+    protected format(data: { name: string; score: number }[]): string {
+        const header = "name,score";
+        const rows = data.map(r => `${r.name},${r.score}`);
+        return [header, ...rows].join("
+");
+        // => CSV format: header + rows
+    }
+}
+
+// => CONCRETE SUBCLASS 2: JSON exporter — same algorithm, different format
+class JsonExporter extends DataExporter {
+    protected fetchData(): { name: string; score: number }[] {
+        return [{ name: "Alice", score: 95 }, { name: "Bob", score: 82 }];
+        // => same data source
+    }
+
+    protected format(data: unknown[]): string {
+        return JSON.stringify(data, null, 2);
+        // => JSON format with indentation
+    }
+}
+
+console.log(new CsvExporter().export());
+// => --- EXPORT ---
+// => name,score
+// => Alice,95
+// => Bob,82
+// => --- END ---
+
+console.log(new JsonExporter().export());
+// => --- EXPORT ---
+// => [{"name":"Alice","score":95},{"name":"Bob","score":82}]
+// => --- END ---
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Template Method pattern enforces a consistent algorithm structure (validate → transform → serialize → checksum) while letting subclasses customize individual steps — the base class owns the workflow, subclasses own the variations.
@@ -5019,7 +6314,7 @@ graph TD
     style D fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5271,6 +6566,62 @@ Console.WriteLine(email1.Domain());   // => Output: example.com
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => VALUE OBJECT: Money — defined by amount + currency together
+// => Equality is by value, not by reference; immutable by design
+class Money {
+  private constructor(
+    private readonly amount: number,
+    private readonly currency: string,
+  ) {}
+  // => private constructor: use factory method to create instances
+
+  // => FACTORY METHOD: enforces invariants before construction
+  static of(amount: number, currency: string): Money {
+    if (amount < 0) throw new Error("Money amount cannot be negative");
+    // => negative money is meaningless — invariant enforced at creation
+    if (!currency.trim()) throw new Error("Currency must not be blank");
+    // => blank currency makes comparison undefined
+    return new Money(Math.round(amount * 100) / 100, currency.toUpperCase());
+    // => rounds to 2 decimal places; normalizes currency to uppercase
+  }
+
+  add(other: Money): Money {
+    if (this.currency !== other.currency) throw new Error(`Cannot add ${this.currency} and ${other.currency}`);
+    // => domain rule: mixed currencies cannot be summed
+    return Money.of(this.amount + other.amount, this.currency);
+    // => returns new Money (immutable pattern — no mutation)
+  }
+
+  multiply(factor: number): Money {
+    if (factor < 0) throw new Error("Multiplier cannot be negative");
+    return Money.of(this.amount * factor, this.currency);
+    // => scales amount by factor; currency preserved
+  }
+
+  equals(other: Money): boolean {
+    return this.amount === other.amount && this.currency === other.currency;
+    // => structural equality: same amount AND same currency
+  }
+
+  toString(): string {
+    return `${this.currency} ${this.amount.toFixed(2)}`;
+    // => human-readable representation
+  }
+}
+
+const price = Money.of(10.0, "USD");
+const tax = Money.of(1.5, "USD");
+const total = price.add(tax); // => USD 11.50
+
+console.log(total.toString()); // => USD 11.50
+console.log(total.multiply(3).toString()); // => USD 34.50
+console.log(Money.of(10, "USD").equals(Money.of(10, "USD"))); // => true (value equality)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Value objects are immutable, equality-by-value domain concepts that validate themselves at construction — they are safer than primitives (validated, meaningful type) and simpler than entities (no identity, no lifecycle).
@@ -5283,7 +6634,7 @@ Console.WriteLine(email1.Domain());   // => Output: example.com
 
 An Aggregate is a cluster of domain objects treated as a single unit. The Aggregate Root is the only member that external objects can hold references to. All modifications to objects inside the aggregate must go through the root, which enforces invariants across the entire cluster.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5574,6 +6925,73 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => VALUE OBJECT: line item inside the aggregate
+class LineItem {
+  private constructor(
+    readonly productId: string,
+    readonly price: number,
+    readonly qty: number,
+  ) {}
+
+  static create(productId: string, price: number, qty: number): LineItem {
+    if (qty <= 0) throw new Error("Quantity must be positive");
+    if (price < 0) throw new Error("Price cannot be negative");
+    return new LineItem(productId, price, qty);
+    // => invariants enforced before creation
+  }
+
+  subtotal(): number {
+    return this.price * this.qty;
+  }
+  // => derived value — always consistent with qty and price
+}
+
+// => AGGREGATE ROOT: controls all mutations to the aggregate
+class Cart {
+  private readonly items: LineItem[] = [];
+  // => private: external code cannot mutate items directly
+
+  addItem(productId: string, price: number, qty: number): void {
+    const existing = this.items.findIndex((i) => i.productId === productId);
+    if (existing >= 0) {
+      // => merge: replace with updated quantity
+      const old = this.items[existing];
+      this.items[existing] = LineItem.create(productId, price, old.qty + qty);
+    } else {
+      this.items.push(LineItem.create(productId, price, qty));
+      // => validate via LineItem.create before adding — aggregate enforces invariants
+    }
+  }
+
+  removeItem(productId: string): void {
+    const idx = this.items.findIndex((i) => i.productId === productId);
+    if (idx >= 0) this.items.splice(idx, 1);
+    // => aggregate controls removal — no direct array mutation from outside
+  }
+
+  total(): number {
+    return this.items.reduce((sum, i) => sum + i.subtotal(), 0);
+    // => total is always computed from current items — never cached stale
+  }
+
+  itemCount(): number {
+    return this.items.length;
+  }
+}
+
+const cart = new Cart();
+cart.addItem("p1", 10.0, 2); // => 2x at $10 each
+cart.addItem("p2", 25.0, 1); // => 1x at $25
+cart.addItem("p1", 10.0, 1); // => merge: p1 becomes 3x
+
+console.log(cart.total()); // => 55 (3*10 + 1*25)
+console.log(cart.itemCount()); // => 2 (p1 and p2)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Aggregate Root is the sole entry point for all modifications to a cluster of related objects — this concentrates business rule enforcement in one place and ensures the cluster is always in a valid state.
@@ -5586,7 +7004,7 @@ try {
 
 A Bounded Context defines the scope within which a particular domain model applies. The same concept (e.g., "Customer") can mean different things in different bounded contexts — the Sales context cares about purchase history, the Shipping context cares about delivery address. Each context has its own model.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -5877,6 +7295,69 @@ Console.WriteLine($"Delivery: ${delivery}");
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// === BOUNDED CONTEXT 1: Sales — Customer means loyalty + purchase history ===
+namespace Sales {
+  export interface Customer {
+    id: string;
+    name: string;
+    loyaltyPoints: number; // => Sales cares about loyalty
+    totalPurchases: number; // => Sales cares about purchase history
+  }
+
+  export class SalesService {
+    applyLoyaltyDiscount(customer: Customer, price: number): number {
+      const discountPct = Math.min(customer.loyaltyPoints / 100, 20);
+      // => up to 20% discount based on loyalty points
+      return price * (1 - discountPct / 100);
+      // => Sales-specific business rule; Shipping doesn't know about loyalty
+    }
+  }
+}
+
+// === BOUNDED CONTEXT 2: Shipping — Customer means delivery address + weight limits ===
+namespace Shipping {
+  export interface Customer {
+    id: string;
+    name: string;
+    defaultAddress: string; // => Shipping cares about delivery location
+    maxWeightKg: number; // => Shipping cares about weight restrictions
+  }
+
+  export class ShippingService {
+    calculateCost(customer: Customer, weightKg: number): number {
+      if (weightKg > customer.maxWeightKg) throw new Error(`Exceeds customer weight limit: ${customer.maxWeightKg}kg`);
+      // => Shipping-specific rule; Sales doesn't know about weight limits
+      return weightKg * 2.5 + (customer.defaultAddress.includes("remote") ? 15 : 0);
+      // => Shipping formula; Sales context has no concept of delivery cost
+    }
+  }
+}
+
+// === ANTI-CORRUPTION LAYER: translates between contexts ===
+function toShippingCustomer(salesCustomer: Sales.Customer): Shipping.Customer {
+  return {
+    id: salesCustomer.id,
+    name: salesCustomer.name,
+    defaultAddress: "123 Main St", // => real impl: lookup from address service
+    maxWeightKg: 50, // => real impl: lookup from shipping profile
+  };
+  // => Each context owns its own Customer shape — no shared mutable class
+}
+
+const salesCust: Sales.Customer = { id: "c1", name: "Alice", loyaltyPoints: 150, totalPurchases: 12 };
+const shippingCust = toShippingCustomer(salesCust);
+
+const salesSvc = new Sales.SalesService();
+const shippingSvc = new Shipping.ShippingService();
+
+console.log(salesSvc.applyLoyaltyDiscount(salesCust, 100).toFixed(2)); // => 98.50 (1.5% discount)
+console.log(shippingSvc.calculateCost(shippingCust, 5)); // => 12.5 (5 * 2.5)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Each Bounded Context maintains its own model of shared concepts — "Customer" means different attributes in Sales vs Shipping, and each context owns the operations relevant to its responsibility.
@@ -5906,7 +7387,7 @@ graph LR
     style C fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6211,6 +7692,68 @@ Console.WriteLine(legacyWrite.UnitPrice);  // => Output: 101.84 (converted to EU
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN MODEL: clean internal representation
+interface Product {
+  id: string;
+  name: string;
+  priceUsd: number;
+  inStock: boolean;
+}
+
+// => LEGACY API RESPONSE: external system uses different field names and types
+interface LegacyProductResponse {
+  prod_id: string; // => legacy: underscore, not camelCase
+  product_name: string; // => legacy: verbose field name
+  price_cents: number; // => legacy: price in cents, not dollars
+  qty_available: number; // => legacy: quantity instead of boolean flag
+}
+
+// => ANTI-CORRUPTION LAYER: translates legacy shapes into domain shapes
+class ProductTranslator {
+  fromLegacy(legacy: LegacyProductResponse): Product {
+    return {
+      id: legacy.prod_id,
+      name: legacy.product_name, // => rename
+      priceUsd: legacy.price_cents / 100, // => convert cents to dollars
+      inStock: legacy.qty_available > 0, // => derive boolean from quantity
+    };
+    // => domain model is insulated from legacy field names and types
+  }
+
+  toLegacy(product: Product): LegacyProductResponse {
+    return {
+      prod_id: product.id,
+      product_name: product.name,
+      price_cents: Math.round(product.priceUsd * 100), // => convert dollars to cents
+      qty_available: product.inStock ? 1 : 0, // => encode boolean as quantity
+    };
+    // => translates back for writing to legacy system
+  }
+}
+
+// => USAGE: domain code never sees legacy format
+const translator = new ProductTranslator();
+
+const legacyData: LegacyProductResponse = {
+  prod_id: "p-42",
+  product_name: "Wireless Mouse",
+  price_cents: 2999,
+  qty_available: 15,
+};
+
+const domainProduct = translator.fromLegacy(legacyData);
+console.log(domainProduct.name); // => Wireless Mouse
+console.log(domainProduct.priceUsd); // => 29.99
+console.log(domainProduct.inStock); // => true
+
+const backToLegacy = translator.toLegacy(domainProduct);
+console.log(backToLegacy.price_cents); // => 2999 (round-trip preserved)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Anti-Corruption Layer translates external system models into domain concepts at the boundary — the domain model never directly touches external field names, data types, or conventions.
@@ -6247,7 +7790,7 @@ graph TD
     style E fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6576,6 +8119,82 @@ Console.WriteLine(item?.DisplayPrice); // => Output: $9.99 (pre-formatted, no cl
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// === WRITE SIDE: normalized model optimized for business rule enforcement ===
+interface WriteProduct {
+  id: string;
+  name: string;
+  priceUsd: number; // => single source of truth for price
+  stock: number; // => single source of truth for inventory
+}
+
+// => COMMAND: represents intent to change state
+interface ReserveStockCommand {
+  productId: string;
+  qty: number;
+}
+
+// => COMMAND HANDLER: applies business rules and mutates write model
+class ProductCommandService {
+  private readonly products: Map<string, WriteProduct> = new Map();
+
+  addProduct(product: WriteProduct): void {
+    this.products.set(product.id, { ...product });
+    // => copy to prevent external mutation
+  }
+
+  reserveStock(cmd: ReserveStockCommand): void {
+    const product = this.products.get(cmd.productId);
+    if (!product) throw new Error(`Product ${cmd.productId} not found`);
+    if (product.stock < cmd.qty) throw new Error(`Insufficient stock`);
+    product.stock -= cmd.qty; // => mutate write model
+    console.log(`[Write] Reserved ${cmd.qty}x ${cmd.productId}`);
+  }
+}
+
+// === READ SIDE: denormalized model optimized for display ===
+interface ProductListItem {
+  id: string;
+  displayName: string; // => computed: "Name ($price)"
+  availabilityLabel: string; // => computed: "In Stock" or "Out of Stock"
+}
+
+// => QUERY HANDLER: assembles denormalized read models
+class ProductQueryService {
+  constructor(private readonly commands: ProductCommandService) {}
+
+  getProductListItems(): ProductListItem[] {
+    // => in real CQRS, query side reads from a separate read store
+    // => here we simulate by projecting from command service state
+    return []; // => simplified — real impl reads from read-optimized store
+  }
+
+  // => PROJECTION: builds read model from write model event (simulated)
+  projectProductForList(product: WriteProduct): ProductListItem {
+    return {
+      id: product.id,
+      displayName: `${product.name} ($${product.priceUsd.toFixed(2)})`,
+      // => denormalized: combines name and price for display efficiency
+      availabilityLabel: product.stock > 0 ? "In Stock" : "Out of Stock",
+      // => denormalized: boolean derived from stock count
+    };
+  }
+}
+
+const cmdSvc = new ProductCommandService();
+cmdSvc.addProduct({ id: "p1", name: "Laptop", priceUsd: 1200.0, stock: 5 });
+cmdSvc.reserveStock({ productId: "p1", qty: 2 });
+// => [Write] Reserved 2x p1
+
+const querySvc = new ProductQueryService(cmdSvc);
+const projection = querySvc.projectProductForList({ id: "p1", name: "Laptop", priceUsd: 1200.0, stock: 3 });
+console.log(projection.displayName); // => Laptop ($1200.00)
+console.log(projection.availabilityLabel); // => In Stock
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: CQRS separates the write model (enforcing business rules, normalized) from the read model (optimized for display, denormalized) — they evolve independently and can be scaled separately.
@@ -6588,7 +8207,7 @@ Console.WriteLine(item?.DisplayPrice); // => Output: $9.99 (pre-formatted, no cl
 
 The Middleware pattern processes requests through a chain of handlers, where each handler can modify the request or response, pass control to the next handler, or short-circuit the chain. Cross-cutting concerns (auth, logging, rate limiting) are implemented as middleware, not scattered in business logic.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -6926,6 +8545,75 @@ Console.WriteLine(resp2.Status); // => Output: 401
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => MIDDLEWARE TYPE: a function that processes a request and calls next
+type Request = { method: string; path: string; userId?: string; body?: unknown };
+type Response = { status: number; body: unknown };
+type NextFn = () => Response;
+type Middleware = (req: Request, next: NextFn) => Response;
+
+// => MIDDLEWARE 1: logging — records every request
+const loggingMiddleware: Middleware = (req, next) => {
+  console.log(`[Log] ${req.method} ${req.path}`);
+  // => log before processing
+  const response = next(); // => pass to next middleware
+  console.log(`[Log] Response: ${response.status}`);
+  return response; // => return response to previous middleware
+};
+
+// => MIDDLEWARE 2: authentication — validates user identity
+const authMiddleware: Middleware = (req, next) => {
+  if (!req.userId) {
+    return { status: 401, body: "Unauthorized" };
+    // => reject unauthenticated requests — short-circuits the chain
+  }
+  return next(); // => pass to next middleware only if authenticated
+};
+
+// => MIDDLEWARE 3: validation — checks request body
+const validationMiddleware: Middleware = (req, next) => {
+  if (req.method === "POST" && !req.body) {
+    return { status: 400, body: "Missing request body" };
+    // => reject invalid requests — short-circuits the chain
+  }
+  return next(); // => pass to handler if valid
+};
+
+// => PIPELINE BUILDER: composes middlewares into a chain
+function buildPipeline(middlewares: Middleware[], handler: (req: Request) => Response): (req: Request) => Response {
+  return (req: Request) => {
+    let index = 0;
+    const dispatch = (): Response => {
+      if (index < middlewares.length) {
+        return middlewares[index++](req, dispatch);
+        // => each middleware calls next() which invokes dispatch again
+      }
+      return handler(req); // => final handler after all middlewares pass
+    };
+    return dispatch();
+  };
+}
+
+// => HANDLER: the actual request processor
+const handler = (req: Request): Response => ({
+  status: 200,
+  body: `Processed ${req.path} for user ${req.userId}`,
+});
+
+// => WIRE: build pipeline with three middlewares
+const pipeline = buildPipeline([loggingMiddleware, authMiddleware, validationMiddleware], handler);
+
+pipeline({ method: "GET", path: "/api/orders", userId: "u1" });
+// => [Log] GET /api/orders
+// => [Log] Response: 200
+
+const unauth = pipeline({ method: "GET", path: "/api/orders" });
+console.log(unauth); // => { status: 401, body: 'Unauthorized' }
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Middleware pattern processes requests through a composable pipeline where each middleware handles one cross-cutting concern — auth, logging, rate limiting — independently, without mixing into business logic.
@@ -6938,7 +8626,7 @@ Console.WriteLine(resp2.Status); // => Output: 401
 
 A Plugin Architecture defines a stable core with extension points (hooks, interfaces) that external plugins implement. The core discovers and loads plugins at startup or runtime. This enables third parties to add capabilities without modifying the core codebase.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -7322,6 +9010,90 @@ Console.WriteLine(result); // => Output: { token = jwt-token-here }
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => PLUGIN INTERFACE: contract every plugin must implement
+interface ReportPlugin {
+    readonly name: string;           // => unique plugin identifier
+    generate(data: unknown[]): string; // => produces a formatted report
+}
+
+// => PLUGIN REGISTRY: manages registration and retrieval of plugins
+class PluginRegistry {
+    private readonly plugins: Map<string, ReportPlugin> = new Map();
+    // => registry maps plugin name → implementation
+
+    register(plugin: ReportPlugin): void {
+        this.plugins.set(plugin.name, plugin);
+        // => plugins self-register; registry has no prior knowledge of them
+    }
+
+    get(name: string): ReportPlugin | undefined {
+        return this.plugins.get(name);
+        // => returns plugin or undefined if not registered
+    }
+
+    getAll(): ReportPlugin[] {
+        return [...this.plugins.values()]; // => all registered plugins
+    }
+}
+
+// => PLUGIN 1: CSV format
+class CsvPlugin implements ReportPlugin {
+    readonly name = "csv";
+
+    generate(data: Record<string, unknown>[]): string {
+        if (data.length === 0) return "";
+        const headers = Object.keys(data[0]).join(",");
+        // => headers from first row's keys
+        const rows = data.map(row => Object.values(row).join(","));
+        return [headers, ...rows].join("
+");
+        // => CSV format: header + data rows
+    }
+}
+
+// => PLUGIN 2: JSON format
+class JsonPlugin implements ReportPlugin {
+    readonly name = "json";
+
+    generate(data: unknown[]): string {
+        return JSON.stringify(data, null, 2);
+        // => pretty-printed JSON
+    }
+}
+
+// => PLUGIN 3: custom summary format — added without modifying existing code
+class SummaryPlugin implements ReportPlugin {
+    readonly name = "summary";
+
+    generate(data: unknown[]): string {
+        return `Summary: ${data.length} records`;
+        // => minimal format for quick overview
+    }
+}
+
+// => CORE: uses only the plugin interface — never imports concrete plugins
+const registry = new PluginRegistry();
+registry.register(new CsvPlugin());
+registry.register(new JsonPlugin());
+registry.register(new SummaryPlugin());
+// => plugins registered at startup; core never changes when new plugins are added
+
+const data = [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }];
+
+const csvPlugin = registry.get("csv")!;
+console.log(csvPlugin.generate(data));
+// => id,name
+// => 1,Alice
+// => 2,Bob
+
+const summaryPlugin = registry.get("summary")!;
+console.log(summaryPlugin.generate(data)); // => Summary: 2 records
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Plugin architecture exposes a stable CoreAPI for plugins to register behavior (routes, event handlers) — the core stays unchanged as new capabilities are added through plugins loaded at runtime.
@@ -7334,7 +9106,7 @@ Console.WriteLine(result); // => Output: { token = jwt-token-here }
 
 The Repository pattern provides a collection-like interface for accessing domain objects, hiding the persistence mechanism behind an abstraction. The domain layer interacts with repositories as if they were in-memory collections, while the implementation handles SQL, HTTP, or file storage.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -7671,6 +9443,77 @@ sqlService.AddProduct(new Product("p3", "Tablet", 449.99, "electronics"));
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN ENTITY: pure value object; no persistence annotations
+interface Account {
+  id: string;
+  owner: string;
+  balance: number; // => current balance in cents
+  status: "active" | "suspended" | "closed";
+}
+
+// => REPOSITORY INTERFACE: collection-like abstraction; no SQL in business code
+interface AccountRepository {
+  findById(id: string): Account | undefined;
+  findByOwner(owner: string): Account[];
+  findActiveWithBalanceAbove(minBalance: number): Account[];
+  // => domain-meaningful query — named for the business question
+  save(account: Account): void;
+  delete(id: string): void;
+}
+
+// => IN-MEMORY IMPLEMENTATION: for tests and local development
+class InMemoryAccountRepository implements AccountRepository {
+  private readonly accounts: Map<string, Account> = new Map();
+
+  findById(id: string): Account | undefined {
+    return this.accounts.get(id); // => O(1) lookup by primary key
+  }
+
+  findByOwner(owner: string): Account[] {
+    return [...this.accounts.values()].filter((a) => a.owner === owner);
+    // => linear scan; real DB would use an index on owner column
+  }
+
+  findActiveWithBalanceAbove(minBalance: number): Account[] {
+    return [...this.accounts.values()].filter((a) => a.status === "active" && a.balance > minBalance);
+    // => compound filter; real DB would use WHERE status='active' AND balance>?
+  }
+
+  save(account: Account): void {
+    this.accounts.set(account.id, { ...account }); // => upsert with copy
+  }
+
+  delete(id: string): void {
+    this.accounts.delete(id); // => remove by id
+  }
+}
+
+// => SERVICE: uses only the repository interface — zero awareness of storage type
+class AccountService {
+  constructor(private readonly repo: AccountRepository) {}
+
+  suspend(accountId: string): void {
+    const account = this.repo.findById(accountId);
+    if (!account) throw new Error(`Account ${accountId} not found`);
+    this.repo.save({ ...account, status: "suspended" }); // => immutable update
+  }
+}
+
+const repo = new InMemoryAccountRepository();
+repo.save({ id: "a1", owner: "Alice", balance: 500, status: "active" });
+repo.save({ id: "a2", owner: "Bob", balance: 1500, status: "active" });
+
+const svc = new AccountService(repo);
+svc.suspend("a1");
+
+console.log(repo.findById("a1")?.status); // => suspended
+console.log(repo.findActiveWithBalanceAbove(1000).length); // => 1 (only Bob)
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Repository pattern gives the domain layer a collection-like interface for persistence — the domain calls `save()` and `findByCategory()`, not SQL or HTTP, making it easy to swap implementations and test with in-memory repositories.
@@ -7683,7 +9526,7 @@ sqlService.AddProduct(new Product("p3", "Tablet", 449.99, "electronics"));
 
 The Unit of Work pattern tracks all changes made during a business transaction and commits them atomically at the end. It prevents partial writes — if any operation fails, all changes roll back. This is the foundation behind database transaction management.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -8006,6 +9849,87 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN ENTITY: immutable record representing a bank account
+interface Account {
+  id: string;
+  owner: string;
+  balance: number;
+}
+
+// => UNIT OF WORK: tracks all changes within a logical transaction
+class UnitOfWork {
+  private readonly inserted: Map<string, Account> = new Map();
+  private readonly updated: Map<string, Account> = new Map();
+  private readonly deleted: Set<string> = new Set();
+  // => tracks dirty state — nothing committed until commit() is called
+
+  registerNew(account: Account): void {
+    this.inserted.set(account.id, { ...account });
+    // => marks account as new — will be INSERTed on commit
+  }
+
+  registerDirty(account: Account): void {
+    if (!this.inserted.has(account.id)) {
+      this.updated.set(account.id, { ...account });
+      // => marks account as modified — will be UPDATEd on commit
+    }
+    // => if already new, no need to separately mark dirty
+  }
+
+  registerDeleted(accountId: string): void {
+    this.deleted.add(accountId);
+    this.updated.delete(accountId); // => delete supersedes update
+    // => marks account for removal — will be DELETEd on commit
+  }
+
+  commit(store: Map<string, Account>): void {
+    // => INSERTS: add all new entities
+    for (const [id, account] of this.inserted) {
+      store.set(id, account);
+      console.log(`[DB] INSERT account ${id}`);
+    }
+    // => UPDATES: apply all modifications
+    for (const [id, account] of this.updated) {
+      store.set(id, account);
+      console.log(`[DB] UPDATE account ${id}`);
+    }
+    // => DELETES: remove all marked-for-deletion
+    for (const id of this.deleted) {
+      store.delete(id);
+      console.log(`[DB] DELETE account ${id}`);
+    }
+    // => all changes committed atomically — real impl wraps in DB transaction
+  }
+}
+
+// => USAGE: build up changes, then commit as one unit
+const store: Map<string, Account> = new Map([
+  ["a1", { id: "a1", owner: "Alice", balance: 1000 }],
+  ["a2", { id: "a2", owner: "Bob", balance: 500 }],
+]);
+
+const uow = new UnitOfWork();
+
+// => Simulate: transfer $200 from a2 to a1
+const a1 = { ...store.get("a1")!, balance: 1200 }; // => Alice +200
+const a2 = { ...store.get("a2")!, balance: 300 }; // => Bob -200
+
+uow.registerDirty(a1); // => mark a1 as modified
+uow.registerDirty(a2); // => mark a2 as modified
+uow.registerNew({ id: "a3", owner: "Carol", balance: 750 }); // => new account
+
+uow.commit(store);
+// => [DB] INSERT account a3
+// => [DB] UPDATE account a1
+// => [DB] UPDATE account a2
+console.log(store.get("a1")?.balance); // => 1200
+console.log(store.get("a3")?.owner); // => Carol
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Unit of Work collects all changes made during a business operation and commits them atomically — if any step fails, all tracked changes roll back, preventing data inconsistency from partial writes.
@@ -8018,7 +9942,7 @@ try {
 
 The Specification pattern encapsulates a business rule as an object that can evaluate whether a candidate satisfies the rule. Specifications can be combined with AND, OR, and NOT operators to build complex rules from simple ones — without modifying the candidate class.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -8290,6 +10214,114 @@ Console.WriteLine(string.Join(", ", excluded)); // => Output: Premium Laptop, Sm
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => BASE SPECIFICATION: composable business rule abstraction
+abstract class Specification<T> {
+  abstract isSatisfiedBy(candidate: T): boolean;
+  // => core predicate; each subclass implements one focused rule
+
+  and(other: Specification<T>): Specification<T> {
+    return new AndSpecification(this, other);
+    // => both specifications must be satisfied
+  }
+
+  or(other: Specification<T>): Specification<T> {
+    return new OrSpecification(this, other);
+    // => at least one specification must be satisfied
+  }
+
+  not(): Specification<T> {
+    return new NotSpecification(this);
+    // => logical negation of this specification
+  }
+}
+
+class AndSpecification<T> extends Specification<T> {
+  constructor(
+    private readonly a: Specification<T>,
+    private readonly b: Specification<T>,
+  ) {
+    super();
+  }
+  isSatisfiedBy(c: T): boolean {
+    return this.a.isSatisfiedBy(c) && this.b.isSatisfiedBy(c);
+  }
+}
+
+class OrSpecification<T> extends Specification<T> {
+  constructor(
+    private readonly a: Specification<T>,
+    private readonly b: Specification<T>,
+  ) {
+    super();
+  }
+  isSatisfiedBy(c: T): boolean {
+    return this.a.isSatisfiedBy(c) || this.b.isSatisfiedBy(c);
+  }
+}
+
+class NotSpecification<T> extends Specification<T> {
+  constructor(private readonly spec: Specification<T>) {
+    super();
+  }
+  isSatisfiedBy(c: T): boolean {
+    return !this.spec.isSatisfiedBy(c);
+  }
+}
+
+// => DOMAIN: concrete specifications for product filtering
+interface Product {
+  name: string;
+  price: number;
+  inStock: boolean;
+  category: string;
+}
+
+class InStockSpec extends Specification<Product> {
+  isSatisfiedBy(p: Product): boolean {
+    return p.inStock;
+  }
+  // => true if product has stock
+}
+
+class PriceUnderSpec extends Specification<Product> {
+  constructor(private readonly max: number) {
+    super();
+  }
+  isSatisfiedBy(p: Product): boolean {
+    return p.price < this.max;
+  }
+  // => true if price is below max
+}
+
+class CategorySpec extends Specification<Product> {
+  constructor(private readonly category: string) {
+    super();
+  }
+  isSatisfiedBy(p: Product): boolean {
+    return p.category === this.category;
+  }
+  // => true if product belongs to the given category
+}
+
+// => COMPOSE: budget electronics that are in stock
+const budgetElectronics = new InStockSpec().and(new PriceUnderSpec(100)).and(new CategorySpec("electronics"));
+// => composed specification reads like natural language
+
+const products: Product[] = [
+  { name: "Cable", price: 15, inStock: true, category: "electronics" },
+  { name: "Laptop", price: 1200, inStock: true, category: "electronics" },
+  { name: "Pencil", price: 2, inStock: true, category: "stationery" },
+  { name: "Headset", price: 75, inStock: false, category: "electronics" },
+];
+
+const results = products.filter((p) => budgetElectronics.isSatisfiedBy(p));
+console.log(results.map((p) => p.name)); // => ["Cable"] — only affordable, in-stock electronics
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Specification pattern encapsulates each business rule as a composable object — complex filtering logic is built by combining simple specifications with AND, OR, and NOT without modifying the candidate class or scattering if/else chains across the codebase.
@@ -8302,7 +10334,7 @@ Console.WriteLine(string.Join(", ", excluded)); // => Output: Premium Laptop, Sm
 
 Event Sourcing stores the history of all state-changing events rather than the current state. The current state is derived by replaying events from the beginning. Combined with CQRS, the write side appends events to an event store; the read side builds projections by processing those events.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -8685,6 +10717,103 @@ foreach (var e in store.Load("acc1")) {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => DOMAIN EVENT: immutable fact about something that happened
+interface DomainEvent {
+  type: string;
+  occurredAt: number;
+}
+interface AccountCreated extends DomainEvent {
+  type: "AccountCreated";
+  id: string;
+  owner: string;
+}
+interface MoneyDeposited extends DomainEvent {
+  type: "MoneyDeposited";
+  id: string;
+  amount: number;
+}
+interface MoneyWithdrawn extends DomainEvent {
+  type: "MoneyWithdrawn";
+  id: string;
+  amount: number;
+}
+type AccountEvent = AccountCreated | MoneyDeposited | MoneyWithdrawn;
+
+// === WRITE SIDE: command + domain model that emits events ===
+class BankAccount {
+  private balance = 0;
+  private owner = "";
+  private id = "";
+
+  // => APPLY: updates state from each event (pure function)
+  apply(event: AccountEvent): void {
+    switch (event.type) {
+      case "AccountCreated":
+        this.id = event.id;
+        this.owner = event.owner;
+        break;
+      case "MoneyDeposited":
+        this.balance += event.amount;
+        break;
+      case "MoneyWithdrawn":
+        this.balance -= event.amount;
+        break;
+    }
+  }
+
+  // => RECONSTRUCT: replay event history to reach current state
+  static fromEvents(events: AccountEvent[]): BankAccount {
+    const account = new BankAccount();
+    for (const e of events) account.apply(e);
+    return account;
+    // => current state always derivable from event history
+  }
+
+  getBalance(): number {
+    return this.balance;
+  }
+  getOwner(): string {
+    return this.owner;
+  }
+}
+
+// === READ SIDE: projection optimized for display ===
+interface AccountSummary {
+  id: string;
+  owner: string;
+  balance: number;
+  displayBalance: string;
+}
+
+function projectAccountSummary(events: AccountEvent[]): AccountSummary | null {
+  const account = BankAccount.fromEvents(events);
+  const created = events.find((e) => e.type === "AccountCreated") as AccountCreated | undefined;
+  if (!created) return null;
+  return {
+    id: created.id,
+    owner: account.getOwner(),
+    balance: account.getBalance(),
+    displayBalance: `$${account.getBalance().toFixed(2)}`,
+    // => denormalized for display — avoids formatting in business logic
+  };
+}
+
+// === EVENT STORE: append-only log ===
+const eventLog: AccountEvent[] = [
+  { type: "AccountCreated", id: "acc1", owner: "Alice", occurredAt: Date.now() },
+  { type: "MoneyDeposited", id: "acc1", amount: 1000, occurredAt: Date.now() },
+  { type: "MoneyWithdrawn", id: "acc1", amount: 200, occurredAt: Date.now() },
+];
+
+const summary = projectAccountSummary(eventLog);
+console.log(summary?.owner); // => Alice
+console.log(summary?.displayBalance); // => $800.00
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: Event Sourcing stores the full sequence of events rather than current state — current state is derived by replaying events, giving you complete audit history and the ability to time-travel to any past state.
@@ -8697,7 +10826,7 @@ foreach (var e in store.Load("acc1")) {
 
 A Saga is a sequence of local transactions where each transaction publishes an event triggering the next step. If a step fails, compensating transactions undo the preceding steps. Sagas replace distributed ACID transactions (which require 2PC and don't scale) with eventual consistency and explicit rollback logic.
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -9095,6 +11224,92 @@ try {
 ```
 
 {{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => SAGA STEP: each step encapsulates one local transaction and its compensating action
+interface SagaStep {
+  readonly name: string;
+  execute(): Promise<void>; // => forward action
+  compensate(): Promise<void>; // => rollback action
+}
+
+// => SAGA ORCHESTRATOR: executes steps in order; rolls back on failure
+class Saga {
+  private readonly completed: SagaStep[] = [];
+
+  async execute(steps: SagaStep[]): Promise<void> {
+    for (const step of steps) {
+      try {
+        await step.execute();
+        this.completed.push(step);
+        console.log(`[Saga] Completed: ${step.name}`);
+      } catch (err) {
+        console.log(`[Saga] Failed at: ${step.name} — rolling back`);
+        await this.rollback(); // => compensate all completed steps in reverse
+        throw new Error(`Saga failed at step "${step.name}": ${(err as Error).message}`);
+      }
+    }
+  }
+
+  private async rollback(): Promise<void> {
+    for (const step of [...this.completed].reverse()) {
+      await step.compensate();
+      console.log(`[Saga] Compensated: ${step.name}`);
+    }
+  }
+}
+
+// => CONCRETE STEPS: each owns one service boundary
+function makeReserveInventoryStep(productId: string, qty: number): SagaStep {
+  return {
+    name: "ReserveInventory",
+    async execute(): Promise<void> {
+      console.log(`[Inventory] Reserve ${qty}x ${productId}`);
+      // => real impl: call inventory service
+    },
+    async compensate(): Promise<void> {
+      console.log(`[Inventory] Release ${qty}x ${productId}`);
+      // => real impl: call inventory service to release reservation
+    },
+  };
+}
+
+function makeChargePaymentStep(customerId: string, amount: number, failOnExecute = false): SagaStep {
+  return {
+    name: "ChargePayment",
+    async execute(): Promise<void> {
+      if (failOnExecute) throw new Error("Payment declined");
+      console.log(`[Payment] Charge $${amount} to ${customerId}`);
+    },
+    async compensate(): Promise<void> {
+      console.log(`[Payment] Refund $${amount} to ${customerId}`);
+    },
+  };
+}
+
+// => HAPPY PATH: all steps succeed
+const saga = new Saga();
+await saga.execute([makeReserveInventoryStep("p1", 2), makeChargePaymentStep("c1", 50)]);
+// => [Saga] Completed: ReserveInventory
+// => [Saga] Completed: ChargePayment
+
+// => FAILURE PATH: payment fails → inventory reservation rolled back
+const failingSaga = new Saga();
+try {
+  await failingSaga.execute([
+    makeReserveInventoryStep("p1", 2),
+    makeChargePaymentStep("c1", 50, true), // => inject failure
+  ]);
+} catch {
+  // => [Saga] Completed: ReserveInventory
+  // => [Saga] Failed at: ChargePayment — rolling back
+  // => [Saga] Compensated: ReserveInventory
+  console.log("Saga rolled back");
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Key Takeaway**: The Saga pattern manages distributed transactions through a sequence of local transactions with compensating rollbacks — each service commits its local change and compensations undo completed steps on failure, achieving eventual consistency without 2PC.
@@ -9121,7 +11336,7 @@ stateDiagram-v2
     classDef halfopen fill:#CC78BC,color:#fff
 ```
 
-{{< tabs items="Java,Kotlin,C#" >}}
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
 
 ```java
@@ -9496,6 +11711,84 @@ var result = breaker.Call<string>(() => {
 // => Circuit: Closed — service recovered
 Console.WriteLine(result);       // => Output: OK (call #5)
 Console.WriteLine(breaker.State); // => Output: Closed
+```
+
+{{< /tab >}}
+{{< tab >}}
+
+```typescript
+// => CIRCUIT BREAKER: prevents cascading failures by short-circuiting repeated failures
+type CircuitState = "closed" | "open" | "half-open";
+// => closed = normal operation; open = rejecting calls; half-open = testing recovery
+
+class CircuitBreaker {
+  private state: CircuitState = "closed";
+  // => starts closed (healthy — all calls pass through)
+  private failureCount = 0;
+  // => consecutive failure counter
+  private lastFailureTime: number | null = null;
+  // => timestamp of most recent failure
+
+  constructor(
+    private readonly threshold: number, // => failures before opening
+    private readonly timeoutMs: number, // => time to wait before attempting recovery
+  ) {}
+
+  async call<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.state === "open") {
+      const elapsed = Date.now() - (this.lastFailureTime ?? 0);
+      if (elapsed > this.timeoutMs) {
+        this.state = "half-open";
+        // => enough time has passed — attempt one probe call
+        console.log("[CB] Transitioning to half-open");
+      } else {
+        throw new Error("Circuit open — call rejected");
+        // => reject immediately — protects downstream from more load
+      }
+    }
+
+    try {
+      const result = await fn(); // => attempt the actual call
+      if (this.state === "half-open") {
+        this.state = "closed"; // => probe succeeded — circuit recovered
+        this.failureCount = 0;
+        console.log("[CB] Circuit closed (recovered)");
+      }
+      return result;
+    } catch (err) {
+      this.failureCount++;
+      this.lastFailureTime = Date.now();
+      console.log(`[CB] Failure count: ${this.failureCount}`);
+
+      if (this.failureCount >= this.threshold || this.state === "half-open") {
+        this.state = "open";
+        // => threshold reached OR probe failed — open the circuit
+        console.log("[CB] Circuit opened");
+      }
+      throw err; // => re-throw so caller knows the call failed
+    }
+  }
+}
+
+// => USAGE: wrap unreliable service calls
+const cb = new CircuitBreaker(3, 5000);
+// => opens after 3 failures, waits 5 seconds before probing
+
+const unreliable = async (): Promise<string> => {
+  throw new Error("Service unavailable");
+};
+
+for (let i = 0; i < 4; i++) {
+  try {
+    await cb.call(unreliable);
+  } catch (err) {
+    console.log(`Call ${i + 1} failed: ${(err as Error).message}`);
+  }
+}
+// => Call 1 failed: Service unavailable (failure count: 1)
+// => Call 2 failed: Service unavailable (failure count: 2)
+// => Call 3 failed: Service unavailable (circuit opened)
+// => Call 4 failed: Circuit open — call rejected
 ```
 
 {{< /tab >}}
