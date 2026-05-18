@@ -243,7 +243,7 @@ export type UnitOfMeasure = "Each" | "Box" | "Kg" | "Litre" | "Hour";
 
 The flat layout is a direct consequence of starting with a single-module approach. F# projects list every `.fs` file in the `.fsproj` in compilation order. A flat layout means all domain files sit in one `Domain/` directory and all handlers in one `Presentation/` directory. This is the zero-ceremony stdlib approach: it compiles, it works, and it is adequate for a small codebase.
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -301,6 +301,36 @@ type RepositoryError =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Flat layout: domain/types.ts — shared cross-cutting types
+// src/procurement-platform/domain/types.ts
+// [F#: module ProcurementPlatform.Domain.Types — single shared module; TS uses a single barrel file]
+
+// Deployment environment as a closed string-literal union
+// [F#: discriminated union AppEnv — compiler-enforced exhaustive match; TS uses literal union + exhaustive switch]
+export type AppEnv = "Dev" | "Staging" | "Prod";
+// => "Dev"     — local development
+// => "Staging" — pre-production integration environment
+// => "Prod"    — production; infrastructure selects connection strings by this value
+// => No context scoping — every module in the project can import this type
+// => A switch on AppEnv with a `never` default catches missing cases at compile time
+
+// Shared repository error as a tagged union — flat shared type
+// [F#: RepositoryError DU — typed variants; TS uses a discriminated union on the `kind` field]
+export type RepositoryError =
+  | { readonly kind: "NotFound" }
+  // => Read-side: a missing resource is a valid domain outcome, not an exception
+  | { readonly kind: "ConnectionFailure"; readonly cause: unknown };
+// => Infrastructure failure: carry the cause for logging; callers return HTTP 500
+// => Tagged union: switch on `kind` is exhaustive — TS narrows the payload per variant
+// => Single shared type works for small codebases
+// => Will split into per-context error types as contexts gain feature plans
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: as each bounded context adds its own error variants, a single shared `RepositoryError` becomes a merge-conflict magnet and prevents per-context type evolution.
@@ -344,7 +374,7 @@ The single most common way a hexagonal architecture degrades into a layered mono
 
 F# record types carry no annotations by default. The standard library gives you a pure, framework-free type that the compiler serializes as a plain CLR class:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -420,6 +450,48 @@ let createMoney (amount: decimal) (currency: string) : Result<Money, string> =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: pure type definitions, zero framework imports
+// src/procurement-platform/contexts/purchasing/domain/value-objects.ts
+// [F#: module with no open statements; TS file imports nothing — only stdlib types used]
+
+// Branded purchase order ID — no ORM decorator, no serializer annotation
+// [F#: single-case DU PurchaseOrderId of Guid — opaque compile-time type; TS uses branded primitive]
+export type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+// => Branded type: string at runtime, structurally distinct at compile time
+// => No Prisma, no TypeORM decorator — compiles with zero dependencies
+// => Can be used in unit tests with PurchaseOrderId(crypto.randomUUID())
+
+export const PurchaseOrderId = (raw: string): PurchaseOrderId => raw as PurchaseOrderId;
+// => Smart constructor — validation logic added here without touching callers
+
+// Money: opaque type with private-construction idiom
+// [F#: private Money of amount * currency — constructor hidden; TS uses a readonly interface + factory]
+export type Money = Readonly<{ amount: number; currency: string }> & { readonly __brand: "Money" };
+// => Branded readonly object: prevents passing a plain {amount, currency} where Money is expected
+// => Private construction enforced by the factory function below
+
+// Smart constructor: validates and returns a Result
+// [F#: Result<Money, string> — built-in; TS uses a hand-rolled Result type or neverthrow]
+export type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => Discriminated union on `ok` — callers must handle both branches before accessing value
+
+export const createMoney = (amount: number, currency: string): Result<Money, string> => {
+  // => Returns Result — the caller cannot ignore the error branch
+  // => No exception thrown — functional error handling throughout the domain
+  if (amount < 0) return { ok: false, error: "Money amount cannot be negative" };
+  // => Negative amounts rejected at the type level — domain invariant holds
+  if (currency.length !== 3) return { ok: false, error: "Currency must be a 3-letter ISO code" };
+  // => ISO 4217 length enforced here — no infrastructure needed to check this
+  return { ok: true, value: { amount, currency } as Money };
+  // => ok: true — the validated value; downstream functions receive only valid Money
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: when you need to persist a domain type, the ORM needs to know the column names. The stdlib gives you no mechanism for this — you have to decide where the ORM mapping lives.
@@ -428,7 +500,7 @@ let createMoney (amount: decimal) (currency: string) : Result<Money, string> =
 
 The hexagonal answer is: ORM mapping lives in the infrastructure layer, not the domain layer. The domain type is a plain F# record. The `NpgsqlPurchaseOrderRepository.fs` in `Infrastructure/` holds the mapping logic, keeping the domain module completely free of Npgsql:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -507,6 +579,59 @@ type PurchaseOrderRow =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Infrastructure layer: postgres-purchase-order-repository.ts holds all ORM concerns
+// src/procurement-platform/contexts/purchasing/infrastructure/postgres-purchase-order-repository.ts
+// [F#: NpgsqlPurchaseOrderRepository.fs with CLIMutable row record; TS uses a plain row interface + pg]
+import { Pool } from "pg";
+// => pg import is confined to this infrastructure module — domain module never imports pg
+import type { PurchaseOrderId, Money, PurchaseOrder } from "../domain/value-objects";
+// => Import domain types for mapping — infrastructure depends on domain, not the reverse
+
+// Row-level interface matching the purchasing.purchase_orders table columns
+// [F#: [<CLIMutable>] record PurchaseOrderRow — reflection-mapped; TS uses a plain readonly interface]
+interface PurchaseOrderRow {
+  readonly po_id: string;
+  // => snake_case: matches the PostgreSQL column name — ORM concern only in infrastructure
+  readonly supplier_id: string;
+  readonly total_amount: number;
+  readonly currency: string;
+  // => currency stored separately — deserialize to Money in the repository, not in domain
+  readonly status: string;
+  // => No decorator, no TypeORM annotation — stays out of the domain layer
+}
+// => PurchaseOrderRow: the DB-facing shape; PurchaseOrder (domain) is the application-facing type
+// => The mapping between the two is the adapter's sole responsibility
+
+const rowToDomain = (row: PurchaseOrderRow): PurchaseOrder => ({
+  // => Mapping function: DB row → domain aggregate — infrastructure concern only
+  id: row.po_id as PurchaseOrderId,
+  // => Cast from string to branded PurchaseOrderId — safe because DB is the source of truth
+  supplierId: row.supplier_id as PurchaseOrderId,
+  // => [F#: SupplierId wrapper; TS reuses cast pattern — a SupplierId branded type would be added here]
+  totalAmount: { amount: row.total_amount, currency: row.currency } as Money,
+  // => Reconstruct Money from separate DB columns — create-money validation skipped (already persisted)
+  status: row.status as PurchaseOrder["status"],
+  // => "draft" string → domain status literal — infrastructure concern only
+});
+
+const domainToRow = (po: PurchaseOrder): Omit<PurchaseOrderRow, never> => ({
+  // => Inverse mapping: domain aggregate → DB insert parameters
+  po_id: po.id,
+  // => Branded type string value passed directly — pg driver sends it as TEXT
+  supplier_id: po.supplierId,
+  total_amount: po.totalAmount.amount,
+  // => Flatten Money into separate columns — ORM concern stays in this module
+  currency: po.totalAmount.currency,
+  status: po.status,
+  // => Domain literal → string — pg stores as VARCHAR
+});
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The dependency rule flows inward: `Infrastructure` opens `Domain`, never the reverse. In F# project files the compilation order enforces this mechanically — `Domain/ValueObjects.fs` compiles before `Infrastructure/NpgsqlPurchaseOrderRepository.fs`, so the domain module physically cannot open anything from infrastructure.
@@ -525,7 +650,7 @@ Application services are the orchestration layer between the driving adapter (an
 
 F# function types naturally express this signature without any framework. The standard library gives you function composition and `Result` for error propagation:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -587,6 +712,45 @@ let submitPurchaseOrder
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: application service as a plain function with domain types
+// src/procurement-platform/contexts/purchasing/application/submit-purchase-order.ts
+// [F#: module with only Domain import; TS imports only from the domain layer]
+import type { PurchaseOrder } from "../domain/value-objects";
+// => Import only the domain module — no HTTP framework, no JSON, no DB driver
+// => Keeping the application layer free of framework imports preserves testability
+
+// Result type — hand-rolled; production code would use neverthrow
+// [F#: Result<T,E> built-in; TS defines it inline here for zero-dependency stdlib example]
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => Discriminated union on `ok` — callers must narrow before accessing value or error
+
+// Output port type: a function that accepts an aggregate and returns a Result
+// [F#: save: PurchaseOrder -> Result<unit, string> — function parameter; TS uses a function type alias]
+type SavePort = (po: PurchaseOrder) => Result<void, string>;
+// => Port is a plain function type — no interface ceremony
+
+// Application service: takes port + aggregate, returns aggregate-or-error
+// [F#: curried function; TS uses a higher-order function returning the service function]
+export const submitPurchaseOrder =
+  (save: SavePort) =>
+  // => 'save' is the injected output port — agnostic of implementation
+  (po: PurchaseOrder): Result<PurchaseOrder, string> => {
+    // => Aggregate received from the handler after invariant validation
+    // => Signature is entirely in domain terms — no DTO type crosses this boundary
+    const result = save(po);
+    // => Delegates persistence to the injected port — synchronous stdlib version
+    if (!result.ok) return { ok: false, error: result.error };
+    // => Propagate the error string from the port — caller handles it
+    return { ok: true, value: po };
+    // => On success, return the same aggregate the caller passed in
+  };
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: plain strings as error types lose type information. In a real service you want a discriminated union for errors so callers can pattern-match on specific failure modes.
@@ -595,7 +759,7 @@ let submitPurchaseOrder
 
 In the Giraffe stack the HTTP handler owns the DTO translation. The application service never touches `HttpContext`, `System.Text.Json`, or Giraffe types:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -712,6 +876,67 @@ let submitPurchaseOrder
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Production application service
+// src/procurement-platform/contexts/purchasing/application/submit-purchase-order.ts
+// [F#: only Domain + Ports imported; TS mirrors the same import discipline]
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+import type { PurchaseOrderRepository, EventPublisher } from "./ports";
+// => Only domain and port types imported — no Express, no JSON lib, no pg driver
+// => This import boundary makes the application layer unit-testable without a web server
+
+// Typed error union — each failure mode is explicit
+// [F#: SubmitPurchaseOrderError DU — compiler-enforced exhaustive match; TS uses a tagged union]
+export type SubmitPurchaseOrderError =
+  | { readonly kind: "DuplicatePurchaseOrder"; readonly id: PurchaseOrderId }
+  // => Carries the PurchaseOrderId that already exists — callers return HTTP 409
+  | { readonly kind: "InvalidPurchaseOrder"; readonly message: string }
+  // => Carries the validation message — callers return HTTP 400 with this text
+  | { readonly kind: "RepositoryFailure"; readonly cause: unknown };
+// => Wraps the infrastructure error — callers return HTTP 500 and log cause
+// => switch on `kind` at the handler boundary — TS exhaustiveness check with `never` default
+// => Adding a new failure mode requires updating all handler switch sites
+
+// Application service: takes ports + aggregate, returns Promise<aggregate-or-error>
+// [F#: curried function; TS uses nested arrow functions for the same partial-application pattern]
+export const submitPurchaseOrder =
+  (repo: PurchaseOrderRepository, pub: EventPublisher) =>
+  // => repo and pub injected by the composition root via partial application
+  async (
+    po: PurchaseOrder,
+  ): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: SubmitPurchaseOrderError }> => {
+    // => Validated aggregate — the handler called the smart constructor before reaching here
+    // => Signature is entirely in domain and port types — no HTTP context, no DTO
+    const saveResult = await repo.savePurchaseOrder(po);
+    // => Await the repository port — async mirrors F#'s Async computation expression
+    if (!saveResult.ok) {
+      // => saveResult.error is RepositoryError — translate to application-layer error
+      if (saveResult.error.kind === "UniqueConstraintViolation")
+        return { ok: false, error: { kind: "DuplicatePurchaseOrder", id: po.id } };
+      // => Translate infrastructure error to application-layer error variant
+      return { ok: false, error: { kind: "RepositoryFailure", cause: saveResult.error.cause } };
+      // => Wrap the raw cause for the handler to log
+    }
+    const publishResult = await pub.publish({
+      kind: "PurchaseOrderSubmitted",
+      // => Domain event — published after successful save; outbox adapter is atomic
+      purchaseOrderId: po.id,
+      supplierId: po.supplierId,
+      totalAmount: po.totalAmount,
+      approvalLevel: po.approvalLevel,
+    });
+    // => Await the event publisher port — mirrors F#'s do! pub.Publish(...)
+    if (!publishResult.ok) return { ok: false, error: { kind: "RepositoryFailure", cause: publishResult.error } };
+    // => Propagate publish failure — callers return HTTP 500
+    return { ok: true, value: po };
+    // => Success: return the same aggregate — caller translates to HTTP 201
+  };
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: this clean signature forces you to write a mapping function in the handler layer. For thin CRUD endpoints the mapping is boilerplate. For endpoints where the domain aggregate has invariants the payoff is substantial — the application service is a pure function of domain types and can be tested with zero framework setup.
@@ -728,7 +953,7 @@ Output ports define _what_ the application layer needs from the outside world wi
 
 F# function types are first-class. The standard library lets you express any port as a type alias with zero ceremony:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -780,6 +1005,36 @@ type SavePurchaseOrder = PurchaseOrder -> Result<unit, string>
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: function type aliases as output ports
+// src/procurement-platform/contexts/purchasing/application/ports.ts
+// [F#: type alias with no interface keyword; TS uses plain function-type aliases — same zero-ceremony approach]
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+// => Only domain types imported — no pg, no HTTP framework
+
+// Result type — hand-rolled for zero-dependency stdlib example
+// [F#: Result<T,E> built-in; TS defines it here inline]
+type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
+// => Discriminated union on `ok` — callers must narrow before accessing value or error
+
+// Repository port: find a PO by its ID
+// [F#: type FindPurchaseOrder = PurchaseOrderId -> Result<PurchaseOrder option, string> — function alias]
+export type FindPurchaseOrder = (id: PurchaseOrderId) => Result<PurchaseOrder | null, string>;
+// => Plain function type alias — no interface keyword, no abstract class
+// => null signals a missing PO — callers distinguish null from error
+// => Compose multiple ports as separate parameters to the service function
+
+// Repository port: persist a PO
+// [F#: type SavePurchaseOrder = PurchaseOrder -> Result<unit, string>]
+export type SavePurchaseOrder = (po: PurchaseOrder) => Result<void, string>;
+// => void success — the application service trusts the adapter to persist atomically
+// => Error string is the stdlib approach; production version uses a tagged union (see Guide 4)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: plain `Result<_, string>` loses error semantics. The caller cannot distinguish a database connection failure from a uniqueness constraint violation without parsing the string.
@@ -801,7 +1056,7 @@ flowchart LR
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -924,6 +1179,82 @@ type Configuration =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Production port type definitions — application layer only
+// src/procurement-platform/contexts/purchasing/application/ports.ts
+// [F#: module contains only type aliases; TS file exports only types — no implementation, no I/O]
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+// => Domain types are the only import — ports are defined in application-layer terms
+
+// Repository error as a typed tagged union
+// [F#: RepositoryError DU — compiler-enforced exhaustive pattern matching; TS uses a discriminated union]
+export type RepositoryError =
+  | { readonly kind: "NotFound"; readonly id: PurchaseOrderId }
+  // => Read-side: a missing PO is surfaced as NotFound — callers return HTTP 404
+  | { readonly kind: "UniqueConstraintViolation" }
+  // => Write-side: the DB raised a uniqueness constraint — callers return HTTP 409
+  | { readonly kind: "ConnectionFailure"; readonly cause: unknown };
+// => Infrastructure failure: carry the cause for logging; callers return HTTP 500
+// => switch on `kind` at the call site — TS exhaustiveness check with `never` default
+// => Adding a new DB error mode requires all handler switch sites to handle it
+
+// Repository port as an interface — groups read and write operations under one type
+// [F#: PurchaseOrderRepository record-of-functions; TS uses an interface — same structural contract]
+export interface PurchaseOrderRepository {
+  findPurchaseOrder(
+    id: PurchaseOrderId,
+  ): Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: RepositoryError }>;
+  // => Async because the pg adapter performs I/O — mirrors F#'s Async return type
+  // => null value signals a missing PO — not an error, a valid domain outcome
+  savePurchaseOrder(po: PurchaseOrder): Promise<{ ok: true } | { ok: false; error: RepositoryError }>;
+  // => void-equivalent success — application service trusts the adapter to persist atomically
+  // => RepositoryError wraps pg exceptions at the adapter boundary
+}
+// => The pg adapter satisfies this interface in production
+// => The in-memory test stub (Map-backed) also satisfies it
+
+// Event publisher port — single publish operation
+// [F#: EventPublisher record { Publish: DomainEvent -> Async<Result<unit, string>> }]
+export interface EventPublisher {
+  publish(event: DomainEvent): Promise<{ ok: true } | { ok: false; error: string }>;
+  // => Async publish — outbox adapter is atomic with the DB commit in production
+  // => In-memory stub satisfies this in tests; no mocking framework needed
+}
+
+// Domain event type — used by EventPublisher
+// [F#: DomainEvent discriminated union — typed variants; TS uses a tagged union]
+export type DomainEvent = {
+  readonly kind: "PurchaseOrderSubmitted";
+  // => Event type discriminant — consumers switch on this field
+  readonly purchaseOrderId: PurchaseOrderId;
+  readonly supplierId: string;
+  readonly totalAmount: { readonly amount: number; readonly currency: string };
+  readonly approvalLevel: string;
+};
+
+// Clock port — swappable for deterministic tests
+// [F#: type Clock = unit -> System.DateTimeOffset — function alias; TS uses a 0-arity function type]
+export type Clock = () => Date;
+// => The real adapter calls `new Date()` on each invocation
+// => Tests inject `() => new Date("2025-01-01")` — deterministic without mocking frameworks
+
+// Configuration port — typed readonly record, read once at startup
+// [F#: Configuration record { DatabaseUrl: string; ApprovalThresholdL1: decimal; ... }]
+export type Configuration = Readonly<{
+  databaseUrl: string;
+  // => pg connection string — injected from environment variable at startup
+  approvalThresholdL1: number;
+  // => Dollar threshold for L1 approval (default 1000) — externalized for tuning
+  approvalThresholdL2: number;
+  // => Dollar threshold for L2 approval (default 10000)
+}>;
+// => Readonly record: read once at startup; adapter reads from process.env + secret manager
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: function type aliases are lightweight but single-method. When a port grows to five or six operations, grouping them in a record of functions keeps the application service parameter list manageable. A record-of-functions port is a natural next step when the function-alias approach feels like parameter explosion.
@@ -940,7 +1271,7 @@ The Giraffe handler is the primary (driving) adapter in the hexagonal architectu
 
 F# functions compose naturally. Without Giraffe you would write an ASP.NET Core `RequestDelegate` directly — a `Func<HttpContext, Task>`. The standard library gives you the composition, but the ceremony is high:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1008,6 +1339,33 @@ let healthHandler : RequestDelegate =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: Node.js http.IncomingMessage handler without an HTTP framework
+// [F#: RequestDelegate (ASP.NET Core); TS uses Node's http.createServer callback]
+import { IncomingMessage, ServerResponse } from "node:http";
+// => Node.js built-in http module — no Express, no Fastify dependency
+
+export const healthHandler = (_req: IncomingMessage, res: ServerResponse): void => {
+  // => RequestListener is (IncomingMessage, ServerResponse) => void — the Node.js handler contract
+  // [F#: Func<HttpContext, Task> — imperative mutation of ctx; TS mutates ServerResponse similarly]
+  const body = JSON.stringify({ status: "healthy" });
+  // => JSON.stringify: stdlib JSON serializer — no external library needed
+  // => Express's res.json() and Fastify's reply.send() call this internally
+  res.writeHead(200, { "Content-Type": "application/json" });
+  // => Set status code and Content-Type header manually — no automatic negotiation
+  // => writeHead must be called before res.end(); headers sent on first write
+  res.end(body);
+  // => Write response body and close the connection
+  // => res.end() is synchronous for string payloads — no await needed here
+};
+// => Pure imperative adapter — testable by passing mock IncomingMessage and ServerResponse objects
+// => Framework route registration wraps this function (see Production Framework below)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: composition is verbose. Chaining middleware, routing, and authorization requires manual `next` threading. Giraffe's `HttpHandler` type (`HttpContext -> Task<HttpContext option>`) composes cleanly with `>=>` (fish operator).
@@ -1016,7 +1374,7 @@ let healthHandler : RequestDelegate =
 
 The health handler shows the minimal Giraffe adapter. A domain-backed handler for `POST /api/v1/purchase-orders` follows the same pattern but adds the translation steps:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1252,11 +1610,117 @@ let handleSubmit
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Express handler — primary (driving) adapter for purchase order submission
+// src/procurement-platform/contexts/purchasing/presentation/purchasing-handlers.ts
+// [F#: Giraffe HttpHandler; TS uses Express RequestHandler — same adapter role]
+import { Request, Response } from "express";
+// => Express types: Request, Response — HTTP framework imports confined to presentation layer
+import type { PurchaseOrderRepository, EventPublisher, Clock } from "../application/ports";
+// => Ports: injected by the composition root — no pg, no outbox import here
+import { createMoney, PurchaseOrderId, SupplierId } from "../domain/value-objects";
+// => Domain smart constructors — handler calls these before reaching the application service
+import { submitPurchaseOrder } from "../application/submit-purchase-order";
+// => Application service — presentation layer calls it; never the reverse
+// => Four imports only: no pg driver, no pg imports — handler is a pure adapter
+
+// Request DTO shape — deserialized from JSON by Express's body-parser middleware
+// [F#: [<CLIMutable>] record — reflection-based; TS uses a plain interface for the parsed body]
+interface SubmitPurchaseOrderRequest {
+  readonly supplierId: string;
+  // => Raw string UUID at the boundary — smart constructor wraps it into SupplierId
+  readonly totalAmount: number;
+  // => Raw number: smart constructor validates >= 0 and currency
+  readonly currency: string;
+  // => ISO 4217 currency code: smart constructor validates 3-letter format
+}
+
+// UnitOfMeasure string → domain literal mapping
+// [F#: parseUnit pattern match with catch-all; TS uses a lookup object — same O(1) semantics]
+const UNIT_MAP: Readonly<Record<string, string>> = {
+  Each: "Each",
+  // => Exact match: client must send "Each", not "each"
+  Box: "Box",
+  // => Box: carton-counted line items
+  Kg: "Kg",
+  // => Kg: weight-based line items
+  Litre: "Litre",
+  // => Litre: volume-based line items
+  Hour: "Hour",
+  // => Hour: service or time-based line items
+} as const;
+
+// Handler factory: returns an Express RequestHandler with ports captured in closure
+// [F#: curried function returning HttpHandler; TS returns an Express middleware function]
+export const handleSubmit =
+  (repo: PurchaseOrderRepository, pub: EventPublisher, clock: Clock) =>
+  // => repo, pub, clock injected by the composition root via partial application
+  async (req: Request, res: Response): Promise<void> => {
+    // => async RequestHandler — mirrors F#'s task { ... } computation expression
+    const dto = req.body as SubmitPurchaseOrderRequest;
+    // => Express body-parser has already parsed JSON — req.body is the plain object
+
+    // Step 1: DTO → domain types via smart constructors
+    const moneyResult = createMoney(dto.totalAmount, dto.currency);
+    // => Smart constructor evaluated — Result discriminates ok/error at compile time
+    if (!moneyResult.ok) {
+      res.status(400).json({ error: moneyResult.error });
+      // => HTTP 400: domain validation failed — translate at the adapter boundary
+      return;
+    }
+    // => moneyResult.value: Money is valid — safe to use in domain logic below
+
+    const po = {
+      id: PurchaseOrderId(crypto.randomUUID()),
+      // => crypto.randomUUID(): stdlib UUID v4 — composition root can inject an IdGenerator port
+      supplierId: SupplierId(dto.supplierId),
+      // => Wrap raw string into branded SupplierId — smart constructor
+      totalAmount: moneyResult.value,
+      // => Validated Money value — only valid Money reaches domain logic
+      status: "Draft" as const,
+      // => "Draft": all new POs start in Draft status — const assertion narrows the type
+      createdAt: clock(),
+      // => clock(): port call — frozen to a fixed Date in tests
+    };
+    // => Build the domain aggregate from validated value objects
+
+    // Step 2: aggregate → application service → domain result
+    const svcResult = await submitPurchaseOrder(repo, pub)(po);
+    // => Application service awaited — mirrors F#'s match! (Async resolution)
+    if (!svcResult.ok) {
+      const err = svcResult.error;
+      // => err is SubmitPurchaseOrderError — switch on kind for typed dispatch
+      switch (err.kind) {
+        case "DuplicatePurchaseOrder":
+          res.status(409).json({ error: `PurchaseOrder ${err.id} already exists` });
+          // => HTTP 409: typed switch branch, not string parsing
+          return;
+        case "InvalidPurchaseOrder":
+          res.status(400).json({ error: err.message });
+          // => HTTP 400: validation failed in the application service
+          return;
+        case "RepositoryFailure":
+          console.error("Repository failure:", err.cause);
+          // => Log the raw cause before discarding it from the response
+          res.status(500).json({ error: "Repository unavailable" });
+          return;
+      }
+    }
+    // => Step 3: domain aggregate → response DTO → HTTP 201
+    res.status(201).json({ purchaseOrderId: svcResult.value.id });
+    // => 201 Created: serialize only the ID — the handler owns the response shape
+  };
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The routing wires the handler to a URL in `Program.fs`:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1324,6 +1788,65 @@ let webApp (repo: PurchaseOrderRepository) (pub: EventPublisher) (clock: Clock) 
     ;; => Default handler: returns 404 for unmatched routes
     ;; [F#: RequestErrors.NOT_FOUND "Not Found" as the catch-all in Giraffe choose]
     ))
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// composition/program.ts: Express routes declare what handlers respond to what URLs
+// src/procurement-platform/composition/program.ts
+// [F#: Giraffe choose + route + routef; TS uses Express Router with explicit method mounts]
+import express, { type Router } from "express";
+// => express: minimal HTTP framework — Router groups related routes under one object
+// => [F#: webApp returns an HttpHandler; TS makeWebApp returns an Express Router]
+import type { PurchaseOrderRepository, EventPublisher, Clock } from "../contexts/purchasing/application/ports";
+// => Port interfaces imported at the composition root — no concrete adapters imported here
+// => [F#: open Ports brings type aliases; TS imports the interface shapes only]
+import { makePurchasingRouter } from "../contexts/purchasing/presentation/purchasing-handlers";
+// => makePurchasingRouter: factory that returns a Router with repo, pub, clock in closure
+// => [F#: PurchasingHandlers.handleSubmit partially applied; TS uses a router factory]
+
+// makeWebApp: composition root wires all ports into a fully-configured Express Router
+// [F#: webApp curried function returning HttpHandler with ports partially applied]
+export function makeWebApp(
+  repo: PurchaseOrderRepository,
+  // => repo: PurchaseOrderRepository interface — pg adapter in production; Map stub in tests
+  pub: EventPublisher,
+  // => pub: EventPublisher interface — outbox adapter in production; no-op stub in tests
+  clock: Clock,
+  // => Three ports injected by the composition root — no global state, no service locator
+): Router {
+  const router = express.Router();
+  // => express.Router(): creates a scoped router — mounted at "/" in the app entry point
+
+  router.get("/api/v1/health", (_req, res) => {
+    // => GET /api/v1/health: inline health check — no domain port needed
+    // => [F#: GET >=> route "/api/v1/health" >=> json {| status = "healthy" |}]
+    res.json({ status: "healthy" });
+    // => Responds with 200 + JSON body — Express sets Content-Type automatically
+  });
+
+  router.use(
+    // => router.use: mount the purchasing sub-router under the root path
+    // => [F#: POST + GET routes declared inline; TS delegates to a dedicated router factory]
+    makePurchasingRouter(repo, pub, clock),
+    // => makePurchasingRouter returns a Router with /api/v1/purchase-orders routes bound
+    // => Ports are captured in closure — composition root owns their lifecycle
+  );
+
+  router.use((_req, res) => {
+    // => Catch-all: any unmatched route returns 404
+    // => [F#: RequestErrors.NOT_FOUND "Not Found" as the last entry in Giraffe choose]
+    res.status(404).json({ error: "Not Found" });
+    // => Explicit 404: consistent JSON shape — no framework-default HTML error page
+  });
+
+  return router;
+  // => Router returned as a pure value — no side effects at construction time
+  // => [F#: HttpHandler is also a pure value; both are composed at the entry point]
+}
 ```
 
 {{< /tab >}}

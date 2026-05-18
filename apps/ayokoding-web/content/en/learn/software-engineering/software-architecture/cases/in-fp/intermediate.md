@@ -28,7 +28,7 @@ A repository port is the seam that separates your application layer from the dat
 
 F# lets you alias any function type with a single `type` declaration. The standard library gives you the full type system but no I/O primitive for PostgreSQL — you would fall back to `System.Data.Common.DbConnection` and raw SQL strings:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -101,6 +101,50 @@ type SavePurchaseOrder = PurchaseOrder -> IDbConnection -> Result<unit, exn>
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: repository port as bare function types over node's built-in pg client
+// src/procurement-platform/contexts/purchasing/application/ports.ts
+// [F#: module with type aliases over System.Data — TS uses ES module with type aliases]
+
+import type { Client } from "pg";
+// => pg: node-postgres stdlib-level client — no connection pool, no ORM
+// => Synchronous-style: pg Client operations are callback/Promise-based; no thread-pool concern here
+// [F#: IDbConnection — TS uses pg.Client as the raw connection handle]
+
+// Branded ID — prevents passing a SupplierId where a PurchaseOrderId is expected
+// [F#: single-case DU PurchaseOrderId of Guid — TS uses branded primitive for compile-time safety]
+export type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
+// => Branded string: identical to F# single-case DU but no runtime wrapper cost
+
+// Minimal inline Result type — no dependency needed for stdlib illustration
+// [F#: Result<'T, 'E> is built-in — TS stdlib has no Result; we define a small inline alias]
+type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
+// => Tagged union: { ok: true } branch carries the value; { ok: false } branch carries the error
+// => Using neverthrow in production (Guide 7 production section) replaces this inline type
+
+// Read port — synchronous-style function type (mirrors F# stdlib approach)
+// [F#: type FindPurchaseOrder = PurchaseOrderId -> IDbConnection -> Result<PurchaseOrder option, exn>]
+export type FindPurchaseOrder = (
+  poId: PurchaseOrderId,
+  conn: Client,
+  // => Client: raw pg connection — caller must open, pass, and close it manually
+) => Promise<Result<PurchaseOrder | null, Error>>;
+// => Promise: pg operations are async; synchronous DB calls are not possible in Node.js
+// => null represents absence (Option/None) — standard in TS stdlib-style code
+// => Error: opaque catch-all — caller cannot distinguish constraint from connection failure
+
+// Write port — synchronous-style function type
+// [F#: type SavePurchaseOrder = PurchaseOrder -> IDbConnection -> Result<unit, exn>]
+export type SavePurchaseOrder = (po: PurchaseOrder, conn: Client) => Promise<Result<void, Error>>;
+// => void success mirrors F# unit — caller does not re-read after a successful save
+// => Error is untyped: UniqueConstraintViolation vs ConnectionFailure must be inferred from message
+// => Limitation: manual Client threading — caller opens, passes, and closes the connection
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: `IDbConnection` threading is manual and error-prone. `exn` as the error type is untyped. Async is absent — synchronous DB calls block ASP.NET Core's thread pool under load.
@@ -127,7 +171,7 @@ flowchart LR
 
 The application layer port record:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -210,11 +254,56 @@ type PurchaseOrderRepository =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Production port record — application layer, no pg/postgres import
+// src/procurement-platform/contexts/purchasing/application/ports.ts
+// [F#: module with type aliases — TS ES module; same isolation invariant]
+
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+// => Only domain types — no pg, no pool library, no ORM
+// => This is the isolation invariant: application layer has zero infrastructure imports
+
+// Typed error discriminated union — replaces F# stdlib's opaque exn
+// [F#: type RepositoryError DU — TS uses a tagged union with a readonly discriminant]
+export type RepositoryError =
+  | { readonly kind: "NotFound"; readonly poId: PurchaseOrderId }
+  // => Read-side: a missing PO is a domain outcome, not an infrastructure failure
+  | { readonly kind: "UniqueConstraintViolation" }
+  // => Write-side: pg raises error code 23505 on duplicate primary key
+  | { readonly kind: "ConnectionFailure"; readonly cause: unknown };
+// => Infrastructure failure: carry the raw thrown value for logging; callers return HTTP 500
+// [F#: DU cases — TS uses a literal string discriminant on a readonly object union]
+
+// Result type from neverthrow — used throughout production guides
+// [F#: Result<'T, 'E> built-in — TS: neverthrow provides the same semantics]
+import type { Result } from "neverthrow";
+// => neverthrow: ok(value) | err(error) — the two branches mirror F#'s Ok/Error
+
+// Repository port as a function-type record — canonical shape used across all guides
+// [F#: type PurchaseOrderRepository record-of-functions — TS uses a readonly object type]
+export type PurchaseOrderRepository = {
+  readonly findPurchaseOrder: (poId: PurchaseOrderId) => Promise<Result<PurchaseOrder | null, RepositoryError>>;
+  // => Promise: pg operations are async — never blocks the Node.js event loop
+  // => PurchaseOrder | null: null represents Option None — a missing row is a valid outcome
+  // [F#: Async<Result<PurchaseOrder option, RepositoryError>> — TS uses Promise<Result<T|null, E>>]
+  readonly savePurchaseOrder: (po: PurchaseOrder) => Promise<Result<void, RepositoryError>>;
+  // => void success: caller does not re-read after a successful save
+  // => Adapter wraps pg's error codes into RepositoryError at the seam
+  // [F#: record literal field — TS readonly property; both pg and in-memory adapters satisfy this shape]
+};
+// => Object type with readonly fields: the pg adapter and in-memory test stub both satisfy it
+// => Application service receives one value, not two function parameters
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The Npgsql adapter in the infrastructure layer satisfies the port record. It opens a connection from the pool and translates database exceptions:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -415,6 +504,125 @@ let npgsqlPurchaseOrderRepository (connStr: string) : PurchaseOrderRepository =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Production pg adapter — infrastructure layer only
+// src/procurement-platform/contexts/purchasing/infrastructure/pg-purchase-order-repository.ts
+// [F#: module NpgsqlPurchaseOrderRepository — TS uses a factory function returning the port object]
+
+import { Pool, DatabaseError } from "pg";
+// => pg Pool: manages connections — equivalent to Npgsql's built-in connection pool
+// => DatabaseError: pg's typed error class carrying the SQLSTATE code
+// [F#: open Npgsql — TS imports Pool + DatabaseError from "pg"]
+import { ok, err, type Result } from "neverthrow";
+// => neverthrow: ok(v) and err(e) constructors — mirrors F# Ok/Error
+import type { PurchaseOrderRepository, RepositoryError } from "../application/ports";
+// => Port type: the adapter must satisfy PurchaseOrderRepository exactly
+// [F#: open ProcurementPlatform.Contexts.Purchasing.Application.Ports]
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+// => Domain types: PurchaseOrder, PurchaseOrderId — adapter translates DB row ↔ domain
+
+// Row → domain translation — private to this module
+// [F#: purchaseOrderRowToDomain — private function, same purpose]
+const rowToPurchaseOrder = (row: Record<string, unknown>): PurchaseOrder => ({
+  id: row.po_id as PurchaseOrderId,
+  // => Cast the raw UUID string to branded PurchaseOrderId — valid because DB enforces uniqueness
+  supplierId: row.supplier_id as string,
+  // => Supplier UUID passes through directly — no DU unwrapping needed in TS
+  totalAmount: { amount: row.total_amount as number, currency: row.currency as string },
+  // => Reconstruct Money value object from two separate columns
+  status: row.status as "draft" | "submitted" | "approved" | "cancelled",
+  // => Cast varchar back to the literal union — DB stores only valid status strings
+  createdAt: new Date(row.created_at as string),
+  // => Parse timestamptz string to Date — pg returns ISO 8601 strings for timestamptz columns
+});
+// [F#: record expression mapping — TS uses an object literal returned from a pure function]
+
+// pg adapter factory satisfying PurchaseOrderRepository
+// [F#: let npgsqlPurchaseOrderRepository (connStr: string) : PurchaseOrderRepository]
+export const makePgPurchaseOrderRepository = (
+  pool: Pool,
+  // => Pool: injected by the composition root — shared per process, not per request
+): PurchaseOrderRepository => ({
+  // => Object literal matching PurchaseOrderRepository exactly — TS structural typing enforces this
+  // [F#: record literal { SavePurchaseOrder = ...; FindPurchaseOrder = ... }]
+
+  savePurchaseOrder: async (po) => {
+    // => async arrow function: Node.js I/O is always async — no thread-pool blocking concern
+    // [F#: fun po -> async { ... } — TS uses async/await instead of computation expressions]
+    const client = await pool.connect();
+    // => pool.connect(): borrows a connection — must be released in finally
+    // [F#: use conn = new NpgsqlConnection(connStr) — TS uses try/finally for manual release]
+    try {
+      await client.query(
+        `INSERT INTO purchasing.purchase_orders
+         (po_id, supplier_id, total_amount, currency, status, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          po.id,
+          // => Branded PurchaseOrderId is a string at runtime — pg accepts it as uuid
+          po.supplierId,
+          // => Supplier UUID string — pg maps to uuid column
+          po.totalAmount.amount,
+          // => Decimal as number — pg maps to NUMERIC column
+          po.totalAmount.currency,
+          // => ISO 4217 currency code string — stored as varchar
+          po.status,
+          // => Literal union string — stored as varchar status
+          po.createdAt.toISOString(),
+          // => ISO 8601 string — pg maps to timestamptz column
+        ],
+      );
+      return ok(undefined);
+      // => ok(undefined): mirrors F# Ok () — void success; caller does not re-read
+    } catch (e) {
+      if (e instanceof DatabaseError && e.code === "23505") {
+        // => SQLSTATE 23505: unique_violation — same code as Npgsql's SqlState "23505"
+        // [F#: :? PostgresException as ex when ex.SqlState = "23505"]
+        return err({ kind: "UniqueConstraintViolation" } satisfies RepositoryError);
+        // => Translate to typed RepositoryError — application layer never sees the raw DatabaseError
+      }
+      return err({ kind: "ConnectionFailure", cause: e } satisfies RepositoryError);
+      // => All other errors: connection timeout, pool exhaustion — caller logs and returns HTTP 500
+    } finally {
+      client.release();
+      // => release(): returns connection to the pool — equivalent to F# use binding disposal
+    }
+  },
+
+  findPurchaseOrder: async (poId) => {
+    // [F#: fun (PurchaseOrderId poId) -> async { ... } — TS receives the branded string directly]
+    const client = await pool.connect();
+    // => Fresh connection borrow per call — pool manages the underlying socket
+    try {
+      const result = await client.query(
+        "SELECT * FROM purchasing.purchase_orders WHERE po_id = $1",
+        [poId],
+        // => $1 parameterized query — prevents SQL injection; pg maps branded string to uuid column
+      );
+      if (result.rows.length === 0) {
+        return ok(null);
+        // => ok(null): mirrors F# Ok None — absence of a row is a valid domain outcome, not an error
+        // [F#: return Ok None — TS uses null instead of option to represent absence]
+      }
+      return ok(rowToPurchaseOrder(result.rows[0]));
+      // => Row found: translate DB row to domain aggregate and wrap in ok
+      // [F#: return Ok (Some (purchaseOrderRowToDomain row)) — TS uses ok(T) not ok(Some(T))]
+    } catch (e) {
+      return err({ kind: "ConnectionFailure", cause: e } satisfies RepositoryError);
+      // => Any database error becomes ConnectionFailure — caller logs and returns HTTP 500
+      // => Includes connection timeouts, SSL errors, and unexpected PostgreSQL errors
+    } finally {
+      client.release();
+      // => Always release — even on error; mirrors F# use binding's guaranteed disposal
+    }
+  },
+});
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: Dapper maps result rows to F# records efficiently without a full ORM change-tracker overhead. For write-heavy aggregates, Dapper's explicit SQL gives you fine-grained control over the INSERT shape. For read-heavy workloads, the lack of a change-tracker means no accidental N+1 queries. Npgsql-specific error codes (`SqlState`) are stable within PostgreSQL major versions — test your error handling against the target server version.
@@ -431,7 +639,7 @@ An integration test that hits a real PostgreSQL database is slow, requires Docke
 
 F# mutable dictionaries and `ref` cells give you an in-memory store with no dependencies:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -481,6 +689,30 @@ let inMemorySave (po: obj) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: in-memory store using a global Map<string, unknown>
+// [F#: global Dictionary<Guid, string> — TS uses Map keyed by string]
+
+const store = new Map<string, unknown>();
+// => Global mutable Map: not isolated between tests — parallel execution corrupts state
+// => Map<string, unknown>: untyped value — compiler cannot enforce PurchaseOrder shape
+// [F#: Dictionary<Guid, string> — TS Map is reference-typed; no structural copying]
+
+const inMemorySave = (po: unknown): { ok: true; value: void } => {
+  // => unknown parameter: no type safety — any value accepted; mirrors F# obj
+  store.set(crypto.randomUUID(), JSON.stringify(po));
+  // => crypto.randomUUID(): generates a random key — not keyed by po's own identity
+  // => JSON.stringify: serialization loses class instances and undefined fields
+  // => Limitation: keyed by random UUID — findPurchaseOrder cannot retrieve by PO identity
+  return { ok: true, value: undefined };
+  // => Inline success result — no neverthrow dependency for this stdlib illustration
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: global mutable state fails under parallel test execution. Untyped storage introduces silent type mismatch bugs. The adapter does not satisfy the `PurchaseOrderRepository` record — a different shape means a different seam, not the same seam with a different implementation.
@@ -489,7 +721,7 @@ let inMemorySave (po: obj) =
 
 The in-memory adapter satisfies the same `PurchaseOrderRepository` record as the Npgsql adapter. It uses an F# `Map` (immutable) wrapped in a `ref` cell for thread-safety in tests:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -608,11 +840,72 @@ let inMemoryPurchaseOrderRepository (store: Map<PurchaseOrderId, PurchaseOrder> 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// In-memory adapter satisfying PurchaseOrderRepository
+// src/procurement-platform/contexts/purchasing/infrastructure/in-memory-purchase-order-repository.ts
+// [F#: module InMemoryPurchaseOrderRepository — TS uses a factory function]
+
+import { ok, err, type Result } from "neverthrow";
+// => neverthrow: ok/err constructors — mirrors F# Ok/Error
+import type { PurchaseOrderRepository, RepositoryError } from "../application/ports";
+// => Port type: the adapter must satisfy PurchaseOrderRepository exactly
+// [F#: open Ports — TS imports the exact type to enforce structural match]
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+// => Domain types: PurchaseOrder, PurchaseOrderId — adapter stores typed values
+
+// Per-test-instance store factory — returns a fresh isolated Map
+// [F#: let makeStore () = ref Map.empty — TS returns a new Map object per call]
+export const makeStore = (): Map<PurchaseOrderId, PurchaseOrder> => new Map<PurchaseOrderId, PurchaseOrder>();
+// => new Map(): creates an empty typed store — no global state; parallel tests are safe
+// => Calling makeStore() in each test gives an isolated store instance
+// => Map<PurchaseOrderId, PurchaseOrder>: typed — compiler prevents storing the wrong value
+
+// In-memory adapter factory satisfying PurchaseOrderRepository
+// [F#: let inMemoryPurchaseOrderRepository (store: Map ref) : PurchaseOrderRepository]
+export const makeInMemoryPurchaseOrderRepository = (
+  store: Map<PurchaseOrderId, PurchaseOrder>,
+  // => store: injected per-test instance — same closure pattern as the pg adapter
+): PurchaseOrderRepository => ({
+  // => Object literal matching PurchaseOrderRepository exactly — TS structural typing enforces this
+  // [F#: record literal { SavePurchaseOrder = ...; FindPurchaseOrder = ... }]
+
+  savePurchaseOrder: async (po) => {
+    // => async arrow: maintains identical async calling convention to the pg adapter
+    // [F#: fun po -> async { ... } — TS uses async/await instead of computation expressions]
+    if (store.has(po.id)) {
+      // => Map.has: O(1) lookup — checks for duplicate before insert
+      // [F#: Map.tryFind po.Id !store — TS uses Map.has for the duplicate check]
+      return err({ kind: "UniqueConstraintViolation" } satisfies RepositoryError);
+      // => Mirror the pg adapter's behavior exactly — tests that check duplicates work identically
+    }
+    store.set(po.id, po);
+    // => Map.set: inserts or overwrites — no mutation of the Map reference; the store grows
+    // => In-memory: no network I/O — still async to match the port's Promise return type
+    return ok(undefined);
+    // => ok(undefined): mirrors F# Ok () — caller does not re-read after a successful save
+  },
+
+  findPurchaseOrder: async (poId) => {
+    // [F#: fun poId -> async { return Ok (Map.tryFind poId !store) }]
+    const po = store.get(poId) ?? null;
+    // => Map.get: O(1) lookup — returns PurchaseOrder or undefined; coerce to null for port contract
+    // => null: represents absence (Option None) — same semantics as the pg adapter
+    return ok(po);
+    // => ok(po): a missing PO is a valid outcome, not an error — identical to pg adapter semantics
+    // [F#: return Ok (Map.tryFind poId !store) — TS returns ok(T|null)]
+  },
+});
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 A test wires the in-memory adapter at the application service seam:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -742,6 +1035,87 @@ let ``submitPurchaseOrder stores a valid PO`` () =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Integration test using the in-memory adapter — no Docker, no PostgreSQL
+// src/procurement-platform/contexts/purchasing/__tests__/submit-purchase-order.test.ts
+// [F#: module SubmitPurchaseOrderTests — TS uses a Vitest describe block]
+
+import { describe, it, expect } from "vitest";
+// => Vitest: test framework — describe/it/expect mirrors xUnit [<Fact>]
+import { makeStore, makeInMemoryPurchaseOrderRepository } from "../infrastructure/in-memory-purchase-order-repository";
+// => Bring store factory and adapter factory into scope
+// [F#: open InMemoryPurchaseOrderRepository — TS imports named exports]
+import { submitPurchaseOrder } from "../application/submit-purchase-order";
+// => Application service under test — imported directly; no DI container
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+// => Domain types needed to construct the test aggregate
+import type { EventPublisher } from "../application/ports";
+// => Port type: null publisher must satisfy EventPublisher structurally
+
+describe("submitPurchaseOrder", () => {
+  // [F#: module-level test group — TS uses describe for grouping]
+
+  it("stores a valid PO via the in-memory adapter", async () => {
+    // => async test: application service returns a Promise — await it directly
+    // [F#: async { ... } |> Async.RunSynchronously — TS uses async/await in test body]
+
+    const store = makeStore();
+    // => Fresh Map per test — no shared state; parallel tests are safe
+    // [F#: let store = makeStore () — TS makeStore() returns a new Map]
+    const repo = makeInMemoryPurchaseOrderRepository(store);
+    // => PurchaseOrderRepository object — wired directly, no DI container
+
+    const nullPub: EventPublisher = {
+      // => Null publisher: satisfies EventPublisher structurally — no broker needed
+      // [F#: { Publish = fun _ -> async { return Ok () } }]
+      publish: async () => ({ ok: true, value: undefined }),
+      // => ok: true: mirrors F# Ok () — publisher contract satisfied with no side effect
+    };
+
+    const poId = crypto.randomUUID() as PurchaseOrderId;
+    // => Branded cast: crypto.randomUUID() is a string; cast to PurchaseOrderId for type safety
+    const po: PurchaseOrder = {
+      // => Build the domain aggregate directly — mirrors F# smart constructor output
+      id: poId,
+      // => PurchaseOrderId branded string — uniquely identifies this test PO
+      supplierId: crypto.randomUUID(),
+      // => Supplier UUID — irrelevant for this test; any valid UUID works
+      totalAmount: { amount: 500, currency: "USD" },
+      // => Money value object — 500 USD; mirrors createMoney 500m "USD" result
+      status: "draft",
+      // => Initial state: all POs start as draft before submission
+      createdAt: new Date(),
+      // => Current timestamp — frozen clock is shown in advanced guides
+    };
+
+    const result = await submitPurchaseOrder(repo, nullPub, po);
+    // => submitPurchaseOrder: application service from Guide 4
+    // => Awaited: no Async.RunSynchronously needed — TS async/await handles this
+    expect(result.ok).toBe(true);
+    // [F#: | Ok saved -> Assert.Equal(...) — TS uses Vitest expect().toBe()]
+
+    if (result.ok) {
+      expect(result.value.id).toBe(po.id);
+      // => Saved aggregate ID matches input — no mutation occurred
+      // [F#: Assert.Equal(po.Id, saved.Id)]
+      const found = await repo.findPurchaseOrder(po.id);
+      // => Verify the adapter persisted the PO in the Map store
+      expect(found.ok).toBe(true);
+      // => found is ok: a stored PO is retrievable by its ID
+      // [F#: Assert.Equal(Ok (Some saved), found) — TS unwraps the Result explicitly]
+      if (found.ok) {
+        expect(found.value?.id).toBe(po.id);
+        // => The stored PO matches the saved aggregate by ID
+      }
+    }
+  });
+});
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the in-memory adapter faithfully mirrors the Npgsql adapter's semantics only as far as you code it. If the Npgsql adapter introduces a new `RepositoryError` variant (e.g., `SerializationFailure`), the in-memory adapter must be updated too. Use the compiler: both adapters satisfy the same record type, so adding a new `RepositoryError` variant causes a compile error in both. That is the intended effect — the compiler enforces adapter parity.
@@ -758,7 +1132,7 @@ A domain event publisher port solves the same problem as a repository port, but 
 
 F# `Event<_>` and `IEvent<_>` are the stdlib's in-process pub/sub primitives. They work within a single process but provide no persistence, no retry, and no cross-process delivery:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -833,6 +1207,48 @@ let publish (event: PurchasingEvent) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: in-process event using Node.js EventEmitter
+// src/procurement-platform/contexts/purchasing/domain/events.ts
+// [F#: F# Event<_> — TS uses Node.js EventEmitter as the stdlib pub/sub primitive]
+
+import { EventEmitter } from "node:events";
+// => EventEmitter: Node.js stdlib — no npm dependency; ships with every Node.js runtime
+// [F#: open System — Event<_> ships with every .NET runtime]
+
+// Domain event tagged union — plain discriminated by a literal string field
+// [F#: type PurchasingEvent DU — TS uses a tagged union with a readonly kind discriminant]
+export type PurchasingEvent =
+  | { readonly kind: "PurchaseOrderSubmitted"; readonly poId: string; readonly supplierId: string }
+  // => Carries only primitive types — safe to serialize, safe to log
+  // => No domain aggregate reference — events are immutable facts, not live objects
+  | { readonly kind: "PurchaseOrderIssued"; readonly poId: string };
+// => Issued events carry only the PO ID — downstream contexts fetch details via ACL
+
+// In-process publisher using EventEmitter
+// [F#: let private publisher = Event<PurchasingEvent>() — TS uses a module-private EventEmitter]
+const emitter = new EventEmitter();
+// => Module-private: not exported — external callers use publish() and subscribe() only
+// => Single-process only: subscribers live in the same Node.js process
+// => No persistence: if the process crashes, all subscriptions are lost
+
+const EVENT_CHANNEL = "purchasing:event";
+// => Single channel name — all PurchasingEvent variants flow through one channel
+// => Subscribers discriminate by kind field, not by channel name
+
+export const publish = (event: PurchasingEvent): void => {
+  // [F#: publisher.Trigger(event) — TS uses emitter.emit()]
+  emitter.emit(EVENT_CHANNEL, event);
+  // => emit: fire-and-forget — all registered listeners called synchronously
+  // => If a listener throws, the exception propagates to the publish() caller
+  // => No retry, no dead-letter queue, no outbox guarantee
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: in-process events die with the process. If the application crashes after saving the aggregate but before publishing the event, the event is lost. The at-least-once delivery guarantee requires an outbox.
@@ -857,7 +1273,7 @@ flowchart LR
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -947,6 +1363,57 @@ type ApprovalRouterPort =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Domain event publisher port — function-type record style
+// src/procurement-platform/contexts/purchasing/application/ports.ts (extended)
+// [F#: module Ports extended — TS adds new exports to the same module]
+
+import type { PurchaseOrderId, ApprovalLevel } from "../domain/value-objects";
+// => Only domain types — no messaging library imported here
+// [F#: open ProcurementPlatform.Contexts.Purchasing.Domain]
+import type { Result } from "neverthrow";
+// => neverthrow Result: matches F# Result<unit, string> semantics
+
+// Domain event tagged union — plain TS types carrying structured payloads
+// [F#: type DomainEvent DU — TS uses a readonly tagged union]
+export type DomainEvent =
+  | { readonly kind: "PurchaseOrderSubmitted"; readonly poId: PurchaseOrderId; readonly supplierId: string }
+  // => Carries the structured payload — the outbox adapter serializes it to JSON
+  | { readonly kind: "PurchaseOrderIssued"; readonly poId: PurchaseOrderId; readonly supplierId: string }
+  // => Issued events carry PO ID and supplier ID — consumed by receiving and supplier-notifier contexts
+  | { readonly kind: "PurchaseOrderCancelled"; readonly poId: PurchaseOrderId; readonly reason: string };
+// => Cancelled carries the reason — consumed by accounting and supplier-notifier contexts
+// [F#: DU cases — TS uses a literal string kind discriminant on readonly object unions]
+
+// Event publisher port — function-type record with a single publish field
+// [F#: type EventPublisher = { Publish: DomainEvent -> Async<Result<unit, string>> }]
+export type EventPublisher = {
+  readonly publish: (event: DomainEvent) => Promise<Result<void, string>>;
+  // => Single publish function: dispatches any DomainEvent variant
+  // => Promise<Result<void, string>>: mirrors F# Async<Result<unit, string>>
+  // => The outbox adapter writes to DB — async I/O, typed error string
+  // => Adding a new event type: add a new DomainEvent union member — all publish callers still compile
+  // [F#: record field Publish — TS readonly property enforces structural match]
+};
+
+// Approval router port — separate from event publishing
+// [F#: type ApprovalRouterPort = { RouteApproval: PurchaseOrderId -> ApprovalLevel -> Async<Result<unit, string>> }]
+export type ApprovalRouterPort = {
+  readonly routeApproval: (
+    poId: PurchaseOrderId,
+    // => PO being routed — workflow engine uses this to fetch context
+    level: ApprovalLevel,
+    // => ApprovalLevel: "L1" | "L2" | "L3" literal union — determines which manager receives the request
+  ) => Promise<Result<void, string>>;
+  // => Adapter: workflow engine in production; stub returning ok(undefined) in tests
+  // [F#: ApprovalLevel (L1/L2/L3) DU — TS uses a literal union string]
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the single-field record pattern is concise for contexts with one to three event types. For contexts with many event types where the Publish dispatcher grows large, consider separate record fields per event type — the compiler then enforces that all fields are supplied when constructing the record. For two to four event types, a single dispatching `Publish` function keeps the call sites readable and the application service free of event-specific ceremony.
@@ -963,7 +1430,7 @@ Two adapters satisfy the `EventPublisher` port from Guide 9: an in-memory adapte
 
 The stdlib `ResizeArray<_>` (mutable list) captures events in memory for test assertions:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1010,6 +1477,28 @@ let captureEvent (e: obj) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: capture events in a global array for test assertions
+// [F#: ResizeArray<obj> — TS uses a module-level mutable array]
+
+const captured: unknown[] = [];
+// => unknown[]: mutable, untyped array — mirrors F# ResizeArray<obj>
+// => unknown: no compile-time enforcement of DomainEvent shape
+// => Module-level state: shared across all tests in the process — parallel runs corrupt it
+
+const captureEvent = (e: unknown): void => {
+  // => unknown parameter: any value accepted — mirrors F# obj; no type safety
+  captured.push(e);
+  // => push: appends to the global array — no isolation between tests
+  // => Test A's events are visible to Test B if both run in the same process
+};
+// => void return: no Result contract — this stdlib version cannot satisfy EventPublisher port
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: global mutable state breaks parallel test execution. Untyped storage makes assertion code fragile. The outbox pattern requires transactional writes — the stdlib has no transactional in-memory store.
@@ -1018,7 +1507,7 @@ let captureEvent (e: obj) =
 
 **In-memory adapter** (for tests):
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1097,11 +1586,55 @@ let makeInMemoryPublisher () =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// In-memory event publisher adapter — typed DomainEvent capture, per-test-instance isolation
+// src/procurement-platform/contexts/purchasing/infrastructure/in-memory-event-publisher.ts
+// [F#: module InMemoryEventPublisher — TS uses a factory function]
+
+import { ok, type Result } from "neverthrow";
+// => neverthrow ok: satisfies Promise<Result<void, string>> contract
+import type { EventPublisher, DomainEvent } from "../application/ports";
+// => Port type + DomainEvent tagged union — captures typed events for assertions
+// [F#: open Ports — TS imports both EventPublisher and DomainEvent]
+
+// Per-test-instance factory — returns [publisher, capturedRef] tuple
+// [F#: let makeInMemoryPublisher () -> (EventPublisher * DomainEvent list ref)]
+export const makeInMemoryPublisher = (): [EventPublisher, readonly DomainEvent[]] => {
+  // => Factory: each test calls this for an isolated publisher and capture array
+  // => No global state — parallel tests each hold their own array reference
+  const captured: DomainEvent[] = [];
+  // => DomainEvent[]: typed array — compiler prevents storing non-DomainEvent values
+  // [F#: let captured = ref ([] : DomainEvent list)]
+
+  const publisher: EventPublisher = {
+    // => Object literal satisfying EventPublisher structurally — TS enforces all fields
+    // [F#: record literal { Publish = fun event -> async { ... } }]
+    publish: async (event): Promise<Result<void, string>> => {
+      // => async arrow: maintains identical Promise calling convention to the outbox adapter
+      captured.push(event);
+      // => push: appends the typed DomainEvent — O(1) amortized; no thread-safety concern in Node.js
+      // => Tests inspect captured after the application service call
+      return ok(undefined);
+      // => ok(undefined): mirrors F# Ok () — satisfies Promise<Result<void, string>>
+    },
+  };
+
+  return [publisher, captured];
+  // => Tuple return: caller destructures with const [pub, captured] = makeInMemoryPublisher()
+  // [F#: (publisher, captured) — TS uses array destructuring instead of tuple destructuring]
+  // => Return both the publisher (to inject into the service) and the array (for assertions)
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Outbox adapter** (for production):
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1233,6 +1766,90 @@ let makeOutboxPublisher (connStr: string) : EventPublisher =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Outbox event publisher adapter — writes event rows in the same pg transaction
+// src/procurement-platform/contexts/purchasing/infrastructure/outbox-event-publisher.ts
+// [F#: module OutboxEventPublisher — TS uses a factory function]
+
+import { Pool, type PoolClient } from "pg";
+// => Pool: shared connection pool — same pool used by the repository adapter
+// [F#: open Npgsql — TS imports Pool from "pg"]
+import { ok, err, type Result } from "neverthrow";
+// => neverthrow: ok/err constructors — mirrors F# Ok/Error
+import type { EventPublisher, DomainEvent } from "../application/ports";
+// => Port types — the adapter must satisfy EventPublisher exactly
+
+// Outbox row type — persisted in purchasing.outbox_events
+// [F#: type OutboxRow record — TS uses a plain object type]
+type OutboxRow = {
+  readonly id: string;
+  // => UUID string primary key — generated at publish time, not by the DB
+  readonly event_type: string;
+  // => DomainEvent kind string — used by the relay worker to dispatch
+  readonly payload: string;
+  // => JSON serialization of the full DomainEvent — relay worker deserializes with same schema
+  readonly created_at: string;
+  // => ISO 8601 UTC timestamp — relay worker uses for ordering and age-based alerting
+  readonly processed_at: null;
+  // => null: outbox row starts unprocessed — relay worker sets this after delivery
+};
+
+// Build the outbox row from a domain event — no domain logic here
+// [F#: inline row construction — TS extracts to a pure function]
+const buildOutboxRow = (event: DomainEvent): OutboxRow => ({
+  id: crypto.randomUUID(),
+  // => New UUID per event — idempotency key for the relay worker
+  event_type: event.kind,
+  // => Tagged union kind: "PurchaseOrderSubmitted", "PurchaseOrderIssued", etc.
+  // [F#: event.GetType().Name — TS uses the literal kind discriminant directly]
+  payload: JSON.stringify(event),
+  // => JSON.stringify: serializes the full DomainEvent object — all fields preserved
+  created_at: new Date().toISOString(),
+  // => ISO 8601 UTC string — pg maps to timestamptz column
+  processed_at: null,
+  // => null: relay worker sets this after successful delivery
+});
+
+// Outbox publisher factory satisfying EventPublisher
+// [F#: let makeOutboxPublisher (connStr: string) : EventPublisher]
+export const makeOutboxPublisher = (pool: Pool): EventPublisher => ({
+  // => pool: injected by composition root — shared per process
+  // [F#: record literal { Publish = fun event -> async { ... } }]
+  publish: async (event): Promise<Result<void, string>> => {
+    // => async arrow: pg is always async — maintains identical contract to in-memory adapter
+    const client: PoolClient = await pool.connect();
+    // => Borrow connection from pool; must release in finally
+    // [F#: use conn = new NpgsqlConnection(connStr) — TS uses try/finally for manual release]
+    try {
+      const row = buildOutboxRow(event);
+      // => Pure function builds the row — no I/O, no side effects
+      await client.query(
+        `INSERT INTO purchasing.outbox_events
+         (id, event_type, payload, created_at, processed_at)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [row.id, row.event_type, row.payload, row.created_at, row.processed_at],
+        // => Parameterized query: prevents SQL injection; pg maps JS types to column types
+      );
+      // => In production: share client with the repository save inside a transaction
+      // => Sharing the transaction makes aggregate save + outbox insert atomic
+      return ok(undefined);
+      // => ok(undefined): fire-and-confirm contract — mirrors F# Ok ()
+    } catch (e) {
+      return err(`outbox-insert-failed: ${String(e)}`);
+      // => String error: caller logs and may retry or circuit-break
+      // [F#: Error string — TS returns a string error to match EventPublisher port]
+    } finally {
+      client.release();
+      // => Always release — mirrors F# use binding's guaranteed disposal
+    }
+  },
+});
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the outbox pattern guarantees at-least-once delivery — the relay worker may deliver an event more than once if it crashes between delivery and marking `processed_at`. Consumers must be idempotent. The relay worker itself (polling the `outbox_events` table and forwarding to consumers) is covered in Guide 19. For contexts that emit events at low volume (< 100/s), a simple polling relay suffices. High-throughput contexts benefit from a CDC-based relay (e.g., Debezium) that reads the PostgreSQL WAL instead of polling.
@@ -1249,7 +1866,7 @@ Guide 6 showed the Giraffe handler concept using a sketch of a domain-backed han
 
 ASP.NET Core's minimal API (`MapPost`) handles the binding and response in a flat function without Giraffe's combinator chain:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1327,6 +1944,52 @@ app.MapPost("/api/v1/purchase-orders", fun (ctx: HttpContext) ->
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: bare Node.js http.createServer — no Hono/Express framework
+// src/procurement-platform/contexts/purchasing/presentation/purchasing-handlers.ts
+// [F#: ASP.NET Core Minimal API — TS stdlib equivalent is bare http.createServer]
+
+import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+// => node:http: stdlib HTTP server — no npm dependency; ships with every Node.js runtime
+
+// Stdlib handler: reads body manually, validates inline, responds with magic status numbers
+const handleSubmitStdlib = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+  // => IncomingMessage/ServerResponse: Node.js stdlib request/response — no Request/Response objects
+): Promise<void> => {
+  const chunks: Buffer[] = [];
+  // => Manual body buffering — no middleware-provided body parsing
+  for await (const chunk of req) {
+    chunks.push(chunk as Buffer);
+    // => Collect chunks: Node.js streams body as chunks
+  }
+  const dto = JSON.parse(Buffer.concat(chunks).toString()) as {
+    supplierId: string;
+    totalAmount: number;
+    currency: string;
+  };
+  // => JSON.parse: deserializes body — no typed schema validation; any shape accepted
+
+  if (dto.totalAmount <= 0) {
+    // => Validation inline in the handler — duplicated at every route, mirrors F# limitation
+    res.writeHead(400, { "Content-Type": "application/json" });
+    // => Magic number 400: no typed bad-request helper — repeated at every handler
+    res.end(JSON.stringify({ error: "totalAmount must be positive" }));
+    // => Manual JSON serialization — no framework combinator for typed error responses
+    return;
+  }
+  res.writeHead(201, { "Content-Type": "application/json" });
+  // => Magic number 201: no typed Created() helper — mirrors F# Minimal API limitation
+  res.end(JSON.stringify({ id: crypto.randomUUID(), currency: dto.currency }));
+  // => Business logic (ID generation) leaks into the handler — no application service boundary
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: validation logic duplicated across every `MapPost` lambda. Business logic in the handler. No typed error discrimination — status codes are magic numbers. The flat closure cannot compose with Giraffe middleware.
@@ -1335,7 +1998,7 @@ app.MapPost("/api/v1/purchase-orders", fun (ctx: HttpContext) ->
 
 The full Giraffe handler pipeline enforces a strict translation discipline:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
