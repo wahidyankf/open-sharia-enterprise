@@ -347,7 +347,7 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 - **Verify behavior**: Playwright MCP for UI, curl for API ([manual-behavioral-verification.md](./repo-governance/development/quality/manual-behavioral-verification.md))
 - **CI blockers**: Investigate root cause, fix properly, never bypass ([ci-blocker-resolution.md](./repo-governance/development/quality/ci-blocker-resolution.md))
 - **CI post-push verification**: After pushing app or lib code to `origin main`, trigger relevant GitHub CI workflows and verify they pass before declaring work done — pre-push hook alone is not sufficient ([ci-post-push-verification.md](./repo-governance/development/workflow/ci-post-push-verification.md))
-- **CI monitoring**: Check every 3-5 min via scheduling a background wake-up + one `gh run view` per wakeup. Never tight-loop poll. `gh run watch` only for jobs <5 min. If rate-limited (HTTP 403): wait ~35 min before retrying ([ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md))
+- **CI monitoring**: Default poll interval is **3 minutes** — schedule a wake-up every 3 min and run one `gh run view --json status,conclusion` per wakeup. Never tight-loop poll. **Do not use `gh run watch`** (stream-watching is prohibited for CI monitoring). If rate-limited (HTTP 403): wait ~35 min before retrying ([ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md))
 
 ## AI Agents
 

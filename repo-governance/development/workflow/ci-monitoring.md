@@ -1,6 +1,6 @@
 ---
 title: "CI Monitoring Convention"
-description: Standards for monitoring GitHub Actions CI runs without exhausting the GitHub API rate limit — required tooling, poll intervals, trigger discipline, and recovery procedures
+description: Standards for monitoring GitHub Actions CI runs without exhausting the GitHub API rate limit — required tooling, default 3-minute poll interval, no stream-watching, trigger discipline, and recovery procedures
 category: explanation
 subcategory: development
 tags:
@@ -15,13 +15,15 @@ tags:
 
 Monitoring CI runs is a required step after every push to `origin main`. How you monitor matters as much as whether you monitor. Polling `gh run view` in a tight loop without delay can exhaust the GitHub API rate limit (5,000 requests/hour) within minutes, blocking all subsequent `gh` commands for up to an hour. This convention defines the correct tools, minimum intervals, trigger discipline, and recovery procedures to ensure CI monitoring never burns API quota unnecessarily.
 
+**Default poll interval: 3 minutes.** Schedule a wakeup every 3 minutes and issue one `gh run view --json status,conclusion` per wakeup. Do not use `gh run watch` (stream-watching is prohibited for CI monitoring).
+
 ## Principles Implemented/Respected
 
 This convention implements the following core principles:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: The required default approach for monitoring CI runs is `ScheduleWakeup` every 3-5 minutes with a single `gh run view` check — this replaces error-prone manual polling without exhausting the API rate limit. `gh run watch` is suitable only for short jobs expected to complete in under 5 minutes.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: The required default approach for monitoring CI runs is `ScheduleWakeup` every 3 minutes (3-5 minutes acceptable) with a single `gh run view --json status,conclusion` check per wakeup — this replaces error-prone manual polling without exhausting the API rate limit. Stream-watching via `gh run watch` is prohibited for CI monitoring.
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: `ScheduleWakeup` + a single `gh run view` is simpler than a while-loop, a sleep, a JSON parser, and retry logic. A scheduled wakeup removes code that must be written, debugged, and maintained — and avoids the rate limit hazard that `gh run watch` introduces on jobs longer than 5 minutes.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: `ScheduleWakeup` + a single `gh run view --json status,conclusion` is simpler than a while-loop, a sleep, a JSON parser, and retry logic. A scheduled wakeup removes code that must be written, debugged, and maintained — and avoids the rate limit hazard that stream-watching via `gh run watch` introduces on jobs longer than 5 minutes.
 
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Rate limit budget is a finite, shared resource. This convention makes its constraints explicit — quota size, window duration, recovery delay — so agents and developers can reason about impact before issuing commands rather than discovering exhaustion after the fact.
 
@@ -31,7 +33,7 @@ This convention implements the following core principles:
 
 This convention implements/respects the following development practices:
 
-- **[CI Post-Push Verification Convention](./ci-post-push-verification.md)**: That convention mandates triggering and monitoring CI after every push. This convention specifies HOW to perform that monitoring safely — `ScheduleWakeup` every 3-5 min as the required default for standard CI jobs, `gh run watch` restricted to short jobs under 5 minutes, minimum intervals if manual polling is used, and recovery procedures when rate-limited.
+- **[CI Post-Push Verification Convention](./ci-post-push-verification.md)**: That convention mandates triggering and monitoring CI after every push. This convention specifies HOW to perform that monitoring safely — `ScheduleWakeup` every 3 minutes (default) as the required approach for standard CI jobs, `gh run watch` prohibited for CI monitoring, minimum 3-minute sleep if a manual poll loop is unavoidable, and recovery procedures when rate-limited.
 
 - **[CI Blocker Resolution Convention](../quality/ci-blocker-resolution.md)**: When a rate limit prevents CI verification, it is a blocker. This convention provides the correct recovery path (scheduled wakeup, not retry loop) rather than treating a 403 as a transient error and spinning.
 
@@ -64,14 +66,14 @@ The target audience is any agent or developer performing the post-push CI verifi
 
 Understanding the budget prevents accidental exhaustion.
 
-| Parameter            | Value                                                 |
-| -------------------- | ----------------------------------------------------- |
-| Quota                | 5,000 requests/hour per authenticated user            |
-| Reset window         | Rolling 1 hour from the first request                 |
-| When exhausted       | HTTP 403 on all subsequent `gh` commands              |
-| Reset timing         | Top of the next hour from first call                  |
-| Single `gh run view` | 1 request per invocation                              |
-| `gh run watch`       | Polls internally every ~3s; safe only for runs <5 min |
+| Parameter            | Value                                                                          |
+| -------------------- | ------------------------------------------------------------------------------ |
+| Quota                | 5,000 requests/hour per authenticated user                                     |
+| Reset window         | Rolling 1 hour from the first request                                          |
+| When exhausted       | HTTP 403 on all subsequent `gh` commands                                       |
+| Reset timing         | Top of the next hour from first call                                           |
+| Single `gh run view` | 1 request per invocation                                                       |
+| `gh run watch`       | Polls internally every ~3s; **prohibited for CI monitoring** (stream-watching) |
 
 A tight loop with no sleep issues hundreds of requests per minute. At 200 calls/minute, the 5,000-request quota exhausts in 25 minutes. **`gh run watch` on a 30-minute CI run also exhausts the quota** — it polls ~3 times/minute for 30 minutes = ~90 calls just for watching. Combined with triggers and other list calls this crosses 5,000 quickly. Any `gh` command — list, trigger, view — then returns HTTP 403 until the window resets.
 
@@ -79,52 +81,49 @@ A tight loop with no sleep issues hundreds of requests per minute. At 200 calls/
 
 Use the first approach that fits the situation. Only fall back to lower-priority approaches when the higher-priority one is not applicable.
 
-#### 1. `ScheduleWakeup` Every 3-5 Minutes (Required Default)
+#### 1. `ScheduleWakeup` Every 3 Minutes (Required Default)
 
-Trigger the run, record the run ID, schedule a wakeup for 3-5 minutes, check status, repeat until done. Each check is **one** `gh run view` call.
+Trigger the run, record the run ID, schedule a wakeup for 3 minutes (3-5 minutes acceptable), check status once, repeat until done. Each check is **one** `gh run view --json status,conclusion` call.
 
-**Why 3-5 min:** Fast enough for responsive feedback; safe forever at 12-20 req/hour (0.4% of the 5,000/hour budget).
+**Why 3 min default:** Fast enough for responsive feedback; safe forever at 20 req/hour (0.4% of the 5,000/hour budget). The 3-5 min window gives flexibility — 3 min is the recommended default for active monitoring.
 
 ```bash
 # Step 1: trigger and capture run ID
 gh workflow run test-and-deploy-organiclever-web-development.yml
 # URL output contains run ID, e.g. https://github.com/.../runs/12345678
 
-# Step 2: ScheduleWakeup(delaySeconds=180)  ← check in 3 min
+# Step 2: ScheduleWakeup(delaySeconds=180)  ← check in 3 min (default)
 
 # Step 3: On wakeup — one check
-gh run view <run-id> --json conclusion,status,jobs
-# If still in_progress → ScheduleWakeup(delaySeconds=300) and check again
-# If completed → read conclusion and proceed
+gh run view <run-id> --json status,conclusion
+# If status != "completed" → ScheduleWakeup(delaySeconds=180) and check again
+# If status == "completed" → read conclusion and proceed
 ```
 
-At 3-5 min intervals a 35-min CI job needs 7-12 checks = **7-12 API calls total**. Zero burst.
+At 3 min intervals a 35-min CI job needs ~12 checks = **12 API calls total**. Zero burst.
 
 **Rate limit math:** 1 call every 3 min = 20 calls/hour. Budget: 5,000/hour. Usage: 0.4%. Safe forever.
 
-#### 2. `gh run watch <run-id>` (Short Jobs Only, <5 min)
+#### 2. Manual Poll Loop With 3-Minute Sleep (Unavoidable Loop Cases)
 
-`gh run watch` polls internally every ~3 seconds. For short jobs it's fine. For jobs longer than 5 minutes it will exhaust the rate limit.
+**Do not use `gh run watch`** — stream-watching is prohibited for CI monitoring. If `ScheduleWakeup` is not available, use a manual poll loop with a minimum 3-minute sleep between checks.
 
-**Only use for jobs expected to complete in under 5 minutes.** For any CI job that takes 10+ minutes, use approach 1 instead.
+**Why `gh run watch` is prohibited:** It streams output by polling internally every ~3 seconds. This (1) ties up a foreground tool slot for the entire duration of the run, (2) exhausts the API rate limit on any job longer than ~5 minutes (~3 calls/min × 30 min = 90 calls just for watching), and (3) produces verbose unstructured output that must be parsed. A single `gh run view --json status,conclusion` per wakeup is cheaper, parseable, and non-blocking.
 
-```bash
-# ONLY for short jobs (<5 min)
-gh run watch <run-id>
-```
-
-#### 3. Manual Polling With Minimum 3-Minute Sleep (Unavoidable Loop Cases)
-
-If `ScheduleWakeup` is not available, the minimum interval between successive `gh run view` calls is **3 minutes**.
+**Canonical poll-loop pattern (when `ScheduleWakeup` is unavailable):**
 
 ```bash
-# PASS: Correct — 3-minute minimum sleep between checks
+# PASS: Correct — 3-minute minimum sleep, structured JSON output
+run_id=<run-id>
 while true; do
-  status=$(gh run view "$run_id" --json status --jq '.status')
+  result=$(gh run view "$run_id" --json status,conclusion)
+  status=$(echo "$result" | jq -r '.status')
+  conclusion=$(echo "$result" | jq -r '.conclusion')
   if [ "$status" = "completed" ]; then
+    echo "Run completed with conclusion: $conclusion"
     break
   fi
-  sleep 180
+  sleep 180  # 3-minute minimum — never shorten this
 done
 ```
 
@@ -135,7 +134,12 @@ while [ "$(gh run view $run_id --json status | python3 -c ...)" != "completed" ]
 done
 ```
 
-The forbidden pattern above can issue 500+ API calls in minutes. There is no scenario in which a tight-loop poll is acceptable.
+```bash
+# FAIL: Forbidden — stream-watching (ties up tool slot, exhausts rate limit on long jobs)
+gh run watch <run-id>
+```
+
+The tight-loop pattern can issue 500+ API calls in minutes. `gh run watch` exhausts the quota on any job longer than ~5 minutes. There is no scenario in which either of these patterns is acceptable for CI monitoring.
 
 ### Trigger Discipline
 
@@ -153,7 +157,7 @@ Triggering the same workflow repeatedly before prior runs complete multiplies AP
    ```
 
 3. If a run was cancelled by a concurrency group, wait for the currently-running run to reach a terminal state before deciding whether to trigger again.
-4. In plan execution, if CI was triggered for a push and the run is still in progress, use `gh run watch <id>` on the existing run — do not trigger a new run.
+4. In plan execution, if CI was triggered for a push and the run is still in progress, schedule a wakeup and poll the existing run with `gh run view <id> --json status,conclusion` — do not trigger a new run.
 
 ### Recovery When Rate-Limited
 
@@ -171,7 +175,7 @@ An HTTP 403 response from any `gh` command during CI monitoring means the rate l
 # PASS: Correct recovery — scheduled wait, not retry loop
 # [Detected HTTP 403 from gh run list]
 # [ScheduleWakeup delaySeconds=2100 — rate limit recovery]
-# [On wakeup: gh run list --limit=1 to verify reset, then gh run watch <id>]
+# [On wakeup: gh run list --limit=1 to verify reset, then resume polling with gh run view <id> --json status,conclusion]
 ```
 
 ```bash
@@ -206,15 +210,13 @@ gh run view <run-id> --json conclusion,status,jobs
 gh run view <run-id> --log-failed
 ```
 
-**When `gh run watch` is acceptable in Step 2c:**
-
-Only use `gh run watch <run-id>` if the job is expected to complete in under 5 minutes. For all standard CI jobs (10–35 min), use `ScheduleWakeup` + single `gh run view` instead.
+**`gh run watch` is prohibited in Step 2c** (and all CI monitoring). Use `ScheduleWakeup` + single `gh run view --json status,conclusion` for all CI jobs regardless of expected duration.
 
 **Forbidden in Step 2c:**
 
-- Using `gh run watch` for CI jobs that take 10+ minutes (exhausts rate limit)
+- Using `gh run watch` for any CI job (stream-watching prohibited)
 - Tight-loop polling with `gh run view` and no sleep
-- Polling intervals shorter than 30 seconds if neither approach above is applicable
+- Polling intervals shorter than 3 minutes if a manual loop is unavoidable
 - Triggering a new run while the previous one is still active
 - Treating an HTTP 403 as a transient error and retrying immediately
 
@@ -224,25 +226,35 @@ If the rate limit is hit mid-plan, use `ScheduleWakeup delaySeconds=2100` and re
 
 ## Examples
 
-### PASS: Correct — Watch single run to completion
+### PASS: Correct — Poll single run to completion (ScheduleWakeup pattern)
 
 ```bash
 gh workflow run test-and-deploy-organiclever-web-development.yml
-gh run list --workflow=test-and-deploy-organiclever-web-development.yml --limit=3
-gh run watch 98765432
-# Blocks until run completes; exits 0 on success, non-zero on failure
+run_id=$(gh run list --workflow=test-and-deploy-organiclever-web-development.yml \
+  --limit=1 --json databaseId --jq '.[0].databaseId')
+# [ScheduleWakeup delaySeconds=180]  ← default 3-minute interval
+# On wakeup:
+gh run view "$run_id" --json status,conclusion
+# Repeat wakeup until status == "completed"
 ```
 
-### PASS: Correct — Check before triggering
+### FAIL: Forbidden — Stream-watching a run
+
+```bash
+# BAD: stream-watching is prohibited — ties up tool slot, exhausts rate limit on long jobs
+gh run watch 98765432
+```
+
+### PASS: Correct — Check before triggering, then poll
 
 ```bash
 active=$(gh run list --workflow=test-and-deploy-organiclever-web-development.yml \
   --limit=1 --json status --jq '.[0].status')
 if [ "$active" = "in_progress" ] || [ "$active" = "queued" ]; then
-  echo "Run already active — watching existing run instead of triggering new one"
+  echo "Run already active — polling existing run instead of triggering new one"
   run_id=$(gh run list --workflow=test-and-deploy-organiclever-web-development.yml \
     --limit=1 --json databaseId --jq '.[0].databaseId')
-  gh run watch "$run_id"
+  # [ScheduleWakeup delaySeconds=180] then: gh run view "$run_id" --json status,conclusion
 else
   gh workflow run test-and-deploy-organiclever-web-development.yml
 fi
@@ -274,7 +286,8 @@ gh workflow run test-and-deploy-organiclever-web-development.yml
 # [ScheduleWakeup delaySeconds=2100]
 # On wakeup:
 gh run list --limit=1  # verify rate limit cleared
-gh run watch 98765432  # resume watching the original run
+gh run view 98765432 --json status,conclusion  # resume polling — do NOT use gh run watch
+# [ScheduleWakeup delaySeconds=180] and repeat until status == "completed"
 ```
 
 ## Related Documentation
