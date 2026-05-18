@@ -18,7 +18,7 @@ Unit tests with an in-memory adapter (Guide 8) prove port correctness but cannot
 
 `System.Data.Common.DbConnection` and raw ADO.NET let you open a connection to any database — but you manage the lifecycle entirely yourself:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -84,6 +84,43 @@ printfn "Connected: %A" result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: raw pg connection to a test database
+// [F#: NpgsqlConnection over ADO.NET — same raw-SQL intent; TypeScript uses the pg driver]
+import { Client } from "pg";
+// => pg: the standard Node.js PostgreSQL client — equivalent to Npgsql in the .NET ecosystem
+// => No docker-compose awareness: the test assumes the database is already running
+
+const connectionString = process.env["DATABASE_URL"];
+// => Read from environment — the same variable docker-compose sets for the test-runner service
+// => If the variable is missing, new Client({ connectionString: undefined }) throws at connect time
+
+async function smokeConnect(): Promise<void> {
+  // => async function: all pg I/O is Promise-based — await prevents blocking the event loop
+  const client = new Client({ connectionString });
+  // => Client: pg's single-connection object; not pooled — equivalent to new NpgsqlConnection(connStr)
+  // => connectionString: reads DATABASE_URL from the environment injected by docker-compose
+  await client.connect();
+  // => connect(): establishes the TCP handshake to PostgreSQL
+  // => If the postgres service is not ready yet, this throws — no health-check polling in stdlib
+  try {
+    const result = await client.query("SELECT 1 AS probe");
+    // => client.query: sends the SQL and returns a QueryResult object
+    // => Smoke query — verifies the connection is live before running migration scripts
+    console.log("Connected:", result.rows[0]);
+    // => result.rows[0]: { probe: 1 } — data-oriented result, equivalent to F# ExecuteScalar
+    // => [F#: printfn "Connected: %A" result — same intent, structured row instead of scalar obj]
+  } finally {
+    await client.end();
+    // => end(): releases the TCP connection — equivalent to F# use conn (IDisposable)
+    // => Must be in finally: ensures the connection closes even if the query throws
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: raw ADO.NET requires manual health-check polling before running tests, manual connection lifecycle management, and manual schema setup. The harness logic duplicates across every project that needs integration tests against PostgreSQL.
@@ -173,7 +210,7 @@ flowchart LR
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -307,6 +344,77 @@ let ``npgsqlPurchaseOrderRepository.SavePurchaseOrder stores a PO in PostgreSQL`
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Integration test consuming the docker-compose harness
+// tests/purchasing/NpgsqlPurchaseOrderRepository.integration.test.ts
+// [F#: xUnit [<Fact>] — TypeScript uses Jest; same round-trip contract]
+import { Pool } from "pg";
+// => Pool: pg's connection pool — manages multiple connections; more efficient than Client per test
+import { makeNpgsqlPurchaseOrderRepository } from "../../src/purchasing/infrastructure/NpgsqlPurchaseOrderRepository";
+// => Real adapter under test — not the in-memory stub (same separation as F# IntegrationTests assembly)
+import { createMoney, type PurchaseOrderId } from "../../src/purchasing/domain";
+// => Domain types and smart constructors — same as F# open ProcurementPlatform.Contexts.Purchasing.Domain
+
+const connStr = process.env["DATABASE_URL"] ?? "";
+// => Read connection string from environment — docker-compose injects DATABASE_URL into the test runner
+// => ?? "": TypeScript null-coalescing — empty string causes pool.connect() to throw on use
+
+const pool = new Pool({ connectionString: connStr });
+// => Pool: shared across all tests in this file — equivalent to F# shared connStr across facts
+
+afterAll(async () => {
+  await pool.end();
+  // => afterAll: Jest lifecycle hook — releases pool after all tests in this file complete
+  // => Equivalent to IDisposable cleanup in xUnit test fixtures
+});
+
+test("npgsqlPurchaseOrderRepository saves a PO and reads it back from PostgreSQL", async () => {
+  // => test(): Jest's parameterless test — runs once against the docker-compose test database
+  // => [F#: [<Fact>] let ``...`` () = async { } |> Async.RunSynchronously]
+
+  const moneyResult = createMoney(5000, "USD");
+  // => createMoney: smart constructor validates amount and currency
+  // => 5000 USD: above L1 threshold — ApprovalLevel will be L2 in production logic
+  if (moneyResult._tag === "Left") throw new Error(moneyResult.left);
+  // => Tagged union check: fail fast if the smart constructor returns an error
+
+  const po = {
+    id: crypto.randomUUID() as PurchaseOrderId,
+    // => Fresh UUID: guarantees no collision with other test rows in the database
+    // => as PurchaseOrderId: branded type cast — mirrors F# PurchaseOrderId (Guid.NewGuid())
+    supplierId: crypto.randomUUID(),
+    // => Arbitrary supplier: not validated by this test — only the repo round-trip matters
+    totalAmount: moneyResult.right,
+    // => 5000 USD: stored as (amount=5000, currency="USD") in separate columns
+    status: "Draft" as const,
+    // => "Draft" literal type: initial state — the adapter stores whatever status the aggregate carries
+    approvalLevel: "L2" as const,
+    // => "L2" persisted as a varchar — adapter maps the literal to the column value
+    createdAt: new Date().toISOString(),
+    // => UTC ISO-8601 string: stored in timestamptz — PostgreSQL preserves the offset
+  } as const;
+
+  const repo = makeNpgsqlPurchaseOrderRepository(pool);
+  // => Factory: returns PurchaseOrderRepository object closed over the pool
+
+  const saveResult = await repo.savePurchaseOrder(po);
+  // => savePurchaseOrder: performs a real INSERT via pg to PostgreSQL
+  expect(saveResult._tag).toBe("Right");
+  // => Right: Tagged union success — INSERT committed
+
+  const found = await repo.findPurchaseOrder(po.id);
+  // => Round-trip read: confirms the committed row is readable
+  expect(found._tag).toBe("Right");
+  if (found._tag === "Right" && found.right !== null) {
+    expect(found.right.id).toBe(po.id);
+    // => id equality: round-trip verified — [F#: Assert.Equal(po.Id, saved.Id)]
+  }
+});
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: docker-compose integration tests are slower than in-memory tests (typically 5–30 seconds to start PostgreSQL) and require Docker on the CI runner and developer machine. They are not cacheable by Nx. Run them only on the `test:integration` Nx target, not `test:quick`. The payoff is that they catch schema drift, PostgreSQL-specific constraint behavior, and migration ordering bugs that no in-memory test can surface.
@@ -323,7 +431,7 @@ Every database integration test relies on a schema that matches the application'
 
 F# `System.IO.File` and raw ADO.NET can execute SQL files in order — but you manage ordering, idempotency, and error handling manually:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -384,6 +492,40 @@ let runMigration (connStr: string) (sqlFilePath: string) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: manual SQL file execution without a migration library
+// [F#: File.ReadAllText + ExecuteNonQuery — TypeScript uses fs/promises + pg Client]
+import { readFile } from "fs/promises";
+// => fs/promises: Node.js built-in — equivalent to F# System.IO.File.ReadAllText
+import { Client } from "pg";
+// => pg Client: raw connection — no migration tracking abstraction; same as Npgsql + raw command
+
+export async function runMigration(connStr: string, sqlFilePath: string): Promise<void> {
+  // => connStr: PostgreSQL connection string; sqlFilePath: path to the .sql migration file
+  // => Promise<void>: async function — all pg I/O is Promise-based
+  const sql = await readFile(sqlFilePath, "utf8");
+  // => readFile: reads the entire .sql file as a UTF-8 string — equivalent to File.ReadAllText
+  // => No templating, no parameter binding — raw DDL executed as-is
+  const client = new Client({ connectionString: connStr });
+  // => Client: single connection — equivalent to F# use conn = new NpgsqlConnection(connStr)
+  await client.connect();
+  // => connect(): establish TCP connection to PostgreSQL
+  try {
+    await client.query(sql);
+    // => client.query: executes the SQL file as one statement
+    // => No tracking table: if the migration was already applied, it runs again — idempotency is manual
+    // => DDL errors mid-file leave partial schema — no transaction wrapping here
+  } finally {
+    await client.end();
+    // => end(): releases the TCP connection — equivalent to F# use binding IDisposable disposal
+    // => finally: ensures cleanup even if the query throws a DDL error
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: no tracking table means migrations can run twice. No ordering means alphabetical file naming must be enforced by convention. No error recovery means a failed migration leaves the schema in a partial state.
@@ -392,7 +534,7 @@ let runMigration (connStr: string) (sqlFilePath: string) =
 
 `procurement-platform-be` uses DbUp embedded in `Infrastructure/Migrations.fs`. DbUp maintains an applied-scripts journal table (`schemaversions`) in the database and applies scripts in order:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -466,9 +608,65 @@ let upgrade (connectionString: string) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Infrastructure/migrations.ts: umzug migration runner
+// [F#: DbUp journal table "schemaversions" — umzug tracks applied migrations; same idempotency]
+import { Umzug, SequelizeStorage } from "umzug";
+// => umzug: Node.js migration library — applies scripts in order, tracks applied migrations
+// => SequelizeStorage: stores the applied-script journal in the target database
+import { Sequelize } from "sequelize";
+// => Sequelize: ORM used only for connection + storage backend — same role as Npgsql in DbUp
+import path from "path";
+// => path.join: resolves migration file paths — equivalent to Assembly.GetExecutingAssembly() embedded resources
+
+export function makeUpgrader(connectionString: string) {
+  // => connectionString: injected from startup config — reads from environment
+  const sequelize = new Sequelize(connectionString, { logging: false });
+  // => Sequelize: connection instance — DbUp equivalent: NpgsqlConnection + DatabaseUpgrader
+  // => logging: false: suppress SQL noise; DbUp uses .LogToConsole() for verbosity
+  return new Umzug({
+    // => Umzug: equivalent to DeployChanges.To.PostgresqlDatabase(...).Build() in DbUp
+    migrations: {
+      glob: path.join(__dirname, "../../migrations/*.sql"),
+      // => glob: finds .sql files alphabetically — prefix with "0001_", "0002_" etc. (same as DbUp)
+      resolve: ({ name, path: p }) => ({
+        // => resolve: per-file executor — reads the SQL and runs it via Sequelize
+        name,
+        up: async ({ context: seq }: { context: Sequelize }) => {
+          const { promises: fs } = await import("fs");
+          const sql = await fs.readFile(p!, "utf8");
+          // => readFile: reads the migration SQL — equivalent to DbUp reading embedded .sql resource
+          await seq.query(sql);
+          // => seq.query: executes the DDL — DbUp equivalent: DbUpgrade.PerformUpgrade() per script
+        },
+      }),
+    },
+    context: sequelize,
+    // => context: the Sequelize instance passed to each resolver — equivalent to DbUp's NpgsqlConnection
+    storage: new SequelizeStorage({ sequelize }),
+    // => SequelizeStorage: creates "SequelizeMeta" journal table — equivalent to DbUp's "schemaversions"
+    // => Scripts already in the journal are skipped — idempotency guaranteed by umzug
+    logger: console,
+    // => logger: console: writes each applied migration name to stdout — equivalent to .LogToConsole()
+  });
+}
+
+export async function upgrade(connectionString: string): Promise<void> {
+  // => upgrade: applies all unapplied migration scripts in order
+  // => [F#: let result = upgrader.PerformUpgrade() — TypeScript throws on failure]
+  const upgrader = makeUpgrader(connectionString);
+  await upgrader.up();
+  // => up(): applies all pending migrations in order
+  // => Throws on failure: catch at startup and exit(1) — equivalent to not result.Successful
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -537,6 +735,41 @@ let ``migrations apply successfully to the test database`` () =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Integration test: verify migrations apply cleanly against the docker-compose database
+// tests/migrations/migration-smoke.integration.test.ts
+// [F#: xUnit [<Fact>] — Jest test; same smoke-test + idempotency assertions]
+import { makeUpgrader, upgrade } from "../../src/infrastructure/migrations";
+// => upgrade, makeUpgrader: the umzug-based migration runner from infrastructure/migrations.ts
+
+const connStr = process.env["DATABASE_URL"] ?? "";
+// => DATABASE_URL: injected by docker-compose.integration.yml — same env variable as F# adapter
+
+test("migrations apply successfully on first run", async () => {
+  // => test(): Jest parameterless test — runs against the docker-compose test database
+  // => [F#: let ``migrations apply successfully`` () = ... |> Async.RunSynchronously]
+  await expect(upgrade(connStr)).resolves.toBeUndefined();
+  // => resolves.toBeUndefined(): upgrade() returns void — assertion passes if Promise resolves
+  // => [F#: Assert.True(result.Successful, ...) — TypeScript throws on failure instead of returning bool]
+});
+
+test("migrations are idempotent on second run", async () => {
+  // => Second run: all scripts already in SequelizeMeta journal — applies zero scripts
+  // => [F#: let result2 = upgrade connStr; Assert.True(result2.Successful, "Second run...")]
+  const upgrader = makeUpgrader(connStr);
+  const pending = await upgrader.pending();
+  // => pending(): returns migrations not yet in the journal — should be empty after first run
+  expect(pending).toHaveLength(0);
+  // => Zero pending: confirms idempotency — production restarts always run migrations safely
+  // => [F#: DbUp skips scripts already in schemaversions — same guarantee via umzug SequelizeMeta]
+  await expect(upgrader.up()).resolves.toBeDefined();
+  // => up() with zero pending: returns empty array — no error thrown; process-restart safe
+});
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: DbUp applies scripts in alphabetical order — naming discipline (`0001_`, `0002_`) is mandatory. A mislabeled script that should run after `0010_` but is named `002_` runs second and breaks. For teams that prefer a declarative diff-based migration tool, FluentMigrator provides an equivalent with C#-style migration classes.
@@ -553,7 +786,7 @@ The `payments` context must disburse funds to suppliers via a bank API. Like the
 
 `System.Net.Http.HttpClient` sends HTTP requests without any bank-specific library. You can call a bank REST API directly using the BCL:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -644,6 +877,55 @@ let callBankDisbursement (apiKey: string) (baseUrl: string) (paymentId: string) 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: fetch calling a bank disbursement endpoint
+// [F#: static HttpClient with no retry or circuit-breaker — same raw-HTTP limitation in TypeScript]
+
+export async function callBankDisbursement(
+  apiKey: string,
+  baseUrl: string,
+  paymentId: string,
+  amount: number,
+  iban: string,
+): Promise<{ transactionRef: string; status: string }> {
+  // => Five primitive parameters: easy to pass in the wrong order — no branded types, no type safety
+  // => [F#: five primitive parameters with no type safety — same risk of wrong-order pass]
+  const body = JSON.stringify({
+    paymentReference: paymentId,
+    // => paymentId is a raw string — no PaymentId branded type, no type safety
+    amount,
+    // => Raw number — no Money value object, no currency field; bank API may reject silently
+    beneficiaryIban: iban,
+    // => Missing BIC field — bank API may require it; silent omission (same as F# limitation)
+  });
+  // => Hand-crafted JSON body — plain object with no schema validation
+
+  const response = await fetch(`${baseUrl}/disbursements`, {
+    // => URL string concatenation — baseUrl trailing slash errors are silent
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      // => Bearer token: inline string interpolation — no encapsulation
+      "Content-Type": "application/json",
+    },
+    body,
+  });
+  // => fetch: actual HTTP call — no retry, no timeout, no circuit-breaker
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+    // => Throws on 4xx/5xx — no typed error discrimination
+    // => Caller cannot tell InvalidIban from AuthenticationFailure from network error
+  }
+
+  return response.json() as Promise<{ transactionRef: string; status: string }>;
+  // => No schema validation: fragile if bank changes the field name — no compile error, just undefined
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: no typed error discrimination between rate-limit errors (429), authentication failures (401), and insufficient-funds errors (422). No retry logic. The application layer must import `HttpClient` to call this function — the bank boundary is not behind a port.
@@ -652,7 +934,7 @@ let callBankDisbursement (apiKey: string) (baseUrl: string) (paymentId: string) 
 
 The hexagonal approach defines a port in the `payments` application layer and implements the bank HTTP adapter in infrastructure:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -749,9 +1031,69 @@ type SupplierNotifierPort =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// payments context: application layer BankingPort
+// src/procurement-platform/contexts/payments/application/ports.ts
+// [F#: record type BankingPort — TypeScript uses interfaces with branded domain types]
+
+// Branded domain types — prevent passing wrong values
+declare const PaymentIdBrand: unique symbol;
+export type PaymentId = string & { readonly [PaymentIdBrand]: typeof PaymentIdBrand };
+// => Branded type: a PaymentId cannot be passed where a raw string is expected and vice versa
+// => [F#: type PaymentId = PaymentId of Guid — single-case DU; TypeScript uses structural branding]
+
+declare const TransactionRefBrand: unique symbol;
+export type TransactionRef = string & { readonly [TransactionRefBrand]: typeof TransactionRefBrand };
+// => Branded TransactionRef: prevents mixing up transaction IDs with payment IDs
+// => [F#: type TransactionRef = TransactionRef of string — same strong-typing intent]
+
+// Result type — functional error handling without exceptions
+export type Result<T, E> = { readonly _tag: "Right"; readonly right: T } | { readonly _tag: "Left"; readonly left: E };
+// => Tagged union: Right = success, Left = error — equivalent to F# Result<T, E>
+// => readonly: immutable by construction — [F#: F# records are immutable by default]
+
+// Banking error type — typed alternatives to string-based errors
+export type BankingError =
+  | { readonly type: "InsufficientFunds"; readonly paymentId: PaymentId }
+  // => Bank rejected: account does not have sufficient balance — alert finance team
+  | { readonly type: "InvalidIban"; readonly iban: string }
+  // => Bank rejected: the IBAN failed format validation at the bank — data error
+  | { readonly type: "BankApiUnavailable"; readonly cause: string }
+  // => Transient: bank API is down — retry with circuit-breaker (Guide 18)
+  | { readonly type: "AuthenticationFailure" };
+// => API key is invalid or expired — alert operations team immediately
+// => Literal union: TypeScript narrows type on { type } discriminant — exhaustiveness via switch
+
+// Banking port interface
+export interface BankingPort {
+  readonly initiateDisbursement: (
+    payment: Payment,
+    account: BankAccount,
+  ) => Promise<Result<TransactionRef, BankingError>>;
+  // => initiateDisbursement: given a Payment aggregate and beneficiary IBAN, submit to bank
+  // => TransactionRef: the bank's reference ID for tracking and reconciliation
+  // => [F#: InitiateDisbursement: Payment -> BankAccount -> Async<Result<TransactionRef, BankingError>>]
+  readonly queryDisbursementStatus: (ref: TransactionRef) => Promise<Result<DisbursementStatus, BankingError>>;
+  // => queryDisbursementStatus: poll the bank for final settlement status
+  // => [F#: QueryDisbursementStatus: TransactionRef -> Async<Result<DisbursementStatus, BankingError>>]
+}
+
+// Supplier notifier port
+export interface SupplierNotifierPort {
+  readonly notifyPaymentDisbursed: (supplierId: SupplierId, payment: Payment) => Promise<Result<void, string>>;
+  // => notifyPaymentDisbursed: aligns with the canonical PaymentDisbursed domain event
+  // => Send email or EDI remittance advice to the supplier
+  readonly notifyPurchaseOrderIssued: (supplierId: SupplierId, poId: PurchaseOrderId) => Promise<Result<void, string>>;
+  // => Send PO acknowledgement request to supplier — EDI fallback if SMTP fails
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -970,11 +1312,120 @@ let make (settings: BankApiSettings) (factory: IHttpClientFactory) : BankingPort
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// payments context: bank HTTP adapter implementing BankingPort
+// src/procurement-platform/contexts/payments/infrastructure/BankApiAdapter.ts
+// [F#: BankApiAdapter.make returns BankingPort record — TypeScript returns an object implementing BankingPort]
+import type { BankingPort, BankingError, TransactionRef, DisbursementStatus } from "../application/ports";
+// => Import port types — the adapter depends only on ports module, never on application services
+
+export interface BankApiSettings {
+  readonly apiKey: string;
+  // => API key loaded from Kubernetes Secret at startup — never hardcoded
+  readonly baseUrl: string;
+  // => Bank API base URL — environment-specific, injected from ConfigMap
+  readonly timeoutMs: number;
+  // => Per-call timeout in milliseconds — bank APIs can be slow; 30_000 is a reasonable default
+}
+
+export function makeBankApiAdapter(settings: BankApiSettings): BankingPort {
+  // => settings: BankApiSettings typed config — no magic strings inside the function body
+  // => [F#: let make (settings: BankApiSettings) (factory: IHttpClientFactory) : BankingPort]
+  return {
+    initiateDisbursement: async (payment, account) => {
+      // => async function: all HTTP I/O is Promise-based — equivalent to F# async { }
+      const body = JSON.stringify({
+        paymentReference: payment.id,
+        // => Branded PaymentId used as-is: string under the hood — bank API expects a UUID string
+        amount: payment.totalAmount.amount,
+        // => Decimal amount from Money value object
+        currency: payment.totalAmount.currency,
+        // => ISO 4217 currency code
+        beneficiaryIban: account.iban,
+        // => IBAN from the bank account value object
+        beneficiaryBic: account.bic,
+        // => BIC (SWIFT code) required by the bank API for routing
+      });
+      // => Serialize bank request — bank API schema determines field names
+
+      const controller = new AbortController();
+      // => AbortController: implements per-call timeout — no built-in timeout in fetch
+      const timeoutId = setTimeout(() => controller.abort(), settings.timeoutMs);
+      // => setTimeout: aborts the request after timeoutMs — equivalent to HttpClient.Timeout
+
+      try {
+        const resp = await fetch(`${settings.baseUrl}/disbursements`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${settings.apiKey}`,
+            // => Bearer token: API key injected from Kubernetes Secret — never in source
+            "Content-Type": "application/json",
+          },
+          body,
+          signal: controller.signal,
+          // => signal: wires the AbortController — fetch throws AbortError on timeout
+        });
+        clearTimeout(timeoutId);
+        // => clearTimeout: cancel the timeout if the request completed
+
+        if (resp.status === 201) {
+          const json = (await resp.json()) as { transactionRef: string };
+          // => 201 Created: disbursement accepted — parse transaction reference
+          return { _tag: "Right", right: json.transactionRef as TransactionRef };
+          // => [F#: return Ok (TransactionRef ...)]
+        } else if (resp.status === 422) {
+          return { _tag: "Left", left: { type: "InvalidIban", iban: account.iban } satisfies BankingError };
+          // => HTTP 422: bank rejected IBAN — [F#: return Error (InvalidIban account.Iban)]
+        } else if (resp.status === 401 || resp.status === 403) {
+          return { _tag: "Left", left: { type: "AuthenticationFailure" } satisfies BankingError };
+          // => Auth failure: API key invalid — [F#: return Error AuthenticationFailure]
+        } else {
+          return {
+            _tag: "Left",
+            left: { type: "BankApiUnavailable", cause: `HTTP ${resp.status}` } satisfies BankingError,
+          };
+          // => Unexpected status: treat as unavailable — [F#: Error (BankApiUnavailable ...)]
+        }
+      } catch (err) {
+        clearTimeout(timeoutId);
+        return { _tag: "Left", left: { type: "BankApiUnavailable", cause: String(err) } satisfies BankingError };
+        // => Network/timeout error — [F#: return Error (BankApiUnavailable ex)]
+      }
+    },
+
+    queryDisbursementStatus: async (ref) => {
+      // => ref: branded TransactionRef — type-safe
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), settings.timeoutMs);
+      try {
+        const resp = await fetch(`${settings.baseUrl}/disbursements/${ref}`, {
+          headers: { Authorization: `Bearer ${settings.apiKey}` },
+          signal: controller.signal,
+          // => Same API key — all bank API calls use Bearer authentication
+        });
+        clearTimeout(timeoutId);
+        const json = (await resp.json()) as { status: string };
+        // => Parse status: "pending", "completed", "failed" — bank-specific strings
+        return { _tag: "Right", right: json.status as DisbursementStatus };
+        // => Map bank status string to domain DisbursementStatus type
+      } catch (err) {
+        clearTimeout(timeoutId);
+        return { _tag: "Left", left: { type: "BankApiUnavailable", cause: String(err) } satisfies BankingError };
+        // => Network or timeout error — [F#: return Error (BankApiUnavailable ex)]
+      }
+    },
+  };
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 The stub adapter for tests needs no API key:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1044,6 +1495,45 @@ let deterministicStub : BankingPort =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// payments context: stub bank adapter for tests — no HTTP call, no API key
+// tests/payments/StubBankingPort.ts
+// [F#: deterministicStub : BankingPort record — TypeScript returns an object implementing BankingPort]
+import type { BankingPort, TransactionRef, DisbursementStatus } from "../../src/payments/application/ports";
+// => Import port types — the stub satisfies the same BankingPort interface as the real adapter
+
+export const deterministicStub: BankingPort = {
+  // => deterministicStub: always returns fixed results — exercises the application service's happy path
+  // => Deterministic result enables reproducible assertions without network access
+  // => [F#: let deterministicStub : BankingPort = { InitiateDisbursement = fun _ _ -> ... }]
+
+  initiateDisbursement: async (_payment, _account) => {
+    // => _payment, _account: underscore prefix — discarded; fixed result drives assertions
+    // => [F#: fun _ _ -> async { return Ok (TransactionRef "test-txn-ref-001") }]
+    return {
+      _tag: "Right",
+      right: "test-txn-ref-001" as TransactionRef,
+      // => "test-txn-ref-001": known string — tests assert on this exact value
+      // => Deterministic: tests do not need an API key or network access
+    };
+  },
+
+  queryDisbursementStatus: async (_ref) => {
+    // => _ref: underscore prefix — discarded TransactionRef; always returns the same status
+    // => [F#: fun _ -> async { return Ok Remitted }]
+    return {
+      _tag: "Right",
+      right: "Remitted" as DisbursementStatus,
+      // => "Remitted": literal type — maps to DisbursementStatus.Remitted in F#
+      // => Always returns Remitted — tests verify the downstream state transition
+    };
+  },
+};
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: the adapter owns bank API error mapping — this is intentional. If the bank changes its error codes, only the adapter changes; the application service and domain layer are unaffected. The trade-off is that the port stub cannot test bank-specific error paths; use recorded HTTP fixtures or a sandbox environment for those cases.
@@ -1060,7 +1550,7 @@ External HTTP calls — including the bank API adapter from Guide 17 — fail tr
 
 F# recursion can implement a simple retry loop without any library:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1130,6 +1620,48 @@ let rec retryAsync (attempt: int) (maxAttempts: int) (f: unit -> Async<Result<'a
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: iterative retry with exponential backoff
+// [F#: let rec retryAsync — TypeScript uses a while loop; no computation expression needed]
+export type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+// => Result<T, E>: tagged union — the retry wrapper is type-agnostic over the success type
+
+export async function retryAsync<T>(
+  maxAttempts: number,
+  f: () => Promise<Result<T, string>>,
+): Promise<Result<T, string>> {
+  // => Generic T: the success type — retry logic is type-agnostic, same as F# 'a
+  // => f: () => Promise<...>: the operation to retry — lazy via function, same as F# unit -> Async
+  let attempt = 1;
+  // => let attempt: mutable counter — TypeScript uses a loop variable; [F#: let rec (attempt: int)]
+
+  while (attempt <= maxAttempts) {
+    // => while loop: equivalent to F# tail-recursive retryAsync call
+    const result = await f();
+    // => f(): execute the async operation — each iteration is an independent attempt
+    if (result._tag === "Right") {
+      return result;
+      // => Success on any attempt: return immediately — [F#: | Ok v -> return Ok v]
+    }
+    if (attempt >= maxAttempts) {
+      return result;
+      // => Exceeded retry budget: return last error — [F#: | Error _ when attempt >= maxAttempts]
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+    // => Exponential backoff: wait 1s, 2s, 3s... — Promise + setTimeout is non-blocking
+    // => [F#: do! Async.Sleep(1000 * attempt) — same non-blocking sleep semantics]
+    attempt++;
+    // => Increment: next iteration uses the updated attempt count
+  }
+
+  throw new Error("retryAsync: unreachable");
+  // => TypeScript control flow: this branch is never hit but satisfies exhaustiveness
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: the recursive retry has no circuit-breaker — if the downstream is down, every request retries until `maxAttempts` is exhausted, amplifying load on the failing service. No exponential jitter means thundering herd when many requests retry simultaneously.
@@ -1138,7 +1670,7 @@ let rec retryAsync (attempt: int) (maxAttempts: int) (f: unit -> Async<Result<'a
 
 `Microsoft.Extensions.Http.Resilience` provides retry, circuit-breaker, timeout, and hedging as a typed pipeline added to the `HttpClient` registration at startup:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1214,9 +1746,57 @@ let configureBankApiHttpClient (services: IServiceCollection) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Startup: configure p-retry resilience policies for the bank API client
+// src/procurement-platform/composition/HttpClients.ts
+// [F#: AddStandardResilienceHandler — TypeScript uses p-retry + opossum circuit-breaker]
+import pRetry from "p-retry";
+// => p-retry: Promise-based retry library with exponential backoff + jitter
+// => [F#: AddStandardResilienceHandler default retry: 3 retries, exponential backoff + jitter]
+import CircuitBreaker from "opossum";
+// => opossum: Node.js circuit-breaker library — tracks failure rate and opens after threshold
+// => [F#: AddStandardResilienceHandler default circuit-breaker: 10 failures in 30 seconds]
+
+// Circuit-breaker for the bank API
+export const bankApiCircuitBreaker = new CircuitBreaker(
+  async (fn: () => Promise<unknown>) => fn(),
+  // => Wraps any async function — the bank adapter calls bankApiCircuitBreaker.fire(() => ...)
+  // => [F#: the Polly pipeline wraps SendAsync inside IHttpClientFactory — same decoration intent]
+  {
+    errorThresholdPercentage: 50,
+    // => 50%: circuit opens when 50% of calls in the rolling window fail
+    // => [Clojure: :failure-rate-threshold 50 — same sensitivity]
+    resetTimeout: 30_000,
+    // => 30 seconds: circuit stays open before allowing probe calls
+    // => [F#: AddStandardResilienceHandler default: 30s wait before half-open state]
+    rollingCountTimeout: 10_000,
+    // => 10-second rolling window for failure rate calculation
+    // => [Clojure: :sliding-window-size 10 — equivalent failure window]
+  },
+);
+
+// Retry policy factory for the bank API
+export function bankApiRetry<T>(fn: () => Promise<T>): Promise<T> {
+  // => [F#: AddStandardResilienceHandler default retry: 3 retries, exponential backoff + jitter]
+  return pRetry(fn, {
+    retries: 3,
+    // => 3 retries: same default as AddStandardResilienceHandler — [Clojure: :max-attempts 3]
+    factor: 2,
+    // => Exponential factor 2: base 1s → 1s, 2s, 4s with jitter
+    minTimeout: 1000,
+    // => 1 second base delay — [Clojure: :wait-duration 1000]
+    randomize: true,
+    // => randomize: adds jitter — prevents thundering herd; [F#: AddStandardResilienceHandler uses jitter]
+  });
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1347,6 +1927,80 @@ let makeResilient (factory: IHttpClientFactory) (settings: BankApiSettings) : Ba
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Resilient bank adapter: circuit-breaker checked before each HTTP call
+// src/procurement-platform/payments/infrastructure/ResilientBankApiAdapter.ts
+// [F#: makeResilient returns BankingPort with BrokenCircuitException handling — TypeScript wraps with opossum]
+import { bankApiCircuitBreaker, bankApiRetry } from "../../composition/HttpClients";
+// => bankApiCircuitBreaker: opossum circuit-breaker; bankApiRetry: p-retry wrapper
+import { makeBankApiAdapter } from "./BankApiAdapter";
+// => makeBankApiAdapter: the non-resilient adapter from Guide 17 — resilient adapter delegates to it
+import type { BankingPort, BankApiSettings, BankingError, TransactionRef } from "../application/ports";
+// => Port types: BankingPort — the interface both the resilient and non-resilient adapters satisfy
+
+export function makeResilientBankApiAdapter(settings: BankApiSettings): BankingPort {
+  // => settings: BankApiSettings — API key and base URL from config
+  // => [F#: makeResilient (factory: IHttpClientFactory) (settings: BankApiSettings) : BankingPort]
+  const inner = makeBankApiAdapter(settings);
+  // => inner: the non-resilient BankingPort from Guide 17
+  // => Decorates inner — application service cannot distinguish decorated from raw
+
+  return {
+    initiateDisbursement: async (payment, account) => {
+      // => async function — [F#: fun payment account -> async { }]
+      if (!bankApiCircuitBreaker.closed) {
+        // => closed: opossum property — false when circuit is open or half-open
+        // => [F#: Polly throws BrokenCircuitException before SendAsync]
+        return {
+          _tag: "Left",
+          left: { type: "BankApiUnavailable", cause: "Bank API circuit open" } satisfies BankingError,
+          // => BankApiUnavailable — [F#: return Error (BankApiUnavailable (Exception "Bank API circuit open"))]
+        };
+      }
+      try {
+        return (await bankApiRetry(
+          () => bankApiCircuitBreaker.fire(() => inner.initiateDisbursement(payment, account)),
+          // => fire(): opossum executes the function and tracks success/failure for the circuit
+          // => bankApiRetry: wraps fire() in p-retry — retries on transient errors with backoff
+        )) as Awaited<ReturnType<BankingPort["initiateDisbursement"]>>;
+      } catch (err) {
+        // => Retries exhausted or circuit opened during retries
+        // => [F#: with | :? BrokenCircuitException -> return Error (BankApiUnavailable ...)]
+        const cause = err instanceof Error ? err.message : String(err);
+        return { _tag: "Left", left: { type: "BankApiUnavailable", cause } satisfies BankingError };
+      }
+    },
+
+    queryDisbursementStatus: async (ref: TransactionRef) => {
+      // => Same resilience pattern — circuit state is shared across both port methods
+      // => [F#: QueryDisbursementStatus shares the circuit-breaker state with InitiateDisbursement]
+      if (!bankApiCircuitBreaker.closed) {
+        return {
+          _tag: "Left",
+          left: {
+            type: "BankApiUnavailable",
+            cause: "Bank API circuit open — status query unavailable",
+          } satisfies BankingError,
+        };
+      }
+      try {
+        return (await bankApiRetry(
+          () => bankApiCircuitBreaker.fire(() => inner.queryDisbursementStatus(ref)),
+          // => Same circuit and retry policy — both port methods share circuit state
+        )) as Awaited<ReturnType<BankingPort["queryDisbursementStatus"]>>;
+      } catch (err) {
+        const cause = err instanceof Error ? err.message : String(err);
+        return { _tag: "Left", left: { type: "BankApiUnavailable", cause } satisfies BankingError };
+        // => Unexpected error after retry budget exhausted
+      }
+    },
+  };
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: `AddStandardResilienceHandler` applies a fixed policy suitable for most external HTTP calls. For bank APIs that are inherently slow (5–30 seconds per disbursement), the default 30-second total timeout may be too short — use `ConfigureHttpClient` to set a longer timeout specifically for the `"bank-api"` named client. Circuit-breaker state is in-memory and per-process; in a multi-instance deployment, each instance has an independent circuit.
@@ -1363,7 +2017,7 @@ Guides 9 and 10 showed the publisher port and its two adapters in isolation. Thi
 
 An in-process event queue using `System.Collections.Concurrent.ConcurrentQueue` can relay events within a single process:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1439,6 +2093,34 @@ let dequeue () =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: in-process event relay with a simple queue array
+// [F#: ConcurrentQueue<string> — TypeScript uses a plain array; Node.js is single-threaded]
+// Note: Node.js is single-threaded — no ConcurrentQueue needed; plain array is safe
+
+const queue: string[] = [];
+// => Shared mutable array: all enqueues/dequeues run on the same thread in Node.js
+// => Not persistent: events are lost on process restart — no at-least-once guarantee
+// => [F#: ConcurrentQueue<string>() — thread-safe BCL type; Node.js single thread makes array sufficient]
+
+export function enqueue(eventJson: string): void {
+  queue.push(eventJson);
+  // => push: O(1) amortised array append — equivalent to ConcurrentQueue.Enqueue
+  // => eventJson: serialized event — loses type safety across the enqueue/dequeue boundary
+}
+
+export function dequeue(): string | undefined {
+  // => Returns the first item or undefined — caller loops calling dequeue until undefined
+  return queue.shift();
+  // => shift: removes and returns the first element — O(n) but acceptable for small queues
+  // => undefined: equivalent to F# None from TryDequeue returning (false, _)
+  // => Poll pattern: the relay must call dequeue in a loop — no push notification
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: in-process queues do not survive process restarts. No delivery guarantee — if the relay crashes between dequeue and consumer acknowledgement, the event is lost.
@@ -1447,7 +2129,7 @@ let dequeue () =
 
 The full end-to-end event flow crosses four port boundaries:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1608,6 +2290,91 @@ type OutboxRelayWorker(connStr: string) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// End-to-end domain event flow — four boundary crossings
+// src/procurement-platform/contexts/purchasing/infrastructure/OutboxRelayWorker.ts
+// [F#: IHostedService with task {} loop — TypeScript uses setInterval for background polling]
+import { Pool } from "pg";
+// => Pool: pg connection pool — polls outbox_events table and marks rows processed
+import type { DomainEvent } from "../application/ports";
+// => DomainEvent: tagged union type — deserialize the JSON payload into the typed event
+
+// Boundary 1: Application service emits PurchaseOrderIssued after successful save (Guide 9).
+// The outbox adapter writes an outbox_events row in the same transaction.
+
+// Boundary 2: Outbox relay worker polls and forwards
+function dispatchEvent(event: DomainEvent): void {
+  // => [F#: match event with | PurchaseOrderIssued -> ... — TypeScript discriminates on event.type]
+  switch (event.type) {
+    case "PurchaseOrderIssued":
+      console.log("Relaying PurchaseOrderIssued:", "poId=", event.purchaseOrderId, "supplierId=", event.supplierId);
+      // => In production: call the receiving context port and the supplier-notifier port
+      // => Both contexts receive the same event — relay delivers to each independently
+      break;
+    case "PurchaseOrderCancelled":
+      console.log("Relaying PurchaseOrderCancelled: poId=", event.purchaseOrderId);
+      // => Cancelled events route to accounting (credit note) and supplier-notifier
+      break;
+    default: {
+      const _exhaustive: never = event;
+      // => TypeScript exhaustiveness check: compile error if new event type added without a case
+      // => [F#: | _ -> () — Clojure: case default println; TypeScript enforces via never]
+      console.log("Unknown event type:", (_exhaustive as DomainEvent).type);
+    }
+  }
+}
+
+async function pollAndRelay(pool: Pool): Promise<void> {
+  // => [F#: use conn = ... let! rows = conn.QueryAsync — TypeScript awaits pool.query]
+  const client = await pool.connect();
+  // => client: pg.PoolClient — equivalent to F# use conn = new NpgsqlConnection(connStr)
+  try {
+    const { rows } = await client.query<{ id: number; payload: string }>(
+      `SELECT id, payload FROM purchasing.outbox_events
+       WHERE processed_at IS NULL ORDER BY created_at LIMIT 10`,
+    );
+    // => LIMIT 10: prevents long transactions under high event volume — same as F# Dapper query
+    // => ORDER BY created_at: FIFO delivery — older events dispatched first
+    for (const row of rows) {
+      // => Iterate over unprocessed rows: deserialize, dispatch, mark processed
+      const event = JSON.parse(row.payload) as DomainEvent;
+      // => JSON.parse: deserializes the outbox_events payload column to the DomainEvent type
+      dispatchEvent(event);
+      // => Dispatch to downstream ports before marking processed
+      await client.query(`UPDATE purchasing.outbox_events SET processed_at = $1 WHERE id = $2`, [
+        new Date().toISOString(),
+        row.id,
+      ]);
+      // => Mark as processed after successful dispatch — idempotency key
+      // => processed_at: non-null means the relay has delivered this event
+    }
+  } finally {
+    client.release();
+    // => release(): returns the client to the pool — [F#: use conn IDisposable; Clojure: jdbc/with-db-connection]
+  }
+}
+
+export function startRelayWorker(pool: Pool, stopSignal: { stopped: boolean }): NodeJS.Timeout {
+  // => [F#: IHostedService.StartAsync — TypeScript uses setInterval for background polling]
+  // => stopSignal: mutable object — caller sets stopped = true to initiate shutdown
+  return setInterval(async () => {
+    // => setInterval: fires every 5 seconds — equivalent to F# Task.Delay(5000) loop
+    if (stopSignal.stopped) return;
+    // => stopSignal.stopped: truthy check — [Clojure: @stop-signal atom deref]
+    try {
+      await pollAndRelay(pool);
+    } catch (err) {
+      console.error("Relay worker error:", err);
+      // => Log and continue — single failed batch does not stop the worker
+    }
+  }, 5000);
+  // => 5000ms: poll interval — [F#: Task.Delay(5000) — Clojure: Thread/sleep 5000]
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: the polling relay is simple and self-contained but adds 0–5 seconds of latency between aggregate commit and event delivery. For latency-sensitive use cases, replace the polling loop with PostgreSQL `LISTEN/NOTIFY`. For high-throughput scenarios (> 1000 events/second), a CDC-based relay reading the PostgreSQL WAL (Debezium) eliminates the polling overhead entirely.
@@ -1624,7 +2391,7 @@ In production, you need to know which port call is slow, which adapter is produc
 
 `System.Diagnostics.Activity` is the BCL's span representation. OpenTelemetry builds on this without adding its own threading model:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1723,6 +2490,52 @@ let withSpan (name: string) (f: unit -> Async<'a>) : Async<'a> =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: OpenTelemetry API span wrapping a port call
+// [F#: System.Diagnostics.ActivitySource — TypeScript uses @opentelemetry/api tracer directly]
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+// => @opentelemetry/api: vendor-neutral OpenTelemetry API — equivalent to System.Diagnostics.ActivitySource
+// => SpanStatusCode: OK/ERROR enum — same as F# ActivityStatusCode
+
+const tracer = trace.getTracer("ProcurementPlatform.Adapters");
+// => Named tracer: equivalent to new ActivitySource("ProcurementPlatform.Adapters")
+// => trace.getTracer: returns the globally registered tracer — no-op if SDK not configured
+
+export async function withSpan<T>(name: string, f: () => Promise<T>): Promise<T> {
+  // => Generic T: wraps any async port call — [F#: withSpan (string -> (unit -> Async<'a>) -> Async<'a>)]
+  // => f: () => Promise<T>: the port call to wrap — lazy via function
+  const span = tracer.startSpan(name);
+  // => startSpan: creates a span if a listener is attached — returns a no-op span if SDK not configured
+  // => [F#: use activity = activitySource.StartActivity(name) — null if no listener]
+  try {
+    const result = await f();
+    // => Execute the wrapped port call inside the span
+    span.setStatus({ code: SpanStatusCode.OK });
+    // => SpanStatusCode.OK: marks the span as successful — [F#: SetStatus(ActivityStatusCode.Ok)]
+    return result;
+    // => Return the port result unchanged — withSpan is transparent to the caller
+  } catch (err) {
+    // => Exception path: port call threw — record error details in the span
+    span.setStatus({
+      code: SpanStatusCode.ERROR,
+      message: err instanceof Error ? err.message : String(err),
+    });
+    // => ERROR status: span appears red — [F#: a.SetStatus(ActivityStatusCode.Error, ex.Message)]
+    span.recordException(err instanceof Error ? err : new Error(String(err)));
+    // => recordException: captures stack trace as span event — [F#: a.RecordException(ex)]
+    throw err;
+    // => Re-throw: preserve the original error — withSpan does not swallow errors
+  } finally {
+    span.end();
+    // => end(): records end timestamp — [F#: use binding IDisposable automatic disposal]
+    // => finally: always ends the span — prevents leaked spans on both success and error paths
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: raw ActivitySource spans have no automatic attribute enrichment (HTTP method, DB statement, error type). OpenTelemetry instrumentation libraries add these automatically when you wrap at the adapter level.
@@ -1731,7 +2544,7 @@ let withSpan (name: string) (f: unit -> Async<'a>) : Async<'a> =
 
 The observability adapter wraps the `PurchaseOrderRepository` in a span without the application service knowing:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1953,11 +2766,82 @@ let withRepositorySpans (inner: PurchaseOrderRepository) : PurchaseOrderReposito
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Observability adapter: OpenTelemetry span decorator wrapping PurchaseOrderRepository
+// src/procurement-platform/contexts/purchasing/infrastructure/ObservabilityAdapter.ts
+// [F#: withRepositorySpans returns PurchaseOrderRepository record — TypeScript returns the same interface]
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+// => @opentelemetry/api: vendor-neutral OTel API — equivalent to F# System.Diagnostics + ActivitySource
+import type { PurchaseOrderRepository } from "../application/ports";
+// => PurchaseOrderRepository: the interface both the real and decorator adapters must satisfy
+import type { PurchaseOrder, PurchaseOrderId } from "../domain";
+// => Domain types: PurchaseOrder aggregate and PurchaseOrderId branded type
+
+const source = trace.getTracer("ProcurementPlatform.Purchasing");
+// => Named tracer: [F#: new ActivitySource("ProcurementPlatform.Purchasing")]
+// => Static: created once at module load — Tracer instances are thread-safe and shareable
+
+async function runWithSpan<T>(spanName: string, tags: Record<string, string>, f: () => Promise<T>): Promise<T> {
+  // => Helper: execute async thunk f inside a named span with attribute tags
+  // => [Clojure: run-with-span extracted to avoid duplication — TypeScript extracts the same helper]
+  const span = source.startSpan(spanName);
+  // => startSpan: creates and starts the span — records start timestamp
+  for (const [k, v] of Object.entries(tags)) {
+    span.setAttribute(k, v);
+    // => setAttribute: adds a searchable tag — [F#: a.SetTag("po.id", ...)]
+  }
+  try {
+    const result = await f();
+    span.setStatus({ code: SpanStatusCode.OK });
+    // => SpanStatusCode.OK: marks the span green — [F#: ActivityStatusCode.Ok]
+    return result;
+  } catch (err) {
+    span.setStatus({ code: SpanStatusCode.ERROR, message: err instanceof Error ? err.message : String(err) });
+    // => ERROR status: span appears red — [F#: ActivityStatusCode.Error]
+    span.recordException(err instanceof Error ? err : new Error(String(err)));
+    // => recordException: stack trace as span event — searchable in Jaeger / Honeycomb
+    throw err;
+  } finally {
+    span.end();
+    // => finally: always ends the span — [F#: use IDisposable automatic disposal]
+  }
+}
+
+export function withRepositorySpans(inner: PurchaseOrderRepository): PurchaseOrderRepository {
+  // => inner: the real pg adapter's PurchaseOrderRepository
+  // => Returns PurchaseOrderRepository: same interface — application service cannot distinguish
+  // => [F#: withRepositorySpans (inner: PurchaseOrderRepository) : PurchaseOrderRepository]
+  return {
+    savePurchaseOrder: async (po: PurchaseOrder) =>
+      runWithSpan(
+        "purchasing.save-purchase-order",
+        // => Span name: "context.operation" — visible in Jaeger / Honeycomb
+        { "po.id": po.id, "po.approval_level": po.approvalLevel, context: "purchasing" },
+        // => Tags: filter all spans for a specific PO; latency analysis by approval tier
+        () => inner.savePurchaseOrder(po),
+        // => Anonymous thunk: defers inner call until runWithSpan starts the span
+      ),
+    findPurchaseOrder: async (poId: PurchaseOrderId) =>
+      runWithSpan(
+        "purchasing.find-purchase-order",
+        // => Distinct span name: separates find from save spans in the trace backend
+        { "po.id": poId, context: "purchasing" },
+        // => context tag: consistent across both methods — enables cross-operation analysis
+        () => inner.findPurchaseOrder(poId),
+        // => Delegate to the real adapter — pg query runs inside inner.findPurchaseOrder
+      ),
+  };
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 The composition root chains the observability decorator over the Npgsql adapter:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -1991,6 +2875,30 @@ let poRepo =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Composition root: chain observability decorator over pg adapter
+// src/procurement-platform/composition/program.ts (excerpt)
+// [F#: let poRepo = npgsqlPurchaseOrderRepository connStr |> withRepositorySpans]
+import { makePgPurchaseOrderRepository } from "../purchasing/infrastructure/PgPurchaseOrderRepository";
+// => Factory: returns the raw pg adapter — equivalent to F# NpgsqlPurchaseOrderRepository
+import { withRepositorySpans } from "../purchasing/infrastructure/ObservabilityAdapter";
+// => Decorator: wraps both savePurchaseOrder and findPurchaseOrder in OTel spans
+import type { Pool } from "pg";
+// => Pool: injected at startup — passed through the chain to the pg adapter
+
+export function buildPurchaseOrderRepository(pool: Pool) {
+  // => Called once at startup — chains the observability decorator over the pg adapter
+  // => [F#: let poRepo = ... |> ObservabilityAdapter.withRepositorySpans]
+  return withRepositorySpans(makePgPurchaseOrderRepository(pool));
+  // => makePgPurchaseOrderRepository: raw pg adapter — actual DB I/O happens here
+  // => withRepositorySpans: wraps both port methods in OpenTelemetry spans
+  // => The application service receives the decorated PurchaseOrderRepository — transparent to it
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: the decorator pattern adds one function call overhead per port call — negligible compared to network I/O. OpenTelemetry requires the SDK to be configured (`.AddOpenTelemetry().WithTracing(...)` in `Program.fs`) before spans are exported; the SDK silently drops spans that emit before configuration completes.
@@ -2007,7 +2915,7 @@ let poRepo =
 
 A simple boolean flag in the flat module approach enables or disables the financing path at the call site:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2051,6 +2959,28 @@ let submitPurchaseOrder (enableMurabaha: bool) (po: PurchaseOrder) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: feature flag boolean in application service — no port
+// [F#: bool enableMurabaha parameter — TypeScript uses the same primitive boolean approach]
+import type { PurchaseOrder } from "../purchasing/domain";
+// => PurchaseOrder domain type — the aggregate under consideration for murabaha financing
+
+export function submitPurchaseOrder(enableMurabaha: boolean, po: PurchaseOrder): void {
+  // => enableMurabaha: boolean injected by the caller — not a port
+  // => The application service knows about the feature flag — violates single-responsibility
+  if (enableMurabaha && po.totalAmount.amount > 100_000) {
+    // => 100_000: hard-coded threshold — cannot be tuned per organization without a code change
+    // => [F#: po.TotalAmount.Amount > 100_000m — same primitive threshold comparison]
+    console.log("Initiating murabaha financing for PO", po.id);
+    // => Inline financing logic — no port boundary, not testable in isolation
+    // => LIMITATION: cannot stub this path in unit tests without enabling the flag globally
+  }
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: the feature flag is a boolean — not a port. The application service cannot be tested for the murabaha path without enabling the flag globally. Adding a second financing provider requires changing the service signature.
@@ -2059,7 +2989,7 @@ let submitPurchaseOrder (enableMurabaha: bool) (po: PurchaseOrder) =
 
 The murabaha-finance context defines its own ports and aggregates. The purchasing application service receives a `MurabahaFinancingPort option` — `None` when the feature is disabled, `Some port` when it is enabled:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2131,9 +3061,62 @@ type MurabahaContractRepository =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// murabaha-finance context: application layer ports
+// src/procurement-platform/contexts/murabaha-finance/application/ports.ts
+// [F#: record types MurabahaFinancingPort and MurabahaContractRepository — TypeScript uses interfaces]
+export type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+// => Result<T, E>: tagged union — same functional error handling pattern across all ports
+
+// Placeholder domain type imports (defined in murabaha-finance/domain)
+declare const PurchaseOrderIdBrand: unique symbol;
+export type PurchaseOrderId = string & { [PurchaseOrderIdBrand]: typeof PurchaseOrderIdBrand };
+// => Branded type: prevents passing a raw string where a PurchaseOrderId is expected
+
+export interface Money {
+  readonly amount: number;
+  readonly currency: string;
+}
+// => Money value object: immutable — [F#: type Money = { Amount: decimal; Currency: string }]
+export interface MurabahaQuote {
+  readonly markupBps: number;
+  readonly schedule: readonly string[];
+}
+export interface MurabahaContract {
+  readonly id: string;
+  readonly quote: MurabahaQuote;
+}
+declare const MurabahaContractIdBrand: unique symbol;
+export type MurabahaContractId = string & { [MurabahaContractIdBrand]: typeof MurabahaContractIdBrand };
+
+// Murabaha financing port
+export interface MurabahaFinancingPort {
+  readonly quoteContract: (poId: PurchaseOrderId, totalAmount: Money) => Promise<Result<MurabahaQuote, string>>;
+  // => quoteContract: given PO ID and total amount, request a financing quote from the murabaha bank
+  // => MurabahaQuote carries the markup (basis points) and repayment schedule
+  // => [F#: QuoteContract: PurchaseOrderId -> Money -> Async<Result<MurabahaQuote, string>>]
+  readonly acceptContract: (quote: MurabahaQuote) => Promise<Result<MurabahaContract, string>>;
+  // => acceptContract: buyer accepts the quote — creates a signed MurabahaContract aggregate
+  // => Emits MurabahaContractSigned event — consumed by purchasing and accounting
+  // => [F#: AcceptContract: MurabahaQuote -> Async<Result<MurabahaContract, string>>]
+}
+
+// Murabaha contract repository
+export interface MurabahaContractRepository {
+  readonly saveContract: (contract: MurabahaContract) => Promise<Result<void, string>>;
+  // => saveContract: persists the signed MurabahaContract aggregate
+  // => [F#: SaveContract: MurabahaContract -> Async<Result<unit, string>>]
+  readonly findContract: (contractId: MurabahaContractId) => Promise<Result<MurabahaContract | null, string>>;
+  // => findContract: retrieves by ID; null means not found — [F#: Result<MurabahaContract option, string>]
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2272,6 +3255,82 @@ let issuePurchaseOrder
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// purchasing application service: optional murabaha financing port via null check
+// src/procurement-platform/contexts/purchasing/application/IssuePurchaseOrder.ts
+// [F#: (murabahaPort: MurabahaFinancingPort option) — TypeScript uses MurabahaFinancingPort | null]
+import type { MurabahaFinancingPort } from "../../murabaha-finance/application/ports";
+// => Import the murabaha port type — the application service accepts it as T | null
+
+// Placeholder types (defined elsewhere)
+type PurchaseOrderId = string;
+type PurchaseOrder = { id: PurchaseOrderId; totalAmount: { amount: number }; supplierId: string; status: string };
+type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+type IssuePOError = { type: "RepositoryFailure"; detail: string } | { type: "PONotFound"; poId: string };
+interface PurchaseOrderRepository {
+  findPurchaseOrder(id: PurchaseOrderId): Promise<Result<PurchaseOrder | null, string>>;
+  savePurchaseOrder(po: PurchaseOrder): Promise<Result<void, string>>;
+}
+interface EventPublisher {
+  publish(event: object): Promise<Result<void, string>>;
+}
+
+export async function issuePurchaseOrder(
+  repo: PurchaseOrderRepository,
+  // => repo: database adapter injected at composition root
+  pub: EventPublisher,
+  // => pub: outbox adapter injected at composition root
+  murabahaPort: MurabahaFinancingPort | null,
+  // => null when murabaha is disabled; non-null when enabled for this organization
+  // => [F#: (murabahaPort: MurabahaFinancingPort option) — TypeScript uses | null for the absent case]
+  poId: PurchaseOrderId,
+): Promise<Result<PurchaseOrder, IssuePOError>> {
+  const poResult = await repo.findPurchaseOrder(poId);
+  // => await: [F#: let! poResult = repo.FindPurchaseOrder poId]
+
+  if (poResult._tag === "Left") {
+    return { _tag: "Left", left: { type: "RepositoryFailure", detail: poResult.left } };
+    // => Infrastructure failure: propagate as typed error — caller returns HTTP 500
+  }
+  if (poResult.right === null) {
+    return { _tag: "Left", left: { type: "PONotFound", poId } };
+    // => PO not found: typed error — caller returns HTTP 404
+  }
+
+  const po = poResult.right;
+  // => PO found: proceed with issuance
+
+  if (murabahaPort !== null && po.totalAmount.amount > 100_000) {
+    // => murabahaPort !== null: non-null check — [F#: Some mPort when po.TotalAmount.Amount > 100_000m]
+    // => 100_000: threshold configurable via feature flag in a production implementation
+    const quoteResult = await murabahaPort.quoteContract(poId as any, po.totalAmount as any);
+    // => quoteContract: the murabaha bank adapter; stub in tests
+    if (quoteResult._tag === "Left") {
+      console.error(`Murabaha quote failed for PO ${poId}: ${quoteResult.left} — issuing without financing`);
+      // => Log and continue: murabaha is optional — PO issuance is not blocked
+    }
+  }
+
+  const issuedPO = { ...po, status: "Issued" } as PurchaseOrder;
+  // => Spread + override: immutable record update — [F#: { po with Status = Issued }]
+
+  const saveResult = await repo.savePurchaseOrder(issuedPO);
+  if (saveResult._tag === "Left") {
+    return { _tag: "Left", left: { type: "RepositoryFailure", detail: saveResult.left } };
+    // => Save failure: typed error — caller logs and returns HTTP 500
+  }
+
+  await pub.publish({ type: "PurchaseOrderIssued", purchaseOrderId: po.id, supplierId: po.supplierId });
+  // => PurchaseOrderIssued: outbox adapter writes the event row in a separate transaction
+
+  return { _tag: "Right", right: issuedPO };
+  // => Return the issued PO aggregate — handler serializes to response DTO
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: the `option` parameter makes optionality explicit at the type level — the caller cannot accidentally pass `None` where `Some` is required or vice versa. The composition root wires the murabaha port based on an organization-level feature flag read from configuration. Adding a second Sharia-compliant bank adapter requires no change to the application service — only a new adapter module and a composition-root branch.
@@ -2288,7 +3347,7 @@ Three anti-patterns reliably erode hexagonal architectures over time: the leaky 
 
 F# modules give you no boundary enforcement, so these anti-patterns occur naturally with the stdlib flat layout:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2343,9 +3402,45 @@ type PurchaseOrder =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Anti-pattern 1: Leaky hexagon — pg import in the domain layer
+// [F#: NpgsqlTypeMapping attribute on domain record — TypeScript couples domain type to pg metadata]
+// src/procurement-platform/contexts/purchasing/domain/index.ts (ANTI-PATTERN)
+
+import type { PoolClient } from "pg";
+// => WRONG: pg (PostgreSQL driver) imported into the domain layer
+// => Any change to pg (major version, type changes) can break this module
+// => Unit tests of PurchaseOrder now need pg on the classpath
+
+export interface PurchaseOrder {
+  id: string;
+  totalAmount: number;
+  __pgTable: "purchase_orders";
+  // => WRONG: pg column mapping embedded in the domain type shape
+  // => ORM concern bleeding into the domain — the domain type now knows about the database
+  // => [F#: [<NpgsqlTypeMapping("purchase_orders")>] — same leaky annotation pattern]
+}
+
+// WRONG: serialization logic in the domain layer — infrastructure concern bleeding in
+export function purchaseOrderToPgRow(po: PurchaseOrder): Record<string, unknown> {
+  // => Serialization in the domain: this belongs in the infrastructure adapter
+  // => [F#: NpgsqlColumn("po_id") attribute on Id field — same domain-infrastructure coupling]
+  return {
+    po_id: po.id,
+    // => Column name mapping in the domain — a column rename requires a domain change
+    total_amount: po.totalAmount,
+    // => Domain type now coupled to PostgreSQL column names — cannot be unit-tested without pg
+  };
+  // => Fix: move this function to PgPurchaseOrderRepository in the infrastructure layer
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2427,9 +3522,50 @@ let godSaveAndDisburse (connStr: string) (bankClient: HttpClient) (po: PurchaseO
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Anti-pattern 2: God adapter — one adapter doing repository + event publish + bank call
+// [F#: godSaveAndDisburse with connStr + bankClient — TypeScript god fn with pool + fetch]
+// src/procurement-platform/contexts/purchasing/infrastructure/GodAdapter.ts (ANTI-PATTERN)
+import { Pool } from "pg";
+// => pg: DB dependency
+// => Two infrastructure dependencies in one module — signals multiple port responsibilities
+
+export async function godSaveAndDisburse(
+  pool: Pool,
+  bankBaseUrl: string,
+  po: { id: string; totalAmount: number },
+): Promise<void> {
+  // => pool + bankBaseUrl: two infrastructure resources signal multiple port responsibilities
+  // => SYMPTOM: function signature crosses two port boundaries — DB and bank API
+  const client = await pool.connect();
+  // => DB connection: one responsibility
+  try {
+    await client.query("INSERT INTO purchasing.purchase_orders VALUES ($1, $2)", [po.id, po.totalAmount]);
+    // => Save to database — first port responsibility
+    await fetch(`${bankBaseUrl}/disbursements`, {
+      method: "POST",
+      body: JSON.stringify({ poId: po.id }),
+      headers: { "Content-Type": "application/json" },
+    });
+    // => Call bank API — a different port responsibility mixed in
+    // => If the bank call fails, should the DB save roll back? This adapter cannot answer that.
+    console.log("Event: PurchaseOrderIssued", po.id);
+    // => Publish event via console.log — not behind a port at all
+    // => console.log is not a port: no test can assert on it or replace it
+  } finally {
+    client.release();
+  }
+}
+// => Fix: split into three focused adapters — PgPurchaseOrderRepository, BankApiAdapter, OutboxEventPublisher
+// => Each adapter object satisfies exactly one port interface
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2517,6 +3653,56 @@ let submitPurchaseOrder (save: PurchaseOrderRepository) (dto: {| supplierId: str
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Anti-pattern 3: Anemic domain inside hexagonal
+// [F#: CLIMutable record with mutable fields — TypeScript anemic domain is an unvalidated object]
+// src/procurement-platform/contexts/purchasing/domain/index.ts (ANTI-PATTERN)
+
+// Anemic domain type: no behavior, no invariants, all fields writable
+export interface PurchaseOrder {
+  id: string;
+  // => id — no validation: undefined accepted; duplicate IDs are possible
+  supplierId: string;
+  // => supplierId — no validation: empty string passes silently
+  totalAmount: number;
+  // => totalAmount — no validation: -500 is a valid totalAmount in this anemic design
+  status: string;
+  // => status — no validation: "invalid-status-string" compiles without error
+}
+// => No smart constructor: consumers build PurchaseOrder with { id: "", totalAmount: -500 }
+// => All validation logic lives in the application service — the domain is a data bag
+
+// Application service forced to carry business logic (symptom of anemic domain)
+export async function submitPurchaseOrder(
+  save: (po: PurchaseOrder) => Promise<{ ok: boolean }>,
+  dto: { supplierId: string; totalAmount: number },
+): Promise<{ ok: boolean } | { error: string }> {
+  // => dto: plain object — no domain types at the boundary; validation is the service's problem
+  if (dto.totalAmount <= 0) {
+    return { error: "Total amount must be positive" };
+    // => Validation in the application service: this belongs in a smart constructor
+    // => These checks duplicated wherever submitPurchaseOrder is called
+  }
+  if (!dto.supplierId.trim()) {
+    return { error: "Supplier ID must not be blank" };
+    // => Each call site must re-implement or remember to call submitPurchaseOrder
+  }
+  const po: PurchaseOrder = {
+    id: crypto.randomUUID(),
+    supplierId: dto.supplierId,
+    totalAmount: dto.totalAmount,
+    status: "Draft",
+    // => Plain object construction: no smart constructor — invalid amounts compile fine directly
+  };
+  return save(po);
+  // => Fix: add createMoney and createPurchaseOrder functions that validate and return Result<T, E>
+  // => The application service receives only valid aggregates; all invariants live in the domain layer
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 ### Production Framework
@@ -2758,7 +3944,7 @@ Guide 20 showed how to add OpenTelemetry spans to individual port calls. At the 
 
 `System.Diagnostics.ActivitySource` creates spans, and you can write a minimal listener that prints spans to stdout — verifying that spans are emitted before adding the OpenTelemetry SDK:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2857,6 +4043,31 @@ ActivitySource.AddActivityListener(listener)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: OpenTelemetry SDK writing spans to stdout for verification
+// [F#: ActivityListener with ActivityStopped callback — TypeScript uses ConsoleSpanExporter]
+import { BasicTracerProvider, SimpleSpanProcessor, ConsoleSpanExporter } from "@opentelemetry/sdk-trace-base";
+// => BasicTracerProvider: SDK trace provider — [F#: TracerProvider from OpenTelemetry SDK]
+// => SimpleSpanProcessor: exports each span synchronously — [F#: ActivityListener.ActivityStopped]
+// => ConsoleSpanExporter: writes span JSON to stdout — [F#: printfn "[TRACE] ..." in ActivityStopped]
+
+export function registerStdoutListener(): void {
+  // => [F#: ActivitySource.AddActivityListener(listener) — TypeScript configures the SDK provider]
+  const provider = new BasicTracerProvider();
+  // => BasicTracerProvider: collects spans from all registered sources
+  provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+  // => SimpleSpanProcessor: forwards each span to ConsoleSpanExporter when it ends
+  // => ConsoleSpanExporter: writes span JSON to stdout — unstructured, for verification only
+  // => [F#: ActivityListener.ActivityStopped callback printing to stdout — same intent]
+  provider.register();
+  // => register(): sets this as the global TracerProvider — all trace.getTracer() calls use it
+  // => [F#: ActivitySource.AddActivityListener — same "before any StartActivity" constraint]
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: stdout span output is unstructured — you cannot query duration percentiles, correlate trace IDs across services, or set up alerts. Spans are lost when the pod restarts.
@@ -2865,7 +4076,7 @@ ActivitySource.AddActivityListener(listener)
 
 `procurement-platform-be` wires OpenTelemetry in `Composition/Program.fs` using the `OpenTelemetry.Extensions.Hosting` NuGet package:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3007,6 +4218,68 @@ let configureObservability (builder: WebApplicationBuilder) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// OpenTelemetry SDK wiring at startup using @opentelemetry/sdk-node
+// src/procurement-platform/composition/observability.ts
+// [F#: configureObservability builder — TypeScript calls NodeSDK.start() at process startup]
+import { NodeSDK } from "@opentelemetry/sdk-node";
+// => @opentelemetry/sdk-node: all-in-one SDK for Node.js — registers tracer + metric providers
+// => Equivalent to AddOpenTelemetry().WithTracing().WithMetrics() in ASP.NET Core
+import { Resource } from "@opentelemetry/resources";
+// => Resource: service identity attributes — equivalent to F# ConfigureResource
+import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from "@opentelemetry/semantic-conventions";
+// => Semantic attribute constants: service.name, service.version — avoids magic strings
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
+// => OTLP gRPC exporter: sends spans to the OpenTelemetry Collector in protobuf format
+// => [F#: .AddOtlpExporter(fun o -> o.Endpoint <- Uri(otlpEndpoint)) — same protocol]
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+// => Auto-instrumentations: HTTP, pg, Express spans — [F#: AddAspNetCoreInstrumentation]
+
+export function configureObservability(): void {
+  // => Called once at startup — before any imports that create tracers
+  // => [F#: let configureObservability (builder: WebApplicationBuilder) — TypeScript is a side-effecting init]
+  const otlpEndpoint = process.env["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://localhost:4317";
+  // => Read from environment — Kubernetes ConfigMap injects this key
+  // => [F#: builder.Configuration.["OTEL_EXPORTER_OTLP_ENDPOINT"] |> Option.defaultValue "..."]
+
+  const sdk = new NodeSDK({
+    resource: new Resource({
+      [SEMRESATTRS_SERVICE_NAME]: "procurement-platform-be",
+      // => service.name: visible in Jaeger / Honeycomb — [F#: serviceName = "procurement-platform-be"]
+      [SEMRESATTRS_SERVICE_VERSION]: "1.0.0",
+      // => service.version: correlates spans to a specific release
+      "service.instance.id": require("os").hostname(),
+      // => Pod hostname in Kubernetes — [F#: System.Environment.MachineName]
+    }),
+    traceExporter: new OTLPTraceExporter({ url: otlpEndpoint }),
+    // => OTLP gRPC exporter: sends spans to the collector — [F#: .AddOtlpExporter(...)]
+    instrumentations: [
+      getNodeAutoInstrumentations({
+        // => Auto-instruments HTTP, pg, Express — [F#: AddAspNetCoreInstrumentation]
+        "@opentelemetry/instrumentation-http": {
+          requestHook: (span) => {
+            span.setAttribute("context", "http");
+          },
+          // => Add context tag to all HTTP spans — consistent with manual adapter spans
+        },
+      }),
+    ],
+  });
+
+  sdk.start();
+  // => start(): activates the SDK — all trace.getTracer() calls emit to the OTLP endpoint
+  // => [F#: builder.Services.AddOpenTelemetry() starts on WebApplication.Build()]
+
+  process.on("SIGTERM", async () => {
+    await sdk.shutdown();
+    // => Graceful shutdown: flushes pending spans — [F#: IHostedService ForceFlush on app shutdown]
+  });
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 The Kubernetes ConfigMap from Guide 23 adds the OTLP endpoint key so no code change is needed per environment:
@@ -3037,7 +4310,7 @@ When the PostgreSQL pod is unhealthy during a rolling restart, or the bank API r
 
 F# option types and simple try/catch at the handler level provide a primitive fallback:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3132,6 +4405,48 @@ let handleGetPurchaseOrder (repo: PurchaseOrderRepository) (poId: System.Guid) :
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: try/catch fallback at the Express handler level (ANTI-PATTERN)
+// [F#: Giraffe HttpHandler — TypeScript uses Express Request/Response]
+import type { Request, Response } from "express";
+// => express: TypeScript's standard web framework — Request/Response mirror Giraffe's HttpContext
+
+// Placeholder repository type (defined in application/ports)
+interface PurchaseOrderRepository {
+  findPurchaseOrder(id: string): Promise<{ _tag: string; right?: unknown; left?: string }>;
+}
+
+export function handleGetPurchaseOrder(repo: PurchaseOrderRepository, poId: string) {
+  // => repo: PurchaseOrderRepository injected at composition root
+  // => poId: raw string from the URL — not yet validated or typed
+  return async (_req: Request, res: Response): Promise<void> => {
+    // => Express handler: (req, res) => Promise<void>; [F#: fun next ctx -> task { ... }]
+    try {
+      const result = await repo.findPurchaseOrder(poId);
+      // => findPurchaseOrder: async DB call — await resolves the Promise
+      if (result._tag === "Right" && result.right !== null) {
+        res.status(200).json(result.right);
+        // => PO found: serialize to JSON and return 200 — [F#: json po next ctx]
+      } else if (result._tag === "Right") {
+        res.status(404).send("Not found");
+        // => PO not found: 404 — [F#: RequestErrors.notFound (text "Not found")]
+      } else {
+        res.status(503).send("Storage unavailable");
+        // => Repository failure: 503 — [F#: ServerErrors.serviceUnavailable]
+        // => ANTI-PATTERN: no typed discrimination — RepositoryError variant is lost
+      }
+    } catch (err) {
+      res.status(500).send(err instanceof Error ? err.message : String(err));
+      // => Unhandled exception: 500 with the error message — leaks internal details to the caller
+      // => ANTI-PATTERN: use RepositoryError port type to avoid this
+    }
+  };
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: the fallback logic is inside the handler — every handler must duplicate it. When the database goes down, all handlers fail the same way, but the logic must be audited and updated in every file.
@@ -3140,7 +4455,7 @@ let handleGetPurchaseOrder (repo: PurchaseOrderRepository) (poId: System.Guid) :
 
 The degraded-mode pattern introduces a `DegradedPurchaseOrderRepository` that wraps a cached snapshot and a `NullEventPublisher` that silently drops events when the broker is unavailable:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3298,9 +4613,79 @@ let withCachePopulation (inner: PurchaseOrderRepository) : PurchaseOrderReposito
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Degraded read adapter: returns a cached snapshot when the DB port fails
+// src/procurement-platform/contexts/purchasing/infrastructure/DegradedPurchaseOrderRepository.ts
+// [F#: DegradedPurchaseOrderRepository module — TypeScript uses a plain object + shared Map cache]
+
+// Placeholder types (defined in domain/application)
+type PurchaseOrderId = string;
+type PurchaseOrder = { id: PurchaseOrderId; approvalLevel: string; supplierId: string };
+type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+interface PurchaseOrderRepository {
+  findPurchaseOrder(id: PurchaseOrderId): Promise<Result<PurchaseOrder | null, string>>;
+  savePurchaseOrder(po: PurchaseOrder): Promise<Result<void, string>>;
+}
+
+// Shared degraded-mode flag: true when the circuit-breaker has opened
+export let isDegraded = false;
+// => let + export: module-level mutable variable — written by circuit-breaker callback
+// => [F#: let mutable isDegraded = false — Node.js single-threaded, no race on bool]
+
+// Cache: holds the last successful snapshot of purchase orders
+const cache = new Map<PurchaseOrderId, PurchaseOrder>();
+// => Map: O(1) get/set — same role as F# ConcurrentDictionary<PurchaseOrderId, PurchaseOrder>()
+// => Private to module: only withCachePopulation writes to it
+
+// Degraded PurchaseOrderRepository: serves from the in-memory cache without DB I/O
+export const cachedPurchaseOrderRepository: PurchaseOrderRepository = {
+  findPurchaseOrder: async (poId) => {
+    // => Read path — cache lookup; no DB call
+    // => [F#: fun poId -> async { match cache.TryGetValue(poId) }]
+    const po = cache.get(poId);
+    if (po !== undefined) {
+      return { _tag: "Right", right: po };
+      // => Cache hit: return last-known PO — may be stale since last successful DB read
+    }
+    return { _tag: "Right", right: null };
+    // => Cache miss: no snapshot available — caller returns HTTP 404
+    // => [F#: return Ok None — same semantics; null used instead of Option]
+  },
+  savePurchaseOrder: async (_po) => {
+    // => Write path: writes rejected during degraded mode
+    return { _tag: "Left", left: "Service degraded — writes unavailable" };
+    // => Callers translate this to a 503 response with a Retry-After header
+    // => [F#: return Error (ConnectionFailure (Exception "Service degraded — writes unavailable"))]
+  },
+};
+
+// Cache-populating decorator for the real pg adapter
+export function withCachePopulation(inner: PurchaseOrderRepository): PurchaseOrderRepository {
+  // => Decorator: wraps inner.findPurchaseOrder to populate the cache on success
+  // => [F#: let withCachePopulation (inner: PurchaseOrderRepository) : PurchaseOrderRepository]
+  return {
+    findPurchaseOrder: async (poId) => {
+      const result = await inner.findPurchaseOrder(poId);
+      // => Call the real adapter — actual DB query
+      if (result._tag === "Right" && result.right !== null) {
+        cache.set(result.right.id, result.right);
+        // => Populate the cache on success — [F#: cache.[po.Id] <- po]
+      }
+      return result;
+      // => Pass through the result unchanged — decorator is transparent to the caller
+    },
+    savePurchaseOrder: inner.savePurchaseOrder,
+    // => Save path: no cache to populate on writes — delegate directly to inner
+  };
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3362,9 +4747,38 @@ let nullEventPublisher : EventPublisher =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Null event publisher: silently drops events when the outbox is unavailable
+// src/procurement-platform/contexts/purchasing/infrastructure/NullEventPublisher.ts
+// [F#: NullEventPublisher module — TypeScript exports a null-object constant]
+
+// Placeholder EventPublisher type (defined in application/ports)
+type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+interface EventPublisher {
+  publish(event: object): Promise<Result<void, string>>;
+}
+
+export const nullEventPublisher: EventPublisher = {
+  // => Module-level constant: shared per process — stateless, no side effects
+  // => [F#: let nullEventPublisher : EventPublisher = { Publish = ... } — equivalent const binding]
+  publish: async (_event) => {
+    // => _event: underscore prefix — ignored; event is discarded without network I/O
+    // => [F#: fun _event -> async { return Ok () } — TypeScript uses Promise.resolve()]
+    return { _tag: "Right", right: undefined };
+    // => Right/void: the application service proceeds as if the event was published
+    // => Silent drop: wire a logging decorator in production for observability
+  },
+};
+// => When the circuit-breaker closes, the composition root swaps back to the real outbox adapter
+// => Events emitted during degraded mode are permanently lost — acceptable for non-critical notifications
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3448,6 +4862,53 @@ let buildEventPublisher (connStr: string) : EventPublisher =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Composition root: circuit-breaker state selects the correct adapter at request time
+// src/procurement-platform/composition/program.ts (circuit adapter selection)
+// [F#: Program.fs buildPurchaseOrderRepository — TypeScript exports two factory functions]
+import {
+  isDegraded,
+  cachedPurchaseOrderRepository,
+  withCachePopulation,
+} from "../purchasing/infrastructure/DegradedPurchaseOrderRepository";
+// => isDegraded: module-level flag; cachedPurchaseOrderRepository: degraded adapter
+import { makePgPurchaseOrderRepository } from "../purchasing/infrastructure/PgPurchaseOrderRepository";
+// => Real pg adapter factory — equivalent to F# NpgsqlPurchaseOrderRepository
+import { nullEventPublisher } from "../purchasing/infrastructure/NullEventPublisher";
+// => Null event publisher: drops events when circuit is open
+import { makeOutboxPublisher } from "../purchasing/infrastructure/OutboxEventPublisher";
+// => Real outbox publisher: at-least-once delivery adapter
+import type { Pool } from "pg";
+
+export function buildPurchaseOrderRepository(pool: Pool) {
+  // => Called at request time — evaluates isDegraded on each call
+  // => [F#: let buildPurchaseOrderRepository (connStr: string) : PurchaseOrderRepository]
+  if (isDegraded) {
+    return cachedPurchaseOrderRepository;
+    // => Circuit open: serve from cache — no database I/O
+    // => Application service receives a valid PurchaseOrderRepository — no code change needed
+  }
+  return withCachePopulation(makePgPurchaseOrderRepository(pool));
+  // => Circuit closed: serve from pg and populate the cache as a side-effect
+  // => [F#: npgsqlPurchaseOrderRepository connStr |> withCachePopulation]
+}
+
+export function buildEventPublisher(pool: Pool) {
+  // => Same pattern as buildPurchaseOrderRepository — selects EventPublisher based on circuit state
+  if (isDegraded) {
+    return nullEventPublisher;
+    // => Circuit open: drop events — the outbox table is inaccessible
+    // => Application service calls pub.publish — receives Right/void — no exception, no retry
+  }
+  return makeOutboxPublisher(pool);
+  // => Circuit closed: write to outbox — at-least-once delivery resumes
+  // => [F#: OutboxEventPublisher.makeOutboxPublisher connStr — factory pattern]
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: the degraded read adapter serves stale data — clients receive a response that may be minutes or hours old. For a procurement platform, serving a stale PO list is better than returning 503 and blocking a manager who needs to check approval status. The null event publisher silently drops events — if at-least-once delivery is a hard requirement, replace it with an in-memory buffer that replays to the outbox when the broker recovers, accepting the risk of buffer overflow under sustained outages.
@@ -3464,7 +4925,7 @@ let buildEventPublisher (connStr: string) : EventPublisher =
 
 `Environment.GetEnvironmentVariable` reads a single key directly — the manual approach:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3557,6 +5018,65 @@ let readBankApiSettings () : Result<BankApiSettings, string> =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: read BankApiSettings manually from environment variables
+// [F#: Result<BankApiSettings, string> — TypeScript returns a tagged union Result]
+
+export interface BankApiSettings {
+  readonly apiKey: string;
+  readonly baseUrl: string;
+  readonly timeoutMs: number;
+}
+
+type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+
+export function readBankApiSettings(): Result<BankApiSettings, string> {
+  // => Returns Result<BankApiSettings, string>: Right on success, Left with a message on missing key
+  // => [F#: let readBankApiSettings () : Result<BankApiSettings, string>]
+  const apiKey = process.env["BankApi__ApiKey"] ?? null;
+  // => Double-underscore naming: matches .NET IConfiguration's hierarchy separator convention
+  // => ?? null: process.env returns undefined for missing keys; null normalises the check below
+  const baseUrl = process.env["BankApi__BaseUrl"] ?? null;
+  // => baseUrl: the bank API base URL — must be a valid HTTPS URI
+  const timeoutStr = process.env["BankApi__TimeoutSeconds"] ?? null;
+  // => timeoutStr: string value — must be parsed to int; no type coercion from environment
+
+  if (apiKey === null) {
+    return { _tag: "Left", left: "BankApi__ApiKey is not set" };
+    // => Missing API key: bank adapter cannot authenticate — fail fast at startup
+    // => [F#: | null, _, _ -> Error "BankApi__ApiKey is not set"]
+  }
+  if (baseUrl === null) {
+    return { _tag: "Left", left: "BankApi__BaseUrl is not set" };
+    // => Missing base URL: bank adapter has no endpoint to call
+  }
+  if (timeoutStr === null) {
+    return { _tag: "Left", left: "BankApi__TimeoutSeconds is not set" };
+    // => Missing timeout: bank adapter cannot configure per-call HTTP timeout
+  }
+
+  const timeoutSeconds = Number(timeoutStr);
+  // => Number(): parse string to number — NaN if non-numeric; [F#: Int32.TryParse]
+  if (Number.isNaN(timeoutSeconds)) {
+    return {
+      _tag: "Left",
+      left: `BankApi__TimeoutSeconds is not a valid integer: ${timeoutStr}`,
+      // => Parse failure: descriptive error — [F#: Error (sprintf "... not a valid integer: %s" ts)]
+    };
+  }
+
+  return {
+    _tag: "Right",
+    right: { apiKey, baseUrl, timeoutMs: timeoutSeconds * 1000 },
+    // => All keys present and parseable — construct and return the typed settings object
+    // => [F#: Ok { ApiKey = key; BaseUrl = url; TimeoutSeconds = timeout }]
+  };
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: `GetEnvironmentVariable` reads at call time — no binding validation (empty-string keys pass the null check). Changes to the key names in the Kubernetes ConfigMap/Secret must be manually mirrored in every `GetEnvironmentVariable` call.
@@ -3565,7 +5085,7 @@ let readBankApiSettings () : Result<BankApiSettings, string> =
 
 `procurement-platform-be` uses `builder.Services.Configure<ValidatedBankApiSettings>` in `Composition/Program.fs`. This makes the full binding chain explicit and adds validation via `ValidateDataAnnotations`:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3669,9 +5189,65 @@ let configureOptions (builder: WebApplicationBuilder) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Startup: typed settings object with zod schema validation at startup
+// src/procurement-platform/composition/Config.ts
+// [F#: ValidatedBankApiSettings with data annotation constraints — TypeScript uses zod schema]
+import { z } from "zod";
+// => zod: TypeScript-first schema validation library — equivalent to [<Required>][<MinLength>][<Url>][<Range>]
+// => [Clojure: malli.core — zod is the TypeScript ecosystem's malli equivalent]
+
+export const ValidatedBankApiSettingsSchema = z.object({
+  // => z.object: equivalent to the F# [<CLIMutable>] record type with validation attributes
+  apiKey: z.string().min(10, { message: "apiKey must be at least 10 characters" }),
+  // => min(10): detects placeholder "REPLACE_ME" — [F#: [<MinLength(10)>]]
+  // => z.string(): validates the apiKey is a non-null string — [F#: [<Required>]]
+  baseUrl: z.string().url({ message: "baseUrl must be a valid HTTP(S) URI" }),
+  // => .url(): validates the baseUrl is a well-formed absolute URI — [F#: [<Url>]]
+  timeoutSeconds: z
+    .number()
+    .int()
+    .min(5, { message: "timeoutSeconds must be at least 5" })
+    .max(120, { message: "timeoutSeconds must be at most 120" }),
+  // => .min(5).max(120): range constraint — [F#: [<Range(5, 120)>]; catches 0 or negative values]
+});
+
+export type ValidatedBankApiSettings = z.infer<typeof ValidatedBankApiSettingsSchema>;
+// => z.infer: derives the TypeScript type from the schema — no manual interface duplication
+
+export function configureAndValidateOptions(): ValidatedBankApiSettings {
+  // => Called once from main startup — equivalent to .ValidateDataAnnotations().ValidateOnStart()
+  const raw = {
+    apiKey: process.env["BankApi__ApiKey"],
+    // => BankApi__ApiKey: double-underscore env var — same as F# IConfiguration convention
+    baseUrl: process.env["BankApi__BaseUrl"],
+    // => BankApi__BaseUrl: non-secret config — present in Kubernetes ConfigMap
+    timeoutSeconds: process.env["BankApi__TimeoutSeconds"] ? Number(process.env["BankApi__TimeoutSeconds"]) : undefined,
+    // => Number(): parse env var string to number; undefined if absent — schema catches it
+  };
+
+  const result = ValidatedBankApiSettingsSchema.safeParse(raw);
+  // => safeParse: validates without throwing — returns { success: true/false, data/error }
+  // => [F#: ValidateOnStart fails the process at startup — same fail-fast contract]
+  if (!result.success) {
+    const errors = result.error.flatten();
+    // => flatten(): readable error map — [Clojure: me/humanize — same human-readable format]
+    throw new Error(`Invalid BankApiSettings — process startup aborted: ${JSON.stringify(errors)}`);
+    // => Throw: process terminates with a clear error
+    // => [F#: ValidateOnStart terminates WebApplication.Build() — same CrashLoopBackOff behaviour]
+  }
+
+  return result.data;
+  // => Return the validated settings object — composition root passes it to the adapter factory
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3764,6 +5340,56 @@ let makeFromOptions (options: IOptions<ValidatedBankApiSettings>) (factory: IHtt
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Adapter factory: reads validated settings and constructs the bank API port
+// src/procurement-platform/payments/infrastructure/OptionsAwareAdapterFactory.ts
+// [F#: OptionsAwareAdapterFactory.makeFromOptions — TypeScript receives the validated settings object]
+import { z } from "zod";
+// => zod: schema validation — the TypeScript equivalent of data annotations + IOptions<T>
+import { makeBankApiAdapter } from "./BankApiAdapter";
+// => makeBankApiAdapter: the adapter factory from Guide 17 — receives the typed settings map
+import type { BankingPort } from "../application/ports";
+
+const ValidatedBankApiSettings = z.object({
+  apiKey: z.string().min(10),
+  // => apiKey: must be at least 10 characters — detects placeholder "REPLACE_ME"
+  baseUrl: z.string().url(),
+  // => baseUrl: must match a valid URL — fails fast on misconfigured URL
+  timeoutSeconds: z.number().int().min(5).max(120),
+  // => timeoutSeconds: integer between 5 and 120 — rejects 0 or negative values at startup
+});
+
+function validateSettings(config: unknown): asserts config is z.infer<typeof ValidatedBankApiSettings> {
+  // => asserts: TypeScript assertion function — narrows type after validation
+  const result = ValidatedBankApiSettings.safeParse(config);
+  if (!result.success) {
+    throw new Error(`Invalid BankApiSettings — startup aborted: ${JSON.stringify(result.error.flatten())}`);
+    // => Throw: process terminates — [F#: ValidateOnStart terminates WebApplication.Build()]
+  }
+}
+
+export function makeFromConfig(config: unknown): BankingPort {
+  // => config: plain object from environment — validated before use
+  // => [F#: let makeFromOptions (options: IOptions<ValidatedBankApiSettings>) factory]
+  validateSettings(config);
+  // => validateSettings: throws on invalid config — no silent empty-string propagation
+  const settings = {
+    apiKey: config.apiKey,
+    // => apiKey: validated non-null, minimum 10 characters
+    baseUrl: config.baseUrl,
+    // => baseUrl: validated as a URL
+    timeoutMs: config.timeoutSeconds * 1000,
+    // => Convert seconds to milliseconds for BankApiSettings — adapter expects ms
+  };
+  return makeBankApiAdapter(settings);
+  // => Returns the bank API port — composition root wires it to the application service
+  // => [F#: make settings factory — identical responsibility, different type plumbing]
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: `ValidateOnStart` fails the process at startup — the Kubernetes Deployment rolls back the failed pod and keeps the previous replica running. This is the desired behaviour (fast fail over silent misconfiguration), but it means a misconfigured Secret causes a `CrashLoopBackOff` that requires a ConfigMap/Secret fix and a pod restart to recover. Hot-reload of `IOptions` (via `IOptionsMonitor<T>`) allows configuration changes without restart but bypasses `ValidateOnStart` — validate manually inside the reload callback if hot-reload is enabled.
@@ -3780,7 +5406,7 @@ The outbox relay worker from Guide 19 is itself a background job — an `IHosted
 
 An `IHostedService` with inline business logic skips the port entirely:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -3880,6 +5506,47 @@ type StaleApprovalEscalatorWorker(connStr: string) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: inline background job with pg — no port abstraction (ANTI-PATTERN)
+// [F#: IHostedService with Npgsql/Dapper inline — TypeScript uses setInterval with pg directly]
+import { Pool } from "pg";
+// => pg: imported directly into the worker; ties the worker to PostgreSQL
+// => ANTI-PATTERN: importing pg here couples the worker to the database technology
+
+export function startStaleEscalatorAntiPattern(pool: Pool): NodeJS.Timeout {
+  // => pool: Pool parameter signals no port — DB technology hardwired
+  // => [F#: type StaleApprovalEscalatorWorker(connStr: string) — same anti-pattern]
+  return setInterval(async () => {
+    // => setInterval: fires every 60 seconds — equivalent to IHostedService while loop
+    const client = await pool.connect();
+    try {
+      const { rows: staleOrders } = await client.query<{ po_id: string }>(
+        `SELECT po_id FROM purchasing.purchase_orders
+         WHERE status = 'AwaitingApproval'
+         AND created_at < NOW() - INTERVAL '5 days'`,
+        // => SQL: "5 days" business rule is a raw string — not configurable, not testable
+        // => PROBLEM: cannot test "5 days" threshold without a real PostgreSQL instance
+      );
+      // => staleOrders: raw rows — no domain aggregate, no smart constructors
+      for (const { po_id } of staleOrders) {
+        await client.query(`UPDATE purchasing.purchase_orders SET status = 'Escalated' WHERE po_id = $1`, [po_id]);
+        // => Direct UPDATE — no application service, no domain event published
+        // => PROBLEM: downstream consumers never learn about the escalation
+        console.log("Event: StaleApprovalEscalated", po_id);
+        // => console.log: not a port — no test can assert on it or replace it
+      }
+    } finally {
+      client.release();
+    }
+  }, 60_000);
+  // => 60_000ms: hardcoded poll interval — not configurable without a code change
+  // => [F#: Task.Delay(60_000) — Clojure: timeout 60000; same hardcoded value anti-pattern]
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Limitation for production**: business logic ("5 days") inside the hosted service cannot be tested without a real database. No domain event is published when a PO is escalated — downstream consumers (approval-router, finance team) miss the transition. No port means swapping the database requires changing the hosted service.
@@ -3888,7 +5555,7 @@ type StaleApprovalEscalatorWorker(connStr: string) =
 
 The hexagonal approach defines a background job port and wires the hosted service to call the application service through it:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4018,9 +5685,87 @@ let escalateStaleApprovals
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Background job port and application service: escalateStaleApprovals
+// src/procurement-platform/contexts/purchasing/application/EscalateStaleApprovals.ts
+// [F#: type EscalateStaleApprovalsJob = DateTimeOffset -> Async<Result<...>>]
+// TypeScript ports are plain function types — no nominal type alias needed
+
+// Minimal domain types (defined elsewhere in purchasing/domain)
+declare const PurchaseOrderIdBrand: unique symbol;
+type PurchaseOrderId = string & { [PurchaseOrderIdBrand]: typeof PurchaseOrderIdBrand };
+type PurchaseOrder = {
+  id: PurchaseOrderId;
+  approvalLevel: string;
+  totalAmount: { amount: number; currency: string };
+  supplierId: string;
+  status: string;
+};
+type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+interface EventPublisher {
+  publish(e: object): Promise<Result<void, string>>;
+}
+
+// Clock port type — zero-argument function returning current date
+export type Clock = () => Date;
+// => [F#: type Clock = unit -> DateTimeOffset — same functional clock port pattern]
+// => Frozen in tests: deterministic regardless of system clock
+
+export async function escalateStaleApprovals(
+  findStale: (cutoff: Date) => Promise<Result<readonly PurchaseOrder[], string>>,
+  // => Read port: find POs in AwaitingApproval state opened before the cutoff
+  // => [F#: (findStale: DateTimeOffset -> Async<Result<PurchaseOrder list, string>>)]
+  escalatePO: (po: PurchaseOrder) => Promise<Result<void, string>>,
+  // => Write port: escalate a single PO — adapter issues the UPDATE
+  pub: EventPublisher,
+  // => Event publisher: publish PurchaseOrderApprovalEscalated for each escalated PO
+  clock: Clock,
+  // => Clock port: returns current date — frozen in tests
+): Promise<Result<readonly PurchaseOrder[], string>> {
+  const cutoff = new Date(clock().getTime() - 5 * 24 * 60 * 60 * 1000);
+  // => Subtract 5 days from the injected clock — testable without Date.now() dependency
+  // => [F#: (clock ()).AddDays(-5.0) — same cutoff calculation, different API]
+  const staleResult = await findStale(cutoff);
+  // => findStale: calls the read adapter — await resolves the Promise
+  if (staleResult._tag === "Left") {
+    return staleResult;
+    // => Read failure: propagate the error — [F#: | Error e -> return Error e]
+  }
+
+  const stalePOs = staleResult.right;
+  // => stalePOs: readonly array of PO aggregates — may be empty
+  await Promise.all(
+    stalePOs.map(async (po) => {
+      // => Promise.all + map: escalate all stale POs concurrently — [F#: Async.Parallel]
+      const r = await escalatePO(po);
+      if (r._tag === "Right") {
+        await pub.publish({
+          type: "PurchaseOrderApprovalEscalated",
+          purchaseOrderId: po.id,
+          // => Carry PO ID into the event — approval-router re-routes to next-level manager
+          approvalLevel: po.approvalLevel,
+          // => ApprovalLevel: carried into the escalation event — [F#: po.ApprovalLevel]
+        });
+        // => Publish escalation event — [F#: pub.Publish (PurchaseOrderApprovalEscalated { ... })]
+      } else {
+        console.error("Failed to escalate PO", po.id, r.left);
+        // => Log and continue — partial failure acceptable for a batch job
+      }
+    }),
+  );
+
+  return { _tag: "Right", right: stalePOs };
+  // => Return the escalated list — caller (worker) logs the count
+  // => [F#: return Ok stalePOs — same semantics, tagged union rather than Result DU]
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4126,11 +5871,61 @@ type StaleApprovalEscalatorWorker
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Background job worker: calls the application service on a schedule using setInterval
+// src/procurement-platform/contexts/purchasing/infrastructure/StaleApprovalEscalatorWorker.ts
+// [F#: IHostedService — TypeScript uses setInterval; no hosted-service protocol needed]
+import { escalateStaleApprovals, type Clock } from "../application/EscalateStaleApprovals";
+// => escalateStaleApprovals: the application service function
+
+// Placeholder types (defined in application/ports)
+type PurchaseOrder = { id: string; approvalLevel: string };
+type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
+interface EventPublisher {
+  publish(e: object): Promise<Result<void, string>>;
+}
+
+export function startStaleApprovalEscalator(
+  findStale: Parameters<typeof escalateStaleApprovals>[0],
+  // => Read port: queries stale POs from the database adapter
+  escalatePO: Parameters<typeof escalateStaleApprovals>[1],
+  // => Write port: issues the UPDATE for each stale PO
+  pub: EventPublisher,
+  // => Event publisher: publishes PurchaseOrderApprovalEscalated events
+  clock: Clock,
+  // => Clock port: returns current date — frozen in tests
+  stopSignal: { stopped: boolean },
+  // => stopSignal: mutable object — caller sets stopped = true to initiate shutdown
+  // => [F#: CancellationToken — TypeScript uses a plain object for lifecycle control]
+): NodeJS.Timeout {
+  // => Returns a Timeout handle — caller calls clearInterval(handle) to stop the worker
+  // => [Clojure: returns stop-ch — close! terminates go-loop; clearInterval is the TS equivalent]
+  return setInterval(async () => {
+    // => setInterval: fires every 60 seconds — [F#: Task.Delay(60_000); Clojure: timeout 60000]
+    if (stopSignal.stopped) return;
+    // => stopSignal.stopped check — [Clojure: @stop-signal atom deref]
+    const result = await escalateStaleApprovals(findStale, escalatePO, pub, clock);
+    // => Call the application service with all four ports — hexagonal isolation preserved
+    if (result._tag === "Right") {
+      console.log("Escalated", result.right.length, "stale purchase orders");
+      // => In production, use a structured logger (pino, winston) — [F#: ILogger<T>]
+    } else {
+      console.error("escalateStaleApprovals failed:", result.left);
+      // => Log the error and continue — next iteration retries
+    }
+  }, 60_000);
+  // => 60_000ms: configurable via config adapter in production
+}
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 The unit test for the application service uses in-memory adapters — no Docker, no hosted service lifecycle:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -4298,6 +6093,80 @@ let ``escalateStaleApprovals escalates POs awaiting approval for more than 5 day
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Unit test: escalateStaleApprovals using in-memory stubs and a frozen clock
+// tests/purchasing/EscalateStaleApprovals.test.ts
+// [F#: [<Fact>] module — Jest test; no IHostedService lifecycle, no Docker]
+import { escalateStaleApprovals, type Clock } from "../../src/purchasing/application/EscalateStaleApprovals";
+
+test("escalates POs awaiting approval for more than 5 days", async () => {
+  // => test(): Jest parameterless test — uses stub adapters, no external dependencies
+  // => [F#: [<Fact>] let ``escalateStaleApprovals escalates POs ...`` () = async { ... }]
+
+  const frozenNow = new Date("2026-05-17T00:00:00Z");
+  // => Frozen clock: cutoff becomes 2026-05-12 — deterministic regardless of test run date
+  // => [F#: System.DateTimeOffset(2026, 5, 17, 0, 0, 0, TimeSpan.Zero)]
+
+  const stalePO = {
+    id: crypto.randomUUID() as any,
+    // => Fresh UUID: each test run uses a unique PO ID — [F#: PurchaseOrderId (Guid.NewGuid())]
+    supplierId: crypto.randomUUID(),
+    // => Arbitrary supplier: irrelevant for the escalation test
+    totalAmount: { amount: 8000, currency: "USD" as const },
+    // => 8000 USD: above L2 threshold — [F#: createMoney 8000m "USD"]
+    status: "AwaitingApproval" as const,
+    // => "AwaitingApproval": the only status that triggers escalation
+    approvalLevel: "L2" as const,
+    // => "L2": carried into the PurchaseOrderApprovalEscalated event
+    createdAt: new Date(frozenNow.getTime() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    // => 6 days before frozenNow — beyond the 5-day escalation threshold
+  } as const;
+
+  const escalatedPOs: (typeof stalePO)[] = [];
+  // => Tracks which POs were escalated — [F#: ref []]
+
+  const findStale = async (_cutoff: Date) => ({
+    _tag: "Right" as const,
+    right: [stalePO] as (typeof stalePO)[],
+    // => Stub: ignores cutoff, always returns the pre-built stalePO list
+  });
+
+  const escalatePO = async (po: typeof stalePO) => {
+    escalatedPOs.push(po);
+    // => Capture: records the PO passed to the write port — [F#: escalatedPOs := po :: !escalatedPOs]
+    return { _tag: "Right" as const, right: undefined };
+  };
+
+  const capturedEvents: unknown[] = [];
+  // => Collects events published during the test run
+  const pub = {
+    publish: async (event: object) => {
+      capturedEvents.push(event);
+      // => Capture: records events; [F#: InMemoryEventPublisher]
+      return { _tag: "Right" as const, right: undefined };
+    },
+  };
+
+  const clock: Clock = () => frozenNow;
+  // => Zero-argument function returning frozenNow — [F#: fun () -> frozenNow]
+
+  const result = await escalateStaleApprovals(findStale, escalatePO, pub, clock);
+  // => Call the application service with all four stubs — pure function test
+
+  expect(result._tag).toBe("Right");
+  // => Service returned success — [F#: Assert.Equal(Ok [stalePO], result)]
+  expect(escalatedPOs).toHaveLength(1);
+  // => escalatePO stub was called exactly once — [F#: Assert.Equal(1, (!escalatedPOs).Length)]
+  expect(capturedEvents).toHaveLength(1);
+  // => One PurchaseOrderApprovalEscalated event captured — [F#: Assert.Equal(1, (!captured).Length)]
+  expect((capturedEvents[0] as any).type).toBe("PurchaseOrderApprovalEscalated");
+  // => Event type matches the canonical name — verified with typed discriminant
+});
+```
+
+{{< /tab >}}
 {{< /tabs >}}
 
 **Trade-offs**: the port-based background job adds an `EscalateStaleApprovalsJob` type alias, a `PurchasingService.escalateStaleApprovals` application service, and a hosted service that delegates to it — three files instead of one. For simple cleanup jobs that touch a single table with no domain events, the overhead may not be worth it. Apply the full hexagonal pattern when the job has testable business rules (the five-day threshold), produces domain events, or must be testable without Docker.

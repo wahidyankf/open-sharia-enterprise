@@ -17,6 +17,10 @@ A bounded context is not just a package name — it is an isolation unit. Every 
 
 Java packages group related classes but enforce no architectural boundary. The compiler does not stop `receiving` from importing `PurchaseOrderRepository` directly from another context's `infrastructure` package. The package system provides cohesion, not isolation.
 
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
+
 ```java
 // Standard library approach: packages group code but enforce no boundary
 // Demonstrates the stdlib package approach that the hexagonal context layout supersedes.
@@ -37,6 +41,103 @@ public class GoodsReceiptService {
     // => The boundary exists only in the developer's head
 }
 ```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// Standard library approach: packages group code but enforce no boundary
+// Demonstrates the stdlib package approach that the hexagonal context layout supersedes.
+
+package com.procurement.platform.receiving
+// => Kotlin package declaration: no curly braces — file-level declaration
+
+// Direct import from another context's infrastructure — no barrier here
+import com.procurement.platform.purchasing.infrastructure.JdbcPurchaseOrderRepository
+// => Kotlin allows cross-package imports unconditionally — same stdlib limitation as Java
+// => The compiler sees no violation even though receiving is
+//    reading purchasing infrastructure internals directly
+// => Any refactor of JdbcPurchaseOrderRepository silently breaks receiving logic
+
+class GoodsReceiptService(
+    private val poRepo: JdbcPurchaseOrderRepository // infrastructure type leaking into a domain service
+    // => Kotlin primary constructor: property declared inline with val
+    // => GoodsReceiptService now depends on a Spring Data JDBC class
+    // => Unit testing requires a real JdbcPurchaseOrderRepository or a mock — no isolation
+    // => The boundary exists only in the developer's head
+)
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// Standard library approach: packages group code but enforce no boundary
+// Demonstrates the stdlib namespace approach that the hexagonal context layout supersedes.
+
+namespace Procurement.Platform.Receiving;
+// => C# file-scoped namespace declaration (C# 10+): applies to entire file
+// => No compiler enforcement of cross-namespace import restrictions
+
+// Direct import from another context's infrastructure — no barrier here
+using Procurement.Platform.Purchasing.Infrastructure;
+// => C# using directive: allows cross-namespace type access unconditionally
+// => The compiler sees no violation even though Receiving is
+//    reading Purchasing infrastructure internals directly
+// => Any refactor of JdbcPurchaseOrderRepository silently breaks receiving logic
+
+public class GoodsReceiptService
+{
+    private readonly JdbcPurchaseOrderRepository _poRepo; // infrastructure type leaking into a domain service
+    // => GoodsReceiptService now depends on a concrete EF Core / Dapper repository class
+    // => Unit testing GoodsReceiptService requires a full DI container or a mock of JdbcPurchaseOrderRepository
+    // => The boundary exists only in the developer's head
+
+    public GoodsReceiptService(JdbcPurchaseOrderRepository poRepo)
+    {
+        _poRepo = poRepo;
+        // => Constructor injection: explicit but typed to the concrete class
+        // => Swapping the adapter requires changing this constructor signature
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Standard library approach: modules group code but enforce no architectural boundary
+// Demonstrates the module-import pattern that the hexagonal context layout supersedes.
+
+// Direct import from another context's infrastructure — no barrier here
+import { JdbcPurchaseOrderRepository } from "../../purchasing/infrastructure/JdbcPurchaseOrderRepository";
+// => TypeScript/Node allows cross-module imports unconditionally
+// => The compiler sees no violation even though receiving is
+//    reading purchasing infrastructure internals directly
+// => Any refactor of JdbcPurchaseOrderRepository silently breaks receiving logic
+
+export class GoodsReceiptService {
+  // => class keyword: OOP-style class in TypeScript
+  private readonly poRepo: JdbcPurchaseOrderRepository; // infrastructure type leaking into a domain service
+  // => private readonly: field cannot be reassigned after construction
+  // => GoodsReceiptService now depends on a concrete repository class
+  // => Unit testing GoodsReceiptService requires instantiating JdbcPurchaseOrderRepository
+  // => The boundary exists only in the developer's head
+
+  constructor(poRepo: JdbcPurchaseOrderRepository) {
+    this.poRepo = poRepo;
+    // => Constructor injection: explicit but typed to the concrete class
+    // => Swapping the adapter requires changing this constructor parameter type
+  }
+}
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 **Limitation for production**: packages permit cross-context imports with no enforcement. As the codebase grows, accidental coupling accumulates silently. Dependency analysis tools like ArchUnit can detect violations post-hoc, but nothing prevents them at the code level.
 
@@ -69,6 +170,10 @@ flowchart LR
 ```
 
 The `procurement-platform-be` service places each bounded context at its own top-level package under `com.procurement.platform`:
+
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
 
 ```java
 // Purchasing context domain layer — PurchaseOrder aggregate identity
@@ -103,6 +208,122 @@ public record PurchaseOrder(
 // => The serialization mapping lives in the presentation layer (Guide 6)
 ```
 
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// Purchasing context domain layer — PurchaseOrder aggregate identity
+package com.procurement.platform.purchasing.domain
+// => Package path mirrors the hexagonal layer: purchasing context, domain layer
+// => No Spring imports anywhere in this file — data classes are pure Kotlin
+
+import java.util.UUID
+
+@JvmInline
+value class PurchaseOrderId(val value: UUID) {
+    // => @JvmInline value class: zero-overhead wrapper at runtime on the JVM
+    // => Strongly-typed wrapper: prevents passing a SupplierId where a PurchaseOrderId is expected
+    // => Kotlin value class provides equals and hashCode automatically
+    init {
+        // => init block runs on construction — equivalent to Java compact constructor
+        requireNotNull(value) { "PurchaseOrderId value must not be null" }
+        // => requireNotNull: Kotlin stdlib null guard — throws IllegalArgumentException if null
+    }
+}
+
+data class PurchaseOrder(
+    val id: PurchaseOrderId,          // => Aggregate identity — drives equals/hashCode via data class
+    val supplierId: SupplierId,       // => Strongly-typed supplier reference — not a raw UUID
+    val totalAmount: Money,           // => Value object: amount + ISO 4217 currency code
+    val approvalLevel: ApprovalLevel, // => Enum: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+    val status: PurchaseOrderStatus   // => Enum: Draft → AwaitingApproval → Approved → … → Closed
+)
+// => Kotlin data class: immutable when all fields are val, no JPA/Jackson annotations
+// => The ORM mapping lives in the infrastructure layer
+// => The serialization mapping lives in the presentation layer
+// => copy() function generated automatically for producing modified aggregates
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// Purchasing context domain layer — PurchaseOrder aggregate identity
+namespace Procurement.Platform.Purchasing.Domain;
+// => Namespace mirrors the hexagonal layer: Purchasing context, Domain layer
+// => No EF Core, no System.Text.Json attributes — pure C# records
+
+public readonly record struct PurchaseOrderId(Guid Value)
+{
+    // => readonly record struct: zero-allocation strongly-typed wrapper (C# 10+)
+    // => Prevents passing a SupplierId where a PurchaseOrderId is expected
+    // => Compiler generates Equals, GetHashCode, ToString, and deconstruct automatically
+    // => Static factory validates on creation
+    public static PurchaseOrderId Of(Guid value)
+    {
+        if (value == Guid.Empty)
+            throw new ArgumentException("PurchaseOrderId value must not be empty", nameof(value));
+        // => Domain invariant: empty Guid is not a valid identity
+        return new PurchaseOrderId(value);
+        // => Factory method pattern: named construction with validation
+    }
+}
+
+public sealed record PurchaseOrder(
+    PurchaseOrderId Id,             // => Aggregate identity — drives equality via record semantics
+    SupplierId SupplierId,          // => Strongly-typed supplier reference — not a raw Guid
+    Money TotalAmount,              // => Value object: amount + ISO 4217 currency code
+    ApprovalLevel ApprovalLevel,    // => Enum: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+    PurchaseOrderStatus Status      // => Enum: Draft → AwaitingApproval → Approved → … → Closed
+);
+// => C# positional record: immutable, no [Column], no [JsonPropertyName] attributes
+// => The ORM mapping lives in the infrastructure layer (EF Core owned-type config)
+// => The serialization mapping lives in the presentation layer (minimal API / controller)
+// => with-expression provides non-destructive mutation for aggregate state transitions
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Purchasing context domain layer — PurchaseOrder aggregate identity
+// File: procurement-platform/purchasing/domain/PurchaseOrder.ts
+
+// => No framework imports — pure TypeScript domain types
+// => Branded type pattern prevents passing a SupplierId where a PurchaseOrderId is expected
+
+declare const _purchaseOrderIdBrand: unique symbol;
+export type PurchaseOrderId = string & { readonly [_purchaseOrderIdBrand]: never };
+// => Branded string type: structurally a string but nominally distinct
+// => TypeScript's type system rejects SupplierId where PurchaseOrderId is expected
+
+export function makePurchaseOrderId(value: string): PurchaseOrderId {
+  if (!value || value.trim().length === 0) throw new Error("PurchaseOrderId value must not be empty");
+  // => Factory function: validation at construction boundary — matches Java compact constructor
+  return value as PurchaseOrderId;
+  // => Type assertion: safe here because we validated above
+}
+
+export interface PurchaseOrder {
+  // => Interface models an immutable aggregate — no class needed for pure data shapes
+  readonly id: PurchaseOrderId; // => Aggregate identity — branded type drives type safety
+  readonly supplierId: SupplierId; // => Strongly-typed supplier reference — not a raw string
+  readonly totalAmount: Money; // => Value object: amount + ISO 4217 currency code
+  readonly approvalLevel: ApprovalLevel; // => Enum: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+  readonly status: PurchaseOrderStatus; // => Enum: Draft → AwaitingApproval → Approved → … → Closed
+}
+// => readonly fields: immutable after construction — no ORM decorators, no JSON annotations
+// => The persistence mapping lives in the infrastructure layer
+// => The serialization mapping lives in the presentation layer
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
 **Trade-offs**: the per-context package layout requires discipline in code review — the Java compiler cannot stop a developer from adding a cross-context import. Tools like ArchUnit enforce the boundary mechanically in CI. The payoff is that each context can evolve its domain model independently, and a unit test for one context never requires a Spring context from another context.
 
 ---
@@ -116,6 +337,10 @@ The production layout for `procurement-platform-be` places every bounded context
 ### Standard Library First
 
 A flat layout is a direct consequence of starting with a single-concern Spring Boot scaffold. Spring Boot's `@SpringBootApplication` scans the entire root package and registers everything it finds. A flat layout means all domain-adjacent classes sit near the root package, sharing the same Spring component scan. This is the zero-ceremony stdlib approach: it compiles, it runs, and it is adequate for a one-context prototype.
+
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
 
 ```java
 // Flat layout bootstrap: ProcurementPlatformApplication.java — Spring Boot entry point
@@ -142,11 +367,118 @@ public class ProcurementPlatformApplication {
 }
 ```
 
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// Flat layout bootstrap: ProcurementPlatformApplication.kt — Spring Boot entry point
+package com.procurement.platform
+// => Root package: Spring component scan starts here and covers all sub-packages
+// => @SpringBootApplication covers @Configuration + @EnableAutoConfiguration + @ComponentScan
+
+import org.springframework.boot.autoconfigure.SpringBootApplication
+// => SpringBootApplication: meta-annotation combining @Configuration, @EnableAutoConfiguration,
+//    and @ComponentScan — one annotation to start the whole context
+import org.springframework.boot.runApplication
+// => runApplication: Kotlin-idiomatic extension function replacing SpringApplication.run
+
+@SpringBootApplication
+// => Triggers auto-configuration for everything on the classpath: Spring MVC,
+//    Jackson, Actuator — no explicit setup needed for defaults
+class ProcurementPlatformApplication
+// => Kotlin class: no body needed — Spring Boot only needs the class reference for scanning
+
+fun main(args: Array<String>) {
+    runApplication<ProcurementPlatformApplication>(*args)
+    // => runApplication: Kotlin reified-generic wrapper — no .class reference needed
+    // => *args: spread operator unpacks the array into vararg parameters
+    // => Args forwarded: supports --server.port, --spring.profiles.active, etc.
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// Flat layout bootstrap: Program.cs — ASP.NET Core 8+ minimal hosting entry point
+// => Root namespace: no explicit namespace declaration needed for Program.cs
+// => WebApplication.CreateBuilder scans assemblies for controllers and services
+
+using Microsoft.AspNetCore.Builder;
+// => WebApplication and WebApplicationBuilder live here
+using Microsoft.Extensions.DependencyInjection;
+// => AddControllers and other service registration extensions live here
+
+var builder = WebApplication.CreateBuilder(args);
+// => WebApplicationBuilder: equivalent to SpringApplication — sets up DI container,
+//    configuration, logging, and the HTTP server (Kestrel) automatically
+// => args forwarded: supports --urls, environment variables, appsettings.json
+
+builder.Services.AddControllers();
+// => Registers all [ApiController]-annotated classes across assemblies — mirrors
+//    Spring Boot's component scan picking up @RestController beans
+// => A flat registration: all contexts' controllers are discovered together
+
+var app = builder.Build();
+// => Builds the WebApplication (DI container locked, pipeline configuration begins)
+// => Equivalent to SpringApplication.run completing context refresh
+
+app.MapControllers();
+// => Routes HTTP requests to [ApiController] action methods via attribute routing
+// => No explicit routing table — mirrors Spring MVC's @RequestMapping discovery
+
+app.Run();
+// => Starts Kestrel and begins accepting requests — equivalent to embedded Tomcat start
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Flat layout bootstrap: main.ts — NestJS entry point
+// => NestJS mirrors Spring Boot's component-scan model with decorators
+
+import { NestFactory } from "@nestjs/core";
+// => NestFactory: bootstrap utility — equivalent to SpringApplication
+import { AppModule } from "./app.module";
+// => AppModule: root module that @imports all feature modules — equivalent to @SpringBootApplication scan root
+
+async function bootstrap() {
+  // => async bootstrap: NestJS startup is async — await required for listen()
+  const app = await NestFactory.create(AppModule);
+  // => NestFactory.create: builds the NestJS application context
+  // => Equivalent to SpringApplication.run — scans AppModule for all @Injectable, @Controller beans
+  // => AppModule's imports array lists all context modules (PurchasingModule, SupplierModule, etc.)
+
+  app.setGlobalPrefix("api/v1");
+  // => Global URL prefix applied to all routes — mirrors @RequestMapping("/api/v1") at app level
+  // => Each context module's controllers then declare their own sub-paths
+
+  await app.listen(process.env.PORT ?? 3000);
+  // => Starts the HTTP server on the configured port
+  // => process.env.PORT: reads from environment — equivalent to --server.port in Spring Boot
+}
+
+bootstrap();
+// => Invoke the async entry point — top-level await not used for broader Node.js compatibility
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
 **Limitation for production**: a single root-package component scan picks up every `@Component`, `@Service`, `@Repository`, and `@Controller` in the codebase — including those from different bounded contexts. As contexts multiply, auto-configuration fights context isolation.
 
 ### Production Framework
 
 The hexagonal layout replaces the implicit root scan with explicit per-context `@Configuration` classes that register only their own beans. The `@SpringBootApplication` retains the scan only at the root level to discover the explicit configurations; it does not need to discover individual `@Service` or `@Repository` beans scattered across contexts.
+
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
 
 ```java
 // Per-context package structure: purchasing context domain value objects
@@ -175,6 +507,114 @@ public record Money(BigDecimal amount, String currency) {
     }
 }
 ```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// Per-context package structure: purchasing context domain value objects
+package com.procurement.platform.purchasing.domain
+// => Domain package: no Spring, no JDBC, no Jackson imports allowed here
+// => All types are pure Kotlin data classes or sealed classes
+
+import java.math.BigDecimal
+
+data class Money(val amount: BigDecimal, val currency: String) {
+    // => Value object wrapping an amount and a 3-letter ISO 4217 currency code
+    // => Kotlin data class: immutable when fields are val — no setter methods generated
+    // => equals and hashCode generated automatically based on amount and currency
+    init {
+        // => init block: runs after primary constructor — equivalent to Java compact constructor
+        require(amount >= BigDecimal.ZERO) { "Money amount must not be negative" }
+        // => require: Kotlin stdlib precondition — throws IllegalArgumentException with the given message
+        // => Domain invariant: monetary amounts are non-negative
+        require(currency.length == 3) { "Currency must be a 3-letter ISO 4217 code" }
+        // => Domain invariant: ISO 4217 codes are exactly 3 characters — "USD", "EUR", "IDR" are valid
+        // => No null checks needed: Kotlin's type system enforces non-null by default
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// Per-context package structure: purchasing context domain value objects
+namespace Procurement.Platform.Purchasing.Domain;
+// => Domain namespace: no EF Core, no System.Text.Json attributes allowed here
+// => All types are pure C# records or sealed classes
+
+using System.Diagnostics.CodeAnalysis;
+
+public sealed record Money
+{
+    // => sealed record: immutable value object — no subclassing allowed
+    // => Value object wrapping an amount and a 3-letter ISO 4217 currency code
+    // => Compiler generates Equals, GetHashCode, ToString, and with-expression support
+
+    public decimal Amount { get; }
+    // => decimal: .NET's fixed-precision monetary type — avoids floating-point rounding errors
+    // => get-only property: immutable after construction
+
+    public string Currency { get; }
+    // => string: ISO 4217 currency code — validated to exactly 3 characters
+
+    public Money(decimal amount, string currency)
+    {
+        // => Constructor with validation — equivalent to Java compact constructor
+        if (amount < 0)
+            throw new ArgumentException("Money amount must not be negative", nameof(amount));
+        // => Domain invariant: monetary amounts are non-negative
+        ArgumentException.ThrowIfNullOrWhiteSpace(currency, nameof(currency));
+        // => ArgumentException.ThrowIfNullOrWhiteSpace: .NET 8+ null/whitespace guard
+        if (currency.Length != 3)
+            throw new ArgumentException("Currency must be a 3-letter ISO 4217 code", nameof(currency));
+        // => Domain invariant: ISO 4217 codes are exactly 3 characters — "USD", "EUR", "IDR" are valid
+        Amount = amount;
+        Currency = currency;
+        // => Assign validated values — properties are get-only, so assignment only valid in constructor
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Per-context package structure: purchasing context domain value objects
+// File: procurement-platform/purchasing/domain/Money.ts
+// => Domain module: no ORM, no HTTP framework imports allowed here
+// => All types are plain TypeScript interfaces or classes with validation
+
+export class Money {
+  // => class with private constructor enforces factory construction with validation
+  readonly amount: number; // => Monetary amount — validated non-negative at construction
+  readonly currency: string; // => ISO 4217 currency code — validated to exactly 3 characters
+
+  private constructor(amount: number, currency: string) {
+    // => private constructor: forces callers to use the static factory method
+    this.amount = amount; // => Assign validated amount — readonly prevents reassignment
+    this.currency = currency; // => Assign validated currency — readonly prevents reassignment
+  }
+
+  static of(amount: number, currency: string): Money {
+    // => Static factory method: named construction with validation — mirrors Java compact constructor
+    if (amount < 0) throw new Error("Money amount must not be negative");
+    // => Domain invariant: monetary amounts are non-negative
+    if (!currency || currency.length !== 3) throw new Error("Currency must be a 3-letter ISO 4217 code");
+    // => Domain invariant: ISO 4217 codes are exactly 3 characters — "USD", "EUR", "IDR" are valid
+    return new Money(amount, currency);
+    // => Private constructor called only after validation passes
+  }
+}
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 The full `com.procurement.platform` package tree follows the four-layer convention in every context:
 
@@ -226,6 +666,10 @@ The single most common way a hexagonal architecture collapses into a layered mon
 
 Java records carry no annotations by default. The language gives you a pure, framework-free type with equality, immutability, and accessors built in:
 
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
+
 ```java
 // Standard library: pure Java record, zero framework annotations
 package com.procurement.platform.purchasing.domain;
@@ -270,11 +714,179 @@ public record PurchaseOrder(
 }
 ```
 
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// Standard library: pure Kotlin data class, zero framework annotations
+package com.procurement.platform.purchasing.domain
+// => Domain package: no Spring, no JPA, no Jackson imports allowed here
+
+data class PurchaseOrder(
+    val id: PurchaseOrderId,
+    // => Strongly-typed identity — prevents confusion with other aggregate IDs
+    // => PurchaseOrderId is a value class: the compiler rejects a raw UUID where PurchaseOrderId is expected
+    val supplierId: SupplierId,
+    // => Reference to the supplier — a strongly-typed value object, not a raw String
+    // => Cross-context coupling via typed ID: purchasing never imports a Supplier aggregate
+    val lines: List<PurchaseOrderLine>,
+    // => Value objects representing individual line items — List<T> is read-only in Kotlin
+    // => Domain invariant: lines must not be empty after PO issuance
+    val totalAmount: Money,
+    // => Derived or calculated: the sum of all line totals
+    val approvalLevel: ApprovalLevel,
+    // => Enum derived from totalAmount: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+    val status: PurchaseOrderStatus
+    // => Enum: Draft → AwaitingApproval → Approved → Issued → … → Closed
+    // => No ORM column mapping annotation — the infrastructure layer owns that mapping
+) {
+    init {
+        // => init block: runs after primary constructor — validates all fields
+        // => All validation happens here — the data class is immutable after construction
+        requireNotNull(id) { "PurchaseOrder id must not be null" }
+        // => requireNotNull: Kotlin stdlib null guard — redundant with non-null types but explicit
+        requireNotNull(supplierId) { "PurchaseOrder supplierId must not be null" }
+        // => Every PO must reference a supplier — orphan POs violate the domain model
+        require(lines.isNotEmpty() || status == PurchaseOrderStatus.Draft) {
+            "PurchaseOrder lines must not be empty after issuance"
+        }
+        // => Domain invariant: empty lines allowed only in Draft state
+        requireNotNull(totalAmount) { "PurchaseOrder totalAmount must not be null" }
+        requireNotNull(approvalLevel) { "PurchaseOrder approvalLevel must not be null" }
+        requireNotNull(status) { "PurchaseOrder status must not be null" }
+        // => Status must be initialized — Draft is the correct initial value
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// Standard library: pure C# record, zero framework attributes
+namespace Procurement.Platform.Purchasing.Domain;
+// => Domain namespace: no EF Core, no System.Text.Json attributes allowed here
+
+public sealed record PurchaseOrder
+{
+    // => sealed record: immutable aggregate root — no subclassing allowed
+    // => Compiler generates Equals, GetHashCode, ToString, and with-expression support
+    // => All validation enforced in constructor — record is immutable after construction
+
+    public PurchaseOrderId Id { get; }
+    // => Strongly-typed identity — prevents confusion with other aggregate IDs
+    // => PurchaseOrderId is a readonly record struct: zero-allocation wrapper
+    public SupplierId SupplierId { get; }
+    // => Reference to the supplier — strongly-typed value object, not a raw Guid
+    public IReadOnlyList<PurchaseOrderLine> Lines { get; }
+    // => IReadOnlyList: read-only view — callers cannot mutate the list
+    // => Domain invariant: lines must not be empty after PO issuance
+    public Money TotalAmount { get; }
+    // => Derived or calculated: the sum of all line totals
+    public ApprovalLevel ApprovalLevel { get; }
+    // => Enum derived from TotalAmount: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+    public PurchaseOrderStatus Status { get; }
+    // => Enum: Draft → AwaitingApproval → Approved → Issued → … → Closed
+    // => No [Column] attribute — the infrastructure layer owns that mapping
+
+    public PurchaseOrder(
+        PurchaseOrderId id, SupplierId supplierId, IReadOnlyList<PurchaseOrderLine> lines,
+        Money totalAmount, ApprovalLevel approvalLevel, PurchaseOrderStatus status)
+    {
+        // => Constructor validates all fields — record is immutable after assignment
+        ArgumentNullException.ThrowIfNull(lines, nameof(lines));
+        // => ArgumentNullException.ThrowIfNull: .NET 6+ null guard
+        if (lines.Count == 0 && status != PurchaseOrderStatus.Draft)
+            throw new ArgumentException("PurchaseOrder lines must not be empty after issuance");
+        // => Domain invariant: empty lines allowed only in Draft state
+        Id = id; SupplierId = supplierId; Lines = lines;
+        TotalAmount = totalAmount; ApprovalLevel = approvalLevel; Status = status;
+        // => Assign validated values — get-only properties, so assignment only valid here
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Standard library: pure TypeScript class, zero framework decorators
+// File: procurement-platform/purchasing/domain/PurchaseOrder.ts
+// => Domain module: no ORM, no HTTP framework imports allowed here
+
+import { PurchaseOrderId } from "./PurchaseOrderId";
+// => Import domain identity type — branded type enforces type safety at compile time
+import { SupplierId } from "../supplier/domain/SupplierId";
+// => Cross-context reference via typed ID only — no Supplier aggregate imported
+import { PurchaseOrderLine } from "./PurchaseOrderLine";
+// => Value objects representing individual line items
+import { Money } from "./Money";
+// => Value object: amount + ISO 4217 currency code
+import { ApprovalLevel, PurchaseOrderStatus } from "./PurchaseOrderEnums";
+// => Enums: ApprovalLevel and PurchaseOrderStatus — pure TypeScript string enums
+
+export class PurchaseOrder {
+  // => class with private constructor enforces factory construction with validation
+  // => All fields readonly: immutable after construction — no ORM decorators
+  readonly id: PurchaseOrderId; // => Strongly-typed identity — branded type
+  readonly supplierId: SupplierId; // => Strongly-typed supplier reference
+  readonly lines: ReadonlyArray<PurchaseOrderLine>; // => Immutable array — callers cannot mutate
+  readonly totalAmount: Money; // => Derived or calculated: sum of all line totals
+  readonly approvalLevel: ApprovalLevel; // => Enum: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
+  readonly status: PurchaseOrderStatus; // => Enum: Draft → AwaitingApproval → Approved → …
+
+  private constructor(
+    id: PurchaseOrderId,
+    supplierId: SupplierId,
+    lines: ReadonlyArray<PurchaseOrderLine>,
+    totalAmount: Money,
+    approvalLevel: ApprovalLevel,
+    status: PurchaseOrderStatus,
+  ) {
+    // => private constructor: forces callers through the static factory
+    this.id = id;
+    this.supplierId = supplierId;
+    this.lines = lines;
+    this.totalAmount = totalAmount;
+    this.approvalLevel = approvalLevel;
+    this.status = status;
+    // => Assign all validated fields — readonly enforces immutability after this point
+  }
+
+  static create(
+    id: PurchaseOrderId,
+    supplierId: SupplierId,
+    lines: ReadonlyArray<PurchaseOrderLine>,
+    totalAmount: Money,
+    approvalLevel: ApprovalLevel,
+    status: PurchaseOrderStatus,
+  ): PurchaseOrder {
+    // => Static factory with validation — mirrors Java compact constructor
+    if (lines.length === 0 && status !== PurchaseOrderStatus.Draft)
+      throw new Error("PurchaseOrder lines must not be empty after issuance");
+    // => Domain invariant: empty lines only valid in Draft state
+    return new PurchaseOrder(id, supplierId, lines, totalAmount, approvalLevel, status);
+    // => Private constructor called only after validation passes
+  }
+}
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
 **Limitation for production**: when you need to persist a domain record, the ORM needs column names and table mappings. The standard library gives you no mechanism for this — you have to decide where the ORM mapping lives.
 
 ### Production Framework
 
 The hexagonal answer is: ORM and serialization mappings live in the infrastructure and presentation layers, not the domain layer. The domain record is a pure Java record. The JDBC mapping lives in the adapter in `infrastructure/` with explicit SQL, and a mapper translates between the row and the domain record. Spring Boot 4 supports plain `JdbcClient` result mappings that avoid JPA entities entirely.
+
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
 
 ```java
 // GlobalExceptionHandler.java — Spring exception mapping in the shared config layer, not domain
@@ -311,6 +923,149 @@ public class GlobalExceptionHandler {
     }
 }
 ```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// GlobalExceptionHandler.kt — Spring exception mapping in the shared config layer, not domain
+package com.procurement.platform.shared.config
+// => shared/config/ is the infrastructure/framework wiring layer — not a domain package
+
+import org.springframework.http.HttpStatus
+// => HttpStatus: enum of HTTP status codes — used to set the response status
+import org.springframework.http.ProblemDetail
+// => ProblemDetail: RFC 9457 / HTTP Problem Details — Spring 6+ standard error response format
+import org.springframework.web.bind.annotation.ExceptionHandler
+// => @ExceptionHandler: marks a function as an exception handler for specific exception types
+import org.springframework.web.bind.annotation.RestControllerAdvice
+// => @RestControllerAdvice: combines @ControllerAdvice and @ResponseBody for all @RestControllers
+
+@RestControllerAdvice
+// => @RestControllerAdvice: applies @ExceptionHandler functions to all @RestControllers
+// => Infrastructure wiring — lives in shared/config/, not in any bounded context domain package
+// => Domain exceptions bubble up; this class translates them to HTTP responses
+class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception::class)
+    // => Exception::class: Kotlin class reference — equivalent to Exception.class in Java
+    // => Catch-all handler: covers any exception not matched by a more specific @ExceptionHandler
+    fun handleGenericException(ex: Exception): ProblemDetail {
+        // => Kotlin function: return type declared after colon — ProblemDetail
+        val problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+        // => ProblemDetail.forStatus: produces an RFC 9457 JSON body with status 500
+        // => val: immutable local variable — problem reference does not change after assignment
+        problem.detail = ex.message
+        // => Kotlin property assignment: ex.message is a nullable String? — safe here as detail accepts null
+        // => Production: scrub sensitive messages before surfacing to clients
+        return problem
+        // => Spring serializes ProblemDetail to application/problem+json automatically
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// GlobalExceptionHandler.cs — ASP.NET Core exception mapping middleware, not domain
+namespace Procurement.Platform.Shared.Config;
+// => Shared.Config namespace: infrastructure wiring layer — not a domain namespace
+
+using Microsoft.AspNetCore.Diagnostics;
+// => IExceptionHandler: ASP.NET Core 8+ interface for structured exception handling
+using Microsoft.AspNetCore.Http;
+// => IResult, Results, ProblemDetails: HTTP response abstractions
+using Microsoft.AspNetCore.Mvc;
+// => ProblemDetails: RFC 9457 standard error response format
+
+public sealed class GlobalExceptionHandler : IExceptionHandler
+{
+    // => IExceptionHandler: ASP.NET Core 8+ interface — registered via AddExceptionHandler<T>()
+    // => sealed: no subclassing — this handler is the terminal exception handler
+    // => Infrastructure wiring — lives in Shared.Config, not in any bounded context domain namespace
+    // => Domain exceptions bubble up; this class translates them to HTTP ProblemDetails responses
+
+    public async ValueTask<bool> TryHandleAsync(
+        HttpContext httpContext,
+        Exception exception,
+        CancellationToken cancellationToken)
+    {
+        // => TryHandleAsync: called by ASP.NET Core for every unhandled exception
+        // => Returns true to signal the exception was handled — prevents default error page
+        // => ValueTask<bool>: allocation-efficient async return type for high-throughput handlers
+        var problem = new ProblemDetails
+        {
+            Status = StatusCodes.Status500InternalServerError,
+            // => Status 500: catch-all for unhandled exceptions — specific handlers override this
+            Detail = exception.Message,
+            // => exception.Message: surfaces the exception message — scrub in production
+            Title = "An unexpected error occurred"
+            // => Title: human-readable summary — maps to RFC 9457 "title" field
+        };
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        // => Set response status code explicitly before writing the body
+        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
+        // => WriteAsJsonAsync: serializes ProblemDetails to application/problem+json
+        return true;
+        // => true: exception handled — ASP.NET Core stops propagation
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// globalExceptionFilter.ts — NestJS exception filter in the shared config layer, not domain
+// File: procurement-platform/shared/config/GlobalExceptionFilter.ts
+// => shared/config/ is the infrastructure wiring layer — not a domain module
+
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
+// => @Catch: marks the class as a NestJS exception filter — equivalent to @RestControllerAdvice
+// => ExceptionFilter: interface that the filter must implement
+// => ArgumentsHost: provides access to the HTTP request/response context
+import { Request, Response } from "express";
+// => Express Request/Response: underlying HTTP objects in a NestJS + Express application
+
+@Catch()
+// => @Catch() with no arguments: catches all exceptions — equivalent to @ExceptionHandler(Exception.class)
+// => More specific filters (@Catch(PurchasingException)) take precedence when registered
+export class GlobalExceptionFilter implements ExceptionFilter {
+  // => implements ExceptionFilter: TypeScript interface contract — catch() method required
+
+  catch(exception: unknown, host: ArgumentsHost): void {
+    // => catch(): called for every unhandled exception — NestJS equivalent of handleGenericException
+    // => unknown: safer than any — forces type narrowing before use
+    const ctx = host.switchToHttp();
+    // => switchToHttp(): retrieves the HTTP-specific context from ArgumentsHost
+    const response = ctx.getResponse<Response>();
+    // => getResponse<Response>(): typed access to the Express response object
+    const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    // => HttpException: NestJS base exception — has a built-in status code
+    // => Falls back to 500 for non-HttpException errors — mirrors @ExceptionHandler catch-all
+    const message = exception instanceof Error ? exception.message : "An unexpected error occurred";
+    // => Type narrowing: only access .message when exception is an Error instance
+    // => Production: scrub sensitive messages before surfacing to clients
+    response.status(status).json({
+      // => response.status().json(): sets HTTP status and serializes the body to JSON
+      status,
+      // => status field: numeric HTTP status code — e.g., 500
+      detail: message,
+      // => detail: mirrors RFC 9457 ProblemDetail.detail field
+      title: "An unexpected error occurred",
+      // => title: human-readable summary — mirrors RFC 9457 ProblemDetail.title
+    });
+  }
+}
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
 
 The dependency rule flows inward: `infrastructure` and `presentation` know about `domain`; `domain` knows about neither. ArchUnit tests in CI enforce the rule: no import from `domain` may reference any class in `infrastructure`, `presentation`, or any Spring package.
 

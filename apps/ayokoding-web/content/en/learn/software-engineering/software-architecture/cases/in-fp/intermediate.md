@@ -2194,6 +2194,149 @@ let handleSubmit
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Full Hono handler pipeline — DTO → smart constructors → service → response DTO
+// src/procurement-platform/contexts/purchasing/presentation/purchasing-handlers.ts
+// [F#: module PurchasingHandlers — TS uses a factory function; Hono replaces Giraffe]
+
+import { Hono } from "hono";
+// => Hono: lightweight web framework for Node.js/Bun/Cloudflare Workers
+// => Replaces Giraffe: typed request binding, composable middleware, typed response helpers
+// [F#: open Giraffe — TS imports Hono for typed routing and handler composition]
+import { zValidator } from "@hono/zod-validator";
+// => zValidator: Zod schema validation middleware — mirrors Giraffe's BindJsonAsync + smart constructors
+import { z } from "zod";
+// => Zod: runtime schema validation — bridges the untyped JSON body to a typed TS object
+import type { PurchaseOrderRepository, EventPublisher } from "../application/ports";
+// => Port types — injected by the composition root at startup
+import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
+// => Domain types for aggregate assembly
+import { createMoney, computeApprovalLevel } from "../domain/value-objects";
+// => Domain pure functions — no I/O, no DB calls
+import { submitPurchaseOrder } from "../application/submit-purchase-order";
+// => Application service under test — four imports only; no pg, no JSON library
+
+// Request DTO schema — validated by Zod middleware before handler runs
+// [F#: CLIMutable SubmitPurchaseOrderRequest — TS uses a Zod schema]
+const submitRequestSchema = z.object({
+  supplierId: z.string().uuid(),
+  // => uuid(): validates the UUID string format — mirrors Guid deserialization in Giraffe
+  totalAmount: z.number().positive(),
+  // => positive(): validates amount > 0 — mirrors createMoney's amount check inline
+  currency: z.string().length(3),
+  // => length(3): ISO 4217 codes are exactly 3 characters — schema-level guard
+  notes: z.string().optional(),
+  // => optional(): mirrors Notes: string option in F# — may be absent
+});
+
+// Response DTO type — only the fields the client needs
+// [F#: type SubmitPurchaseOrderResponse record — TS uses a plain object type]
+type SubmitPurchaseOrderResponse = {
+  readonly purchaseOrderId: string;
+  // => Unwrapped branded string — client does not need the PurchaseOrderId branded type
+  readonly status: string;
+  // => Literal union string: "draft" | "submitted" — human-readable, stable across versions
+  readonly approvalLevel: string;
+  // => Approval level string — mirrors F# sprintf "%A" po.ApprovalLevel
+};
+
+// DTO → response DTO mapping — lives in presentation module only
+// [F#: private toResponse — TS private convention with module-level const]
+const toResponse = (po: PurchaseOrder): SubmitPurchaseOrderResponse => ({
+  purchaseOrderId: po.id,
+  // => Branded PurchaseOrderId is a string at runtime — unwrapped for the client
+  status: po.status,
+  // => Literal union string passed through — no sprintf needed in TS
+  approvalLevel: po.approvalLevel,
+  // => Approval level string — mirrors F# toResponse mapping
+});
+// [F#: toResponse knows both domain type and response DTO shape]
+
+// Handler factory: returns a Hono app with ports partially applied
+// [F#: let handleSubmit (repo) (pub) (clock) : HttpHandler — TS uses a closure]
+export const makePurchasingRouter = (
+  repo: PurchaseOrderRepository,
+  // => Injected at composition root — pg adapter in production, in-memory in tests
+  pub: EventPublisher,
+  // => Outbox publisher in production — stores event row in same DB as aggregate
+  clock: () => Date,
+  // => Clock port: () => new Date() in production, frozen in tests
+): Hono => {
+  const app = new Hono();
+  // => Hono instance: scoped to the purchasing context — composed into the root app
+
+  app.post(
+    "/api/v1/purchase-orders",
+    zValidator("json", submitRequestSchema),
+    // => zValidator: validates request body against the schema before handler runs
+    // => Returns HTTP 400 automatically if validation fails — no manual if-check needed
+    // [F#: Giraffe BindJsonAsync + createMoney validation — TS uses Zod middleware]
+    async (c) => {
+      const dto = c.req.valid("json");
+      // => valid("json"): returns the Zod-validated, typed DTO — no manual parse needed
+
+      // Step 1: DTO → domain value objects via pure functions
+      const moneyResult = createMoney(dto.totalAmount, dto.currency);
+      // => createMoney: validates amount > 0 and currency — returns neverthrow Result
+      // [F#: match createMoney dto.TotalAmount dto.Currency with]
+      if (!moneyResult.isOk()) {
+        return c.json({ error: moneyResult.error }, 400);
+        // => HTTP 400: domain validation failed — translate at the adapter boundary
+        // [F#: return! RequestErrors.BAD_REQUEST msg next ctx]
+      }
+
+      const po: PurchaseOrder = {
+        // => Assemble the domain aggregate from validated value objects
+        id: crypto.randomUUID() as PurchaseOrderId,
+        // => New UUID per request — client does not supply the PO ID
+        supplierId: dto.supplierId,
+        // => Raw UUID string — no additional wrapping needed in TS presentation layer
+        totalAmount: moneyResult.value,
+        // => Validated Money value — createMoney confirmed amount > 0 and valid currency
+        status: "draft",
+        // => Initial status is always draft — domain state machine starts here
+        approvalLevel: computeApprovalLevel(moneyResult.value),
+        // => Pure domain function — no I/O, no DB call
+        createdAt: clock(),
+        // => Clock port — frozen in tests
+      };
+
+      // Step 2: aggregate → application service → typed result
+      const result = await submitPurchaseOrder(repo, pub, po);
+      // [F#: match! submitPurchaseOrder repo pub po with]
+      if (!result.isOk()) {
+        const e = result.error;
+        // => Typed SubmitPurchaseOrderError — discriminate by kind, not by magic number
+        if (e.kind === "DuplicatePurchaseOrder") {
+          return c.json({ error: `PurchaseOrder ${e.poId} already exists` }, 409);
+          // => HTTP 409: typed discrimination — mirrors RequestErrors.CONFLICT
+          // [F#: | Error (DuplicatePurchaseOrder id) -> RequestErrors.CONFLICT ...]
+        }
+        if (e.kind === "InvalidPurchaseOrder") {
+          return c.json({ error: e.message }, 400);
+          // => HTTP 400: domain rule violation — mirrors RequestErrors.BAD_REQUEST
+        }
+        console.error("Repository failure:", e.cause);
+        // => Log raw error for diagnostics — never send details to the client
+        return c.json({ error: "Repository unavailable" }, 500);
+        // => HTTP 500: infrastructure failure — mirrors ServerErrors.INTERNAL_ERROR
+      }
+
+      // Step 3: domain aggregate → response DTO → HTTP 201
+      return c.json(toResponse(result.value), 201);
+      // => HTTP 201 Created: response DTO serialized to JSON by Hono
+      // [F#: return! Successful.CREATED (toResponse saved) next ctx]
+    },
+  );
+
+  return app;
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the four-step pipeline (bind → construct → service → respond) adds three translation functions compared to a flat Minimal API handler. For CRUD endpoints that map directly to database rows, the overhead feels disproportionate. The payoff appears when domain invariants are non-trivial: the smart constructor enforces them once, and every downstream component receives only valid aggregates.
@@ -2210,7 +2353,7 @@ The Giraffe handler in Guide 11 references hand-authored `SubmitPurchaseOrderReq
 
 Without codegen, the team writes CLIMutable DTOs by hand and keeps them in sync with the spec manually:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2272,6 +2415,32 @@ type SubmitPurchaseOrderRequest =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: hand-authored TypeScript interface matching OpenAPI spec manually
+// src/procurement-platform/contracts/submit-purchase-order-request.ts
+// [F#: CLIMutable record maintained by hand — TS uses an interface or type maintained by hand]
+
+// Hand-authored request interface — no codegen; maintained manually in sync with the OpenAPI spec
+// [F#: type SubmitPurchaseOrderRequest = { SupplierId: Guid ... } maintained by hand]
+export interface SubmitPurchaseOrderRequestManual {
+  supplierId: string;
+  // => Property name must match the JSON field name exactly — no codegen contract
+  totalAmount: number;
+  // => Hand-authored: adding a new field here does not update the OpenAPI spec automatically
+  // => A field present in the spec but absent here produces a silent runtime parse gap
+  currency: string;
+  // => ISO 4217 currency code — domain validation enforces allowed values; no codegen guard here
+  notes?: string;
+  // => Optional string — mirrors Notes: string option in F#; drift is invisible until runtime
+}
+// => All fields maintained by hand — renaming a field in the spec causes no TS compile error
+// => Limitation: a spec field rename is invisible until JSON deserialization returns undefined at runtime
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: manual synchronization between spec and DTOs is error-prone at scale. A field rename in the spec produces no compile error — only a runtime JSON deserialization failure.
@@ -2295,7 +2464,7 @@ The `.fsproj` conditionally includes generated contract types produced by the Nx
 
 A handler consuming a generated type looks identical to Guide 11 — the import changes, not the handler logic:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2356,6 +2525,40 @@ let handleHealth : HttpHandler =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Handler consuming a generated contract type from openapi-typescript codegen
+// src/procurement-platform/contexts/purchasing/presentation/purchasing-handlers.ts
+// [F#: open ProcurementPlatform.Contracts — TS imports from the generated-contracts module]
+
+import type { Hono } from "hono";
+// => Hono: HTTP framework — same as Guide 11 production handler
+import type { HealthResponse } from "../../../generated-contracts";
+// => HealthResponse: generated by "nx run procurement-platform-be:codegen" from the OpenAPI spec
+// => openapi-typescript generates this type — field names are spec-authoritative
+// [F#: open ProcurementPlatform.Contracts — TS imports the generated type]
+
+// Health check handler consuming a generated response type
+// [F#: let handleHealth : HttpHandler — TS returns a Hono app registration]
+export const registerHealthHandler = (app: Hono): void => {
+  // => app: Hono instance — handler registered as a route on the shared router
+  app.get("/api/v1/health", (c) => {
+    // => No dependencies to inject — pure handler returning a static response
+    const response: HealthResponse = { status: "healthy" };
+    // => HealthResponse: generated from the OpenAPI schema — field names are spec-authoritative
+    // [F#: let response : HealthResponse = { Status = "healthy" }]
+    // => Changing the spec field name regenerates HealthResponse; this line then fails to compile
+    // => The compile error surfaces spec drift at build time — same mechanism as F#
+    return c.json(response, 200);
+    // => c.json: Hono serializes HealthResponse and sets Content-Type: application/json
+    // [F#: json response next ctx — same role, different combinator]
+  });
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: codegen introduces a build-time step (`nx run procurement-platform-be:codegen`) that must run before `dotnet build`. Teams must run codegen as part of their onboarding script. The payoff: adding a new response field to the OpenAPI spec and running codegen produces a compile error at every handler that constructs the response type without the new field — zero drift, enforced by the compiler.
@@ -2372,7 +2575,7 @@ The `receiving` context needs summary information about a purchase order when cr
 
 Without an ACL, `receiving` opens `purchasing` domain types directly:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2416,6 +2619,33 @@ let createGoodsReceiptNote (po: PurchaseOrder) (receivedQty: int) =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// No ACL: receiving domain imports purchasing domain types directly
+// src/procurement-platform/contexts/receiving/domain/receiving-types.ts
+// [F#: open ProcurementPlatform.Contexts.Purchasing.Domain — TS uses a direct import]
+
+import type { PurchaseOrder } from "../../purchasing/domain/value-objects";
+// => Direct cross-context import — coupling the two domain modules
+// => A rename of PurchaseOrder.totalAmount to PurchaseOrder.amount in purchasing breaks this file
+// [F#: open Purchasing.Domain — TS import creates the same compile-time coupling]
+
+// createGoodsReceiptNote takes purchasing's PurchaseOrder directly — no translation boundary
+// [F#: let createGoodsReceiptNote (po: PurchaseOrder) — TS uses a typed parameter]
+const createGoodsReceiptNote = (po: PurchaseOrder, receivedQty: number): void => {
+  // => po: purchasing's PurchaseOrder type — no ACL translation; direct structural coupling
+  // => receivedQty: quantity of goods received at the dock
+  // => Direct coupling: if purchasing renames PurchaseOrder.totalAmount, this function must change too
+  void po;
+  void receivedQty;
+  // => Returns undefined placeholder — illustrates direct dependency without translation boundary
+};
+// => Limitation: refactoring purchasing's type shape requires simultaneous update here
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: direct domain coupling means that refactoring one context requires simultaneous changes to all consuming contexts. In a large team, this creates merge-conflict pressure and prevents independent deployment.
@@ -2442,7 +2672,7 @@ flowchart LR
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
 ```
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2497,9 +2727,34 @@ type PurchaseOrderSummary =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// receiving domain: its own type for PO information — no cross-context import
+// src/procurement-platform/contexts/receiving/domain/receiving-types.ts
+// [F#: module Receiving.Domain — TS uses a separate file per context; no cross-context import]
+
+// receiving's view of a purchase order — independent of purchasing's domain types
+// [F#: type PurchaseOrderSummary record — TS uses a readonly object type]
+export type PurchaseOrderSummary = {
+  readonly purchaseOrderId: string;
+  // => Plain string UUID — receiving does not need purchasing's branded PurchaseOrderId type
+  // [F#: PurchaseOrderId: System.Guid — TS uses plain string; no cross-context DU needed]
+  readonly supplierId: string;
+  // => Supplier identifier — receiving uses this to route GRN to the correct supplier
+  readonly expectedTotalAmount: number;
+  // => Expected total — receiving compares against goods actually received at the dock
+};
+// => PurchaseOrderSummary: receiving's own type for PO metadata
+// => Adding a field to PurchaseOrder in purchasing does not affect this type
+// => A rename in purchasing's types causes no compile error here — contexts evolve independently
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2562,9 +2817,48 @@ type GoodsReceiptRepository =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// receiving application layer: port types for fetching PO summaries and persisting GRNs
+// src/procurement-platform/contexts/receiving/application/ports.ts
+// [F#: module Receiving.Application.Ports — TS ES module with exported types]
+
+import type { Result } from "neverthrow";
+// => neverthrow Result: mirrors F# Result<T, string> semantics
+import type { PurchaseOrderSummary, GoodsReceiptNote, GoodsReceiptNoteId } from "../domain/receiving-types";
+// => Only receiving domain types — no purchasing import in application layer
+// [F#: open ProcurementPlatform.Contexts.Receiving.Domain]
+
+// PO summary port — function type alias used by the ACL adapter to satisfy receiving's queries
+// [F#: type PurchaseOrderSummaryPort = Guid -> Async<Result<PurchaseOrderSummary option, string>>]
+export type PurchaseOrderSummaryPort = {
+  readonly fetchPurchaseOrderSummary: (
+    poId: string,
+    // => Plain string UUID — receiving does not wrap it in a branded type
+    // [F#: System.Guid — TS uses string; no strongly-typed wrapper at the cross-context boundary]
+  ) => Promise<Result<PurchaseOrderSummary | null, string>>;
+  // => PurchaseOrderSummary | null: null represents absence (Option None)
+  // => The ACL adapter satisfies this port — receiving never knows where the data comes from
+};
+
+// GoodsReceiptRepository port — save and load GRNs
+// [F#: type GoodsReceiptRepository record-of-functions — TS uses a readonly object type]
+export type GoodsReceiptRepository = {
+  readonly saveGoodsReceipt: (grn: GoodsReceiptNote) => Promise<Result<void, string>>;
+  // => Persist a GRN — called after goods are verified at the receiving dock
+  // [F#: SaveGoodsReceipt: GoodsReceiptNote -> Async<Result<unit, string>>]
+  readonly findGoodsReceipt: (grnId: GoodsReceiptNoteId) => Promise<Result<GoodsReceiptNote | null, string>>;
+  // => Load by identity — used for three-way match lookup in invoicing context
+  // [F#: FindGoodsReceipt: GoodsReceiptNoteId -> Async<Result<GoodsReceiptNote option, string>>]
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2668,6 +2962,73 @@ let makePurchasingAcl (findPO: PurchaseOrderRepository) : PurchaseOrderSummaryPo
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// ACL adapter in receiving infrastructure: translates purchasing domain types
+// src/procurement-platform/contexts/receiving/infrastructure/purchasing-acl.ts
+// [F#: module PurchasingAcl — TS factory function in infrastructure layer]
+
+import { ok, err, type Result } from "neverthrow";
+// => neverthrow ok/err: mirrors F# Ok/Error
+import type { PurchaseOrderRepository } from "../../purchasing/application/ports";
+// => ACL imports the purchasing APPLICATION port (not the domain) — query model only
+// [F#: open ProcurementPlatform.Contexts.Purchasing.Application.Ports]
+import type { PurchaseOrderSummaryPort } from "../application/ports";
+// => Port type the ACL must satisfy — receiving's application layer port
+// [F#: open ProcurementPlatform.Contexts.Receiving.Application.Ports]
+import type { PurchaseOrderSummary } from "../domain/receiving-types";
+// => receiving domain type for the translation output
+
+// ACL adapter factory satisfying receiving's PurchaseOrderSummaryPort
+// [F#: let makePurchasingAcl (findPO: PurchaseOrderRepository) : PurchaseOrderSummaryPort]
+export const makePurchasingAcl = (
+  purchasingRepo: PurchaseOrderRepository,
+  // => purchasing's PurchaseOrderRepository — injected by the composition root
+): PurchaseOrderSummaryPort => ({
+  // => Object literal satisfying PurchaseOrderSummaryPort structurally
+  // [F#: returns a PurchaseOrderSummaryPort function — TS returns an object with the method]
+
+  fetchPurchaseOrderSummary: async (poId): Promise<Result<PurchaseOrderSummary | null, string>> => {
+    // => poId: plain string UUID — receiving passes a raw UUID; ACL adapts for purchasing's port
+    // [F#: fun poId -> async { let! result = findPO.FindPurchaseOrder (PurchaseOrderId poId) }]
+    const result = await purchasingRepo.findPurchaseOrder(
+      poId as Parameters<typeof purchasingRepo.findPurchaseOrder>[0],
+    );
+    // => Cast to branded PurchaseOrderId — ACL owns this translation; receiving never touches the brand
+    if (!result.isOk()) {
+      return err(`ACL translation failure: ${result.error.kind}`);
+      // => Translate purchasing's RepositoryError to receiving's error string
+      // => receiving's application layer never sees purchasing's RepositoryError type
+      // [F#: return Error (sprintf "ACL translation failure: %A" e)]
+    }
+    const po = result.value;
+    // => po: PurchaseOrder | null — unwrap the neverthrow Ok
+    if (po === null) {
+      return ok(null);
+      // => null: PO not found — valid domain outcome; receiving decides how to handle absence
+      // [F#: | Ok None -> return Ok None]
+    }
+    const summary: PurchaseOrderSummary = {
+      // => PO found: translate from purchasing's domain type to receiving's summary type
+      purchaseOrderId: poId,
+      // => Pass UUID string through — receiving's summary uses plain string, not branded type
+      // [F#: PurchaseOrderId = poId — same pass-through; Guid is already the raw type]
+      supplierId: po.supplierId,
+      // => Extract supplier UUID string — receiving only needs the plain UUID
+      // [F#: SupplierId = let (SupplierId sid) = po.SupplierId in sid — TS unwraps nothing]
+      expectedTotalAmount: po.totalAmount.amount,
+      // => Map Money value object to a number — receiving's needs are simpler than purchasing's
+      // [F#: ExpectedTotalAmount = po.TotalAmount.Amount]
+    };
+    return ok(summary);
+    // => ok(summary): translated domain type — receiving's application service receives this
+  },
+});
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the ACL adapter adds a translation step and an additional port. For contexts that share a large read model, the translation code is verbose. Use a shared read model (a separate query module both contexts import from a `SharedKernel` library) when the translation is purely structural with no semantic difference. Reserve the full ACL for cases where the two contexts genuinely use different ubiquitous language — which is the case for `receiving` and `purchasing` in `procurement-platform-be`.
@@ -2684,7 +3045,7 @@ The composition root is the single place in the application where adapter implem
 
 Without a DI container or explicit composition, each function creates its own dependencies — the poor man's composition:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2730,6 +3091,36 @@ let handleRequest () =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```typescript
+// Standard library: inline dependency construction (poor man's DI)
+// src/procurement-platform/contexts/purchasing/presentation/purchasing-handlers.ts
+// [F#: each call site constructs its own adapter — same antipattern in TS]
+
+import { Pool } from "pg";
+// => Infrastructure import directly in presentation — wrong layer coupling
+import { makePgPurchaseOrderRepository } from "../infrastructure/pg-purchase-order-repository";
+// => Infrastructure adapter required at the call site — not injected by a composition root
+
+const handleRequestStdlib = async (): Promise<void> => {
+  // => Inline construction: reads config and builds adapter per call
+  const connStr = process.env["DATABASE_URL"] ?? "";
+  // => process.env: reads DATABASE_URL at call time — not from a typed config object
+  // [F#: System.Environment.GetEnvironmentVariable("DATABASE_URL")]
+  const pool = new Pool({ connectionString: connStr });
+  // => New Pool per call: each call creates a new connection pool — pool efficiency lost
+  // [F#: NpgsqlConnection per call — same efficiency problem]
+  const repo = makePgPurchaseOrderRepository(pool);
+  // => Adapter constructed inline — not shared across calls
+  // => Adding a new adapter requires touching every handler that builds dependencies
+  void repo;
+  // => repo usage placeholder — illustrates inline construction without application service call
+};
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: inline construction creates adapter instances per call, bypassing connection pool sharing. Adding a new adapter requires touching all call sites.
@@ -2738,7 +3129,7 @@ let handleRequest () =
 
 `Composition/Program.fs` in `procurement-platform-be` demonstrates the correct pattern: adapters are constructed once at startup and injected via partial application:
 
-{{< tabs items="F#,Clojure" >}}
+{{< tabs items="F#,Clojure,TypeScript" >}}
 
 {{< tab >}}
 
@@ -2920,6 +3311,99 @@ let main _ =
     app))
 ;; => Return the Ring handler — passed to the Jetty or http-kit server start call
 ;; => All routes declared in one place — audit what runs in production here
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// Composition root: wiring all context ports — the single place adapters are bound to port types
+// src/procurement-platform/composition/system.ts
+// [F#: module Program — TS uses a startSystem factory function]
+
+import { Pool } from "pg";
+// => pg Pool: shared connection pool — constructed once at startup; equivalent to Npgsql's built-in pooling
+// [F#: open Npgsql — TS imports Pool from "pg"]
+import { Hono } from "hono";
+// => Hono: HTTP framework — same as the handler guides; all context routers compose here
+import { makePgPurchaseOrderRepository } from "../contexts/purchasing/infrastructure/pg-purchase-order-repository";
+// => pg adapter for purchasing context
+import { makeOutboxPublisher } from "../contexts/purchasing/infrastructure/outbox-event-publisher";
+// => OutboxEventPublisher: writes event rows to purchasing.outbox_events
+import { makePgGoodsReceiptRepository } from "../contexts/receiving/infrastructure/pg-goods-receipt-repository";
+// => pg adapter for receiving context
+import { makePurchasingAcl } from "../contexts/receiving/infrastructure/purchasing-acl";
+// => ACL adapter: satisfies receiving's PurchaseOrderSummaryPort using purchasing's repo
+import { makePurchasingRouter } from "../contexts/purchasing/presentation/purchasing-handlers";
+// => Handler factory for purchasing context
+import { makeReceivingRouter } from "../contexts/receiving/presentation/receiving-handlers";
+// => Handler factory for receiving context
+// [F#: open ... all infrastructure and presentation modules — same imports, different syntax]
+
+// Typed config record — reads from environment at startup only
+// [F#: let cfg = builder.Configuration — TS uses a plain object]
+type AppConfig = {
+  readonly databaseUrl: string;
+  // => DATABASE_URL: injected as env var in Kubernetes or docker-compose
+  readonly clock: () => Date;
+  // => Clock port: () => new Date() in production, frozen in tests
+};
+
+const loadConfig = (): AppConfig => ({
+  databaseUrl: process.env["DATABASE_URL"] ?? "",
+  // => Non-null assertion avoided: empty string triggers connection error at first DB call
+  clock: () => new Date(),
+  // => Monotone UTC clock — tests replace this with a frozen function
+});
+
+// Composition root factory — builds and returns the wired Hono app
+// [F#: let main _ = ... single-entry-point — TS exports startSystem for main.ts and tests]
+export const startSystem = (): Hono => {
+  const config = loadConfig();
+  // => Config read once at startup — no inline process.env access in adapters or handlers
+
+  // Shared pg Pool — constructed once per process; all adapters close over it
+  const pool = new Pool({ connectionString: config.databaseUrl, max: 10 });
+  // => max: 10 connections per pool — mirrors Clojure's :maximum-pool-size 10
+  // [F#: connStr passed to each adapter factory — TS passes the shared pool directly]
+
+  // Purchasing context — wires PurchaseOrderRepository and EventPublisher
+  const poRepo = makePgPurchaseOrderRepository(pool);
+  // => Single PurchaseOrderRepository object shared per process — stateless; no per-request allocation
+  const eventPub = makeOutboxPublisher(pool);
+  // => OutboxEventPublisher: writes event rows inside purchasing.outbox_events
+
+  // Receiving context — wires GoodsReceiptRepository and PurchasingAcl
+  const grnRepo = makePgGoodsReceiptRepository(pool);
+  // => GoodsReceiptRepository for the receiving context — persists to receiving schema
+  const purchasingAcl = makePurchasingAcl(poRepo);
+  // => ACL adapter: satisfies receiving's PurchaseOrderSummaryPort using purchasing's repo
+  // => The ACL is a read-only adapter — it never writes to purchasing's data
+
+  // Compose all context routers into the root app
+  const app = new Hono();
+  // => Root Hono app: all context routes registered here — one place to audit what runs in production
+  // [F#: choose [...] — Hono uses app.route() to mount context routers]
+
+  app.get("/api/v1/health", (c) => c.json({ status: "healthy" }));
+  // => Health check: no port needed — simple inline response
+  // [F#: GET >=> route "/api/v1/health" >=> json {| status = "healthy" |}]
+
+  const purchasingRouter = makePurchasingRouter(poRepo, eventPub, config.clock);
+  app.route("/", purchasingRouter);
+  // => Mount purchasing context routes — includes /api/v1/purchase-orders POST and GET
+  // [F#: POST >=> route "/api/v1/purchase-orders" >=> PurchasingHandlers.handleSubmit ...]
+
+  const receivingRouter = makeReceivingRouter(grnRepo, purchasingAcl, eventPub);
+  app.route("/", receivingRouter);
+  // => Mount receiving context routes — includes /api/v1/goods-receipts POST
+  // [F#: POST >=> route "/api/v1/goods-receipts" >=> ReceivingHandlers.handleCreateGrn ...]
+
+  return app;
+  // => Return the root Hono app — main.ts passes it to serve(); tests call it directly
+  // [F#: app.Run() blocks the process — TS returns the app; caller decides how to start the server]
+};
 ```
 
 {{< /tab >}}
