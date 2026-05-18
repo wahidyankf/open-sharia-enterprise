@@ -8,11 +8,11 @@ Feature: DDD + Hexagonal In-the-Field Tutorial Routes
     Given the app is running
 
   Scenario: F# in-the-field tutorial route is reachable
-    When a visitor navigates to "/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/fp-in-the-field"
+    When a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-fp-in-the-field"
     Then the page should respond with HTTP 200
     And the page should contain a heading with text "DDD + Hexagonal in Practice — F# in the Field"
 
   Scenario: Java in-the-field tutorial route is reachable
-    When a visitor navigates to "/en/learn/software-engineering/architecture/ddd-hexagonal-in-practice/oop-in-the-field"
+    When a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-oop-in-the-field"
     Then the page should respond with HTTP 200
     And the page should contain a heading with text "DDD + Hexagonal in Practice — Java in the Field"

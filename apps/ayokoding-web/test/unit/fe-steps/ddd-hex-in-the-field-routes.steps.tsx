@@ -17,7 +17,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("F# in-the-field tutorial route is reachable", ({ When, Then, And }) => {
     When(
-      'a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/fp-in-the-field"',
+      'a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-fp-in-the-field"',
       () => {
         expect(true).toBe(true);
       },
@@ -34,7 +34,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
   Scenario("Java in-the-field tutorial route is reachable", ({ When, Then, And }) => {
     When(
-      'a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/oop-in-the-field"',
+      'a visitor navigates to "/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-oop-in-the-field"',
       () => {
         expect(true).toBe(true);
       },
