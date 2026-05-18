@@ -7,12 +7,12 @@ description: "Finite State Machine (FSM) - a computational model managing applic
 ---
 
 - [Overview](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/overview)
-- [By Example in OOP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example)
+- [By Example](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example)
   - [Overview](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/overview)
   - [Beginner](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/advanced)
-- [By Example in FP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example)
+- [FSM By Example in FP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example)
   - [Overview](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example/overview)
   - [Beginner](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example/intermediate)
