@@ -20,7 +20,7 @@ tags:
   ]
 ---
 
-This advanced section adds the `Supplier` lifecycle and `Payment` state machine to the Procure-to-Pay domain, then covers the patterns that turn flat FSMs into statecharts: hierarchical states, parallel regions, history states, FSM persistence, event sourcing, and actor-model integration. All examples are in F# using discriminated unions, pure transition functions, and immutable records. The `MurabahaContract` machine appears as an optional Sharia-finance extension.
+This advanced section adds the `Supplier` lifecycle and `Payment` state machine to the Procure-to-Pay domain, then covers the patterns that turn flat FSMs into statecharts: hierarchical states, parallel regions, history states, FSM persistence, event sourcing, and actor-model integration. Examples are shown using discriminated unions, pure transition functions, and immutable records — canonical patterns for any functional language. F# is the primary language; Clojure and TypeScript equivalents appear in the tabbed examples. The `MurabahaContract` machine appears as an optional Sharia-finance extension.
 
 ## Supplier Lifecycle FSM (Examples 51–57)
 

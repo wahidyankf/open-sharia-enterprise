@@ -12,7 +12,7 @@ tags:
 
 ### Why It Matters
 
-Unit tests with an in-memory adapter (Guide 8) prove port correctness but cannot catch SQL schema mistakes, PostgreSQL-specific constraint behavior, or migration ordering bugs. A database integration test that runs against a real PostgreSQL instance inside Docker closes this gap without requiring a persistent database on developer machines. In `procurement-platform-be`, the `docker-compose.integration.yml` file defines exactly this harness: a `postgres:17-alpine` service with a health-check gate and a `test-runner` container that waits for it. The two services together give every integration test a fresh, disposable PostgreSQL instance that mirrors the production schema.
+Unit tests with an in-memory adapter (Guide 8) prove port correctness but cannot catch SQL schema mistakes, PostgreSQL-specific constraint behavior, or migration ordering bugs. A database integration test that runs against a real PostgreSQL instance inside Docker closes this gap without requiring a persistent database on developer machines. In `procurement-platform-be`, the `docker-compose.integration.yml` file defines exactly this harness: a `postgres:17-alpine` service with a health-check gate and a `test-runner` container that waits for it. The two services together give every integration test a fresh, disposable PostgreSQL instance that mirrors the production schema. The docker-compose harness is shared across all three stacks — the database is identical; only the test runner changes (a .NET `xunit` runner for F#, a Clojure `clojure.test` runner, or a Node.js `jest` runner for TypeScript).
 
 ### Standard Library First
 
@@ -425,7 +425,7 @@ test("npgsqlPurchaseOrderRepository saves a PO and reads it back from PostgreSQL
 
 ### Why It Matters
 
-Every database integration test relies on a schema that matches the application's expectations. In `procurement-platform-be`, the `Infrastructure/Migrations.fs` module uses DbUp to apply embedded SQL scripts in order at startup. This makes the migration adapter a first-class hexagonal concern: the application layer defines what shape data the aggregate needs; the migration adapter ensures the database schema reflects that shape; and the integration test harness runs both in order.
+Every database integration test relies on a schema that matches the application's expectations. The migration adapter is a first-class hexagonal concern regardless of stack: the application layer defines what shape data the aggregate needs; the migration adapter ensures the database schema reflects that shape; and the integration test harness runs both in order. In `procurement-platform-be`, the migration adapter is implemented with DbUp (embedded SQL scripts) in F#, `ragtime` or `migratus` in Clojure, and `umzug` (with `sequelize-storage` for the journal) in TypeScript. All three use the same plain SQL migration scripts — only the driver library differs.
 
 ### Standard Library First
 
@@ -780,7 +780,7 @@ test("migrations are idempotent on second run", async () => {
 
 ### Why It Matters
 
-The `payments` context must disburse funds to suppliers via a bank API. Like the database boundary, this external I/O must sit behind a port so the application service is testable without a live bank API key, and so you can swap the bank provider without touching business logic. In `procurement-platform-be`, the `BankingPort` is a record of functions for initiating disbursements and querying payment status. The port-first design means that a test can use a stub adapter returning a fixed response, while production uses the real bank REST API call.
+The `payments` context must disburse funds to suppliers via a bank API. Like the database boundary, this external I/O must sit behind a port so the application service is testable without a live bank API key, and so you can swap the bank provider without touching business logic. The `BankingPort` is a record of functions for initiating disbursements and querying payment status — a record-of-functions type alias in F#, a `defprotocol` in Clojure, or an interface in TypeScript. The port-first design means that a test can use a stub adapter returning a fixed response, while production uses the real bank REST API call — reached via `System.Net.Http.HttpClient` in F#, `clj-http` or `hato` in Clojure, or the built-in `fetch` API in TypeScript.
 
 ### Standard Library First
 
@@ -1544,7 +1544,7 @@ export const deterministicStub: BankingPort = {
 
 ### Why It Matters
 
-External HTTP calls — including the bank API adapter from Guide 17 — fail transiently. A single `EnsureSuccessStatusCode` followed by an exception propagated to the application layer violates the resilience contract: one network hiccup crashes a user's request. Wrapping adapter calls in retry and circuit-breaker policies separates transient failure handling (retry) from persistent failure handling (circuit-breaker). The application service sees only a typed `BankingError` from the `BankingPort` — it does not implement retry logic itself.
+External HTTP calls — including the bank API adapter from Guide 17 — fail transiently. A single error check followed by an exception propagated to the application layer violates the resilience contract: one network hiccup crashes a user's request. Wrapping adapter calls in retry and circuit-breaker policies separates transient failure handling (retry) from persistent failure handling (circuit-breaker). The application service sees only a typed `BankingError` from the `BankingPort` — it does not implement retry logic itself. The resilience layer lives entirely inside the adapter: Polly's `AddStandardResilienceHandler` in F#, `diehard` or hand-rolled recursion in Clojure, or `p-retry` and a hand-rolled circuit-breaker state machine in TypeScript.
 
 ### Standard Library First
 
@@ -2011,7 +2011,7 @@ export function makeResilientBankApiAdapter(settings: BankApiSettings): BankingP
 
 ### Why It Matters
 
-Guides 9 and 10 showed the publisher port and its two adapters in isolation. This guide traces the full domain event flow from aggregate emit to downstream consumer, showing every hand-off boundary. In `procurement-platform-be`, the intended flow is: a Giraffe handler calls the purchasing application service, the service calls the outbox adapter to write the event row, a relay worker polls the outbox table and dispatches events to downstream contexts (`receiving` opens a GRN expectation; `supplier-notifier` sends the PO to the supplier by EDI/email). Understanding this flow as a sequence of port crossings prevents the common mistake of coupling the relay worker to the application service directly.
+Guides 9 and 10 showed the publisher port and its two adapters in isolation. This guide traces the full domain event flow from aggregate emit to downstream consumer, showing every hand-off boundary. The intended flow is: an HTTP handler calls the purchasing application service, the service calls the outbox adapter to write the event row, a relay worker polls the outbox table and dispatches events to downstream contexts (`receiving` opens a GRN expectation; `supplier-notifier` sends the PO to the supplier by EDI/email). This flow is language-independent — the port crossings are the same whether the adapter is a Giraffe handler in F#, a Reitit route in Clojure, or a Hono route in TypeScript. Understanding the flow as a sequence of port crossings prevents the common mistake of coupling the relay worker to the application service directly.
 
 ### Standard Library First
 
@@ -2385,7 +2385,7 @@ export function startRelayWorker(pool: Pool, stopSignal: { stopped: boolean }): 
 
 ### Why It Matters
 
-In production, you need to know which port call is slow, which adapter is producing errors, and what the end-to-end trace looks like for a given HTTP request. Wrapping port calls in OpenTelemetry spans gives you this visibility without modifying the application service. The observability adapter is itself a decorator — it satisfies the same record shape as the real adapter but wraps the real adapter's call inside a span.
+In production, you need to know which port call is slow, which adapter is producing errors, and what the end-to-end trace looks like for a given HTTP request. Wrapping port calls in OpenTelemetry spans gives you this visibility without modifying the application service. The observability adapter is itself a decorator — it satisfies the same port contract as the real adapter but wraps the real adapter's call inside a span. The decorator concept is language-independent: in F# it is a record-of-functions that forwards calls to the inner record while adding span wrappers; in Clojure it is a `reify` over the protocol that does the same; in TypeScript it is an object that implements the port interface and delegates to an inner instance.
 
 ### Standard Library First
 
@@ -2909,7 +2909,7 @@ export function buildPurchaseOrderRepository(pool: Pool) {
 
 ### Why It Matters
 
-`procurement-platform-be` serves organizations operating under Sharia-compliant procurement rules. For those organizations, large purchases may be financed through a murabaha contract: a bank buys the asset and resells it to the buyer at a markup, structuring the transaction as a sale rather than a loan. This optional context — `murabaha-finance` — introduces the `MurabahaContract` aggregate and a `MurabahaContractRepository` port. The hexagonal architecture makes optionality explicit: the composition root wires the `murabaha-finance` adapters only when the feature flag is enabled. The purchasing context application service never knows whether murabaha financing is in play.
+`procurement-platform-be` serves organizations operating under Sharia-compliant procurement rules. For those organizations, large purchases may be financed through a murabaha contract: a bank buys the asset and resells it to the buyer at a markup, structuring the transaction as a sale rather than a loan. This optional context — `murabaha-finance` — introduces the `MurabahaContract` aggregate and a `MurabahaContractRepository` port. The hexagonal architecture makes optionality explicit: the composition root wires the `murabaha-finance` adapters only when the feature flag is enabled. The purchasing context application service never knows whether murabaha financing is in play — the optional port is expressed as an F# `option` parameter, a Clojure `nil`-or-protocol value, or a TypeScript `null`-or-interface parameter in all three stacks.
 
 ### Standard Library First
 
@@ -3341,7 +3341,7 @@ export async function issuePurchaseOrder(
 
 ### Why It Matters
 
-Three anti-patterns reliably erode hexagonal architectures over time: the leaky hexagon (infrastructure types bleeding into the domain), the god adapter (one adapter that does too much), and the anemic domain (domain types with no behavior, forcing business logic into application services). All three are easy to introduce under feature pressure and difficult to remove once calcified. Recognizing them early in `procurement-platform-be` prevents the hexagonal structure from collapsing into a layered monolith.
+Three anti-patterns reliably erode hexagonal architectures over time: the leaky hexagon (infrastructure types bleeding into the domain), the god adapter (one adapter that does too much), and the anemic domain (domain types with no behavior, forcing business logic into application services). All three are easy to introduce under feature pressure and difficult to remove once calcified. They manifest in every stack: the leaky hexagon is an `open Npgsql` in F# domain code, a `:require [next.jdbc ...]` in a Clojure domain namespace, or a `import { Pool } from "pg"` in a TypeScript domain module. Recognizing them early in `procurement-platform-be` prevents the hexagonal structure from collapsing into a layered monolith regardless of which language the team uses.
 
 ### Standard Library First
 
@@ -3721,7 +3721,7 @@ The production pattern for each anti-pattern follows the same corrective shape: 
 
 ### Why It Matters
 
-A Kubernetes manifest is not a deployment detail you add after the code works — it is the composition root for the entire hexagonal stack at runtime. The `Deployment` object determines how many adapter instances run concurrently; the `ConfigMap` determines which port an adapter connects to; the `Secret` holds the credentials that make the Npgsql adapter authenticate to PostgreSQL and the bank API adapter authenticate to the bank. If these three resources are misaligned, the adapter throws at startup rather than at test time. Writing the Kubernetes manifest before the first production deploy makes the configuration contract explicit and reviewable.
+A Kubernetes manifest is not a deployment detail you add after the code works — it is the composition root for the entire hexagonal stack at runtime. The `Deployment` object determines how many adapter instances run concurrently; the `ConfigMap` determines which port an adapter connects to; the `Secret` holds the credentials that make the database adapter authenticate to PostgreSQL (Npgsql in F#, `next.jdbc` in Clojure, `pg` in TypeScript) and the bank API adapter authenticate to the bank. If these three resources are misaligned, the adapter throws at startup rather than at test time. Writing the Kubernetes manifest before the first production deploy makes the configuration contract explicit and reviewable — the same YAML drives all three stacks since they share the same PostgreSQL service and environment variable names.
 
 ### Standard Library First
 
@@ -3938,7 +3938,7 @@ flowchart LR
 
 ### Why It Matters
 
-Guide 20 showed how to add OpenTelemetry spans to individual port calls. At the deployment seam, the concern shifts: where does the collected telemetry go, and how does `procurement-platform-be` register its trace sources so that the SDK exports them? A misconfigured OTLP exporter means you pay the span creation overhead in every request but see nothing in Jaeger or Honeycomb. Getting this right before the first production deploy saves the painful debugging session where P95 latency spikes but the trace dashboard shows only half the spans.
+Guide 20 showed how to add OpenTelemetry spans to individual port calls. At the deployment seam, the concern shifts: where does the collected telemetry go, and how does the application register its trace sources so that the SDK exports them? A misconfigured OTLP exporter means you pay the span creation overhead in every request but see nothing in Jaeger or Honeycomb. The SDK registration differs by stack — `builder.Services.AddOpenTelemetry().WithTracing(...)` in F#, `(configure-opentelemetry! ...)` via the `opentelemetry-clj` library in Clojure, or `NodeSDK` initialization in TypeScript — but the OTLP endpoint, resource attributes, and Kubernetes `ConfigMap` key are identical across all three. Getting this right before the first production deploy saves the painful debugging session where P95 latency spikes but the trace dashboard shows only half the spans.
 
 ### Standard Library First
 
@@ -4304,7 +4304,7 @@ data:
 
 ### Why It Matters
 
-When the PostgreSQL pod is unhealthy during a rolling restart, or the bank API returns 503 for thirty seconds, you have two choices: fail every request immediately, or serve degraded responses from fallback adapters. The hexagonal architecture makes the second choice tractable — because the application service depends on port records, not concrete adapters, you can swap in a degraded adapter at the composition root without touching business logic. The circuit-breaker from Guide 18 is the trigger; this guide shows the fallback adapter wired to it.
+When the PostgreSQL pod is unhealthy during a rolling restart, or the bank API returns 503 for thirty seconds, you have two choices: fail every request immediately, or serve degraded responses from fallback adapters. The hexagonal architecture makes the second choice tractable — because the application service depends on a port contract, not a concrete adapter, you can swap in a degraded adapter at the composition root without touching business logic. The circuit-breaker from Guide 18 is the trigger; this guide shows the fallback adapter wired to it. The swap is mechanically the same across all three stacks: at the composition root, the degraded value satisfies the same port type (F# record-of-functions, Clojure protocol instance, TypeScript interface) as the production adapter.
 
 ### Standard Library First
 
@@ -4919,7 +4919,7 @@ export function buildEventPublisher(pool: Pool) {
 
 ### Why It Matters
 
-`procurement-platform-be` reads `BankApiSettings` from configuration at startup. The journey of a secret from a Kubernetes Secret object to a strongly-typed F# record crosses four boundaries: Kubernetes injects the Secret key as an environment variable; the ASP.NET Core configuration system reads the environment variable; the `IOptions<T>` binding maps it to `BankApiSettings`; the composition root reads the record and passes it to the adapter factory. A break at any boundary — a renamed key, a missing namespace prefix, a wrong casing — silently produces an empty string instead of the expected value. Making this chain explicit prevents the class of bugs where the bank adapter always returns auth errors because `ApiKey` is empty.
+`procurement-platform-be` reads `BankApiSettings` from configuration at startup. The journey of a secret from a Kubernetes Secret object to a typed configuration record crosses the same conceptual boundaries regardless of stack: Kubernetes injects the Secret key as an environment variable; the configuration system reads the environment variable; a binding mechanism maps it to the typed settings record; the composition root passes it to the adapter factory. In F# this chain uses `IOptions<T>` with `ValidateOnStart`; in Clojure it uses `aero` or `environ` with a `clojure.spec.alpha` validation step; in TypeScript it uses `zod` schema validation called explicitly at process startup. A break at any boundary — a renamed key, a missing namespace prefix, a wrong casing — silently produces an empty string instead of the expected value. Making this chain explicit prevents the class of bugs where the bank adapter always returns auth errors because `ApiKey` is empty.
 
 ### Standard Library First
 
@@ -5400,7 +5400,7 @@ export function makeFromConfig(config: unknown): BankingPort {
 
 ### Why It Matters
 
-The outbox relay worker from Guide 19 is itself a background job — an `IHostedService` that runs alongside the HTTP server. When the platform needs scheduled work (e.g., escalating purchase orders that have been awaiting approval for more than five business days, or sending remittance advice to suppliers after payment is disbursed), that work must go through a port rather than being wired directly into a hosted service. This guide shows the `IHostedService` + port pair that keeps background jobs testable and swappable under the hexagonal architecture.
+The outbox relay worker from Guide 19 is itself a background job. When the platform needs scheduled work (e.g., escalating purchase orders that have been awaiting approval for more than five business days, or sending remittance advice to suppliers after payment is disbursed), that work must go through a port rather than being wired directly into a hosted service. The background-job primitive differs by stack — an `IHostedService` in F#, a `go-loop` or `mount`-managed worker thread in Clojure, or a `setInterval`-backed worker in TypeScript — but the key invariant is the same in all three: the scheduled logic calls application service functions via injected port records, never directly touching the database or message bus. This keeps background jobs testable with the same in-memory adapters used in unit tests.
 
 ### Standard Library First
 

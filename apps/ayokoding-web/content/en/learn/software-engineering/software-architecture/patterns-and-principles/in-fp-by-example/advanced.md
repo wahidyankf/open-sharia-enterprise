@@ -8,9 +8,9 @@ tags: ["software-architecture", "tutorial", "by-example", "advanced", "fp", "fsh
 ---
 
 This section covers advanced software architecture patterns for distributed systems, microservices,
-resilience, and expert-level architectural decisions — implemented in F# using functional idioms.
-Examples 58–85 assume familiarity with foundational and intermediate architecture concepts covered
-earlier in this series.
+resilience, and expert-level architectural decisions — using functional idioms. F# is the canonical
+language; Clojure and TypeScript equivalents appear in the tabbed code blocks. Examples 58–85 assume
+familiarity with foundational and intermediate architecture concepts covered earlier in this series.
 
 ## Decomposition and Service Design
 
@@ -2074,8 +2074,9 @@ seconds instead of minutes.
 ### Example 67: Distributed Tracing Architecture
 
 Distributed tracing tracks a request across multiple services by propagating a shared `traceId`.
-In F#, a span is an immutable record; starting and finishing spans are pure functions that return
-new records, keeping trace creation free of mutation.
+A span is modelled as an immutable data value; starting and finishing spans are pure functions that
+return new values, keeping trace creation free of mutation. F# expresses spans as records; Clojure
+as plain maps; TypeScript as readonly interfaces — the functional principle is language-agnostic.
 
 ```mermaid
 sequenceDiagram
@@ -2308,8 +2309,9 @@ locking.
 ### Example 68: Sidecar Pattern
 
 The sidecar pattern deploys cross-cutting concerns alongside the application without changing it.
-In F#, the sidecar is modelled as a higher-order function that wraps the application handler,
-adding concerns before and after delegation.
+Functionally, the sidecar is a higher-order function that wraps the application handler, adding
+concerns before and after delegation. F# expresses this as a function wrapper; Clojure as a
+Ring-style middleware; TypeScript as a higher-order function wrapping an async handler.
 
 ```mermaid
 graph LR
@@ -4374,9 +4376,10 @@ trade-off between these two properties is intentional and educational.
 ### Example 77: Database per Service Pattern
 
 The database-per-service pattern assigns each microservice an exclusive data store it fully controls.
-In F#, each service's data access is a record of injected repository functions; cross-service data
-access goes through composed function calls. In Clojure, each service owns an independent atom —
-cross-service access goes through function calls, never shared atom references.
+Data access is represented as a set of injected functions or protocols, never as a shared mutable
+reference. Cross-service data access goes through explicit function calls, not shared state. F# uses
+a record of injected repository functions; Clojure uses an independent atom per service; TypeScript
+uses an injected repository interface — all enforce the same ownership boundary.
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
 
@@ -5359,8 +5362,10 @@ serialised to JSON and deserialised back — the rule becomes a configuration ar
 ### Example 81: CQRS (Command Query Responsibility Segregation)
 
 CQRS separates the write model (enforcing invariants) from the read model (optimised for queries).
-In F#, commands are DU cases; the write handler is a function returning `Result`; the read model
-is a separate type built by projecting events.
+Commands are closed union cases; the write handler returns a typed Result; the read model is a
+separate type built by projecting events. F# represents commands as discriminated union cases with
+`Result`-returning handlers; Clojure as keyword-tagged maps with explicit validation; TypeScript as
+a discriminated union with `Result` wrappers — the CQRS boundary is the same regardless of syntax.
 
 ```mermaid
 graph LR

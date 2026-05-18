@@ -5379,7 +5379,7 @@ console.log(withLine1.status); // => Output: PARTIALLY_RECEIVED (withLine1 uncha
 
 ---
 
-### Example 70: Kotlin — data-class aggregates with `copy` for immutable state transitions
+### Example 70: Immutable Aggregate State Transitions via Copy / With
 
 Kotlin's `data class` with `copy` enables immutable aggregate state — each transition returns a new instance instead of mutating in place. The tabs below show how the same pattern is expressed in Java (records + wither-style factory), Kotlin (the centerpiece), and C# (records with `with`).
 
@@ -5743,7 +5743,7 @@ console.log(result.discrepancies[0]);
 
 ---
 
-### Example 71: C# — record aggregates with `with` expression for immutable receiving
+### Example 71: Immutable Record Aggregates with Structural Copy in the Receiving Context
 
 C# positional records with `with` expressions mirror Kotlin's `copy` pattern, enabling immutable aggregate state transitions in the `receiving` context. All three languages express the same DDD principle — each state transition returns a new aggregate instance rather than mutating in place.
 

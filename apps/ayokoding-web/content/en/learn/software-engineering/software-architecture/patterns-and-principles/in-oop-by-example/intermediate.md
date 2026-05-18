@@ -20,7 +20,7 @@ aliases:
   - /en/learn/software-engineering/software-architecture/patterns-and-principles/intermediate/
 ---
 
-Examples 29-57 cover intermediate software architecture concepts (40-75% coverage). These examples build on foundational patterns and introduce composite architectural styles, enterprise patterns, and domain-driven design building blocks. Each example is self-contained and uses Python or TypeScript.
+Examples 29-57 cover intermediate software architecture concepts (40-75% coverage). These examples build on foundational patterns and introduce composite architectural styles, enterprise patterns, and domain-driven design building blocks. Each example is self-contained and uses object-oriented idioms — Java is the canonical language; Kotlin, C#, and TypeScript equivalents appear in the tabbed code blocks.
 
 ## Hexagonal Architecture and Clean Architecture
 

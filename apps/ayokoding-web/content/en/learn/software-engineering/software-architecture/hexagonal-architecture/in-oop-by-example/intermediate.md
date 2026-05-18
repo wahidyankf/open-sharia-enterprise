@@ -1433,7 +1433,7 @@ export class InMemorySupplierRepository implements SupplierRepository {
 
 ---
 
-### Example 27: Spring @Profile-based adapter selection
+### Example 27: Profile-based adapter selection (Spring @Profile / C# environments)
 
 Spring `@Profile` lets different adapters load in different environments without any `if` statements in business code. The application is oblivious to which adapter is active.
 
@@ -2939,7 +2939,7 @@ export class InMemorySupplierRepository implements SupplierRepository {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Kotlin's nullable types replace `Optional<>` at the port boundary — `Supplier?` is idiomatic null-safe Kotlin. The adapter pattern is identical to Java; only the syntax differs.
+**Key Takeaway**: Null-safe port boundaries eliminate `Optional<>` boilerplate — the adapter pattern is identical across languages; only the syntax for expressing nullability differs. Kotlin uses `Supplier?` nullable types; C# uses nullable reference types (`Supplier?`) with NRT enabled; TypeScript uses `Supplier | null`. Java uses `Optional<Supplier>` at the boundary.
 
 **Why It Matters**: In a mixed Java/Kotlin codebase, Kotlin adapters are fully interoperable with Java ports. A team can migrate adapters one at a time to Kotlin without changing the Java port interface. Kotlin's conciseness reduces the boilerplate cost of writing multiple adapters.
 
@@ -3637,7 +3637,7 @@ export class OutboxEventPublisher implements EventPublisher {
 
 ## Advanced Composition Patterns (Examples 36–40)
 
-### Example 36: Spring @Configuration with multiple bounded contexts
+### Example 36: Composition root with multiple bounded contexts (Spring @Configuration / IServiceCollection)
 
 When two bounded contexts live in the same service, the `@Configuration` class wires both contexts' ports. Package discipline prevents cross-context coupling in the domain or application layers.
 
@@ -4159,7 +4159,7 @@ describe("IssuePurchaseOrderService (integration)", () => {
 
 ---
 
-### Example 38: Kotlin — data class as command DTO with validation
+### Example 38: Command DTO as record / data class with validation
 
 Kotlin's `data class` with `init` block provides a concise command DTO that enforces validation at construction — matching the Java `record` with compact constructor pattern used in the beginner section.
 
@@ -4339,7 +4339,7 @@ export interface IssuePOCommandPlain {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Kotlin's `data class` with an `init` block enforces command invariants at construction — the same pattern as Java's compact record constructor.
+**Key Takeaway**: Enforcing command invariants at construction makes every downstream service trust the data is valid. The construction-time validation pattern is consistent across OOP languages: Java uses compact record constructors; Kotlin uses `data class` with an `init` block; C# uses primary constructor validation; TypeScript uses a static factory method with a Zod or class-validator guard.
 
 **Why It Matters**: Enforcing command validity at the data class boundary means every service that receives an `IssuePOCommand` can trust the data is valid. No defensive `if (supplierId == null)` scattered through the service logic. Invalid commands fail fast at the entry point, with a clear error message.
 

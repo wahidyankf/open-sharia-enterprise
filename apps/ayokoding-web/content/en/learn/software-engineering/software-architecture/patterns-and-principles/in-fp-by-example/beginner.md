@@ -7,7 +7,7 @@ description: "FP variant — foundational software architecture examples with he
 tags: ["software-architecture", "tutorial", "by-example", "beginner", "fp", "fsharp"]
 ---
 
-This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using F# with self-contained, runnable code (compatible with `dotnet fsi`). These examples target developers who already know at least one language and want to rapidly build architectural instincts through working functional code. Each example uses its own small illustrative domain so the architectural pattern remains the focal point.
+This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using functional programming idioms. F# is the canonical language (examples are compatible with `dotnet fsi`); Clojure and TypeScript equivalents appear in the tabbed code blocks. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working functional code. Each example uses its own small illustrative domain so the architectural pattern remains the focal point.
 
 ## Separation of Concerns
 

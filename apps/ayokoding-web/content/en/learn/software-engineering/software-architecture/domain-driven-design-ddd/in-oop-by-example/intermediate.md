@@ -6420,7 +6420,7 @@ console.log(domainRecord.paymentTerms); // => Output: NET_30
 
 ## Bounded Context Packaging and Module Separation (Examples 46–51)
 
-### Example 46: Bounded context as a Java package — module boundary enforcement
+### Example 46: Bounded context as a package / namespace — module boundary enforcement
 
 A bounded context maps directly to a Java package (or module in Java 9+). Classes in `purchasing` are not imported directly by `receiving`; instead, only integration events cross the boundary.
 

@@ -22,7 +22,7 @@ tags:
 
 ### Why It Matters
 
-A repository port is the seam that keeps your application layer independent of the database. Every time you inject a Spring Data repository interface directly into an application service, the service becomes untestable without a live database and untestable without a Spring context. In `procurement-platform-be`, the per-context package layout declares the repository port as a plain Java interface in the `application` package. The Spring Data JDBC adapter implements that interface in `infrastructure`. Nothing in the application layer knows whether PostgreSQL, H2, or an in-memory `HashMap` is behind the port.
+A repository port is the seam that keeps your application layer independent of the database. Every time you inject a framework persistence type directly into an application service — a Spring Data repository in Java/Kotlin, a `DbContext` subclass in C# EF Core, or a drizzle-orm `db` object in TypeScript — the service becomes untestable without a live database. In `procurement-platform-be`, the per-context package layout declares the repository port as a plain interface in the `application` package. The persistence adapter implements that interface in `infrastructure`. Nothing in the application layer knows whether PostgreSQL, H2, or an in-memory `HashMap` is behind the port.
 
 ### Standard Library First
 
@@ -862,7 +862,7 @@ function toDomain(row: typeof purchaseOrdersTable.$inferSelect): PurchaseOrder {
 
 ### Why It Matters
 
-An integration test that starts a PostgreSQL container for every test class is slow, requires Docker, and cannot be cached by Nx. A test that injects an in-memory `Map`-backed adapter runs in milliseconds, needs no infrastructure, and runs safely in parallel. The seam from Guide 8 — the `PurchaseOrderRepository` interface — is exactly what makes this swap possible. If the in-memory adapter requires changes to the application service to work, the port has leaked infrastructure concerns upward.
+An integration test that starts a PostgreSQL container for every test class is slow, requires Docker, and cannot be cached by Nx. A test that injects an in-memory `Map`-backed adapter runs in milliseconds, needs no infrastructure, and runs safely in parallel. The port interface — a Java/Kotlin `interface`, a C# `interface`, or a TypeScript `interface` — is exactly what makes this swap possible: any concrete adapter that satisfies the contract can be substituted at the composition root. If the in-memory adapter requires changes to the application service to work, the port has leaked infrastructure concerns upward.
 
 ### Standard Library First
 
@@ -1491,7 +1491,7 @@ Then("the purchase order status should be {string}", (expectedStatus: string) =>
 
 ### Why It Matters
 
-A domain event publisher port solves the same problem as a repository port but for the outbound event stream. Every time the application service calls `ApplicationEventPublisher.publishEvent(...)` directly, the application layer acquires a Spring dependency. You can no longer test event emission without a Spring context, and swapping the delivery mechanism (Spring events → outbox table) requires modifying application code. In `procurement-platform-be`, the per-context package layout defines the publisher port as a plain Java interface in the `application` package. The application service receives the interface and never imports `ApplicationEventPublisher`.
+A domain event publisher port solves the same problem as a repository port but for the outbound event stream. Every time the application service calls a framework event bus directly — `ApplicationEventPublisher.publishEvent` in Java/Kotlin Spring, `IMediator.Publish` in C# MediatR, or an NestJS `EventEmitter2` instance in TypeScript — the application layer acquires a framework dependency. You can no longer test event emission without wiring the framework, and swapping the delivery mechanism (in-memory → outbox table) requires modifying application code. In `procurement-platform-be`, the per-context package layout defines the publisher port as a plain interface in the `application` package. The application service receives the interface and never imports any framework event type.
 
 ### Standard Library First
 
@@ -2048,7 +2048,7 @@ export class NestjsEventPublisherAdapter implements EventPublisher {
 
 ### Why It Matters
 
-Two adapters satisfy the `EventPublisher` port from Guide 10: an in-memory adapter for integration tests (zero infrastructure, fast, assertable) and an outbox adapter for production (durable, survives process crashes). Without an outbox, you face a dual-write hazard: the aggregate commits to the database, then the process crashes before the event reaches the message bus — the event is silently lost. The outbox pattern writes the event row in the same JDBC transaction as the aggregate row, so if the transaction commits, the event is guaranteed to be relayed eventually. In `procurement-platform-be`, the outbox adapter uses `JdbcClient` to insert into an `outbox_events` table inside the same transaction as the aggregate.
+Two adapters satisfy the `EventPublisher` port from Guide 10: an in-memory adapter for integration tests (zero infrastructure, fast, assertable) and an outbox adapter for production (durable, survives process crashes). Without an outbox, you face a dual-write hazard: the aggregate commits to the database, then the process crashes before the event reaches the message bus — the event is silently lost. The outbox pattern writes the event row in the same database transaction as the aggregate row, so if the transaction commits, the event is guaranteed to be relayed eventually. In `procurement-platform-be`, the outbox adapter writes into an `outbox_events` table inside the same transaction as the aggregate — using `JdbcClient` in Java/Kotlin, `DbContext.SaveChangesAsync` within a transaction scope in C# EF Core, or a pg `Transaction` block in TypeScript.
 
 ### Standard Library First
 
@@ -2657,7 +2657,7 @@ export class OutboxEventPublisher implements EventPublisher {
 
 ### Why It Matters
 
-Guide 6 introduced the Spring `@RestController` as a primary adapter using a minimal health check and a sketch of a PO issuance endpoint. This guide goes deeper: every step of the translation pipeline — deserialising the request DTO, calling the application service, publishing the domain event, and serialising the response DTO — has an exact location in the hexagonal layout, and each location has a rule about what it may and may not import. Getting those rules wrong is the most common way a Spring Boot codebase silently collapses the hexagonal boundary over time.
+Guide 6 introduced the primary adapter using a minimal health check and a sketch of a PO issuance endpoint. This guide goes deeper: every step of the translation pipeline — deserialising the request DTO, calling the application service, publishing the domain event, and serialising the response DTO — has an exact location in the hexagonal layout, and each location has a rule about what it may and may not import. Getting those rules wrong is the most common way a codebase silently collapses the hexagonal boundary over time — regardless of whether the controller is a Spring `@RestController` in Java/Kotlin, a minimal API handler in C# ASP.NET Core, or a NestJS `@Controller` in TypeScript.
 
 ### Standard Library First
 
@@ -3229,7 +3229,7 @@ export class PurchaseOrderController {
 
 ### Why It Matters
 
-The `PurchaseOrderController` in Guide 12 uses hand-authored `IssuePurchaseOrderRequest` and `PurchaseOrderResponse` records. In a production team those DTO types should be generated from an OpenAPI 3.1 spec rather than hand-authored — hand-authored DTOs drift from the spec, and drift causes integration failures that the Java compiler cannot catch. `procurement-platform-be` can use the same codegen pipeline pattern: a `pom.xml` that adds a `generated-contracts/src/main/java` as an additional source directory and a code generation step that produces Java types from an OpenAPI spec. This guide shows how to wire generated contract types into a `@RestController` so the controller stays in sync with the spec at compile time.
+The primary adapter controller in Guide 12 uses hand-authored request and response types. In a production team those DTO types should be generated from an OpenAPI 3.1 spec rather than hand-authored — hand-authored DTOs drift from the spec, and drift causes integration failures that the type system cannot catch. The codegen pipeline is expressed differently per stack: a Maven plugin producing Java records in Java/Kotlin, the `NSwag` or `Kiota` toolchain producing C# records in ASP.NET Core, and `openapi-typescript` or `orval` producing TypeScript interfaces in a NestJS project. This guide shows how to wire generated contract types into the primary adapter so the controller stays in sync with the spec at compile time.
 
 ### Standard Library First
 
@@ -3650,7 +3650,7 @@ export class PurchaseOrderContractController {
 
 ### Why It Matters
 
-The `receiving` context needs PO data from the `purchasing` context to record goods receipts against a PO. A direct import of `purchasing.domain.PurchaseOrder` into `receiving.domain` creates coupling: renaming a field in `PurchaseOrder` silently breaks `GoodsReceiptService`. The Anti-Corruption Layer (ACL) pattern places an adapter in `receiving.infrastructure` that translates `purchasing`'s types into `receiving`'s own domain types. The `receiving` domain layer never imports anything from `purchasing`. In `procurement-platform-be`, both contexts are in the hexagonal layout — the ACL adapter is the first file written in `com.procurement.platform.receiving.infrastructure`.
+The `receiving` context needs PO data from the `purchasing` context to record goods receipts against a PO. A direct import of the `purchasing` domain type into `receiving.domain` creates coupling: renaming a field in `PurchaseOrder` silently breaks `GoodsReceiptService`. The Anti-Corruption Layer (ACL) pattern places an adapter in `receiving.infrastructure` that translates `purchasing`'s types into `receiving`'s own domain types. The `receiving` domain layer never imports anything from `purchasing`. This boundary is enforced through package/namespace visibility — Java/Kotlin package-private types, C# `internal` namespace members, or TypeScript barrel exports that intentionally exclude cross-context types. In `procurement-platform-be`, the ACL adapter is the first file written in `com.procurement.platform.receiving.infrastructure`.
 
 ### Standard Library First
 
@@ -4164,7 +4164,7 @@ export class PurchaseOrderAcl implements PurchasedItemsPort {
 
 ### Why It Matters
 
-The composition root is the single place where adapter implementations are bound to port interfaces and injected into application services and controllers. In `procurement-platform-be`, `ProcurementPlatformApplication.java` is the entry point, and per-context `@Configuration` classes in each context's `infrastructure` package are the composition roots. Guide 7 introduced a minimal `PurchasingContextConfiguration`. This guide goes deeper: wiring the repository port, the event publisher port, the ACL adapter, and the application service in one coherent `@Configuration`, and showing how a test `@TestConfiguration` swaps production adapters for in-memory ones without touching any production code.
+The composition root is the single place where adapter implementations are bound to port interfaces and injected into application services and controllers. In `procurement-platform-be`, the entry point is the application bootstrap, and per-context wiring classes in each context's `infrastructure` package act as composition roots — expressed as `@Configuration` classes in Java/Kotlin Spring Boot, `IServiceCollection` extension methods in C# ASP.NET Core, or per-context `@Module` classes in TypeScript NestJS. Guide 7 introduced a minimal wiring for the `purchasing` context. This guide goes deeper: wiring the repository port, the event publisher port, the ACL adapter, and the application service in one coherent block, and showing how a test configuration swaps production adapters for in-memory ones without touching any production code.
 
 ### Standard Library First
 

@@ -9,7 +9,7 @@ aliases:
   - /en/learn/software-engineering/software-architecture/patterns-and-principles/beginner/
 ---
 
-This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using Python or TypeScript with self-contained, runnable code. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working code.
+This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using object-oriented idioms with self-contained, runnable code. Java is the canonical language; Kotlin, C#, and TypeScript equivalents appear in the tabbed code blocks. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working code.
 
 ## Separation of Concerns
 

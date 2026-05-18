@@ -20,11 +20,11 @@ tags:
   ]
 ---
 
-This beginner-level section introduces DDD through F# types, using the `purchasing` bounded context of a Procure-to-Pay procurement platform. The central thesis — **encode business rules in the type system so illegal states are unrepresentable** — is established through 25 progressive examples built around `PurchaseRequisition`, `Money`, `SkuCode`, `Quantity`, and `RequisitionId`.
+This beginner-level section introduces DDD through type-system design, using the `purchasing` bounded context of a Procure-to-Pay procurement platform. The central thesis — **encode business rules in the type system so illegal states are unrepresentable** — is established through 25 progressive examples built around `PurchaseRequisition`, `Money`, `SkuCode`, `Quantity`, and `RequisitionId`. Examples are shown in F# (canonical), with Clojure and TypeScript equivalents throughout.
 
 ## Types as the Design (Examples 1–10)
 
-### Example 1: Ubiquitous Language as F# Type Aliases
+### Example 1: Ubiquitous Language as Type Aliases
 
 Ubiquitous language means every term the business uses has an exact counterpart in the code. In F# the cheapest way to honour this is a type alias: `type RequisitionId = string` makes the intent explicit without adding runtime cost. The type alias lives in the same module as the rest of the domain model and is visible to both developers and procurement domain experts reading the code.
 
@@ -152,7 +152,7 @@ console.log("Branded types defined — zero runtime cost, maximum documentation 
 
 {{< /tabs >}}
 
-**Key Takeaway**: Type aliases convert the ubiquitous language of procurement into F# identifiers at zero runtime cost and maximum readability.
+**Key Takeaway**: Type aliases convert the ubiquitous language of procurement into domain-named identifiers at zero runtime cost and maximum readability. In F# these are `type` aliases; Clojure uses spec keywords; TypeScript uses type aliases — all achieving the same readable domain vocabulary.
 
 **Why It Matters**: When a new developer joins the procurement platform team and reads `RequisitionId -> SupplierId -> SkuCode`, they immediately understand the function's purpose from the domain vocabulary. Without aliases, `string -> string -> string` forces them to read the implementation to understand what each argument represents. This is the simplest possible application of type-driven DDD: make the domain model readable to domain experts — a purchasing manager or procurement analyst should recognise every identifier. Even before writing any logic, type aliases establish the vocabulary that will permeate every function signature and module.
 
@@ -365,7 +365,7 @@ console.log("Event created:", submitted.type);
 
 ---
 
-### Example 3: Bounded Context as F# Module
+### Example 3: Bounded Context as Module / Namespace
 
 A bounded context is an explicit boundary within which a particular domain model applies. In F#, modules provide that boundary cheaply: all types and functions for the `purchasing` context live inside `module Purchasing`, keeping them isolated from the `supplier`, `receiving`, and `invoicing` contexts.
 
@@ -558,7 +558,7 @@ console.log("Requisition:", req.id, "status:", req.status);
 
 {{< /tabs >}}
 
-**Key Takeaway**: F# modules are the zero-cost mechanical translation of bounded contexts — they enforce the boundary between purchasing, supplier, receiving, and invoicing without any framework overhead.
+**Key Takeaway**: Modules (namespaces) are the zero-cost mechanical translation of bounded contexts — they enforce the boundary between purchasing, supplier, receiving, and invoicing without any framework overhead. F# uses named modules; Clojure uses namespaces; TypeScript uses ES modules — all provide the same context isolation at zero runtime cost.
 
 **Why It Matters**: In a procurement platform, the word "supplier" means something different in the `supplier` context (vendor master data, approval state, risk score) than it does in the `purchasing` context (a reference ID on a PO line) or the `payments` context (a bank account to disburse to). Modules prevent these different meanings from merging into an ambiguous mega-object. Each context owns its model; cross-context communication happens via domain events and Anti-Corruption Layers.
 
@@ -1126,7 +1126,7 @@ console.log("Workflow type defined — signature is the domain contract");
 
 ### Example 7: Single-Case Discriminated Union Wrapper
 
-A single-case DU wraps a primitive type to give it a distinct identity. This prevents accidentally passing a `RequisitionId` where a `PurchaseOrderId` is expected, even though both are strings underneath. Single-case wrappers are the cheapest form of domain type safety in F#.
+A single-case DU wraps a primitive type to give it a distinct identity. This prevents accidentally passing a `RequisitionId` where a `PurchaseOrderId` is expected, even though both are strings underneath. Single-case wrappers are the cheapest form of domain type safety — expressed as single-case discriminated unions in F#, single-key spec records in Clojure, and branded types in TypeScript.
 
 ```mermaid
 graph LR
@@ -1889,7 +1889,7 @@ results.forEach(([s, r]) => {
 
 {{< /tabs >}}
 
-**Key Takeaway**: The F# compiler's exhaustive match warning is a compile-time correctness guarantee — it ensures every state of a discriminated union is handled, preventing silent bugs from newly added cases.
+**Key Takeaway**: Exhaustive pattern matching is a compile-time correctness guarantee — it ensures every state of a union type is handled, preventing silent bugs from newly added cases. F# enforces this through compiler warnings on incomplete `match` expressions; Clojure relies on spec conformance; TypeScript enforces it via discriminated union narrowing with a never-check fallthrough.
 
 **Why It Matters**: In a live procurement system, adding a new `PurchaseOrderStatus` case such as `Disputed` should immediately surface all the places in the codebase that need updating. The compiler's match exhaustiveness check is a zero-cost, zero-test-required audit. It is more reliable than code search because it catches even indirect usages via type aliases and intermediate let-bindings, making it one of the highest-value features of F# for DDD practitioners.
 
@@ -3467,7 +3467,7 @@ if (priceResult.ok) {
 
 ### Example 18: Units of Measure
 
-F# has first-class support for units of measure — a compile-time mechanism that prevents mixing amounts in different units. In the procurement context, this means you cannot accidentally add a quantity in `KG` to a quantity in `EACH` without explicit conversion.
+Compile-time dimensional analysis prevents mixing amounts in different units. F# provides this natively through units of measure — a type-level mechanism that makes a `Quantity<kg>` and a `Quantity<each>` incompatible at compile time. Clojure and TypeScript achieve similar protection through tagged wrappers or branded numeric types. In the procurement context, this means you cannot accidentally add a quantity in `KG` to a quantity in `EACH` without explicit conversion.
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
 
@@ -3670,7 +3670,7 @@ console.log(`Requisition total: ${requisitionTotal.toFixed(4)} USD`);
 
 {{< /tabs >}}
 
-**Key Takeaway**: F# units of measure provide compile-time dimensional analysis — mixing quantities in different units (KG vs EACH) or adding money to quantity is a compile error, not a runtime bug.
+**Key Takeaway**: Compile-time dimensional analysis prevents unit-mismatch bugs — mixing quantities in different units (KG vs EACH) or adding money to quantity becomes a compile error, not a runtime bug. F# achieves this natively with units of measure; Clojure and TypeScript use tagged wrappers to approximate the same protection at the domain boundary.
 
 **Why It Matters**: Unit mismatch errors in procurement (ordering 100 KG when the spec said 100 EACH, or adding a weight to a price) can be catastrophically expensive. Units of measure bring the same compile-time safety that physical dimension analysis provides in engineering domains. While not all codebases use this feature, it is uniquely powerful for procurement systems where multiple measurement dimensions (weight, volume, count, currency) interact in complex line-item calculations.
 

@@ -1271,7 +1271,7 @@ try {
 
 ---
 
-### Example 7: Java 21 record compact constructor for `Quantity`
+### Example 7: Compact Constructor / Init Block for `Quantity`
 
 Java 21 records compact constructors express invariants concisely without boilerplate field assignment — the compiler inserts assignments after the constructor body. Kotlin and C# achieve the same guarantee through `init` blocks and primary constructor validation, respectively.
 

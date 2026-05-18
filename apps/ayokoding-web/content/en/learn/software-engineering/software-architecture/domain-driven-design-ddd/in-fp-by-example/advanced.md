@@ -1649,7 +1649,7 @@ if (result.ok) console.log("Event:", result.value.type, "level:", result.value.a
 
 {{< /tabs >}}
 
-**Key Takeaway**: F# module visibility rules enforce bounded context boundaries — internal types stay hidden, and the only coupling between contexts is through explicitly exported types and functions.
+**Key Takeaway**: Module visibility rules enforce bounded context boundaries — internal types stay hidden, and the only coupling between contexts is through explicitly exported types and functions. F# uses `internal` module access; Clojure uses private namespace vars; TypeScript uses explicit `export` declarations — all achieve the same context encapsulation.
 
 **Why It Matters**: The `InternalPoState` with its approval chain, line-item history, and status notes is a purchasing-specific implementation detail. If the receiving context depends on `InternalPoState` directly, every refactor of purchasing internals risks breaking receiving. By exporting only `PurchaseOrderIssuedPublic`, the purchasing context can freely evolve its internal model without affecting downstream contexts. In production, this boundary prevents cascading compile errors across services when the purchasing team restructures approval logic.
 
@@ -5061,7 +5061,7 @@ console.log("After CFO:", afterCFO.step);
 
 ### Example 76: Interop with C# Caller — Workflow Exposed as Task
 
-F# domain workflows may be consumed from C# service hosts (e.g., a .NET Giraffe or ASP.NET Core handler). `Async<T>` is the F# async type; C# callers expect `Task<T>`. Converting between the two is a thin boundary concern.
+Domain workflows written in one language may be consumed from hosts written in another. On the .NET platform, F# uses `Async<T>` while C# callers expect `Task<T>` — converting between the two is a thin boundary concern at the composition root. Clojure and TypeScript face the same challenge when crossing library or service boundaries: the domain layer stays idiomatic; the shim translates at the edge.
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
 
@@ -5215,7 +5215,7 @@ console.log("Bad response:", badResponse.status, JSON.stringify(badResponse.body
 
 {{< /tabs >}}
 
-**Key Takeaway**: The `Async.StartAsTask` conversion is the complete interop boundary between F# domain workflows and C# callers — the domain logic stays in F# `Async`, and the shim translates to `Task` at the edge.
+**Key Takeaway**: Async interop at the composition root keeps domain logic idiomatic while presenting a compatible interface to the host. On .NET, `Async.StartAsTask` is the complete shim between F# `Async` workflows and C# `Task` callers — one line, no restructuring of domain logic required. Equivalent boundary shims exist for every cross-language or cross-runtime integration point.
 
 **Why It Matters**: Procurement platform backends often start as pure F# services but evolve to integrate with C# libraries (ORMs, message bus clients, telemetry SDKs). The `Async.StartAsTask` shim keeps the domain layer in idiomatic F# while presenting a C#-friendly `Task<T>` surface to infrastructure code. The conversion is a one-liner — it does not require restructuring the domain workflow.
 

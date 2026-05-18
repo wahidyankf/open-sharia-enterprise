@@ -2546,7 +2546,7 @@ export class DisbursementService {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Java default interface methods (Kotlin interface default bodies, C# default interface members) let ports evolve with new capabilities while all existing adapters continue compiling and running unchanged.
+**Key Takeaway**: Default method implementations on port interfaces let ports evolve with new capabilities while all existing adapters continue compiling and running unchanged. Java achieves this with default interface methods; Kotlin with interface default bodies; C# with default interface members; TypeScript with optional interface properties paired with a base adapter class providing fallback behaviour.
 
 **Why It Matters**: In a production system with multiple adapters (REST, EDI, stub), forcing all of them to implement every new method creates big-bang releases. Default methods allow additive port evolution: introduce the new method with a safe fallback, gradually upgrade adapters that need the new capability, and never break a currently-working adapter.
 
@@ -4423,7 +4423,7 @@ export interface GoodsReceiptRepository {
 
 ## Production Reference (Examples 73–75)
 
-### Example 73: Composition root — wiring all contexts with Spring @Configuration
+### Example 73: Composition root — wiring all contexts (Spring @Configuration / IServiceCollection)
 
 The composition root is the only place where concrete adapter classes are instantiated and wired together. Spring `@Configuration` classes serve as the composition root in a Spring application; C# uses `IServiceCollection` extension methods as the idiomatic equivalent.
 

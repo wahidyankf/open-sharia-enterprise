@@ -19,7 +19,7 @@ tags:
   ]
 ---
 
-Examples 29-57 cover intermediate software architecture concepts (40-75% coverage). These examples build on foundational patterns and introduce composite architectural styles, enterprise patterns, and domain-driven design building blocks. Each example is self-contained and uses F# functional idioms: records, discriminated unions, pattern matching, smart constructors, Result types, modules, partial application, and the `|>` operator. Compatible with `dotnet fsi`.
+Examples 29-57 cover intermediate software architecture concepts (40-75% coverage). These examples build on foundational patterns and introduce composite architectural styles, enterprise patterns, and domain-driven design building blocks. Each example is self-contained and uses functional idioms — records, discriminated unions, pattern matching, smart constructors, Result types, modules, partial application, and pipelines. F# is the canonical language (compatible with `dotnet fsi`); Clojure and TypeScript equivalents appear in the tabbed code blocks.
 
 ## Hexagonal Architecture and Clean Architecture
 
@@ -3709,7 +3709,7 @@ if (emailR.ok) console.log(`Email: ${emailR.value.address}`);
 
 {{< /tabs >}}
 
-**Key Takeaway:** Use single-case DUs for opaque validated wrappers; use records for value objects with multiple fields. Both enforce immutability and structural equality automatically in F#.
+**Key Takeaway:** Use single-case union types for opaque validated wrappers; use product types (records) for value objects with multiple fields. Both enforce immutability and structural equality automatically. F# does this natively with single-case DUs and records; Clojure uses spec-validated maps with positional uniqueness; TypeScript uses branded primitive types and readonly interfaces.
 
 **Why It Matters:** Value objects eliminate primitive obsession — the anti-pattern where domain concepts are represented as plain strings, ints, or decimals. When `Email` is a type rather than a string, passing a raw string where an `Email` is expected is a compile-time error. This eliminates an entire class of bugs (invalid emails, mixed-up IDs, wrong currency) without runtime checks. F#'s structural equality makes value-object comparison natural without overriding `.Equals()`.
 
@@ -4860,7 +4860,7 @@ console.log(composedHandler50({ userId: "u2" }));
 
 **Key Takeaway:** Each middleware wraps the next with `(next: Handler) -> Handler` in F# or `(fn [handler] (fn [req] ...))` in Clojure. The pipeline is assembled by composing these wrapping functions with `|>` (F#) or `->` (Clojure), making the chain order explicit and readable.
 
-**Why It Matters:** Middleware-as-function-composition makes cross-cutting concerns modular: each concern lives in one function, is independently testable, and can be added or removed from the pipeline by changing a single line. This is the same model used by Suave, Giraffe, and ASP.NET Core's middleware pipeline in F#, and by Ring and Pedestal in Clojure — understanding it at the function level makes framework middleware transparent.
+**Why It Matters:** Middleware-as-function-composition makes cross-cutting concerns modular: each concern lives in one function, is independently testable, and can be added or removed from the pipeline by changing a single line. This model is shared across functional ecosystems — Suave, Giraffe, and ASP.NET Core on .NET; Ring and Pedestal in Clojure; Express middleware chains and tRPC procedure builders in TypeScript — understanding it at the function level makes any framework's middleware transparent.
 
 ---
 
@@ -5544,7 +5544,7 @@ console.log(`Items after rollback: ${store54.size}`); // => Items after rollback
 
 {{< /tabs >}}
 
-**Key Takeaway:** Operations are accumulated as data values (DU list in F#, map vector in Clojure); `commit` applies them in order and short-circuits on the first failure using recursive pattern matching (F#) or `reduce` + `reduced` (Clojure). The immutable UoW is safe to inspect before committing.
+**Key Takeaway:** Operations are accumulated as data values before any side effects occur; `commit` applies them in order and short-circuits on the first failure. The immutable Unit of Work is safe to inspect before committing. F# uses a DU list with recursive pattern matching; Clojure uses a map vector with `reduce` + `reduced`; TypeScript uses a typed array with `Array.reduce` and early returns — all defer side effects to a single controlled commit step.
 
 **Why It Matters:** Treating operations as data (deferred intent) rather than immediate side effects makes transactions composable and testable. You can inspect the operations before calling `commit`. In production, the `applyOps`/`commit` function is replaced by an actual database transaction; the rest of the pattern is unchanged.
 

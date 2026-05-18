@@ -22,7 +22,7 @@ tags:
 
 ### Why It Matters
 
-A repository port is the seam that separates your application layer from the database. Every time you wire an Npgsql call directly inside an application service, you lose two things: the ability to swap the database for tests, and the ability to reason about the service's behavior without a running PostgreSQL instance. In `procurement-platform-be` the repository port is a record-of-functions declared in the `Application/` layer of each context. The Npgsql adapter satisfies that record in `Infrastructure/`. Nothing in the application layer knows whether PostgreSQL or an in-memory dictionary is behind the port.
+A repository port is the seam that separates your application layer from the database. Every time you wire a database call directly inside an application service, you lose two things: the ability to swap the database for tests, and the ability to reason about the service's behavior without a running PostgreSQL instance. In `procurement-platform-be` the repository port is declared in the `Application/` layer of each context — as a record-of-functions type alias in F#, a `defprotocol` in Clojure, or an interface in TypeScript. The production adapter — Npgsql/Dapper in F#, `next.jdbc` in Clojure, `pg` (node-postgres) in TypeScript — satisfies that port in `Infrastructure/`. Nothing in the application layer knows whether PostgreSQL or an in-memory substitute is behind the port.
 
 ### Standard Library First
 
@@ -633,7 +633,7 @@ export const makePgPurchaseOrderRepository = (
 
 ### Why It Matters
 
-An integration test that hits a real PostgreSQL database is slow, requires Docker to be running, and cannot be cached. A test that uses an in-memory adapter runs in milliseconds, requires no infrastructure, and is safe to run in parallel. The seam from Guide 7 — the `PurchaseOrderRepository` record — is exactly what makes this swap possible. Providing an in-memory adapter is not a testing trick; it is the proof that your port design is sound. If swapping the adapter requires changing the application service, the port has leaked infrastructure concerns upward.
+An integration test that hits a real PostgreSQL database is slow, requires Docker to be running, and cannot be cached. A test that uses an in-memory adapter runs in milliseconds, requires no infrastructure, and is safe to run in parallel. The seam from Guide 7 — the port contract, expressed as a record-of-functions type alias in F#, a `defprotocol` in Clojure, or an interface in TypeScript — is exactly what makes this swap possible. Providing an in-memory adapter is not a testing trick; it is the proof that your port design is sound. If swapping the adapter requires changing the application service, the port has leaked infrastructure concerns upward.
 
 ### Standard Library First
 
@@ -1126,7 +1126,7 @@ describe("submitPurchaseOrder", () => {
 
 ### Why It Matters
 
-A domain event publisher port solves the same problem as a repository port, but for the outbound event stream. Every time the application service raises a domain event by calling a framework-specific message bus directly, the application layer acquires an infrastructure dependency. In `procurement-platform-be`, the publisher port is defined in each context's `Application/` layer as a record of functions. The application service receives the record as a parameter and never imports the messaging or outbox library. The record-of-functions style groups multiple publish operations into one value, avoiding parameter explosion when a context raises several event types.
+A domain event publisher port solves the same problem as a repository port, but for the outbound event stream. Every time the application service raises a domain event by calling a framework-specific message bus directly, the application layer acquires an infrastructure dependency. In `procurement-platform-be`, the publisher port is defined in each context's `Application/` layer using the same port idiom as the repository — a record-of-functions type alias in F#, a `defprotocol` in Clojure, or a single-method interface in TypeScript. The application service receives this value as a parameter and never imports the messaging or outbox library directly. Grouping publish operations into one value avoids parameter explosion when a context raises several event types.
 
 ### Standard Library First
 
@@ -1424,7 +1424,7 @@ export type ApprovalRouterPort = {
 
 ### Why It Matters
 
-Two adapters satisfy the `EventPublisher` port from Guide 9: an in-memory adapter for tests (fast, zero infrastructure) and an outbox adapter for production (durable, survives process crashes). The outbox pattern writes the event to the same database transaction as the aggregate save — if the transaction commits, the event is guaranteed to be delivered eventually. Without an outbox, you face a dual-write hazard: the aggregate commits but the message bus call fails, and the event is silently lost. In `procurement-platform-be`, the outbox adapter uses Npgsql to write event rows into an `outbox_events` table inside the same transaction as the aggregate.
+Two adapters satisfy the `EventPublisher` port from Guide 9: an in-memory adapter for tests (fast, zero infrastructure) and an outbox adapter for production (durable, survives process crashes). The outbox pattern writes the event to the same database transaction as the aggregate save — if the transaction commits, the event is guaranteed to be delivered eventually. Without an outbox, you face a dual-write hazard: the aggregate commits but the message bus call fails, and the event is silently lost. In `procurement-platform-be`, the outbox adapter writes event rows into an `outbox_events` table inside the same transaction as the aggregate — using Npgsql/Dapper in F#, `next.jdbc` inside a `with-transaction` block in Clojure, or `pg` with a shared client in TypeScript.
 
 ### Standard Library First
 
@@ -1860,7 +1860,7 @@ export const makeOutboxPublisher = (pool: Pool): EventPublisher => ({
 
 ### Why It Matters
 
-Guide 6 showed the Giraffe handler concept using a sketch of a domain-backed handler. This guide goes deeper: every step of the translation pipeline — binding the request DTO, calling the smart constructor, dispatching to the application service, pattern-matching on the domain result, and emitting the response DTO — has an exact location in the hexagonal layout, and each location has a rule about what it may and may not import. Getting these rules wrong is the most common way a Giraffe codebase silently collapses the hexagonal boundary.
+Guide 6 showed the HTTP handler concept using a sketch of a domain-backed adapter. This guide goes deeper: every step of the translation pipeline — binding the request DTO, calling the smart constructor, dispatching to the application service, pattern-matching on the domain result, and emitting the response DTO — has an exact location in the hexagonal layout, and each location has a rule about what it may and may not import. Getting these rules wrong is the most common way any codebase silently collapses the hexagonal boundary — whether the adapter is a Giraffe `HttpHandler` in F#, a Ring/Reitit route function in Clojure, or a Hono route callback in TypeScript.
 
 ### Standard Library First
 
@@ -2347,7 +2347,7 @@ export const makePurchasingRouter = (
 
 ### Why It Matters
 
-The Giraffe handler in Guide 11 references hand-authored `SubmitPurchaseOrderRequest` and `SubmitPurchaseOrderResponse` types. In a production team, those DTO types should be generated from an OpenAPI spec rather than hand-authored — hand-authored DTOs drift from the spec, and drift causes integration failures that the compiler cannot catch. `procurement-platform-be` uses a codegen pipeline: an OpenAPI 3.1 spec at `specs/apps/procurement-platform/` drives `nx run procurement-platform-be:codegen`, which generates F# DTO types. This guide shows how to wire generated contract types into a Giraffe handler so the handler stays in sync with the spec at compile time.
+The HTTP handler in Guide 11 references hand-authored request and response DTO types. In a production team, those DTO types should be generated from an OpenAPI spec rather than hand-authored — hand-authored DTOs drift from the spec, and drift causes integration failures that the compiler or runtime cannot catch. `procurement-platform-be` uses a codegen pipeline: an OpenAPI 3.1 spec at `specs/apps/procurement-platform/` drives `nx run procurement-platform-be:codegen`. Each stack generates spec-authoritative types: F# CLIMutable DTO records via a .NET codegen tool, Clojure spec definitions via `malli` schema generation, and TypeScript interfaces via `openapi-typescript`. This guide shows how to wire generated contract types into the HTTP handler so it stays in sync with the spec at build time.
 
 ### Standard Library First
 
@@ -2569,7 +2569,7 @@ export const registerHealthHandler = (app: Hono): void => {
 
 ### Why It Matters
 
-The `receiving` context needs summary information about a purchase order when creating a `GoodsReceiptNote`. A direct import of `purchasing`'s domain types into `receiving`'s domain layer creates coupling: a rename in `purchasing` breaks `receiving` silently. The Anti-Corruption Layer (ACL) pattern places an adapter in `receiving`'s infrastructure layer that translates `purchasing`'s types into `receiving`'s own domain types. `receiving`'s domain layer never imports anything from `purchasing`. In `procurement-platform-be`, the `PurchaseOrderIssued` domain event is the primary integration channel, but a query path via ACL also exists for cases where `receiving` needs to fetch PO metadata on demand.
+The `receiving` context needs summary information about a purchase order when creating a `GoodsReceiptNote`. A direct import of `purchasing`'s domain types into `receiving`'s domain layer creates coupling: a rename in `purchasing` breaks `receiving` silently. The Anti-Corruption Layer (ACL) pattern places an adapter in `receiving`'s infrastructure layer that translates `purchasing`'s types into `receiving`'s own domain types. `receiving`'s domain layer never imports anything from `purchasing` — regardless of stack. In F# this means `receiving` never opens `purchasing` modules; in Clojure, never `:require`s `purchasing` domain namespaces; in TypeScript, never imports from `purchasing/domain`. In `procurement-platform-be`, the `PurchaseOrderIssued` domain event is the primary integration channel, but a query path via ACL also exists for cases where `receiving` needs to fetch PO metadata on demand.
 
 ### Standard Library First
 
@@ -3039,7 +3039,7 @@ export const makePurchasingAcl = (
 
 ### Why It Matters
 
-The composition root is the single place in the application where adapter implementations are bound to port records and injected into application services and handlers. In `procurement-platform-be`, `Composition/Program.fs` is the composition root. It wires Npgsql adapters, registers Giraffe, and sets up the routing table. As new bounded contexts add ports and adapters, every new wire goes into `Program.fs` — nowhere else. This guide shows what that growth looks like using the purchasing, supplier, and receiving contexts.
+The composition root is the single place in the application where adapter implementations are bound to port contracts and injected into application services and handlers. In `procurement-platform-be`, the composition root is `Composition/Program.fs` in F#, the system's entry-point namespace in Clojure, and `composition/program.ts` in TypeScript. Each wires the database adapter (Npgsql/Dapper, `next.jdbc`, or `pg`), registers the HTTP framework (Giraffe, Ring/Reitit, or Hono), and sets up the routing table. As new bounded contexts add ports and adapters, every new wire goes into the composition root — nowhere else. This guide shows what that growth looks like using the purchasing, supplier, and receiving contexts.
 
 ### Standard Library First
 

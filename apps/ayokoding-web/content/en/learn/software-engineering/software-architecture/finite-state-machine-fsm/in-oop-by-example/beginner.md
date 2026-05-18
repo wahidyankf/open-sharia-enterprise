@@ -1912,7 +1912,7 @@ if (r.kind === "err") console.log(r.error);
 
 ---
 
-### Example 10: Cancel From Any Pre-Paid State (Python)
+### Example 10: Cancel From Any Pre-Paid State
 
 The same PO machine in Python illustrates how the "cancel from any pre-paid state" rule reads cleanly with a set of allowed source states.
 
@@ -2416,7 +2416,7 @@ console.log(transitionWithDispute(dp, "RESOLVE_CANCEL")?.state); // => CANCELLED
 
 ## Modelling the Full PO Lifecycle (Examples 12-17)
 
-### Example 12: The Full Transition Table in TypeScript
+### Example 12: The Full Transition Table
 
 Putting the complete PurchaseOrder state machine — all states and transitions including the dispute cycle — into a single transition map.
 
@@ -3575,7 +3575,7 @@ console.log(machineApply(po, "APPROVE")); // => Output: undefined
 
 {{< /tabs >}}
 
-**Key Takeaway**: Each language's idiom — Java `EnumMap`, Kotlin `copy()`, C# `with` expression — enforces immutability at the type level; the transition table is the single authoritative source of valid moves.
+**Key Takeaway**: Using type-safe, enum-keyed transition tables enforces immutability at the type level and makes the table the single authoritative source of valid moves. Java uses `EnumMap`; Kotlin uses enum keys with `copy()`; C# uses enum-keyed `Dictionary` with `with` expressions; TypeScript uses a `Record<StateEnum, ...>` mapped type — all eliminate stringly-typed state keys.
 
 **Why It Matters**: `HashMap<String, ...>` or `Dictionary<string, string>` with string keys reintroduces the stringly-typed state problem. Enum-keyed maps use ordinal indices or hash-by-value — no accidental typos, and the compiler checks that every key is a valid state. For a PO machine called thousands of times per second in a procurement system, type safety and O(1) lookup are both wins.
 

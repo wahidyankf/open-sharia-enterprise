@@ -16,11 +16,11 @@ tags:
   ]
 ---
 
-This beginner-level section introduces Hexagonal Architecture (Ports and Adapters) through F# code. The central thesis — that the **domain must be isolated from all infrastructure concerns** via a clean dependency rule — is established here through 25 progressive examples. All examples use the `purchasing` bounded context of `procurement-platform-be`: employees draft `PurchaseOrder` records, submit them for approval, and receive confirmations when orders are issued to suppliers.
+This beginner-level section introduces Hexagonal Architecture (Ports and Adapters) through 25 progressive examples grounded in functional programming. The central thesis — that the **domain must be isolated from all infrastructure concerns** via a clean dependency rule — applies identically across functional languages. Examples are shown in F# (canonical for this track) and Clojure, with TypeScript variants. All examples use the `purchasing` bounded context of `procurement-platform-be`: employees draft `PurchaseOrder` records, submit them for approval, and receive confirmations when orders are issued to suppliers.
 
 ## The Three Zones (Examples 1–7)
 
-### Example 1: The Hexagon Metaphor — Three Zones as F# Namespaces
+### Example 1: The Hexagon Metaphor — Three Zones as Namespaces / Modules
 
 Hexagonal Architecture divides a system into three zones. The **Domain** zone holds pure business logic with no external dependencies. The **Application** zone orchestrates domain functions and defines ports. The **Adapters** zone wires the outside world (HTTP, database, CLI) to those ports. In F#, module namespaces are the natural mechanism for enforcing these zone boundaries.
 
@@ -212,7 +212,7 @@ console.log("Three zones defined — dependency rule enforced by module imports"
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: The three zones (Domain, Application, Adapters) map directly to F# module namespaces, and the dependency rule — inner zones never import outer zones — is a simple constraint on `open` statements.
+**Key Takeaway**: The three zones (Domain, Application, Adapters) map directly to module namespaces, and the dependency rule — inner zones never import outer zones — is a simple constraint on import/open statements. F# enforces this through module ordering; Clojure through namespace `require` direction; TypeScript through import path conventions and linting rules.
 
 **Why It Matters**: In most codebases, business logic quietly accumulates database calls, HTTP client calls, and configuration reads until nothing can be tested without spinning up real infrastructure. Hexagonal Architecture prevents this by making the zone boundary a module-level convention. When a developer attempts to `open Npgsql` inside `Domain.fs`, a code review catches it immediately because the convention is documented in the file structure itself. This single rule is responsible for the testability and evolvability of the entire system.
 
@@ -434,7 +434,7 @@ if (result.ok) {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: A pure domain function with no infrastructure imports is the most testable unit of code in the system — calling it requires nothing but the F# runtime and domain types.
+**Key Takeaway**: A pure domain function with no infrastructure imports is the most testable unit of code in the system — calling it requires nothing but the runtime and domain types, regardless of whether that runtime is F#, Clojure, or a TypeScript Node process.
 
 **Why It Matters**: Teams that embed database calls directly in domain functions often discover this when they try to write unit tests. The setup cost (spinning up databases, seeding data, managing transactions) discourages testing, leading to under-tested business logic. Pure domain functions have zero setup cost: pass in data, receive a `Result`. This is the direct payoff of the domain isolation rule, and it compounds across every domain function in the system.
 
@@ -1129,7 +1129,7 @@ console.log("Dependency rule: Domain <- Application <- Adapters (arrows = allowe
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: The dependency rule — imports only point inward — is enforced by F# module ordering; a module cannot open a module defined later in the compilation order.
+**Key Takeaway**: The dependency rule — imports only point inward — is a structural constraint, not a framework feature. F# enforces it through module ordering (a module cannot open one defined later in compilation order); Clojure through namespace `require` topology; TypeScript through import linting rules such as `import/no-restricted-paths`.
 
 **Why It Matters**: The dependency rule is not a guideline — it is the architectural invariant that makes the whole pattern work. When it is violated, the domain becomes coupled to infrastructure (untestable), adapters become coupled to each other (unswappable), and the application service becomes coupled to specific adapter implementations (fragile). F#'s compilation order makes many violations visible at compile time: if `Domain.fs` tries to `open` a type from `Adapters.fs`, the compiler rejects it. This is the strongest enforcement mechanism available in a compiled language.
 
@@ -1522,7 +1522,7 @@ console.log("PurchaseOrderRepo port declared — adapters implement; application
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: The `PurchaseOrderRepository` record type (F#) and protocol (Clojure) make the port contract explicit — any implementation satisfying the required operations substitutes without changing the application service.
+**Key Takeaway**: The port contract makes substitution explicit — any implementation satisfying the required operations substitutes without changing the application service. F# represents this as a record type; Clojure as a protocol; TypeScript as an interface. The application service depends on the abstraction in all three cases.
 
 **Why It Matters**: Record-of-functions ports give F# codebases the same substitutability that OOP languages get from interfaces, without inheritance or virtual dispatch. The compiler verifies that every adapter provides exactly the fields the port requires. In Clojure, protocols achieve the same substitutability through dynamic dispatch — any value implementing the protocol satisfies the port. Both approaches ensure the port is the single source of truth for the boundary contract.
 
@@ -2101,7 +2101,7 @@ console.log("Named RepoError union: exhaustive matching; no string parsing; comp
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Using a discriminated union (F#) or typed error map (Clojure) as the port's error representation makes all failure modes explicit, enabling the application service to respond differently to transient vs permanent failures.
+**Key Takeaway**: Using a typed error representation at the port boundary makes all failure modes explicit, enabling the application service to respond differently to transient vs permanent failures. F# uses a discriminated union; Clojure uses a typed error map; TypeScript uses a discriminated union — all ensure the service never receives an untyped exception from infrastructure.
 
 **Why It Matters**: Generic exception or string error types force callers to parse error messages or catch exception types by name — fragile, untestable, and undiscoverable. In F#, a named DU makes every error case a compiler-verified contract: add a new error case, and the compiler immediately identifies every call site that needs to handle it. In Clojure, named `:type` keys in error maps achieve the same explicitness with open extensibility — a new error variant requires only a new constructor helper and a new `cond` branch. For a `PurchaseOrderRepository`, the distinction between `:connection-timeout` (retry) and `:dup-key` (idempotency check) directly affects business behaviour and must be expressed at the data level.
 
@@ -2564,7 +2564,7 @@ console.log("Two output ports — independently swappable — compose in applica
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Multiple output ports are composed as separate function parameters — each independently injectable and independently testable regardless of whether F# or Clojure is used.
+**Key Takeaway**: Multiple output ports are composed as separate function parameters — each independently injectable and independently testable. This pattern holds identically in F#, Clojure, and TypeScript; the language does not affect the composability principle.
 
 **Why It Matters**: When all output ports are composed in one function signature, each port can be independently stubbed in tests. Replacing `repo` with an in-memory stub tests persistence logic; replacing `clock-fn` with a fixed time tests time-sensitive business rules; replacing neither tests the full production wiring. This granular control is unavailable when ports are grouped into a god-record without thinking about which service actually needs which port.
 
@@ -2829,7 +2829,7 @@ console.log("Both styles valid — individual params for few ports, record for m
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Individual parameters work well for 1–3 ports; a named ports record (F#) or ports map (Clojure) scales better when the application service depends on 4 or more ports.
+**Key Takeaway**: Individual parameters work well for 1–3 ports; a named ports record scales better when the application service depends on 4 or more ports. F# uses a named record; Clojure uses a named map; TypeScript uses a typed object literal — all group ports into a single injectable dependency.
 
 **Why It Matters**: Individual parameters are explicit at call sites, making dependencies visible. But when services grow to 6-8 ports, 8-parameter function signatures become unwieldy and hard to partially apply. A ports record or map solves this: one parameter, all ports, each addressable by name. The choice is a local style decision — the important invariant is that adapters remain injectable regardless of the syntax used.
 

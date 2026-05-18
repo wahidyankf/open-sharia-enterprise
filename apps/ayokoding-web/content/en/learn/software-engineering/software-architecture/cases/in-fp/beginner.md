@@ -237,7 +237,7 @@ export type UnitOfMeasure = "Each" | "Box" | "Kg" | "Litre" | "Hour";
 
 ### Why It Matters
 
-`procurement-platform-be` organizes all feature code under `src/ProcurementPlatform/Contexts/`. Before writing any new feature code you need to read this layout fluently — otherwise you put new files in the wrong layer or duplicate types that already exist. The folder shape is not arbitrary: F# compiles files in the order listed in the `.fsproj`, which means the directory structure also encodes the dependency rule.
+`procurement-platform-be` organizes all feature code under `src/ProcurementPlatform/Contexts/`. Before writing any new feature code you need to read this layout fluently — otherwise you put new files in the wrong layer or duplicate types that already exist. The folder shape is not arbitrary: each stack enforces a dependency ordering that mirrors the directory structure. In F# the `.fsproj` compilation order makes this explicit; in Clojure the `ns` declaration order and project-level linting enforce it by convention; in TypeScript the import graph and ESLint boundary rules play the same role. Understanding how each stack expresses this ordering is what lets you read the layout fluently.
 
 ### Standard Library First
 
@@ -368,7 +368,7 @@ The per-context layout separates shared cross-cutting types from context-specifi
 
 ### Why It Matters
 
-The single most common way a hexagonal architecture degrades into a layered monolith is when domain types import framework assemblies. The moment `PurchaseOrder` has a `[<JsonPropertyName>]` attribute or a `[<Column("po_id")>]` annotation, the domain layer depends on a serialization or ORM framework. Switching frameworks — or testing the domain in isolation — now requires framework setup. In `procurement-platform-be`, keeping the `Contexts/Purchasing/Domain/` modules free of `open Npgsql`, `open System.Text.Json`, or `open Giraffe` is the invariant that makes everything else possible.
+The single most common way a hexagonal architecture degrades into a layered monolith is when domain types import framework assemblies. The moment a domain type carries an ORM annotation, a serializer attribute, or an HTTP-framework decorator, the domain layer depends on infrastructure. Switching frameworks — or testing the domain in isolation — now requires framework setup. The invariant is the same across all three stacks: keep the domain namespace free of database drivers (`Npgsql` in F#, `next.jdbc` in Clojure, `pg` in TypeScript), serialization frameworks (`System.Text.Json` / `cheshire` / `JSON.stringify` wrappers), and HTTP frameworks (`Giraffe` / `Ring` / `Hono`). That invariant is what makes everything else in the hexagonal layout possible.
 
 ### Standard Library First
 
@@ -644,7 +644,7 @@ The dependency rule flows inward: `Infrastructure` opens `Domain`, never the rev
 
 ### Why It Matters
 
-Application services are the orchestration layer between the driving adapter (an HTTP handler) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the HTTP handler works with — JSON-friendly `[<CLIMutable>]` records with nullable fields and no invariants. When that happens the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. In `procurement-platform-be`, the design rule is: application service functions take and return domain aggregates; the handler translates.
+Application services are the orchestration layer between the driving adapter (an HTTP handler) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the HTTP handler works with — JSON-friendly records with nullable fields and no invariants. When that happens the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. The design rule is the same across all three stacks: application service functions take and return domain aggregates; the driving adapter (a Giraffe handler in F#, a Ring/Reitit handler in Clojure, a Hono route handler in TypeScript) owns the translation. In `procurement-platform-be`, this boundary is what keeps the application layer unit-testable without spinning up an HTTP server.
 
 ### Standard Library First
 
@@ -947,7 +947,7 @@ export const submitPurchaseOrder =
 
 ### Why It Matters
 
-Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In object-oriented hexagonal architecture this is typically an interface. In F# the idiomatic equivalent is a function type alias — a single-function type that the application service receives as a parameter. This makes the dependency explicit in the type signature, eliminates interface ceremony, and makes adapter swapping as simple as passing a different function. `procurement-platform-be` uses this pattern throughout its per-context layout.
+Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In object-oriented hexagonal architecture this is typically an interface. The concept is a single-function port type that the application service receives as a parameter — expressed as a function type alias in F# (`type SavePurchaseOrder = PurchaseOrder -> Async<Result<unit, RepositoryError>>`), a protocol or function-valued map in Clojure (`defprotocol PurchaseOrderRepository`), or a function-typed interface property in TypeScript (`type SavePort = (po: PurchaseOrder) => Promise<Result<void, RepositoryError>>`). All three representations make the dependency explicit in the call site, eliminate interface ceremony, and make adapter swapping as simple as passing a different value. `procurement-platform-be` uses this pattern throughout its per-context layout.
 
 ### Standard Library First
 
@@ -1265,7 +1265,7 @@ export type Configuration = Readonly<{
 
 ### Why It Matters
 
-The Giraffe handler is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command, call the application service, and translate the domain result into an HTTP response. Nothing more. A handler that contains business logic, validates domain invariants, or directly opens a database connection has crossed out of the adapter layer and into the domain or infrastructure — the most common source of untestable, entangled production code. In `procurement-platform-be`, `Presentation/PurchasingHandlers.fs` holds the HTTP adapter for the purchasing context.
+The HTTP handler is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command, call the application service, and translate the domain result into an HTTP response. Nothing more. A handler that contains business logic, validates domain invariants, or directly opens a database connection has crossed out of the adapter layer and into the domain or infrastructure — the most common source of untestable, entangled production code. The role is identical across all three stacks: `Presentation/PurchasingHandlers.fs` using Giraffe `HttpHandler` combinators in F#, a Ring/Reitit route function in Clojure, or a Hono route callback in TypeScript. In `procurement-platform-be`, each stack expresses this adapter in its own idiom but enforces the same single responsibility.
 
 ### Standard Library First
 

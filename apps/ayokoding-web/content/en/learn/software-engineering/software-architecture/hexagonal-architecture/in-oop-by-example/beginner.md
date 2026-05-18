@@ -175,7 +175,7 @@ export class PurchaseOrder {
 
 ---
 
-### Example 2: Domain entity — pure Java record, no framework annotations
+### Example 2: Domain entity — pure record / data class, no framework annotations
 
 A domain entity contains only business state and behaviour. Framework annotations (`@Entity`, `@Table`, `@JsonProperty`) are infrastructure concerns that belong in adapter-layer mapping classes. Placing them in the domain couples the domain to a specific framework and forces recompilation whenever that framework changes.
 
@@ -1985,7 +1985,7 @@ export interface IssuePOCommand {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Input ports are Java interfaces in the application package. Primary adapters depend on the interface, not the concrete service class.
+**Key Takeaway**: Input ports are interface contracts in the application package — primary adapters depend on the interface, not the concrete service class. Java expresses this as a `public interface` in the application package; Kotlin and C# follow the same pattern with their own interface syntax; TypeScript uses a structural interface or type alias.
 
 **Why It Matters**: When a controller depends on `IssuePurchaseOrderUseCase` (an interface), a test can swap in a stub returning a known `PurchaseOrder` — no Spring context needed. Adding a CLI adapter that calls the same use case requires zero changes to the service or the interface.
 

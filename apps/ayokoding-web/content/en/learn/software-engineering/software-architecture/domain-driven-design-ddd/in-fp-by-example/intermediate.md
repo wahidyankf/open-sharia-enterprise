@@ -405,7 +405,7 @@ console.log("Approval level v2:", approvalLevelV2);
 
 ---
 
-### Example 28: Currying — Every F# Function is One-Arg
+### Example 28: Currying — Every Function is One-Arg
 
 Every F# function technically takes one argument and returns a function or a value. This is currying. It enables partial application: supplying some arguments up front to produce a specialised function. In the procurement domain, partial application injects dependencies like approval thresholds into workflow functions.
 
@@ -865,7 +865,7 @@ else console.log("Error:", result.error);
 
 ### Example 30: Result Type — Ok and Error
 
-`Result<'T, 'Error>` is F#'s built-in type for computations that can fail. It is a discriminated union with two cases: `Ok value` (success) and `Error err` (failure). Using `Result` instead of exceptions keeps failure handling in the type system and forces callers to acknowledge both paths.
+The Result type models computations that can fail by returning either a success value or a typed error, without throwing exceptions. F# provides `Result<'T, 'Error>` as a built-in discriminated union with `Ok value` and `Error err` cases. Clojure uses a `[value nil]` / `[nil error]` pair convention or libraries such as `failjure`; TypeScript uses a discriminated union with `{ ok: true; value: T }` / `{ ok: false; error: E }`. All three keep failure handling in the type system and force callers to acknowledge both paths.
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
 
@@ -1758,7 +1758,7 @@ if (goodLine.valid) console.log("Valid line:", goodLine.value.skuCode);
 
 ### Example 34: Computation Expression for Result
 
-F#'s `result` computation expression (a.k.a. "do notation") lets you write `Result.bind` chains in imperative-looking syntax. The `let!` keyword desugars to `Result.bind`, making the pipeline read like sequential steps without explicit chaining.
+Computation expressions (a.k.a. "do notation") let you write `Result.bind` chains in imperative-looking syntax without explicit nesting. In F#, the `result { }` CE desugars `let!` to `Result.bind`, making the pipeline read as sequential steps. Clojure achieves the same feel with threading macros (`->>`) plus an early-exit helper; TypeScript uses `async/await`-style patterns or generator-based monads for the same sequential illusion.
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
 
@@ -6799,7 +6799,7 @@ console.log("Loaded PO status:", loaded?.status);
 
 {{< /tabs >}}
 
-**Key Takeaway**: A record of functions is the idiomatic F# port — it groups related I/O operations into a cohesive unit that can be swapped between test and production implementations without changing the workflow code.
+**Key Takeaway**: A record of functions (F#), a protocol (Clojure), or an interface-shaped object (TypeScript) groups related I/O operations into a cohesive port that can be swapped between test and production implementations without changing the workflow code. The concept is identical across all three: the port is a value, not a base class.
 
 **Why It Matters**: The record-of-functions pattern makes the port boundary explicit and first-class without requiring abstract classes or mock frameworks. Passing an `inMemoryRepo` in tests and a `pgRepo` (backed by Npgsql) in production is a matter of constructing different records. The workflow function (`loadAndPrint`) receives `PurchaseOrderRepository` and never knows which adapter is behind it.
 

@@ -19,13 +19,13 @@ tags:
   ]
 ---
 
-This beginner section introduces Finite State Machine fundamentals through 25 annotated F# examples grounded in the `PurchaseOrder` aggregate from a Procure-to-Pay procurement platform. The central thesis — **model states as a discriminated union and transitions as a pure `State -> Event -> State` function with exhaustive pattern matching** — is established progressively through the full PO approval-issuance lifecycle.
+This beginner section introduces Finite State Machine fundamentals through 25 annotated examples grounded in the `PurchaseOrder` aggregate from a Procure-to-Pay procurement platform. The central thesis — **model states as a closed union type and transitions as a pure `State -> Event -> State` function with exhaustive pattern matching** — applies across functional languages. Examples are shown in F# (canonical), with Clojure and TypeScript equivalents. The full PO approval-issuance lifecycle serves as the running domain throughout.
 
 ## What Is a Finite State Machine? (Examples 1–5)
 
 ### Example 1: States as a Discriminated Union
 
-A `PurchaseOrder` moves through a defined set of states: Draft, AwaitingApproval, Approved, Issued, Acknowledged, Closed, Cancelled, and Disputed. In F# the entire valid state set is encoded as a discriminated union (DU), so the compiler rejects any value outside this set at compile time — no runtime "unknown state" bugs.
+A `PurchaseOrder` moves through a defined set of states: Draft, AwaitingApproval, Approved, Issued, Acknowledged, Closed, Cancelled, and Disputed. Encoding the valid state set as a closed union type means the compiler rejects any value outside this set at compile time — no runtime "unknown state" bugs. In F# this is a discriminated union; in Clojure a spec-constrained keyword set; in TypeScript a string literal union type.
 
 ```mermaid
 stateDiagram-v2
@@ -187,7 +187,7 @@ console.log("isTerminal Cancelled =", isTerminal({ kind: "Cancelled" }));
 
 {{< /tabs >}}
 
-**Key Takeaway**: A F# discriminated union seals the state space at compile time — the compiler enforces exhaustiveness so no invalid state can ever exist.
+**Key Takeaway**: A closed union type seals the state space at compile time — the compiler enforces exhaustiveness so no invalid state can ever exist. F# uses a discriminated union; Clojure uses a spec-constrained keyword; TypeScript uses a string literal union with exhaustive `never` checks.
 
 **Why It Matters**: In an OOP State pattern each state is a class; adding a state means adding a file and updating every visitor. In FP the DU is the single source of truth. Adding `PartiallyReceived` to the DU causes every incomplete `match` expression in the codebase to produce a compiler warning, guiding the developer to every place that needs updating. The type system acts as a living checklist, eliminating the category of "forgot to handle the new state" bugs before the code runs.
 
@@ -589,7 +589,7 @@ console.log("After Issue:   ", po3.state.kind); // => Issued
 
 ### Example 5: Exhaustiveness Checking with Match
 
-F#'s compiler warns when a `match` expression is non-exhaustive. This example deliberately triggers the warning to show how exhaustiveness acts as a safety net — every time the state DU gains a new case, the compiler flags every incomplete handler.
+Exhaustiveness checking warns when a pattern-match expression does not cover every case. This example deliberately triggers the warning to show how exhaustiveness acts as a safety net — every time the state type gains a new case, the compiler flags every incomplete handler. F# raises a compile warning on non-exhaustive `match`; TypeScript raises a type error via the `never` fallthrough pattern; Clojure uses spec conformance checks.
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
 
@@ -1398,7 +1398,7 @@ console.log(issued.ok ? issued.value.state.kind : issued.error);
 
 {{< /tabs >}}
 
-**Key Takeaway**: Modelling pre-issue and post-issue POs as different F# types makes line-item immutability a compile-time guarantee rather than a runtime check.
+**Key Takeaway**: Modelling pre-issue and post-issue POs as different types makes line-item immutability a compile-time guarantee rather than a runtime check. F# expresses this distinction as separate discriminated union cases with different payloads; TypeScript as separate type aliases with discriminant fields; Clojure through spec shapes validated at the state-entry boundary.
 
 **Why It Matters**: The OOP approach guards immutability with a mutable boolean flag checked at runtime. The FP type-level approach makes the invalid operation unrepresentable: no function accepts an `IssuedPO` and adds a line item. This technique — "make illegal states unrepresentable" — is the defining idiom of type-driven domain modelling. It shifts enforcement from "validate at runtime and hope" to "encode in the type and let the compiler verify".
 
@@ -1733,7 +1733,7 @@ console.log(disputed.ok ? disputed.value.state.kind : disputed.error);
 
 ## Transition Tables and Full Lifecycle (Examples 12–17)
 
-### Example 12: The Full Transition Table in F\#
+### Example 12: The Full Transition Table
 
 The full PO transition table lists every valid (state, event) pair. Encoding it as an F# `Map` creates a queryable specification that can also drive tests and documentation generators.
 
@@ -2783,9 +2783,9 @@ effs.forEach((e) => console.log(e.kind, e.kind === "SendEmail" ? e.subject : e.m
 
 ## Testing, Derivations, and Protocol (Examples 18–25)
 
-### Example 18: Testing FSM Transitions in F\#
+### Example 18: Testing FSM Transitions
 
-F# script files can contain assertions using `assert` or simple `if/then/failwith` patterns. This example shows how to test the full transition table with table-driven tests, checking every valid and several invalid transitions.
+Table-driven tests verify every valid transition and every invalid one in a single loop, making it easy to spot gaps in FSM coverage. F# uses script assertions (`assert` or `if/then/failwith`) to run the table inline; Clojure uses `clojure.test/is` assertions; TypeScript uses Jest `test.each` — all iterate the same transition matrix.
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
 

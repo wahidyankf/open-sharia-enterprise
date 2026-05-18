@@ -11,7 +11,7 @@ tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "cases", "beginne
 
 ### Why It Matters
 
-A bounded context is not just a package name — it is an isolation unit. Every time two contexts share a repository directly or call each other's domain objects without an explicit port, a change in one cascades invisibly into the other. In the `procurement-platform-be` service, each bounded context owns its own `domain`, `application`, `infrastructure`, and `presentation` packages. Nothing crosses the context boundary except through an interface declared in the `application` package. Getting this isolation invariant right from day one is the single most valuable structural decision in a DDD + hexagonal Java codebase.
+A bounded context is not just a package name — it is an isolation unit. Every time two contexts share a repository directly or call each other's domain objects without an explicit port, a change in one cascades invisibly into the other. In the `procurement-platform-be` service, each bounded context owns its own `domain`, `application`, `infrastructure`, and `presentation` packages. Nothing crosses the context boundary except through an interface declared in the `application` package. Getting this isolation invariant right from day one is the single most valuable structural decision in a DDD + hexagonal codebase — whether that codebase is organised into Java/Kotlin packages, C# namespaces, or TypeScript modules.
 
 ### Standard Library First
 
@@ -332,11 +332,11 @@ export interface PurchaseOrder {
 
 ### Why It Matters
 
-The production layout for `procurement-platform-be` places every bounded context at a dedicated top-level package under `com.procurement.platform`. Each context owns four sub-packages: `domain`, `application`, `infrastructure`, and `presentation`. Before writing any new feature code you need to read this layout fluently — otherwise you misplace new files or misread which types belong to the domain boundary versus the infrastructure boundary.
+The production layout for `procurement-platform-be` places every bounded context at a dedicated top-level package under `com.procurement.platform`. Each context owns four sub-packages: `domain`, `application`, `infrastructure`, and `presentation`. Before writing any new feature code you need to read this layout fluently — otherwise you misplace new files or misread which types belong to the domain boundary versus the infrastructure boundary. The same four-layer pattern applies across all four OOP stacks: packages in Java/Kotlin, namespaces in C#, and directory-scoped barrel exports in TypeScript.
 
 ### Standard Library First
 
-A flat layout is a direct consequence of starting with a single-concern Spring Boot scaffold. Spring Boot's `@SpringBootApplication` scans the entire root package and registers everything it finds. A flat layout means all domain-adjacent classes sit near the root package, sharing the same Spring component scan. This is the zero-ceremony stdlib approach: it compiles, it runs, and it is adequate for a one-context prototype.
+A flat layout is a direct consequence of starting with a single-concern web-framework scaffold. Spring Boot's `@SpringBootApplication` scans the entire root package and registers everything it finds. A flat layout means all domain-adjacent classes sit near the root package, sharing the same Spring component scan. This is the zero-ceremony stdlib approach: it compiles, it runs, and it is adequate for a one-context prototype.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -660,7 +660,7 @@ com.procurement.platform
 
 ### Why It Matters
 
-The single most common way a hexagonal architecture collapses into a layered monolith is when domain types carry framework annotations. The moment a `PurchaseOrder` record has `@Entity`, `@Column`, or `@JsonProperty`, the domain layer depends on a persistence or serialization framework. Switching frameworks — or testing the domain in isolation — now requires framework setup. In `procurement-platform-be`, keeping the domain records free of `jakarta.persistence`, `com.fasterxml.jackson`, or Spring annotations is the invariant that makes everything else possible.
+The single most common way a hexagonal architecture collapses into a layered monolith is when domain types carry framework annotations. The moment a domain aggregate carries ORM or serialisation annotations — `@Entity`/`@Column` in Java/Kotlin JPA, `[Column]`/`[Table]` in C# EF Core, or an ORM decorator in TypeScript — the domain layer acquires a persistence or serialisation framework dependency. Switching frameworks — or testing the domain in isolation — now requires framework setup. In `procurement-platform-be`, keeping the domain records free of any ORM or serialisation framework annotations is the invariant that makes everything else possible.
 
 ### Standard Library First
 
@@ -1077,7 +1077,7 @@ The dependency rule flows inward: `infrastructure` and `presentation` know about
 
 ### Why It Matters
 
-Application services are the orchestration layer between the driving adapter (the Spring `@RestController`) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the controller works with — Jackson-friendly classes with nullable fields, no invariants, and `@JsonProperty` annotations. When that happens, the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. In `procurement-platform-be`, the design rule is: application services accept and return domain aggregates; the controller owns the DTO translation.
+Application services are the orchestration layer between the driving adapter and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the controller works with — framework-friendly classes with nullable fields, no invariants, and serialisation annotations (`@JsonProperty` in Java/Kotlin, `[JsonPropertyName]` in C#, or plain interface shapes in TypeScript). When that happens, the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. In `procurement-platform-be`, the design rule is: application services accept and return domain aggregates; the driving adapter owns the DTO translation.
 
 ### Standard Library First
 
@@ -1410,7 +1410,7 @@ export interface IssuePurchaseOrderService {
 
 ### Why It Matters
 
-Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In Java hexagonal architecture the idiomatic output port is a Java interface declared in the `application` package. The application service declares a dependency on the interface; Spring Boot wires the infrastructure adapter implementation at startup via constructor injection. This makes adapter swapping — in production and in tests — a configuration decision, not a code change. `procurement-platform-be` uses this pattern for every infrastructure dependency: the repository, the event publisher, the approval router, and the supplier notifier.
+Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. The idiomatic output port is an interface declared in the `application` package — a Java/Kotlin `interface`, a C# `interface`, or a TypeScript `interface` or abstract class. The application service declares a dependency on the interface; the composition root wires the infrastructure adapter implementation at startup via constructor injection — expressed as Spring Boot `@Configuration` in Java/Kotlin, the `IServiceCollection` builder in C# ASP.NET Core, or a NestJS `@Module` providers array in TypeScript. This makes adapter swapping — in production and in tests — a configuration decision, not a code change. `procurement-platform-be` uses this pattern for every infrastructure dependency: the repository, the event publisher, the approval router, and the supplier notifier.
 
 ### Standard Library First
 
@@ -1725,7 +1725,7 @@ export interface PurchaseOrderRepository {
 
 ### Why It Matters
 
-The Spring `@RestController` is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command or query, call the application service, and translate the domain result into an HTTP response. A controller that contains business logic, validates domain invariants, or directly calls a JDBC adapter has crossed out of the adapter layer into the domain or infrastructure — the most common source of untestable, entangled production code. In `procurement-platform-be`, every controller serves one bounded context and delegates entirely to an application service interface.
+The primary (driving) adapter translates an HTTP request into a domain command or query, calls the application service, and translates the domain result into an HTTP response. This role is played by a Spring `@RestController` in Java/Kotlin, a minimal API handler or `[ApiController]` class in C# ASP.NET Core, or a NestJS `@Controller` in TypeScript. A controller that contains business logic, validates domain invariants, or directly calls a persistence adapter has crossed out of the adapter layer into the domain or infrastructure — the most common source of untestable, entangled production code. In `procurement-platform-be`, every controller serves one bounded context and delegates entirely to an application service interface.
 
 ### Standard Library First
 
@@ -2364,7 +2364,7 @@ export class PurchaseOrderController {
 
 ### Why It Matters
 
-The composition root is the single place in the application where all dependencies are wired together. In object-oriented hexagonal architecture, the composition root must know about concrete adapter classes — that is where the `new JdbcPurchaseOrderRepository()` or `new InMemoryPurchaseOrderRepository()` decision is made, not inside the application service. Spring Boot 4's `@Configuration` classes are the idiomatic composition root: they declare `@Bean` methods that construct and wire concrete types, while the rest of the codebase depends only on interfaces. Without a disciplined composition root, `@Autowired` field injection scatters wiring decisions across hundreds of classes, making adapter swapping impossible without touching production code.
+The composition root is the single place in the application where all dependencies are wired together. In object-oriented hexagonal architecture, the composition root must know about concrete adapter classes — that is where the `new JdbcPurchaseOrderRepository()` or `new InMemoryPurchaseOrderRepository()` decision is made, not inside the application service. The composition root is expressed as `@Configuration` classes in Java/Kotlin Spring Boot, the `IServiceCollection` builder block in `Program.cs` for C# ASP.NET Core, or the `providers` array of the root `@Module` in TypeScript NestJS. Without a disciplined composition root, scattered field injection spreads wiring decisions across hundreds of classes, making adapter swapping impossible without touching production code.
 
 ### Standard Library First
 

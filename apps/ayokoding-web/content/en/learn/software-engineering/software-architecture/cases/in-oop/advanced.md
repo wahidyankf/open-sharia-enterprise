@@ -25,7 +25,7 @@ tags:
 
 ### Why It Matters
 
-Unit tests with an in-memory adapter (Guide 9) prove port correctness but cannot catch SQL schema mistakes, PostgreSQL-specific constraint behavior, or migration ordering bugs. A database integration test that spins up a real PostgreSQL instance inside Docker closes this gap without requiring a persistent database on developer machines. In `procurement-platform-be`, the `@Testcontainers`-annotated test class manages the full container lifecycle — start, health-check, stop — through JUnit 5 lifecycle hooks. The adapter under test receives a `DataSource` configured to point at the ephemeral container rather than any static URL.
+Unit tests with an in-memory adapter (Guide 9) prove port correctness but cannot catch SQL schema mistakes, PostgreSQL-specific constraint behavior, or migration ordering bugs. A database integration test that spins up a real PostgreSQL instance inside Docker closes this gap without requiring a persistent database on developer machines. Container lifecycle management follows the same concept across all four stacks: JUnit 5 + Testcontainers `@Testcontainers` annotation in Java/Kotlin, `Testcontainers.net` with xUnit or NUnit fixtures in C#, and `@testcontainers/postgresql` with Jest or Vitest in TypeScript. The adapter under test receives a connection configured to point at the ephemeral container rather than any static URL.
 
 ### Standard Library First
 
@@ -636,7 +636,7 @@ Add the Testcontainers dependency to the `pom.xml` for `procurement-platform-be`
 
 ### Why It Matters
 
-Every database integration test and every production deployment depends on the schema matching the application's expectations. Without a migration tool, schema changes require manual SQL execution coordinated across every developer machine, CI runner, and production server. In `procurement-platform-be`, Flyway runs embedded SQL migration scripts in versioned order at application startup. The migration adapter is a first-class hexagonal concern: it runs before any domain port is called, and the Testcontainers integration test (Guide 16) can invoke it against the fresh container database before running assertions.
+Every database integration test and every production deployment depends on the schema matching the application's expectations. Without a migration tool, schema changes require manual SQL execution coordinated across every developer machine, CI runner, and production server. The migration adapter is a first-class hexagonal concern: it runs before any domain port is called, and the Testcontainers integration test (Guide 16) can invoke it against the fresh container database before running assertions. The idiomatic migration library differs per stack — Flyway embedded in a Java/Kotlin Spring Boot application, EF Core `dotnet ef database update` or a hosted `MigrationService` in C# ASP.NET Core, and `node-pg-migrate` or `drizzle-kit push` in TypeScript — but the structural role is the same in each: a versioned, ordered execution of SQL scripts before any domain port is exercised.
 
 ### Standard Library First
 
@@ -1043,7 +1043,7 @@ Add the Flyway dependency to `pom.xml`:
 
 ### Why It Matters
 
-External bank API calls are an I/O boundary: the payments context sends a disbursement instruction and receives a confirmation from the bank's REST API. Like the database boundary, this I/O must sit behind a port so the application service is testable without a live banking API, and so the provider can be swapped without touching business logic. In `procurement-platform-be`, the `payments` bounded context introduces a `BankingPort` interface in its `application` package. Spring Boot 4 ships `RestClient` — already on the classpath via `spring-boot-starter-web` — which provides type-safe, builder-configured HTTP calls with timeout control.
+External bank API calls are an I/O boundary: the payments context sends a disbursement instruction and receives a confirmation from the bank's REST API. Like the database boundary, this I/O must sit behind a port so the application service is testable without a live banking API, and so the provider can be swapped without touching business logic. In `procurement-platform-be`, the `payments` bounded context introduces a `BankingPort` interface in its `application` package. The HTTP client adapter is expressed differently per stack — Spring Boot 4 `RestClient` in Java/Kotlin, `HttpClient` + `IHttpClientFactory` in C# ASP.NET Core, or `fetch`/`axios` wrapped in a typed adapter class in TypeScript — but in every case it is wired at the composition root and hidden behind the port.
 
 ### Standard Library First
 
@@ -1802,7 +1802,7 @@ export class AxiosBankingAdapter implements BankingPort {
 
 ### Why It Matters
 
-External ports — the banking adapter from Guide 18, the JDBC adapter from Guide 8 — fail transiently. A timeout does not mean the downstream service is permanently unavailable; a retry after a brief pause often succeeds. Conversely, an adapter that retries indefinitely against a service that is genuinely down floods the downstream with traffic and keeps threads occupied. Resilience4j (the Spring Boot 4 resilience starter) wraps port adapters with configurable retry and circuit-breaker policies via a decorator pattern over the port interface. The application service code is unchanged — the decorator is wired in the composition root.
+External ports — the banking adapter from Guide 18, the persistence adapter from Guide 8 — fail transiently. A timeout does not mean the downstream service is permanently unavailable; a retry after a brief pause often succeeds. Conversely, an adapter that retries indefinitely against a service that is genuinely down floods the downstream with traffic and keeps threads occupied. A resilience decorator wraps port adapters with configurable retry and circuit-breaker policies — expressed as Resilience4j annotations in Java/Kotlin Spring Boot, `Polly` pipeline policies in C# ASP.NET Core, or `opossum` circuit-breaker wrappers in TypeScript. The application service code is unchanged — the decorator is wired transparently in the composition root.
 
 ### Standard Library First
 
@@ -2390,7 +2390,7 @@ Add the Resilience4j Spring Boot starter to `pom.xml`:
 
 ### Why It Matters
 
-A hexagonal application whose port calls are not traced is a black box in production. When a purchasing manager reports that the PO issuance endpoint is slow, the only way to diagnose it without tracing is to reproduce the slowness in development — expensive and error-prone. Micrometer Tracing (the observability layer in Spring Boot 4) wraps port calls with OpenTelemetry-compatible spans. The observability adapter follows the same decorator pattern as the resilience decorator in Guide 19: it implements the port interface, wraps each method with a span, delegates to the real adapter, and is wired transparently in the composition root.
+A hexagonal application whose port calls are not traced is a black box in production. When a purchasing manager reports that the PO issuance endpoint is slow, the only way to diagnose it without tracing is to reproduce the slowness in development — expensive and error-prone. An observability decorator wraps port calls with OpenTelemetry-compatible spans — implemented via Micrometer Tracing in Java/Kotlin Spring Boot, the `ActivitySource` API and OpenTelemetry SDK in C# ASP.NET Core, or the `@opentelemetry/api` tracer in TypeScript. The observability adapter follows the same decorator pattern as the resilience decorator in Guide 19: it implements the port interface, wraps each method with a span, delegates to the real adapter, and is wired transparently in the composition root.
 
 ### Standard Library First
 
@@ -2994,7 +2994,7 @@ Add Micrometer Tracing to `pom.xml`:
 
 ### Why It Matters
 
-Guides 10 and 11 introduced the domain event publisher port and its adapters. This guide traces the complete flow in a single context: the aggregate state change occurs during a command, the application service captures and publishes the event through the publisher port, and a second downstream handler — modeled as a Spring `@EventListener` in the same process — consumes the event and triggers a side-effect. Understanding this flow end-to-end is a prerequisite for cross-context event routing (Guide 14) and for deciding when to upgrade from the in-memory adapter to the outbox adapter.
+Guides 10 and 11 introduced the domain event publisher port and its adapters. This guide traces the complete flow in a single context: the aggregate state change occurs during a command, the application service captures and publishes the event through the publisher port, and a second downstream handler consumes the event and triggers a side-effect. The in-process handler is expressed as a Spring `@EventListener` method in Java/Kotlin, an `INotificationHandler<T>` in C# MediatR, or an `@OnEvent` listener in TypeScript NestJS. Understanding this flow end-to-end is a prerequisite for cross-context event routing (Guide 14) and for deciding when to upgrade from the in-memory adapter to the outbox adapter.
 
 ### Standard Library First
 
@@ -3785,7 +3785,7 @@ sequenceDiagram
 
 ### Why It Matters
 
-Anti-patterns accumulate silently in Java codebases because the compiler does not enforce hexagonal boundaries. A JPA annotation on a domain record, a Spring service that handles HTTP requests and database writes in one class, and an aggregate that holds no behavior — each of these feels harmless in isolation and becomes a migration nightmare at scale. Recognizing these three anti-patterns in `procurement-platform-be` before they take root saves significant refactoring cost later.
+Anti-patterns accumulate silently in OOP codebases because the compiler does not enforce hexagonal boundaries. An ORM annotation on a domain type — `@Entity` in Java/Kotlin JPA, `[Table]` in C# EF Core, or an entity decorator in TypeScript — a service class that handles HTTP requests and database writes in one method, and an aggregate that holds no behavior: each of these feels harmless in isolation and becomes a migration nightmare at scale. Recognizing these three anti-patterns in `procurement-platform-be` before they take root saves significant refactoring cost later.
 
 ### The Leaky Hexagon
 
@@ -4284,9 +4284,9 @@ export class AnemicPurchaseOrderService {
 
 ### Why It Matters
 
-A Kubernetes manifest is not a deployment detail you bolt on after the code works — it is the composition root for the entire hexagonal stack at runtime. The `Deployment` object determines how many adapter instances run concurrently; the `ConfigMap` holds the non-secret wiring that tells the Spring DataSource adapter which PostgreSQL host to connect to; the `Secret` holds the credentials that make the adapter authenticate. If these three resources are misaligned, the adapter throws at startup rather than at test time — you find out at 3 AM during a rolling restart rather than during the pre-merge integration test. Writing the manifest before the first production deploy makes the configuration contract explicit, reviewable, and portable across environments.
+A Kubernetes manifest is not a deployment detail you bolt on after the code works — it is the composition root for the entire hexagonal stack at runtime. The `Deployment` object determines how many adapter instances run concurrently; the `ConfigMap` holds the non-secret wiring that tells the persistence adapter which PostgreSQL host to connect to; the `Secret` holds the credentials that make the adapter authenticate. If these three resources are misaligned, the adapter throws at startup rather than at test time — you find out at 3 AM during a rolling restart rather than during the pre-merge integration test. Writing the manifest before the first production deploy makes the configuration contract explicit, reviewable, and portable across environments — regardless of whether the application reads that configuration via Spring Boot's `application.yml` auto-binding, C# `appsettings.json` with `IOptions<T>`, or NestJS `ConfigModule` in TypeScript.
 
-Spring Boot Actuator adds `/actuator/health`, `/actuator/liveness`, and `/actuator/readiness` without any manifest-level change. Kubernetes reads those endpoints through liveness and readiness probes. A misconfigured probe means Kubernetes either never routes traffic to a healthy pod or restarts a pod that is actually busy finishing a long-running database migration — both outcomes land the on-call engineer in a painful rollback.
+Health probe endpoints integrate naturally with Kubernetes liveness and readiness probes. The health endpoint path and framework differ per stack — Spring Boot Actuator `/actuator/health` in Java/Kotlin, ASP.NET Core health checks at `/health` in C#, or a Terminus health check controller in TypeScript NestJS — but the Kubernetes probe configuration concept is identical in all cases. A misconfigured probe means Kubernetes either never routes traffic to a healthy pod or restarts a pod that is actually busy finishing a long-running database migration — both outcomes land the on-call engineer in a painful rollback.
 
 ### Standard Library First
 
@@ -4497,9 +4497,9 @@ flowchart LR
 
 ### Why It Matters
 
-Guide 20 showed how Micrometer Tracing decorates individual port calls with spans. At the deployment seam, the concern shifts: where does the collected telemetry go, and which sources does the SDK export? A misconfigured OTLP exporter means you pay the span creation overhead on every request but see nothing in Jaeger or Grafana Tempo. A missing Prometheus scrape configuration means P95 latency regressions on the PO issuance path are invisible until a procurement manager files a support ticket. Getting observability wired correctly before the first production deploy makes the difference between reacting to incidents in seconds and debugging in the dark.
+Guide 20 showed how an observability decorator wraps individual port calls with spans. At the deployment seam, the concern shifts: where does the collected telemetry go, and which sources does the SDK export? A misconfigured OTLP exporter means you pay the span creation overhead on every request but see nothing in Jaeger or Grafana Tempo. A missing Prometheus scrape configuration means P95 latency regressions on the PO issuance path are invisible until a procurement manager files a support ticket. Getting observability wired correctly before the first production deploy makes the difference between reacting to incidents in seconds and debugging in the dark — and the OTLP export configuration is expressed the same way across all four stacks: environment variables (`OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`) injected by the Kubernetes `Deployment` manifest.
 
-The deployment seam also determines the resource attributes attached to every span — `service.name`, `service.version`, and `service.instance.id`. Without them, traces from two pod replicas collide in the trace UI, making it impossible to diagnose which replica produced a slow span.
+The deployment seam also determines the resource attributes attached to every span — `service.name`, `service.version`, and `service.instance.id`. Without them, traces from two pod replicas collide in the trace UI, making it impossible to diagnose which replica produced a slow span. These attributes are set identically via the OpenTelemetry environment-variable protocol regardless of whether the application is a Spring Boot JAR, an ASP.NET Core binary, or a Node.js process.
 
 ### Standard Library First
 
@@ -4857,7 +4857,7 @@ flowchart LR
 
 ### Why It Matters
 
-When the PostgreSQL pod is unhealthy during a rolling restart, you have two choices: fail every request immediately with a 500, or serve degraded responses from a fallback adapter. The hexagonal architecture makes the second choice tractable — because the application service depends on a port interface, not a concrete adapter, you can swap in a degraded adapter at the composition root without touching the domain or application layers. The cached read-model adapter returns the last known state; the null event publisher silently drops events when the broker is unavailable. A Spring `HealthIndicator` drives the liveness and readiness probes from Guide 23, so Kubernetes removes a degraded pod from rotation rather than routing live traffic to it.
+When the PostgreSQL pod is unhealthy during a rolling restart, you have two choices: fail every request immediately with a 500, or serve degraded responses from a fallback adapter. The hexagonal architecture makes the second choice tractable — because the application service depends on a port interface, not a concrete adapter, you can swap in a degraded adapter at the composition root without touching the domain or application layers. The cached read-model adapter returns the last known state; the null event publisher silently drops events when the broker is unavailable. A health indicator drives the liveness and readiness probes from Guide 23 so Kubernetes removes a degraded pod from rotation — expressed as a Spring `HealthIndicator` in Java/Kotlin, an `IHealthCheck` implementation in C# ASP.NET Core, or a Terminus `HealthIndicator` in TypeScript NestJS.
 
 ### Standard Library First
 
@@ -5718,7 +5718,7 @@ export class PurchasingHealthCheck {
 
 ### Why It Matters
 
-Guide 17 introduced Flyway as the schema-migration adapter. At the deployment seam, the wiring question is: when does the migration run relative to pod startup, and which mechanism owns the migration lifecycle? Running Flyway inside `SpringApplication.run` means every replica races to apply migrations during a rolling restart — a potential for migration conflicts on `ALTER TABLE` statements. Running Flyway as a Kubernetes `Job` before the `Deployment` rolls means the schema is stable before any pod starts, but a failed job blocks the entire rollout. Choosing the wrong strategy causes a database-level lock that holds the deployment in progress for ten minutes while the on-call engineer investigates.
+Guide 17 introduced schema migration as a hexagonal concern. At the deployment seam, the wiring question is: when does the migration run relative to pod startup, and which mechanism owns the migration lifecycle? Running the migration library inside the application bootstrap (Flyway in Java/Kotlin Spring Boot, EF Core `MigrateAsync` in C#, or `node-pg-migrate` in TypeScript) means every replica races to apply migrations during a rolling restart — a potential for migration conflicts on `ALTER TABLE` statements. Running the migration as a Kubernetes `Job` before the `Deployment` rolls means the schema is stable before any pod starts, but a failed job blocks the entire rollout. Choosing the wrong strategy causes a database-level lock that holds the deployment in progress for ten minutes while the on-call engineer investigates.
 
 ### Standard Library First
 
@@ -6186,7 +6186,7 @@ export async function runFlywayEquivalent(pool: Pool): Promise<void> {
 
 ### Why It Matters
 
-`procurement-platform-be` reads database credentials and the banking API key from environment variables that Kubernetes injects from a `Secret`. The journey of a credential from a Kubernetes Secret object to a strongly-typed Java record crosses four boundaries: Kubernetes decodes the base64-encoded Secret value and injects it as an environment variable; the Spring Environment property source reads the environment variable; the `@ConfigurationProperties` binding maps it to a typed record; the composition root reads the record and passes it to the adapter constructor. A break at any boundary — a renamed key, a missing prefix, a wrong casing — silently produces a `null` or empty string. Spring Boot `@ConfigurationProperties` with `@Validated` detects the break at startup rather than at the first database call, which turns a `3 AM NullPointerException in HikariPool` into a `ContextLoad failure: datasource.username must not be blank` during the Kubernetes pod `Init:0/1` phase — a much easier debugging session.
+`procurement-platform-be` reads database credentials and the banking API key from environment variables that Kubernetes injects from a `Secret`. The journey of a credential from a Kubernetes Secret object to a strongly-typed configuration type crosses four boundaries: Kubernetes decodes the base64-encoded Secret value and injects it as an environment variable; the application's configuration layer reads the environment variable; a typed binding maps it to a record or options object; the composition root reads the record and passes it to the adapter constructor. The typed binding mechanism differs per stack — Spring Boot `@ConfigurationProperties` with `@Validated` in Java/Kotlin, `IOptions<T>` with `DataAnnotations` validation in C# ASP.NET Core, or `joi`/`zod`-validated `ConfigService` in TypeScript NestJS — but all three detect misconfiguration at startup rather than at the first database call, turning a 3 AM `NullPointerException` into a clear startup failure message during the Kubernetes pod `Init` phase.
 
 ### Standard Library First
 
