@@ -275,7 +275,7 @@ Invoicing and Payments modules are added when those contexts enter active develo
 
 Package structure is the most visible architectural decision in a codebase. When packages encode bounded context, layer, and ubiquitous language simultaneously, accidental coupling is detectable by reading import statements. When packages are organized by technical type alone (`controllers/`, `services/`, `repositories/`), context boundaries are invisible and the hexagonal layering rule can be violated silently. These standards make every structural violation an obvious import smell.
 
-**Educational counterpart**: [DDD + Hexagonal in Practice Tutorials](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/overview.md)
+**Educational counterpart**: [Cases](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/cases/overview.md)
 
 ## Related Documentation
 
@@ -285,5 +285,5 @@ Package structure is the most visible architectural decision in a codebase. When
 - **[Port Standards](../hexagonal-architecture/port-standards.md)** — Port naming conventions applied in `application/port/in/` and `application/port/out/`
 - **[Adapter Standards](../hexagonal-architecture/adapter-standards.md)** — Adapter naming conventions applied in `adapter/in/` and `adapter/out/`
 - **[Composition Root Standards](../hexagonal-architecture/composition-root-standards.md)** — `configuration/` package wiring
-- **[DDD + Hexagonal Java Track](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-oop-in-the-field/overview.md)** — Full Java module structure in production context
-- **[DDD + Hexagonal F# Track](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-fp-in-the-field/overview.md)** — Full F# module structure in production context
+- **[Cases — In OOP](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/cases/in-oop/overview.md)** — Full Java module structure in production context
+- **[Cases — In FP](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/cases/in-fp/overview.md)** — Full F# module structure in production context

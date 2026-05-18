@@ -3,14 +3,14 @@ title: "Intermediate"
 weight: 10000013
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Intermediate DDD + Hexagonal in Practice guides (Guides 8–15) — Spring Data JDBC adapter behind the repository port, in-memory adapter for integration tests, domain event publisher port, in-memory and outbox event adapters, deeper @RestController pipeline, contract codegen consumed by a controller, cross-context Anti-Corruption Layer, and composition root @Configuration wiring"
+description: "Intermediate Cases guides (Guides 8–15) — Spring Data JDBC adapter behind the repository port, in-memory adapter for integration tests, domain event publisher port, in-memory and outbox event adapters, deeper @RestController pipeline, contract codegen consumed by a controller, cross-context Anti-Corruption Layer, and composition root @Configuration wiring"
 tags:
   [
     "ddd",
     "hexagonal-architecture",
     "java",
     "spring-boot",
-    "in-the-field",
+    "cases",
     "spring-data-jdbc",
     "domain-events",
     "anti-corruption-layer",
@@ -75,9 +75,9 @@ Spring Boot 4 ships a modernised `JdbcClient` (Spring Framework 6.1+) that is le
 ```mermaid
 flowchart LR
     svc["IssuePurchaseOrderServiceImpl\n(application package)"]:::orange
-    port["PurchaseOrderRepository interface\n(application package)"]:::orange
+    port["PurchaseOrderRepository\n(application package)"]:::orange
     jdbc["JdbcPurchaseOrderRepository\n@Repository (infrastructure)"]:::teal
-    mem["InMemoryPurchaseOrderRepository\n(test infrastructure)"]:::purple
+    mem["InMemoryPORepository\n(test)"]:::purple
     svc -->|"declares dependency on"| port
     port -->|"satisfied in production"| jdbc
     port -->|"satisfied in tests"| mem
@@ -1128,8 +1128,8 @@ The ACL adapter lives in `receiving.infrastructure`. It imports the `purchasing`
 ```mermaid
 flowchart LR
     purdom["purchasing\ndomain/PurchaseOrder record"]:::blue
-    purport["purchasing\napplication/PurchaseOrderRepository port"]:::orange
-    acl["receiving\ninfrastructure/PurchaseOrderAcl\n(ACL adapter)"]:::teal
+    purport["purchasing\napplication/PORepository port"]:::orange
+    acl["receiving\ninfra/PurchaseOrderAcl"]:::teal
     recvport["receiving\napplication/PurchasedItemsPort"]:::orange
     recvdom["receiving\ndomain/PurchasedItems record"]:::purple
     purport -->|"queried by"| acl

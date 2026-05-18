@@ -32,7 +32,7 @@ graph TD
     end
 
     subgraph Domain["Domain Core (inside)"]
-        DM["Domain Model\n(entities, value objects, domain services)"]
+        DM["Domain Model\n(entities, VOs, services)"]
         DE["Domain Events"]
     end
 
@@ -97,7 +97,7 @@ Both tutorials use the same shared **procurement-platform-be Procure-to-Pay doma
 
 ## Production Wiring
 
-Once the by-example tracks above are clear, the in-the-field tutorials show ports and adapters wired around real DDD aggregates in production code:
+Once the by-example tracks above are clear, the cases tutorials show ports and adapters wired around real DDD aggregates in production code:
 
-- Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-fp-in-the-field) — pairs with the FP by-example track.
-- Next step (production wiring): [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-oop-in-the-field) — pairs with the OOP by-example track.
+- Next step (production wiring): [In FP — F# / Giraffe / Npgsql](/en/learn/software-engineering/software-architecture/cases/in-fp) — pairs with the FP by-example track.
+- Next step (production wiring): [In OOP — Java / Spring Boot](/en/learn/software-engineering/software-architecture/cases/in-oop) — pairs with the OOP by-example track.

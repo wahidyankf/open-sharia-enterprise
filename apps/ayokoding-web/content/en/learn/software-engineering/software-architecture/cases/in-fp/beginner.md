@@ -3,8 +3,8 @@ title: "Beginner"
 weight: 10000003
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Beginner DDD + Hexagonal in Practice guides (Guides 1–6) — one context as one hexagon, reading the per-context layout, domain types, application service signatures, repository port, and Giraffe handler as primary adapter"
-tags: ["ddd", "hexagonal-architecture", "f#", "in-the-field", "giraffe", "beginner"]
+description: "Beginner Cases guides (Guides 1–6) — one context as one hexagon, reading the per-context layout, domain types, application service signatures, repository port, and Giraffe handler as primary adapter"
+tags: ["ddd", "hexagonal-architecture", "f#", "cases", "giraffe", "beginner"]
 ---
 
 ## Guide 1 — One Context, One Hexagon
@@ -76,7 +76,7 @@ The diagram below shows the per-context layout that the `Contexts/` scaffolding 
 flowchart LR
     subgraph ctx["purchasing context"]
         direction TB
-        dom["Domain/\n(PurchaseOrder, ValueObjects, DomainEvents)"]:::blue
+        dom["Domain/\n(PO, VOs, Events)"]:::blue
         app["Application/\n(ports, services)"]:::orange
         inf["Infrastructure/\n(adapters, DB)"]:::teal
     end
@@ -737,9 +737,9 @@ The Giraffe + Npgsql stack wraps each port in a typed error union and makes the 
 
 ```mermaid
 flowchart LR
-    app["Application layer\nPurchaseOrderRepository port record"]:::orange
-    inf["Infrastructure layer\nnpgsqlPurchaseOrderRepository : PurchaseOrderRepository"]:::teal
-    mem["Test infrastructure\ninMemoryPurchaseOrderRepository : PurchaseOrderRepository"]:::purple
+    app["Application layer\nPurchaseOrderRepository port"]:::orange
+    inf["Infrastructure layer\nnpgsqlPurchaseOrderRepository"]:::teal
+    mem["Test infrastructure\ninMemoryPORepository"]:::purple
     app -->|"satisfied by"| inf
     app -->|"satisfied by in tests"| mem
 

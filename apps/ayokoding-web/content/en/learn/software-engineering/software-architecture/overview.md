@@ -24,7 +24,7 @@ This section explores proven architectural methodologies used in modern software
 - **Domain-Driven Design (DDD)**: Strategic and tactical patterns for modeling complex business domains and organizing code around business concepts
 - **Hexagonal Architecture**: Ports-and-adapters approach that isolates the domain core from external concerns (databases, frameworks, UIs)
 - **Finite State Machine (FSM)**: Mathematical model for designing systems with discrete states and well-defined transitions
-- **DDD + Hexagonal in Practice**: Production wiring tutorials that combine DDD and Hexagonal patterns in real-world code (F# and Java tracks)
+- **Cases**: Production wiring tutorials that compose C4, DDD, Hexagonal Architecture, and FSM in real-world code (In FP and In OOP cases)
 
 ## 📐 Why Architecture Patterns Matter
 
@@ -82,10 +82,10 @@ Each architecture pattern section covers:
 
 ## Production Wiring
 
-After the by-example tutorials for DDD and Hexagonal Architecture, the in-the-field tracks show how the two patterns combine in real production code:
+After the by-example tutorials for C4, DDD, Hexagonal Architecture, and FSM, the production cases show how the four families compose in real production code:
 
-- Next step (production wiring): [DDD + Hexagonal in Practice — F# in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-fp-in-the-field)
-- Next step (production wiring): [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-oop-in-the-field)
+- Next step (production wiring): [In FP — F# / Giraffe / Npgsql](/en/learn/software-engineering/software-architecture/cases/in-fp)
+- Next step (production wiring): [In OOP — Java / Spring Boot](/en/learn/software-engineering/software-architecture/cases/in-oop)
 
 ## 🚀 Getting Started
 

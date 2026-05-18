@@ -3,8 +3,8 @@ title: "Beginner"
 weight: 10000012
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Beginner DDD + Hexagonal in Practice guides (Guides 1–7) — one context as one hexagon, per-context package layout, domain types, application service signatures, repository port interface, Spring @RestController as primary adapter, and Spring @Configuration as composition root"
-tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "in-the-field", "beginner"]
+description: "Beginner Cases guides (Guides 1–7) — one context as one hexagon, per-context package layout, domain types, application service signatures, repository port interface, Spring @RestController as primary adapter, and Spring @Configuration as composition root"
+tags: ["ddd", "hexagonal-architecture", "java", "spring-boot", "cases", "beginner"]
 ---
 
 ## Guide 1 — One Context, One Hexagon
@@ -48,15 +48,15 @@ The hexagonal pattern enforces the boundary by making each context own its `doma
 flowchart LR
     subgraph ctx["purchasing context"]
         direction TB
-        dom["domain/\n(PurchaseOrder, PurchaseOrderId records)"]:::blue
+        dom["domain/\n(PO, POId records)"]:::blue
         app["application/\n(PurchaseOrderRepository port)"]:::orange
         inf["infrastructure/\n(JdbcPurchaseOrderRepository)"]:::teal
         pres["presentation/\n(@RestController)"]:::purple
     end
     subgraph recv["receiving context"]
         direction TB
-        rdom["domain/\n(GoodsReceiptNote, GoodsReceiptId records)"]:::blue
-        rapp["application/\n(PurchaseOrderQueryPort interface)"]:::orange
+        rdom["domain/\n(GRN, GRNId records)"]:::blue
+        rapp["application/\n(POQueryPort interface)"]:::orange
         rinf["infrastructure/\n(PurchaseOrderQueryAcl)"]:::teal
     end
     rapp -->|"consumes port only"| app
@@ -459,9 +459,9 @@ In the Spring stack the output port interface is declared in the `application` p
 ```mermaid
 flowchart LR
     svc["IssuePurchaseOrderService\n(application package)"]:::orange
-    port["PurchaseOrderRepository interface\n(application package)"]:::orange
+    port["PurchaseOrderRepository\n(application package)"]:::orange
     jdbc["JdbcPurchaseOrderRepository\n@Repository (infrastructure)"]:::teal
-    mem["InMemoryPurchaseOrderRepository\n(test infrastructure)"]:::purple
+    mem["InMemoryPORepository\n(test)"]:::purple
     svc -->|"declares dependency on"| port
     port -->|"satisfied by"| jdbc
     port -->|"satisfied by in tests"| mem

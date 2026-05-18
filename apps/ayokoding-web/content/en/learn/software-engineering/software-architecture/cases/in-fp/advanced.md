@@ -3,19 +3,9 @@ title: "Advanced"
 weight: 10000005
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Advanced DDD + Hexagonal in Practice guides (Guides 15–27) — docker-compose integration harness, schema migrations, banking port and payment adapter, retry and circuit-breaker, end-to-end domain event flow, OpenTelemetry observability adapter, optional murabaha-finance context, hexagonal anti-patterns, Kubernetes deployment topology, observability wiring at the deploy seam, failure-mode degraded adapters, configuration adapter, and background-job port"
+description: "Advanced Cases guides (Guides 15–27) — docker-compose integration harness, schema migrations, banking port and payment adapter, retry and circuit-breaker, end-to-end domain event flow, OpenTelemetry observability adapter, optional murabaha-finance context, hexagonal anti-patterns, Kubernetes deployment topology, observability wiring at the deploy seam, failure-mode degraded adapters, configuration adapter, and background-job port"
 tags:
-  [
-    "ddd",
-    "hexagonal-architecture",
-    "f#",
-    "in-the-field",
-    "docker-compose",
-    "dbup",
-    "opentelemetry",
-    "polly",
-    "anti-patterns",
-  ]
+  ["ddd", "hexagonal-architecture", "f#", "cases", "docker-compose", "dbup", "opentelemetry", "polly", "anti-patterns"]
 ---
 
 ## Guide 15 — Database Integration Test via docker-compose Harness
@@ -2734,7 +2724,7 @@ spec:
 flowchart LR
     ci["CI workflow\n(build + push OCI image)"]:::orange
     secret["Kubernetes Secret\n(DATABASE_URL, BankApiKey)"]:::purple
-    cm["Kubernetes ConfigMap\n(BankUrl, Timeouts, Thresholds)"]:::teal
+    cm["Kubernetes ConfigMap\n(URL, Timeouts, Thresholds)"]:::teal
     dep["Deployment\n(2 replicas)"]:::blue
     svc["Service\n(ClusterIP :80 → :8080)"]:::brown
     pg["PostgreSQL\n(postgres-svc)"]:::teal

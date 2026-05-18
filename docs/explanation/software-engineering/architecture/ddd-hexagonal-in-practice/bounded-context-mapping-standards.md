@@ -19,7 +19,7 @@ OSE Platform standards for translating DDD bounded context decisions into Hexago
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [DDD Bounded Context Standards](../domain-driven-design-ddd/bounded-context-standards.md), [Hexagonal Architecture Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md), and [DDD + Hexagonal in Practice Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/overview.md) before applying these standards.
+**REQUIRED**: Complete [DDD Bounded Context Standards](../domain-driven-design-ddd/bounded-context-standards.md), [Hexagonal Architecture Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md), and [Cases Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/cases/overview.md) before applying these standards.
 
 ## Standard 1: One Bounded Context — One Hexagon
 
@@ -33,7 +33,7 @@ The rule maps directly onto Nx app boundaries per [DDD Bounded Context Standards
 
 **Rationale**: Hexagonal architecture's value — replaceable adapters, testable domain core — is lost when the hexagon boundary does not coincide with the context boundary. Mixing contexts inside the hexagon means the domain core cannot be independently reasoned about, tested, or evolved.
 
-**See**: [DDD + Hexagonal Tutorials — Bounded Context Wiring](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-oop-in-the-field/beginner.md) for a worked example.
+**See**: [DDD + Hexagonal Tutorials — Bounded Context Wiring](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/cases/in-oop/beginner.md) for a worked example.
 
 ## Standard 2: Context Map Patterns Translate to Port/Adapter Patterns
 
@@ -122,7 +122,7 @@ GoodsReceiptEventPublisherPort    // Receiving context, domain event
 
 Context mapping is the strategic design decision. Port/adapter structure is the implementation decision. Without an explicit rule connecting the two, teams make the context map correctly in theory and then muddy it in code by letting contexts share adapters, merge repository implementations, or skip the translation layer. These standards close that gap.
 
-**Educational counterpart**: [DDD + Hexagonal in Practice Tutorials](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/overview.md)
+**Educational counterpart**: [Cases](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/software-architecture/cases/overview.md)
 
 ## Related Documentation
 

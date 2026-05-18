@@ -3,13 +3,13 @@ title: "Intermediate"
 weight: 10000004
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Intermediate DDD + Hexagonal in Practice guides (Guides 7–14) — Npgsql adapter seam, in-memory adapter for tests, domain event publisher port, outbox adapter, deeper Giraffe handler wiring, contract codegen, cross-context ACL, and composition root"
+description: "Intermediate Cases guides (Guides 7–14) — Npgsql adapter seam, in-memory adapter for tests, domain event publisher port, outbox adapter, deeper Giraffe handler wiring, contract codegen, cross-context ACL, and composition root"
 tags:
   [
     "ddd",
     "hexagonal-architecture",
     "f#",
-    "in-the-field",
+    "cases",
     "npgsql",
     "integration-testing",
     "domain-events",
@@ -111,10 +111,10 @@ The Npgsql stack in `procurement-platform-be` replaces raw `IDbConnection` threa
 
 ```mermaid
 flowchart LR
-    port["Application/Ports.fs\nPurchaseOrderRepository record"]:::orange
-    npgsql["Infrastructure/NpgsqlPurchaseOrderRepository.fs\nnpgsqlPurchaseOrderRepository : PurchaseOrderRepository"]:::teal
-    mem["Infrastructure/InMemoryPurchaseOrderRepository.fs\ninMemoryPurchaseOrderRepository : PurchaseOrderRepository"]:::purple
-    app["Application/SubmitPurchaseOrder.fs\nsubmitPurchaseOrder (repo: PurchaseOrderRepository)"]:::blue
+    port["App/Ports.fs\nPurchaseOrderRepository record"]:::orange
+    npgsql["Infra/NpgsqlPORepository.fs\nnpgsqlPORepository"]:::teal
+    mem["Infra/InMemoryPORepository.fs\ninMemoryPORepository"]:::purple
+    app["App/SubmitPurchaseOrder.fs\nsubmitPurchaseOrder (repo)"]:::blue
     port -->|"satisfied by"| npgsql
     port -->|"satisfied by in tests"| mem
     app -->|"calls"| port
@@ -843,10 +843,10 @@ The record-of-functions port groups all publisher operations into one injected v
 
 ```mermaid
 flowchart LR
-    port["Application/Ports.fs\nEventPublisher record"]:::orange
-    mem["Infrastructure/InMemoryEventPublisher.fs\ninMemoryPublisher : EventPublisher"]:::purple
-    outbox["Infrastructure/OutboxEventPublisher.fs\noutboxPublisher : EventPublisher"]:::teal
-    svc["Application/SubmitPurchaseOrder.fs\nsubmitPurchaseOrder (pub: EventPublisher)"]:::blue
+    port["App/Ports.fs\nEventPublisher record"]:::orange
+    mem["Infra/InMemoryEventPublisher\ninMemoryPublisher"]:::purple
+    outbox["Infra/OutboxEventPublisher\noutboxPublisher"]:::teal
+    svc["App/SubmitPurchaseOrder.fs\nsubmitPurchaseOrder (pub)"]:::blue
     port -->|"satisfied by"| mem
     port -->|"satisfied by in prod"| outbox
     svc -->|"calls"| port
@@ -1764,9 +1764,9 @@ The ACL adapter lives in `receiving`'s infrastructure layer. It imports the `pur
 ```mermaid
 flowchart LR
     purdom["purchasing\nDomain/PurchaseOrder"]:::blue
-    purport["purchasing\nApplication/PurchaseOrderRepository.FindPurchaseOrder"]:::orange
-    acl["receiving\nInfrastructure/PurchasingAcl.fs\n(ACL adapter)"]:::teal
-    recport["receiving\nApplication/PurchaseOrderSummaryPort"]:::orange
+    purport["purchasing\nApp/FindPurchaseOrder"]:::orange
+    acl["receiving\nInfra/PurchasingAcl.fs"]:::teal
+    recport["receiving\nApplication/POSummaryPort"]:::orange
     recdom["receiving\nDomain/PurchaseOrderSummary"]:::purple
     purport -->|"queried by"| acl
     purdom -->|"translated by"| acl

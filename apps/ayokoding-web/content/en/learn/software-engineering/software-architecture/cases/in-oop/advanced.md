@@ -3,14 +3,14 @@ title: "Advanced"
 weight: 10000014
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Advanced DDD + Hexagonal in Practice guides (Guides 16–27) — Testcontainers database integration test, schema migration adapter with Flyway, banking port and Spring RestClient adapter, retry and circuit-breaker with Resilience4j, observability adapter with Micrometer Tracing, domain event flow end-to-end, hexagonal anti-patterns, Kubernetes deployment topology, Micrometer + OTLP + Prometheus observability stack, failure-mode HealthIndicator wiring, Flyway at deploy time, and configuration adapter"
+description: "Advanced Cases guides (Guides 16–27) — Testcontainers database integration test, schema migration adapter with Flyway, banking port and Spring RestClient adapter, retry and circuit-breaker with Resilience4j, observability adapter with Micrometer Tracing, domain event flow end-to-end, hexagonal anti-patterns, Kubernetes deployment topology, Micrometer + OTLP + Prometheus observability stack, failure-mode HealthIndicator wiring, Flyway at deploy time, and configuration adapter"
 tags:
   [
     "ddd",
     "hexagonal-architecture",
     "java",
     "spring-boot",
-    "in-the-field",
+    "cases",
     "testcontainers",
     "flyway",
     "resilience4j",
