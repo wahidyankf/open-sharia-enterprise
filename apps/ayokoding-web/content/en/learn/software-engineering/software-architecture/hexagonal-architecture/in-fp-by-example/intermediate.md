@@ -2511,6 +2511,8 @@ const result = await submitForApproval(inMemoryApprovalRouter)(highValuePO);
 
 The composition root is the single place in the application where concrete adapters are instantiated and injected into application services. It lives in the adapter zone and is the only place that imports both the application layer and infrastructure libraries simultaneously.
 
+**Adapter wiring** (composition root instantiates each adapter):
+
 ```mermaid
 graph TD
     CR["Composition Root\nAdapters zone"]:::orange
@@ -2518,18 +2520,28 @@ graph TD
     PGS["PostgresSupplierRepo\nNpgsql-backed"]:::purple
     KAF["KafkaPublisher\nconfluent-kafka"]:::purple
     WFE["WorkflowEngineRouter\nHTTP client"]:::purple
-    SVC["issuePO service\nApplication zone"]:::teal
-    DOM["Domain\npure functions"]:::blue
 
     CR --> PGR
     CR --> PGS
     CR --> KAF
     CR --> WFE
+
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef purple fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Application wiring** (composition root also injects adapters into the application service):
+
+```mermaid
+graph TD
+    CR["Composition Root\nAdapters zone"]:::orange
+    SVC["issuePO service\nApplication zone"]:::teal
+    DOM["Domain\npure functions"]:::blue
+
     CR --> SVC
     SVC --> DOM
 
     classDef orange fill:#DE8F05,stroke:#000,color:#000
-    classDef purple fill:#CC78BC,stroke:#000,color:#fff
     classDef teal fill:#029E73,stroke:#000,color:#fff
     classDef blue fill:#0173B2,stroke:#000,color:#fff
 ```

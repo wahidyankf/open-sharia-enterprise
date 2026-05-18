@@ -2108,7 +2108,7 @@ An Entity has a unique identity that persists across state changes. Two `LineIte
 %% Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05
 graph LR
     A["Entity: LineItem"]:::blue
-    B["id: LineItemId #40;identity#41;"]:::orange
+    B["id: LineItemId (identity)"]:::orange
     C["skuCode: SkuCode #40;VO#41;"]:::teal
     D["quantity: Quantity #40;VO#41;"]:::teal
     E["unitPrice: Money #40;VO#41;"]:::teal

@@ -5440,18 +5440,18 @@ graph TD
     UC["SubmitPurchaseOrderUseCase\n(input port)"]
     VAL["validatePO\ndomain fn — pure"]
     LVL["determineApprovalLevel\ndomain fn — pure"]
-    SAVE["PurchaseOrderRepository.save\noutput port"]
+    SAVE["PORepository.save\noutput port"]
     CLK["Clock\noutput port"]
     MAP["HTTP Adapter\ntoHttpResponse"]
     RESP["HTTP 201\nHttpPoResponse"]
 
     REQ --> PARSE
-    PARSE -->|"DraftPurchaseOrder"| UC
+    PARSE -- "DraftPO" --> UC
     UC --> VAL
-    VAL -->|"ValidatedPO"| LVL
-    LVL -->|"ApprovalLevel"| SAVE
-    CLK -->|"DateTimeOffset"| SAVE
-    SAVE -->|"Ok ()"| MAP
+    VAL -- "ValidatedPO" --> LVL
+    LVL -- "ApprovalLevel" --> SAVE
+    CLK -- "DateTimeOffset" --> SAVE
+    SAVE -- "Ok ()" --> MAP
     MAP --> RESP
 
     style REQ fill:#DE8F05,stroke:#000,color:#000

@@ -859,17 +859,25 @@ Saga choreography removes the central orchestrator; instead, each service reacts
 and emits new events to trigger the next step. Services are decoupled because no service calls
 another directly, but the saga's flow is implicit across multiple event handlers.
 
+**Happy path then compensation**:
+
 ```mermaid
 graph LR
     A["OrderPlaced<br/>event"] --> B["Inventory Service<br/>reserves stock"]
     B --> C["StockReserved<br/>event"]
     C --> D["Payment Service<br/>charges card"]
-    D --> E["PaymentFailed<br/>event"]
-    E --> F["Inventory Service<br/>releases stock (compensation)"]
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
     style C fill:#0173B2,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+```
+
+```mermaid
+graph LR
+    D["Payment Service<br/>charges card"] --> E["PaymentFailed<br/>event"]
+    E --> F["Inventory Service<br/>releases stock (compensation)"]
+
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#CC78BC,stroke:#000,color:#fff
@@ -2029,8 +2037,8 @@ dependency calls, a slow third-party service starves only its own pool, not the 
 ```mermaid
 graph TD
     App["Application Thread Pool<br/>(shared — vulnerable)"]
-    BH1["Bulkhead: Payments<br/>(isolated pool, max 5 threads)"]
-    BH2["Bulkhead: Inventory<br/>(isolated pool, max 10 threads)"]
+    BH1["Bulkhead: Payments<br/>(isolated pool, 5 threads)"]
+    BH2["Bulkhead: Inventory<br/>(isolated pool, 10 threads)"]
     P["Payment Service"]
     I["Inventory Service"]
 
@@ -6323,9 +6331,11 @@ graph TD
     end
     CP["Control Plane<br/>(Istio / Linkerd)"]
 
-    PA <-->|"mTLS encrypted<br/>traffic"| PB
-    CP -->|"policy config"| PA
-    CP -->|"policy config"| PB
+    PA -- "mTLS encrypted<br/>traffic" --> PB
+    CP -- "policy config" --> PA
+    CP -- "policy config" --> PB
+    A --> PA
+    B --> PB
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style PA fill:#029E73,stroke:#000,color:#fff
@@ -7940,10 +7950,10 @@ graph TD
     MQ["Message Queue Adapter<br/>(Kafka consumer)"]
     Domain["Domain Core<br/>(business logic + ports)"]
 
-    HTTP <-->|"port: OrderService"| Domain
-    CLI <-->|"port: OrderService"| Domain
-    Domain <-->|"port: OrderRepository"| PG
-    Domain <-->|"port: EventPublisher"| MQ
+    HTTP -- "port: OrderService" --> Domain
+    CLI -- "port: OrderService" --> Domain
+    Domain -- "port: OrderRepository" --> PG
+    Domain -- "port: EventPublisher" --> MQ
 
     style HTTP fill:#0173B2,stroke:#000,color:#fff
     style CLI fill:#0173B2,stroke:#000,color:#fff

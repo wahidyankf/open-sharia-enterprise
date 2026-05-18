@@ -2840,10 +2840,10 @@ graph TD
     B["LoyaltyDiscount"]
     C["SeasonalDiscount"]
 
-    Client -->|uses| Base
-    Base -->|implemented by| A
-    Base -->|implemented by| B
-    Base -->|implemented by| C
+    Client -- "uses" --> Base
+    Base -- "implemented by" --> A
+    Base -- "implemented by" --> B
+    Base -- "implemented by" --> C
 
     style Client fill:#0173B2,stroke:#000,color:#fff
     style Base fill:#DE8F05,stroke:#000,color:#fff
@@ -5536,10 +5536,10 @@ graph TD
     Duck["Duck"]
     Penguin["Penguin"]
 
-    Eagle -->|has-a| Fly
-    Duck -->|has-a| Fly
-    Duck -->|has-a| Swim
-    Penguin -->|has-a| Swim
+    Eagle -- "has a" --> Fly
+    Duck -- "has a" --> Fly
+    Duck -- "has a" --> Swim
+    Penguin -- "has a" --> Swim
 
     style Bird fill:#CA9161,stroke:#000,color:#fff
     style Fly fill:#0173B2,stroke:#000,color:#fff

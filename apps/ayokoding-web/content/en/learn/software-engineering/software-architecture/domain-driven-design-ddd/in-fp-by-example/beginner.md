@@ -1315,7 +1315,7 @@ graph LR
     Check1{"IsNullOrWhiteSpace?"}
     Check2{"Matches req_ prefix?"}
     Ok["Ok (RequisitionId raw)\n(valid wrapper)"]
-    Err1["Error\n'RequisitionId cannot be blank'"]
+    Err1["Error\n'RequisitionId is blank'"]
     Err2["Error\n'must start with req_'"]
 
     Raw --> Check1

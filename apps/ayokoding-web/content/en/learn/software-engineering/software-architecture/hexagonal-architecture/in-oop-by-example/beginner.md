@@ -33,11 +33,13 @@ graph TD
         MONEY["Money\n#40;value object#41;"]:::blue
     end
 
-    WEB -->|"calls"| UC
-    SVC -->|"implements"| UC
-    SVC -->|"calls"| REPO
-    DB -->|"implements"| REPO
-    SVC -->|"uses"| PO
+    WEB -- "calls" --> UC
+    SVC -- "implements" --> UC
+    SVC -- "calls" --> REPO
+    DB -- "implements" --> REPO
+    SVC -- "uses" --> PO
+    PO -- "has" --> POID
+    PO -- "has" --> MONEY
 
     classDef blue fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000,color:#fff,stroke-width:2px

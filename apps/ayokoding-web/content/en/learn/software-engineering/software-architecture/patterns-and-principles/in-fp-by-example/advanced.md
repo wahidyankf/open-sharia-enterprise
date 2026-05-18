@@ -732,17 +732,27 @@ Saga choreography replaces the central orchestrator with reactive functions: eac
 subscribes to events and publishes new ones. An event bus is a dispatch table mapping event type
 strings to lists of handler functions registered at startup.
 
+**Happy path**:
+
 ```mermaid
 graph LR
     A["OrderPlaced<br/>event"] --> B["Inventory<br/>reserves stock"]
     B --> C["StockReserved<br/>event"]
     C --> D["Payment<br/>charges card"]
-    D --> E["PaymentFailed<br/>event"]
-    E --> F["Inventory<br/>releases stock"]
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
     style C fill:#0173B2,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+```
+
+**Compensation path** (continues from `Payment`):
+
+```mermaid
+graph LR
+    D["Payment<br/>charges card"] --> E["PaymentFailed<br/>event"]
+    E --> F["Inventory<br/>releases stock"]
+
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#CC78BC,stroke:#000,color:#fff
@@ -6191,10 +6201,10 @@ graph TD
     MQ["Event Adapter<br/>(function)"]
     Domain["Domain Core<br/>(pure functions + port types)"]
 
-    HTTP <-->|"OrderService port"| Domain
-    CLI  <-->|"OrderService port"| Domain
-    Domain <-->|"OrderRepo port"| PG
-    Domain <-->|"EventPublisher port"| MQ
+    HTTP -- "OrderService port" --> Domain
+    CLI  -- "OrderService port" --> Domain
+    Domain -- "OrderRepo port" --> PG
+    Domain -- "EventPub port" --> MQ
 
     style HTTP fill:#0173B2,stroke:#000,color:#fff
     style CLI fill:#0173B2,stroke:#000,color:#fff

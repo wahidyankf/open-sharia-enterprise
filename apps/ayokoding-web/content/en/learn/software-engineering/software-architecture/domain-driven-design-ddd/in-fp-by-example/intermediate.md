@@ -29,21 +29,32 @@ This intermediate section builds on the type vocabulary from the beginner sectio
 
 The `>>` operator composes two functions into one. It is the mathematical composition operator: `(f >> g) x = g(f(x))`. In procurement workflows, composition lets you assemble a pipeline from individually testable steps.
 
+**Pipeline stages**:
+
 ```mermaid
 graph LR
     In["'  req-f4c2  '\n(raw input)"]
     T["trimInput\nstring→string"]
     U["toUpperCase\nstring→string"]
+
+    In --> T --> U
+
+    style In fill:#DE8F05,stroke:#000,color:#000
+    style T fill:#0173B2,stroke:#000,color:#fff
+    style U fill:#0173B2,stroke:#000,color:#fff
+```
+
+```mermaid
+graph LR
+    U["toUpperCase\nstring→string"]
     P["addPrefix\nstring→string"]
     Out["'REQ_F4C2'\n(normalised)"]
 
-    In --> T --> U --> P --> Out
+    U --> P --> Out
 
-    style In fill:#DE8F05,stroke:#000,color:#000
-    style Out fill:#029E73,stroke:#000,color:#fff
-    style T fill:#0173B2,stroke:#000,color:#fff
     style U fill:#0173B2,stroke:#000,color:#fff
     style P fill:#0173B2,stroke:#000,color:#fff
+    style Out fill:#029E73,stroke:#000,color:#fff
 ```
 
 {{< tabs items="F#,Clojure,TypeScript" >}}
@@ -1037,26 +1048,39 @@ if (!err2.ok) console.log("Error 2:", err2.error);
 
 `Result.bind` chains two fallible steps: if the first step succeeds, it passes the `Ok` value into the second step; if the first fails, the `Error` propagates without running the second step. This is the foundation of Railway-Oriented Programming.
 
+**Happy track** (Input flows through three Result-returning steps to `Ok ApprovalLevel`):
+
 ```mermaid
 graph LR
-    Input["Input\n(raw id)"]
     S1["findRequisition\nResult<Req, Err>"]
     S2["checkBudget\nResult<unit, Err>"]
     S3["deriveLevel\nResult<Level, Err>"]
-    OkOut["Ok ApprovalLevel\n(all steps succeeded)"]
-    ErrOut["Error ProcurementError\n(first failure short-circuits)"]
+    OkOut["Ok ApprovalLevel"]
 
-    Input --> S1
-    S1 -- "Ok req" --> S2
-    S2 -- "Ok ()" --> S3
-    S3 -- "Ok level" --> OkOut
+    S1 -- "Ok" --> S2
+    S2 -- "Ok" --> S3
+    S3 -- "Ok" --> OkOut
+
+    style OkOut fill:#029E73,stroke:#000,color:#fff
+    style S1 fill:#0173B2,stroke:#000,color:#fff
+    style S2 fill:#0173B2,stroke:#000,color:#fff
+    style S3 fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Error track** (first failure short-circuits):
+
+```mermaid
+graph LR
+    S1["findRequisition"]
+    S2["checkBudget"]
+    S3["deriveLevel"]
+    ErrOut["Error\nProcurementError"]
+
     S1 -- "Error" --> ErrOut
     S2 -- "Error" --> ErrOut
     S3 -- "Error" --> ErrOut
 
-    style OkOut fill:#029E73,stroke:#000,color:#fff
     style ErrOut fill:#CC78BC,stroke:#000,color:#000
-    style Input fill:#DE8F05,stroke:#000,color:#000
     style S1 fill:#0173B2,stroke:#000,color:#fff
     style S2 fill:#0173B2,stroke:#000,color:#fff
     style S3 fill:#0173B2,stroke:#000,color:#fff
@@ -2168,9 +2192,9 @@ A comprehensive `ProcurementError` discriminated union names every failure mode 
 graph TD
     E["PurchasingError DU"]
     R["Requisition errors\nNotFound / AlreadySubmitted\nHasNoLines"]
-    P["PO errors\nPONotFound / NotInApprovedState\nBudgetExceeded"]
+    P["PO errors\n(NotFound / NotApproved /\nBudgetExceeded)"]
     S["Supplier errors\nNotFound / NotEligible"]
-    I["Infrastructure errors\nDatabaseTimeout / EventPublishFailed"]
+    I["Infra errors\nDBTimeout / EventPubFailed"]
 
     E --> R
     E --> P
@@ -2427,25 +2451,41 @@ console.log(describeDomainError(err2), "->", httpStatusFor(err2));
 
 The `PurchaseOrder` is the workhorse aggregate of the purchasing context. Its state machine governs the full lifecycle from `Draft` through `Issued`, `Received`, `Invoiced`, and `Paid` to `Closed`, with off-ramps to `Cancelled` and `Disputed`.
 
+**Approval flow** (forward path from Draft to Issued):
+
 ```mermaid
 graph LR
     D["Draft"]
     AA["AwaitingApproval"]
     AP["Approved"]
     IS["Issued"]
-    CA["Cancelled"]
-    DI["Disputed"]
 
     D  -- "submit"   --> AA
     AA -- "approve"  --> AP
-    AA -- "reject"   --> CA
     AP -- "issue"    --> IS
+
+    style D  fill:#DE8F05,stroke:#000,color:#000
+    style AA fill:#0173B2,stroke:#000,color:#fff
+    style AP fill:#029E73,stroke:#000,color:#fff
+    style IS fill:#029E73,stroke:#000,color:#fff
+```
+
+**Off-ramps and disputes** (Cancelled / Disputed states from various points):
+
+```mermaid
+graph LR
+    AA["AwaitingApproval"]
+    AP["Approved"]
+    IS["Issued"]
+    CA["Cancelled"]
+    DI["Disputed"]
+
+    AA -- "reject"   --> CA
     IS -- "cancel"   --> CA
     IS -- "dispute"  --> DI
     DI -- "resolve-approve" --> AP
     DI -- "resolve-cancel"  --> CA
 
-    style D  fill:#DE8F05,stroke:#000,color:#000
     style AA fill:#0173B2,stroke:#000,color:#fff
     style AP fill:#029E73,stroke:#000,color:#fff
     style IS fill:#029E73,stroke:#000,color:#fff
@@ -4104,10 +4144,10 @@ The `ApprovePO` workflow needs access to the supplier repository (to check eligi
 
 ```mermaid
 graph TD
-    Deps["Injected Dependencies\nLoadPO · CheckSupplier · RecordApproval"]
+    Deps["Injected Deps\nLoadPO · CheckSupplier ·\nRecordApproval"]
     Cmd["ApprovePOCommand\n(runtime input)"]
     WF["approvePOWorkflow\n(pure function)"]
-    Out["Async<Result<ApprovedPO, ApprovalError>>"]
+    Out["Async&lt;Result&lt;ApprovedPO,\nApprovalError&gt;&gt;"]
 
     Deps -->|"partial application"| WF
     Cmd -->|"final argument"| WF
@@ -5752,7 +5792,7 @@ The functional core of the procurement domain is pure — no I/O, no side effect
 ```mermaid
 graph TD
     Shell["Imperative Shell\nload / save / notify (I/O)"]
-    Core["Functional Core\ncanApprove / applyApproval (pure)"]
+    Core["Functional Core\ncanApprove / applyApproval"]
     Shell -->|"passes DraftPO"| Core
     Core -->|"returns Result<unit, string> + ApprovedPO"| Shell
 

@@ -30,20 +30,32 @@ This advanced section adds the `receiving` and `invoicing` bounded contexts to t
 
 Domain types never directly touch serialization libraries. JSON serialization uses DTO types as the sole wire format. The boundary has four steps: deserialize JSON to DTO, validate DTO to domain, compute, serialize domain back to DTO, then to JSON.
 
+**Inbound boundary** (JSON to validated domain):
+
 ```mermaid
 graph LR
     JSON_In["JSON string\n(HTTP request body)"]
     DTO_In["CreatePODto\n(deserialized DTO)"]
     Domain["PurchaseOrderAgg\n(validated domain type)"]
-    DTO_Out["PoResponseDto\n(serialized DTO)"]
-    JSON_Out["JSON string\n(HTTP response body)"]
 
     JSON_In -- "JsonSerializer.Deserialize" --> DTO_In
     DTO_In -- "fromDto (validates)" --> Domain
+
+    style DTO_In fill:#DE8F05,stroke:#000,color:#000
+    style Domain fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Outbound boundary** (domain to JSON):
+
+```mermaid
+graph LR
+    Domain["PurchaseOrderAgg\n(validated domain type)"]
+    DTO_Out["PoResponseDto\n(serialized DTO)"]
+    JSON_Out["JSON string\n(HTTP response body)"]
+
     Domain -- "toDto (infallible)" --> DTO_Out
     DTO_Out -- "JsonSerializer.Serialize" --> JSON_Out
 
-    style DTO_In fill:#DE8F05,stroke:#000,color:#000
     style Domain fill:#0173B2,stroke:#000,color:#fff
     style DTO_Out fill:#DE8F05,stroke:#000,color:#000
 ```
@@ -2460,7 +2472,7 @@ In functional F#, a repository is modelled as a set of function-type aliases —
 
 ```mermaid
 graph TD
-    Port["Port (type alias)\nLoadPO : PurchaseOrderId → Async<PoData option>\nSavePO : PoData → Async<unit>"]
+    Port["Port (type alias)\nLoadPO: POId → Async<Data opt>\nSavePO: Data → Async<unit>"]
     Prod["Production adapter\nNpgsql query"]
     Test["Test adapter\nIn-memory map"]
     WF["approvePOWorkflow\n(only sees the type alias)"]
@@ -4560,33 +4572,58 @@ if (typeof contract !== "string") {
 
 This example documents the full integration topology of the procurement platform as a runtime diagram — which context publishes which events and which context consumes them.
 
+**Forward flow** (purchase to payment):
+
 ```mermaid
 graph TD
     P["purchasing\nPurchaseRequisition\nPurchaseOrder"]
-    S["supplier\nSupplier"]
     R["receiving\nGoodsReceiptNote"]
     I["invoicing\nInvoice"]
     PA["payments\nPayment"]
-    MF["murabaha-finance\nMurabahaContract (optional)"]
 
     P -- "PurchaseOrderIssued" --> R
-    P -- "PurchaseOrderIssued" --> S
-    P -- "PurchaseOrderCancelled" --> S
-    P -- "RequisitionApproved" --> P
-    S -- "SupplierApproved" --> P
-    S -- "SupplierSuspended" --> P
     R -- "GoodsReceived" --> I
     R -- "GoodsReceiptDiscrepancyDetected" --> I
     I -- "InvoiceMatched" --> PA
+
+    style P  fill:#0173B2,stroke:#000,color:#fff
+    style R  fill:#DE8F05,stroke:#000,color:#000
+    style I  fill:#CC78BC,stroke:#000,color:#000
+    style PA fill:#CA9161,stroke:#000,color:#000
+```
+
+**Supplier lifecycle loop**:
+
+```mermaid
+graph TD
+    P["purchasing"]
+    S["supplier\nSupplier"]
+    I["invoicing"]
+
+    P -- "PurchaseOrderIssued / Cancelled" --> S
+    S -- "SupplierApproved / Suspended" --> P
     I -- "InvoiceDisputed" --> S
+
+    style P  fill:#0173B2,stroke:#000,color:#fff
+    style S  fill:#029E73,stroke:#000,color:#fff
+    style I  fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Payment and finance integration**:
+
+```mermaid
+graph TD
+    P["purchasing"]
+    S["supplier"]
+    PA["payments"]
+    MF["murabaha-finance\nMurabahaContract (optional)"]
+
     PA -- "PaymentDisbursed" --> P
     PA -- "PaymentDisbursed" --> S
     MF -- "MurabahaContractSigned" --> P
 
     style P  fill:#0173B2,stroke:#000,color:#fff
     style S  fill:#029E73,stroke:#000,color:#fff
-    style R  fill:#DE8F05,stroke:#000,color:#000
-    style I  fill:#CC78BC,stroke:#000,color:#000
     style PA fill:#CA9161,stroke:#000,color:#000
     style MF fill:#808080,stroke:#000,color:#fff
 ```

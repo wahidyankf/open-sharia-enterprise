@@ -19,17 +19,15 @@ An aggregate root is the single entry point for a cluster of related objects. Al
 %% Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph TD
     A["PurchaseOrder (Aggregate Root)"]:::blue
-    B["PurchaseOrderId"]:::teal
-    C["PurchaseOrderLine[]"]:::teal
-    D["Money (total)"]:::teal
-    E["SupplierId"]:::teal
+    VOs["Value Objects"]:::teal
     F["PurchaseOrderStatus"]:::orange
 
-    A --> B
-    A --> C
-    A --> D
-    A --> E
+    A --> VOs
     A --> F
+    VOs --> B["PurchaseOrderId"]:::teal
+    VOs --> C["PurchaseOrderLine[]"]:::teal
+    VOs --> D["Money (total)"]:::teal
+    VOs --> E["SupplierId"]:::teal
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -6706,7 +6704,7 @@ graph LR
     A["AwaitingApprovalSpec"]:::blue
     B["HighValueSpec"]:::orange
     C["combined.and()"]:::teal
-    D["PurchaseOrderRepository.findAll(combined)"]:::purple
+    D["PORepository.findAll(combined)"]:::purple
 
     A --> C
     B --> C
