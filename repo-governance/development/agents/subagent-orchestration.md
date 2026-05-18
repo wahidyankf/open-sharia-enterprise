@@ -44,7 +44,7 @@ The following Layer 3 development practice also informs this document:
 
 When a main agent uses the Agent tool to spawn multiple subagents in background (`run_in_background: true`), it operates with incomplete information about each subagent's progress. Two failure modes are common:
 
-1. **Rate-limit collisions**: Each subagent has its own context window and tool-call stream. Running too many simultaneously saturates the Anthropic per-minute API quota, causing retries, degraded throughput, or hard failures.
+1. **Rate-limit collisions**: Each subagent has its own context window and tool-call stream. Running too many simultaneously saturates the the model vendor per-minute API quota, causing retries, degraded throughput, or hard failures.
 
 2. **Stuck agents**: A subagent occasionally stalls — usually because its output-token budget is exhausted mid-plan. The agent "completes" but its output file is sparse or ends with a planning sentence (e.g., "Now writing section...") rather than finished content. Without polling, the main agent waits indefinitely.
 
@@ -76,7 +76,7 @@ The main agent MUST NOT have more than **3 subagents active simultaneously** at 
 
 **Applies to**: All Agent-tool spawns, whether background or foreground. Both content-producing makers (e.g., `apps-ayokoding-web-by-example-maker`) and meta-agents (e.g., `repo-rules-maker`) count toward the cap. Total simultaneous Agent-tool invocations is the metric, not agent type.
 
-**Rationale**: Each subagent operates its own independent tool-call stream against the Claude API. Running more than 3 concurrently risks saturating the per-minute request quota at the vendor (Anthropic), producing rate-limit errors that cascade and slow the entire batch. Three concurrent agents deliver adequate throughput while staying safely below observed saturation thresholds.
+**Rationale**: Each subagent operates its own independent tool-call stream against the Claude API. Running more than 3 concurrently risks saturating the per-minute request quota at the model vendor, producing rate-limit errors that cascade and slow the entire batch. Three concurrent agents deliver adequate throughput while staying safely below observed saturation thresholds.
 
 **Sequencing rule**: Launch a new subagent only after a prior one completes (via task-notification message) or after calling `TaskStop` on a stuck agent. Do not pre-queue more than 3 pending launches at once.
 
