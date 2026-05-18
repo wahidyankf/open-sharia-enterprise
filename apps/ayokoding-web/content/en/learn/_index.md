@@ -20,7 +20,7 @@ weight: 10
   - [Platform Linux](/en/learn/software-engineering/platform-linux)
   - [Platform Web](/en/learn/software-engineering/platform-web)
   - [Platform Mobile](/en/learn/software-engineering/platform-mobile)
-  - [Architecture](/en/learn/software-engineering/software-architecture)
+  - [Software Architecture](/en/learn/software-engineering/software-architecture)
   - [Development](/en/learn/software-engineering/development)
 - [Information Security](/en/learn/information-security)
   - [Overview](/en/learn/information-security/overview)

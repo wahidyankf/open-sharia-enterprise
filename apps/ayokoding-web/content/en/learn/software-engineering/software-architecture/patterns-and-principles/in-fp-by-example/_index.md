@@ -1,5 +1,5 @@
 ---
-title: "By Example in FP"
+title: "Patterns and Principles in FP"
 weight: 10000002
 date: 2026-05-17T00:00:00+07:00
 draft: false

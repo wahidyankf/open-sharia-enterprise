@@ -1,15 +1,15 @@
 ---
-title: "Architecture"
+title: "Software Architecture"
 weight: 1000000
 date: 2026-01-30T00:00:00+07:00
 draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/software-architecture/overview)
-- [By Example](/en/learn/software-engineering/software-architecture/patterns-and-principles)
-  - [By Example in OOP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example)
-  - [By Example in FP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example)
-- [C4 Architecture Model](/en/learn/software-engineering/software-architecture/c4-model)
+- [Patterns and Principles](/en/learn/software-engineering/software-architecture/patterns-and-principles)
+  - [Patterns and Principles in OOP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example)
+  - [Patterns and Principles in FP](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example)
+- [C4 Model](/en/learn/software-engineering/software-architecture/c4-model)
   - [Overview](/en/learn/software-engineering/software-architecture/c4-model/overview)
   - [By Example](/en/learn/software-engineering/software-architecture/c4-model/by-example)
 - [Domain-Driven Design (DDD)](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd)
@@ -26,5 +26,5 @@ draft: false
   - [DDD + Hexagonal in Practice — Java in the Field](/en/learn/software-engineering/software-architecture/ddd-hexagonal-in-practice/in-oop-in-the-field)
 - [Finite State Machine (FSM)](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm)
   - [Overview](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/overview)
-  - [By Example](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example)
+  - [FSM By Example in OOP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example)
   - [FSM By Example in FP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example)
