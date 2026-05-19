@@ -248,8 +248,8 @@ The C4 Model works with **any technology stack**:
 
 **Community:**
 
-- [C4 Model Examples](https://github.com/structurizr/examples) - Real-world C4 diagram examples
-- [Awesome C4](https://github.com/mariovtech/awesome-c4-model) - Curated C4 resources
+- [Structurizr DSL Cookbook](https://docs.structurizr.com/dsl/cookbook/) - Official C4 diagram examples and recipes
+- [C4 Model Tooling](https://c4model.com/tooling) - Official curated list of C4 tools and resources
 
 ---
 

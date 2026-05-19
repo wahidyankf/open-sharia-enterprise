@@ -9111,7 +9111,7 @@ main = do
 
 ### Example 87: Free Monads / Tagless Final (Embedded DSLs)
 
-> **Paradigm Note**: The FP-native form of "Example 80: Interpreter Pattern". Norvig (1996) classifies Interpreter under "Macros" — language-level, not pattern-level. Free monads (Swierstra, [Data Types à la Carte](https://www.cs.ru.nl/~W.Swierstra/Publications/DataTypesALaCarte.pdf), 2008) and tagless final (Carette, Kiselyov, Shan, 2009) are the FP idioms.
+> **Paradigm Note**: The FP-native form of "Example 80: Interpreter Pattern". Norvig (1996) classifies Interpreter under "Macros" — language-level, not pattern-level. Free monads (Swierstra, [Data Types à la Carte](https://www.cambridge.org/core/journals/journal-of-functional-programming/article/data-types-a-la-carte/14416CB20C4637164EA9F77097909409), 2008) and tagless final (Carette, Kiselyov, Shan, 2009) are the FP idioms.
 
 A free monad represents a program as a _data structure_ — a tree of operations — separate from the interpreter that runs it. Multiple interpreters (production, test, dry-run, audit-log) consume the same program. Tagless final encodes the same idea with type classes / records of operations instead of a constructor tree.
 
