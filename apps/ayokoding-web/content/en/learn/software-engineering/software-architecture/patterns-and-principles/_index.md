@@ -5,7 +5,7 @@ date: 2026-03-20T00:00:00+07:00
 draft: false
 type: docs
 layout: list
-description: "Learn software architecture through 85 heavily annotated examples covering patterns, principles, styles, trade-offs, and real-world architectural decisions (95% coverage), in paradigm-specific variants"
+description: "Learn software architecture through 93 heavily annotated examples (85 canonical + 5 FP-native extras + 3 OOP-native extras) covering patterns, principles, styles, trade-offs, and real-world architectural decisions (95% coverage), in paradigm-specific variants with explicit paradigm-fit framing"
 ---
 
 - [Overview](/en/learn/software-engineering/software-architecture/patterns-and-principles/overview)
