@@ -46,6 +46,7 @@ These standards define **HOW to execute development workflows**, covering the th
 - [Native-First Toolchain Management](./native-first-toolchain.md) - Architectural decision to use native package managers and `rhino-cli doctor` instead of Terraform, Ansible, or Docker Dev Containers for development environment setup
 - [Test-Driven Development Convention](./test-driven-development.md) - Mandates TDD (Red→Green→Refactor) as the required practice for all code changes; defines TDD across all test levels (unit, integration, E2E), plan-checker enforcement of TDD-shaped delivery checklist items, and the chain from Gherkin acceptance criteria to first failing test
 - [CI Monitoring Convention](./ci-monitoring.md) - Standards for monitoring GitHub Actions CI runs without exhausting the GitHub API rate limit — required tooling, poll intervals, trigger discipline, and recovery procedures
+- [Git Identity From Global Config Convention](./git-identity-from-global-config.md) - Prohibits `[user]` overrides in any subrepo's `.git/config`; git author identity must come exclusively from the developer's global `~/.gitconfig`. Enforced by `scripts/git-identity-check.sh` invoked as the first step of the Husky pre-commit hook
 
 ## Companion Documents
 
