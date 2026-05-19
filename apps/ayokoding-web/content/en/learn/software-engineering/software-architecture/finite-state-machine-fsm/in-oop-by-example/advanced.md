@@ -343,13 +343,13 @@ interface Supplier {
 type SupplierResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
 
 // => Transition table: only BLACKLISTED is absent (terminal)
-const SUPPLIER_TRANSITIONS: Readonly<Partial<Record<SupplierState, Partial<Record<SupplierEvent, SupplierState>>>>> = {
+const SUPPLIER_TRANSITIONS: Readonly = {
   PENDING: { APPROVE: "APPROVED", BLACKLIST: "BLACKLISTED" },
   APPROVED: { SUSPEND: "SUSPENDED", BLACKLIST: "BLACKLISTED" },
   SUSPENDED: { REINSTATE: "APPROVED", BLACKLIST: "BLACKLISTED" },
 } as const;
 
-function transitionSupplier(sup: Supplier, event: SupplierEvent): SupplierResult<Supplier> {
+function transitionSupplier(sup: Supplier, event: SupplierEvent): SupplierResult {
   const next = SUPPLIER_TRANSITIONS[sup.state]?.[event];
   if (next === undefined) return { kind: "err", error: `${sup.state} --${event}--> (forbidden)` };
   return { kind: "ok", value: { ...sup, state: next } };
@@ -598,7 +598,7 @@ interface BlacklistResult {
   readonly affectedPOIds: readonly string[];
 }
 
-function blacklistSupplier(sup: Supplier, openPOIds: readonly string[]): SupplierResult<BlacklistResult> {
+function blacklistSupplier(sup: Supplier, openPOIds: readonly string[]): SupplierResult {
   if (sup.state === "BLACKLISTED") return { kind: "err", error: `Supplier ${sup.id} is already blacklisted` };
   const r = transitionSupplier(sup, "BLACKLIST");
   if (r.kind === "err") return { kind: "err", error: r.error };
@@ -862,7 +862,7 @@ function canApproveSupplier(app: SupplierApplication): readonly string[] {
   return errors;
 }
 
-function approveSupplier(sup: Supplier, app: SupplierApplication): SupplierResult<Supplier> {
+function approveSupplier(sup: Supplier, app: SupplierApplication): SupplierResult {
   if (sup.state !== "PENDING") return { kind: "err", error: `Supplier ${sup.id} is not in PENDING state` };
   const errors = canApproveSupplier(app);
   if (errors.length > 0) return { kind: "err", error: `Approval blocked: ${errors.join("; ")}` };
@@ -1515,7 +1515,7 @@ interface SupplierWithHistory {
   readonly historyState: HierarchicalState | null; // => null if never suspended
 }
 
-function suspendWithHistory(sup: SupplierWithHistory): SupplierResult<SupplierWithHistory> {
+function suspendWithHistory(sup: SupplierWithHistory): SupplierResult {
   if (!isApproved(sup.state))
     return { kind: "err", error: `Cannot suspend: supplier is ${sup.state.kind}, not Approved` };
   return {
@@ -1525,7 +1525,7 @@ function suspendWithHistory(sup: SupplierWithHistory): SupplierResult<SupplierWi
   };
 }
 
-function reinstateWithHistory(sup: SupplierWithHistory): SupplierResult<SupplierWithHistory> {
+function reinstateWithHistory(sup: SupplierWithHistory): SupplierResult {
   if (sup.state.kind !== "Suspended") return { kind: "err", error: `Cannot reinstate: supplier is ${sup.state.kind}` };
   const restored = sup.historyState ?? { kind: "ApprovedStandard" as const };
   // => Null coalescing: restore history or default to Standard
@@ -1831,7 +1831,7 @@ interface SupRecord {
 }
 
 // => Transition table keyed by enum-equivalent string literals
-const SUP_TABLE: Readonly<Partial<Record<SupState, Partial<Record<SupEvent, SupState>>>>> = {
+const SUP_TABLE: Readonly = {
   PENDING: { APPROVE: "APPROVED", BLACKLIST: "BLACKLISTED" },
   APPROVED: { SUSPEND: "SUSPENDED", BLACKLIST: "BLACKLISTED" },
   SUSPENDED: { REINSTATE: "APPROVED", BLACKLIST: "BLACKLISTED" },
@@ -1863,7 +1863,7 @@ console.log(noReinstate === undefined); // => Output: true (BLACKLISTED is termi
 
 **Key Takeaway**: Enum-keyed maps avoid magic strings entirely — the transition table keys are enum members, so typos are caught at compile time rather than at runtime.
 
-**Why It Matters**: Dictionaries with string keys (`{"approved": {"suspend": "suspended"}}`) are common but fragile: `"APPROVED"` vs `"approved"` silently misses the key. Enum keys fail immediately at compile time if an undefined member is used — the same safety guarantee across Java, Kotlin, and C#.
+**Why It Matters**: Dictionaries with string keys (`{"approved": {"suspend": "suspended"}}`) are common but fragile: `"APPROVED"` vs `"approved"` silently misses the key. Each language enforces this structurally: enum-keyed maps in Java, Kotlin, and C# reject undefined members at compile time; TypeScript's string literal union type rejects any string outside the declared set at the type-check boundary — the same compile-time safety guarantee regardless of the mechanism.
 
 ---
 
@@ -2128,7 +2128,7 @@ interface BlacklistCascade {
 
 const TERMINAL_PO_STATES = new Set(["Closed", "Cancelled", "Paid"]);
 
-function computeBlacklistCascade(sup: SupRecord, openPOs: readonly OpenPO[]): SupplierResult<BlacklistCascade> {
+function computeBlacklistCascade(sup: SupRecord, openPOs: readonly OpenPO[]): SupplierResult {
   const r = supApply(sup, "BLACKLIST");
   if (r === undefined) return { kind: "err", error: `${sup.state} --BLACKLIST--> (forbidden)` };
   const supplierPOs = openPOs.filter((po) => po.supplierId === sup.id);
@@ -2526,14 +2526,14 @@ interface Payment {
 
 type PaymentResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
 
-const PAYMENT_TRANSITIONS: Readonly<Partial<Record<PaymentState, Partial<Record<PaymentEvent, PaymentState>>>>> = {
+const PAYMENT_TRANSITIONS: Readonly = {
   SCHEDULED: { DISBURSE: "DISBURSED", REVERSE: "REVERSED" },
   DISBURSED: { REMIT: "REMITTED", FAIL: "FAILED", REVERSE: "REVERSED" },
   FAILED: { RETRY: "SCHEDULED" },
   // => REMITTED, REVERSED: absent — terminal states, no valid outgoing events
 } as const;
 
-function paymentApply(pmt: Payment, event: PaymentEvent): PaymentResult<Payment> {
+function paymentApply(pmt: Payment, event: PaymentEvent): PaymentResult {
   const next = PAYMENT_TRANSITIONS[pmt.state]?.[event];
   if (next === undefined) return { kind: "err", error: `${pmt.state} --${event}--> (forbidden)` };
   return { kind: "ok", value: { ...pmt, state: next } };
@@ -2798,7 +2798,7 @@ function canRetry(pmt: PaymentWithRetries): boolean {
   return pmt.retryCount < pmt.maxRetries;
 }
 
-function retryPayment(pmt: PaymentWithRetries): PaymentResult<PaymentWithRetries> {
+function retryPayment(pmt: PaymentWithRetries): PaymentResult {
   if (pmt.state !== "FAILED") return { kind: "err", error: `Cannot retry payment in state ${pmt.state}` };
   if (!canRetry(pmt))
     return {
@@ -3440,7 +3440,7 @@ function serialisePayment(pmt: PaymentWithRetries): PaymentSnapshot {
   // => All fields are primitives: safe for JSON, database, or message bus
 }
 
-function deserialisePayment(snap: PaymentSnapshot): PaymentResult<PaymentWithRetries> {
+function deserialisePayment(snap: PaymentSnapshot): PaymentResult {
   const VALID_STATES = new Set<PaymentState>(["SCHEDULED", "DISBURSED", "REMITTED", "FAILED", "REVERSED"]);
   if (!VALID_STATES.has(snap.state as PaymentState))
     return { kind: "err", error: `Unknown payment state in snapshot: '${snap.state}'` };
@@ -3685,7 +3685,7 @@ interface StoredPaymentEvent {
   readonly timestamp: string; // => ISO-8601 wall-clock time
 }
 
-function rebuildPayment(initial: Payment, events: readonly StoredPaymentEvent[]): PaymentResult<Payment> {
+function rebuildPayment(initial: Payment, events: readonly StoredPaymentEvent[]): PaymentResult {
   let current = initial;
   for (const stored of events) {
     const r = paymentApply(current, stored.event);
@@ -4324,7 +4324,7 @@ interface CoverageReport {
   readonly extra: readonly string[];
 }
 
-function coverageCheck(spec: MachineSpec, implementedStateNames: ReadonlySet<string>): CoverageReport {
+function coverageCheck(spec: MachineSpec, implementedStateNames: ReadonlySet): CoverageReport {
   const covered = spec.expectedStates.filter((s) => implementedStateNames.has(s));
   const missing = spec.expectedStates.filter((s) => !implementedStateNames.has(s));
   const extra = [...implementedStateNames].filter((s) => !spec.expectedStates.includes(s));
@@ -4796,7 +4796,7 @@ interface MurabahaContract {
 }
 type MurabahaResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
 
-const MURABAHA_TRANSITIONS: Readonly<Partial<Record<MurabahaState, Partial<Record<MurabahaEvent, MurabahaState>>>>> = {
+const MURABAHA_TRANSITIONS: Readonly = {
   QUOTED: { ACQUIRE_ASSET: "ASSET_ACQUIRED" },
   ASSET_ACQUIRED: { SIGN: "SIGNED" },
   SIGNED: { FIRST_INSTALLMENT_DUE: "INSTALLMENT_PENDING" },
@@ -4810,7 +4810,7 @@ function validateMarkup(basisPoints: number): string | undefined {
   return undefined;
 }
 
-function applyMurabaha(contract: MurabahaContract, event: MurabahaEvent): MurabahaResult<MurabahaContract> {
+function applyMurabaha(contract: MurabahaContract, event: MurabahaEvent): MurabahaResult {
   const next = MURABAHA_TRANSITIONS[contract.state]?.[event];
   if (next === undefined) return { kind: "err", error: `${contract.state} --${event}--> (forbidden)` };
   return { kind: "ok", value: { ...contract, state: next } };
@@ -5061,7 +5061,7 @@ interface MurabahaContractWithPayments extends MurabahaContract {
   readonly installmentAmount: number;
 }
 
-function payInstallment(c: MurabahaContractWithPayments): MurabahaResult<MurabahaContractWithPayments> {
+function payInstallment(c: MurabahaContractWithPayments): MurabahaResult {
   if (c.state !== "INSTALLMENT_PENDING") return { kind: "err", error: `Cannot pay installment in state ${c.state}` };
   const newCount = c.installmentsPaid + 1;
   if (newCount >= c.totalInstallments)
@@ -5297,7 +5297,7 @@ function paymentPath(po: FinancedPO): "murabaha" | "conventional" {
   return po.murabahaContractId !== null ? "murabaha" : "conventional";
 }
 
-function advancePOToPaid(po: FinancedPO, murabahaState: MurabahaState | null): MurabahaResult<FinancedPO> {
+function advancePOToPaid(po: FinancedPO, murabahaState: MurabahaState | null): MurabahaResult {
   if (paymentPath(po) === "murabaha") {
     if (murabahaState !== "SETTLED")
       return {
@@ -5542,7 +5542,7 @@ class PaymentActor {
     this.state = initialPayment;
   }
 
-  receive(event: PaymentEvent, replyTo: (r: PaymentResult<Payment>) => void): void {
+  receive(event: PaymentEvent, replyTo: (r: PaymentResult) => void): void {
     const r = paymentApply(this.state, event);
     if (r.kind === "ok") this.state = { ...this.state, state: r.value.state };
     // => Update only the state field; retryCount/maxRetries are preserved
@@ -5800,10 +5800,10 @@ interface Versioned<T> {
 }
 
 function updateVersioned<T>(
-  stored: Versioned<T>,
-  expected: Versioned<T>,
-  updater: (data: T) => PaymentResult<T>,
-): PaymentResult<Versioned<T>> {
+  stored: Versioned,
+  expected: Versioned,
+  updater: (data: T) => PaymentResult,
+): PaymentResult {
   if (stored.version !== expected.version)
     return {
       kind: "err",
@@ -5820,18 +5820,18 @@ interface SimplePO {
   readonly state: string;
 }
 
-const storedPO: Versioned<SimplePO> = {
+const storedPO: Versioned = {
   data: { id: "po_conc_01", totalAmount: 500, state: "AwaitingApproval" },
   version: 1,
 };
 const approver2 = storedPO; // => Loads at version 1
 
-const storedAfterFirst: Versioned<SimplePO> = { data: { ...storedPO.data, state: "Approved" }, version: 2 };
+const storedAfterFirst: Versioned = { data: { ...storedPO.data, state: "Approved" }, version: 2 };
 const r2 = updateVersioned(storedAfterFirst, approver2, (po) => ({ kind: "ok", value: { ...po, state: "Approved" } }));
 if (r2.kind === "err") console.log(r2.error);
 // => Concurrency conflict: expected version 1, found 2
 
-const reloaded: Versioned<SimplePO> = { data: storedAfterFirst.data, version: 2 };
+const reloaded: Versioned = { data: storedAfterFirst.data, version: 2 };
 const r3 = updateVersioned(storedAfterFirst, reloaded, (po) => ({ kind: "ok", value: { ...po, state: "Approved" } }));
 if (r3.kind === "ok") console.log(`Resolved at version ${r3.value.version}`);
 // => Resolved at version 3
@@ -6107,13 +6107,13 @@ else if (sagaResult is Err<IReadOnlyList<object>> sagaErr)
 // => TypeScript: saga step with forward action and compensating rollback
 interface SagaStep<T> {
   readonly name: string;
-  readonly execute: () => PaymentResult<T>;
+  readonly execute: () => PaymentResult;
   readonly compensate: () => void;
 }
 
-function runSaga<T>(...steps: Array<SagaStep<T>>): PaymentResult<readonly T[]> {
+function runSaga<T>(...steps: Array): PaymentResult {
   const results: T[] = [];
-  const executed: Array<SagaStep<T>> = [];
+  const executed: Array = [];
 
   for (const step of steps) {
     const r = step.execute();
@@ -6660,15 +6660,11 @@ foreach (var line in diagram.Split('\n').Take(8))
 
 {{< tab >}}
 
-```typescript
+````typescript
 // => TypeScript: generate Mermaid stateDiagram-v2 from transition table
 // => Note: using template literal with actual backtick chars for mermaid fence
-function generateMermaid(
-  title: string,
-  table: Partial<Record<string, Partial<Record<string, string>>>>,
-  terminalStates: readonly string[],
-): string {
-  const lines: string[] = ["\`\`\`mermaid", "stateDiagram-v2", `    %% ${title}`];
+function generateMermaid(title: string, table: Partial, terminalStates: readonly string[]): string {
+  const lines: string[] = ["```mermaid", "stateDiagram-v2", `    %% ${title}`];
   const initialState = Object.keys(table)[0];
   if (initialState) lines.push(`    [*] --> ${initialState}`);
   for (const [from, events] of Object.entries(table)) {
@@ -6676,11 +6672,11 @@ function generateMermaid(
     for (const [event, to] of Object.entries(events)) lines.push(`    ${from} --> ${to}: ${event}`);
   }
   for (const terminal of terminalStates) lines.push(`    ${terminal} --> [*]`);
-  lines.push("\`\`\`");
+  lines.push("```");
   return lines.join("\n");
 }
 
-const paymentTable: Record<string, Record<string, string>> = {
+const paymentTable: Record = {
   Scheduled: { disburse: "Disbursed", reverse: "Reversed" },
   Disbursed: { remit: "Remitted", fail: "Failed" },
   Failed: { retry: "Scheduled", reverse: "Reversed" },
@@ -6691,7 +6687,7 @@ diagram
   .slice(0, 5)
   .forEach((l) => console.log(l));
 // => Output lines: mermaid fence / stateDiagram-v2 / %% Payment FSM / [*] --> Scheduled / ...
-```
+````
 
 {{< /tab >}}
 
@@ -7005,19 +7001,19 @@ interface SimplePoRecord {
   readonly state: SimplePoState;
 }
 
-const SIMPLE_PO_TABLE: Partial<Record<SimplePoState, Partial<Record<string, SimplePoState>>>> = {
+const SIMPLE_PO_TABLE: Partial = {
   DRAFT: { submit: "AWAITING_APPROVAL" },
   AWAITING_APPROVAL: { approve: "APPROVED" },
   APPROVED: { close: "CLOSED" },
 };
 
-function simplePoApply(po: SimplePoRecord, event: string): PaymentResult<SimplePoRecord> {
+function simplePoApply(po: SimplePoRecord, event: string): PaymentResult {
   const next = SIMPLE_PO_TABLE[po.state]?.[event];
   if (next === undefined) return { kind: "err", error: `${po.state} --${event}--> (forbidden)` };
   return { kind: "ok", value: { ...po, state: next } };
 }
 
-function toHttpResponse(result: PaymentResult<SimplePoRecord>, event: string): FsmApiResponse {
+function toHttpResponse(result: PaymentResult, event: string): FsmApiResponse {
   if (result.kind === "ok") return { status: 200, body: { id: result.value.id, state: result.value.state } };
   const isConflict = result.error.includes("(forbidden)") || result.error.startsWith("Cannot");
   if (isConflict)
@@ -7395,26 +7391,26 @@ type PoSt2 = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "ACKNOWLEDG
 type InvSt2 = "REGISTERED" | "MATCHING" | "MATCHED" | "SCHEDULED_FOR_PAYMENT" | "PAID";
 type PmtSt2 = "SCHEDULED" | "DISBURSED" | "REMITTED";
 
-const SUP_T2: Partial<Record<SupSt, Partial<Record<string, SupSt>>>> = { PENDING: { approve: "APPROVED" } };
-const PO_T2: Partial<Record<PoSt2, Partial<Record<string, PoSt2>>>> = {
+const SUP_T2: Partial = { PENDING: { approve: "APPROVED" } };
+const PO_T2: Partial = {
   DRAFT: { submit: "AWAITING_APPROVAL" },
   AWAITING_APPROVAL: { approve: "APPROVED" },
   APPROVED: { issue: "ISSUED" },
   ISSUED: { acknowledge: "ACKNOWLEDGED" },
   ACKNOWLEDGED: { close: "CLOSED" },
 };
-const INV_T2: Partial<Record<InvSt2, Partial<Record<string, InvSt2>>>> = {
+const INV_T2: Partial = {
   REGISTERED: { start_match: "MATCHING" },
   MATCHING: { match_ok: "MATCHED" },
   MATCHED: { schedule: "SCHEDULED_FOR_PAYMENT" },
   SCHEDULED_FOR_PAYMENT: { pay: "PAID" },
 };
-const PMT_T2: Partial<Record<PmtSt2, Partial<Record<string, PmtSt2>>>> = {
+const PMT_T2: Partial = {
   SCHEDULED: { disburse: "DISBURSED" },
   DISBURSED: { remit: "REMITTED" },
 };
 
-function step<S extends string>(table: Partial<Record<S, Partial<Record<string, S>>>>, state: S, event: string): S {
+function step<S extends string>(table: Partial, state: S, event: string): S {
   const next = table[state]?.[event];
   if (!next) throw new Error(`${state} --${event}--> (forbidden)`);
   return next;

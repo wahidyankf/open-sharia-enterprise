@@ -25,7 +25,7 @@ tags:
 
 ### Why It Matters
 
-Unit tests with an in-memory adapter (Guide 8) prove port correctness but cannot catch SQL schema mistakes, PostgreSQL-specific constraint behavior, or migration ordering bugs. A database integration test that runs against a real PostgreSQL instance inside Docker closes this gap without requiring a persistent database on developer machines. In `procurement-platform-be`, the `docker-compose.integration.yml` file defines exactly this harness: a `postgres:17-alpine` service with a health-check gate and a `test-runner` container that waits for it. The two services together give every integration test a fresh, disposable PostgreSQL instance that mirrors the production schema. The docker-compose harness is shared across all three stacks — the database is identical; only the test runner changes (a .NET `xunit` runner for F#, a Clojure `clojure.test` runner, or a Node.js `jest` runner for TypeScript).
+Unit tests with an in-memory adapter (Guide 8) prove port correctness but cannot catch SQL schema mistakes, PostgreSQL-specific constraint behavior, or migration ordering bugs. A database integration test that runs against a real PostgreSQL instance inside Docker closes this gap without requiring a persistent database on developer machines. In `procurement-platform-be`, the `docker-compose.integration.yml` file defines exactly this harness: a `postgres:17-alpine` service with a health-check gate and a `test-runner` container that waits for it. The two services together give every integration test a fresh, disposable PostgreSQL instance that mirrors the production schema. The docker-compose harness is shared across all four stacks — the database is identical; only the test runner changes (a .NET `xunit` runner for F#, a Clojure `clojure.test` runner, a Node.js `jest` runner for TypeScript, or an `hspec` runner for Haskell).
 
 ### Standard Library First
 
@@ -546,11 +546,11 @@ spec = describe "postgresPurchaseOrderRepository" $ do
 
 ### Why It Matters
 
-Every database integration test relies on a schema that matches the application's expectations. The migration adapter is a first-class hexagonal concern regardless of stack: the application layer defines what shape data the aggregate needs; the migration adapter ensures the database schema reflects that shape; and the integration test harness runs both in order. In `procurement-platform-be`, the migration adapter is implemented with DbUp (embedded SQL scripts) in F#, `ragtime` or `migratus` in Clojure, and `umzug` (with `sequelize-storage` for the journal) in TypeScript. All three use the same plain SQL migration scripts — only the driver library differs.
+Every database integration test relies on a schema that matches the application's expectations. The migration adapter is a first-class hexagonal concern regardless of stack: the application layer defines what shape data the aggregate needs; the migration adapter ensures the database schema reflects that shape; and the integration test harness runs both in order. In `procurement-platform-be`, the migration adapter is implemented with DbUp (embedded SQL scripts) in F#, `ragtime` or `migratus` in Clojure, `umzug` (with `sequelize-storage` for the journal) in TypeScript, and `postgresql-simple-migration` in Haskell. All four use the same plain SQL migration scripts — only the driver library differs.
 
 ### Standard Library First
 
-F# `System.IO.File` and raw ADO.NET can execute SQL files in order — but you manage ordering, idempotency, and error handling manually:
+Standard library primitives can execute SQL files in order — but you manage ordering, idempotency, and error handling manually:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1017,11 +1017,11 @@ spec = describe "migrations" $ do
 
 ### Why It Matters
 
-The `payments` context must disburse funds to suppliers via a bank API. Like the database boundary, this external I/O must sit behind a port so the application service is testable without a live bank API key, and so you can swap the bank provider without touching business logic. The `BankingPort` is a record of functions for initiating disbursements and querying payment status — a record-of-functions type alias in F#, a `defprotocol` in Clojure, or an interface in TypeScript. The port-first design means that a test can use a stub adapter returning a fixed response, while production uses the real bank REST API call — reached via `System.Net.Http.HttpClient` in F#, `clj-http` or `hato` in Clojure, or the built-in `fetch` API in TypeScript.
+The `payments` context must disburse funds to suppliers via a bank API. Like the database boundary, this external I/O must sit behind a port so the application service is testable without a live bank API key, and so you can swap the bank provider without touching business logic. The `BankingPort` is a record of functions for initiating disbursements and querying payment status — a record-of-functions type alias in F#, a `defprotocol` in Clojure, an interface in TypeScript, or a record-of-functions data type in Haskell. The port-first design means that a test can use a stub adapter returning a fixed response, while production uses the real bank REST API call — reached via `System.Net.Http.HttpClient` in F#, `clj-http` or `hato` in Clojure, the built-in `fetch` API in TypeScript, or `http-client` with a `Manager` in Haskell.
 
 ### Standard Library First
 
-`System.Net.Http.HttpClient` sends HTTP requests without any bank-specific library. You can call a bank REST API directly using the BCL:
+Each language ships a low-level HTTP client that can call a bank REST API directly — without any bank-specific library or resilience wrapper:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2057,11 +2057,11 @@ deterministicStub = BankingPort
 
 ### Why It Matters
 
-External HTTP calls — including the bank API adapter from Guide 17 — fail transiently. A single error check followed by an exception propagated to the application layer violates the resilience contract: one network hiccup crashes a user's request. Wrapping adapter calls in retry and circuit-breaker policies separates transient failure handling (retry) from persistent failure handling (circuit-breaker). The application service sees only a typed `BankingError` from the `BankingPort` — it does not implement retry logic itself. The resilience layer lives entirely inside the adapter: Polly's `AddStandardResilienceHandler` in F#, `diehard` or hand-rolled recursion in Clojure, or `p-retry` and a hand-rolled circuit-breaker state machine in TypeScript.
+External HTTP calls — including the bank API adapter from Guide 17 — fail transiently. A single error check followed by an exception propagated to the application layer violates the resilience contract: one network hiccup crashes a user's request. Wrapping adapter calls in retry and circuit-breaker policies separates transient failure handling (retry) from persistent failure handling (circuit-breaker). The application service sees only a typed `BankingError` from the `BankingPort` — it does not implement retry logic itself. The resilience layer lives entirely inside the adapter: Polly's `AddStandardResilienceHandler` in F#, `diehard` or hand-rolled recursion in Clojure, `p-retry` and a hand-rolled circuit-breaker state machine in TypeScript, or the `retry` library combined with a `TVar`-backed circuit-breaker in Haskell.
 
 ### Standard Library First
 
-F# recursion can implement a simple retry loop without any library:
+A simple recursive retry loop with exponential backoff can be written in any of the four languages without adding a library:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3165,7 +3165,7 @@ startRelayWorker pool stopSignal = async $ forever $ do
 
 ### Why It Matters
 
-In production, you need to know which port call is slow, which adapter is producing errors, and what the end-to-end trace looks like for a given HTTP request. Wrapping port calls in OpenTelemetry spans gives you this visibility without modifying the application service. The observability adapter is itself a decorator — it satisfies the same port contract as the real adapter but wraps the real adapter's call inside a span. The decorator concept is language-independent: in F# it is a record-of-functions that forwards calls to the inner record while adding span wrappers; in Clojure it is a `reify` over the protocol that does the same; in TypeScript it is an object that implements the port interface and delegates to an inner instance.
+In production, you need to know which port call is slow, which adapter is producing errors, and what the end-to-end trace looks like for a given HTTP request. Wrapping port calls in OpenTelemetry spans gives you this visibility without modifying the application service. The observability adapter is itself a decorator — it satisfies the same port contract as the real adapter but wraps the real adapter's call inside a span. The decorator concept is language-independent: in F# it is a record-of-functions that forwards calls to the inner record while adding span wrappers; in Clojure it is a `reify` over the protocol that does the same; in TypeScript it is an object that implements the port interface and delegates to an inner instance; in Haskell it is a record-of-functions value built with the same port type, each field wrapping the corresponding inner field.
 
 ### Standard Library First
 
@@ -4425,11 +4425,11 @@ issuePurchaseOrder repo pub murabahaPort pid = do
 
 ### Why It Matters
 
-Three anti-patterns reliably erode hexagonal architectures over time: the leaky hexagon (infrastructure types bleeding into the domain), the god adapter (one adapter that does too much), and the anemic domain (domain types with no behavior, forcing business logic into application services). All three are easy to introduce under feature pressure and difficult to remove once calcified. They manifest in every stack: the leaky hexagon is an `open Npgsql` in F# domain code, a `:require [next.jdbc ...]` in a Clojure domain namespace, or a `import { Pool } from "pg"` in a TypeScript domain module. Recognizing them early in `procurement-platform-be` prevents the hexagonal structure from collapsing into a layered monolith regardless of which language the team uses.
+Three anti-patterns reliably erode hexagonal architectures over time: the leaky hexagon (infrastructure types bleeding into the domain), the god adapter (one adapter that does too much), and the anemic domain (domain types with no behavior, forcing business logic into application services). All three are easy to introduce under feature pressure and difficult to remove once calcified. They manifest in every stack: the leaky hexagon is an `open Npgsql` in F# domain code, a `:require [next.jdbc ...]` in a Clojure domain namespace, a `import { Pool } from "pg"` in a TypeScript domain module, or a `import Database.PostgreSQL.Simple` in a Haskell domain module. Recognizing them early in `procurement-platform-be` prevents the hexagonal structure from collapsing into a layered monolith regardless of which language the team uses.
 
 ### Standard Library First
 
-F# modules give you no boundary enforcement, so these anti-patterns occur naturally with the stdlib flat layout:
+Without the hexagonal discipline, these anti-patterns occur naturally when everything shares the same flat module or namespace layout:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6425,7 +6425,7 @@ buildEventPublisher pool = do
 
 ### Why It Matters
 
-`procurement-platform-be` reads `BankApiSettings` from configuration at startup. The journey of a secret from a Kubernetes Secret object to a typed configuration record crosses the same conceptual boundaries regardless of stack: Kubernetes injects the Secret key as an environment variable; the configuration system reads the environment variable; a binding mechanism maps it to the typed settings record; the composition root passes it to the adapter factory. In F# this chain uses `IOptions<T>` with `ValidateOnStart`; in Clojure it uses `aero` or `environ` with a `clojure.spec.alpha` validation step; in TypeScript it uses `zod` schema validation called explicitly at process startup. A break at any boundary — a renamed key, a missing namespace prefix, a wrong casing — silently produces an empty string instead of the expected value. Making this chain explicit prevents the class of bugs where the bank adapter always returns auth errors because `ApiKey` is empty.
+`procurement-platform-be` reads `BankApiSettings` from configuration at startup. The journey of a secret from a Kubernetes Secret object to a typed configuration record crosses the same conceptual boundaries regardless of stack: Kubernetes injects the Secret key as an environment variable; the configuration system reads the environment variable; a binding mechanism maps it to the typed settings record; the composition root passes it to the adapter factory. In F# this chain uses `IOptions<T>` with `ValidateOnStart`; in Clojure it uses `aero` or `environ` with a `clojure.spec.alpha` validation step; in TypeScript it uses `zod` schema validation called explicitly at process startup; in Haskell it uses `lookupEnv` combined with a smart-constructor returning `Either [Text] settings` that validates every field before constructing the record. A break at any boundary — a renamed key, a missing namespace prefix, a wrong casing — silently produces an empty string instead of the expected value. Making this chain explicit prevents the class of bugs where the bank adapter always returns auth errors because `ApiKey` is empty.
 
 ### Standard Library First
 
@@ -7058,11 +7058,11 @@ makeFromConfig validated mgr =
 
 ### Why It Matters
 
-The outbox relay worker from Guide 19 is itself a background job. When the platform needs scheduled work (e.g., escalating purchase orders that have been awaiting approval for more than five business days, or sending remittance advice to suppliers after payment is disbursed), that work must go through a port rather than being wired directly into a hosted service. The background-job primitive differs by stack — an `IHostedService` in F#, a `go-loop` or `mount`-managed worker thread in Clojure, or a `setInterval`-backed worker in TypeScript — but the key invariant is the same in all three: the scheduled logic calls application service functions via injected port records, never directly touching the database or message bus. This keeps background jobs testable with the same in-memory adapters used in unit tests.
+The outbox relay worker from Guide 19 is itself a background job. When the platform needs scheduled work (e.g., escalating purchase orders that have been awaiting approval for more than five business days, or sending remittance advice to suppliers after payment is disbursed), that work must go through a port rather than being wired directly into a hosted service. The background-job primitive differs by stack — an `IHostedService` in F#, a `go-loop` or `mount`-managed worker thread in Clojure, a `setInterval`-backed worker in TypeScript, or an `async + forever` green thread in Haskell — but the key invariant is the same in all four: the scheduled logic calls application service functions via injected port records, never directly touching the database or message bus. This keeps background jobs testable with the same in-memory adapters used in unit tests.
 
 ### Standard Library First
 
-An `IHostedService` with inline business logic skips the port entirely:
+A background worker with inline business logic skips the port entirely:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 

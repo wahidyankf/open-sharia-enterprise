@@ -15,7 +15,7 @@ A bounded context is not just a package name — it is an isolation unit. Every 
 
 ### Standard Library First
 
-Java packages group related classes but enforce no architectural boundary. The compiler does not stop `receiving` from importing `PurchaseOrderRepository` directly from another context's `infrastructure` package. The package system provides cohesion, not isolation.
+Each language's module system groups related code but enforces no architectural boundary. The compiler does not stop a `receiving` module from importing `PurchaseOrderRepository` directly from another context's `infrastructure` package (or namespace, or directory). The module system provides cohesion, not isolation.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -324,7 +324,7 @@ export interface PurchaseOrder {
 
 {{< /tabs >}}
 
-**Trade-offs**: the per-context package layout requires discipline in code review — the Java compiler cannot stop a developer from adding a cross-context import. Tools like ArchUnit enforce the boundary mechanically in CI. The payoff is that each context can evolve its domain model independently, and a unit test for one context never requires a Spring context from another context.
+**Trade-offs**: the per-context package layout requires discipline in code review — the compiler (in any of the four languages) cannot stop a developer from adding a cross-context import. Tools like ArchUnit enforce the boundary mechanically in CI. The payoff is that each context can evolve its domain model independently, and a unit test for one context never requires a framework context from another context.
 
 ---
 
@@ -336,7 +336,7 @@ The production layout for `procurement-platform-be` places every bounded context
 
 ### Standard Library First
 
-A flat layout is a direct consequence of starting with a single-concern web-framework scaffold. Spring Boot's `@SpringBootApplication` scans the entire root package and registers everything it finds. A flat layout means all domain-adjacent classes sit near the root package, sharing the same Spring component scan. This is the zero-ceremony stdlib approach: it compiles, it runs, and it is adequate for a one-context prototype.
+A flat layout is a direct consequence of starting with a single-concern web-framework scaffold. The framework's entry point (a root class in Java/Kotlin, `Program.cs` in C#, or `main.ts` in TypeScript/NestJS) registers or scans everything it finds at one level. A flat layout means all domain-adjacent classes sit near the root, sharing the same component scan or assembly registration. This is the zero-ceremony stdlib approach: it compiles, it runs, and it is adequate for a one-context prototype.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -474,7 +474,7 @@ bootstrap();
 
 ### Production Framework
 
-The hexagonal layout replaces the implicit root scan with explicit per-context `@Configuration` classes that register only their own beans. The `@SpringBootApplication` retains the scan only at the root level to discover the explicit configurations; it does not need to discover individual `@Service` or `@Repository` beans scattered across contexts.
+The hexagonal layout replaces the implicit root scan (or broad assembly scan) with explicit per-context DI registration that registers only that context's own beans. The application entry point retains a scan only at the root level to discover the explicit configurations; it does not need to discover individual service or repository beans scattered across contexts.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -652,7 +652,7 @@ com.procurement.platform
 └── ProcurementPlatformApplication.java
 ```
 
-**Trade-offs**: keeping the per-context layout consistent means new bounded context types always go into `com.procurement.platform.<context>/{domain,application,infrastructure,presentation}/`. The flat `ProcurementPlatformApplication` remains as the scan entry point, not as a template for new classes. Any class that does not fit a context layer goes into `shared/`.
+**Trade-offs**: keeping the per-context layout consistent means new bounded context types always go into the corresponding `{domain,application,infrastructure,presentation}/` layer of their context (the Java canonical layout shown above uses `com.procurement.platform.<context>/`; C# and TypeScript mirror the same four-layer split). The application entry point remains as the scan entry point, not as a template for new classes. Any type that does not fit a context layer goes into `shared/`.
 
 ---
 
@@ -664,7 +664,7 @@ The single most common way a hexagonal architecture collapses into a layered mon
 
 ### Standard Library First
 
-Java records carry no annotations by default. The language gives you a pure, framework-free type with equality, immutability, and accessors built in:
+Each language's standard type system provides a pure, framework-free aggregate type with equality, immutability, and accessors built in — records in Java/Kotlin, positional records in C#, and interfaces or classes with readonly fields in TypeScript — all without any ORM or serialization annotations:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -833,7 +833,7 @@ export class PurchaseOrder {
   // => All fields readonly: immutable after construction — no ORM decorators
   readonly id: PurchaseOrderId; // => Strongly-typed identity — branded type
   readonly supplierId: SupplierId; // => Strongly-typed supplier reference
-  readonly lines: ReadonlyArray<PurchaseOrderLine>; // => Immutable array — callers cannot mutate
+  readonly lines: ReadonlyArray; // => Immutable array — callers cannot mutate
   readonly totalAmount: Money; // => Derived or calculated: sum of all line totals
   readonly approvalLevel: ApprovalLevel; // => Enum: L1 (≤ $1k), L2 (≤ $10k), L3 (> $10k)
   readonly status: PurchaseOrderStatus; // => Enum: Draft → AwaitingApproval → Approved → …
@@ -841,7 +841,7 @@ export class PurchaseOrder {
   private constructor(
     id: PurchaseOrderId,
     supplierId: SupplierId,
-    lines: ReadonlyArray<PurchaseOrderLine>,
+    lines: ReadonlyArray,
     totalAmount: Money,
     approvalLevel: ApprovalLevel,
     status: PurchaseOrderStatus,
@@ -859,7 +859,7 @@ export class PurchaseOrder {
   static create(
     id: PurchaseOrderId,
     supplierId: SupplierId,
-    lines: ReadonlyArray<PurchaseOrderLine>,
+    lines: ReadonlyArray,
     totalAmount: Money,
     approvalLevel: ApprovalLevel,
     status: PurchaseOrderStatus,
@@ -882,7 +882,7 @@ export class PurchaseOrder {
 
 ### Production Framework
 
-The hexagonal answer is: ORM and serialization mappings live in the infrastructure and presentation layers, not the domain layer. The domain record is a pure Java record. The JDBC mapping lives in the adapter in `infrastructure/` with explicit SQL, and a mapper translates between the row and the domain record. Spring Boot 4 supports plain `JdbcClient` result mappings that avoid JPA entities entirely.
+The hexagonal answer is: ORM and serialization mappings live in the infrastructure and presentation layers, not the domain layer. The domain aggregate type stays a pure, framework-free record or class. The persistence mapping lives in the adapter in `infrastructure/` — explicit SQL with a row-to-aggregate mapper in Java/Kotlin, an owned-type configuration in C# EF Core, or a repository adapter class in TypeScript — and a mapper translates between the storage row and the domain aggregate.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1067,9 +1067,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
 {{< /tabs >}}
 
-The dependency rule flows inward: `infrastructure` and `presentation` know about `domain`; `domain` knows about neither. ArchUnit tests in CI enforce the rule: no import from `domain` may reference any class in `infrastructure`, `presentation`, or any Spring package.
+The dependency rule flows inward: `infrastructure` and `presentation` know about `domain`; `domain` knows about neither. ArchUnit tests in CI enforce the rule: no import from `domain` may reference any class in `infrastructure`, `presentation`, or any framework package.
 
-**Trade-offs**: keeping domain records annotation-free means you need a separate mapping step at the boundary. For simple CRUD aggregates this mapping is tedious. For complex aggregates with invariants validated at construction time, the separation pays for itself immediately — you can test the entire domain layer with zero Spring context setup.
+**Trade-offs**: keeping domain aggregate types annotation-free means you need a separate mapping step at the boundary. For simple CRUD aggregates this mapping is tedious. For complex aggregates with invariants validated at construction time, the separation pays for itself immediately — you can test the entire domain layer with zero framework context setup.
 
 ---
 
@@ -1081,7 +1081,7 @@ Application services are the orchestration layer between the driving adapter and
 
 ### Standard Library First
 
-Java interfaces naturally express an application service contract with domain types only. The standard library gives you `Optional` for absence and `java.util.function` for functional composition without any framework:
+Each language's interface or abstract-type mechanism naturally expresses an application service contract using domain types only — a Java/Kotlin `interface`, a C# `interface`, or a TypeScript `interface`. The standard library provides idioms for expressing absence (`Optional` in Java, nullable return in Kotlin/C#, union with `null` in TypeScript) without any framework:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1222,7 +1222,7 @@ export interface IssuePurchaseOrderService {
   // => The implementation (the service class) lives in infrastructure/
   // => No @Injectable() decorator here — pure domain contract
 
-  issue(supplierId: SupplierId, lines: ReadonlyArray<PurchaseOrderLine>): PurchaseOrder;
+  issue(supplierId: SupplierId, lines: ReadonlyArray): PurchaseOrder;
   // => Parameters are domain types — the implementation builds the aggregate and enforces invariants
   // => Returns the full domain aggregate, not a response DTO
 
@@ -1246,7 +1246,7 @@ export interface IssuePurchaseOrderService {
 
 ### Production Framework
 
-In the Spring stack the controller owns the DTO translation. The application service never touches `HttpServletRequest`, `ResponseEntity`, or any Spring MVC type. Spring injects the service implementation via constructor injection — the controller declares the interface type, not the concrete class:
+In all four stacks the driving adapter (controller) owns the DTO translation. The application service never touches HTTP request or response types. The DI container injects the service implementation via constructor injection — the controller declares the interface type, not the concrete class:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1382,7 +1382,7 @@ export interface IssuePurchaseOrderService {
   // => NestJS DI container injects the concrete class at startup via constructor injection
   // => The controller declares this interface token — never imports the concrete class
 
-  issue(supplierId: SupplierId, lines: ReadonlyArray<PurchaseOrderLine>): PurchaseOrder;
+  issue(supplierId: SupplierId, lines: ReadonlyArray): PurchaseOrder;
   // => Throws DuplicatePurchaseOrderError (runtime): signals a business rule violation
   // => TypeScript has no checked exceptions — error types documented in JSDoc
   // => The global exception filter maps DuplicatePurchaseOrderError to HTTP 409
@@ -1414,7 +1414,7 @@ Output ports define _what_ the application layer needs from the outside world wi
 
 ### Standard Library First
 
-Java interfaces are the standard library's mechanism for expressing a contract without an implementation. The `java.util.function` package gives you functional types (`Function`, `Supplier`, `Consumer`) that serve as single-operation port alternatives:
+Each language's interface mechanism expresses a contract without an implementation — a `interface` in Java, Kotlin, C#, and TypeScript. The standard library additionally provides functional-composition types (e.g., `java.util.function` in Java, function types in Kotlin/C#/TypeScript) that can serve as single-operation port alternatives:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1560,7 +1560,7 @@ export interface PurchaseOrderRepository {
 
 ### Production Framework
 
-In the Spring stack the output port interface is declared in the `application` package and its implementation — a Spring `@Repository`-annotated class — lives in `infrastructure`. Spring Boot wires them via constructor injection. No `@Autowired` field injection; no `ApplicationContext.getBean()` lookup:
+In all four stacks the output port interface is declared in the `application` package and its implementation — a repository adapter class — lives in `infrastructure`. The DI container wires them via constructor injection. No field injection or service-locator lookups:
 
 ```mermaid
 flowchart LR
@@ -1729,7 +1729,7 @@ The primary (driving) adapter translates an HTTP request into a domain command o
 
 ### Standard Library First
 
-Java's `HttpServlet` is the standard library equivalent of a Spring controller. Without Spring MVC you write a `doGet` or `doPost` override in an `HttpServlet` subclass. The ceremony is high and composition is manual:
+Each language's standard HTTP primitive — a servlet subclass in Java/Kotlin, `HttpListener` in C#, or the `http` module in Node.js — is the low-level equivalent of a framework controller. Without a web framework, routing, serialization, and exception handling must all be wired manually. The ceremony is high and composition is explicit in all four stacks:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1886,11 +1886,11 @@ server.listen(8080, () => console.log("Server running on port 8080"));
 
 {{< /tabs >}}
 
-**Limitation for production**: routing, serialization, validation, exception handling, and content negotiation must all be wired manually. Spring MVC handles all of these declaratively.
+**Limitation for production**: routing, serialization, validation, exception handling, and content negotiation must all be wired manually. Each production framework handles all of these declaratively.
 
 ### Production Framework
 
-A `PurchaseOrderController` shows the minimal Spring `@RestController` — the primary adapter for the purchasing context:
+A minimal `PurchaseOrderController` shows the primary adapter pattern for the purchasing context — `@RestController` in Java/Kotlin, `[ApiController]` in C#, and `@Controller` in TypeScript:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -2023,7 +2023,7 @@ export class HealthController {
   @Get("health")
   // => @Get("health"): handles GET /api/v1/health — equivalent to @GetMapping("/health")
   // => NestJS resolves this mapping at startup — no runtime routing table needed
-  health(): Record<string, string> {
+  health(): Record {
     // => Return type Record<string, string>: NestJS serializes to {"status":"UP"}
     // => No ResponseEntity wrapper: NestJS sets 200 OK by default for non-void returns
     return { status: "UP" };
@@ -2036,7 +2036,7 @@ export class HealthController {
 
 {{< /tabs >}}
 
-A domain-backed controller for `POST /api/v1/purchase-orders` follows the same pattern but adds the translation steps. The controller declares the application service interface — never the concrete `@Service` class — as a constructor parameter:
+A domain-backed controller for `POST /api/v1/purchase-orders` follows the same pattern but adds the translation steps. The controller declares the application service interface — never the concrete service implementation class — as a constructor parameter:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -2356,7 +2356,7 @@ export class PurchaseOrderController {
 
 {{< /tabs >}}
 
-**Trade-offs**: Spring `@RestController` requires Jackson on the classpath and Spring MVC auto-configuration. For a microservice that serves REST JSON this is always present. The payoff: routing, serialization, content negotiation, and exception handling are all declarative, leaving the controller as pure adapter code with no HTTP ceremony.
+**Trade-offs**: each framework's controller mechanism requires the relevant web framework and serialization library on the classpath or in the project. For a microservice that serves REST JSON this is always present. The payoff: routing, serialization, content negotiation, and exception handling are all declarative, leaving the controller as pure adapter code with no HTTP ceremony.
 
 ---
 
@@ -2368,7 +2368,7 @@ The composition root is the single place in the application where all dependenci
 
 ### Standard Library First
 
-Without Spring, the composition root is a plain `main` method or a factory class that constructs all objects manually. This is the pure dependency injection approach — no framework, no magic:
+Without a DI framework, the composition root is a plain entry-point function or factory class that constructs all objects manually. This is the pure dependency injection approach — no framework, no magic:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -2511,11 +2511,11 @@ bootstrap();
 
 {{< /tabs >}}
 
-**Limitation for production**: manual wiring of hundreds of beans is impractical. Spring's `@Configuration` provides the same composition-root discipline at scale, with lifecycle management, profile-based switching, and test context override.
+**Limitation for production**: manual wiring of hundreds of beans is impractical. Each framework's DI container provides the same composition-root discipline at scale, with lifecycle management, profile-based switching, and test context override.
 
 ### Production Framework
 
-Spring Boot 4's `ProcurementPlatformApplication.java` is the entry point, but the wiring is expressed in `@Configuration` classes. For bounded context wiring with explicit port-to-adapter binding, a dedicated `@Configuration` class in the context's `infrastructure` package makes the dependency graph explicit:
+Each stack has a dedicated entry point, but the wiring is expressed in the framework's DI composition mechanism — `@Configuration` classes in Java/Kotlin Spring Boot, the `IServiceCollection` builder in C# ASP.NET Core, or the `@Module` providers array in TypeScript NestJS. For bounded context wiring with explicit port-to-adapter binding, a dedicated composition class in the context's `infrastructure` package makes the dependency graph explicit:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -2655,7 +2655,7 @@ bootstrap();
 
 {{< /tabs >}}
 
-The per-context `@Configuration` class wires the port interface to its adapter explicitly, avoiding reliance on `@Autowired` field injection or accidental discovery:
+The per-context DI composition unit — a `@Configuration` class in Java/Kotlin, a `services.AddPurchasingContext()` extension in C#, or a NestJS `@Module` in TypeScript — wires the port interface to its adapter explicitly, avoiding reliance on field injection or accidental discovery:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -2858,4 +2858,4 @@ export class PurchasingModule {}
 
 {{< /tabs >}}
 
-**Trade-offs**: explicit `@Configuration` classes require more boilerplate than Spring Boot's auto-configuration scan. The payoff is a visible, replaceable wiring graph — integration tests can override a single `@Configuration` to swap the production JDBC adapter for an in-memory stub without modifying any production code. For teams with more than two bounded contexts, this discipline prevents the implicit coupling that component scan enables silently.
+**Trade-offs**: explicit per-context DI registration requires more boilerplate than convention-based auto-scanning. The payoff is a visible, replaceable wiring graph — integration tests can override a single registration unit to swap the production persistence adapter for an in-memory stub without modifying any production code. For teams with more than two bounded contexts, this discipline prevents the implicit coupling that unconstrained auto-scanning enables silently.

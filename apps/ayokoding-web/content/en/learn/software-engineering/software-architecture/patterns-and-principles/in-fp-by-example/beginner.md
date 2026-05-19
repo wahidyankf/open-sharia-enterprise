@@ -8,7 +8,7 @@ tags:
   ["software-architecture", "tutorial", "by-example", "beginner", "fp", "fsharp", "clojure", "typescript", "haskell"]
 ---
 
-This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using functional programming idioms. F# is the canonical language (examples are compatible with `dotnet fsi`); Clojure, TypeScript, and Haskell equivalents appear in the tabbed code blocks. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working functional code. Each example uses its own small illustrative domain so the architectural pattern remains the focal point.
+This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using functional programming idioms. All four languages — F#, Clojure, TypeScript, and Haskell — show the same pattern side by side in tabbed code blocks. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working functional code. Each example uses its own small illustrative domain so the architectural pattern remains the focal point.
 
 ## Separation of Concerns
 
@@ -354,7 +354,7 @@ Each function now has one reason to change: swap the data source without touchin
 
 ### Example 2: Single Responsibility Principle
 
-The Single Responsibility Principle (SRP) states that a module or function should have one and only one reason to change. In F#, SRP is expressed through focused modules and single-purpose functions rather than classes. Violating SRP creates fragile code where an unrelated change breaks a seemingly unrelated feature.
+The Single Responsibility Principle (SRP) states that a module or function should have one and only one reason to change. In FP, SRP is expressed through focused modules and single-purpose functions: each module groups only the behavior that belongs together, and an unrelated change to one group never ripples into another. Violating SRP creates fragile code where an unrelated change breaks a seemingly unrelated feature.
 
 **Violating SRP — one module does too much:**
 
@@ -755,7 +755,7 @@ main = do
 
 ### Example 3: Three-Layer Architecture
 
-A layered architecture organizes code into a presentation layer (handles user interaction), a business logic layer (enforces rules), and a data access layer (manages persistence). In F#, layers are expressed as separate modules that only call downward — presentation calls business logic, business logic calls data access, never the reverse.
+A layered architecture organizes code into a presentation layer (handles user interaction), a business logic layer (enforces rules), and a data access layer (manages persistence). In FP, each layer is a collection of pure functions organized so that data flows only downward — presentation calls business logic, business logic calls data access, never the reverse.
 
 ```mermaid
 graph TD
@@ -1071,13 +1071,13 @@ main = do
 
 **Key Takeaway:** Each layer communicates only with the layer directly below it. Presentation never touches the database; data access never formats strings for users. In FP, the `|>` pipeline operator makes this layered data flow explicit and readable.
 
-**Why It Matters:** Layered architecture enables parallel development — a frontend team can build against an agreed function signature while a backend team implements the business rules — and makes testing each layer independently straightforward. Because each F# layer is a collection of pure functions, they can be tested without stubs or mocks.
+**Why It Matters:** Layered architecture enables parallel development — a frontend team can build against an agreed function signature while a backend team implements the business rules — and makes testing each layer independently straightforward. Because each layer is a collection of pure functions, they can be tested without stubs or mocks.
 
 ---
 
 ### Example 4: Presentation Layer Isolation
 
-The presentation layer should translate raw input into domain calls and translate domain results into output format. It should contain no business logic and no data access code. In F#, keeping the presentation layer thin means it only pipes values through domain functions and formats results.
+The presentation layer should translate raw input into domain calls and translate domain results into output format. It should contain no business logic and no data access code. Keeping the presentation layer thin means it only threads values through domain functions and formats results — a discipline that FP pipelines make explicit and readable.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1289,7 +1289,7 @@ main = do
 
 ### Example 5: Model-View-Controller Basics
 
-MVC separates a program into a Model (data and rules), a View (formatting output), and a Controller (coordinating input and response). In F#, each MVC component is a module containing pure functions. The Controller module receives input, asks the Model to process it, then passes results to the View for display.
+MVC separates a program into a Model (data and rules), a View (formatting output), and a Controller (coordinating input and response). In FP, each MVC component is a group of pure functions: the Controller receives input, asks the Model to process it, then passes results to the View for display.
 
 ```mermaid
 graph LR
@@ -1727,15 +1727,15 @@ main = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** The Controller handles input and coordinates. The Model owns data types and rules. The View formats output. In F#, state flows explicitly from function to function rather than being mutated in place, making the data flow visible and testable.
+**Key Takeaway:** The Controller handles input and coordinates. The Model owns data types and rules. The View formats output. In FP, state flows explicitly from function to function rather than being mutated in place, making the data flow visible and testable.
 
-**Why It Matters:** MVC is the backbone of virtually every web framework. Understanding the pure form of MVC lets you debug framework issues quickly. The F# implementation makes each layer's role obvious through the type system — a View function accepts data and returns a string, not a database object.
+**Why It Matters:** MVC is the backbone of virtually every web framework. Understanding the pure form of MVC lets you debug framework issues quickly. The FP approach makes each layer's role obvious through function signatures — a View function accepts data and returns a string, not a database object.
 
 ---
 
 ### Example 6: Model Encapsulates Validation
 
-The Model is responsible for enforcing its own invariants. In F#, a module with a private constructor (or smart constructor) ensures that invalid data can never be constructed — the type system enforces the rule, not runtime guards scattered across callers.
+The Model is responsible for enforcing its own invariants. A smart constructor — a function that validates inputs before producing a value — ensures that invalid data can never be constructed. The type system (or convention, depending on the language) enforces the rule, not runtime guards scattered across callers.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1998,7 +1998,7 @@ main = case example of
 
 **Key Takeaway:** Use a module with a private constructor and a smart `create` function to enforce invariants at the type level. A successfully constructed value is always valid — no external guard required.
 
-**Why It Matters:** Domain model integrity is the first line of defense against data corruption in production. When the model enforces its own rules through the type system, invariants cannot be violated even by callers who forget to validate. The F# `Result` type makes the possibility of failure explicit in the type signature, so callers cannot ignore it.
+**Why It Matters:** Domain model integrity is the first line of defense against data corruption in production. When the model enforces its own rules through the type system, invariants cannot be violated even by callers who forget to validate. A sum type such as `Result`/`Either` makes the possibility of failure explicit in the function signature, so callers cannot ignore it.
 
 ---
 
@@ -2006,7 +2006,7 @@ main = case example of
 
 ### Example 7: Manual Dependency Injection
 
-Dependency injection means passing dependencies into a function rather than hard-coding them inside it. In F#, DI is natural: functions take their dependencies as parameters, typically as function-typed arguments or records of functions. This makes code testable without any DI framework.
+Dependency injection means passing dependencies into a function rather than hard-coding them inside it. In FP, DI is natural: functions take their dependencies as parameters — typically as function-typed arguments or records of functions — so the caller decides which implementation to supply. This makes code testable without any DI framework.
 
 ```mermaid
 graph TD
@@ -2288,7 +2288,7 @@ main = do
 
 **Key Takeaway:** Inject dependencies as function parameters rather than hard-coding them. The function only knows the signature it needs, not which implementation provides it.
 
-**Why It Matters:** In F#, every function that accepts a function parameter is implicitly practicing dependency injection. This makes testability the default: swap the real fetcher for a fake by passing a different function. No DI container, no reflection — just higher-order functions, which the type system already supports.
+**Why It Matters:** In FP, every function that accepts a function parameter is implicitly practicing dependency injection. This makes testability the default: swap the real fetcher for a fake by passing a different function. No DI container, no reflection — just higher-order functions, which all four languages support natively.
 
 ---
 
@@ -2485,7 +2485,7 @@ main = do
 
 **Key Takeaway:** Use partial application (F#) or factory closures (Clojure) to fix stable dependencies at "construction" time. Use full parameter threading when the dependency varies per invocation.
 
-**Why It Matters:** Partial application is F#'s idiomatic form of constructor injection — it bakes a dependency into a function, producing a simpler function that already has what it needs. Clojure achieves the same via closures, keeping dependencies as plain data or functions captured at factory time. Method injection powers extensible APIs: passing different output functions lets audit logging write to a console, a file, or a test spy without changing the logging logic.
+**Why It Matters:** Partial application and factory closures are the FP form of constructor injection — they bake a dependency into a function, producing a simpler function that already has what it needs. F#, Clojure, TypeScript, and Haskell all express this pattern naturally through first-class functions. Method injection powers extensible APIs: passing different output functions lets audit logging write to a console, a file, or a test spy without changing the logging logic.
 
 ---
 
@@ -2493,7 +2493,7 @@ main = do
 
 ### Example 9: Interface Segregation Principle
 
-The Interface Segregation Principle says that modules should not depend on operations they do not use. In F#, this is expressed naturally through focused record-of-functions types: each consumer receives only the functions it actually needs, not a large monolithic record. In Clojure, the same principle appears as protocol segregation or passing only the specific keys from a map that a function genuinely needs.
+The Interface Segregation Principle says that modules should not depend on operations they do not use. In FP, this is expressed naturally through focused record-of-functions types or segregated protocols: each consumer receives only the functions it actually needs, not a large monolithic record. Splitting a fat dependency record into smaller focused ones means no consumer is forced to provide stub implementations for capabilities it does not possess.
 
 **Fat dependency record — forces consumers to carry functions they do not use:**
 
@@ -2847,7 +2847,7 @@ main = do
 
 **Key Takeaway:** Split dependency records (F#) or protocols (Clojure) by cohesive capability, not by the most complex consumer. Each consumer receives only the functions it genuinely uses.
 
-**Why It Matters:** Interface segregation is why F# record-of-functions and Clojure protocols are powerful DI mechanisms — you compose only the capabilities a function needs. Systems that ignore ISP accumulate unused fields in large dependency records, increasing coupling and making mocking harder. Focused records and protocols make dependencies explicit and minimal.
+**Why It Matters:** Interface segregation is why record-of-functions and protocol-based DI are powerful mechanisms — you compose only the capabilities a function needs. Systems that ignore ISP accumulate unused fields in large dependency records, increasing coupling and making substitution harder. Focused records and protocols make dependencies explicit and minimal across F#, Clojure, TypeScript, and Haskell alike.
 
 ---
 
@@ -2855,7 +2855,7 @@ main = do
 
 ### Example 10: Open for Extension, Closed for Modification
 
-The Open/Closed Principle states that a function or module should be open for extension (new behaviors can be added) but closed for modification (existing code does not change when behavior is added). In F#, this is achieved through discriminated unions and function parameters — you extend by adding new cases or passing new functions, not by editing existing logic. In Clojure, the same principle maps to multimethods or functions-as-values: each new discount strategy is a new `defmethod` or a new function, not an edit to the dispatch logic.
+The Open/Closed Principle states that a function or module should be open for extension (new behaviors can be added) but closed for modification (existing code does not change when behavior is added). In FP, this is achieved through function parameters and sum types: you extend by passing a new function value or adding a new variant, not by editing existing logic. Each new strategy is a new value; the dispatch or consumer function is untouched.
 
 ```mermaid
 graph TD
@@ -3157,9 +3157,9 @@ main = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** Depend on function types (F#) or function values (Clojure) and inject concrete strategies from outside. Adding new behavior means writing a new function, not modifying existing ones.
+**Key Takeaway:** Depend on function types and inject concrete strategies from outside. Adding new behavior means writing a new function, not modifying existing ones.
 
-**Why It Matters:** The Open/Closed Principle enables extension through new implementations rather than modification. In F#, function types make this natural: a `DiscountStrategy` is any `float -> float` function, so every new discount is a new value. In Clojure, functions are first-class values with the same extensibility. Pluggable systems — payment processors, notification channels — are only maintainable when each extension point is a function parameter rather than a conditional.
+**Why It Matters:** The Open/Closed Principle enables extension through new implementations rather than modification. In all four FP languages, a strategy type is any function matching the required signature, so every new discount is a new value — no edits to the dispatch logic. Pluggable systems — payment processors, notification channels — are only maintainable when each extension point is a function parameter rather than a conditional.
 
 ---
 
@@ -3167,7 +3167,7 @@ main = do
 
 ### Example 11: Subtypes Must Be Substitutable
 
-The Liskov Substitution Principle (LSP) says that any value of a subtype must be usable wherever its parent type is expected, without breaking the program. In F#, LSP is expressed through parametric polymorphism and type constraints: a generic function that accepts any `'a` satisfying a constraint can receive any conforming value safely. F# avoids LSP violations by preferring function types and discriminated unions over inheritance hierarchies. In Clojure, LSP maps to the guarantee that every value passed to a multimethod or protocol function actually satisfies the dispatch contract.
+The Liskov Substitution Principle (LSP) says that any value of a subtype must be usable wherever its parent type is expected, without breaking the program. In FP, LSP is expressed through parametric polymorphism and sum types: a function that pattern-matches on a closed sum of variants can receive any conforming value safely. FP avoids LSP violations by preferring function types and algebraic data types over inheritance hierarchies — every variant carries exactly the data it needs, so no case can silently break the contract expected by a consumer.
 
 **LSP violation modeled — subtype breaks the contract:**
 
@@ -3494,9 +3494,9 @@ main = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** Prefer discriminated unions (F#) or multimethods on tagged maps (Clojure) over inheritance hierarchies. When every case carries exactly the data it needs, no case can break the contract expected by a consumer.
+**Key Takeaway:** Prefer algebraic data types and pattern matching over inheritance hierarchies. When every case carries exactly the data it needs, no case can break the contract expected by a consumer.
 
-**Why It Matters:** LSP violations create runtime surprises that escape static analysis. The classic Rectangle/Square problem in OOP surfaces whenever mutable coupling is hidden behind an inheritance contract. F# discriminated unions and Clojure multimethods on tagged maps both eliminate this by making each variant structurally independent — no case can silently break another case's contract.
+**Why It Matters:** LSP violations create runtime surprises that escape static analysis. The classic Rectangle/Square problem in OOP surfaces whenever mutable coupling is hidden behind an inheritance contract. Sum types — discriminated unions, tagged unions, ADTs — eliminate this by making each variant structurally independent: no case can silently break another case's contract.
 
 ---
 
@@ -3504,7 +3504,7 @@ main = do
 
 ### Example 12: DRY — Don't Repeat Yourself
 
-DRY (Don't Repeat Yourself) means every piece of knowledge should have a single authoritative representation. In F#, duplication is eliminated by extracting shared rules into named functions and composing them, rather than copy-pasting conditional logic. In Clojure, the same extraction is a plain `defn` at the top of the namespace — every caller `require`s it from there, giving the same single source of truth.
+DRY (Don't Repeat Yourself) means every piece of knowledge should have a single authoritative representation. In FP, duplication is eliminated by extracting shared rules into named functions and composing them — rather than copy-pasting conditional logic — so that every caller delegates to the single canonical definition.
 
 **Violation — business rule duplicated in three places:**
 
@@ -3773,13 +3773,13 @@ main = do
 
 **Key Takeaway:** Extract repeated decisions into named functions. Code duplication is a symptom of knowledge duplication — fix the knowledge location, not just the syntax.
 
-**Why It Matters:** The most costly bugs in production are consistency bugs where the same rule was updated in two places but not the third. DRY violations are the primary driver of those failures. In F#, extracting a rule into a named function is frictionless — partial application even lets you pre-bind some arguments. In Clojure, a single `defn` at the namespace top level becomes the authoritative home for any business rule, making the extraction equally zero-friction.
+**Why It Matters:** The most costly bugs in production are consistency bugs where the same rule was updated in two places but not the third. DRY violations are the primary driver of those failures. In FP, extracting a rule into a named function is frictionless — partial application and first-class functions let you pre-bind arguments or pass the extracted predicate directly to higher-order combinators, making the extraction equally zero-friction across F#, Clojure, TypeScript, and Haskell.
 
 ---
 
 ### Example 13: KISS — Keep It Simple, Stupid
 
-KISS means preferring the simplest design that satisfies the requirements. Complexity is a cost that must be justified by demonstrable benefit. In F#, over-engineering often appears as unnecessary type machinery for a problem a simple function solves. In Clojure, over-engineering appears as premature protocol hierarchies or needless spec wrapping for straightforward data transformations.
+KISS means preferring the simplest design that satisfies the requirements. Complexity is a cost that must be justified by demonstrable benefit. Over-engineering in FP often appears as unnecessary type machinery — discriminated unions, protocol hierarchies, or spec wrapping — for a problem that a single pure function solves directly.
 
 **Over-engineered — excessive type machinery for a simple task:**
 
@@ -3999,13 +3999,13 @@ main = putStrLn (greet "Alice")
 
 **Key Takeaway:** Add abstractions only when complexity is demonstrated, not anticipated. The simple solution is easier to read, debug, test, extend, and hand off.
 
-**Why It Matters:** Premature abstraction is one of the top causes of architectural debt. F#'s type system is powerful — discriminated unions, type aliases, computation expressions — and Clojure's protocol system is equally expressive. But each addition has a maintenance cost. Build the simplest thing, then refactor when a pattern genuinely emerges from repeated use, not from speculation.
+**Why It Matters:** Premature abstraction is one of the top causes of architectural debt. Every FP language offers powerful abstraction tools — sum types, type aliases, monadic computation, protocols, typeclasses — but each addition carries a maintenance cost. Build the simplest thing, then refactor when a pattern genuinely emerges from repeated use, not from speculation.
 
 ---
 
 ### Example 14: YAGNI — You Aren't Gonna Need It
 
-YAGNI means do not add functionality until it is actually needed. Speculative features add code complexity without delivering current value, and they are often built for a requirement that never arrives in the form anticipated. In Clojure, speculative keys in a map namespace add invisible surface area — every function that reads the map must mentally filter out keys it does not need.
+YAGNI means do not add functionality until it is actually needed. Speculative features add code complexity without delivering current value, and they are often built for a requirement that never arrives in the form anticipated. In FP, speculative fields in records or maps add invisible surface area — every function that reads the data structure must mentally filter out keys it does not need.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -4191,7 +4191,7 @@ main = do
 
 **Key Takeaway:** Ship only what the current requirement demands. Code that is never executed in production still costs maintenance, testing, and cognitive load.
 
-**Why It Matters:** YAGNI reduces the "inventory" of unvalidated code. Speculative record fields in F# force every constructor and pattern match to handle values that may never be used. Speculative map keys in Clojure force every reader to mentally filter noise. Lean manufacturing teaches that inventory is waste — software inventory (unshipped features, speculative fields) follows the same economics.
+**Why It Matters:** YAGNI reduces the "inventory" of unvalidated code. Speculative record fields force every constructor and pattern match to handle values that may never be used; speculative map keys force every reader to mentally filter noise. This holds equally in F#, Clojure, TypeScript, and Haskell. Lean manufacturing teaches that inventory is waste — software inventory (unshipped features, speculative fields) follows the same economics.
 
 ---
 
@@ -4199,7 +4199,7 @@ main = do
 
 ### Example 15: High Coupling — The Problem
 
-Coupling measures how much one module depends on the internals of another. High coupling means a change in one module forces changes in others, making the system brittle and hard to evolve. In F#, high coupling appears when one function directly accesses or mutates the internal fields of records owned by another module.
+Coupling measures how much one module depends on the internals of another. High coupling means a change in one module forces changes in others, making the system brittle and hard to evolve. In FP, high coupling appears when one function directly accesses or mutates the internal fields of data structures owned by another module — bypassing the stable function interface that module exposes.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -4397,13 +4397,13 @@ main = do
 
 **Key Takeaway:** When one function directly reads or mutates another module's internal fields, every internal change cascades as a breaking change throughout the codebase.
 
-**Why It Matters:** High coupling is the primary reason legacy migrations fail. Systems where functions directly manipulate each other's internals cannot be changed one component at a time. In F#, preferring immutable records returned by smart functions — rather than mutable fields — is the idiomatic way to prevent coupling from taking root.
+**Why It Matters:** High coupling is the primary reason legacy migrations fail. Systems where functions directly manipulate each other's internals cannot be changed one component at a time. In FP, preferring immutable values returned by smart functions — rather than mutable shared fields — is the idiomatic way to prevent coupling from taking root.
 
 ---
 
 ### Example 16: Low Coupling Through Encapsulation
 
-Reducing coupling means modules communicate through stable function interfaces, not through internal fields. In F#, encapsulation is achieved by giving each domain concept its own module with opaque types and smart accessor/mutator functions.
+Reducing coupling means modules communicate through stable function interfaces, not through internal fields. In FP, encapsulation is achieved by giving each domain concept its own module with opaque types and smart accessor/mutator functions — callers depend on behavior, not representation.
 
 ```mermaid
 graph LR
@@ -4737,7 +4737,7 @@ main = do
 
 **Key Takeaway:** Define stable module functions that express what a concept can do, not what it contains. Callers depend on behavior, not representation.
 
-**Why It Matters:** Encapsulation is what makes refactoring safe. When the internal representation of an F# record changes — say, `Balance` becomes a `decimal` instead of `float` — only that module changes. Systems with high encapsulation maintain a stable change cost over time.
+**Why It Matters:** Encapsulation is what makes refactoring safe. When the internal representation of a domain type changes — say, `Balance` switches numeric types — only that module changes. Systems with high encapsulation maintain a stable change cost over time.
 
 ---
 
@@ -5033,7 +5033,7 @@ main = do
 
 ### Example 18: Encapsulation with Private State
 
-Encapsulation means controlling access to internal state so that external code cannot put the system into an inconsistent state. In F#, encapsulation is achieved through modules with private types and smart constructors, combined with immutable records that derive computed values on demand rather than caching them in parallel fields.
+Encapsulation means controlling access to internal state so that external code cannot put the system into an inconsistent state. In FP, encapsulation is achieved through opaque types and smart constructors, combined with immutable records that derive computed values on demand rather than caching them in parallel mutable fields.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -5293,7 +5293,7 @@ main = do
 
 **Key Takeaway:** Use a module with private types and `create` to enforce invariants. Derived values should always be computed from a single source of truth rather than cached in parallel fields.
 
-**Why It Matters:** Every public mutable field in a record is a potential consistency bug. F#'s `private` type visibility and immutable-by-default records make it structurally harder to create stale state. Systems where state changes are controlled and validated at the module boundary make invariant violations physically impossible.
+**Why It Matters:** Every public mutable field in a record is a potential consistency bug. Opaque types and immutable-by-default values — a pattern available in F#, Haskell, Clojure, and TypeScript — make it structurally harder to create stale state. Systems where state changes are controlled and validated at the module boundary make invariant violations physically impossible.
 
 ---
 
@@ -5301,7 +5301,7 @@ main = do
 
 ### Example 19: Preferring Composition
 
-Composition over inheritance means building complex behavior by combining simple, focused functions or values rather than deep type hierarchies. In F#, there are no inheritance hierarchies for data — discriminated unions and record composition are the idiomatic alternatives.
+Composition over inheritance means building complex behavior by combining simple, focused functions or values rather than deep type hierarchies. In FP, sum types and record-of-functions composition replace inheritance hierarchies — each variant carries exactly the data it needs, and behaviors are assembled at the call site from small reusable functions.
 
 ```mermaid
 graph TD
@@ -5515,13 +5515,13 @@ main = do
 
 **Key Takeaway:** Model capabilities with composable behavior functions. Compose a type from only the behaviors it actually has — no unused fields, no exceptions thrown from "inherited" operations.
 
-**Why It Matters:** Deep inheritance hierarchies are a primary driver of architectural rigidity. In F#, there is no class inheritance for data, so the composition approach is not just preferred — it is the only option. This makes LSP violations structurally impossible: a `Penguin` type without a `Fly` field simply cannot be passed to a function that expects a `{ Fly: unit -> string }`.
+**Why It Matters:** Deep inheritance hierarchies are a primary driver of architectural rigidity. In FP, data types do not inherit behavior — the composition approach is not just preferred, it is the only option. This makes LSP violations structurally impossible: a `Penguin` type without a `Fly` field simply cannot be passed to a function that expects a flying capability.
 
 ---
 
 ### Example 20: Mixin vs. Composition
 
-Mixins add behavior to a type without deep inheritance. In F#, mixin-like behavior is expressed through module functions that operate on any compatible type, while explicit composition is done through records of functions. Understanding when to use each is a foundational architectural decision.
+Mixins add behavior to a type without deep inheritance. In FP, mixin-like behavior is expressed through utility functions that operate on any compatible data shape, while explicit composition is done through records of functions (or maps of functions). Understanding when to use each is a foundational architectural decision.
 
 **Module-function approach (F# equivalent of mixins) — reuses capability without inheritance:**
 
@@ -5817,7 +5817,7 @@ main = do
 
 **Key Takeaway:** Use module functions for optional, non-configurable capabilities shared across types. Use explicit record-of-functions composition when the behavior needs to be swapped, tested, or configured independently.
 
-**Why It Matters:** In F#, the equivalent of "mixin hell" is a long chain of module functions that all share global state or are hard to test in isolation. Explicit composition via record-of-functions fields makes every dependency visible in the type, enabling clean injection and deterministic testing.
+**Why It Matters:** In FP, the equivalent of "mixin hell" is a long chain of utility functions that all share global state or are hard to test in isolation. Explicit composition via record-of-functions (or map-of-functions) fields makes every dependency visible in the signature, enabling clean injection and deterministic testing.
 
 ---
 
@@ -5825,7 +5825,7 @@ main = do
 
 ### Example 21: Repository Pattern Basics
 
-The Repository pattern abstracts the data access layer behind a collection-like interface. In F#, a repository is expressed as a record of functions — `find`, `save`, `findAll` — that can be satisfied by either an in-memory implementation or a database driver. The business layer sees only the record type.
+The Repository pattern abstracts the data access layer behind a collection-like interface. In FP, a repository is expressed as a record-of-functions (or map-of-functions) — `find`, `save`, `findAll` — that can be satisfied by either an in-memory implementation or a database driver. The business layer sees only the interface, never the implementation.
 
 ```mermaid
 graph LR
@@ -6097,13 +6097,13 @@ main = do
 
 **Key Takeaway:** Define a record of functions for persistence and inject the implementation. The business layer never imports a database driver.
 
-**Why It Matters:** The repository pattern is why F# business functions can be tested at full speed without a live database. Because a `ProductRepository` is just a record of functions, a test implementation is a literal record literal — no mocking framework, no stubs. Swapping to a real database means creating a different record value.
+**Why It Matters:** The repository pattern is why FP business functions can be tested at full speed without a live database. Because a repository is just a record-of-functions (or map-of-functions), a test implementation is a literal value — no mocking framework, no stubs. Swapping to a real database means creating a different implementation and injecting it at the composition root.
 
 ---
 
 ### Example 22: Repository with Query Methods
 
-Real repositories go beyond simple CRUD. They expose domain-meaningful query functions that express business questions as named fields rather than raw queries embedded in business logic. In F#, these are simply additional function fields on the repository record. In Clojure, the repository is a plain map of keyword-to-function entries — the same data-orientation philosophy, no type definition required.
+Real repositories go beyond simple CRUD. They expose domain-meaningful query functions that express business questions as named fields rather than raw queries embedded in business logic. Whether represented as a typed record-of-functions (F#, Haskell, TypeScript) or a plain map of keyword-to-function entries (Clojure), the business layer calls named operations and never sees storage details.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6346,7 +6346,7 @@ main = do
 
 ### Example 23: Service Layer Coordinates Use Cases
 
-The Service Layer pattern centralizes application use cases in dedicated functions. A use case (like "place an order") typically involves multiple domain types and repositories. In F#, the service layer is a module of pure functions that coordinate domain logic and repository calls. In Clojure, use-case functions operate on plain maps and return tagged result maps, coordinating pure helper functions in the same way.
+The Service Layer pattern centralizes application use cases in dedicated functions. A use case (like "place an order") typically involves multiple domain types and repositories. The service layer is a set of pure functions that coordinate domain logic and repository calls — operating on plain values and returning structured results that make both success and failure explicit.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6664,13 +6664,13 @@ main = do
 
 **Key Takeaway:** The service layer owns the sequence of steps for a use case. Domain functions own their own rules. In F#, the service layer is a composition of pure functions — no class required.
 
-**Why It Matters:** Without a service layer, use case logic scatters into handler functions and domain types — creating duplicate sequences with subtle differences that diverge over time. The F# service layer is particularly clean because it composes pure functions: every step is testable independently.
+**Why It Matters:** Without a service layer, use case logic scatters into handler functions and domain types — creating duplicate sequences with subtle differences that diverge over time. The FP service layer is particularly clean because it composes pure functions: every step is testable independently.
 
 ---
 
 ### Example 24: Service Layer with Error Handling
 
-A mature service layer handles errors explicitly, returning structured result values rather than leaking exceptions to the presentation layer. In F#, `Result<'T, 'E>` is a first-class built-in type that makes every failure mode visible in the function signature. In Clojure, the idiomatic equivalent is a tagged result map with a `:status` key — the same data-orientation approach seen in Example 23.
+A mature service layer handles errors explicitly, returning structured result values rather than leaking exceptions to the presentation layer. A sum type such as `Result`/`Either` (F#, Haskell, TypeScript) or a tagged result map with a `:status` key (Clojure) encodes every failure mode in the function signature so callers cannot silently ignore it.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6891,7 +6891,7 @@ main = do
 
 **Key Takeaway:** Returning `Result` types forces callers to handle both success and failure paths. Unhandled errors become a compile-time concern rather than a production incident.
 
-**Why It Matters:** F#'s `Result<'T, 'E>` is a language-level enforcement of explicit error handling — the same philosophy as Rust's `Result<T, E>` and Go's `(value, error)`. The F# compiler will warn you if you ignore a `Result` value, making "fire and forget" error handling visible before it reaches production.
+**Why It Matters:** Explicit result types — `Result`/`Either` in F# and Haskell, tagged union types in TypeScript, tagged maps in Clojure — enforce explicit error handling at the language level, the same philosophy as Rust's `Result<T, E>` and Go's `(value, error)`. Pattern matching and exhaustiveness checks make "fire and forget" error handling visible before it reaches production.
 
 ---
 
@@ -6899,7 +6899,7 @@ main = do
 
 ### Example 25: Data Transfer Objects
 
-A Data Transfer Object (DTO) is a simple container for carrying data between layers or across service boundaries. DTOs have no business logic — they are pure data carriers. In F#, DTOs are simple record types with no methods. In Clojure, the same boundary is expressed by selecting only the safe keys from the domain map before returning it. Using DTOs decouples the internal domain model from the external representation.
+A Data Transfer Object (DTO) is a simple container for carrying data between layers or across service boundaries. DTOs have no business logic — they are pure data carriers. A DTO holds only the fields appropriate for the boundary it crosses; sensitive or internal fields are physically absent from the type. Using DTOs decouples the internal domain model from the external representation.
 
 ```mermaid
 graph LR
@@ -7165,13 +7165,13 @@ main = do
 
 **Key Takeaway:** DTOs are the shape of data at a boundary — they protect internal domain structure from external exposure and decouple serialization from business logic.
 
-**Why It Matters:** Every major data breach involving accidental field exposure (password hashes returned in API responses, admin flags visible to users) is a failure to use DTOs. In F#, the DTO pattern is enforced structurally: `UserResponse` simply has no `PasswordHash` field, so it is physically impossible to include it in a response.
+**Why It Matters:** Every major data breach involving accidental field exposure (password hashes returned in API responses, admin flags visible to users) is a failure to use DTOs. When the response type has no `PasswordHash` field, it is physically impossible to include it in a response — a structural guarantee that typed FP languages enforce automatically.
 
 ---
 
 ### Example 26: DTO Validation
 
-DTOs are the right place to validate external input before it enters the domain layer. In F#, validation is expressed as a smart constructor that returns `Result<DTO, errors>`, ensuring a successfully constructed DTO is always valid. In Clojure, the idiomatic equivalent collects errors into a sequence and returns a tagged result map — the same accumulate-all-errors philosophy without the type-system guarantees.
+DTOs are the right place to validate external input before it enters the domain layer. A smart constructor validates every field before constructing the DTO and returns a result type on failure — accumulating all errors rather than stopping at the first. A successfully constructed DTO is therefore guaranteed valid; the domain layer never needs to re-validate the same fields.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -7470,7 +7470,7 @@ main = do
 
 ### Example 27: Small Layered Application
 
-This example combines the patterns introduced in Examples 1-26 into a minimal but realistic layered application: a product catalog with separation of concerns, repository, service, and DTO layers all working together. F# uses records, modules, and the `|>` pipeline operator. Clojure uses plain maps, atoms, and threading macros — the same four-layer structure without a type definition in sight.
+This example combines the patterns introduced in Examples 1-26 into a minimal but realistic layered application: a product catalog with separation of concerns, repository, service, and DTO layers all working together. F#, Clojure, TypeScript, and Haskell each express the same four-layer structure — typed records and pipelines, plain maps and threading macros, interfaces and readonly types, and algebraic data types with IO — without changing the architecture.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -7869,7 +7869,7 @@ main = do
 
 **Key Takeaway:** Each layer has a clear job: DTOs carry data at boundaries, the domain holds types and rules, the repository manages storage, and the service coordinates use cases. The presentation layer does nothing but wire and call.
 
-**Why It Matters:** This four-layer structure reliably scales from a two-person project to a large engineering team because each layer can be replaced, tested, and scaled independently. In F#, the entire structure is just records, modules, and pure functions — no framework required. The lack of inheritance means each boundary is enforced by the type signatures, not by convention.
+**Why It Matters:** This four-layer structure reliably scales from a two-person project to a large engineering team because each layer can be replaced, tested, and scaled independently. In FP, the entire structure is just values, modules, and pure functions — no framework required. The lack of inheritance means each boundary is enforced by function signatures or structural types, not by convention.
 
 ---
 
@@ -8305,4 +8305,4 @@ loginPure name = name
 
 **Key Takeaway:** God modules, layer leakage, anemic domains, and global mutable state are the four most common beginner architecture smells. Recognizing them early is as important as knowing the correct patterns.
 
-**Why It Matters:** Architecture smells compound silently: a god module at 200 lines becomes unmaintainable at 2,000. In F#, the language nudges you away from global mutable state (it requires the `mutable` keyword and is discouraged by convention) and toward pure functions. But module-level discipline still requires deliberate attention — the type system does not prevent putting all functions in one file. The patterns in Examples 1-27 exist precisely to prevent these smells from taking root by establishing clear, stable boundaries before the codebase grows past the point where restructuring becomes prohibitively expensive.
+**Why It Matters:** Architecture smells compound silently: a god module at 200 lines becomes unmaintainable at 2,000. FP languages nudge developers away from global mutable state and toward pure functions — F# requires the `mutable` keyword, Haskell quarantines effects in IO, and Clojure wraps mutation in atoms. But module-level discipline still requires deliberate attention — the type system does not prevent putting all functions in one file. The patterns in Examples 1-27 exist precisely to prevent these smells from taking root by establishing clear, stable boundaries before the codebase grows past the point where restructuring becomes prohibitively expensive.

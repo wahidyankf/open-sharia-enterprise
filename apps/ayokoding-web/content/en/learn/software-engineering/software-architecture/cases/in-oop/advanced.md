@@ -150,7 +150,7 @@ import { Client } from "pg";
 // => pg: Node.js PostgreSQL driver — the ecosystem equivalent of the PostgreSQL JDBC driver
 // => No automatic container provisioning — the database must be started in a separate step
 
-async function main(): Promise<void> {
+async function main(): Promise {
   // => Assumes the database is already running on localhost:5432 — manual setup required
   // => If the database is not ready, client.connect() throws immediately — no health-check polling
   const client = new Client({
@@ -183,7 +183,7 @@ main();
 
 ### Production Framework
 
-Testcontainers integrates with JUnit 5 via `@Testcontainers` and `@Container`. The `PostgreSQLContainer` manages the full container lifecycle — start, wait for the PostgreSQL health probe, expose a random host port, and stop after the test class finishes:
+The Testcontainers framework integrates with the test runner via lifecycle annotations (JUnit 5 `@Testcontainers`/`@Container` in Java and Kotlin, `IAsyncLifetime` in C#, `beforeAll`/`afterAll` hooks in TypeScript). The container wrapper manages the full lifecycle — start, wait for the PostgreSQL health probe, expose a random host port, and stop after the test suite finishes:
 
 ```mermaid
 flowchart LR
@@ -640,7 +640,7 @@ Every database integration test and every production deployment depends on the s
 
 ### Standard Library First
 
-`java.io` and plain JDBC can execute SQL files in order — but you manage ordering, idempotency, and error recovery manually:
+Each stack's standard I/O utilities can execute SQL files in order — but you manage ordering, idempotency, and error recovery manually:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -765,7 +765,7 @@ import { readFileSync } from "fs";
 import type { Client } from "pg";
 // => Client: Node.js PostgreSQL connection — must be provided by the caller; not managed here
 
-async function runMigration(client: Client, sqlFilePath: string): Promise<void> {
+async function runMigration(client: Client, sqlFilePath: string): Promise {
   // => No ordering enforcement — the caller must sort files by name manually
   // => No version tracking: impossible to determine which migrations have already run
   const sql = readFileSync(sqlFilePath, "utf8");
@@ -950,7 +950,7 @@ import type { Pool } from "pg";
 import { logger } from "./shared/logger";
 // => logger: structured logger (pino or winston) — decoupled from the logging backend
 
-export async function runMigrations(pool: Pool): Promise<void> {
+export async function runMigrations(pool: Pool): Promise {
   // => Called from the application bootstrap before the HTTP server starts accepting requests
   // => Equivalent to ApplicationRunner — runs once at startup, before any HTTP request is served
   const result = await migrate({
@@ -1047,7 +1047,7 @@ External bank API calls are an I/O boundary: the payments context sends a disbur
 
 ### Standard Library First
 
-`java.net.http.HttpClient` (JDK 11+) can call any HTTP endpoint without any Spring dependency. You manage timeout configuration, error discrimination, and JSON mapping manually:
+Each stack's built-in HTTP client can call any HTTP endpoint without any framework dependency. You manage timeout configuration, error discrimination, and JSON mapping manually:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1213,7 +1213,7 @@ const httpClient = axios.create({
   // => timeout: 30 s total request timeout — axios throws AxiosError on timeout
 });
 
-async function initiateDisbursement(apiKey: string, iban: string, amount: string, currency: string): Promise<string> {
+async function initiateDisbursement(apiKey: string, iban: string, amount: string, currency: string): Promise {
   // => No typed error discrimination between insufficient-funds, auth failure, and timeout
   const body = { iban, amount, currency };
   // => Plain object: no type safety on field names — a typo compiles silently
@@ -1237,11 +1237,11 @@ async function initiateDisbursement(apiKey: string, iban: string, amount: string
 
 {{< /tabs >}}
 
-**Limitation for production**: no typed error discrimination between insufficient-funds errors, authentication failures, and server errors. No retry logic. The application layer must import `HttpClient` to call this function — the banking boundary is not behind a port.
+**Limitation for production**: no typed error discrimination between insufficient-funds errors, authentication failures, and server errors. No retry logic. The application layer must import the HTTP client directly — the banking boundary is not behind a port.
 
 ### Production Framework
 
-The hexagonal approach declares a `BankingPort` in the `payments` application package and implements the HTTP adapter in infrastructure using Spring `RestClient`:
+The hexagonal approach declares a `BankingPort` interface in the `payments` application package and implements the HTTP adapter in infrastructure using the stack's idiomatic HTTP client (Spring `RestClient` in Java/Kotlin, `IHttpClientFactory`-injected `HttpClient` in C#, `axios` in TypeScript):
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1368,11 +1368,11 @@ export interface BankingPort {
   // => Output port: declares what the application needs from a bank API
   // => No mention of axios or HTTP — those are adapter concerns
 
-  initiateDisbursement(payment: Payment): Promise<DisbursementConfirmation>;
+  initiateDisbursement(payment: Payment): Promise;
   // => initiateDisbursement: called during a payment run — submits disbursement to the bank
   // => Rejects with BankingError on failure — the caller can distinguish bank API failure
 
-  confirmDisbursement(bankReference: string): Promise<boolean>;
+  confirmDisbursement(bankReference: string): Promise;
   // => confirmDisbursement: polls for settlement status — resolves true when bank confirms
   // => Rejects with BankingError on connection failure, not on "pending" status
 }
@@ -1750,7 +1750,7 @@ export class AxiosBankingAdapter implements BankingPort {
     });
   }
 
-  async initiateDisbursement(payment: Payment): Promise<DisbursementConfirmation> {
+  async initiateDisbursement(payment: Payment): Promise {
     // => Implements BankingPort.initiateDisbursement — called by the payments application service
     try {
       const body: DisbursementRequest = {
@@ -1774,7 +1774,7 @@ export class AxiosBankingAdapter implements BankingPort {
     }
   }
 
-  async confirmDisbursement(bankReference: string): Promise<boolean> {
+  async confirmDisbursement(bankReference: string): Promise {
     try {
       const { data } = await this.client.get<DisbursementStatusResponse>(
         `/v1/disbursements/${encodeURIComponent(bankReference)}`,
@@ -1806,7 +1806,7 @@ External ports — the banking adapter from Guide 18, the persistence adapter fr
 
 ### Standard Library First
 
-`java.util.concurrent` provides `CompletableFuture` and thread pools for async retry — but you write the retry loop, backoff calculation, and open-circuit logic yourself:
+Each stack's standard concurrency primitives can implement a retry loop — but you write the retry logic, backoff calculation, and open-circuit state yourself:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1930,15 +1930,15 @@ public static class ManualRetry
 // Standard library: manual retry loop with exponential backoff — TypeScript
 // Demonstrates the manual retry approach that p-retry + opossum supersedes.
 
-const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number): Promise => new Promise((resolve) => setTimeout(resolve, ms));
 // => setTimeout-based sleep: non-blocking — does not occupy a thread like Thread.sleep
 
 export async function withRetry<T>(
-  operation: () => Promise<T>,
+  operation: () => Promise,
   // => () => Promise<T>: async lambda — wraps the call that may throw
   maxAttempts: number,
   initialDelayMs: number,
-): Promise<T> {
+): Promise {
   let lastError: unknown;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // => Linear retry loop: no built-in jitter, no backoff cap, no circuit-breaker state
@@ -1968,7 +1968,7 @@ export async function withRetry<T>(
 
 ### Production Framework
 
-Resilience4j provides `Retry` and `CircuitBreaker` decorators that wrap any `Supplier`, `Function`, or `Callable`. The decorator is applied in the composition root `@Configuration` class — the application service constructor receives a `PurchaseOrderRepository` that already has retry and circuit-breaker wiring applied:
+The resilience library for each stack provides `Retry` and `CircuitBreaker` decorators that wrap any callable unit of work (Resilience4j in Java/Kotlin, Polly's `ResiliencePipeline` in C#, `p-retry` + `opossum` in TypeScript). The decorator is applied in the composition root — the application service constructor receives a `PurchaseOrderRepository` that already has retry and circuit-breaker wiring applied:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -2258,9 +2258,9 @@ export class ResilientPurchaseOrderRepository implements PurchaseOrderRepository
     // => Wraps findById in a circuit-breaker: read failures counted separately from write failures
   }
 
-  async save(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async save(po: PurchaseOrder): Promise {
     // => Wraps save() with retry + circuit-breaker: transient DB failures are retried
-    return pRetry(() => this.saveBreaker.fire(po) as Promise<PurchaseOrder>, {
+    return pRetry(() => this.saveBreaker.fire(po) as Promise, {
       retries: 2,
       // => retries: 2 — the initial call plus two retries (total 3 attempts)
       minTimeout: 200,
@@ -2270,8 +2270,8 @@ export class ResilientPurchaseOrderRepository implements PurchaseOrderRepository
     });
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
-    return pRetry(() => this.findBreaker.fire(id) as Promise<PurchaseOrder | null>, {
+  async findById(id: PurchaseOrderId): Promise {
+    return pRetry(() => this.findBreaker.fire(id) as Promise, {
       retries: 2,
       // => findById is also retried: transient DB timeouts on reads benefit from retry
       minTimeout: 200,
@@ -2279,7 +2279,7 @@ export class ResilientPurchaseOrderRepository implements PurchaseOrderRepository
     });
   }
 
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     return pRetry(() => this.delegate.existsById(id), {
       retries: 2,
       // => existsById retried: the existence check uses a lightweight COUNT query — worth retrying
@@ -2394,7 +2394,7 @@ A hexagonal application whose port calls are not traced is a black box in produc
 
 ### Standard Library First
 
-`java.lang.System.nanoTime()` can measure wall-clock duration — but it gives you no distributed trace context, no parent-child span relationship, and no integration with any observability backend:
+Each stack provides a built-in high-resolution timer (e.g., `System.nanoTime()`, `Stopwatch`, `performance.now()`) that can measure elapsed duration — but it gives you no distributed trace context, no parent-child span relationship, and no integration with any observability backend:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -2493,7 +2493,7 @@ public class ManualTimingExample
 // performance.now(): high-resolution monotonic clock — no trace context
 // No trace context: this duration cannot be correlated with upstream HTTP spans
 
-async function saveWithTiming(delegate: PurchaseOrderRepository, po: PurchaseOrder): Promise<void> {
+async function saveWithTiming(delegate: PurchaseOrderRepository, po: PurchaseOrder): Promise {
   // => Illustrative function: wraps save() with manual performance.now()-based timing
   const start = performance.now();
   // => performance.now(): monotonic clock — suitable for elapsed time, not wall-clock time
@@ -2815,7 +2815,7 @@ export class TracedPurchaseOrderRepository implements PurchaseOrderRepository {
   constructor(private readonly delegate: PurchaseOrderRepository) {}
   // => Both fields are readonly — immutable after construction, thread-safe for concurrent requests
 
-  async save(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async save(po: PurchaseOrder): Promise {
     return tracer.startActiveSpan("purchase-order-repository.save", async (span) => {
       // => startActiveSpan: creates a child span if a parent trace context is active
       // => name: span name visible in Jaeger / OTLP backends — describes the operation
@@ -2834,7 +2834,7 @@ export class TracedPurchaseOrderRepository implements PurchaseOrderRepository {
     });
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     return tracer.startActiveSpan("purchase-order-repository.findById", async (span) => {
       // => startActiveSpan: creates a child span under the current trace if one is active
       span.setAttribute("purchase_order.id", id.value);
@@ -2853,7 +2853,7 @@ export class TracedPurchaseOrderRepository implements PurchaseOrderRepository {
     });
   }
 
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     return tracer.startActiveSpan("purchase-order-repository.existsById", async (span) => {
       // => Span name distinguishes it from save and findById — queryable in trace UIs
       span.setAttribute("purchase_order.id", id.value);
@@ -2998,7 +2998,7 @@ Guides 10 and 11 introduced the domain event publisher port and its adapters. Th
 
 ### Standard Library First
 
-Java `Consumer<T>` and a mutable listener registry both require manual registration and synchronous dispatch with no lifecycle management:
+A plain callback registry using each stack's functional interface (e.g., `Consumer<T>`, `Action<T>`, or a typed function) requires manual registration and synchronous dispatch with no lifecycle management:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -3119,11 +3119,11 @@ type Handler<T> = (event: T) => void;
 // => Handler<T>: callback type — invoked synchronously on each publish
 
 export class InMemoryBus<T> {
-  private readonly handlers: Array<Handler<T>> = [];
+  private readonly handlers: Array = [];
   // => handlers: mutable array — not safe if handlers are registered concurrently
   // => No synchronisation: Node.js is single-threaded, but async interleaving can corrupt the list
 
-  subscribe(handler: Handler<T>): void {
+  subscribe(handler: Handler): void {
     this.handlers.push(handler);
     // => Registration is synchronous — all subscribers must register before the first publish
     // => No deduplication: subscribing the same handler twice causes it to run twice per event
@@ -3148,7 +3148,7 @@ export class InMemoryBus<T> {
 
 ### Production Framework
 
-The Spring `ApplicationEventPublisher` is the in-process publisher; `@EventListener` annotated methods are the consumers. The application service publishes after saving the aggregate — inside the same transaction boundary if `@TransactionalEventListener` is used:
+Each stack provides a framework-managed in-process event bus (Spring `ApplicationEventPublisher` with `@EventListener` in Java/Kotlin, MediatR `INotificationHandler<T>` in C#, NestJS `EventEmitter2` with `@OnEvent` in TypeScript). The application service publishes after saving the aggregate — inside the same transaction boundary when the framework supports transactional event dispatch:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -3511,7 +3511,7 @@ export class IssuePurchaseOrderServiceImpl implements IssuePurchaseOrderService 
     // => EventPublisher port: wired to the outbox adapter in production
   ) {}
 
-  async issue(supplierId: SupplierId, lines: PurchaseOrderLine[]): Promise<PurchaseOrder> {
+  async issue(supplierId: SupplierId, lines: PurchaseOrderLine[]): Promise {
     const id = new PurchaseOrderId(crypto.randomUUID());
     // => PurchaseOrderId: new random UUID — generated in the application service, not the database
     const totalAmount = new Money(
@@ -3533,13 +3533,13 @@ export class IssuePurchaseOrderServiceImpl implements IssuePurchaseOrderService 
     // => Returns the created aggregate: the controller maps it to the response DTO
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     return this.repository.findById(id);
     // => Delegate to the repository port — no event needed for a read operation
     // => null returned when the PO does not exist — the controller maps this to HTTP 404
   }
 
-  async cancel(id: PurchaseOrderId): Promise<PurchaseOrder> {
+  async cancel(id: PurchaseOrderId): Promise {
     // => cancel: modifies state — must participate in a transaction boundary
     const po = await this.repository.findById(id);
     if (!po) throw new PurchaseOrderNotFoundException(id);
@@ -3738,7 +3738,7 @@ export class PurchaseOrderIssuedEventHandler {
 
 {{< /tabs >}}
 
-**Trade-offs**: synchronous `@EventListener` dispatch is simple but blocks the application service until all handlers complete. Slow handlers block the HTTP request. Use `@Async` on the handler method to dispatch on a Spring-managed thread pool. For cross-process reliability, replace the in-process publisher with the outbox adapter from Guide 11.
+**Trade-offs**: synchronous in-process dispatch is simple but blocks the application service until all handlers complete. Slow handlers block the HTTP request. Each stack provides an async dispatch mechanism (Spring `@Async`, NestJS async event handlers, C# `IHostedService` background processing) to offload handler work to a separate execution context. For cross-process reliability, replace the in-process publisher with the outbox adapter from Guide 11.
 
 ### Domain Event Flow — End-to-End Sequence
 
@@ -4066,7 +4066,7 @@ export class GodPurchaseOrderService {
     this.pool = pool;
   }
 
-  async issuePurchaseOrder(req: Request): Promise<void> {
+  async issuePurchaseOrder(req: Request): Promise {
     // => ANTI-PATTERN: Express Request in the application layer — HTTP is a presentation concern
     const supplierId = req.query["supplierId"] as string;
     // => Parsing HTTP query parameters in the application service: untestable without HTTP mocks
@@ -4080,7 +4080,7 @@ export class GodPurchaseOrderService {
     // => ANTI-PATTERN: supplier notification in the application service — belongs in an event handler
   }
 
-  private async notifySupplier(_supplierId: string): Promise<void> {}
+  private async notifySupplier(_supplierId: string): Promise {}
   // => ANTI-PATTERN: notification logic inline — no SupplierNotifierPort, no stub, no test coverage
 }
 ```
@@ -4290,7 +4290,7 @@ Health probe endpoints integrate naturally with Kubernetes liveness and readines
 
 ### Standard Library First
 
-`System.getenv` is the Java SE mechanism for reading runtime configuration. You can start `procurement-platform-be` on any machine by exporting environment variables manually before running the JAR:
+Environment variables are the lowest-level mechanism for runtime configuration across all stacks. You can start `procurement-platform-be` on any machine by exporting variables manually before launching the process:
 
 ```bash
 # Standard library: running procurement-platform-be with environment variables only
@@ -4503,7 +4503,7 @@ The deployment seam also determines the resource attributes attached to every sp
 
 ### Standard Library First
 
-`java.lang.management.ManagementFactory` provides JVM-level instrumentation that ships with the JDK. You can print heap usage and thread counts to stdout without any framework:
+Each runtime ships with built-in process instrumentation APIs (`ManagementFactory` MXBeans on the JVM, `GC`/`Process` on .NET, `process.memoryUsage()` in Node.js). You can print heap usage and thread counts to stdout without any observability framework:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -4624,11 +4624,11 @@ export function printMetrics(): void {
 
 {{< /tabs >}}
 
-**Limitation for production**: `ManagementFactory` metrics are snapshots, not time-series — you cannot compute rate, P95, or trend. No spans means you cannot correlate a slow database query with the HTTP request that triggered it.
+**Limitation for production**: built-in platform metrics are snapshots, not time-series — you cannot compute rate, P95, or trend. No spans means you cannot correlate a slow database query with the HTTP request that triggered it.
 
 ### Production Framework
 
-`procurement-platform-be` wires Micrometer Tracing with the OTLP exporter and the Prometheus Micrometer registry via Spring Boot auto-configuration:
+`procurement-platform-be` wires the OpenTelemetry-compatible tracing SDK and the Prometheus metrics registry through the stack's configuration mechanism (Spring Boot auto-configuration in Java/Kotlin, `AddOpenTelemetry` builder in C#, `NodeSDK` in TypeScript):
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -4861,7 +4861,7 @@ When the PostgreSQL pod is unhealthy during a rolling restart, you have two choi
 
 ### Standard Library First
 
-A plain `try-catch` at the controller layer is the minimal fallback Java SE provides without a framework:
+A plain `try-catch` at the controller layer is the minimal fallback available in any stack without a dedicated health framework:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -5039,7 +5039,7 @@ export function createPurchaseOrderController(service: IssuePurchaseOrderService
 
 ### Production Framework
 
-The degraded-mode pattern introduces a `CachedPurchaseOrderReadAdapter` that returns the last-known PO list when the real repository port fails, and a `NullEventPublisher` that silently drops events when the broker is unavailable. A `PurchasingHealthIndicator` bean exposes the degraded flag to the Spring Actuator readiness probe:
+The degraded-mode pattern introduces a `CachedPurchaseOrderReadAdapter` that returns the last-known PO list when the real repository port fails, and a `NullEventPublisher` that silently drops events when the broker is unavailable. A health indicator component exposes the degraded flag to the framework's readiness probe mechanism (Spring Actuator `HealthIndicator` in Java/Kotlin, ASP.NET Core `IHealthCheck` in C#, Terminus health check in TypeScript):
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -5303,14 +5303,14 @@ import type { PurchaseOrderId } from "../domain/purchase-order-id";
 export class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
   // => implements PurchaseOrderRepository: satisfies the output port contract
 
-  private cache: ReadonlyArray<PurchaseOrder> = [];
+  private cache: ReadonlyArray = [];
   // => ReadonlyArray: immutable snapshot — replaced atomically by populateCache
   // => Node.js is single-threaded: no CopyOnWriteArrayList needed, but atomicity still matters for async interleaving
 
   private degraded = false;
   // => degraded flag: set by the circuit-breaker callback, read per request
 
-  populateCache(snapshot: ReadonlyArray<PurchaseOrder>): void {
+  populateCache(snapshot: ReadonlyArray): void {
     this.cache = snapshot;
     // => Atomic assignment: replaces the entire snapshot — concurrent readers see the new array
   }
@@ -5325,7 +5325,7 @@ export class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
     // => isDegraded(): read by the health-check middleware to determine the readiness probe state
   }
 
-  async save(_po: PurchaseOrder): Promise<PurchaseOrder> {
+  async save(_po: PurchaseOrder): Promise {
     if (this.degraded) {
       throw new RepositoryError("Writes unavailable in degraded mode");
       // => Write operations are not supported in degraded mode — callers receive RepositoryError
@@ -5335,7 +5335,7 @@ export class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
     // => Normal operation: the pg adapter handles writes; this adapter is only active in degraded mode
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     if (this.degraded) {
       return this.cache.find((p) => p.id.value === id.value) ?? null;
       // => Degraded mode: return from the cached snapshot without touching the database
@@ -5345,7 +5345,7 @@ export class CachedPurchaseOrderReadAdapter implements PurchaseOrderRepository {
     // => Normal operation: the pg adapter handles reads; this adapter is only active in degraded mode
   }
 
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     if (this.degraded) {
       return this.cache.some((p) => p.id.value === id.value);
       // => some: returns false for unknown IDs — callers can still perform existence checks
@@ -5526,7 +5526,7 @@ import { logger } from "../shared/logger";
 export class NullEventPublisher implements EventPublisher {
   // => Null object pattern: replaces the real adapter without changing the application service
 
-  async publish(event: PurchaseOrderIssued | PurchaseOrderCancelled): Promise<void> {
+  async publish(event: PurchaseOrderIssued | PurchaseOrderCancelled): Promise {
     // => Single overload: TypeScript union type handles both event types in one method
     if ("purchaseOrderId" in event) {
       logger.warn(
@@ -5680,7 +5680,7 @@ import type { CachedPurchaseOrderReadAdapter } from "./cached-purchase-order-rea
 export interface HealthCheckResult {
   status: "up" | "down";
   // => status: "up" returns HTTP 200; "down" returns HTTP 503 from the health middleware
-  details?: Record<string, unknown>;
+  details?: Record;
   // => details: optional detail map — visible in the /health response body for debugging
 }
 
@@ -5856,7 +5856,7 @@ public class ManualSchemaMigration
 import { Client } from "pg";
 // => pg: Node.js PostgreSQL driver — equivalent to JDBC DriverManager + Connection
 
-async function main(): Promise<void> {
+async function main(): Promise {
   const client = new Client({
     connectionString: process.env.SPRING_DATASOURCE_URL,
     // => Reads the connection URL from an environment variable — must be set before this runs
@@ -6147,7 +6147,7 @@ const K8S_PROFILE = process.env.SPRING_PROFILES_ACTIVE === "k8s";
 // => K8S_PROFILE: equivalent to @Profile("!k8s") — disabled in the k8s profile
 // => In k8s profile, the Kubernetes Job owns the migration lifecycle — see Guide 26
 
-export async function runFlywayEquivalent(pool: Pool): Promise<void> {
+export async function runFlywayEquivalent(pool: Pool): Promise {
   // => Called from the application bootstrap after the pool is created, before the HTTP server starts
   // => Equivalent to ApplicationRunner — runs once at startup, before any HTTP request is served
   if (K8S_PROFILE) {
@@ -6190,7 +6190,7 @@ export async function runFlywayEquivalent(pool: Pool): Promise<void> {
 
 ### Standard Library First
 
-`System.getenv` reads a single key directly — the manual approach before `@ConfigurationProperties`:
+Reading each environment variable individually from the process environment is the manual approach before typed configuration binding:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -6342,11 +6342,11 @@ export function createDataSourceManually(): Pool {
 
 {{< /tabs >}}
 
-**Limitation for production**: `getenv` returns `null` for a missing variable and an empty string for an env var set to `""` — both cases pass a naive null-check but cause HikariCP to fail at connection time. Changes to the key names in the Kubernetes Secret must be manually mirrored in every `getenv` call.
+**Limitation for production**: the environment access API returns `null` or `undefined` for a missing variable and an empty string for a variable set to `""` — both cases pass a naive presence check but cause the connection pool to fail at connection time. Changes to key names in the Kubernetes Secret must be manually mirrored in every read call.
 
 ### Production Framework
 
-Spring Boot `@ConfigurationProperties` with `@Validated` maps the environment variables to a typed record and runs Jakarta Bean Validation at startup — before any request is handled and before the liveness probe first fires:
+The typed configuration binding mechanism for each stack maps environment variables to a validated record at startup — before any request is handled and before the liveness probe first fires (Spring Boot `@ConfigurationProperties` with `@Validated` in Java/Kotlin, `IOptions<T>` with `DataAnnotations` validation in C#, Zod schema parsing in TypeScript):
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -6498,7 +6498,7 @@ const dataSourceSchema = z.object({
   // => .min(1): catches an empty Sealed Secret placeholder that was not replaced before deployment
 });
 
-export type DataSourceConfig = z.infer<typeof dataSourceSchema>;
+export type DataSourceConfig = z.infer;
 // => z.infer: derives the TypeScript type from the Zod schema — no duplicate type declaration
 
 export function loadDataSourceConfig(): DataSourceConfig {

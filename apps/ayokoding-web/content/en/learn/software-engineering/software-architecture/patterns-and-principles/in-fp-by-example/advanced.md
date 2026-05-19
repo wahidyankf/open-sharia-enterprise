@@ -356,8 +356,8 @@ data-oriented maps and atoms, relying on namespace qualification rather than com
 
 **Why It Matters:** Business-capability decomposition aligns service ownership with Conway's Law —
 the team owning "Orders" controls its full stack without coordinating schema changes with
-"Inventory". In F#, module boundaries are enforced by the compiler through type-checked function
-signatures, making boundary violations a compile error rather than a runtime surprise.
+"Inventory". When a language's module system enforces service boundaries through compile-time
+type-checking, boundary violations become compile errors rather than runtime surprises.
 
 ---
 
@@ -2195,8 +2195,9 @@ each legal transition explicit — there is no way to accidentally skip the `hal
 ### Example 65: Bulkhead Pattern
 
 The bulkhead pattern isolates resource pools per downstream dependency so one slow service cannot
-exhaust shared resources. In F#, a bulkhead is a record wrapping a `SemaphoreSlim`, and the acquire
-function returns a `Result` rather than throwing.
+exhaust shared resources. A bulkhead combines a concurrency-limiting primitive (semaphore, counter,
+or bounded channel) with an acquire function that returns a typed result rather than throwing, so
+callers cannot silently ignore the "pool full" outcome.
 
 ```mermaid
 graph TD
@@ -2512,16 +2513,18 @@ callers to handle both the "accepted" and "rejected" cases — the failure path 
 ignored.
 
 **Why It Matters:** The bulkhead pattern prevents a payment processor slowdown from starving
-inventory checks and health endpoints. In F#, the `Result` return makes the resource-exhaustion
-path a first-class value, not an exception that might be swallowed by a catch-all handler.
+inventory checks and health endpoints. Returning a typed result from the acquire function makes
+the resource-exhaustion path a first-class value, not an exception that might be swallowed by a
+catch-all handler.
 
 ---
 
 ### Example 66: Retry with Exponential Backoff and Jitter
 
 Retrying transient failures is essential in distributed systems, but naive fixed-interval retries
-cause thundering herds. In F#, the retry is a recursive `async` computation that accumulates
-attempts via tail-recursive loop without mutable loop counters.
+cause thundering herds. A functional retry threads attempt state through recursive parameters
+rather than a mutable loop counter, so each attempt is a tail call with no additional stack
+frame.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3337,16 +3340,18 @@ not inherited — swapping the sidecar means passing a different wrapper functio
 root.
 
 **Why It Matters:** Kubernetes service meshes (Istio, Linkerd) use the sidecar pattern to inject
-Envoy proxies transparently. The F# higher-order function models this cleanly: the application
-function is unchanged; the wrapping function handles all infrastructure concerns independently.
+Envoy proxies transparently. Modelling the sidecar as a higher-order function keeps this clean:
+the application function is unchanged; the wrapping function handles all infrastructure concerns
+independently.
 
 ---
 
 ### Example 69: Ambassador Pattern
 
 The ambassador pattern places a proxy between an application and a remote service to handle
-connection management, retry logic, and credential injection. In F#, the ambassador is a record
-of configuration plus a function that returns `Result`, hiding all complexity from callers.
+connection management, retry logic, and credential injection. A functional ambassador bundles
+configuration with a query function that returns a typed result, sealing all retry and connection
+complexity inside so callers never deal with it directly.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3627,9 +3632,9 @@ infrastructure level.
 
 ### Example 70: Event Sourcing Implementation
 
-Event sourcing stores state as an append-only sequence of domain events. In F#, replaying events
-is a `List.fold` over the event list — the most natural functional pattern. The current state is
-the fold accumulator.
+Event sourcing stores state as an append-only sequence of domain events. Replaying events is a
+left fold over the event list — each event is a state transition, and the accumulated result after
+processing all events is the current state.
 
 ```mermaid
 graph TD
@@ -3908,14 +3913,14 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** `List.fold applyEvent` is the direct FP expression of event replay — there is
-no concept more natural in F# than folding a list of state transitions into a single accumulated
-value.
+**Key Takeaway:** A left fold over the event list is the direct FP expression of event replay —
+folding a list of state transitions into a single accumulated value is the most natural pattern
+in any functional language.
 
 **Why It Matters:** Traditional CRUD databases overwrite state on every update, losing historical
 information. Event sourcing satisfies audit requirements by design — every state transition is
-recorded with its cause. The F# `fold` makes it trivial to replay to any point in history by slicing
-the event list with `List.take`.
+recorded with its cause. Replaying to any point in history is trivial: slice the event list to
+the desired position and fold.
 
 ---
 
@@ -3923,9 +3928,10 @@ the event list with `List.take`.
 
 ### Example 71: Modular Monolith
 
-A modular monolith deploys as a single process but enforces strict module boundaries. In F#, module
-boundaries are enforced by the file ordering in the project — types defined in later files cannot
-be referenced by earlier files, making circular dependencies a compile error.
+A modular monolith deploys as a single process but enforces strict module boundaries. Each
+language achieves this differently — through file-ordering rules, namespace declarations, or module
+import checks — but the invariant is the same: dependency direction is visible, and circular
+dependencies are a compile-time error.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -4225,14 +4231,14 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** F#'s file-ordering rule means module dependencies are enforced by the compiler —
-a Billing module that imports Orders internals must be listed after Orders in the project file,
-making all dependency directions visible in one place.
+**Key Takeaway:** Enforcing module dependency direction at the compiler or loader level makes all
+dependency arrows visible in one place — a Billing module that imports Orders internals must
+declare that relationship explicitly, and any cycle is rejected before the program runs.
 
 **Why It Matters:** A modular monolith provides the domain boundary discipline of microservices
-while retaining the operational simplicity of a single deployable unit. F# compiles modules in
-declared order, so circular dependencies are impossible — a structural guarantee no runtime check
-can provide.
+while retaining the operational simplicity of a single deployable unit. When the module system
+rejects circular dependencies at compile time, boundary integrity is a structural guarantee rather
+than a convention enforced only by code review.
 
 ---
 
@@ -6448,9 +6454,9 @@ specific toggle values, with no mock framework required.
 
 ### Example 79: Service Mesh Architecture
 
-A service mesh adds a transparent infrastructure layer for mTLS, retries, and telemetry. In F#,
-the mesh proxy is a higher-order function that wraps inter-service calls — the same structural
-pattern as the sidecar but focused on outbound calls to other services.
+A service mesh adds a transparent infrastructure layer for mTLS, retries, and telemetry. The mesh
+proxy is a higher-order function that wraps inter-service calls — the same structural pattern as
+the sidecar but focused on outbound calls to other services rather than inbound request handling.
 
 ```mermaid
 graph TD
@@ -6782,9 +6788,10 @@ so mesh logic is fully separable from business logic.
 
 ### Example 80: Interpreter Pattern for Configuration DSL
 
-The interpreter pattern defines a grammar and an evaluator. In F#, a configuration DSL is a DU
-representing the AST; the interpreter is a recursive function that evaluates the tree against a
-context map — no class hierarchy, just pattern matching.
+The interpreter pattern defines a grammar and an evaluator. A configuration DSL is represented as
+a closed sum of expression variants (the AST); the interpreter is a recursive function that
+evaluates each node against a context map — no class hierarchy, just structural dispatch over the
+expression tree.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -7091,13 +7098,14 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** The DU AST and recursive evaluator form a complete interpreter in under 30 lines
-of F# — the exhaustive match ensures every AST node kind is handled; the compiler catches any
-missing case when a new node type is added.
+**Key Takeaway:** A closed sum type for the AST and a recursive evaluator form a complete
+interpreter in very few lines — exhaustive dispatch over the node variants ensures every AST kind
+is handled, and the compiler flags any missing case when a new node type is added.
 
 **Why It Matters:** Hardcoded business rules require deployment for every change. Retail banks use
-interpreter-based policy engines to update loan eligibility same-day. In F#, the DU AST can be
-serialised to JSON and deserialised back — the rule becomes a configuration artefact, not source code.
+interpreter-based policy engines to update loan eligibility same-day. When the AST is a serialisable
+data structure, the rule becomes a configuration artefact loaded at runtime, not source code that
+requires a build and deploy cycle.
 
 ---
 
@@ -7458,17 +7466,18 @@ the caller to handle both success and failure; the read side folds events with `
 projection logic as a pure function.
 
 **Why It Matters:** CQRS solves the conflict between write consistency requirements (locks,
-normalisation) and read performance requirements (denormalised fast queries). In F#, the clean
-separation is enforced by the type system — command handlers return events, not read models; query
-handlers read projections, not the write store.
+normalisation) and read performance requirements (denormalised fast queries). When the type system
+enforces the separation, command handlers return events rather than read models, and query handlers
+read projections rather than the write store — the boundary cannot be accidentally crossed.
 
 ---
 
 ### Example 82: Outbox Pattern for Reliable Event Publishing
 
 The outbox pattern solves the dual-write problem by writing the event to the same store as the
-business record. In F#, both writes are modelled as a pure function returning a new state tuple
-`(businessStore, outboxStore)` — atomicity is represented as a single function call.
+business record. Modelling both writes as a single pure function that returns a new state value
+containing both stores makes atomicity structural — there is no intermediate state where the
+business record exists without its corresponding outbox entry.
 
 ```mermaid
 graph LR
@@ -7842,9 +7851,10 @@ solution. The F# immutable state model makes the atomicity guarantee explicit in
 
 ### Example 83: Anti-Corruption Layer
 
-The Anti-Corruption Layer (ACL) is a translation boundary between two bounded contexts. In F#,
-the ACL is a pair of pure functions — `translateIn` and `translateOut` — with no class, no state,
-and no mutation.
+The Anti-Corruption Layer (ACL) is a translation boundary between two bounded contexts. A
+functional ACL is a pair of pure functions — `translateIn` and `translateOut` — with no class, no
+state, and no mutation; all foreign vocabulary and type mismatches are resolved inside these
+functions and never leak into the domain.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -8203,16 +8213,18 @@ of all status values everywhere in the domain — the integer-to-DU translation 
 ACL and never leaks further.
 
 **Why It Matters:** Without an ACL, integrating a legacy CRM causes its integer codes, misspelled
-field names, and wrong types to propagate through the domain. In F#, the DU translation makes the
-impedance mismatch visible: the compiler will flag any new status code not covered by the match.
+field names, and wrong types to propagate through the domain. Translating the legacy status code
+to a closed sum type in the ACL makes the impedance mismatch visible: the compiler flags any new
+status code not covered by the pattern match, so the translation boundary never silently breaks.
 
 ---
 
 ### Example 84: Ports and Adapters (Hexagonal Architecture)
 
-Hexagonal architecture places the domain at the centre, communicating through ports. In F#, ports
-are function-type aliases (not abstract classes); adapters are concrete function values that satisfy
-those types; composition is constructor injection via partial application.
+Hexagonal architecture places the domain at the centre, communicating through ports. In a
+functional setting, ports are function-type signatures rather than abstract classes; adapters are
+concrete function values that satisfy those signatures; and composition is achieved by passing the
+adapters as arguments at the application entry point.
 
 ```mermaid
 graph TD
@@ -8553,17 +8565,18 @@ a valid adapter — no interface declaration, no class boilerplate; partial appl
 domain to adapters at the composition root.
 
 **Why It Matters:** Traditional layered architectures let infrastructure details leak into the domain.
-Hexagonal architecture keeps the domain portable — the F# domain functions have no import of any
-persistence or messaging library, making them testable in complete isolation with in-memory function
-values.
+Hexagonal architecture keeps the domain portable — domain functions import no persistence or
+messaging library, making them testable in complete isolation with in-memory function values passed
+as adapter arguments.
 
 ---
 
 ### Example 85: Reactive Architecture with Backpressure
 
 Reactive architecture processes data streams asynchronously with backpressure signals that tell
-producers to slow down when consumers cannot keep up. In F#, this is modelled with `MailboxProcessor`
-(an async agent with a bounded inbox) — the natural F# primitive for backpressure.
+producers to slow down when consumers cannot keep up. A bounded queue or channel is the backpressure
+boundary: a non-blocking offer that returns false (or a typed rejection signal) when capacity is
+exhausted gives producers an explicit feedback mechanism without throwing exceptions.
 
 ```mermaid
 graph LR
@@ -8901,11 +8914,11 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** `MailboxProcessor` is F#'s built-in async agent with a message inbox — the
-natural primitive for backpressure-aware processing; bounded capacity plus `TryPost` returning
-`false` is the backpressure signal without additional framework dependencies.
+**Key Takeaway:** A bounded async queue is the natural primitive for backpressure-aware processing;
+bounded capacity plus a non-blocking offer that returns false is the backpressure signal without
+additional framework dependencies.
 
 **Why It Matters:** Reactive Streams emerged because event-driven systems with unbounded queues
-inevitably crash under load. F#'s `MailboxProcessor` makes backpressure a first-class language
-feature: the inbox size is the back-pressure boundary, and `TryPost` returning `false` is the
-explicit signal to producers — not a thrown exception that might be swallowed.
+inevitably crash under load. Making backpressure explicit — a bounded inbox with a non-blocking
+offer returning a typed rejection — gives producers a clear signal to slow down or shed load, rather
+than an exception that might be swallowed.

@@ -437,7 +437,7 @@ demo = do
 
 **Key Takeaway**: The three-way match is a composable pure function on domain values — it can be tested exhaustively before being wired into the transition function.
 
-**Why It Matters**: The three-way match is a critical procurement control: it prevents paying for goods not ordered or not received. Encoding it as a pure function makes it independently auditable: finance can verify the tolerance configuration and test boundary cases without running the full FSM. The `Result<unit, string>` return type integrates naturally with `Result.bind` chains, allowing the match to gate the Approve transition without any special handling at the FSM layer.
+**Why It Matters**: The three-way match is a critical procurement control: it prevents paying for goods not ordered or not received. Encoding it as a pure function makes it independently auditable: finance can verify the tolerance configuration and test boundary cases without running the full FSM. A Result/Either return type integrates naturally with monadic bind chains across all four languages, allowing the match to gate the Approve transition without any special handling at the FSM layer.
 
 ---
 
@@ -712,9 +712,9 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: `Result.map` threads the guard result into the state update without nested `match` expressions — the guard failure propagates automatically.
+**Key Takeaway**: Mapping over a Result/Either value threads the guard outcome into the state update without nested conditionals — the guard failure propagates automatically.
 
-**Why It Matters**: The pattern `guard |> Result.map (fun () -> newState)` is the idiomatic way to gate a transition behind a pure guard. Compare the OOP equivalent: a `canApprove()` method that throws an exception, which breaks the pure transition contract and couples the state class to exception handling. The FP `Result.map` approach is referentially transparent: the same guard context always produces the same result, the transition function has no side effects, and the entire approval logic is visible in one `match` arm.
+**Why It Matters**: The idiomatic FP pattern for gating a transition behind a pure guard is to compose the guard's Result/Either with a function that produces the new state — via `map`, `fmap`, or an equivalent combinator. Compare the OOP equivalent: a `canApprove()` method that throws an exception, which breaks the pure transition contract and couples the state class to exception handling. The FP approach is referentially transparent: the same guard context always produces the same result, the transition function has no side effects, and the entire approval logic is visible in a single transition branch.
 
 ---
 
@@ -1238,7 +1238,7 @@ demo = do
 
 ### Example 31: Invoice FSM with Result Chaining
 
-A complete invoice approval workflow involves multiple steps: validate the invoice, run the three-way match, check budget availability, then approve. `Result.bind` chains these into a pipeline where any failure short-circuits the rest.
+A complete invoice approval workflow involves multiple steps: validate the invoice, run the three-way match, check budget availability, then approve. Monadic bind (Result/Either chaining) sequences these steps into a pipeline where any failure short-circuits the rest.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1483,9 +1483,9 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: `Result.bind` chains compose multi-step approval logic into a single readable pipeline where each step is independently testable.
+**Key Takeaway**: Monadic bind chains compose multi-step approval logic into a single readable pipeline where each step is independently testable.
 
-**Why It Matters**: Railway-oriented programming (Result chaining) is the functional equivalent of a validation pipeline. Each `Result.bind` is a step that either continues the happy path or diverts to the error track. The pipeline reads top-to-bottom as a business process: "state check, then three-way match, then budget check, then approve." Adding a new step (e.g., `checkSanctionsList`) requires one additional `|> Result.bind` — no conditionals inside the approval function, no risk of accidentally skipping a step.
+**Why It Matters**: Railway-oriented programming (Result/Either chaining) is the functional equivalent of a validation pipeline. Each bind step either continues the happy path or diverts to the error track. The pipeline reads top-to-bottom as a business process: "state check, then three-way match, then budget check, then approve." Adding a new step (e.g., `checkSanctionsList`) requires one additional bind — no conditionals inside the approval function, no risk of accidentally skipping a step.
 
 ---
 
@@ -2830,7 +2830,7 @@ demo = do
 
 ### Example 37: PO Lifecycle — PartiallyReceived State
 
-The PO lifecycle needs a `PartiallyReceived` state for partial deliveries. This example introduces it as a new DU case and shows how F#'s exhaustiveness check immediately flags every incomplete handler.
+The PO lifecycle needs a `PartiallyReceived` state for partial deliveries. This example introduces it as a new sum type variant and shows how each language's exhaustiveness checking immediately flags every incomplete handler.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3111,9 +3111,9 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: Adding `PartiallyReceived` to the DU and adding two new `match` arms — one for the new state and one for the self-loop — is the complete change required; the compiler flags every other handler that needs updating.
+**Key Takeaway**: Adding `PartiallyReceived` to the sum type and adding two new pattern-match cases — one for the new state and one for the self-loop — is the complete change required; the compiler flags every other handler that needs updating.
 
-**Why It Matters**: The compile-time completeness guarantee is the primary advantage of DU-based FSMs over enum-switch FSMs. In a Java `switch (state)`, a new state silently falls through to the `default` arm. In F#, every non-wildcard `match` on `ExtendedPOState` becomes a warning. This makes adding a new state a structured refactoring task: the compiler produces a list of locations to update, the developer updates them, and the result is a complete and consistent FSM. The effort is proportional to the number of handlers, not hidden in undiscovered code paths.
+**Why It Matters**: The compile-time completeness guarantee is the primary advantage of sum-type FSMs over enum-switch FSMs. In a Java `switch (state)`, a new state silently falls through to the `default` arm. With sum types in F#, Haskell, or TypeScript's exhaustive switches, every non-wildcard pattern match on `ExtendedPOState` produces a warning or error. This makes adding a new state a structured refactoring task: the compiler produces a list of locations to update, the developer updates them, and the result is a complete and consistent FSM. The effort is proportional to the number of handlers, not hidden in undiscovered code paths.
 
 ---
 
@@ -3890,9 +3890,9 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: `Result<Invoice, string list>` accumulates all validation errors in a single pass — the caller sees a complete list, not just the first failure.
+**Key Takeaway**: A Result/Either carrying a list of errors accumulates all validation failures in a single pass — the caller sees a complete list, not just the first failure.
 
-**Why It Matters**: Fail-fast validation forces a loop: submit, get one error, fix it, resubmit, get the next error, fix it. For an invoice with four invalid fields this means four submissions. Error accumulation surfaces all four errors at once, enabling a single correction and resubmission. This is both more efficient and more respectful of the supplier's time. The F# list comprehension with `yield` inside `[ if ... then yield ... ]` is the idiomatic accumulation pattern — no mutable list, no monoid concatenation.
+**Why It Matters**: Fail-fast validation forces a loop: submit, get one error, fix it, resubmit, get the next error, fix it. For an invoice with four invalid fields this means four submissions. Error accumulation surfaces all four errors at once, enabling a single correction and resubmission. This is both more efficient and more respectful of the supplier's time. All four languages support a single-pass accumulation pattern — collecting failing predicates into a list — with no mutable state and no monoid concatenation required by the caller.
 
 ---
 
@@ -4418,9 +4418,9 @@ timedApprove inv now slaHours
 
 {{< /tabs >}}
 
-**Key Takeaway**: Timeout guards are pure functions that compare timestamps — they integrate with the `Result.bind` chain like any other guard, requiring no special FSM infrastructure.
+**Key Takeaway**: Timeout guards are pure functions that compare timestamps — they compose with the Result/Either chain like any other guard, requiring no special FSM infrastructure.
 
-**Why It Matters**: SLA enforcement in workflow systems often requires a separate scheduler or cron job. The guard-based approach makes the SLA a first-class domain rule: the transition function itself enforces the timeout. When the scheduler fires a `checkTimeout` job, it can call `timedApprove` with `DateTime.UtcNow` and immediately receive either `Ok (approvedInvoice)` or `Error (slaMessage)`. The SLA configuration (`slaHours`) can be injected at runtime, enabling per-category SLAs without changing the guard logic.
+**Why It Matters**: SLA enforcement in workflow systems often requires a separate scheduler or cron job. The guard-based approach makes the SLA a first-class domain rule: the transition function itself enforces the timeout. When the scheduler fires a `checkTimeout` job, it calls the timed transition with the current timestamp and immediately receives either a success value (the approved invoice) or an error describing the breach. The SLA configuration (`slaHours`) can be injected at runtime, enabling per-category SLAs without changing the guard logic.
 
 ---
 
@@ -4683,7 +4683,7 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: A generic FSM runner built on `List.fold` and `Result.bind` applies any sequence of events to any machine that follows the `(State, Event) -> Result<(State, Commands), Error>` signature.
+**Key Takeaway**: A generic FSM runner built on a fold with short-circuit error propagation applies any sequence of events to any machine that follows the `(State, Event) -> Result<(State, Commands), Error>` contract.
 
 **Why It Matters**: The runner is infrastructure, not domain code. It knows nothing about invoices — it just threads state through a function. This means the same runner pattern works for PO, Invoice, Supplier, and Payment FSMs. Generic runners also enable test harnesses that exercise entire lifecycles with a single function call, making scenario-based testing (end-to-end lifecycle from Received to Paid) as concise as unit-testing a single transition. The fold-based runner also naturally supports backpressure: if any event fails, the fold terminates early and returns the error with the accumulated state up to that point.
 

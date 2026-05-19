@@ -2446,7 +2446,7 @@ main = do
 
 ### Example 60: Parallel Regions — Payment + Notification
 
-In a statechart, parallel regions run concurrently. In F# this is modelled as a record with two state fields — one for the Payment FSM and one for the Notification FSM — updated by a combined transition function.
+In a statechart, parallel regions run concurrently. A typical functional encoding pairs the two region states inside a single composite value — a record or tuple holding one slot per region — updated by a combined transition function that fans the event out to each region.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3464,7 +3464,7 @@ main = print settled
 
 **Key Takeaway**: Hierarchical sub-states, parallel regions, and history states compose naturally as orthogonal record fields — the combined record is still an immutable value with a single transition function.
 
-**Why It Matters**: Statecharts appear complex in UML diagrams, but in F# they decompose into independent record fields each managed by a small function. The `FullPayment` record holds all dimensions simultaneously: the main state, the sub-state, the history, the parallel notification state. Each function (`enterProcessing`, `settlePayment`) touches only the fields it owns, making changes local and reviewable. The whole statechart behaviour is expressed without any specialised statechart library.
+**Why It Matters**: Statecharts appear complex in UML diagrams, but in any functional language they decompose into independent record fields each managed by a small function. The composite state value holds all dimensions simultaneously: the main state, the sub-state, the history, and the parallel notification region. Each function touches only the fields it owns, making changes local and reviewable. The whole statechart behaviour is expressed without any specialised statechart library.
 
 ---
 
@@ -4599,7 +4599,7 @@ main = do
 
 ### Example 68: Actor Model — FSM as an Actor
 
-In the actor model each FSM instance is an actor that processes messages sequentially. In F# this is modelled with a `MailboxProcessor`, which provides a sequential message queue without explicit locking.
+In the actor model each FSM instance is an actor that processes messages sequentially. A common functional realisation uses a bounded mailbox or channel — F# `MailboxProcessor`, Clojure `core.async` channels, TypeScript async queues, Haskell `STM`/`MVar` — to serialise message handling without explicit locking.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 

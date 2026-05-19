@@ -3678,7 +3678,7 @@ demo = do
 
 **Key Takeaway**: Port versioning at the composition root lets old consumers receive a narrowed subset of the new port while new consumers access the full V2 record — no application service changes required for the old consumers.
 
-**Why It Matters**: Extending a shared port interface in OOP requires all implementors to add the new method even if they never use it. In F# record composition, the composition root can project a subset of a V2 adapter into a V1 consumer by constructing the V1 record from the V2 adapter's fields. Old tests continue to pass; new functionality is opt-in per context.
+**Why It Matters**: Extending a shared port interface in OOP requires every implementor to add the new method even if they never use it. With FP's record-of-functions (or map/protocol-of-functions) port shape, the composition root can project a subset of a V2 adapter into a V1 consumer by constructing the V1 value from the V2 adapter's fields — no method addition is forced on legacy implementors. Old tests continue to pass; new functionality is opt-in per context.
 
 ---
 
@@ -5506,7 +5506,7 @@ main = do
 
 **Key Takeaway**: A port suite spy assembles all `PaymentPorts` fields from closures that capture call arguments — the test can assert on every port interaction without any mocking framework.
 
-**Why It Matters**: Spy ports built from closures require no mocking library and no reflection — they are plain F# record literals with async functions that capture state in mutable local variables. Tests read naturally, failures point precisely to which port was miscalled, and the spy is updated by modifying one helper function when the port contract changes.
+**Why It Matters**: Spy ports built from closures or literal value constructions require no mocking library and no reflection — they are plain port values (records, maps, or protocol implementations) with effectful functions that capture call arguments in local mutable cells. Tests read naturally, failures point precisely to which port was miscalled, and the spy is updated by modifying one helper function when the port contract changes.
 
 ---
 

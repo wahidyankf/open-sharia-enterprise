@@ -959,7 +959,7 @@ describe("HexagonDependencyRules", () => {
 
 ### Example 5: Output port interface — PurchaseOrderRepository
 
-An output port is a Java interface placed in the `domain.application` package. It expresses what the application needs from the outside world (e.g., persistence) using domain language. The interface has no knowledge of databases, SQL, or frameworks — it speaks only in domain types.
+An output port is an interface (or equivalent structural type) placed in the application's inward-facing package. It expresses what the application needs from the outside world (e.g., persistence) using domain language. The port has no knowledge of databases, SQL, or frameworks — it speaks only in domain types.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -1081,17 +1081,17 @@ import type { PurchaseOrderId } from "../domain/purchase-order-id";
 export interface PurchaseOrderRepository {
   // save: persist a PurchaseOrder; return the saved instance (may have generated id)
   // => takes domain type; returns domain type; no ORM types visible
-  save(purchaseOrder: PurchaseOrder): Promise<PurchaseOrder>;
+  save(purchaseOrder: PurchaseOrder): Promise;
   // => caller: await repository.save(po) — does not know if storage is Postgres or in-memory
 
   // findById: retrieve a PurchaseOrder by its typed identity
   // => Promise<PurchaseOrder | null>: null signals absence without throwing
-  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  findById(id: PurchaseOrderId): Promise;
   // => returns null when PO does not exist — caller handles absence explicitly
 
   // existsById: lightweight existence check without loading the full aggregate
   // => useful for duplicate-check guard before saving a new PO
-  existsById(id: PurchaseOrderId): Promise<boolean>;
+  existsById(id: PurchaseOrderId): Promise;
   // => returns true if PO with given id is present; false otherwise
 }
 // => Application service imports only this interface; zero coupling to TypeORM/Prisma
@@ -1255,7 +1255,7 @@ export class IssuePurchaseOrderService {
     private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
   ) {}
 
-  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async issue(po: PurchaseOrder): Promise {
     const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
     // => issuedAt: the timestamp will be embedded in the issued PO or an event
     return po.issue(issuedAt); // => delegates state transition to domain method
@@ -1433,18 +1433,18 @@ export class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository 
   private readonly store = new Map<string, PurchaseOrder>();
   // => store: Map keyed by PurchaseOrderId.value string — in-memory backing store
 
-  async save(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async save(po: PurchaseOrder): Promise {
     this.store.set(po.id.value, po); // => key = raw string from typed PurchaseOrderId
     // => overwrites existing entry if id already present; consistent with repository contract
     return po; // => return the same instance; consistent with repository contract
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     return this.store.get(id.value) ?? null;
     // => ?? null: nullish coalescing; undefined becomes null; caller handles absence
   }
 
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     return this.store.has(id.value); // => O(1) lookup; returns true/false
   }
 }
@@ -1795,26 +1795,26 @@ class PurchaseOrderEntity {
 // => implements PurchaseOrderRepository (domain-facing interface) using TypeORM internally
 // => application service depends on PurchaseOrderRepository; never sees this class
 export class TypeOrmPurchaseOrderRepository implements PurchaseOrderRepository {
-  private readonly repo: Repository<PurchaseOrderEntity>;
+  private readonly repo: Repository;
   constructor(dataSource: DataSource) {
     this.repo = dataSource.getRepository(PurchaseOrderEntity);
     // => dataSource: injected by composition root (NestJS module or manual wiring)
   }
 
-  async save(po: DomainPO): Promise<DomainPO> {
+  async save(po: DomainPO): Promise {
     await this.repo.save(this.toEntity(po)); // => toEntity(): domain → TypeORM entity mapping
     // => TypeORM issues INSERT or UPDATE; entity never leaks past this method
     return po; // => return original domain object; caller sees domain type only
   }
 
-  async findById(id: PurchaseOrderId): Promise<DomainPO | null> {
+  async findById(id: PurchaseOrderId): Promise {
     const entity = await this.repo.findOneBy({ id: id.value });
     // => id.value: raw string for the WHERE id=? clause
     return entity ? this.toDomain(entity) : null;
     // => null when row not found; toDomain() reconstructs typed domain object on hit
   }
 
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     return this.repo.existsBy({ id: id.value });
     // => TypeORM issues SELECT EXISTS; returns boolean; O(1) cost
   }
@@ -1857,7 +1857,7 @@ export class TypeOrmPurchaseOrderRepository implements PurchaseOrderRepository {
 
 ### Example 9: Input port interface — use-case contract
 
-An input port is a Java interface that defines a use case the application exposes to the outside world. Primary adapters (HTTP controllers, CLI, event consumers) call input ports; they never call application service classes directly. This keeps the adapter decoupled from service implementation details.
+An input port is an interface (or equivalent structural type) that defines a use case the application exposes to the outside world. Primary adapters (HTTP controllers, CLI, event consumers) call input ports; they never call application service classes directly. This keeps the adapter decoupled from service implementation details.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -1968,7 +1968,7 @@ import type { PurchaseOrder } from "../domain/purchase-order";
 // IssuePurchaseOrderUseCase: input port; defines the contract for issuing a PO
 // => HTTP controller calls this interface; never the concrete service class
 export interface IssuePurchaseOrderUseCase {
-  execute(command: IssuePOCommand): Promise<PurchaseOrder>;
+  execute(command: IssuePOCommand): Promise;
   // => throws domain error on violation; calling adapter maps to HTTP 422
 }
 
@@ -2351,7 +2351,7 @@ export class IssuePurchaseOrderService {
     private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
   ) {}
 
-  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async issue(po: PurchaseOrder): Promise {
     const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
     // => issuedAt: the timestamp will be embedded in the issued PO or an event
     return po.issue(issuedAt); // => delegates state transition to domain method
@@ -2519,7 +2519,7 @@ export class IssuePurchaseOrderService {
     private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
   ) {}
 
-  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async issue(po: PurchaseOrder): Promise {
     const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
     // => issuedAt: the timestamp will be embedded in the issued PO or an event
     return po.issue(issuedAt); // => delegates state transition to domain method
@@ -2789,7 +2789,7 @@ export class PurchaseOrderController {
   // => @Post: maps HTTP POST to this method; @Body: deserialises JSON body
   @Post()
   @HttpCode(201)
-  async create(@Body() req: CreatePoRequest): Promise<CreatePoResponse> {
+  async create(@Body() req: CreatePoRequest): Promise {
     // Step 1: Translate HTTP inbound DTO → application command (no business logic)
     const command = {
       supplierId: req.supplierId,
@@ -2998,7 +2998,7 @@ export interface CreatePoResponse {
 
 ### Example 15: Multi-adapter — HTTP and CLI calling the same use case
 
-Because the application service implements a Java interface (the input port), any number of primary adapters can call it without the service knowing. This is the "multiple ports" promise of hexagonal architecture.
+Because the application service implements the input port (an interface or equivalent structural type), any number of primary adapters can call it without the service knowing. This is the "multiple ports" promise of hexagonal architecture.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -3164,7 +3164,7 @@ export class PurchaseOrderCliAdapter {
 
   // run: parse CLI args and call the use case
   // => process.argv[2] = supplierId, [3] = totalAmount, [4] = currency
-  async run(args: string[]): Promise<void> {
+  async run(args: string[]): Promise {
     if (args.length < 3) {
       process.stderr.write("Usage: issue-po <supplierId> <amount> <currency>\n");
       // => usage error; no business logic here; adapter responsibility only
@@ -3363,7 +3363,7 @@ export class IssuePurchaseOrderService {
     private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
   ) {}
 
-  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async issue(po: PurchaseOrder): Promise {
     const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
     // => issuedAt: the timestamp will be embedded in the issued PO or an event
     return po.issue(issuedAt); // => delegates state transition to domain method
@@ -3548,7 +3548,7 @@ export class IssuePurchaseOrderService {
     private readonly clock: Clock, // => injected; production vs test adapter determined at wiring
   ) {}
 
-  async issue(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async issue(po: PurchaseOrder): Promise {
     const issuedAt = this.clock.now(); // => explicit; testable; no hidden new Date()
     // => issuedAt: the timestamp will be embedded in the issued PO or an event
     return po.issue(issuedAt); // => delegates state transition to domain method

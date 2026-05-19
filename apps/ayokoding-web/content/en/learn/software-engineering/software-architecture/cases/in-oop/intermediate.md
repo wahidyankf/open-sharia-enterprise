@@ -26,7 +26,7 @@ A repository port is the seam that keeps your application layer independent of t
 
 ### Standard Library First
 
-Java interfaces in `java.util` give you all the primitives needed to express a repository contract. The standard library's `Optional` and `List` are sufficient for a read/write pair with no Spring dependency:
+Standard library types give you all the primitives needed to express a repository contract. An interface (or equivalent structural type) using `Optional`/nullable/union-type returns and a typed list is sufficient for a read/write pair with no framework dependency:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -170,15 +170,15 @@ export interface PurchaseOrderRepository {
   // => The infrastructure adapter in infrastructure/ provides the implementation
   // => The application service declares this interface type in its constructor — never the adapter class
 
-  save(purchaseOrder: PurchaseOrder): Promise<PurchaseOrder>;
+  save(purchaseOrder: PurchaseOrder): Promise;
   // => Write-side port: persist or update the aggregate atomically; return the saved instance
   // => The adapter decides whether to INSERT, UPDATE, or UPSERT
 
-  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  findById(id: PurchaseOrderId): Promise;
   // => Read-side port: returns null when the PO does not exist — union type expresses absence
   // => null is a valid domain outcome here; the adapter never throws for absence
 
-  existsById(id: PurchaseOrderId): Promise<boolean>;
+  existsById(id: PurchaseOrderId): Promise;
   // => Lightweight existence check: no full aggregate load needed for duplicate-check guards
   // => Returns true if a PO with the given id is present; false otherwise
 }
@@ -357,16 +357,16 @@ export interface PurchaseOrderRepository {
   // => The application service constructor parameter is this interface type — never the adapter class
   // => Swapping adapters (pg → in-memory) requires only a DI binding change, not a service change
 
-  save(purchaseOrder: PurchaseOrder): Promise<PurchaseOrder>;
+  save(purchaseOrder: PurchaseOrder): Promise;
   // => Returns the saved PurchaseOrder: may include database-assigned fields (timestamps, sequences)
   // => Rejects with RepositoryException on infrastructure failure — maps to HTTP 500
 
-  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  findById(id: PurchaseOrderId): Promise;
   // => No rejection on absence: absence is a valid domain outcome, not an error
   // => Returns null for a missing PO — union type enforces absence at the call site
   // => The adapter never rejects for absence — null is the correct signal
 
-  existsById(id: PurchaseOrderId): Promise<boolean>;
+  existsById(id: PurchaseOrderId): Promise;
   // => Lightweight existence check without loading the full aggregate
   // => false when the PO does not exist — callers use this for duplicate-check guards before saving
 }
@@ -762,7 +762,7 @@ export class DrizzlePurchaseOrderRepository implements PurchaseOrderRepository {
   // => implements PurchaseOrderRepository: TypeScript compiler verifies all three port methods are present
   // => The application service only ever sees PurchaseOrderRepository — never this class directly
 
-  async save(purchaseOrder: PurchaseOrder): Promise<PurchaseOrder> {
+  async save(purchaseOrder: PurchaseOrder): Promise {
     // => Port method implementation: translates from domain aggregate to SQL — one direction only
     // => purchaseOrder is already validated — domain invariants held at construction time (Guide 3)
     // => The adapter does not re-validate invariants: it trusts the domain layer
@@ -807,7 +807,7 @@ export class DrizzlePurchaseOrderRepository implements PurchaseOrderRepository {
     }
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     // => No exception on absence: absence is a valid domain outcome, not an error
     const rows = await db
       .select()
@@ -821,10 +821,10 @@ export class DrizzlePurchaseOrderRepository implements PurchaseOrderRepository {
     // => toDomain: maps DB row → domain aggregate — single translation point
   }
 
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     // => Lightweight count query — does not load the full aggregate row
     const result = await db
-      .select({ count: sql<number>`COUNT(1)` })
+      .select({ count: sql`COUNT(1)` })
       .from(purchaseOrdersTable)
       .where(eq(purchaseOrdersTable.id, id.value));
     return (result[0]?.count ?? 0) > 0;
@@ -866,7 +866,7 @@ An integration test that starts a PostgreSQL container for every test class is s
 
 ### Standard Library First
 
-`java.util.HashMap` provides an in-memory key-value store with no dependencies. The raw approach compiles but loses type safety and thread safety under parallel test execution:
+An untyped in-memory key-value store (e.g., a raw `HashMap`, `Dictionary`, or plain `Map`) requires no external dependencies but loses compile-time type safety and thread safety under parallel test execution:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1184,7 +1184,7 @@ export class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository 
   // => Fresh per constructor call: each test instantiates a new InMemoryPurchaseOrderRepository
   // => No module-level state — parallel test files each hold their own isolated map
 
-  async save(purchaseOrder: PurchaseOrder): Promise<PurchaseOrder> {
+  async save(purchaseOrder: PurchaseOrder): Promise {
     // => Upsert semantics: mirrors the ON CONFLICT DO UPDATE in the drizzle-orm adapter
     this.store.set(purchaseOrder.id.value, purchaseOrder);
     // => Map.set: upsert — overwrites existing entry silently, same as SQL upsert behaviour
@@ -1192,14 +1192,14 @@ export class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository 
     // => Return the same aggregate — no database-side enrichment in the in-memory adapter
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     // => findById: returns null when the key is absent — union type expresses absence
     return this.store.get(id.value) ?? null;
     // => Map.get returns undefined for missing keys; nullish coalescing converts to null
     // => Mirrors drizzle-orm's .limit(1) result: same absent-PO semantics, zero SQL overhead
   }
 
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     return this.store.has(id.value);
     // => Map.has: O(1) existence check — no full aggregate load needed
     // => Mirrors the drizzle-orm COUNT(1) query: returns true when a PO with this id is present
@@ -1495,7 +1495,7 @@ A domain event publisher port solves the same problem as a repository port but f
 
 ### Standard Library First
 
-Java's standard library provides no persistent event bus. The closest built-in mechanism is the observer pattern via `java.util.EventListener` — useful for in-process pub/sub but insufficient for production cross-process delivery:
+The standard library of each language provides no persistent event bus. The closest built-in mechanism is the observer pattern (e.g., `EventListener` / `EventObject` on the JVM, `EventArgs`-based delegates in C#, or plain function-type arrays in TypeScript) — useful for in-process pub/sub but insufficient for production cross-process delivery:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1654,7 +1654,7 @@ class InProcessEventBus {
 
 ### Production Framework
 
-The domain event publisher port is a plain Java interface in the `application` package. Its implementations — an in-memory adapter for tests and an outbox adapter for production — satisfy the same interface:
+The domain event publisher port is a plain interface (or equivalent structural type) in the `application` package. Its implementations — an in-memory adapter for tests and an outbox adapter for production — satisfy the same port contract:
 
 ```mermaid
 flowchart LR
@@ -2661,7 +2661,7 @@ Guide 6 introduced the primary adapter using a minimal health check and a sketch
 
 ### Standard Library First
 
-A plain Java servlet places translation, validation, persistence, and event publishing all in one method, with no domain boundary:
+Without a disciplined controller pipeline, translation, validation, persistence, and event publishing collapse into a single method with no domain boundary — shown here as a flat servlet/middleware/handler in each language:
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -3167,7 +3167,7 @@ export class PurchaseOrderController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async issuePurchaseOrder(@Body() request: IssuePurchaseOrderRequest): Promise<PurchaseOrderResponse> {
+  async issuePurchaseOrder(@Body() request: IssuePurchaseOrderRequest): Promise {
     // => @Body(): NestJS deserialises the HTTP request body into IssuePurchaseOrderRequest
     // => Step 1: DTO translated to domain value objects before calling the service
     try {
@@ -3197,7 +3197,7 @@ export class PurchaseOrderController {
   }
 
   @Get(":id")
-  async getPurchaseOrder(@Param("id") id: string): Promise<PurchaseOrderResponse> {
+  async getPurchaseOrder(@Param("id") id: string): Promise {
     // => @Param('id'): NestJS extracts the :id path segment as a string
     const po = await this.issueService.findById({ value: id });
     if (!po) throw new NotFoundException(`PurchaseOrder ${id} not found`);
@@ -3606,7 +3606,7 @@ export class PurchaseOrderContractController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async issuePurchaseOrder(@Body() request: IssuePurchaseOrderRequestBody): Promise<PurchaseOrderResponseBody> {
+  async issuePurchaseOrder(@Body() request: IssuePurchaseOrderRequestBody): Promise {
     // => @Body(): NestJS deserialises the HTTP body into IssuePurchaseOrderRequestBody
     // => IssuePurchaseOrderRequestBody: generated type — supplierId is spec-authoritative
     const supplierId = { value: request.supplierId };
@@ -3963,7 +3963,7 @@ import type { PurchasedItems } from "../domain/purchased-items";
 
 export interface PurchasedItemsPort {
   // => receiving output port: declared in application/, implemented by the ACL adapter in infrastructure/
-  findByPurchaseOrderId(purchaseOrderId: string): Promise<PurchasedItems | null>;
+  findByPurchaseOrderId(purchaseOrderId: string): Promise;
   // => The ACL adapter calls the purchasing context's port and maps the result — never the DB directly
   // => null return: the PO may not exist in the purchasing context — receiving handles absence gracefully
 }
@@ -4135,7 +4135,7 @@ export class PurchaseOrderAcl implements PurchasedItemsPort {
   constructor(private readonly purchasingRepository: PurchaseOrderRepository) {}
   // => Constructor injection: purchasing port provided by the DI container — seam at application layer
 
-  async findByPurchaseOrderId(purchaseOrderId: string): Promise<PurchasedItems | null> {
+  async findByPurchaseOrderId(purchaseOrderId: string): Promise {
     // => ACL translation: calls the purchasing port and maps result to receiving domain type
     const po = await this.purchasingRepository.findById({ value: purchaseOrderId });
     if (!po) return null;

@@ -430,7 +430,7 @@ runDemo = do
 
 ### Example 57: Date/Time as a Domain Concept
 
-`DateTimeOffset` is the correct type for all procurement timestamps — it carries the UTC offset, enabling correct comparison across time zones. The procurement platform records `SubmittedAt`, `ApprovedAt`, `IssuedAt`, and `ExpectedDelivery` as `DateTimeOffset` values, never as raw `DateTime`.
+Representing procurement timestamps with timezone-aware types — rather than bare local date-times — enables correct comparison across time zones. The procurement platform records `SubmittedAt`, `ApprovedAt`, `IssuedAt`, and `ExpectedDelivery` as timezone-aware instant values, never as raw local date-times that silently discard offset information.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -706,9 +706,9 @@ runDemo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: Injecting a `Clock` function makes time-dependent domain rules (SLA checks, deadline calculations) testable with fixed timestamps — no `DateTime.Now` calls buried in domain logic.
+**Key Takeaway**: Injecting a `Clock` function makes time-dependent domain rules (SLA checks, deadline calculations) testable with fixed timestamps — no ambient "now" calls buried in domain logic.
 
-**Why It Matters**: SLA breach detection, payment scheduling, and delivery deadline alerts all depend on "what time is it now?" Hardcoding `DateTime.Now` in domain functions makes them untestable deterministically. Injecting `Clock` as a function parameter means tests can use `fixedClock (DateTimeOffset(2026, 6, 15, ...))` and assert on exact SLA outcomes without relying on the real clock.
+**Why It Matters**: SLA breach detection, payment scheduling, and delivery deadline alerts all depend on "what time is it now?" Hardcoding the current time inside domain functions makes them untestable deterministically. Injecting `Clock` as a function parameter means tests can supply a fixed instant and assert on exact SLA outcomes without relying on the real wall clock.
 
 ---
 
@@ -1865,7 +1865,7 @@ runDemo = do
 
 ### Example 61: Bounded Context Boundary as Module + Signature
 
-Each bounded context in the procurement platform exposes a public API through a module signature. The signature defines what is visible to other contexts; the implementation hides internal types. This is the F# module system as a bounded context boundary.
+Each bounded context in the procurement platform exposes a public API through a module or namespace boundary. The boundary defines what is visible to other contexts; the implementation hides internal types. Each language in the tabs uses its own module or namespace mechanism to enforce this encapsulation at the language level.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2138,7 +2138,7 @@ runDemo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: Module visibility rules enforce bounded context boundaries — internal types stay hidden, and the only coupling between contexts is through explicitly exported types and functions. F# uses `internal` module access; Clojure uses private namespace vars; TypeScript uses explicit `export` declarations — all achieve the same context encapsulation.
+**Key Takeaway**: Module visibility rules enforce bounded context boundaries — internal types stay hidden, and the only coupling between contexts is through explicitly exported types and functions. F# uses module-level access control; Clojure uses private namespace vars; TypeScript uses explicit `export` declarations; Haskell uses export lists — all achieve the same context encapsulation.
 
 **Why It Matters**: The `InternalPoState` with its approval chain, line-item history, and status notes is a purchasing-specific implementation detail. If the receiving context depends on `InternalPoState` directly, every refactor of purchasing internals risks breaking receiving. By exporting only `PurchaseOrderIssuedPublic`, the purchasing context can freely evolve its internal model without affecting downstream contexts. In production, this boundary prevents cascading compile errors across services when the purchasing team restructures approval logic.
 
@@ -3220,7 +3220,7 @@ runDemo = do
 
 ### Example 65: Repository as Function-Type Alias
 
-In functional F#, a repository is modelled as a set of function-type aliases — one per operation. These aliases are the port definition. The production adapter and the test adapter are both values of these function types. In Clojure, the idiomatic equivalent is protocol functions or plain higher-order functions passed as arguments.
+A repository can be modelled as a set of named function types — one per operation. These named types are the port definition. Any value that has the right function signature satisfies the port, so the production adapter and the test adapter are interchangeable without a shared interface or abstract class. Each language in the tabs expresses this idea idiomatically: named type aliases, protocol methods, typed interface properties, or type synonyms — the underlying concept is the same.
 
 ```mermaid
 graph TD
@@ -3580,7 +3580,7 @@ runDemo = do
 
 **Key Takeaway**: Function-type aliases are the simplest possible port definition — no interface, no abstract class, no mock framework — just a type alias that any function matching the signature can satisfy.
 
-**Why It Matters**: The `LoadPO` alias `PurchaseOrderId -> Async<PoData option>` can be satisfied by an Npgsql query, a DynamoDB scan, a Redis cache lookup, or an in-memory map. The `approvePOWorkflow` function is indifferent to which adapter is behind the alias. This is the highest fidelity expression of the Dependency Inversion Principle in functional F# — the port is just a type, and the adapter is just a function.
+**Why It Matters**: A load-PO port that maps an ID to an optional record can be satisfied by a PostgreSQL query, a DynamoDB scan, a Redis cache lookup, or an in-memory map — as long as the function signature matches. The `approvePOWorkflow` function is indifferent to which adapter sits behind the port. This is the highest-fidelity expression of the Dependency Inversion Principle in functional languages — the port is just a type, and the adapter is just a function.
 
 ---
 
@@ -6660,7 +6660,7 @@ runDemo nowPlus2 = do
 
 ### Example 76: Interop with C# Caller — Workflow Exposed as Task
 
-Domain workflows written in one language may be consumed from hosts written in another. On the .NET platform, F# uses `Async<T>` while C# callers expect `Task<T>` — converting between the two is a thin boundary concern at the composition root. Clojure and TypeScript face the same challenge when crossing library or service boundaries: the domain layer stays idiomatic; the shim translates at the edge.
+Domain workflows written in one language may be consumed from hosts written in another. Each language has its own async abstraction, and the caller may expect a different one — converting between them is a thin boundary concern at the composition root. In all four languages shown here, the domain logic stays idiomatic; a minimal shim at the edge translates to whatever the external caller expects.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6866,9 +6866,9 @@ runDemo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: Async interop at the composition root keeps domain logic idiomatic while presenting a compatible interface to the host. On .NET, `Async.StartAsTask` is the complete shim between F# `Async` workflows and C# `Task` callers — one line, no restructuring of domain logic required. Equivalent boundary shims exist for every cross-language or cross-runtime integration point.
+**Key Takeaway**: Async interop at the composition root keeps domain logic idiomatic while presenting a compatible interface to the host. In each language, a minimal boundary shim converts the domain's native async representation to whatever the caller expects — one conversion, no restructuring of domain logic required. Equivalent boundary shims exist for every cross-language or cross-runtime integration point.
 
-**Why It Matters**: Procurement platform backends often start as pure F# services but evolve to integrate with C# libraries (ORMs, message bus clients, telemetry SDKs). The `Async.StartAsTask` shim keeps the domain layer in idiomatic F# while presenting a C#-friendly `Task<T>` surface to infrastructure code. The conversion is a one-liner — it does not require restructuring the domain workflow.
+**Why It Matters**: Procurement platform backends often integrate with infrastructure libraries (ORMs, message bus clients, telemetry SDKs) that use a different async model than the domain layer. A thin conversion shim at the composition root keeps the domain layer idiomatic while presenting a compatible surface to infrastructure code. The conversion is a one-liner — it does not require restructuring the domain workflow.
 
 ---
 
@@ -7583,7 +7583,7 @@ runDemo = do
 
 ### Example 79: Domain Model Evolution — Adding a New State
 
-When the business requires a new `OnHold` state for POs pending budget confirmation, the F# type system surfaces every place in the codebase that needs updating — a compile-time migration guide.
+When the business requires a new `OnHold` state for POs pending budget confirmation, a closed algebraic type surfaces every place in the codebase that needs updating — the compiler becomes a migration guide.
 
 ```mermaid
 stateDiagram-v2
@@ -7866,9 +7866,9 @@ runDemo = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: Adding a new state to a discriminated union makes the compiler issue FS0025 warnings on every unupdated match expression — the compiler produces a complete list of code paths that must handle the new state.
+**Key Takeaway**: Adding a new constructor to a closed sum type causes the compiler to flag every unupdated match or case expression — the compiler produces a complete list of code paths that must handle the new state.
 
-**Why It Matters**: In a live procurement system with a dozen engineers, adding `OnHold` to the PO state machine without the compiler's guidance means manually searching for every status check in the codebase. The F# compiler's exhaustive match checking turns this into a systematic, zero-miss compile-time audit. Every match expression that lacks an `OnHold` case will fail to compile — the migration is complete when the build is green.
+**Why It Matters**: In a live procurement system with a dozen engineers, adding `OnHold` to the PO state machine without the compiler's guidance means manually searching for every status check in the codebase. Exhaustive-match checking by the type system turns this into a systematic, zero-miss compile-time audit. Every pattern match that lacks an `OnHold` arm will fail to compile — the migration is complete when the build is green.
 
 ---
 

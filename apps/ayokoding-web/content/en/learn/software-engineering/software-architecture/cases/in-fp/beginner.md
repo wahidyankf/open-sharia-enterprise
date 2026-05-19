@@ -15,7 +15,7 @@ A bounded context is not just a namespace — it is an isolation unit. Every tim
 
 ### Standard Library First
 
-F# modules are the only tool the standard library gives you for grouping related declarations. A module is a namespace, not a boundary enforcer — nothing stops `Supplier.fs` from opening `Purchasing.fs` and reading its types directly. The standard library delivers cohesion, not isolation.
+Each FP toolchain gives you a namespace or module mechanism for grouping related declarations, but none of them enforce cross-context isolation at the language level. A module or namespace is a cohesion tool, not a boundary enforcer — nothing in the standard library stops one context's code from importing another context's domain types directly. The standard library delivers cohesion, not isolation.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -311,11 +311,11 @@ data UnitOfMeasure
 
 ### Why It Matters
 
-`procurement-platform-be` organizes all feature code under `src/ProcurementPlatform/Contexts/`. Before writing any new feature code you need to read this layout fluently — otherwise you put new files in the wrong layer or duplicate types that already exist. The folder shape is not arbitrary: each stack enforces a dependency ordering that mirrors the directory structure. In F# the `.fsproj` compilation order makes this explicit; in Clojure the `ns` declaration order and project-level linting enforce it by convention; in TypeScript the import graph and ESLint boundary rules play the same role. Understanding how each stack expresses this ordering is what lets you read the layout fluently.
+`procurement-platform-be` organizes all feature code under `src/ProcurementPlatform/Contexts/`. Before writing any new feature code you need to read this layout fluently — otherwise you put new files in the wrong layer or duplicate types that already exist. The folder shape is not arbitrary: each stack enforces a dependency ordering that mirrors the directory structure. In F# the `.fsproj` compilation order makes this explicit; in Clojure the `ns` declaration order and project-level linting enforce it by convention; in TypeScript the import graph and ESLint boundary rules play the same role; in Haskell the Cabal/Stack module listing and GHC import checking enforce it at build time. Understanding how each stack expresses this ordering is what lets you read the layout fluently.
 
 ### Standard Library First
 
-The flat layout is a direct consequence of starting with a single-module approach. F# projects list every `.fs` file in the `.fsproj` in compilation order. A flat layout means all domain files sit in one `Domain/` directory and all handlers in one `Presentation/` directory. This is the zero-ceremony stdlib approach: it compiles, it works, and it is adequate for a small codebase.
+The flat layout is a direct consequence of starting with a single-module approach. Each FP toolchain lists or discovers source files in some dependency order — a flat layout means all domain files sit in one `Domain/` directory and all handlers in one `Presentation/` directory with no per-context nesting. This is the zero-ceremony stdlib approach: it compiles, it works, and it is adequate for a small codebase.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -452,7 +452,7 @@ data RepositoryError
 
 ### Production Framework
 
-The per-context layout separates shared cross-cutting types from context-specific types. The `.fsproj` compilation order tells you what the layout has achieved:
+The per-context layout separates shared cross-cutting types from context-specific types. The F# `.fsproj` compilation order excerpt below illustrates what the layout has achieved; the same dependency ordering is expressed through the Clojure namespace declaration tree, the TypeScript import graph, and the Haskell Cabal module list in each respective codebase:
 
 ```xml
 <!-- ProcurementPlatform.fsproj (excerpt) -->
@@ -483,11 +483,11 @@ The per-context layout separates shared cross-cutting types from context-specifi
 
 ### Why It Matters
 
-The single most common way a hexagonal architecture degrades into a layered monolith is when domain types import framework assemblies. The moment a domain type carries an ORM annotation, a serializer attribute, or an HTTP-framework decorator, the domain layer depends on infrastructure. Switching frameworks — or testing the domain in isolation — now requires framework setup. The invariant is the same across all three stacks: keep the domain namespace free of database drivers (`Npgsql` in F#, `next.jdbc` in Clojure, `pg` in TypeScript), serialization frameworks (`System.Text.Json` / `cheshire` / `JSON.stringify` wrappers), and HTTP frameworks (`Giraffe` / `Ring` / `Hono`). That invariant is what makes everything else in the hexagonal layout possible.
+The single most common way a hexagonal architecture degrades into a layered monolith is when domain types import framework assemblies. The moment a domain type carries an ORM annotation, a serializer attribute, or an HTTP-framework decorator, the domain layer depends on infrastructure. Switching frameworks — or testing the domain in isolation — now requires framework setup. The invariant is the same across all four stacks: keep the domain namespace free of database drivers (`Npgsql` in F#, `next.jdbc` in Clojure, `pg` in TypeScript, `postgresql-simple` in Haskell), serialization frameworks (`System.Text.Json` / `cheshire` / `JSON.stringify` wrappers / `aeson`), and HTTP frameworks (`Giraffe` / `Ring` / `Hono` / `Servant`). That invariant is what makes everything else in the hexagonal layout possible.
 
 ### Standard Library First
 
-F# record types carry no annotations by default. The standard library gives you a pure, framework-free type that the compiler serializes as a plain CLR class:
+All four stacks let you define value types using nothing but the language's own data-declaration syntax — no ORM annotation, no serializer attribute, no framework import required. A plain algebraic data type or record is framework-free by default; the compiler treats it as a pure data definition:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -667,7 +667,7 @@ createMoney amount currency
 
 ### Production Framework
 
-The hexagonal answer is: ORM mapping lives in the infrastructure layer, not the domain layer. The domain type is a plain F# record. The `NpgsqlPurchaseOrderRepository.fs` in `Infrastructure/` holds the mapping logic, keeping the domain module completely free of Npgsql:
+The hexagonal answer is: ORM mapping lives in the infrastructure layer, not the domain layer. The domain type is a plain data declaration with no persistence concerns attached. The infrastructure module — `NpgsqlPurchaseOrderRepository.fs` in F#, the `npgsql-purchase-order-repository` namespace in Clojure, the `postgres-purchase-order-repository` module in TypeScript, and `PostgresPurchaseOrderRepository.hs` in Haskell — holds all mapping logic, keeping each domain module completely free of its respective database driver:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -866,7 +866,7 @@ domainToRow (PurchaseOrderId pid) supplier money status = PurchaseOrderRow
 
 {{< /tabs >}}
 
-The dependency rule flows inward: `Infrastructure` opens `Domain`, never the reverse. In F# project files the compilation order enforces this mechanically — `Domain/ValueObjects.fs` compiles before `Infrastructure/NpgsqlPurchaseOrderRepository.fs`, so the domain module physically cannot open anything from infrastructure.
+The dependency rule flows inward: infrastructure imports domain, never the reverse. Each FP toolchain enforces this through its own mechanism — F# project-file compilation order, Clojure project-level linting and `ns` declaration order, TypeScript ESLint boundary rules, Haskell Cabal/Stack module exposed-modules — so the domain module physically cannot import anything from infrastructure.
 
 **Trade-offs**: keeping domain types annotation-free means you need a separate mapping step at the boundary. For simple CRUD aggregates this mapping is tedious. For complex aggregates with invariants (value objects that must be validated on construction) the separation pays for itself immediately — you can test the entire domain layer without spinning up a database or serializer.
 
@@ -876,11 +876,11 @@ The dependency rule flows inward: `Infrastructure` opens `Domain`, never the rev
 
 ### Why It Matters
 
-Application services are the orchestration layer between the driving adapter (an HTTP handler) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the HTTP handler works with — JSON-friendly records with nullable fields and no invariants. When that happens the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. The design rule is the same across all three stacks: application service functions take and return domain aggregates; the driving adapter (a Giraffe handler in F#, a Ring/Reitit handler in Clojure, a Hono route handler in TypeScript) owns the translation. In `procurement-platform-be`, this boundary is what keeps the application layer unit-testable without spinning up an HTTP server.
+Application services are the orchestration layer between the driving adapter (an HTTP handler) and the domain. A common anti-pattern is letting the application service accept and return the same DTO types the HTTP handler works with — JSON-friendly records with nullable fields and no invariants. When that happens the application service cannot enforce domain rules without re-validating on every call, and the domain model becomes a ceremonial wrapper around the DTO. The design rule is the same across all four stacks: application service functions take and return domain aggregates; the driving adapter (a Giraffe handler in F#, a Ring/Reitit handler in Clojure, a Hono route handler in TypeScript, or a Servant handler in Haskell) owns the translation. In `procurement-platform-be`, this boundary is what keeps the application layer unit-testable without spinning up an HTTP server.
 
 ### Standard Library First
 
-F# function types naturally express this signature without any framework. The standard library gives you function composition and `Result` for error propagation:
+Each FP toolchain lets you express an application service signature using only the language's own function types and error-propagation primitives — no framework required. Function composition and an explicit error return type (`Result` / tagged map / `Either`) are the only stdlib tools needed:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1028,7 +1028,7 @@ submitPurchaseOrder save po =
 
 ### Production Framework
 
-In the Giraffe stack the HTTP handler owns the DTO translation. The application service never touches `HttpContext`, `System.Text.Json`, or Giraffe types:
+In every stack the HTTP handler owns the DTO translation. The application service never touches framework request/response types or serialization libraries — in F#/Giraffe that means no `HttpContext` or `System.Text.Json`, in Clojure no Ring request map or JSON encoder, in TypeScript no Express `Request`/`Response` or JSON lib, and in Haskell no Servant `ServerError` or Aeson encoder:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1289,11 +1289,11 @@ submitPurchaseOrder repo pub po = do
 
 ### Why It Matters
 
-Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In object-oriented hexagonal architecture this is typically an interface. The concept is a single-function port type that the application service receives as a parameter — expressed as a function type alias in F# (`type SavePurchaseOrder = PurchaseOrder -> Async<Result<unit, RepositoryError>>`), a protocol or function-valued map in Clojure (`defprotocol PurchaseOrderRepository`), or a function-typed interface property in TypeScript (`type SavePort = (po: PurchaseOrder) => Promise<Result<void, RepositoryError>>`). All three representations make the dependency explicit in the call site, eliminate interface ceremony, and make adapter swapping as simple as passing a different value. `procurement-platform-be` uses this pattern throughout its per-context layout.
+Output ports define _what_ the application layer needs from the outside world without specifying _how_ it is implemented. In object-oriented hexagonal architecture this is typically an interface. The concept is a single-function port type that the application service receives as a parameter — expressed as a function type alias in F# (`type SavePurchaseOrder = PurchaseOrder -> Async<Result<unit, RepositoryError>>`), a protocol or function-valued map in Clojure (`defprotocol PurchaseOrderRepository`), a function-typed interface property in TypeScript (`type SavePort = (po: PurchaseOrder) => Promise<Result<void, RepositoryError>>`), or a record-of-functions type alias in Haskell (`type SavePurchaseOrder = PurchaseOrder -> Either Text ()`). All four representations make the dependency explicit at the call site, eliminate interface ceremony, and make adapter swapping as simple as passing a different value. `procurement-platform-be` uses this pattern throughout its per-context layout.
 
 ### Standard Library First
 
-F# function types are first-class. The standard library lets you express any port as a type alias with zero ceremony:
+All four stacks treat functions as first-class values, so any port can be expressed as a plain function type alias with zero ceremony — no abstract class, no interface keyword required:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1419,7 +1419,7 @@ type SavePurchaseOrder = PurchaseOrder -> Either Text ()
 
 ### Production Framework
 
-The Giraffe + Npgsql stack wraps each port in a typed error union and makes the async nature explicit. The port type alias is still a plain F# `type` alias — no Giraffe or Npgsql types appear in the application layer ports file:
+Each stack wraps its ports in a typed error union and makes the async or effectful nature explicit. The port declaration remains a plain type alias or protocol definition in every case — no HTTP framework or database driver types appear in the application-layer ports file:
 
 ```mermaid
 flowchart LR
@@ -1727,11 +1727,11 @@ data Configuration = Configuration
 
 ### Why It Matters
 
-The HTTP handler is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command, call the application service, and translate the domain result into an HTTP response. Nothing more. A handler that contains business logic, validates domain invariants, or directly opens a database connection has crossed out of the adapter layer and into the domain or infrastructure — the most common source of untestable, entangled production code. The role is identical across all three stacks: `Presentation/PurchasingHandlers.fs` using Giraffe `HttpHandler` combinators in F#, a Ring/Reitit route function in Clojure, or a Hono route callback in TypeScript. In `procurement-platform-be`, each stack expresses this adapter in its own idiom but enforces the same single responsibility.
+The HTTP handler is the primary (driving) adapter in the hexagonal architecture. Its job is exactly this: translate an HTTP request into a domain command, call the application service, and translate the domain result into an HTTP response. Nothing more. A handler that contains business logic, validates domain invariants, or directly opens a database connection has crossed out of the adapter layer and into the domain or infrastructure — the most common source of untestable, entangled production code. The role is identical across all four stacks: `Presentation/PurchasingHandlers.fs` using Giraffe `HttpHandler` combinators in F#, a Ring/Reitit route function in Clojure, a Hono route callback in TypeScript, or a Servant `Handler` in Haskell. In `procurement-platform-be`, each stack expresses this adapter in its own idiom but enforces the same single responsibility.
 
 ### Standard Library First
 
-F# functions compose naturally. Without Giraffe you would write an ASP.NET Core `RequestDelegate` directly — a `Func<HttpContext, Task>`. The standard library gives you the composition, but the ceremony is high:
+Each FP toolchain lets you write an HTTP handler using only its own base HTTP contract — no combinator library required. The standard library gives you the composition primitives, but wiring routing, middleware, and error handling by hand is verbose:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1866,11 +1866,11 @@ healthApp _request respond =
 
 {{< /tabs >}}
 
-**Limitation for production**: composition is verbose. Chaining middleware, routing, and authorization requires manual `next` threading. Giraffe's `HttpHandler` type (`HttpContext -> Task<HttpContext option>`) composes cleanly with `>=>` (fish operator).
+**Limitation for production**: composition is verbose. Chaining middleware, routing, and authorization requires manual threading. Each production framework solves this with its own composition model — Giraffe's `>=>` (Kleisli fish operator) in F#, Reitit's data-driven route table in Clojure, Express/Hono middleware chaining in TypeScript, and Servant's type-level route algebra in Haskell.
 
 ### Production Framework
 
-The health handler shows the minimal Giraffe adapter. A domain-backed handler for `POST /api/v1/purchase-orders` follows the same pattern but adds the translation steps:
+The health handler in each tab shows the minimal framework adapter. A domain-backed handler for `POST /api/v1/purchase-orders` follows the same pattern in every stack but adds the translation steps — DTO deserialization, smart constructor calls, application service invocation, and HTTP response mapping:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2327,7 +2327,7 @@ handleSubmit repo pub clock dto = do
 
 {{< /tabs >}}
 
-The routing wires the handler to a URL in `Program.fs`:
+The composition root wires each handler to a URL — `Program.fs` in F#, `program.clj` in Clojure, `program.ts` in TypeScript, and `Program.hs` in Haskell:
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 

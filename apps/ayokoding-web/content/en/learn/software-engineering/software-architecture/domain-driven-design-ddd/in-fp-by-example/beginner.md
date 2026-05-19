@@ -29,7 +29,7 @@ This beginner-level section introduces DDD through type-system design, using the
 
 ### Example 1: Ubiquitous Language as Type Aliases
 
-Ubiquitous language means every term the business uses has an exact counterpart in the code. In F# the cheapest way to honour this is a type alias: `type RequisitionId = string` makes the intent explicit without adding runtime cost. The type alias lives in the same module as the rest of the domain model and is visible to both developers and procurement domain experts reading the code.
+Ubiquitous language means every term the business uses has an exact counterpart in the code. In FP a type alias is the cheapest way to honour this: it gives the domain concept a name at zero runtime cost without forcing the developer through a wrapper constructor at every use-site. The alias lives next to the rest of the domain model and is visible to both developers and procurement domain experts reading the code.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -203,7 +203,7 @@ main = putStrLn "Type aliases defined - zero runtime cost, maximum documentation
 
 {{< /tabs >}}
 
-**Key Takeaway**: Type aliases convert the ubiquitous language of procurement into domain-named identifiers at zero runtime cost and maximum readability. In F# these are `type` aliases; Clojure uses spec keywords; TypeScript uses type aliases — all achieving the same readable domain vocabulary.
+**Key Takeaway**: Type aliases convert the ubiquitous language of procurement into domain-named identifiers at zero runtime cost and maximum readability. In F# these are `type` aliases; Clojure uses spec keywords; TypeScript uses type aliases; Haskell uses `type` aliases or `newtype` declarations — all achieving the same readable domain vocabulary.
 
 **Why It Matters**: When a new developer joins the procurement platform team and reads `RequisitionId -> SupplierId -> SkuCode`, they immediately understand the function's purpose from the domain vocabulary. Without aliases, `string -> string -> string` forces them to read the implementation to understand what each argument represents. This is the simplest possible application of type-driven DDD: make the domain model readable to domain experts — a purchasing manager or procurement analyst should recognise every identifier. Even before writing any logic, type aliases establish the vocabulary that will permeate every function signature and module.
 
@@ -211,7 +211,7 @@ main = putStrLn "Type aliases defined - zero runtime cost, maximum documentation
 
 ### Example 2: Domain Event Named in Past Tense
 
-Domain events represent facts that have already occurred in the domain. DDD convention names events in the past tense, making them read as business facts. In F# a discriminated union case with a payload record is the idiomatic representation.
+Domain events represent facts that have already occurred in the domain. DDD convention names events in the past tense, making them read as business facts. A typical functional representation pairs a closed sum of event variants with their payload data, so the type system enumerates every fact that can occur in the domain.
 
 ```mermaid
 graph TD
@@ -479,7 +479,7 @@ main = do
 
 ### Example 3: Bounded Context as Module / Namespace
 
-A bounded context is an explicit boundary within which a particular domain model applies. In F#, modules provide that boundary cheaply: all types and functions for the `purchasing` context live inside `module Purchasing`, keeping them isolated from the `supplier`, `receiving`, and `invoicing` contexts.
+A bounded context is an explicit boundary within which a particular domain model applies. The module or namespace system of the host language provides that boundary cheaply: all types and functions for the `purchasing` context live in a dedicated namespace, keeping them isolated from the `supplier`, `receiving`, and `invoicing` contexts.
 
 ```mermaid
 graph TD
@@ -957,7 +957,7 @@ main = do
 
 ### Example 5: OR Type — Discriminated Union
 
-A discriminated union (DU) is an OR type: an `ApprovalLevel` is either `L1` OR `L2` OR `L3`. Exactly one case applies at any given time. DUs are the F# mechanism for making mutually exclusive states explicit and compiler-checked.
+A discriminated union (DU) is an OR type: an `ApprovalLevel` is either `L1` OR `L2` OR `L3`. Exactly one case applies at any given time. Sum types are the functional mechanism for making mutually exclusive states explicit and compiler-checked — exhaustive pattern matching on the sum forces all cases to be handled.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1503,7 +1503,7 @@ main = putStrLn "Workflow type defined - signature is the domain contract"
 
 ### Example 7: Single-Case Discriminated Union Wrapper
 
-A single-case DU wraps a primitive type to give it a distinct identity. This prevents accidentally passing a `RequisitionId` where a `PurchaseOrderId` is expected, even though both are strings underneath. Single-case wrappers are the cheapest form of domain type safety — expressed as single-case discriminated unions in F#, single-key spec records in Clojure, and branded types in TypeScript.
+A single-case DU wraps a primitive type to give it a distinct identity. This prevents accidentally passing a `RequisitionId` where a `PurchaseOrderId` is expected, even though both are strings underneath. Single-case wrappers are the cheapest form of domain type safety — expressed as single-case discriminated unions in F#, `newtype` declarations in Haskell, single-key spec records in Clojure, and branded types in TypeScript.
 
 ```mermaid
 graph LR
@@ -2000,7 +2000,7 @@ main = do
 
 ### Example 9: Pattern Matching on a Discriminated Union
 
-Pattern matching is the primary tool for consuming discriminated union values. It forces you to decide what happens in every case. Combined with the exhaustive match checking of the F# compiler, it eliminates entire classes of "forgot to handle this case" bugs.
+Pattern matching is the primary tool for consuming discriminated union values. It forces you to decide what happens in every case. Combined with exhaustive match checking enforced by the compiler or type system, it eliminates entire classes of "forgot to handle this case" bugs.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2260,7 +2260,7 @@ main = do
 
 ### Example 10: Exhaustive Match — Compiler-Enforced
 
-The F# compiler issues a warning — treated as an error in strict builds — when a match expression does not cover all cases of a discriminated union. This example shows how to see the warning, how to fix it, and why it is one of the most valuable correctness tools in functional DDD.
+Statically-typed functional languages issue a warning or error when a match expression does not cover all cases of a sum type — treated as an error in strict builds. This example shows how to see the warning, how to fix it, and why compiler-enforced exhaustiveness is one of the most valuable correctness tools in functional DDD.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -4642,7 +4642,7 @@ main = do
 
 ### Example 18: Units of Measure
 
-Compile-time dimensional analysis prevents mixing amounts in different units. F# provides this natively through units of measure — a type-level mechanism that makes a `Quantity<kg>` and a `Quantity<each>` incompatible at compile time. Clojure and TypeScript achieve similar protection through tagged wrappers or branded numeric types. In the procurement context, this means you cannot accidentally add a quantity in `KG` to a quantity in `EACH` without explicit conversion.
+Compile-time dimensional analysis prevents mixing amounts in different units. F# provides this natively through units of measure — a type-level mechanism that makes a `Quantity<kg>` and a `Quantity<each>` incompatible at compile time. Haskell approximates the same safety using phantom types. Clojure and TypeScript achieve similar protection through tagged wrappers or branded numeric types. In the procurement context, this means you cannot accidentally add a quantity in `KG` to a quantity in `EACH` without explicit conversion.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -4936,7 +4936,7 @@ main = do
 
 ### Example 19: Email Value via Regex Validation
 
-An email address on a supplier or employee record is a constrained string with format requirements. Active patterns let you embed validation logic directly into pattern-matching syntax, making validation readable and composable.
+An email address on a supplier or employee record is a constrained string with format requirements. Embedding format validation inside the type's construction step keeps the predicate co-located with the type, making it reusable across the procurement codebase without scattering defensive regex checks through every function that touches an address.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -5197,9 +5197,9 @@ main = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: Active patterns embed validation logic into match expressions, making smart constructors readable as domain rules rather than imperative if/else chains.
+**Key Takeaway**: Embedding validation logic inside the type's smart constructor makes the construction rule readable as a domain policy rather than an imperative if/else chain, and ensures the predicate is reused rather than duplicated.
 
-**Why It Matters**: In a procurement system, supplier notification emails and approver routing emails are critical: a malformed email address means a supplier never receives the PO or an approver never gets the approval request. Validating at construction time and using the `Email` type throughout means any code path that sends notifications can trust the address is well-formed. Active patterns make the validation composable — reuse `ValidEmail` anywhere an email check is needed.
+**Why It Matters**: In a procurement system, supplier notification emails and approver routing emails are critical: a malformed email address means a supplier never receives the PO or an approver never gets the approval request. Validating at construction time and using the `Email` type throughout means any code path that sends notifications can trust the address is well-formed — the construction step is the single source of truth for the validation rule.
 
 ---
 

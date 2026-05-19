@@ -28,7 +28,7 @@ Examples 29-57 cover intermediate software architecture concepts (40-75% coverag
 
 ### Example 29: Hexagonal Architecture — Ports and Adapters
 
-Hexagonal architecture separates the application core from external systems by defining ports (function-type contracts) and adapters (concrete implementations). In F#, a port is simply a function type alias or record-of-functions — no abstract class required. The core calls port functions; adapters supply them at startup.
+Hexagonal architecture separates the application core from external systems by defining ports (function-type contracts) and adapters (concrete implementations). In FP, a port is simply a function type or record-of-functions — no abstract class required. The core calls port functions; adapters supply them at startup.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -311,7 +311,7 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** In F#, ports are function types; adapters are functions that match those types. Partial application wires them into the core without any dependency injection framework.
+**Key Takeaway:** Ports are function types or records-of-functions; adapters are functions that match those types. Partial application wires them into the core without any dependency injection framework.
 
 **Why It Matters:** Hexagonal architecture's greatest benefit is seam testability — the core runs entirely with lightweight in-memory adapters during tests, and the swap costs one line of wiring. In FP this seam is even cheaper: instead of swapping class hierarchies you pass a different function. Production systems that adopt this pattern survive infrastructure migrations (e.g., PostgreSQL → DynamoDB) because the core is never coupled to a concrete store, only to a function signature.
 
@@ -319,7 +319,7 @@ demo = do
 
 ### Example 30: Clean Architecture — Layer Separation with Dependency Rule
 
-Clean Architecture organises code into concentric rings: Entities → Use Cases → Interface Adapters → Frameworks. The dependency rule states dependencies point inward only. In F#, each ring becomes a module; inner modules have no `open` statements referencing outer ones.
+Clean Architecture organises code into concentric rings: Entities → Use Cases → Interface Adapters → Frameworks. The dependency rule states dependencies point inward only. Each ring becomes a module or namespace; inner modules have no imports referencing outer ones.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -665,7 +665,7 @@ demo = do
 
 ### Example 31: Onion Architecture — Domain at the Center
 
-Onion Architecture places the domain model at the very center, surrounded by domain services, then application services, then infrastructure. Every dependency points inward. In F#, the concentric rings map naturally to module ordering: domain types first, then functions that operate on them, then infrastructure last.
+Onion Architecture places the domain model at the very center, surrounded by domain services, then application services, then infrastructure. Every dependency points inward. The concentric rings map naturally to module/namespace ordering: domain types first, then functions that operate on them, then infrastructure last.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -991,7 +991,7 @@ demo = do
 
 **Key Takeaway:** Each ring depends only on rings closer to the center. The domain model at the center has zero dependencies; infrastructure at the edge depends on everything but is depended on by nothing.
 
-**Why It Matters:** Onion Architecture aligns naturally with Domain-Driven Design: the innermost ring is the Bounded Context's pure domain model, the outermost ring is its infrastructure shell. In F#, the module declaration order physically enforces the dependency direction — the compiler prevents outer rings from sneaking into inner rings through import ordering. Switching from an in-memory store to a PostgreSQL adapter changes only the outermost `makeProductRepo` function; every other ring is untouched.
+**Why It Matters:** Onion Architecture aligns naturally with Domain-Driven Design: the innermost ring is the Bounded Context's pure domain model, the outermost ring is its infrastructure shell. Module or namespace declaration order physically enforces the dependency direction — the language tooling prevents outer rings from depending on inner rings through import ordering. Switching from an in-memory store to a PostgreSQL adapter changes only the outermost factory function; every other ring is untouched.
 
 ---
 
@@ -999,7 +999,7 @@ demo = do
 
 ### Example 32: Observer Pattern — Event Notification Without Coupling
 
-The Observer pattern defines a one-to-many dependency so that when one object changes state all dependents are notified automatically. In F#, the "observers" are simply event-handler functions stored in a mutable list; no interface required.
+The Observer pattern defines a one-to-many dependency so that when one object changes state all dependents are notified automatically. In FP, "observers" are simply event-handler functions stored in a list; no interface or class required.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -1276,13 +1276,13 @@ demo = do
 
 **Key Takeaway:** Observer in F# is a list of functions. The discriminated union event type gives handlers compile-time safety to pattern-match only the cases they care about.
 
-**Why It Matters:** Event-driven systems decouple producers from consumers: the publisher knows nothing about handlers. In F# this decoupling costs less than in OOP — there is no EventListener interface, no anonymous class, just a function value stored in a list. Real systems use this pattern for audit logging, metrics collection, and email notifications all firing off a single domain event without the event source needing any knowledge of the downstream consumers.
+**Why It Matters:** Event-driven systems decouple producers from consumers: the publisher knows nothing about handlers. In FP this decoupling costs less than in OOP — there is no EventListener interface, no anonymous class, just a function value stored in a list. Real systems use this pattern for audit logging, metrics collection, and email notifications all firing off a single domain event without the event source needing any knowledge of the downstream consumers.
 
 ---
 
 ### Example 33: Domain Events — Signaling State Changes Within a Bounded Context
 
-Domain events represent something significant that happened in the domain — past tense, immutable facts. In F#, domain events are discriminated union cases collected as a list alongside the updated state. Functions return `(newState, events)` tuples rather than firing side effects directly.
+Domain events represent something significant that happened in the domain — past tense, immutable facts. A typical functional representation collects events as a closed sum of variants alongside the updated state. Functions return `(newState, events)` tuples rather than firing side effects directly.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1564,7 +1564,7 @@ demo = do
 
 ### Example 34: Event-Driven Architecture — Async Message Passing Between Services
 
-Event-driven architecture routes events through a central bus so services communicate without direct coupling. In F#, the bus is modelled as a simple in-memory dispatch function; real systems replace it with Kafka, RabbitMQ, or Azure Service Bus while keeping the handler function signatures identical.
+Event-driven architecture routes events through a central bus so services communicate without direct coupling. The bus is modelled as a simple in-memory dispatch function; real systems replace it with Kafka, RabbitMQ, or Azure Service Bus while keeping the handler function signatures identical.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1854,7 +1854,7 @@ demo = do
 
 ### Example 35: Strategy Pattern — Swappable Algorithms
 
-The Strategy pattern defines a family of algorithms and makes them interchangeable. In F#, strategies are simply functions with the same signature — no interface, no class hierarchy. Higher-order functions accept the strategy as a parameter.
+The Strategy pattern defines a family of algorithms and makes them interchangeable. In FP, strategies are simply functions with the same signature — no interface, no class hierarchy. Higher-order functions accept the strategy as a parameter.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2071,7 +2071,7 @@ demo = do
 
 {{< /tabs >}}
 
-**Key Takeaway:** In F#, strategies are functions. Passing a function as an argument is equivalent to injecting a strategy object — with no class hierarchy required.
+**Key Takeaway:** In FP, strategies are functions. Passing a function as an argument is equivalent to injecting a strategy object — with no class hierarchy required.
 
 **Why It Matters:** Strategy via higher-order functions is one of the clearest examples of FP's economy: the OOP pattern (Strategy interface + ConcreteStrategy classes + Context class) collapses to a single parameter of a function type. Swapping strategies at runtime costs nothing — pass a different function. This pattern appears everywhere in production F#: pricing engines, sorting comparators, validation pipelines, and serialization schemes.
 
@@ -2079,7 +2079,7 @@ demo = do
 
 ### Example 36: Factory Pattern — Centralized Object Creation
 
-The Factory pattern centralises object creation, hiding construction logic from callers. In F#, factories are smart constructor functions that return `Result` types, surfacing validation errors without exceptions.
+The Factory pattern centralises object creation, hiding construction logic from callers. In FP, factories are smart constructor functions that return `Result` types, surfacing validation errors without exceptions.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2375,7 +2375,7 @@ demo = do
 
 ### Example 37: Builder Pattern — Constructing Complex Objects Step by Step
 
-The Builder pattern constructs complex objects step by step. In F#, the builder is a pipeline of record-update functions — each step returns an updated intermediate record, and the final `build` function validates and seals it.
+The Builder pattern constructs complex objects step by step. In FP, the builder is a pipeline of update functions — each step returns an updated intermediate value, and the final `build` function validates and seals it.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2699,7 +2699,7 @@ demo = do
 
 ### Example 38: Adapter Pattern — Bridging Incompatible Interfaces
 
-The Adapter pattern wraps an incompatible interface to make it compatible with a caller's expected interface. In F#, an adapter is a function that wraps another function, converting its signature.
+The Adapter pattern wraps an incompatible interface to make it compatible with a caller's expected interface. In FP, an adapter is a function that wraps another function, converting its signature.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2964,7 +2964,7 @@ demo = do
 
 ### Example 39: Decorator Pattern — Adding Behavior Without Subclassing
 
-The Decorator pattern attaches additional behaviour to an object without modifying the original. In F#, decorators are higher-order functions: a decorator takes a function and returns a new function with the same signature but augmented behaviour.
+The Decorator pattern attaches additional behaviour to an object without modifying the original. In FP, decorators are higher-order functions: a decorator takes a function and returns a new function with the same signature but augmented behaviour.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3250,7 +3250,7 @@ demo = do
 
 ### Example 40: Facade Pattern — Simplified Interface to a Subsystem
 
-The Facade pattern provides a simplified interface to a complex subsystem. In F#, a facade is a module or record-of-functions that exposes a small, coherent API and delegates to multiple specialised internal functions.
+The Facade pattern provides a simplified interface to a complex subsystem. In FP, a facade is a module or record-of-functions that exposes a small, coherent API and delegates to multiple specialised internal functions.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3544,7 +3544,7 @@ demo = do
 
 ### Example 41: Command Pattern — Encapsulate Actions as Objects
 
-The Command pattern encapsulates a request as an object, supporting undo/redo, queuing, and logging. In F#, commands are discriminated union cases (defunctionalisation); a `reduce` function interprets them against a state.
+The Command pattern encapsulates a request as an object, supporting undo/redo, queuing, and logging. In FP, commands are closed sum types (defunctionalisation); a pure interpreter function applies them against a state.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -3824,7 +3824,7 @@ demo = do
 
 ### Example 42: Mediator Pattern — Centralized Component Coordination
 
-The Mediator pattern centralises communication between components, reducing direct coupling. In F#, the mediator is a dispatch function: components send typed requests to the mediator, which routes them to the correct handler.
+The Mediator pattern centralises communication between components, reducing direct coupling. In FP, the mediator is a dispatch function: components send typed requests to the mediator, which routes them to the correct handler.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -4118,7 +4118,7 @@ demo = do
 
 ### Example 43: State Pattern — Objects That Change Behavior Based on State
 
-The State pattern allows an object to alter its behaviour when its internal state changes. In F# the state machine is modelled as a discriminated union of states and a transition function that pattern-matches on state × event pairs. In Clojure the same machine is expressed as a plain map of `{[state event] new-state}` entries with a dispatch function.
+The State pattern allows an object to alter its behaviour when its internal state changes. A common functional realisation models the machine as a closed sum of valid states with a pure transition function that dispatches on state × event pairs — either as exhaustive pattern matching over sum types, or as a data-table map of `{[state event] → new-state}` entries with a lookup function.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -4436,7 +4436,7 @@ demo = do
 
 ### Example 44: HOF with Hole-Filling Steps
 
-Template Method defines an algorithm skeleton with certain steps deferred to subclasses. In F#, the equivalent is a higher-order function that accepts the variable steps as function arguments — "holes" filled by the caller. In Clojure the same skeleton is a function that receives other functions as arguments and threads data through them with `->>`.
+Template Method defines an algorithm skeleton with certain steps deferred to subclasses. A common functional realisation is a higher-order function that accepts the variable steps as function arguments — "holes" filled by the caller — and threads the data through them in a fixed order.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -4696,7 +4696,7 @@ demo = do
 
 ### Example 45: Value Objects — Immutable Domain Concepts Without Identity
 
-Value objects represent domain concepts defined entirely by their attributes. In F#, value objects are immutable records (equality by structural value) or single-case discriminated unions (opaque wrappers that prevent misuse). In Clojure the same concept is expressed as validated maps with namespaced keywords and spec-based construction.
+Value objects represent domain concepts defined entirely by their attributes. In FP a value object is typically an immutable, structurally-compared bundle of data with construction-time validation; smart constructors enforce the invariants, preventing callers from creating invalid values directly.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -5002,7 +5002,7 @@ demo = do
 
 ### Example 46: Aggregate Roots — Consistency Boundaries in DDD
 
-An Aggregate Root is the entry point to a cluster of related objects. All modifications to the cluster go through the root, which enforces invariants. In F#, the aggregate is a record with a module exposing command functions that return `Result`. In Clojure the aggregate is a plain map and the "module boundary" is enforced through a namespace of pure command functions.
+An Aggregate Root is the entry point to a cluster of related objects. All modifications to the cluster go through the root, which enforces invariants. In FP an aggregate is a value-typed bundle (record/map) whose command surface is a set of pure functions returning a `Result`; the module or namespace boundary is what guards the cluster from direct mutation.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -5319,13 +5319,13 @@ demo = do
 
 **Key Takeaway:** The aggregate module is the only place where invariants are enforced. Commands return `Result<Order, string>`; callers chain them with `Result.bind` to build pipelines that fail fast on any invariant violation.
 
-**Why It Matters:** Aggregate boundaries define transactional consistency scope: everything inside one aggregate is always consistent; consistency across aggregates is eventual. In F#, the module boundary makes this explicit — external code can only call the exported command functions, never mutate the record directly. This is the functional equivalent of "only call public methods on the aggregate root" from the OOP DDD canon.
+**Why It Matters:** Aggregate boundaries define transactional consistency scope: everything inside one aggregate is always consistent; consistency across aggregates is eventual. The module or namespace boundary makes this explicit — external code can only call the exported command functions, never mutate the value directly. This is the functional equivalent of "only call public methods on the aggregate root" from the OOP DDD canon.
 
 ---
 
 ### Example 47: Bounded Contexts — Separating Domain Models by Responsibility
 
-A Bounded Context is an explicit boundary within which a domain model applies. Different contexts model the same real-world concept differently because they serve different purposes. In F#, bounded contexts are separate modules with their own types. In Clojure they are separate namespaces with their own namespaced keyword vocabularies.
+A Bounded Context is an explicit boundary within which a domain model applies. Different contexts model the same real-world concept differently because they serve different purposes. Bounded contexts manifest as separate modules or namespaces, each with its own type or keyword vocabulary; identical real-world terms can carry different meanings across contexts.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -5619,7 +5619,7 @@ demo = do
 
 ### Example 48: Anti-Corruption Layer — Protecting the Domain from External Models
 
-The Anti-Corruption Layer (ACL) is a translation boundary that prevents an external system's model from polluting the internal domain model. In F#, the ACL is a module with translation functions that map external types to internal types and vice versa. In Clojure the ACL is a pure function that transforms an external raw map into an internal namespaced-keyword map.
+The Anti-Corruption Layer (ACL) is a translation boundary that prevents an external system's model from polluting the internal domain model. An ACL is a module of pure translation functions that map external types or maps into the internal vocabulary, isolating the domain core from the external model's naming and encoding conventions.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -5912,7 +5912,7 @@ demo = do
 
 ### Example 49: CQRS Pattern — Separate Read and Write Models
 
-CQRS (Command Query Responsibility Segregation) uses separate models for writes (commands) and reads (queries). Commands return `Result<unit, error>` or a domain event; queries return read-optimised data shapes. In F#, the separation is enforced by distinct module namespaces. In Clojure it is enforced by separating atom-mutating command functions from pure read projections.
+CQRS (Command Query Responsibility Segregation) uses separate models for writes (commands) and reads (queries). Commands return `Result<unit, error>` or a domain event; queries return read-optimised data shapes. CQRS separation is enforced by module or namespace boundaries: command-side functions own writes (and return Result or events); query-side functions own reads (returning read-optimised shapes).
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6276,7 +6276,7 @@ demo = do
 
 ### Example 50: Middleware Pattern — Processing Pipeline for Cross-Cutting Concerns
 
-The Middleware pattern chains functions that each perform one cross-cutting concern (logging, auth, rate limiting) and then delegate to the next handler. In F#, middleware is function composition: each middleware wraps the next with `>>` or explicit lambda. In Clojure, Ring-style middleware wraps handler functions with threading macros for pipeline assembly.
+The Middleware pattern chains functions that each perform one cross-cutting concern (logging, auth, rate limiting) and then delegate to the next handler. In FP, middleware is function composition: each middleware wraps the next handler, building the pipeline by composing these wrapping functions.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6583,7 +6583,7 @@ demo = do
 
 ### Example 51: Plugin Architecture — Extending Systems Without Modifying Core
 
-Plugin architecture allows extending system behaviour by adding new plugins without modifying the core system. In F#, plugins are record-of-functions (capabilities) registered at startup and discovered dynamically by the core. In Clojure, plugins are plain maps of functions registered in a vector — idiomatic data-oriented extensibility.
+Plugin architecture allows extending system behaviour by adding new plugins without modifying the core system. In FP, plugins are records or maps of functions (capabilities) registered at startup and discovered dynamically by the core — idiomatic data-oriented extensibility without class hierarchies.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -6880,7 +6880,7 @@ demo = do
 
 ### Example 52: Repository Pattern — Abstracting Data Access
 
-The Repository pattern abstracts data access behind a clean interface, keeping domain logic free of persistence concerns. In F#, the repository is a record-of-functions whose implementations are swapped at startup. In Clojure, the repository is a protocol with `reify`-constructed implementations — idiomatic polymorphism over the same data access contract.
+The Repository pattern abstracts data access behind a clean interface, keeping domain logic free of persistence concerns. In FP, the repository is a record-of-functions or protocol whose implementations are swapped at startup, providing idiomatic polymorphism over the same data access contract.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -7203,7 +7203,7 @@ demo = do
 
 ### Example 53: Unit of Work Pattern — Grouping Operations into Atomic Transactions
 
-The Unit of Work pattern tracks changes and commits them as a single atomic transaction. In F#, this is modelled as a transactional Result chain: operations accumulate in a list; a final `commit` either applies all or rolls back on any failure. In Clojure, operations are plain maps accumulated in a vector; `commit` uses `reduce` to apply them and `reduced` to short-circuit on failure.
+The Unit of Work pattern tracks changes and commits them as a single atomic transaction. In FP, this is modelled as a deferred-intent pipeline: operations accumulate as values in a list or vector; a final `commit` folds over them, applying each in order and short-circuiting on the first failure.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -7517,7 +7517,7 @@ demo = do
 
 ### Example 54: Specification Pattern — Composable Business Rules
 
-The Specification pattern encapsulates a business rule as a predicate and supports composing rules with `and`, `or`, and `not`. In F#, specifications are functions of type `'a -> bool`, composed with custom operators. In Clojure, specifications are plain predicate functions composed with `every-pred`, `some-fn`, and `complement` — idiomatic higher-order function combinators.
+The Specification pattern encapsulates a business rule as a predicate and supports composing rules with `and`, `or`, and `not`. In FP, specifications are predicate functions composed with higher-order combinators — any function of type `('a -> bool)` qualifies as a specification, and the combinator layer builds complex policies from atomic rules.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -7845,7 +7845,7 @@ demo = do
 
 ### Example 55: CQRS with Event Sourcing — State as a Sequence of Events
 
-Event Sourcing stores state as an append-only log of events. Current state is derived by replaying the event log. Combined with CQRS, events are the write model; projected views are the read model. In F#, the `fold` function replays events to reconstruct state via pattern-matched DU transitions. In Clojure, `reduce` replays events over plain maps with multimethod dispatch — idiomatic data-oriented event sourcing.
+Event Sourcing stores state as an append-only log of events. Current state is derived by replaying the event log. Combined with CQRS, events are the write model; projected views are the read model. A fold or reduce over the event log reconstructs state by dispatching each event to the appropriate transition — either exhaustive pattern matching over sum types, or open dispatch via multimethods.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -8182,7 +8182,7 @@ demo = do
 
 ### Example 56: Saga Pattern — Managing Distributed Transactions
 
-The Saga pattern manages multi-step distributed transactions by defining a sequence of local transactions and compensating actions for rollback. In F#, each saga step is a `Result`-returning function; compensation functions are paired with each step. In Clojure, saga steps are plain maps of functions; `reduce` drives execution and `reduced` short-circuits on failure — idiomatic data-oriented saga orchestration.
+The Saga pattern manages multi-step distributed transactions by defining a sequence of local transactions and compensating actions for rollback. In FP, each saga step pairs a `Result`-returning execute function with a compensation function; a fold over the step list drives execution and short-circuits on failure, calling compensations in reverse order.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -8592,7 +8592,7 @@ demo = do
 
 ### Example 57: Circuit Breaker Pattern — Preventing Cascade Failures
 
-The Circuit Breaker pattern stops calls to a failing dependency when the failure rate exceeds a threshold, preventing cascade failures. In F#, the circuit breaker state is a discriminated union (Closed/Open/HalfOpen) and the executor checks state before calling the dependency. In Clojure, the state lives in an atom holding a plain map; `swap!` transitions state atomically — idiomatic Clojure concurrency for shared mutable state.
+The Circuit Breaker pattern stops calls to a failing dependency when the failure rate exceeds a threshold, preventing cascade failures. In FP, the circuit breaker state is represented as a closed sum (Closed/Open/HalfOpen); the executor checks state before calling the dependency and transitions state atomically on each outcome.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161

@@ -681,7 +681,7 @@ postgresViewRepo = GetPurchaseOrderView $ \i -> do
 
 ### Example 28: Async Output Port — `Async<Result<>>` Composition
 
-Every output port that performs I/O returns `Async<Result<'a, 'e>>`. Composing two such calls without a helper library requires explicit `async { let! ... }` nesting and `Result` matching. The `asyncResult { }` CE from FsToolkit.ErrorHandling eliminates the boilerplate.
+Every output port that performs I/O wraps its return type in both an asynchronous effect and a result type. Composing two such calls without a helper requires explicit nesting and result inspection at each step. Each language provides a mechanism — computation expressions, threading macros, pipe helpers, or monad transformers — that restores a linear pipeline reading style while preserving full error propagation.
 
 ```mermaid
 graph LR
@@ -924,7 +924,7 @@ manualIssuePipeline save publish po = do
 {{< /tab >}}
 {{< /tabs >}}
 
-**Cleaner with `asyncResult { }` from FsToolkit.ErrorHandling:**
+**Cleaner with a composition helper:**
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1126,9 +1126,9 @@ issuePipelineEarly save publish po = do
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: `Async<Result<'a, 'e>>` composition is the async railway — every `do!` inside `asyncResult { }` switches track on Error, just as `result { }` does for synchronous pipelines.
+**Key Takeaway**: Composing async-result port calls is the async railway — each bind point switches tracks on error, just as the synchronous result pipeline does for pure operations.
 
-**Why It Matters**: Without a composition strategy for `Async<Result<>>`, application services devolve into deeply nested match expressions that obscure domain intent behind infrastructure plumbing. The `asyncResult { }` CE restores the linear pipeline reading style while preserving full error tracking.
+**Why It Matters**: Without a composition strategy for async-wrapped results, application services devolve into deeply nested match or check expressions that obscure domain intent behind infrastructure plumbing. The per-language composition helpers restore a linear pipeline reading style while preserving full error tracking.
 
 ---
 
@@ -1551,9 +1551,9 @@ buildIssuePO loadSupplier savePO_ publishEvent_ input = runExceptT $ do
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: ROP across async port calls merges asynchrony and error propagation into a single linear pipeline where every step is either a track switch (Result) or an async track switch (Async<Result>).
+**Key Takeaway**: ROP across async port calls merges asynchrony and error propagation into a single linear pipeline where every step is either a track switch (result) or an async track switch (async-result).
 
-**Why It Matters**: The alternative — nested `async { match ... }` for every port call — produces code where the happy path is buried inside match arms. `asyncResult { }` restores linearity: read the function top-to-bottom and you see the business intent. Five steps in one `asyncResult { }` block would require five nested match expressions without it.
+**Why It Matters**: The alternative — a nested inspect-and-branch for every port call — produces code where the happy path is buried inside conditional arms. The per-language composition mechanisms restore linearity: read the function top-to-bottom and see the business intent. Five steps in one composition block would require five nested conditionals without it.
 
 ---
 
@@ -1953,7 +1953,7 @@ demo = mapM_ (print . toHttpResponse) demoOutcomes
 
 **Key Takeaway**: A single unified error DU at the application layer, lifted from domain and port errors via `Result.mapError`, gives the HTTP adapter one exhaustive match point instead of nested partial matches scattered across the codebase.
 
-**Why It Matters**: F# discriminated unions with exhaustive matching turn error-case coverage into a compile-time guarantee. Adding a new error case breaks compilation at every unhandled match site. The cost is one `Result.mapError` per port call; the gain is impossible-to-miss coverage.
+**Why It Matters**: Closed sum types with exhaustive dispatch — discriminated unions, keyword sets paired with spec, tagged unions with switch exhaustiveness, or sum types with `-Wall` — turn error-case coverage into a toolchain guarantee. Adding a new error case surfaces at every unhandled dispatch site. The cost is one error-lifting call per port call; the gain is impossible-to-miss coverage.
 
 ---
 
@@ -4613,7 +4613,7 @@ demo = putStrLn "Dependency rule: domain imports nothing; application imports on
 
 **Key Takeaway**: The application service accepts only port types as parameters, making it structurally impossible for infrastructure imports to leak into the application zone — the compiler rejects any attempt.
 
-**Why It Matters**: Code review catches most zone violations, but structural enforcement catches them all. When port types are used as parameter types, no developer can accidentally pass a `NpgsqlConnection` where a `PurchaseOrderRepository` is expected — the types are different. This is the mechanical enforcement of the dependency rule that makes Hexagonal Architecture more than just a convention.
+**Why It Matters**: Code review catches most zone violations, but structural enforcement catches them all. When port types are used as parameter types, no developer can accidentally pass a raw database connection where a repository port is expected — the types are different. This is the mechanical enforcement of the dependency rule that makes Hexagonal Architecture more than just a convention.
 
 ---
 
@@ -7004,7 +7004,7 @@ demo = do
 
 ### Example 46: Dependency Rejection — Refusing Infrastructure at the Domain Boundary
 
-The domain function must refuse to accept infrastructure types. If the domain imports a database module or uses `Async`, it has crossed into the adapter zone. This example shows the before/after of a dependency rejection refactor.
+The domain function must refuse to accept infrastructure types. If the domain imports a database module or embeds an effectful wrapper, it has crossed into the adapter zone. This example shows the before/after of a dependency rejection refactor.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -7281,9 +7281,9 @@ demo = do
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Domain functions that contain infrastructure imports or `Async` have crossed zone boundaries — the fix is to extract all I/O into the application service and leave only pure logic in the domain.
+**Key Takeaway**: Domain functions that contain infrastructure imports or effectful wrappers have crossed zone boundaries — the fix is to extract all I/O into the application service and leave only pure logic in the domain.
 
-**Why It Matters**: Domain logic mixed with infrastructure is the most common failure mode in supposedly hexagonal systems. Once `Npgsql` is imported inside a domain function, every domain test needs a database connection, CI becomes slow, and refactoring the database schema forces domain rewrites. A pure domain function tests in microseconds, runs identically in CI with no infrastructure, and is safe to refactor without fear of breaking infrastructure wiring.
+**Why It Matters**: Domain logic mixed with infrastructure is the most common failure mode in supposedly hexagonal systems. Once a database client is imported inside a domain function, every domain test needs a database connection, CI becomes slow, and refactoring the database schema forces domain rewrites. A pure domain function tests in microseconds, runs identically in CI with no infrastructure, and is safe to refactor without fear of breaking infrastructure wiring.
 
 ---
 
@@ -8004,9 +8004,9 @@ demo = do
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Each bounded context defines its own repository port using the same record-of-functions pattern — the structural consistency across contexts is the key property that makes multi-context wiring predictable.
+**Key Takeaway**: Each bounded context defines its own repository port using the same structural pattern — the consistency across contexts is the key property that makes multi-context wiring predictable.
 
-**Why It Matters**: When receiving context ports follow a different structural pattern from purchasing context ports, developers must learn a new injection idiom for every context they work in. Consistent port structure — record of typed functions, factory function returning the record, application service accepting the record — means the mental model transfers from `PurchaseOrderRepository` to `GoodsReceiptNoteRepository` immediately.
+**Why It Matters**: When receiving context ports follow a different structural pattern from purchasing context ports, developers must learn a new injection idiom for every context they work in. Consistent port structure — a named contract with typed operations, a factory producing the implementation, and application services that accept the port type — means the mental model transfers from `PurchaseOrderRepository` to `GoodsReceiptNoteRepository` immediately.
 
 ---
 

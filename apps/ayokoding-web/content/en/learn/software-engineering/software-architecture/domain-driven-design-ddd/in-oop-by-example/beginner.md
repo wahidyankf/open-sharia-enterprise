@@ -1273,7 +1273,7 @@ try {
 
 ### Example 7: Compact Constructor / Init Block for `Quantity`
 
-Java 21 records compact constructors express invariants concisely without boilerplate field assignment — the compiler inserts assignments after the constructor body. Kotlin and C# achieve the same guarantee through `init` blocks and primary constructor validation, respectively.
+Compact constructors and their equivalents express invariants concisely without boilerplate field assignment. Java 21 records insert field assignments automatically after the compact constructor body; Kotlin achieves the same guarantee through `init` blocks; C# through primary constructor validation; and TypeScript through a private constructor with a validating factory method.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -1456,7 +1456,7 @@ try {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Records with compact constructors deliver immutability, structural equality, and validation in minimal lines — they are the canonical Java 21 Value Object implementation. Kotlin `data class` with `init` and C# `record` with constructor guards achieve identical guarantees in their idioms.
+**Key Takeaway**: Compact constructors and their equivalents deliver immutability, structural equality, and validation in minimal lines. Java 21 records, Kotlin `data class` with `init`, C# `record` with constructor guards, and TypeScript classes with private constructors and factory methods each achieve these guarantees in their respective idioms.
 
 **Why It Matters**: Before Java 21 records, a manually written immutable class required `final` fields, a constructor, two accessors, `equals`, `hashCode`, and `toString` — about 40 lines for a two-field value. Records collapse that to under 10 lines while being provably equivalent. Less boilerplate means fewer opportunities to introduce bugs in the plumbing.
 
@@ -1464,7 +1464,7 @@ try {
 
 ### Example 8: `ApprovalLevel` derived from `Money` total
 
-`ApprovalLevel` is a value object derived from the requisition's estimated cost. The derivation rule lives in a factory method rather than in the caller — one source of truth. Kotlin uses a companion object function; C# uses a static factory method on the enum-equivalent sealed class.
+`ApprovalLevel` is a value object derived from the requisition's estimated cost. The derivation rule lives in a factory method rather than in the caller — one source of truth. Each language exposes a factory function on the value type itself: Java a `static` method, Kotlin a companion-object function, C# a static factory method on the sealed class, and TypeScript a module-level factory function.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -1649,7 +1649,7 @@ console.log(approvalLevelFrom(boundary)); // => Output: L1 (1000 <= 1000 thresho
 
 ### Example 9: `data class` / `record` `copy` and `with` — Value Object cloning pitfall
 
-Kotlin's `data class` generates `copy()` and Java `record` and C# `record` generate `with`-expression support. All three enable creating modified instances without mutation — but each has a nuance around whether invariants re-run.
+Kotlin's `data class` generates `copy()`, Java records and C# records generate `with`-expression support, and TypeScript classes provide explicit `withXxx` methods that delegate back to the factory. All four enable creating modified instances without mutation — but each has a nuance around whether invariants re-run on the copy path.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -1872,7 +1872,7 @@ try {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Kotlin `data class` with `init` delivers Value Object guarantees in fewer lines than Java. `copy()` is useful but bypasses `init` in some Kotlin versions — verify invariants hold after copy in critical code. C# `with`-expressions route through the constructor and re-enforce all guards.
+**Key Takeaway**: Each language's copy-and-modify mechanism has its own invariant-re-enforcement behaviour. Kotlin `data class` `copy()` bypasses `init` in some versions — verify invariants hold after copy in critical code. C# `with`-expressions route through the constructor and re-enforce all guards. Java explicit copy methods re-run the compact constructor. TypeScript `withXxx` methods delegate back to the factory, so guards always run.
 
 **Why It Matters**: The `copy()` bypass is a real footgun: `Money(BigDecimal("-1"), "USD")` cannot be constructed directly, but `validMoney.copy(amount = BigDecimal("-1"))` can in some Kotlin versions. Understanding this nuance prevents subtle bugs when VO constraints are security-critical (e.g., negative procurement amounts triggering accounting reversals).
 
@@ -1880,7 +1880,7 @@ try {
 
 ### Example 10: Record/data-class as Value Object — `SkuCode` with `with`/`copy` semantics
 
-Records and data classes in Java, Kotlin, and C# provide structural equality, immutable fields, and copy-construction. Each language has a distinct idiom for creating modified copies without mutation.
+Records, data classes, and their equivalents in all four languages provide structural equality, immutable fields, and copy-construction. Each language has a distinct idiom for creating modified copies without mutation.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -2092,7 +2092,7 @@ try {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Java records use explicit copy methods to re-run compact-constructor guards; Kotlin uses a `withValue` function that triggers the `init` block; C# `with`-expressions route through the regular constructor and re-enforce all validation.
+**Key Takeaway**: Java records use explicit copy methods to re-run compact-constructor guards; Kotlin uses a `withValue` function that triggers the `init` block; C# `with`-expressions route through the regular constructor and re-enforce all validation; TypeScript `withValue` methods delegate to the static factory, so guards always run.
 
 **Why It Matters**: In a procurement catalog, an invalid SKU silently routes to a ghost product. Catching malformed codes at construction — not at purchase order creation hours later — compresses the error-detection window from hours to milliseconds and keeps the error message close to the cause.
 
@@ -3192,7 +3192,7 @@ try {
 
 ### Example 14: Immutability in practice — `with`-style copy via records
 
-Java 21 records have no `with`-expression built-in (unlike C#), but a manual `withQuantity` builder method on a `LineItem` record delivers the same semantics.
+Demonstrating the full lifecycle of a `PurchaseRequisition` from construction through total computation. Java uses a manual `withQuantity` factory method (records have no built-in `with`-expression), Kotlin uses `data class` `copy()`, C# uses a `with`-expression, and TypeScript uses an explicit `withQuantity` method that delegates to the private constructor.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -3948,7 +3948,7 @@ catch (InvalidOperationException e)
 type Status = "DRAFT" | "SUBMITTED" | "MANAGER_REVIEW" | "APPROVED" | "REJECTED" | "CONVERTED_TO_PO";
 
 // Transition table: maps current status to set of allowed next statuses
-const TRANSITIONS = new Map<Status, Set<Status>>([
+const TRANSITIONS = new Map<Status, Set>([
   ["DRAFT", new Set<Status>(["SUBMITTED"])], // => DRAFT -> SUBMITTED only
   ["SUBMITTED", new Set<Status>(["MANAGER_REVIEW"])], // => must escalate before approval
   ["MANAGER_REVIEW", new Set<Status>(["APPROVED", "REJECTED"])], // => manager decides
@@ -4855,7 +4855,7 @@ console.log(result); // => never reached; exception raised above
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: `Optional<T>` (Java), nullable types `T?` (Kotlin), and nullable reference types `T?` (C#) all make absent values explicit at the API boundary, forcing callers to handle both found and not-found cases rather than receiving a null and failing later.
+**Key Takeaway**: `Optional<T>` (Java), nullable types `T?` (Kotlin), nullable reference types `T?` (C#), and union types `T | null` (TypeScript) all make absent values explicit at the API boundary, forcing callers to handle both found and not-found cases rather than receiving a null and failing later.
 
 **Why It Matters**: In a procurement system, a "not found" requisition could mean it was never created, it was deleted, or the caller has the wrong id. Returning `null` silently propagates that ambiguity until a NPE surfaces somewhere unexpected. Each language's absence type forces the caller to decide what the absence means — in the right place, at the right time.
 
@@ -4863,7 +4863,7 @@ console.log(result); // => never reached; exception raised above
 
 ### Example 20: Line item entity — operator overloads and entity equality
 
-A `LineItem` entity uses operator overloads on `Money` for readable arithmetic and overrides equality to use identity (id) rather than structural field comparison. The pattern is shown in all three languages.
+A `LineItem` entity uses operator overloads (or equivalent named methods) on `Money` for readable arithmetic and overrides equality to use identity (id) rather than structural field comparison. The pattern is shown in all four languages.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -5191,7 +5191,7 @@ console.log(item.equals(revised)); // => Output: true (same id; entity equality)
 
 ### Example 21: Value Object comparison and ordering — `Money`
 
-Business rules often require ordering `Money` values (e.g., checking whether a requisition total exceeds a threshold). Each language provides a standard ordering interface: `Comparable<Money>` in Java, `Comparable<Money>` in Kotlin, and `IComparable<Money>` in C#.
+Business rules often require ordering `Money` values (e.g., checking whether a requisition total exceeds a threshold). Each language provides a standard ordering mechanism: `Comparable<Money>` in Java, `Comparable<Money>` in Kotlin, `IComparable<Money>` in C#, and explicit `compareTo`/`isGreaterThan`/`isLessThan` methods in TypeScript where no ordering interface exists.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -5454,7 +5454,7 @@ totals.forEach((m) => console.log(m.toString()));
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: Implementing the platform's ordering interface (`Comparable` in Java/Kotlin, `IComparable<T>` in C#) on a Value Object enables direct ordering, making threshold checks and sorting idiomatic and safe.
+**Key Takeaway**: Implementing the platform's ordering mechanism (`Comparable` in Java/Kotlin, `IComparable<T>` in C#, or explicit comparison methods in TypeScript) on a Value Object enables direct ordering, making threshold checks and sorting idiomatic and safe.
 
 **Why It Matters**: Procurement systems compare request totals against approval thresholds constantly. Without the ordering interface, callers extract the raw numeric amount and compare it directly — losing the currency-mismatch guard. With `compareTo`/`CompareTo` on `Money`, a cross-currency comparison fails loudly instead of silently producing a meaningless ordering.
 
@@ -5748,7 +5748,7 @@ console.log(req.getLineItems().length); // => Output: 2 (fresh spread from aggre
 
 ### Example 23: Immutable copy-and-modify — `Quantity` revision across languages
 
-Each language provides a native mechanism for creating a modified copy of an immutable value: Java uses a manual `withValue` factory method on records, Kotlin uses `copy()` on data classes, and C# uses `with`-expressions on records. All three preserve the original and produce a distinct revised instance.
+Each language provides a mechanism for creating a modified copy of an immutable value: Java uses a manual `withValue` factory method on records, Kotlin uses `copy()` on data classes, C# uses `with`-expressions on records, and TypeScript uses explicit `withXxx` methods that delegate back to the factory. All four preserve the original and produce a distinct revised instance.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -5950,7 +5950,7 @@ console.log(original === revised); // => Output: false (different object referen
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: All three languages provide a native copy-and-modify mechanism for immutable types — Java's `with<Field>` factory, Kotlin's `copy()`, and C#'s `with`-expression — each producing a new instance while leaving the original unchanged.
+**Key Takeaway**: All four languages provide a copy-and-modify mechanism for immutable types — Java's `with<Field>` factory, Kotlin's `copy()`, C#'s `with`-expression, and TypeScript's explicit `withXxx` factory delegation — each producing a new instance while leaving the original unchanged.
 
 **Why It Matters**: The copy-and-modify pattern is not just syntactic sugar — it communicates "this is an immutable copy with one field changed," which is exactly the intent when revising a procurement line item before approval. That intent is lost when callers call a setter or construct from scratch with scattered arguments.
 

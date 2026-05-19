@@ -564,7 +564,7 @@ Console.WriteLine(NextState(new POState.Closed(), new POEvent.Cancel()));
 type POEvent = "SUBMIT" | "APPROVE" | "REJECT" | "ISSUE" | "ACKNOWLEDGE" | "CLOSE" | "CANCEL" | "DISPUTE";
 
 // => Transition table as nested readonly Record: state -> (event -> nextState)
-const TRANSITIONS: Readonly<Partial<Record<POState, Readonly<Partial<Record<POEvent, POState>>>>>> = {
+const TRANSITIONS: Readonly = {
   DRAFT: { SUBMIT: "AWAITING_APPROVAL", CANCEL: "CANCELLED" },
   // => Draft only allows submit (-> awaiting) or cancel (-> cancelled)
   AWAITING_APPROVAL: { APPROVE: "APPROVED", REJECT: "CANCELLED", CANCEL: "CANCELLED" },
@@ -772,7 +772,7 @@ Console.WriteLine(msg2);
 type Result<T> = { readonly kind: "ok"; readonly value: T } | { readonly kind: "err"; readonly error: string };
 
 // => Pure transition function: (PO, event) -> Result<PO>
-function transition(po: PurchaseOrder, event: POEvent): Result<PurchaseOrder> {
+function transition(po: PurchaseOrder, event: POEvent): Result {
   const next = nextState(po.state, event);
   if (next === undefined)
     return { kind: "err", error: `Invalid transition: ${po.state} --${event}--> (no such transition)` };
@@ -1127,7 +1127,7 @@ Console.WriteLine(CanApprove(highPO, ApprovalLevel.L3)); // => Output: True
 type ApprovalLevel = "L1" | "L2" | "L3";
 
 // => Rank map: explicit numeric values for comparison
-const RANK: Record<ApprovalLevel, number> = { L1: 1, L2: 2, L3: 3 } as const;
+const RANK: Record = { L1: 1, L2: 2, L3: 3 } as const;
 
 // => Pure function: derive required level from PO monetary total
 function requiredLevel(totalAmount: number): ApprovalLevel {
@@ -1358,7 +1358,7 @@ interface ApprovableContext {
 }
 
 // => Guarded approve: FSM state check AND business-rule guard
-function approvePO(ctx: ApprovableContext): Result<PurchaseOrder> {
+function approvePO(ctx: ApprovableContext): Result {
   const { po, actorLevel } = ctx;
   if (po.state !== "AWAITING_APPROVAL") return { kind: "err", error: `Cannot approve PO in state: ${po.state}` };
   // => Guard 1: FSM structural check
@@ -1658,7 +1658,7 @@ function guardAtLeastOneLine(po: POWithLines): string | undefined {
   return undefined; // => Guard passes: no structural violation found
 }
 
-function issuePO(po: POWithLines): Result<POWithLines> {
+function issuePO(po: POWithLines): Result {
   if (po.state !== "APPROVED") return { kind: "err", error: `Cannot issue PO in state ${po.state}` };
   const err = guardAtLeastOneLine(po);
   if (err !== undefined) return { kind: "err", error: err };
@@ -1882,7 +1882,7 @@ Console.WriteLine(result switch
 const IMMUTABLE_STATES = new Set<POState>(["ISSUED", "ACKNOWLEDGED", "CLOSED"]);
 
 // => addLine: returns Result.failure if state forbids mutation
-function addLine(po: POWithLines, line: POLine): Result<POWithLines> {
+function addLine(po: POWithLines, line: POLine): Result {
   if (IMMUTABLE_STATES.has(po.state))
     return { kind: "err", error: `Cannot modify lines: PO is ${po.state} (lines immutable after issue)` };
   if (line.quantity <= 0) return { kind: "err", error: "Line quantity must be > 0" };
@@ -2124,7 +2124,7 @@ const CANCELLABLE = new Set<POState>([
 ]);
 
 // => cancelPO: pure function, no side effects
-function cancelPO(po: PurchaseOrder): Result<PurchaseOrder> {
+function cancelPO(po: PurchaseOrder): Result {
   if (!CANCELLABLE.has(po.state)) return { kind: "err", error: `Cannot cancel PO in state '${po.state}'` };
   return { kind: "ok", value: { ...po, state: "CANCELLED" } };
 }
@@ -2658,7 +2658,7 @@ foreach (var evt in new[] { POEvent.Submit, POEvent.Approve, POEvent.Issue })
 
 ```typescript
 // => TypeScript: full PO transition table including dispute cycle
-const PO_TRANSITIONS: Readonly<Partial<Record<POState, Partial<Record<POEventExtended, POState>>>>> = {
+const PO_TRANSITIONS: Readonly = {
   DRAFT: { SUBMIT: "AWAITING_APPROVAL", CANCEL: "CANCELLED" },
   AWAITING_APPROVAL: { APPROVE: "APPROVED", REJECT: "CANCELLED", CANCEL: "CANCELLED" },
   APPROVED: { ISSUE: "ISSUED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
@@ -3253,7 +3253,7 @@ type ValidationResult<T> =
   | { readonly kind: "valid"; readonly value: T }
   | { readonly kind: "invalid"; readonly errors: readonly string[] };
 
-function validateForIssue(po: POWithLines): ValidationResult<POWithLines> {
+function validateForIssue(po: POWithLines): ValidationResult {
   const errors: string[] = [];
   if (po.lines.length === 0) errors.push("Must have at least one line item");
   if (po.lines.some((l) => l.quantity <= 0)) errors.push("All line quantities must be > 0");
@@ -3291,7 +3291,7 @@ console.log(result !== undefined); // => Output: false
 
 ### Example 15: Enum-Based Transition Table
 
-Java records and enums together produce the most concise idiomatic Java FSM implementation. Kotlin sealed classes and `when` expressions offer an expressive alternative, while C# records with a `Dictionary`-backed table provide the same safety with pattern-matching syntax.
+An enum-keyed transition table makes the FSM definition exhaustive and type-safe: the compiler rejects any state or event value not declared in the enum, and a static or immutable map becomes the single authoritative source of valid moves. Java uses an `EnumMap` backed by enum ordinals; Kotlin combines enum keys with `copy()` for immutable updates; C# uses an enum-keyed `Dictionary` paired with `with` expressions; TypeScript uses a string literal union and a `Record`-mapped object — all four eliminate stringly-typed state keys while keeping lookup O(1).
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -3551,7 +3551,7 @@ interface MachineRecord {
   readonly state: MachineState;
 }
 
-const MACHINE_TABLE: Readonly<Partial<Record<MachineState, Partial<Record<MachineEvent, MachineState>>>>> = {
+const MACHINE_TABLE: Readonly = {
   DRAFT: { SUBMIT: "AWAITING_APPROVAL", CANCEL: "CANCELLED" },
   AWAITING_APPROVAL: { APPROVE: "APPROVED", REJECT: "CANCELLED" },
   APPROVED: { ISSUE: "ISSUED", CANCEL: "CANCELLED", DISPUTE: "DISPUTED" },
@@ -3855,7 +3855,7 @@ public static class POEntryActions
 
 ```typescript
 // => TypeScript: entry actions as a Record of functions returning description strings
-const ENTRY_ACTIONS: Partial<Record<MachineState, (po: MachineRecord) => string>> = {
+const ENTRY_ACTIONS: Partial = {
   AWAITING_APPROVAL: (po) => `Route approval request for PO ${po.id} ($${po.totalAmount}) to manager`,
   ISSUED: (po) => `Send PO ${po.id} to supplier via EDI/email`,
   CANCELLED: (po) => `Notify all parties: PO ${po.id} cancelled`,
@@ -4186,16 +4186,16 @@ interface IssuePO {
   readonly state: IssueState;
 }
 
-const EXIT_ACTIONS: Partial<Record<IssueState, (po: IssuePO, ev: IssueEvent) => string>> = {
+const EXIT_ACTIONS: Partial = {
   ISSUED: (po, ev) =>
     ev === "ACKNOWLEDGE"
       ? `PO ${po.id} acknowledged by supplier — GRN window now open`
       : `PO ${po.id} leaving ISSUED state via ${ev}`,
 };
-const ENTRY: Partial<Record<IssueState, (po: IssuePO) => string>> = {
+const ENTRY: Partial = {
   ACKNOWLEDGED: (po) => `Open GRN window for PO ${po.id}`,
 };
-const ISSUE_TABLE: Partial<Record<IssueState, Partial<Record<IssueEvent, IssueState>>>> = {
+const ISSUE_TABLE: Partial = {
   ISSUED: { ACKNOWLEDGE: "ACKNOWLEDGED", CANCEL: "CANCELLED" },
 };
 interface ActionResult {
@@ -5096,7 +5096,7 @@ public static class POConstructor
 // => TypeScript: smart constructor returning a Result — no raw PO returned
 type BuildResult<T> = { readonly kind: "ok"; readonly value: T } | { readonly kind: "err"; readonly message: string };
 
-function buildPO(id: string, lines: readonly POLine[]): BuildResult<POWithLines> {
+function buildPO(id: string, lines: readonly POLine[]): BuildResult {
   if (!id.startsWith("po_") || id.length < 7)
     return { kind: "err", message: `Invalid PO id format: ${id} (expected po_<uuid>)` };
   if (lines.length === 0) return { kind: "err", message: "PO must have at least one line item" };
@@ -6037,7 +6037,7 @@ public static class DotGraphDemo
 
 ```typescript
 // => TypeScript: generate a Graphviz DOT graph from the transition table
-function generateDOT(table: Partial<Record<string, Partial<Record<string, string>>>>, title: string): string {
+function generateDOT(table: Partial, title: string): string {
   const lines: string[] = [`digraph "${title}" {`, "  rankdir=LR;", "  node [shape=box, style=rounded];"];
   for (const [from, events] of Object.entries(table)) {
     if (!events) continue;
@@ -6047,7 +6047,7 @@ function generateDOT(table: Partial<Record<string, Partial<Record<string, string
   return lines.join("\n");
 }
 
-const dot = generateDOT(MACHINE_TABLE as Record<string, Record<string, string>>, "PurchaseOrder FSM");
+const dot = generateDOT(MACHINE_TABLE as Record, "PurchaseOrder FSM");
 dot
   .split("\n")
   .slice(0, 5)
@@ -6269,7 +6269,7 @@ interface ProtocolStep {
   readonly expects: string; // => What action the actor must perform
 }
 
-const PO_PROTOCOL: Record<MachineState, ProtocolStep> = {
+const PO_PROTOCOL: Record = {
   DRAFT: { actor: "Buyer", expects: "submit the PO for approval" },
   AWAITING_APPROVAL: { actor: "Manager", expects: "approve or reject" },
   APPROVED: { actor: "Finance", expects: "issue PO to supplier" },

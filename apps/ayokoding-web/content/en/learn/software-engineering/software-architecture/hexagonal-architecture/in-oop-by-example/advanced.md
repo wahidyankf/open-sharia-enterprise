@@ -249,8 +249,8 @@ export class GoodsReceiptNote {
 
 // Output port: store and load GoodsReceiptNotes
 export interface GoodsReceiptRepository {
-  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
-  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+  save(grn: GoodsReceiptNote): Promise; // => persist new or updated GRN
+  findById(id: GrnId): Promise; // => null: may not exist
 }
 ```
 
@@ -502,8 +502,8 @@ export class GoodsReceiptNote {
 
 // Output port: store and load GoodsReceiptNotes
 export interface GoodsReceiptRepository {
-  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
-  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+  save(grn: GoodsReceiptNote): Promise; // => persist new or updated GRN
+  findById(id: GrnId): Promise; // => null: may not exist
 }
 ```
 
@@ -512,7 +512,7 @@ export interface GoodsReceiptRepository {
 
 **Key Takeaway**: Three-way match logic lives in the domain; the `InvoiceMatchingPort` output port abstracts where the PO and GRN amounts come from.
 
-**Why It Matters**: Keeping the match algorithm in the domain means it is testable with pure Java — no database, no network. The port boundary means production adapters can fetch from a Postgres materialized view while test adapters return hard-coded values in microseconds.
+**Why It Matters**: Keeping the match algorithm in the domain means it is testable in isolation — no database, no network. The port boundary means production adapters can fetch from a Postgres materialized view while test adapters return hard-coded values in microseconds.
 
 ---
 
@@ -803,7 +803,7 @@ export interface DisbursementResult {
 
 // BankingPort: output port — application depends on this; never on bank API directly
 export interface BankingPort {
-  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise;
 }
 
 // DisbursementService: application service orchestrating payment disbursement
@@ -814,7 +814,7 @@ export class DisbursementService {
     private readonly events: EventPublisher, // => output port for domain events
   ) {}
 
-  async disburse(scheduled: Payment): Promise<Payment> {
+  async disburse(scheduled: Payment): Promise {
     const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
     // => result: DisbursementResult with transactionRef and accepted flag
     const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
@@ -1089,8 +1089,8 @@ export class GoodsReceiptNote {
 
 // Output port: store and load GoodsReceiptNotes
 export interface GoodsReceiptRepository {
-  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
-  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+  save(grn: GoodsReceiptNote): Promise; // => persist new or updated GRN
+  findById(id: GrnId): Promise; // => null: may not exist
 }
 ```
 
@@ -1376,8 +1376,8 @@ export class Invoice {
 
 // Output port: fetch amounts needed for three-way match from other contexts
 export interface InvoiceMatchingPort {
-  fetchPoCommittedAmount(poId: PurchaseOrderId): Promise<Money>; // => purchasing context data
-  fetchGrnVerifiedAmount(grnId: GrnId): Promise<Money>; // => receiving context data
+  fetchPoCommittedAmount(poId: PurchaseOrderId): Promise; // => purchasing context data
+  fetchGrnVerifiedAmount(grnId: GrnId): Promise; // => receiving context data
 }
 ```
 
@@ -1644,7 +1644,7 @@ export interface DisbursementResult {
 
 // BankingPort: output port — application depends on this; never on bank API directly
 export interface BankingPort {
-  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise;
 }
 
 // DisbursementService: application service orchestrating payment disbursement
@@ -1655,7 +1655,7 @@ export class DisbursementService {
     private readonly events: EventPublisher, // => output port for domain events
   ) {}
 
-  async disburse(scheduled: Payment): Promise<Payment> {
+  async disburse(scheduled: Payment): Promise {
     const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
     // => result: DisbursementResult with transactionRef and accepted flag
     const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
@@ -1966,7 +1966,7 @@ export interface DisbursementResult {
 
 // BankingPort: output port — application depends on this; never on bank API directly
 export interface BankingPort {
-  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise;
 }
 
 // DisbursementService: application service orchestrating payment disbursement
@@ -1977,7 +1977,7 @@ export class DisbursementService {
     private readonly events: EventPublisher, // => output port for domain events
   ) {}
 
-  async disburse(scheduled: Payment): Promise<Payment> {
+  async disburse(scheduled: Payment): Promise {
     const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
     // => result: DisbursementResult with transactionRef and accepted flag
     const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
@@ -2225,7 +2225,7 @@ import type { PurchaseOrderId } from "../../domain/purchase-order-id";
 // PurchaseOrderPort: receiving context's own port (its language, its types)
 // => receiving never imports from purchasing domain directly
 export interface PurchaseOrderPort {
-  fetchCommittedQuantity(poId: PurchaseOrderId): Promise<number>;
+  fetchCommittedQuantity(poId: PurchaseOrderId): Promise;
   // => receiving only needs the quantity; not the full PurchaseOrder aggregate
 }
 
@@ -2236,7 +2236,7 @@ export class PurchasingContextAcl implements PurchaseOrderPort {
     private readonly purchasingClient: any, // => purchasing API client (REST or direct service call)
   ) {}
 
-  async fetchCommittedQuantity(poId: PurchaseOrderId): Promise<number> {
+  async fetchCommittedQuantity(poId: PurchaseOrderId): Promise {
     // Translate receiving's PurchaseOrderId → purchasing's wire format
     const response = await this.purchasingClient.get(`/purchase-orders/${poId.value}`);
     // => HTTP GET to purchasing microservice (or direct TypeORM query in monolith)
@@ -2256,7 +2256,7 @@ export class InMemoryPurchasingAcl implements PurchaseOrderPort {
     this.quantities.set(poId, quantity);
   }
 
-  async fetchCommittedQuantity(poId: PurchaseOrderId): Promise<number> {
+  async fetchCommittedQuantity(poId: PurchaseOrderId): Promise {
     return this.quantities.get(poId.value) ?? 0;
     // => in-memory lookup; no HTTP call; purchasing context not needed in receiving tests
   }
@@ -2519,7 +2519,7 @@ export interface DisbursementResult {
 
 // BankingPort: output port — application depends on this; never on bank API directly
 export interface BankingPort {
-  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise;
 }
 
 // DisbursementService: application service orchestrating payment disbursement
@@ -2530,7 +2530,7 @@ export class DisbursementService {
     private readonly events: EventPublisher, // => output port for domain events
   ) {}
 
-  async disburse(scheduled: Payment): Promise<Payment> {
+  async disburse(scheduled: Payment): Promise {
     const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
     // => result: DisbursementResult with transactionRef and accepted flag
     const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
@@ -2783,8 +2783,8 @@ export class GoodsReceiptNote {
 
 // Output port: store and load GoodsReceiptNotes
 export interface GoodsReceiptRepository {
-  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
-  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+  save(grn: GoodsReceiptNote): Promise; // => persist new or updated GRN
+  findById(id: GrnId): Promise; // => null: may not exist
 }
 ```
 
@@ -3003,7 +3003,7 @@ export class PaymentScheduler {
   ) {}
 
   // schedulePayment: creates a SCHEDULED payment with an explicit due date
-  async schedulePayment(invoiceId: InvoiceId, amount: Money, dueAt: Date): Promise<Payment> {
+  async schedulePayment(invoiceId: InvoiceId, amount: Money, dueAt: Date): Promise {
     const now = this.clock.now();
     // => clock.now(): explicit call; test can verify payment was scheduled at expected time
     if (dueAt < now) {
@@ -3371,8 +3371,8 @@ export class GoodsReceiptNote {
 
 // Output port: store and load GoodsReceiptNotes
 export interface GoodsReceiptRepository {
-  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
-  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+  save(grn: GoodsReceiptNote): Promise; // => persist new or updated GRN
+  findById(id: GrnId): Promise; // => null: may not exist
 }
 ```
 
@@ -3676,7 +3676,7 @@ export class MurabahaTransaction {
 
 // MurabahaPort: output port for Sharia board compliance check
 export interface MurabahaPort {
-  validateShariahCompliance(transaction: MurabahaTransaction): Promise<boolean>;
+  validateShariahCompliance(transaction: MurabahaTransaction): Promise;
   // => adapter calls Shariah compliance service or rule engine
 }
 ```
@@ -4407,8 +4407,8 @@ export class GoodsReceiptNote {
 
 // Output port: store and load GoodsReceiptNotes
 export interface GoodsReceiptRepository {
-  save(grn: GoodsReceiptNote): Promise<void>; // => persist new or updated GRN
-  findById(id: GrnId): Promise<GoodsReceiptNote | null>; // => null: may not exist
+  save(grn: GoodsReceiptNote): Promise; // => persist new or updated GRN
+  findById(id: GrnId): Promise; // => null: may not exist
 }
 ```
 
@@ -4670,8 +4670,8 @@ export class Invoice {
 
 // Output port: fetch amounts needed for three-way match from other contexts
 export interface InvoiceMatchingPort {
-  fetchPoCommittedAmount(poId: PurchaseOrderId): Promise<Money>; // => purchasing context data
-  fetchGrnVerifiedAmount(grnId: GrnId): Promise<Money>; // => receiving context data
+  fetchPoCommittedAmount(poId: PurchaseOrderId): Promise; // => purchasing context data
+  fetchGrnVerifiedAmount(grnId: GrnId): Promise; // => receiving context data
 }
 ```
 
@@ -4680,7 +4680,7 @@ export interface InvoiceMatchingPort {
 
 **Key Takeaway**: The composition root is the only place that imports both adapter and application classes — it wires them together at startup, keeping all other layers clean.
 
-**Why It Matters**: Spring `@Autowired` annotations scattered across application service constructors create implicit coupling — the application service knows it lives in a Spring container. Moving all wiring to `@Configuration` classes (Java/Kotlin) or `IServiceCollection` extension methods (C#) means the application service is a plain object testable with `new DisbursementService(mockBank, mockRepo, mockEvents)` — no framework test context, no slow startup.
+**Why It Matters**: Framework annotations or container lookups scattered across application service constructors create implicit coupling — the application service knows it lives in a specific DI container. Moving all wiring to dedicated composition classes (Spring `@Configuration` for Java/Kotlin, `IServiceCollection` extension methods for C#, or a manual bootstrap function for TypeScript) means the application service is a plain object constructed with its port dependencies directly — no framework test context, no slow startup.
 
 ---
 
@@ -4964,7 +4964,7 @@ export interface DisbursementResult {
 
 // BankingPort: output port — application depends on this; never on bank API directly
 export interface BankingPort {
-  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise;
 }
 
 // DisbursementService: application service orchestrating payment disbursement
@@ -4975,7 +4975,7 @@ export class DisbursementService {
     private readonly events: EventPublisher, // => output port for domain events
   ) {}
 
-  async disburse(scheduled: Payment): Promise<Payment> {
+  async disburse(scheduled: Payment): Promise {
     const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
     // => result: DisbursementResult with transactionRef and accepted flag
     const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;
@@ -5235,7 +5235,7 @@ export interface DisbursementResult {
 
 // BankingPort: output port — application depends on this; never on bank API directly
 export interface BankingPort {
-  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise<DisbursementResult>;
+  disburse(id: PaymentId, amount: Money, to: BankAccount): Promise;
 }
 
 // DisbursementService: application service orchestrating payment disbursement
@@ -5246,7 +5246,7 @@ export class DisbursementService {
     private readonly events: EventPublisher, // => output port for domain events
   ) {}
 
-  async disburse(scheduled: Payment): Promise<Payment> {
+  async disburse(scheduled: Payment): Promise {
     const result = await this.bankingPort.disburse(scheduled.id, scheduled.amount, scheduled.destination);
     // => result: DisbursementResult with transactionRef and accepted flag
     const newStatus = result.accepted ? PaymentStatus.DISBURSED : PaymentStatus.FAILED;

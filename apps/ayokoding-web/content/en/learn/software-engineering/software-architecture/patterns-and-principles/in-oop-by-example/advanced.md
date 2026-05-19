@@ -248,7 +248,7 @@ interface OrdersService {
 
 // => In-memory implementation — used in tests and local dev
 class InMemoryOrdersService implements OrdersService {
-  private readonly orders: Map<string, { productId: string; qty: number; status: string }> = new Map();
+  private readonly orders: Map = new Map();
   // => order map: orderId -> order data
 
   placeOrder(productId: ProductId, qty: number): OrderId {
@@ -277,8 +277,8 @@ console.log(svc.cancelOrder(oid)); // => Output: true
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway:** Decompose by business capability using Protocol types (or interfaces) to enforce
-service boundaries in code, making each capability independently replaceable.
+**Key Takeaway:** Decompose by business capability using interfaces to enforce service boundaries in
+code, making each capability independently replaceable.
 
 **Why It Matters:** Business-capability decomposition aligns service ownership with Conway's Law —
 the team owning "Orders" controls its full stack without coordinating schema changes with the
@@ -485,11 +485,11 @@ Console.WriteLine(proxy.Route("/api/products/abc", new() { ["action"] = "list" }
 
 ```typescript
 // => RouteHandler: takes (path, payload) and returns a response
-type RouteHandler = (path: string, payload: Record<string, unknown>) => Record<string, unknown>;
+type RouteHandler = (path: string, payload: Record) => Record;
 
 class StranglerProxy {
   // => Map preserves insertion order — first matching prefix wins
-  private readonly newRoutes: Map<string, RouteHandler> = new Map();
+  private readonly newRoutes: Map = new Map();
   // => Legacy handler is the single catch-all for all unmigrated paths
   private legacyHandler: RouteHandler | null = null;
 
@@ -502,7 +502,7 @@ class StranglerProxy {
     this.legacyHandler = handler; // => Monolith becomes the fallback until retired
   }
 
-  route(path: string, payload: Record<string, unknown>): Record<string, unknown> {
+  route(path: string, payload: Record): Record {
     for (const [prefix, handler] of this.newRoutes) {
       if (path.startsWith(prefix)) {
         return handler(path, payload);
@@ -792,7 +792,7 @@ type AppOrderEvent = OrderPlaced | OrderShipped | OrderCancelled;
 
 // => IN-PROCESS MESSAGE BUS (simulates Kafka/RabbitMQ)
 class MessageBus {
-  private readonly handlers: Map<string, Array<(e: AppOrderEvent) => void>> = new Map();
+  private readonly handlers: Map = new Map();
 
   subscribe(type: string, handler: (e: AppOrderEvent) => void): void {
     const list = this.handlers.get(type) ?? [];
@@ -1053,7 +1053,7 @@ interface ServiceInstance {
 }
 
 class ServiceRegistry {
-  private readonly services: Map<string, ServiceInstance[]> = new Map();
+  private readonly services: Map = new Map();
 
   register(name: string, instance: ServiceInstance): void {
     const existing = this.services.get(name) ?? [];
@@ -1078,7 +1078,7 @@ class ServiceRegistry {
 
 // => LOAD BALANCER: round-robin selection from healthy instances
 class LoadBalancer {
-  private readonly indices: Map<string, number> = new Map();
+  private readonly indices: Map = new Map();
 
   select(instances: ServiceInstance[]): ServiceInstance | null {
     if (instances.length === 0) return null;
@@ -1237,7 +1237,7 @@ Console.WriteLine(Dispatch("GET", "/v2/users")["version"]); // => Output: 2
 ```typescript
 // => Route map keyed by "METHOD:/path" — path includes version prefix
 // => Function defers response construction until dispatched — lazy evaluation
-const routes: Record<string, () => Record<string, unknown>> = {
+const routes: Record = {
   "GET:/v1/users": () => ({ version: 1, users: ["alice"] }),
   // => v1 contract: flat list of usernames — never change this response shape
   "GET:/v2/users": () => ({
@@ -1248,7 +1248,7 @@ const routes: Record<string, () => Record<string, unknown>> = {
 };
 
 // => Dispatcher routes requests to versioned handlers
-function dispatch(method: string, path: string): Record<string, unknown> {
+function dispatch(method: string, path: string): Record {
   const handler = routes[`${method}:${path}`];
   if (!handler) return { error: "Not found" }; // => 404 equivalent
   return handler(); // => Execute matched route handler
@@ -1359,7 +1359,7 @@ Console.WriteLine(DispatchHeader("GET", "/users", "application/vnd.myapi.v2+json
 
 ```typescript
 // => Version is negotiated through the Accept header, keeping URLs clean
-function dispatchHeader(method: string, path: string, accept: string): Record<string, unknown> {
+function dispatchHeader(method: string, path: string, accept: string): Record {
   // => Parse version from Accept: application/vnd.myapi.v2+json
   const version = accept.includes("v2") ? "v2" : "v1";
   // => Default to v1 when header absent or unversioned — conservative fallback
@@ -1589,7 +1589,7 @@ interface RateLimiter {
 }
 
 class TokenBucketLimiter implements RateLimiter {
-  private readonly buckets: Map<string, { tokens: number; lastRefill: number }> = new Map();
+  private readonly buckets: Map = new Map();
   // => per-client buckets: tokens available + last refill timestamp
 
   constructor(
@@ -1621,7 +1621,7 @@ class TokenBucketLimiter implements RateLimiter {
 
 // => SLIDING WINDOW: counts requests in a rolling time window
 class SlidingWindowLimiter implements RateLimiter {
-  private readonly windows: Map<string, number[]> = new Map();
+  private readonly windows: Map = new Map();
   // => per-client: list of request timestamps in current window
 
   constructor(
@@ -1947,7 +1947,7 @@ class CircuitBreaker {
     private readonly timeoutMs: number, // => time to wait in open state
   ) {}
 
-  async call<T>(fn: () => Promise<T>): Promise<T> {
+  async call<T>(fn: () => Promise): Promise {
     if (this.state === "open") {
       if (Date.now() - this.lastFailureTime > this.timeoutMs) {
         this.state = "half-open";
@@ -2021,10 +2021,10 @@ dependency is unhealthy, giving it time to recover while callers receive fallbac
 
 **Why It Matters:** Without circuit breakers, a slow or failing downstream service causes thread
 pools to fill with waiting requests, blocking the entire caller — the cascade failure pattern that
-turns a partial dependency failure into a full service outage. Circuit breaker libraries in Java,
-Python, and Go embed this pattern as production standard because properly configured breakers allow
-a system to shed load during incidents without full outages, giving the failing dependency time to
-recover while callers receive fast fallback responses.
+turns a partial dependency failure into a full service outage. Resilience libraries across all
+major OOP runtimes embed this pattern as production standard because properly configured breakers
+allow a system to shed load during incidents without full outages, giving the failing dependency
+time to recover while callers receive fast fallback responses.
 
 ---
 
@@ -2248,7 +2248,7 @@ class Bulkhead {
     // => max concurrent calls allowed to this downstream service
   }
 
-  async execute<T>(fn: () => Promise<T>): Promise<T> {
+  async execute<T>(fn: () => Promise): Promise {
     if (this.active >= this.maxConcurrent) {
       throw new Error(`Bulkhead full (${this.maxConcurrent} max concurrent)`);
       // => reject call immediately rather than queuing — fail fast
@@ -2271,7 +2271,7 @@ const inventoryBulkhead = new Bulkhead(10); // => up to 10 concurrent inventory 
 // => Simulate concurrent calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function callPayment(id: number): Promise<void> {
+async function callPayment(id: number): Promise {
   await paymentBulkhead.execute(async () => {
     console.log(`[Payment] Processing payment ${id}`);
     await delay(10); // => simulate async work
@@ -2475,7 +2475,7 @@ interface RetryConfig {
   jitterMs: number; // => random jitter to prevent thundering herd
 }
 
-async function retryWithBackoff<T>(fn: () => Promise<T>, config: RetryConfig): Promise<T> {
+async function retryWithBackoff<T>(fn: () => Promise, config: RetryConfig): Promise {
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= config.maxAttempts; attempt++) {
@@ -2503,7 +2503,7 @@ async function retryWithBackoff<T>(fn: () => Promise<T>, config: RetryConfig): P
 
 // => USAGE: wrap unreliable operations with retry logic
 let callCount = 0;
-const unreliableService = async (): Promise<string> => {
+const unreliableService = async (): Promise => {
   callCount++;
   if (callCount < 3) throw new Error("Transient error");
   return `Success on attempt ${callCount}`;
@@ -2757,7 +2757,7 @@ class Span {
   readonly operation: string;
   private readonly startTime: number;
   private endTime: number | null = null;
-  private readonly tags: Map<string, string> = new Map();
+  private readonly tags: Map = new Map();
 
   constructor(traceId: string, operation: string, parentId: string | null = null) {
     this.traceId = traceId;
@@ -3050,7 +3050,7 @@ interface ServiceEndpoint {
 }
 
 class ServiceDiscovery {
-  private readonly registry: Map<string, ServiceEndpoint[]> = new Map();
+  private readonly registry: Map = new Map();
 
   register(name: string, endpoint: ServiceEndpoint): void {
     const existing = this.registry.get(name) ?? [];
@@ -3307,14 +3307,14 @@ Console.WriteLine($"Total calls made (including retries): {db.CallCount}");
 // => AMBASSADOR: proxy that sits in front of a service call and adds cross-cutting concerns
 // => Handles retries, timeouts, logging, circuit breaking — transparent to the caller
 interface ServiceClient {
-  call(path: string, payload: unknown): Promise<unknown>;
+  call(path: string, payload: unknown): Promise;
 }
 
 // => REAL CLIENT: makes the actual network call
 class HttpClient implements ServiceClient {
   constructor(private readonly baseUrl: string) {}
 
-  async call(path: string, payload: unknown): Promise<unknown> {
+  async call(path: string, payload: unknown): Promise {
     console.log(`[HTTP] POST ${this.baseUrl}${path}`);
     // => real impl: fetch(this.baseUrl + path, { body: JSON.stringify(payload) })
     return { status: 200, data: payload }; // => simulated response
@@ -3329,7 +3329,7 @@ class AmbassadorClient implements ServiceClient {
     private readonly timeoutMs: number = 5000,
   ) {}
 
-  async call(path: string, payload: unknown): Promise<unknown> {
+  async call(path: string, payload: unknown): Promise {
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         // => TIMEOUT: race between the actual call and a timeout
@@ -3963,8 +3963,8 @@ interface UserRegisteredEvent {
 }
 
 class UsersModule {
-  private readonly users: Map<string, { id: string; email: string; name: string }> = new Map();
-  private readonly listeners: Array<(e: UserRegisteredEvent) => void> = [];
+  private readonly users: Map = new Map();
+  private readonly listeners: Array = [];
 
   register(userId: string, email: string, name: string): void {
     this.users.set(userId, { id: userId, email, name });
@@ -3995,7 +3995,7 @@ class NotificationsModule {
 
 // === MODULE: BILLING — creates initial plan when users register ===
 class BillingModule {
-  private readonly plans: Map<string, string> = new Map();
+  private readonly plans: Map = new Map();
 
   init(users: UsersModule): void {
     users.onUserRegistered((evt) => {
@@ -4027,7 +4027,7 @@ console.log(billingModule.getPlan("u1")); // => free
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway:** Enforce module boundaries through Protocols and dependency injection rather than
+**Key Takeaway:** Enforce module boundaries through interfaces and dependency injection rather than
 package-access modifiers, making the modular monolith easier to later split into services if needed.
 
 **Why It Matters:** Microservices introduce distributed systems complexity (network failures, data
@@ -4273,9 +4273,9 @@ interface PlaceOrderResult {
 }
 
 // => In-memory store for this slice only
-const orderStore: Map<string, { customerId: string; productId: string; qty: number }> = new Map();
+const orderStore: Map = new Map();
 
-async function handlePlaceOrder(cmd: PlaceOrderCommand): Promise<PlaceOrderResult> {
+async function handlePlaceOrder(cmd: PlaceOrderCommand): Promise {
   // => validate
   if (cmd.qty <= 0) throw new Error("Quantity must be positive");
   // => execute
@@ -4297,7 +4297,7 @@ interface GetOrderResult {
   status: string;
 }
 
-async function handleGetOrder(query: GetOrderQuery): Promise<GetOrderResult | null> {
+async function handleGetOrder(query: GetOrderQuery): Promise {
   const order = orderStore.get(query.orderId);
   if (!order) return null;
   return { orderId: query.orderId, customerId: order.customerId, status: "confirmed" };
@@ -4321,8 +4321,7 @@ single file to understand, change, and test a feature end to end.
 
 **Why It Matters:** Traditional layered architecture (Controller/Service/Repository) scatters a
 feature across three folders, requiring developers to navigate multiple files to understand one
-user story. Vertical slice architecture — popularised through MediatR in .NET and adopted in
-Python projects via FastAPI CQRS patterns — collocates request, handler, and response in one unit,
+user story. Vertical slice architecture collocates request, handler, and response in one unit,
 reducing cognitive load and making the scope of a change immediately visible to anyone reading the
 code.
 
@@ -4783,16 +4782,16 @@ Console.WriteLine(discountEligible.IsSatisfiedBy(o3)); // => Output: False (no c
 abstract class Specification<T> {
   abstract isSatisfiedBy(candidate: T): boolean;
 
-  and(other: Specification<T>): Specification<T> {
-    return { isSatisfiedBy: (c) => this.isSatisfiedBy(c) && other.isSatisfiedBy(c) } as Specification<T>;
+  and(other: Specification): Specification {
+    return { isSatisfiedBy: (c) => this.isSatisfiedBy(c) && other.isSatisfiedBy(c) } as Specification;
   }
 
-  or(other: Specification<T>): Specification<T> {
-    return { isSatisfiedBy: (c) => this.isSatisfiedBy(c) || other.isSatisfiedBy(c) } as Specification<T>;
+  or(other: Specification): Specification {
+    return { isSatisfiedBy: (c) => this.isSatisfiedBy(c) || other.isSatisfiedBy(c) } as Specification;
   }
 
-  not(): Specification<T> {
-    return { isSatisfiedBy: (c) => !this.isSatisfiedBy(c) } as Specification<T>;
+  not(): Specification {
+    return { isSatisfiedBy: (c) => !this.isSatisfiedBy(c) } as Specification;
   }
 }
 
@@ -4804,7 +4803,7 @@ interface Order {
   customerId: string;
 }
 
-class MinimumOrderSpec extends Specification<Order> {
+class MinimumOrderSpec extends Specification {
   constructor(private readonly min: number) {
     super();
   }
@@ -4814,14 +4813,14 @@ class MinimumOrderSpec extends Specification<Order> {
   // => true if order meets minimum total
 }
 
-class PendingStatusSpec extends Specification<Order> {
+class PendingStatusSpec extends Specification {
   isSatisfiedBy(o: Order): boolean {
     return o.status === "pending";
   }
   // => true if order is in pending state
 }
 
-class FreshOrderSpec extends Specification<Order> {
+class FreshOrderSpec extends Specification {
   constructor(private readonly maxDays: number) {
     super();
   }
@@ -5138,7 +5137,7 @@ Console.WriteLine(chain(new HttpRequest("/orders", "key-abc", "caller-1")));
 interface CreateOrderCommand {
   orderId: string;
   customerId: string;
-  items: Array<{ productId: string; qty: number; price: number }>;
+  items: Array;
 }
 interface CancelOrderCommand {
   orderId: string;
@@ -5148,7 +5147,7 @@ interface CancelOrderCommand {
 // => AGGREGATE: enforces business invariants on write side
 class OrderAggregate {
   private status: "draft" | "placed" | "cancelled" = "draft";
-  private readonly items: Array<{ productId: string; qty: number; price: number }> = [];
+  private readonly items: Array = [];
 
   place(cmd: CreateOrderCommand): void {
     if (this.status !== "draft") throw new Error("Order already placed");
@@ -5177,7 +5176,7 @@ interface OrderSummaryView {
   status: string;
 }
 
-const readStore: Map<string, OrderSummaryView> = new Map();
+const readStore: Map = new Map();
 // => separate read store optimized for display
 
 // => PROJECTION: builds/updates read model from command side
@@ -5884,7 +5883,7 @@ foreach (var r in GetOrdersWithCustomer("CUST-1", ordersDb, customersDb))
 ```typescript
 // => ORDERS SERVICE — owns its own database; no other service queries orders_db directly
 class OrdersDb {
-  private readonly orders: Map<string, { id: string; customerId: string; total: number; status: string }> = new Map();
+  private readonly orders: Map = new Map();
   // => isolated data store — only OrdersService accesses this
 
   save(order: { id: string; customerId: string; total: number; status: string }): void {
@@ -5912,7 +5911,7 @@ class OrdersService {
 
 // => INVENTORY SERVICE — owns its own database; no cross-service joins
 class InventoryDb {
-  private readonly stock: Map<string, { productId: string; qty: number }> = new Map();
+  private readonly stock: Map = new Map();
   // => isolated data store — only InventoryService accesses this
 
   setStock(productId: string, qty: number): void {
@@ -6236,7 +6235,7 @@ interface OutboxMessage {
 
 // => TRANSACTIONAL OUTBOX: writes business data + event in same atomic operation
 class OrderWithOutbox {
-  private readonly orders: Map<string, { id: string; customerId: string }> = new Map();
+  private readonly orders: Map = new Map();
   private readonly outbox: OutboxMessage[] = [];
   // => outbox and business data written together — no partial state
 
@@ -6276,7 +6275,7 @@ class OrderWithOutbox {
 class OutboxRelay {
   constructor(private readonly outboxStore: OrderWithOutbox) {}
 
-  async flush(): Promise<void> {
+  async flush(): Promise {
     const pending = this.outboxStore.getUnpublished();
     for (const msg of pending) {
       // => real impl: publish to Kafka/RabbitMQ
@@ -6544,7 +6543,7 @@ interface Message {
 }
 
 class IdempotentOrderConsumer {
-  private readonly processed: Set<string> = new Set();
+  private readonly processed: Set = new Set();
   // => tracks processed message ids — prevents duplicate processing
 
   process(message: Message): string {
@@ -6808,14 +6807,14 @@ Console.WriteLine(discountRule.Interpret(ctxBronze)); // => Output: False (bronz
 ```typescript
 // => Abstract expression — every node in the rule tree implements this
 interface Expression {
-  interpret(context: Record<string, number>): number;
+  interpret(context: Record): number;
   // => evaluates the expression given variable bindings
 }
 
 // => TERMINAL EXPRESSIONS: leaves of the expression tree
 class NumberLiteral implements Expression {
   constructor(private readonly value: number) {}
-  interpret(_ctx: Record<string, number>): number {
+  interpret(_ctx: Record): number {
     return this.value;
   }
   // => literal number always evaluates to its own value
@@ -6823,7 +6822,7 @@ class NumberLiteral implements Expression {
 
 class Variable implements Expression {
   constructor(private readonly name: string) {}
-  interpret(ctx: Record<string, number>): number {
+  interpret(ctx: Record): number {
     if (!(this.name in ctx)) throw new Error(`Undefined variable: ${this.name}`);
     return ctx[this.name]; // => look up variable in context
   }
@@ -6835,7 +6834,7 @@ class Add implements Expression {
     private readonly left: Expression,
     private readonly right: Expression,
   ) {}
-  interpret(ctx: Record<string, number>): number {
+  interpret(ctx: Record): number {
     return this.left.interpret(ctx) + this.right.interpret(ctx);
     // => sum of left and right sub-expressions
   }
@@ -6846,7 +6845,7 @@ class Multiply implements Expression {
     private readonly left: Expression,
     private readonly right: Expression,
   ) {}
-  interpret(ctx: Record<string, number>): number {
+  interpret(ctx: Record): number {
     return this.left.interpret(ctx) * this.right.interpret(ctx);
     // => product of left and right sub-expressions
   }
@@ -6859,7 +6858,7 @@ class IfGreater implements Expression {
     private readonly thenExpr: Expression, // => result if true
     private readonly elseExpr: Expression, // => result if false
   ) {}
-  interpret(ctx: Record<string, number>): number {
+  interpret(ctx: Record): number {
     return this.condition.interpret(ctx) > this.threshold.interpret(ctx)
       ? this.thenExpr.interpret(ctx)
       : this.elseExpr.interpret(ctx);
@@ -7535,9 +7534,9 @@ type Observer<T> = {
 };
 
 class Observable<T> {
-  constructor(private readonly subscribe: (observer: Observer<T>) => void) {}
+  constructor(private readonly subscribe: (observer: Observer) => void) {}
 
-  static from<T>(values: T[]): Observable<T> {
+  static from<T>(values: T[]): Observable {
     return new Observable((observer) => {
       for (const v of values) observer.next(v);
       observer.complete?.();
@@ -7545,7 +7544,7 @@ class Observable<T> {
     });
   }
 
-  map<U>(fn: (v: T) => U): Observable<U> {
+  map<U>(fn: (v: T) => U): Observable {
     return new Observable((observer) => {
       this.subscribe({
         next: (v) => observer.next(fn(v)), // => transform each value
@@ -7555,7 +7554,7 @@ class Observable<T> {
     });
   }
 
-  filter(predicate: (v: T) => boolean): Observable<T> {
+  filter(predicate: (v: T) => boolean): Observable {
     return new Observable((observer) => {
       this.subscribe({
         next: (v) => {
@@ -7568,7 +7567,7 @@ class Observable<T> {
     });
   }
 
-  reduce<U>(fn: (acc: U, v: T) => U, initial: U): Observable<U> {
+  reduce<U>(fn: (acc: U, v: T) => U, initial: U): Observable {
     return new Observable((observer) => {
       let acc = initial;
       this.subscribe({
@@ -7586,7 +7585,7 @@ class Observable<T> {
     });
   }
 
-  run(observer: Observer<T>): void {
+  run(observer: Observer): void {
     this.subscribe(observer); // => start the stream
   }
 }
@@ -8271,7 +8270,7 @@ class OrderApplicationService {
 
 // ---- Infrastructure adapters ----
 class InMemoryEventStore implements EventStore {
-  private readonly streams: Map<string, unknown[]> = new Map();
+  private readonly streams: Map = new Map();
 
   append(streamId: string, event: unknown): void {
     const existing = this.streams.get(streamId) ?? [];
@@ -8503,11 +8502,11 @@ subscription.Dispose(); // => Unsubscribe; clean up resources
 // => Demonstrates the reactive programming model used by Angular, NestJS, and RxJS
 
 type NextFn<T> = (value: T) => void;
-type Operator<T, U> = (source: AsyncIterable<T>) => AsyncIterable<U>;
+type Operator<T, U> = (source: AsyncIterable) => AsyncIterable;
 
 // => SUBJECT: both producer and consumer — emits values imperatively
 class Subject<T> {
-  private readonly subscribers: NextFn<T>[] = [];
+  private readonly subscribers: NextFn[] = [];
   private readonly buffered: T[] = [];
 
   emit(value: T): void {
@@ -8516,11 +8515,11 @@ class Subject<T> {
     // => push to all current subscribers
   }
 
-  [Symbol.asyncIterator](): AsyncIterator<T> {
+  [Symbol.asyncIterator](): AsyncIterator {
     let index = 0;
     const self = this;
     return {
-      async next(): Promise<IteratorResult<T>> {
+      async next(): Promise {
         while (index >= self.buffered.length) {
           await new Promise((r) => setTimeout(r, 1));
           // => poll until new value — real RxJS uses push-based backpressure
@@ -8532,19 +8531,19 @@ class Subject<T> {
 }
 
 // => PIPELINE OPERATORS
-async function* mapOp<T, U>(source: AsyncIterable<T>, fn: (v: T) => U): AsyncIterable<U> {
+async function* mapOp<T, U>(source: AsyncIterable, fn: (v: T) => U): AsyncIterable {
   for await (const v of source) yield fn(v);
   // => transforms each value through fn
 }
 
-async function* filterOp<T>(source: AsyncIterable<T>, pred: (v: T) => boolean): AsyncIterable<T> {
+async function* filterOp<T>(source: AsyncIterable, pred: (v: T) => boolean): AsyncIterable {
   for await (const v of source) {
     if (pred(v)) yield v;
   }
   // => passes only values satisfying pred
 }
 
-async function* takeOp<T>(source: AsyncIterable<T>, n: number): AsyncIterable<T> {
+async function* takeOp<T>(source: AsyncIterable, n: number): AsyncIterable {
   let count = 0;
   for await (const v of source) {
     yield v;

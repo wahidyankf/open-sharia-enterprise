@@ -25,7 +25,7 @@ This beginner-level section introduces Hexagonal Architecture (Ports and Adapter
 
 ### Example 1: The Hexagon Metaphor — Three Zones as Namespaces / Modules
 
-Hexagonal Architecture divides a system into three zones. The **Domain** zone holds pure business logic with no external dependencies. The **Application** zone orchestrates domain functions and defines ports. The **Adapters** zone wires the outside world (HTTP, database, CLI) to those ports. In F#, module namespaces are the natural mechanism for enforcing these zone boundaries.
+Hexagonal Architecture divides a system into three zones. The **Domain** zone holds pure business logic with no external dependencies. The **Application** zone orchestrates domain functions and defines ports. The **Adapters** zone wires the outside world (HTTP, database, CLI) to those ports. Module namespaces and file-level declarations are the natural mechanism for enforcing these zone boundaries across functional languages.
 
 ```mermaid
 graph TD
@@ -277,9 +277,9 @@ main = putStrLn "Three zones defined — dependency rule enforced by module impo
 
 {{< /tabs >}}
 
-**Key Takeaway**: The three zones (Domain, Application, Adapters) map directly to module namespaces, and the dependency rule — inner zones never import outer zones — is a simple constraint on import/open statements. F# enforces this through module ordering; Clojure through namespace `require` direction; TypeScript through import path conventions and linting rules.
+**Key Takeaway**: The three zones (Domain, Application, Adapters) map directly to module namespaces, and the dependency rule — inner zones never import outer zones — is a simple constraint on import or require statements. Every functional language shown here enforces this boundary through its module system: compilation order, namespace declarations, import paths, or linting rules.
 
-**Why It Matters**: In most codebases, business logic quietly accumulates database calls, HTTP client calls, and configuration reads until nothing can be tested without spinning up real infrastructure. Hexagonal Architecture prevents this by making the zone boundary a module-level convention. When a developer attempts to `open Npgsql` inside `Domain.fs`, a code review catches it immediately because the convention is documented in the file structure itself. This single rule is responsible for the testability and evolvability of the entire system.
+**Why It Matters**: In most codebases, business logic quietly accumulates database calls, HTTP client calls, and configuration reads until nothing can be tested without spinning up real infrastructure. Hexagonal Architecture prevents this by making the zone boundary a module-level convention. When a developer attempts to import an infrastructure library inside a domain module, a code review catches it immediately because the convention is documented in the file structure itself. This single rule is responsible for the testability and evolvability of the entire system.
 
 ---
 
@@ -580,7 +580,7 @@ main = do
 
 ### Example 3: Input Port as a Function Type Alias
 
-An **input port** is the entry point into the application. Any adapter (HTTP handler, CLI parser, message consumer) that wants to trigger the `SubmitPurchaseOrder` workflow calls through this port. In F#, the input port is a function type alias — no interface, no abstract class, no inheritance.
+An **input port** is the entry point into the application. Any adapter (HTTP handler, CLI parser, message consumer) that wants to trigger the `SubmitPurchaseOrder` workflow calls through this port. In functional languages, an input port is expressed as a function type — a named type alias or type synonym describing the exact shape a caller must satisfy, with no interface, no abstract class, and no inheritance required.
 
 ```mermaid
 graph LR
@@ -1513,9 +1513,9 @@ main = putStrLn "Dependency rule: Domain <- Application <- Adapters (arrows = al
 
 {{< /tabs >}}
 
-**Key Takeaway**: The dependency rule — imports only point inward — is a structural constraint, not a framework feature. F# enforces it through module ordering (a module cannot open one defined later in compilation order); Clojure through namespace `require` topology; TypeScript through import linting rules such as `import/no-restricted-paths`.
+**Key Takeaway**: The dependency rule — imports only point inward — is a structural constraint, not a framework feature. Every functional language shown here enforces it differently: through compilation order, namespace require topology, import linting rules, or module path conventions. The mechanism varies; the invariant is the same.
 
-**Why It Matters**: The dependency rule is not a guideline — it is the architectural invariant that makes the whole pattern work. When it is violated, the domain becomes coupled to infrastructure (untestable), adapters become coupled to each other (unswappable), and the application service becomes coupled to specific adapter implementations (fragile). F#'s compilation order makes many violations visible at compile time: if `Domain.fs` tries to `open` a type from `Adapters.fs`, the compiler rejects it. This is the strongest enforcement mechanism available in a compiled language.
+**Why It Matters**: The dependency rule is not a guideline — it is the architectural invariant that makes the whole pattern work. When it is violated, the domain becomes coupled to infrastructure (untestable), adapters become coupled to each other (unswappable), and the application service becomes coupled to specific adapter implementations (fragile). Compiled functional languages with strict module or file ordering can surface many violations at compile time: when a module in the domain zone attempts to import from the adapter zone, the compiler rejects it before any code runs. This automatic enforcement is the strongest guard the pattern can provide.
 
 ---
 
@@ -2036,9 +2036,9 @@ main = putStrLn "PurchaseOrderRepository port declared — adapters implement; a
 
 {{< /tabs >}}
 
-**Key Takeaway**: The port contract makes substitution explicit — any implementation satisfying the required operations substitutes without changing the application service. F# represents this as a record type; Clojure as a protocol; TypeScript as an interface. The application service depends on the abstraction in all three cases.
+**Key Takeaway**: The port contract makes substitution explicit — any implementation satisfying the required operations substitutes without changing the application service. Whether represented as a record of functions, a protocol, or a structural type alias, the application service depends only on the abstraction, never on the concrete implementation.
 
-**Why It Matters**: Record-of-functions ports give F# codebases the same substitutability that OOP languages get from interfaces, without inheritance or virtual dispatch. The compiler verifies that every adapter provides exactly the fields the port requires. In Clojure, protocols achieve the same substitutability through dynamic dispatch — any value implementing the protocol satisfies the port. Both approaches ensure the port is the single source of truth for the boundary contract.
+**Why It Matters**: A port expressed as a record of functions or a protocol gives a functional codebase the same substitutability that OOP languages get from interfaces, without requiring inheritance or virtual dispatch. The concrete mechanism varies — a record type checked structurally at compile time, a protocol dispatched dynamically at runtime, a typed object literal verified by the compiler — but all ensure that the port definition is the single source of truth for the boundary contract. Any adapter that provides the required operations is a valid substitution.
 
 ---
 
@@ -2801,9 +2801,9 @@ main = putStrLn "Named RepoError sum type: exhaustive matching; no string parsin
 
 {{< /tabs >}}
 
-**Key Takeaway**: Using a typed error representation at the port boundary makes all failure modes explicit, enabling the application service to respond differently to transient vs permanent failures. F# uses a discriminated union; Clojure uses a typed error map; TypeScript uses a discriminated union — all ensure the service never receives an untyped exception from infrastructure.
+**Key Takeaway**: Using a typed error representation at the port boundary makes all failure modes explicit, enabling the application service to respond differently to transient vs permanent failures. Every functional language shown here expresses port errors as a closed set of named variants — whether as a discriminated union, a sum type, or a tagged data map — so the service never receives an untyped exception from infrastructure.
 
-**Why It Matters**: Generic exception or string error types force callers to parse error messages or catch exception types by name — fragile, untestable, and undiscoverable. In F#, a named DU makes every error case a compiler-verified contract: add a new error case, and the compiler immediately identifies every call site that needs to handle it. In Clojure, named `:type` keys in error maps achieve the same explicitness with open extensibility — a new error variant requires only a new constructor helper and a new `cond` branch. For a `PurchaseOrderRepository`, the distinction between `:connection-timeout` (retry) and `:dup-key` (idempotency check) directly affects business behaviour and must be expressed at the data level.
+**Why It Matters**: Generic exception or string error types force callers to parse error messages or catch exception types by name — fragile, untestable, and undiscoverable. A named set of error variants makes every failure case an explicit, documented contract: adding a new variant immediately surfaces every call site that has not yet handled it, whether the enforcement comes from a compiler exhaustiveness check or a discipline of pattern-matching on a dispatch key. For a `PurchaseOrderRepository`, the distinction between a transient timeout (safe to retry) and a duplicate-key violation (idempotency check required) directly affects business behaviour and must be expressed at the data level.
 
 ---
 
@@ -3767,7 +3767,7 @@ main = putStrLn "Both styles valid — curried for few ports, record for many po
 
 {{< /tabs >}}
 
-**Key Takeaway**: Individual parameters work well for 1–3 ports; a named ports record scales better when the application service depends on 4 or more ports. F# uses a named record; Clojure uses a named map; TypeScript uses a typed object literal — all group ports into a single injectable dependency.
+**Key Takeaway**: Individual parameters work well for 1–3 ports; a named ports record or map scales better when the application service depends on 4 or more ports. Grouping ports into a single named structure — a record, a map, or a typed object — reduces the number of function parameters to one while keeping each port addressable by name.
 
 **Why It Matters**: Individual parameters are explicit at call sites, making dependencies visible. But when services grow to 6-8 ports, 8-parameter function signatures become unwieldy and hard to partially apply. A ports record or map solves this: one parameter, all ports, each addressable by name. The choice is a local style decision — the important invariant is that adapters remain injectable regardless of the syntax used.
 
@@ -4808,7 +4808,7 @@ main = do
 
 **Key Takeaway**: The composition root is the single file that knows adapter names — every other module sees only port types, making adapter swaps a one-line change in one file.
 
-**Why It Matters**: When adapter names are scattered across application services (via `open PostgresAdapter` statements), swapping an adapter requires finding and modifying every file that imports it. The composition root pattern centralises this knowledge: one file, one change. In production F# services, the composition root is typically the `Program.fs` startup module — it wires all adapters at startup and passes them through the call chain via partial application.
+**Why It Matters**: When adapter names are scattered across application services (via direct import or open statements), swapping an adapter requires finding and modifying every file that references it. The composition root pattern centralises this knowledge: one file, one change. In production services using this pattern, the composition root is the startup entry point — it wires all adapters at startup and passes them through the call chain via partial application or function parameters.
 
 ---
 
@@ -5466,7 +5466,7 @@ main = do
 
 ### Example 20: Partial Application as Dependency Injection
 
-Partial application is F#'s native mechanism for baking dependencies into a function. It eliminates the need for DI containers, reflection, and registration boilerplate while producing the same substitutability.
+Partial application is a native mechanism in functional languages for baking dependencies into a function. It eliminates the need for DI containers, reflection, and registration boilerplate while producing the same substitutability as constructor injection in OOP.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -5767,7 +5767,7 @@ main = do
 
 **Key Takeaway**: Partial application bakes port adapters into application service functions, producing a DI-injected use case function without a container, reflection, or registration boilerplate.
 
-**Why It Matters**: DI containers in OOP languages require registration, reflection, and sometimes XML configuration to achieve what F# partial application does in one line. Partially applied functions are first-class values: they can be passed as arguments, stored in records, composed with other functions, and tested by passing different adapters. The composition root becomes a sequence of partial application expressions — readable, refactorable, and checked by the compiler at every step.
+**Why It Matters**: DI containers in OOP languages require registration, reflection, and sometimes XML configuration to achieve what partial application does in one line across functional languages. Partially applied functions are first-class values: they can be passed as arguments, stored in records, composed with other functions, and tested by passing different adapters. The composition root becomes a sequence of partial application or function-wrapping expressions — readable, refactorable, and statically verified at every step.
 
 ---
 

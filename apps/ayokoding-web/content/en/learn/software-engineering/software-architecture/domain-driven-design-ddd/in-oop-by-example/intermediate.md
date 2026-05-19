@@ -1190,7 +1190,7 @@ try {
 
 ### Example 30: Sealed types for exhaustive state modeling
 
-Java 21 sealed classes let the compiler enforce that all states are handled. Using sealed types for `PurchaseOrderStatus` means a forgotten branch is a compile error, not a runtime NullPointerException.
+Sealed type hierarchies (sealed interfaces in Java 21+, sealed classes in Kotlin, abstract record hierarchies in C#, and discriminated union types in TypeScript) let the compiler enforce that all states are handled. Using a closed, exhaustive type for `PurchaseOrderStatus` means a forgotten branch is a compile error, not a runtime NullPointerException.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -1654,7 +1654,7 @@ try {
 type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
 
 // Transition table: maps current status to allowed next statuses
-const TRANSITIONS = new Map<POStatus, Set<POStatus>>([
+const TRANSITIONS = new Map<POStatus, Set>([
   ["DRAFT", new Set<POStatus>(["AWAITING_APPROVAL", "CANCELLED"])],
   ["AWAITING_APPROVAL", new Set<POStatus>(["APPROVED", "CANCELLED"])],
   ["APPROVED", new Set<POStatus>(["ISSUED", "CANCELLED"])],
@@ -1991,7 +1991,7 @@ class DomainRuleViolationError extends DomainError {
 }
 
 type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELLED";
-const ALLOWED = new Map<POStatus, Set<POStatus>>([
+const ALLOWED = new Map<POStatus, Set>([
   ["DRAFT", new Set<POStatus>(["AWAITING_APPROVAL", "CANCELLED"])],
   ["AWAITING_APPROVAL", new Set<POStatus>(["APPROVED", "CANCELLED"])],
   ["APPROVED", new Set<POStatus>(["ISSUED", "CANCELLED"])],
@@ -2671,7 +2671,7 @@ try {
 
 ### Example 35: Immutable domain events as records
 
-Domain events are facts — things that happened. They are immutable, carry only the data needed by consumers, and are named in past tense. Java records, Kotlin data classes, and C# positional records are all natural fits: immutable by construction, with built-in `equals`, `hashCode`, and `toString`.
+Domain events are facts — things that happened. They are immutable, carry only the data needed by consumers, and are named in past tense. Record and data-class constructs across all four languages — Java records, Kotlin data classes, C# positional records, and TypeScript readonly interfaces with frozen objects — are natural fits: immutable by construction, with structural equality and compact syntax.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -3191,7 +3191,7 @@ type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELL
 class PurchaseOrder {
   readonly id: string;
   private _status: POStatus = "DRAFT";
-  private readonly _lines: Array<{ lineId: string; amount: number }> = [];
+  private readonly _lines: Array = [];
   private readonly _events: DomainEvent[] = []; // => internal event log
 
   constructor(id: string) {
@@ -4529,16 +4529,16 @@ class PurchaseOrder {
 // Repository interface: defined in domain layer, not infrastructure
 // => Domain code depends only on this interface, never on concrete implementations
 interface PurchaseOrderRepository {
-  save(po: PurchaseOrder): Promise<void>;
+  save(po: PurchaseOrder): Promise;
   // => save: upsert; creates or updates the PO
 
-  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  findById(id: PurchaseOrderId): Promise;
   // => findById: returns null when not found; never throws for "not found"
 
-  findBySupplier(supplierId: string): Promise<PurchaseOrder[]>;
+  findBySupplier(supplierId: string): Promise;
   // => findBySupplier: returns empty array when no results
 
-  remove(id: PurchaseOrderId): Promise<void>;
+  remove(id: PurchaseOrderId): Promise;
   // => remove: idempotent; no error if already absent
 }
 
@@ -4547,26 +4547,26 @@ class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository {
   private readonly _store = new Map<string, PurchaseOrder>();
   // => Map key is id.value; backing store for the in-memory repository
 
-  async save(po: PurchaseOrder): Promise<void> {
+  async save(po: PurchaseOrder): Promise {
     this._store.set(po.id.value, po); // => upsert
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     return this._store.get(id.value) ?? null; // => null if not found
   }
 
-  async findBySupplier(supplierId: string): Promise<PurchaseOrder[]> {
+  async findBySupplier(supplierId: string): Promise {
     return [...this._store.values()].filter((po) => po.supplierId === supplierId);
     // => filter returns empty array when no matches
   }
 
-  async remove(id: PurchaseOrderId): Promise<void> {
+  async remove(id: PurchaseOrderId): Promise {
     this._store.delete(id.value); // => idempotent; no error if absent
   }
 }
 
 // Usage
-async function demo(): Promise<void> {
+async function demo(): Promise {
   const repo: PurchaseOrderRepository = new InMemoryPurchaseOrderRepository();
 
   const po1 = new PurchaseOrder(PurchaseOrderId.of("po_550e8400-0001"), "sup_660f9511-0001");
@@ -4850,30 +4850,30 @@ interface PurchaseOrder {
 // Specification interface: single method isSatisfiedBy(candidate)
 interface Specification<T> {
   isSatisfiedBy(candidate: T): boolean;
-  and(other: Specification<T>): Specification<T>;
-  or(other: Specification<T>): Specification<T>;
-  not(): Specification<T>;
+  and(other: Specification): Specification;
+  or(other: Specification): Specification;
+  not(): Specification;
 }
 
 // Base implementation with default and/or/not combinators
-abstract class AbstractSpecification<T> implements Specification<T> {
+abstract class AbstractSpecification<T> implements Specification {
   abstract isSatisfiedBy(candidate: T): boolean;
 
-  and(other: Specification<T>): Specification<T> {
+  and(other: Specification): Specification {
     return new AndSpecification(this, other); // => both must be satisfied
   }
-  or(other: Specification<T>): Specification<T> {
+  or(other: Specification): Specification {
     return new OrSpecification(this, other); // => either must be satisfied
   }
-  not(): Specification<T> {
+  not(): Specification {
     return new NotSpecification(this); // => must NOT be satisfied
   }
 }
 
-class AndSpecification<T> extends AbstractSpecification<T> {
+class AndSpecification<T> extends AbstractSpecification {
   constructor(
-    private readonly left: Specification<T>,
-    private readonly right: Specification<T>,
+    private readonly left: Specification,
+    private readonly right: Specification,
   ) {
     super();
   }
@@ -4881,10 +4881,10 @@ class AndSpecification<T> extends AbstractSpecification<T> {
     return this.left.isSatisfiedBy(c) && this.right.isSatisfiedBy(c);
   }
 }
-class OrSpecification<T> extends AbstractSpecification<T> {
+class OrSpecification<T> extends AbstractSpecification {
   constructor(
-    private readonly left: Specification<T>,
-    private readonly right: Specification<T>,
+    private readonly left: Specification,
+    private readonly right: Specification,
   ) {
     super();
   }
@@ -4892,8 +4892,8 @@ class OrSpecification<T> extends AbstractSpecification<T> {
     return this.left.isSatisfiedBy(c) || this.right.isSatisfiedBy(c);
   }
 }
-class NotSpecification<T> extends AbstractSpecification<T> {
-  constructor(private readonly inner: Specification<T>) {
+class NotSpecification<T> extends AbstractSpecification {
+  constructor(private readonly inner: Specification) {
     super();
   }
   isSatisfiedBy(c: T): boolean {
@@ -4902,12 +4902,12 @@ class NotSpecification<T> extends AbstractSpecification<T> {
 }
 
 // Domain specifications
-class IssuedPOSpec extends AbstractSpecification<PurchaseOrder> {
+class IssuedPOSpec extends AbstractSpecification {
   isSatisfiedBy(po: PurchaseOrder): boolean {
     return po.status === "ISSUED";
   }
 }
-class HighValuePOSpec extends AbstractSpecification<PurchaseOrder> {
+class HighValuePOSpec extends AbstractSpecification {
   constructor(private readonly threshold: number) {
     super();
   }
@@ -5645,7 +5645,7 @@ class PurchaseOrder {
   id: string = "";
   supplierId: string = "";
   status: POStatus = "DRAFT";
-  lines: Array<{ lineId: string; amount: number }> = [];
+  lines: Array = [];
 
   // => Apply: pure function; takes current state + event → returns new state
   // => No side effects; just state transition
@@ -6381,7 +6381,7 @@ class SupplierAntiCorruptionLayer {
   }
 
   private translatePaymentTerms(legacy: string): PaymentTerms {
-    const map: Record<string, PaymentTerms> = {
+    const map: Record = {
       NET30: "NET_30", // => legacy "NET30" → domain "NET_30"
       NET60: "NET_60",
       NET90: "NET_90",
@@ -7017,24 +7017,24 @@ interface PurchaseOrderSpec {
 // Generic composable specification
 type Spec<T> = { isSatisfiedBy(item: T): boolean };
 
-function and<T>(left: Spec<T>, right: Spec<T>): Spec<T> {
+function and<T>(left: Spec, right: Spec): Spec {
   return { isSatisfiedBy: (i: T) => left.isSatisfiedBy(i) && right.isSatisfiedBy(i) };
 }
-function or<T>(left: Spec<T>, right: Spec<T>): Spec<T> {
+function or<T>(left: Spec, right: Spec): Spec {
   return { isSatisfiedBy: (i: T) => left.isSatisfiedBy(i) || right.isSatisfiedBy(i) };
 }
-function not<T>(spec: Spec<T>): Spec<T> {
+function not<T>(spec: Spec): Spec {
   return { isSatisfiedBy: (i: T) => !spec.isSatisfiedBy(i) };
 }
 
 // Domain specifications for PurchaseOrder
-const awaitingApproval: Spec<PurchaseOrderSpec> = {
+const awaitingApproval: Spec = {
   isSatisfiedBy: (po) => po.status === "AWAITING_APPROVAL",
 };
-const highValue: Spec<PurchaseOrderSpec> = {
+const highValue: Spec = {
   isSatisfiedBy: (po) => po.totalAmount > 10000, // => L3 threshold
 };
-const fromRequester = (id: string): Spec<PurchaseOrderSpec> => ({
+const fromRequester = (id: string): Spec => ({
   isSatisfiedBy: (po) => po.requesterId === id, // => filter by requester
 });
 
@@ -7377,7 +7377,7 @@ type POStatus = "DRAFT" | "AWAITING_APPROVAL" | "APPROVED" | "ISSUED" | "CANCELL
 class PurchaseOrder {
   readonly id: string;
   private _status: POStatus = "DRAFT";
-  private readonly _lines: Array<{ id: string; amount: number }> = [];
+  private readonly _lines: Array = [];
 
   constructor(id: string) {
     this.id = id;
@@ -7755,9 +7755,9 @@ class PurchaseOrder {
 
 // Port: defined in domain layer; implementation in infrastructure
 interface PurchaseOrderPort {
-  save(po: PurchaseOrder): Promise<void>;
-  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
-  findPendingApprovals(): Promise<PurchaseOrder[]>;
+  save(po: PurchaseOrder): Promise;
+  findById(id: PurchaseOrderId): Promise;
+  findPendingApprovals(): Promise;
 }
 
 // ── Adapter (infrastructure layer) ────────────────────────────────────────────
@@ -7766,15 +7766,15 @@ interface PurchaseOrderPort {
 class InMemoryPurchaseOrderAdapter implements PurchaseOrderPort {
   private readonly _store = new Map<string, PurchaseOrder>();
 
-  async save(po: PurchaseOrder): Promise<void> {
+  async save(po: PurchaseOrder): Promise {
     this._store.set(po.id.value, po); // => simple upsert in memory
   }
 
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     return this._store.get(id.value) ?? null;
   }
 
-  async findPendingApprovals(): Promise<PurchaseOrder[]> {
+  async findPendingApprovals(): Promise {
     return [...this._store.values()].filter((po) => po.status === "AWAITING_APPROVAL");
     // => filter in memory; SQL adapter would issue a WHERE clause instead
   }
@@ -7787,7 +7787,7 @@ class PurchaseOrderApplicationService {
   constructor(private readonly repo: PurchaseOrderPort) {}
   // => repo is injected; service works with any adapter (in-memory, SQL, etc.)
 
-  async submitForApproval(poId: PurchaseOrderId): Promise<void> {
+  async submitForApproval(poId: PurchaseOrderId): Promise {
     const po = await this.repo.findById(poId);
     if (!po) throw new Error(`PurchaseOrder not found: ${poId.value}`);
     if (po.status !== "DRAFT") throw new Error(`Can only submit from DRAFT, current: ${po.status}`);
@@ -7797,7 +7797,7 @@ class PurchaseOrderApplicationService {
 }
 
 // Usage: wire adapter to application service
-async function demo(): Promise<void> {
+async function demo(): Promise {
   const adapter = new InMemoryPurchaseOrderAdapter();
   const service = new PurchaseOrderApplicationService(adapter);
 

@@ -28,7 +28,7 @@ This beginner section introduces Finite State Machine fundamentals through 25 an
 
 ### Example 1: States as a Discriminated Union
 
-A `PurchaseOrder` moves through a defined set of states: Draft, AwaitingApproval, Approved, Issued, Acknowledged, Closed, Cancelled, and Disputed. Encoding the valid state set as a closed union type means the compiler rejects any value outside this set at compile time — no runtime "unknown state" bugs. In F# this is a discriminated union; in Clojure a spec-constrained keyword set; in TypeScript a string literal union type.
+A `PurchaseOrder` moves through a defined set of states: Draft, AwaitingApproval, Approved, Issued, Acknowledged, Closed, Cancelled, and Disputed. Encoding the valid state set as a closed union type means the compiler rejects any value outside this set at compile time — no runtime "unknown state" bugs. In F# this is a discriminated union; in Clojure a spec-constrained keyword set; in TypeScript a string literal union type; in Haskell an ADT (algebraic data type) with no payload, deriving `Eq` for structural comparison.
 
 ```mermaid
 stateDiagram-v2
@@ -230,7 +230,7 @@ main = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: A closed union type seals the state space at compile time — the compiler enforces exhaustiveness so no invalid state can ever exist. F# uses a discriminated union; Clojure uses a spec-constrained keyword; TypeScript uses a string literal union with exhaustive `never` checks.
+**Key Takeaway**: A closed union type seals the state space at compile time — the compiler enforces exhaustiveness so no invalid state can ever exist. F# uses a discriminated union; Clojure uses a spec-constrained keyword; TypeScript uses a string literal union with exhaustive `never` checks; Haskell uses an ADT with `-Wincomplete-patterns` for the same guarantee.
 
 **Why It Matters**: In an OOP State pattern each state is a class; adding a state means adding a file and updating every visitor. In FP the DU is the single source of truth. Adding `PartiallyReceived` to the DU causes every incomplete `match` expression in the codebase to produce a compiler warning, guiding the developer to every place that needs updating. The type system acts as a living checklist, eliminating the category of "forgot to handle the new state" bugs before the code runs.
 
@@ -238,7 +238,7 @@ main = do
 
 ### Example 2: The Minimal FSM Record
 
-A state machine needs identity and current state. In F# an immutable record bundles these two fields. Because records are immutable by default, "transitioning" means creating a new record — the old state is preserved, which simplifies auditing and testing.
+A state machine needs identity and current state. In FP an immutable record (or map/record-like value) bundles these two fields. Because the value is immutable, "transitioning" means producing a new value — the old state is preserved, which simplifies auditing and testing.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -773,7 +773,7 @@ main = do
 
 ### Example 5: Exhaustiveness Checking with Match
 
-Exhaustiveness checking warns when a pattern-match expression does not cover every case. This example deliberately triggers the warning to show how exhaustiveness acts as a safety net — every time the state type gains a new case, the compiler flags every incomplete handler. F# raises a compile warning on non-exhaustive `match`; TypeScript raises a type error via the `never` fallthrough pattern; Clojure uses spec conformance checks.
+Exhaustiveness checking warns when a pattern-match expression does not cover every case. This example deliberately triggers the warning to show how exhaustiveness acts as a safety net — every time the state type gains a new case, the compiler flags every incomplete handler. F# raises a compile warning on non-exhaustive `match`; TypeScript raises a type error via the `never` fallthrough pattern; Clojure uses spec conformance checks; Haskell emits a "Pattern match(es) are non-exhaustive" warning under `-Wincomplete-patterns`.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -969,7 +969,7 @@ main = mapM_ (\s -> putStrLn (show s <> ": " <> describeState s)) allStates
 
 **Key Takeaway**: Exhaustive `match` expressions turn the addition of any new state into a compile-time task list — every handler that needs updating is immediately flagged.
 
-**Why It Matters**: In an enum-backed switch statement in Java or TypeScript, a `default` clause silently absorbs new cases. In F# there is no silent default unless you write `| _ ->`. Omitting the wildcard makes the compiler your FSM auditor. When a product manager requests a new `PendingAmendment` state, the compiler immediately lists every function that needs a new case — making completeness verifiable before the first test runs.
+**Why It Matters**: In an enum-backed switch statement, a `default` clause silently absorbs new cases. Closed-sum pattern matching in FP languages (no default arm) makes the compiler the FSM auditor: when a new state is added, every match expression that needs a new arm is flagged at compile time, making completeness verifiable before the first test runs. When a product manager requests a new `PendingAmendment` state, the compiler immediately lists every function that needs updating.
 
 ---
 
@@ -1822,7 +1822,7 @@ main = do
 
 {{< /tabs >}}
 
-**Key Takeaway**: Modelling pre-issue and post-issue POs as different types makes line-item immutability a compile-time guarantee rather than a runtime check. F# expresses this distinction as separate discriminated union cases with different payloads; TypeScript as separate type aliases with discriminant fields; Clojure through spec shapes validated at the state-entry boundary.
+**Key Takeaway**: Modelling pre-issue and post-issue POs as different types makes line-item immutability a compile-time guarantee rather than a runtime check. F# expresses this distinction as separate discriminated union cases with different payloads; TypeScript as separate type aliases with discriminant fields; Clojure through spec shapes validated at the state-entry boundary; Haskell as separate `data` declarations so the type system rejects mixing them.
 
 **Why It Matters**: The OOP approach guards immutability with a mutable boolean flag checked at runtime. The FP type-level approach makes the invalid operation unrepresentable: no function accepts an `IssuedPO` and adds a line item. This technique — "make illegal states unrepresentable" — is the defining idiom of type-driven domain modelling. It shifts enforcement from "validate at runtime and hope" to "encode in the type and let the compiler verify".
 
@@ -2250,7 +2250,7 @@ main = do
 
 ### Example 12: The Full Transition Table
 
-The full PO transition table lists every valid (state, event) pair. Encoding it as an F# `Map` creates a queryable specification that can also drive tests and documentation generators.
+The full PO transition table lists every valid (state, event) pair. Encoding it as an immutable map creates a queryable specification that can also drive tests and documentation generators.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2943,7 +2943,7 @@ main = do
 
 **Key Takeaway**: Returning `Result<_, string list>` from the constructor accumulates all validation errors in one pass — the caller sees a complete picture of what is wrong.
 
-**Why It Matters**: Fail-fast validation (stopping at the first error) forces users to fix one issue at a time, creating a frustrating loop. Accumulating all errors upfront is more respectful of the user's time and maps directly to how form validation works in practice. The list comprehension with `yield` inside `[ if ... ]` is idiomatic F# for building error lists without mutable accumulators, keeping the validation logic pure and easy to extend.
+**Why It Matters**: Fail-fast validation (stopping at the first error) forces users to fix one issue at a time, creating a frustrating loop. Accumulating all errors upfront is more respectful of the user's time and maps directly to how form validation works in practice. Collecting errors into a list or vector without mutable accumulators is a natural fit for functional style: each check either contributes an error or contributes nothing, making the validation logic pure and easy to extend.
 
 ---
 
@@ -3603,7 +3603,7 @@ main = do
 
 ### Example 18: Testing FSM Transitions
 
-Table-driven tests verify every valid transition and every invalid one in a single loop, making it easy to spot gaps in FSM coverage. F# uses script assertions (`assert` or `if/then/failwith`) to run the table inline; Clojure uses `clojure.test/is` assertions; TypeScript uses Jest `test.each` — all iterate the same transition matrix.
+Table-driven tests verify every valid transition and every invalid one in a single loop, making it easy to spot gaps in FSM coverage. F# uses script assertions (`assert` or `if/then/failwith`) to run the table inline; Clojure uses `clojure.test/is` assertions; TypeScript uses Jest `test.each`; Haskell uses a plain list of records filtered for mismatches — all four iterate the same transition matrix.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 

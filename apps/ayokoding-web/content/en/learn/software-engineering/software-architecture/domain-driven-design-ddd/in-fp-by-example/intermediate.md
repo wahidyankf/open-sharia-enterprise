@@ -527,13 +527,13 @@ main = do
 
 **Key Takeaway**: The `|>` operator enables left-to-right pipeline reading that matches how procurement domain experts describe workflows, making code readable without sacrificing functional purity.
 
-**Why It Matters**: The pipe operator is one of F#'s most-cited readability features. In a procurement context, the pipeline `rawLines |> computeTotals |> sumTotals |> deriveLevel` reads exactly like the domain description: "take the lines, compute their totals, sum them, then determine the approval level." This alignment between code and domain description reduces the translation overhead between domain expert and developer, a core goal of DDD.
+**Why It Matters**: The pipe operator (or its thread-first/thread-last equivalents in other FP languages) is one of FP's most-cited readability features. In a procurement context, the pipeline `rawLines → computeTotals → sumTotals → deriveLevel` reads exactly like the domain description: "take the lines, compute their totals, sum them, then determine the approval level." This alignment between code and domain description reduces the translation overhead between domain expert and developer, a core goal of DDD.
 
 ---
 
 ### Example 28: Currying — Every Function is One-Arg
 
-Every F# function technically takes one argument and returns a function or a value. This is currying. It enables partial application: supplying some arguments up front to produce a specialised function. In the procurement domain, partial application injects dependencies like approval thresholds into workflow functions.
+In functional languages, multi-argument functions are implemented as chains of one-argument functions — a property called currying. This enables partial application: supplying some arguments up front to produce a specialised function. In the procurement domain, partial application injects dependencies like approval thresholds into workflow functions.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -1117,7 +1117,7 @@ main = case submitRequisition "emp_00456" testLines of
 
 ### Example 30: Result Type — Ok and Error
 
-The Result type models computations that can fail by returning either a success value or a typed error, without throwing exceptions. F# provides `Result<'T, 'Error>` as a built-in discriminated union with `Ok value` and `Error err` cases. Clojure uses a `[value nil]` / `[nil error]` pair convention or libraries such as `failjure`; TypeScript uses a discriminated union with `{ ok: true; value: T }` / `{ ok: false; error: E }`. All three keep failure handling in the type system and force callers to acknowledge both paths.
+The Result type models computations that can fail by returning either a success value or a typed error, without throwing exceptions. F# provides `Result<'T, 'Error>` as a built-in discriminated union with `Ok value` and `Error err` cases. Clojure uses a `[value nil]` / `[nil error]` pair convention or libraries such as `failjure`; TypeScript uses a discriminated union with `{ ok: true; value: T }` / `{ ok: false; error: E }`; Haskell uses `Either e a` with `Left` for failure and `Right` for success. All four keep failure handling in the type system and force callers to acknowledge both paths.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2272,7 +2272,7 @@ main = case result of
 
 ### Example 34: Computation Expression for Result
 
-Computation expressions (a.k.a. "do notation") let you write `Result.bind` chains in imperative-looking syntax without explicit nesting. In F#, the `result { }` CE desugars `let!` to `Result.bind`, making the pipeline read as sequential steps. Clojure achieves the same feel with threading macros (`->>`) plus an early-exit helper; TypeScript uses `async/await`-style patterns or generator-based monads for the same sequential illusion.
+Computation expressions (a.k.a. "do notation") let you write `Result.bind` chains in imperative-looking syntax without explicit nesting. Each FP language provides its own mechanism: F# uses the `result { }` CE where `let!` desugars to `Result.bind`; Haskell uses `do`-notation on the `Either` monad; Clojure achieves the same feel with threading macros (`->>`) plus an early-exit helper; TypeScript uses `async/await`-style patterns or generator-based monads for the same sequential illusion.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
@@ -2563,7 +2563,7 @@ main = do
 
 ### Example 35: Async Result — Effects at the Edges
 
-Real procurement workflows involve I/O: loading a requisition from Postgres, calling the approval router API, publishing a domain event. `Async<Result<'T, 'Error>>` composes the two: `Async` handles the effect, `Result` handles the failure.
+Real procurement workflows involve I/O: loading a requisition from Postgres, calling the approval router API, publishing a domain event. Functional languages compose an effect layer with a failure layer — async/IO handles the effect, Result/Either handles the failure — so both concerns can be chained without losing either.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 

@@ -166,19 +166,19 @@ import type { SupplierId } from "../domain/supplier-id";
 // => TypeScript interface: no implementation here; adapters supply the "how"
 export interface SupplierRepository {
   // save: persist a Supplier aggregate; return the saved instance
-  save(supplier: Supplier): Promise<Supplier>;
+  save(supplier: Supplier): Promise;
   // => caller: await repository.save(supplier) — unaware whether store is Postgres or Map
 
   // findById: returns Supplier | null — null signals absence without throwing
-  findById(id: SupplierId): Promise<Supplier | null>;
+  findById(id: SupplierId): Promise;
   // => callers: const s = await repo.findById(id); if (!s) throw new SupplierNotFoundError(id.value);
 
   // findAllApproved: return every supplier eligible for new PurchaseOrders
-  findAllApproved(): Promise<Supplier[]>;
+  findAllApproved(): Promise;
   // => purchasing context calls this to validate supplier is APPROVED before issuing a PO
 
   // existsById: lightweight presence check; avoids loading full aggregate
-  existsById(id: SupplierId): Promise<boolean>;
+  existsById(id: SupplierId): Promise;
   // => true when supplier exists; false otherwise; O(1) cost in both adapters
 }
 // => Application service imports only this interface; zero coupling to TypeORM or Map
@@ -671,25 +671,25 @@ export class InMemorySupplierRepository implements SupplierRepository {
   private readonly store = new Map<string, Supplier>();
   // => Map keyed by SupplierId.value string — O(1) average for all operations
 
-  async save(supplier: Supplier): Promise<Supplier> {
+  async save(supplier: Supplier): Promise {
     this.store.set(supplier.id.value, supplier);
     // => insert or replace; O(1); keyed by typed id's string value
     return supplier;
     // => return same instance; consistent with SupplierRepository contract
   }
 
-  async findById(id: SupplierId): Promise<Supplier | null> {
+  async findById(id: SupplierId): Promise {
     return this.store.get(id.value) ?? null;
     // => ?? null: Map.get returns undefined when absent; convert to null for port contract
   }
 
-  async findAllApproved(): Promise<Supplier[]> {
+  async findAllApproved(): Promise {
     return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
     // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
     // => purchasing context calls this to get eligible-supplier list before issuing a PO
   }
 
-  async existsById(id: SupplierId): Promise<boolean> {
+  async existsById(id: SupplierId): Promise {
     return this.store.has(id.value);
     // => Map.has: O(1) presence check; does not load the full Supplier aggregate
   }
@@ -910,7 +910,7 @@ export class OutboxEventPublisher implements EventPublisher {
     private readonly db: any, // => TypeORM DataSource or knex connection
   ) {}
 
-  async publish(event: DomainEvent): Promise<void> {
+  async publish(event: DomainEvent): Promise {
     const record: OutboxRecord = {
       id: crypto.randomUUID(), // => unique id per event for idempotency
       eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
@@ -933,7 +933,7 @@ export class OutboxEventPublisher implements EventPublisher {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: `EventPublisher` is a single-method `@FunctionalInterface` port. The in-memory adapter captures events for test assertions; the production adapter writes to an outbox.
+**Key Takeaway**: `EventPublisher` is a single-method output port interface. The in-memory adapter captures events for test assertions; the production adapter writes to an outbox.
 
 **Why It Matters**: Hiding event delivery behind a port means the application service never knows whether events go to Kafka, a webhook, or a test list. Replacing the event delivery mechanism requires only a new adapter — the application service and domain are unchanged.
 
@@ -1151,7 +1151,7 @@ export enum ApprovalLevel {
 // => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
 export interface ApprovalRouterPort {
   // route: send a PO to the appropriate approver based on business rules
-  route(po: PurchaseOrder): Promise<void>;
+  route(po: PurchaseOrder): Promise;
   // => adapter translates PO to workflow payload; application never sees workflow engine API
   // => test adapter: captures routed POs for assertion without starting a workflow engine
 }
@@ -1161,7 +1161,7 @@ export class InMemoryApprovalRouter implements ApprovalRouterPort {
   readonly routed: PurchaseOrder[] = [];
   // => routed: array accumulates POs passed to route(); test asserts routing occurred
 
-  async route(po: PurchaseOrder): Promise<void> {
+  async route(po: PurchaseOrder): Promise {
     this.routed.push(po);
     // => push: O(1); PO stored for test assertion; no workflow engine needed
   }
@@ -1395,25 +1395,25 @@ export class InMemorySupplierRepository implements SupplierRepository {
   private readonly store = new Map<string, Supplier>();
   // => Map keyed by SupplierId.value string — O(1) average for all operations
 
-  async save(supplier: Supplier): Promise<Supplier> {
+  async save(supplier: Supplier): Promise {
     this.store.set(supplier.id.value, supplier);
     // => insert or replace; O(1); keyed by typed id's string value
     return supplier;
     // => return same instance; consistent with SupplierRepository contract
   }
 
-  async findById(id: SupplierId): Promise<Supplier | null> {
+  async findById(id: SupplierId): Promise {
     return this.store.get(id.value) ?? null;
     // => ?? null: Map.get returns undefined when absent; convert to null for port contract
   }
 
-  async findAllApproved(): Promise<Supplier[]> {
+  async findAllApproved(): Promise {
     return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
     // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
     // => purchasing context calls this to get eligible-supplier list before issuing a PO
   }
 
-  async existsById(id: SupplierId): Promise<boolean> {
+  async existsById(id: SupplierId): Promise {
     return this.store.has(id.value);
     // => Map.has: O(1) presence check; does not load the full Supplier aggregate
   }
@@ -1427,7 +1427,7 @@ export class InMemorySupplierRepository implements SupplierRepository {
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: The `@Configuration` class is the only place that couples a port to its adapter. Swapping adapters is a one-line change per port.
+**Key Takeaway**: The composition root is the only place that couples a port to its adapter. Swapping adapters is a one-line change per port.
 
 **Why It Matters**: Teams running CI without a database use the in-memory adapter profile for unit tests and the Postgres adapter profile for integration tests — without a single change to application or domain code. The same application service binary runs against both adapters.
 
@@ -1615,9 +1615,9 @@ export class PurchasingModule {}
 {{< /tab >}}
 {{< /tabs >}}
 
-**Key Takeaway**: `@Profile` annotations on `@Configuration` classes wire different adapters in different environments — the application service is never aware of which adapter is active.
+**Key Takeaway**: Environment-based adapter selection wires different adapters in different environments — the application service is never aware of which adapter is active.
 
-**Why It Matters**: Profile-based adapter selection means the same artifact (JAR) runs in staging with a real database and in CI with an in-memory store. No environment-specific branches in business code. The adapter choice is purely an operational concern expressed in Spring configuration.
+**Why It Matters**: Profile-based adapter selection means the same deployable artifact runs in staging with a real database and in CI with an in-memory store. No environment-specific branches in business code. The adapter choice is purely an operational concern expressed in the composition root.
 
 ---
 
@@ -2110,7 +2110,7 @@ export class TemporalApprovalRouter implements ApprovalRouterPort {
     private readonly temporalClient: any, // => @temporalio/client WorkflowClient
   ) {}
 
-  async route(po: PurchaseOrder): Promise<void> {
+  async route(po: PurchaseOrder): Promise {
     // Determine approval level from PO total (domain-side rule applied here as read)
     const level = po.total.amount >= 100_000 ? "BOARD" : po.total.amount >= 10_000 ? "DIRECTOR" : "MANAGER";
     // => level: routing decision based on PO total; same logic as ApprovalLevel enum
@@ -2127,8 +2127,8 @@ export class TemporalApprovalRouter implements ApprovalRouterPort {
 
 // InMemoryApprovalRouter: test adapter
 export class InMemoryApprovalRouter implements ApprovalRouterPort {
-  readonly routed: Array<{ po: PurchaseOrder }> = [];
-  async route(po: PurchaseOrder): Promise<void> {
+  readonly routed: Array = [];
+  async route(po: PurchaseOrder): Promise {
     this.routed.push({ po });
   }
   // => captures calls for assertion; no Temporal Worker or Server needed
@@ -2419,25 +2419,25 @@ export class InMemorySupplierRepository implements SupplierRepository {
   private readonly store = new Map<string, Supplier>();
   // => Map keyed by SupplierId.value string — O(1) average for all operations
 
-  async save(supplier: Supplier): Promise<Supplier> {
+  async save(supplier: Supplier): Promise {
     this.store.set(supplier.id.value, supplier);
     // => insert or replace; O(1); keyed by typed id's string value
     return supplier;
     // => return same instance; consistent with SupplierRepository contract
   }
 
-  async findById(id: SupplierId): Promise<Supplier | null> {
+  async findById(id: SupplierId): Promise {
     return this.store.get(id.value) ?? null;
     // => ?? null: Map.get returns undefined when absent; convert to null for port contract
   }
 
-  async findAllApproved(): Promise<Supplier[]> {
+  async findAllApproved(): Promise {
     return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
     // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
     // => purchasing context calls this to get eligible-supplier list before issuing a PO
   }
 
-  async existsById(id: SupplierId): Promise<boolean> {
+  async existsById(id: SupplierId): Promise {
     return this.store.has(id.value);
     // => Map.has: O(1) presence check; does not load the full Supplier aggregate
   }
@@ -2683,7 +2683,7 @@ export class SupplierContextAcl implements SupplierPort {
   ) {}
 
   // isEligible: purchasing-side contract; translates supplier.status to a boolean
-  async isEligible(supplierId: SupplierId): Promise<boolean> {
+  async isEligible(supplierId: SupplierId): Promise {
     const supplier = await this.supplierRepo.findById(
       // => translate purchasing SupplierId to supplier-context SupplierId
       { value: supplierId.value } as any,
@@ -2907,25 +2907,25 @@ export class InMemorySupplierRepository implements SupplierRepository {
   private readonly store = new Map<string, Supplier>();
   // => Map keyed by SupplierId.value string — O(1) average for all operations
 
-  async save(supplier: Supplier): Promise<Supplier> {
+  async save(supplier: Supplier): Promise {
     this.store.set(supplier.id.value, supplier);
     // => insert or replace; O(1); keyed by typed id's string value
     return supplier;
     // => return same instance; consistent with SupplierRepository contract
   }
 
-  async findById(id: SupplierId): Promise<Supplier | null> {
+  async findById(id: SupplierId): Promise {
     return this.store.get(id.value) ?? null;
     // => ?? null: Map.get returns undefined when absent; convert to null for port contract
   }
 
-  async findAllApproved(): Promise<Supplier[]> {
+  async findAllApproved(): Promise {
     return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
     // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
     // => purchasing context calls this to get eligible-supplier list before issuing a PO
   }
 
-  async existsById(id: SupplierId): Promise<boolean> {
+  async existsById(id: SupplierId): Promise {
     return this.store.has(id.value);
     // => Map.has: O(1) presence check; does not load the full Supplier aggregate
   }
@@ -3162,7 +3162,7 @@ export class OutboxEventPublisher implements EventPublisher {
     private readonly db: any, // => TypeORM DataSource or knex connection
   ) {}
 
-  async publish(event: DomainEvent): Promise<void> {
+  async publish(event: DomainEvent): Promise {
     const record: OutboxRecord = {
       id: crypto.randomUUID(), // => unique id per event for idempotency
       eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
@@ -3368,7 +3368,7 @@ export class TemporalApprovalRouter implements ApprovalRouterPort {
     private readonly temporalClient: any, // => @temporalio/client WorkflowClient
   ) {}
 
-  async route(po: PurchaseOrder): Promise<void> {
+  async route(po: PurchaseOrder): Promise {
     // Determine approval level from PO total (domain-side rule applied here as read)
     const level = po.total.amount >= 100_000 ? "BOARD" : po.total.amount >= 10_000 ? "DIRECTOR" : "MANAGER";
     // => level: routing decision based on PO total; same logic as ApprovalLevel enum
@@ -3385,8 +3385,8 @@ export class TemporalApprovalRouter implements ApprovalRouterPort {
 
 // InMemoryApprovalRouter: test adapter
 export class InMemoryApprovalRouter implements ApprovalRouterPort {
-  readonly routed: Array<{ po: PurchaseOrder }> = [];
-  async route(po: PurchaseOrder): Promise<void> {
+  readonly routed: Array = [];
+  async route(po: PurchaseOrder): Promise {
     this.routed.push({ po });
   }
   // => captures calls for assertion; no Temporal Worker or Server needed
@@ -3606,7 +3606,7 @@ export class OutboxEventPublisher implements EventPublisher {
     private readonly db: any, // => TypeORM DataSource or knex connection
   ) {}
 
-  async publish(event: DomainEvent): Promise<void> {
+  async publish(event: DomainEvent): Promise {
     const record: OutboxRecord = {
       id: crypto.randomUUID(), // => unique id per event for idempotency
       eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
@@ -3902,7 +3902,7 @@ export enum ApprovalLevel {
 // => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
 export interface ApprovalRouterPort {
   // route: send a PO to the appropriate approver based on business rules
-  route(po: PurchaseOrder): Promise<void>;
+  route(po: PurchaseOrder): Promise;
   // => adapter translates PO to workflow payload; application never sees workflow engine API
   // => test adapter: captures routed POs for assertion without starting a workflow engine
 }
@@ -3912,7 +3912,7 @@ export class InMemoryApprovalRouter implements ApprovalRouterPort {
   readonly routed: PurchaseOrder[] = [];
   // => routed: array accumulates POs passed to route(); test asserts routing occurred
 
-  async route(po: PurchaseOrder): Promise<void> {
+  async route(po: PurchaseOrder): Promise {
     this.routed.push(po);
     // => push: O(1); PO stored for test assertion; no workflow engine needed
   }
@@ -4155,7 +4155,7 @@ describe("IssuePurchaseOrderService (integration)", () => {
 
 **Key Takeaway**: Constructor injection declares dependencies explicitly, enables framework-free instantiation in tests, and makes the dependency graph visible in the constructor signature.
 
-**Why It Matters**: A class with five constructor parameters announces its dependencies upfront. When a sixth dependency creeps in, the constructor length signals growing complexity — a nudge toward extracting a collaborator. Field injection hides this signal. Keeping business classes framework-free means the domain and application layers can be compiled and tested as a plain JAR, without Spring on the classpath.
+**Why It Matters**: A class with five constructor parameters announces its dependencies upfront. When a sixth dependency creeps in, the constructor length signals growing complexity — a nudge toward extracting a collaborator. Field injection hides this signal. Keeping business classes framework-free means the domain and application layers can be compiled and tested without a DI container on the classpath.
 
 ---
 
@@ -4979,25 +4979,25 @@ export class InMemorySupplierRepository implements SupplierRepository {
   private readonly store = new Map<string, Supplier>();
   // => Map keyed by SupplierId.value string — O(1) average for all operations
 
-  async save(supplier: Supplier): Promise<Supplier> {
+  async save(supplier: Supplier): Promise {
     this.store.set(supplier.id.value, supplier);
     // => insert or replace; O(1); keyed by typed id's string value
     return supplier;
     // => return same instance; consistent with SupplierRepository contract
   }
 
-  async findById(id: SupplierId): Promise<Supplier | null> {
+  async findById(id: SupplierId): Promise {
     return this.store.get(id.value) ?? null;
     // => ?? null: Map.get returns undefined when absent; convert to null for port contract
   }
 
-  async findAllApproved(): Promise<Supplier[]> {
+  async findAllApproved(): Promise {
     return Array.from(this.store.values()).filter((s) => s.status === SupplierStatus.APPROVED);
     // => filter: only APPROVED suppliers; PENDING, SUSPENDED, BLACKLISTED excluded
     // => purchasing context calls this to get eligible-supplier list before issuing a PO
   }
 
-  async existsById(id: SupplierId): Promise<boolean> {
+  async existsById(id: SupplierId): Promise {
     return this.store.has(id.value);
     // => Map.has: O(1) presence check; does not load the full Supplier aggregate
   }
@@ -5667,7 +5667,7 @@ export class OutboxEventPublisher implements EventPublisher {
     private readonly db: any, // => TypeORM DataSource or knex connection
   ) {}
 
-  async publish(event: DomainEvent): Promise<void> {
+  async publish(event: DomainEvent): Promise {
     const record: OutboxRecord = {
       id: crypto.randomUUID(), // => unique id per event for idempotency
       eventType: event.constructor.name, // => e.g., "PurchaseOrderIssued"
@@ -6548,7 +6548,7 @@ export enum ApprovalLevel {
 // => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
 export interface ApprovalRouterPort {
   // route: send a PO to the appropriate approver based on business rules
-  route(po: PurchaseOrder): Promise<void>;
+  route(po: PurchaseOrder): Promise;
   // => adapter translates PO to workflow payload; application never sees workflow engine API
   // => test adapter: captures routed POs for assertion without starting a workflow engine
 }
@@ -6558,7 +6558,7 @@ export class InMemoryApprovalRouter implements ApprovalRouterPort {
   readonly routed: PurchaseOrder[] = [];
   // => routed: array accumulates POs passed to route(); test asserts routing occurred
 
-  async route(po: PurchaseOrder): Promise<void> {
+  async route(po: PurchaseOrder): Promise {
     this.routed.push(po);
     // => push: O(1); PO stored for test assertion; no workflow engine needed
   }
@@ -6871,7 +6871,7 @@ export enum ApprovalLevel {
 // => adapter implementations: WorkflowEngineAdapter (Camunda/Temporal), InMemoryApprovalRouter (test)
 export interface ApprovalRouterPort {
   // route: send a PO to the appropriate approver based on business rules
-  route(po: PurchaseOrder): Promise<void>;
+  route(po: PurchaseOrder): Promise;
   // => adapter translates PO to workflow payload; application never sees workflow engine API
   // => test adapter: captures routed POs for assertion without starting a workflow engine
 }
@@ -6881,7 +6881,7 @@ export class InMemoryApprovalRouter implements ApprovalRouterPort {
   readonly routed: PurchaseOrder[] = [];
   // => routed: array accumulates POs passed to route(); test asserts routing occurred
 
-  async route(po: PurchaseOrder): Promise<void> {
+  async route(po: PurchaseOrder): Promise {
     this.routed.push(po);
     // => push: O(1); PO stored for test assertion; no workflow engine needed
   }
@@ -7166,10 +7166,10 @@ export interface Page<T> {
 }
 
 export interface PurchaseOrderReadRepository {
-  findById(id: string): Promise<PurchaseOrderView | null>;
+  findById(id: string): Promise;
 
   // findByStatus: paginated query returning a Page<PurchaseOrderView>
-  findByStatus(status: string, pageReq: PageRequest): Promise<Page<PurchaseOrderView>>;
+  findByStatus(status: string, pageReq: PageRequest): Promise;
   // => adapter: SELECT ... WHERE status=? LIMIT ? OFFSET ? + SELECT COUNT(*) WHERE status=?
 }
 
@@ -7177,11 +7177,11 @@ export interface PurchaseOrderReadRepository {
 export class InMemoryPurchaseOrderReadRepository implements PurchaseOrderReadRepository {
   private readonly views = new Map<string, PurchaseOrderView>();
 
-  async findById(id: string): Promise<PurchaseOrderView | null> {
+  async findById(id: string): Promise {
     return this.views.get(id) ?? null;
   }
 
-  async findByStatus(status: string, { page, size }: PageRequest): Promise<Page<PurchaseOrderView>> {
+  async findByStatus(status: string, { page, size }: PageRequest): Promise {
     const all = [...this.views.values()].filter((v) => v.status === status);
     // => filter all matching items; then slice for pagination
     const items = all.slice(page * size, (page + 1) * size);
@@ -7782,10 +7782,10 @@ export interface Page<T> {
 }
 
 export interface PurchaseOrderReadRepository {
-  findById(id: string): Promise<PurchaseOrderView | null>;
+  findById(id: string): Promise;
 
   // findByStatus: paginated query returning a Page<PurchaseOrderView>
-  findByStatus(status: string, pageReq: PageRequest): Promise<Page<PurchaseOrderView>>;
+  findByStatus(status: string, pageReq: PageRequest): Promise;
   // => adapter: SELECT ... WHERE status=? LIMIT ? OFFSET ? + SELECT COUNT(*) WHERE status=?
 }
 
@@ -7793,11 +7793,11 @@ export interface PurchaseOrderReadRepository {
 export class InMemoryPurchaseOrderReadRepository implements PurchaseOrderReadRepository {
   private readonly views = new Map<string, PurchaseOrderView>();
 
-  async findById(id: string): Promise<PurchaseOrderView | null> {
+  async findById(id: string): Promise {
     return this.views.get(id) ?? null;
   }
 
-  async findByStatus(status: string, { page, size }: PageRequest): Promise<Page<PurchaseOrderView>> {
+  async findByStatus(status: string, { page, size }: PageRequest): Promise {
     const all = [...this.views.values()].filter((v) => v.status === status);
     // => filter all matching items; then slice for pagination
     const items = all.slice(page * size, (page + 1) * size);
@@ -8039,7 +8039,7 @@ public sealed class SqlPurchaseOrderRepositoryV2
 
 **Key Takeaway**: Adding a method to a port is safe when existing adapters inherit a default fallback — the compiler flags adapters that must be updated, and they can be migrated incrementally.
 
-**Why It Matters**: In a team where multiple adapters implement the same port (in-memory, Postgres, Elasticsearch), adding a method without a default forces every team to update simultaneously — a coordination overhead. Using a `default` method that throws `UnsupportedOperationException` lets the team update adapters one sprint at a time: the adapters that need the new method get efficient implementations; others get a clear runtime signal to update.
+**Why It Matters**: In a team where multiple adapters implement the same port (in-memory, Postgres, Elasticsearch), adding a method without a fallback forces every team to update simultaneously — a coordination overhead. Providing a default interface method body that throws a "not yet implemented" exception lets the team update adapters one sprint at a time: the adapters that need the new method get efficient implementations; others get a clear runtime signal to update.
 
 ---
 
@@ -8265,16 +8265,16 @@ public sealed class InMemoryPurchaseOrderRepository : IPurchaseOrderRepository
 // src/purchasing/application/purchase-order-repository.port.ts
 
 export interface PurchaseOrderRepository {
-  save(po: PurchaseOrder): Promise<PurchaseOrder>;
-  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
-  existsById(id: PurchaseOrderId): Promise<boolean>;
+  save(po: PurchaseOrder): Promise;
+  findById(id: PurchaseOrderId): Promise;
+  existsById(id: PurchaseOrderId): Promise;
 
   /** @deprecated Use findAllBySupplier(supplierId) instead. Will be removed in v3. */
-  findAll(): Promise<PurchaseOrder[]>;
+  findAll(): Promise;
   // => @deprecated JSDoc tag: TypeScript compiler emits warning at call sites with --noImplicitAny
   // => IDE shows strikethrough; teams migrate call sites before v3 removes the method
 
-  findAllBySupplier(supplierId: SupplierId): Promise<PurchaseOrder[]>;
+  findAllBySupplier(supplierId: SupplierId): Promise;
   // => replacement method: more specific; adapters implement this with an optimised query
 }
 
@@ -8282,24 +8282,24 @@ export interface PurchaseOrderRepository {
 export class InMemoryPurchaseOrderRepository implements PurchaseOrderRepository {
   private readonly store = new Map<string, PurchaseOrder>();
 
-  async save(po: PurchaseOrder): Promise<PurchaseOrder> {
+  async save(po: PurchaseOrder): Promise {
     this.store.set(po.id.value, po);
     return po;
   }
-  async findById(id: PurchaseOrderId): Promise<PurchaseOrder | null> {
+  async findById(id: PurchaseOrderId): Promise {
     return this.store.get(id.value) ?? null;
   }
-  async existsById(id: PurchaseOrderId): Promise<boolean> {
+  async existsById(id: PurchaseOrderId): Promise {
     return this.store.has(id.value);
   }
 
   /** @deprecated */
-  async findAll(): Promise<PurchaseOrder[]> {
+  async findAll(): Promise {
     return [...this.store.values()];
   }
   // => still works; deprecated tag warns but does not break compilation
 
-  async findAllBySupplier(supplierId: SupplierId): Promise<PurchaseOrder[]> {
+  async findAllBySupplier(supplierId: SupplierId): Promise {
     return [...this.store.values()].filter((po) => po.supplierId.value === supplierId.value);
     // => new method: filtering by supplier; adapters provide optimised implementations
   }
@@ -8517,19 +8517,19 @@ public interface IPurchaseOrderAdminPort
 
 // Write port: used by command services; 3 methods only
 export interface PurchaseOrderWriteRepository {
-  save(po: PurchaseOrder): Promise<PurchaseOrder>;
+  save(po: PurchaseOrder): Promise;
   // => command: persist new or updated PO
-  findById(id: PurchaseOrderId): Promise<PurchaseOrder | null>;
+  findById(id: PurchaseOrderId): Promise;
   // => command: load aggregate before mutation
-  existsById(id: PurchaseOrderId): Promise<boolean>;
+  existsById(id: PurchaseOrderId): Promise;
   // => command: duplicate-check guard
 }
 
 // Read port: used by query services; no write methods
 export interface PurchaseOrderReadRepository {
-  findByStatus(status: string, page: PageRequest): Promise<Page<PurchaseOrderView>>;
-  findAllBySupplier(supplierId: string): Promise<PurchaseOrderView[]>;
-  countByStatus(status: string): Promise<number>;
+  findByStatus(status: string, page: PageRequest): Promise;
+  findAllBySupplier(supplierId: string): Promise;
+  countByStatus(status: string): Promise;
 }
 
 // Adapter implements both (composition, not forced coupling):
@@ -8866,7 +8866,7 @@ export class IssuePurchaseOrderService implements IssuePurchaseOrderUseCase {
   // => constructor signature is the contract: all dependencies explicit
   // => testable: new IssuePurchaseOrderService(mockRepo, fixedClock) — no DI container
 
-  async execute(command: IssuePOCommand): Promise<PurchaseOrder> {
+  async execute(command: IssuePOCommand): Promise {
     // ... orchestration logic
     return this.repository.save(/* ... */);
   }
@@ -9094,14 +9094,14 @@ Console.WriteLine($"Supplier notified: {payload.Subject}");
 // Command port: modifies state; returns the changed aggregate
 // => IssuePurchaseOrderUseCase: command side; creates PO; mutates state
 export interface IssuePurchaseOrderUseCase {
-  execute(command: IssuePOCommand): Promise<PurchaseOrder>;
+  execute(command: IssuePOCommand): Promise;
 }
 
 // Query port: read-only; never mutates state; may use read-optimised models
 // => FindPurchaseOrdersUseCase: query side; reads POs; no state changes
 export interface FindPurchaseOrdersUseCase {
-  findById(id: string): Promise<PurchaseOrderView | null>;
-  findByStatus(status: string): Promise<PurchaseOrderView[]>;
+  findById(id: string): Promise;
+  findByStatus(status: string): Promise;
 }
 
 // PurchaseOrderView: read model — flat projection optimised for display

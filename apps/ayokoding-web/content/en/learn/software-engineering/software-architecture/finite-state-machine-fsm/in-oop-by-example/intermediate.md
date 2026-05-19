@@ -223,7 +223,7 @@ interface Invoice {
 }
 
 // => Transition table as nested readonly Record
-const INVOICE_TRANSITIONS: Readonly<Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>>> = {
+const INVOICE_TRANSITIONS: Readonly = {
   REGISTERED: { start_match: "MATCHING" },
   MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
   // => Matching has two outcomes: guard picks which event to send
@@ -796,7 +796,7 @@ interface MatchContext {
 type InvoiceResult<T> = { readonly kind: "ok"; readonly value: T } | { readonly kind: "err"; readonly error: string };
 
 // => Guarded match transition: guard determines which state to target
-function applyMatch(ctx: MatchContext): InvoiceResult<Invoice> {
+function applyMatch(ctx: MatchContext): InvoiceResult {
   const { invoice } = ctx;
   if (invoice.state !== "MATCHING") return { kind: "err", error: `Cannot match invoice in state: ${invoice.state}` };
   // => FSM structural guard
@@ -1090,7 +1090,7 @@ interface ExtendedPO {
 }
 
 // => Handle InvoiceMatchedEvent on the PurchaseOrder FSM
-function handleInvoiceMatched(poState: ExtendedPOState, event: InvoiceMatchedEvent): InvoiceResult<ExtendedPOState> {
+function handleInvoiceMatched(poState: ExtendedPOState, event: InvoiceMatchedEvent): InvoiceResult {
   if (poState !== "ACKNOWLEDGED")
     return { kind: "err", error: `PO cannot accept InvoiceMatched in state ${poState} (expected ACKNOWLEDGED)` };
   console.log(`PO ${event.poId} transitioning to INVOICED by invoice ${event.invoiceId}`);
@@ -1326,7 +1326,7 @@ Console.WriteLine(next2?.State.GetType().Name); // => Output: Disputed
 
 ```typescript
 // => TypeScript: InvoiceFSM combines transition table with the three-way match guard
-const INVOICE_FSM_TABLE: Readonly<Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>>> = {
+const INVOICE_FSM_TABLE: Readonly = {
   REGISTERED: { start_match: "MATCHING" },
   MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
   DISPUTED: { resubmit: "MATCHING" },
@@ -1359,13 +1359,13 @@ console.log(invoiceApply(matchingInv, evt2)?.state); // => Output: DISPUTED
 
 **Key Takeaway**: The `evaluateMatch` function converts continuous business data into a discrete FSM event — the bridge between the analogue world (amounts, percentages) and the digital world (event strings).
 
-**Why It Matters**: Domain patterns should be language-agnostic. The three-way match guard, the immutable record, the table-driven transition — all of these work in Java, Kotlin, and C# because they are mathematical concepts, not language features. Understanding the pattern means you can implement it wherever your team works.
+**Why It Matters**: Domain patterns should be language-agnostic. The three-way match guard, the immutable value type, the table-driven transition — all of these work regardless of whether you choose a sealed type hierarchy, an enum, or a string literal union, because they are mathematical concepts, not language features. Understanding the pattern means you can implement it wherever your team works.
 
 ---
 
 ### Example 31: Invoice FSM with Optional-Based Transition
 
-`Optional` (Java), nullable types (Kotlin), and nullable returns (C#) all model the same "valid or rejected" transition contract without exceptions. Each idiomatic approach communicates that the result may be absent.
+Absent-value idioms — `Optional` wrapping, nullable return types, and `undefined` returns — all model the same "valid or rejected" transition contract without exceptions. Each approach communicates that no valid next state exists, letting callers handle the rejection without catching an exception.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 
@@ -1587,7 +1587,7 @@ Console.WriteLine(rejected is null); // => Output: True (null = FSM rejected)
 ```typescript
 // => TypeScript: InvoiceFSMOptional — undefined return instead of Result<T>
 // => undefined signals the FSM rejected the event; matches TypeScript null-safety idioms
-const INV_OPTIONAL_TABLE: Readonly<Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>>> = {
+const INV_OPTIONAL_TABLE: Readonly = {
   REGISTERED: { start_match: "MATCHING" },
   MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
   DISPUTED: { resubmit: "MATCHING" },
@@ -1873,7 +1873,7 @@ function asTerminal(): StateConfig {
 }
 
 // => Machine config: maps each state to its configuration — pure data, no behaviour
-const INVOICE_MACHINE_CONFIG: Readonly<Record<InvoiceState, StateConfig>> = {
+const INVOICE_MACHINE_CONFIG: Readonly = {
   REGISTERED: withEntry("logRegistered", "start_match"),
   MATCHING: withEntry("logMatchingStarted", "match_ok", "match_fail"),
   MATCHED: withEntry("notifyFinance", "schedule"),
@@ -1883,7 +1883,7 @@ const INVOICE_MACHINE_CONFIG: Readonly<Record<InvoiceState, StateConfig>> = {
 } as const;
 
 // => Action registry: named entry actions wired separately from config
-const INVOICE_ACTIONS: Readonly<Record<string, (id: string) => void>> = {
+const INVOICE_ACTIONS: Readonly = {
   logRegistered: (id) => console.log(`Invoice ${id} registered`),
   logMatchingStarted: (id) => console.log(`Matching started for invoice ${id}`),
   notifyFinance: (id) => console.log(`Finance notified: invoice ${id} matched`),
@@ -2168,7 +2168,7 @@ interface MatchCtx {
 }
 
 // => Named guard registry: maps guard name to predicate
-const INVOICE_GUARDS: Record<string, (ctx: MatchCtx) => boolean> = {
+const INVOICE_GUARDS: Record = {
   matchPasses: (ctx) => {
     if (ctx.expectedAmount === 0) return false;
     return Math.abs(ctx.supplierAmount - ctx.expectedAmount) / ctx.expectedAmount <= ctx.tolerancePct;
@@ -2182,7 +2182,7 @@ interface TransitionCandidate {
 }
 
 // => Guarded config: (state, event) -> ordered list of candidates
-const GUARDED_CONFIG: Partial<Record<InvoiceState, Record<string, readonly TransitionCandidate[]>>> = {
+const GUARDED_CONFIG: Partial = {
   MATCHING: {
     evaluate: [
       { target: "MATCHED", guardName: "matchPasses" }, // => First: fires if guard passes
@@ -2525,7 +2525,7 @@ function invoiceEntryAction(state: InvoiceState, invoice: Invoice, notifier: INo
 
 type InvResult<T> = { kind: "ok"; value: T } | { kind: "err"; error: string };
 
-function transitionInvoice(inv: Invoice, event: string, notifier: INotifier): InvResult<Invoice> {
+function transitionInvoice(inv: Invoice, event: string, notifier: INotifier): InvResult {
   const next = INVOICE_FSM_TABLE[inv.state]?.[event];
   if (next === undefined) return { kind: "err", error: `${inv.state} --${event}--> (forbidden)` };
   const newInv: Invoice = { ...inv, state: next };
@@ -2747,7 +2747,7 @@ function canResubmit(inv: InvoiceWithHistory): boolean {
   return inv.resubmissionCount < inv.maxResubmissions;
 }
 
-function resubmitInvoice(inv: InvoiceWithHistory): InvResult<InvoiceWithHistory> {
+function resubmitInvoice(inv: InvoiceWithHistory): InvResult {
   if (inv.state !== "DISPUTED") return { kind: "err", error: `Cannot resubmit invoice in state ${inv.state}` };
   if (!canResubmit(inv))
     return { kind: "err", error: `Invoice ${inv.id} exceeded resubmission limit (${inv.maxResubmissions})` };
@@ -3326,7 +3326,7 @@ type FullPOState =
   | "DISPUTED";
 
 // => Receiving transitions: self-loop for PartiallyReceived
-const FULL_PO_TRANSITIONS: Readonly<Partial<Record<FullPOState, Partial<Record<string, FullPOState>>>>> = {
+const FULL_PO_TRANSITIONS: Readonly = {
   ACKNOWLEDGED: {
     partial_receive: "PARTIALLY_RECEIVED",
     full_receive: "RECEIVED",
@@ -3546,11 +3546,11 @@ InvoiceMatchSucceeded(bus, "inv_bus_01", "po_bus_01");
 // => TypeScript: minimal in-memory event bus
 interface DomainEvent {
   readonly kind: string;
-  readonly payload: Readonly<Record<string, string>>;
+  readonly payload: Readonly;
 }
 
 class EventBus {
-  private handlers = new Map<string, Array<(e: DomainEvent) => void>>();
+  private handlers = new Map<string, Array>();
   subscribe(kind: string, handler: (e: DomainEvent) => void): void {
     if (!this.handlers.has(kind)) this.handlers.set(kind, []);
     this.handlers.get(kind)!.push(handler);
@@ -3789,7 +3789,7 @@ interface TypedInvoiceMatchedEvent {
   readonly timestamp: string;
 }
 
-function handleInvoiceMatchedTyped(current: FullPOState, event: TypedInvoiceMatchedEvent): InvResult<FullPOState> {
+function handleInvoiceMatchedTyped(current: FullPOState, event: TypedInvoiceMatchedEvent): InvResult {
   const next = FULL_PO_TRANSITIONS[current]?.invoice_matched;
   if (next !== undefined) return { kind: "ok", value: next };
   return { kind: "err", error: `PO cannot accept InvoiceMatched in state ${current} — expected RECEIVED` };
@@ -4377,7 +4377,7 @@ function ofPO(po: ExtendedPO): P2PWorkflow {
 }
 
 // => Step 1: registerInvoice — starts the inner FSM
-function registerInvoice(workflow: P2PWorkflow, invoiceId: string, supplierAmount: number): InvResult<P2PWorkflow> {
+function registerInvoice(workflow: P2PWorkflow, invoiceId: string, supplierAmount: number): InvResult {
   if (workflow.po.state !== "ACKNOWLEDGED")
     return { kind: "err", error: `Cannot register invoice: PO goods not yet received (state: ${workflow.po.state})` };
   const invoice: Invoice = { id: invoiceId, poId: workflow.po.id, supplierAmount, state: "REGISTERED" };
@@ -4385,7 +4385,7 @@ function registerInvoice(workflow: P2PWorkflow, invoiceId: string, supplierAmoun
 }
 
 // => Step 2: advancePOOnInvoicePaid — outer reacts to inner FSM terminal state
-function advancePOOnInvoicePaid(workflow: P2PWorkflow): InvResult<P2PWorkflow> {
+function advancePOOnInvoicePaid(workflow: P2PWorkflow): InvResult {
   if (workflow.invoice?.state !== "PAID") return { kind: "err", error: "Cannot advance PO: invoice not yet paid" };
   const updatedPO: ExtendedPO = { ...workflow.po, state: "INVOICED" };
   return { kind: "ok", value: { ...workflow, po: updatedPO } };
@@ -5042,7 +5042,7 @@ Console.WriteLine(rejected is null); // => Output: True (guard rejected)
 ```typescript
 // => TypeScript: self-contained FSM runner class with guards and entry actions
 class InvoiceFSMRunner {
-  private readonly table: Partial<Record<InvoiceState, Partial<Record<string, InvoiceState>>>> = {
+  private readonly table: Partial = {
     REGISTERED: { start_match: "MATCHING" },
     MATCHING: { match_ok: "MATCHED", match_fail: "DISPUTED" },
     DISPUTED: { resubmit: "MATCHING" },
@@ -5050,7 +5050,7 @@ class InvoiceFSMRunner {
     SCHEDULED_FOR_PAYMENT: { pay: "PAID" },
   };
 
-  private readonly guards: Record<string, (inv: Invoice, ctx: Record<string, number>) => boolean> = {
+  private readonly guards: Record = {
     match_ok: (inv, ctx) => {
       const expected = ctx["expected"] ?? 0;
       const tolerance = ctx["tolerance"] ?? 0.02;
@@ -5059,12 +5059,12 @@ class InvoiceFSMRunner {
     },
   };
 
-  private readonly entryActions: Partial<Record<InvoiceState, (inv: Invoice) => void>> = {
+  private readonly entryActions: Partial = {
     MATCHED: (inv) => console.log(`Notify finance: invoice ${inv.id} matched`),
     DISPUTED: (inv) => console.log(`Notify supplier: invoice ${inv.id} disputed`),
   };
 
-  apply(inv: Invoice, event: string, ctx: Record<string, number> = {}): Invoice | undefined {
+  apply(inv: Invoice, event: string, ctx: Record = {}): Invoice | undefined {
     const next = this.table[inv.state]?.[event];
     if (next === undefined) return undefined;
     const guard = this.guards[event];
@@ -5313,8 +5313,8 @@ PrintCoverageReport();
 interface MachineCoverage {
   readonly machineName: string;
   readonly states: readonly string[];
-  readonly terminalStates: ReadonlySet<string>;
-  readonly offRamps: ReadonlySet<string>;
+  readonly terminalStates: ReadonlySet;
+  readonly offRamps: ReadonlySet;
   get stateCount(): number;
   get terminalCount(): number;
   get offRampCount(): number;
@@ -5587,7 +5587,7 @@ if (r2 is Result<Invoice>.Ok ok2)
 
 ```typescript
 // => TypeScript: idempotent transition handler for at-least-once delivery
-function idempotentTransition(inv: Invoice, event: string): InvResult<Invoice> {
+function idempotentTransition(inv: Invoice, event: string): InvResult {
   // => Step 1: attempt normal table-driven transition
   const next = INVOICE_FSM_TABLE[inv.state]?.[event];
   if (next !== undefined) return { kind: "ok", value: { ...inv, state: next } };
@@ -5842,7 +5842,7 @@ Console.WriteLine(MigrateInvoiceState("Matched").GetType().Name);
 
 ```typescript
 // => TypeScript: state migration function at the persistence boundary
-const STATE_MIGRATIONS: Readonly<Record<string, InvoiceState>> = {
+const STATE_MIGRATIONS: Readonly = {
   InProgress: "MATCHING",
   Approved: "MATCHED",
   Rejected: "DISPUTED",
@@ -6665,7 +6665,7 @@ interface StateSLA {
   readonly action: EscalationAction;
 }
 
-const INVOICE_SLAS: Partial<Record<InvoiceState, StateSLA>> = {
+const INVOICE_SLAS: Partial = {
   MATCHING: { maxHours: 24, escalateTo: "accounts_payable", action: "WARN" },
   DISPUTED: { maxHours: 168, escalateTo: "procurement_manager", action: "ESCALATE_MANAGER" },
 } as const;

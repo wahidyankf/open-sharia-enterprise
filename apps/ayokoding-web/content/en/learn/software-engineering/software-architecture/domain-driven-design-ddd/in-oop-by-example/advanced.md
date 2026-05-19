@@ -995,7 +995,7 @@ interface InternalPurchaseOrder {
   id: string;
   supplierId: string;
   status: string;
-  lines: Array<{ skuCode: string; quantity: number; unit: string; unitPrice: number }>;
+  lines: Array;
   totalAmount: number;
   currency: string;
 }
@@ -2167,40 +2167,40 @@ class Invoice {
 
 // Repository port: defined in domain layer
 interface InvoiceRepository {
-  save(invoice: Invoice): Promise<void>;
-  findById(id: InvoiceId): Promise<Invoice | null>;
-  findBySupplier(supplierId: string): Promise<Invoice[]>;
-  findPendingMatch(): Promise<Invoice[]>;
-  remove(id: InvoiceId): Promise<void>;
+  save(invoice: Invoice): Promise;
+  findById(id: InvoiceId): Promise;
+  findBySupplier(supplierId: string): Promise;
+  findPendingMatch(): Promise;
+  remove(id: InvoiceId): Promise;
 }
 
 // Infrastructure adapter: in-memory implementation
 class InMemoryInvoiceRepository implements InvoiceRepository {
   private readonly _store = new Map<string, Invoice>();
 
-  async save(invoice: Invoice): Promise<void> {
+  async save(invoice: Invoice): Promise {
     this._store.set(invoice.id.value, invoice); // => upsert
   }
 
-  async findById(id: InvoiceId): Promise<Invoice | null> {
+  async findById(id: InvoiceId): Promise {
     return this._store.get(id.value) ?? null; // => null if not found
   }
 
-  async findBySupplier(supplierId: string): Promise<Invoice[]> {
+  async findBySupplier(supplierId: string): Promise {
     return [...this._store.values()].filter((i) => i.supplierId === supplierId);
   }
 
-  async findPendingMatch(): Promise<Invoice[]> {
+  async findPendingMatch(): Promise {
     return [...this._store.values()].filter((i) => i.status === "PENDING_MATCH");
   }
 
-  async remove(id: InvoiceId): Promise<void> {
+  async remove(id: InvoiceId): Promise {
     this._store.delete(id.value); // => idempotent
   }
 }
 
 // Usage
-async function demo(): Promise<void> {
+async function demo(): Promise {
   const repo: InvoiceRepository = new InMemoryInvoiceRepository();
 
   const inv1 = new Invoice(InvoiceId.of("inv_001"), "sup_001", { amount: 5000, currency: "USD" });
@@ -2529,14 +2529,14 @@ public static class AbstractFactoryDemo
 // => UoW ensures both aggregates save atomically; partial updates are prevented
 
 interface DomainRepository<T, ID> {
-  save(entity: T): Promise<void>;
-  findById(id: ID): Promise<T | null>;
+  save(entity: T): Promise;
+  findById(id: ID): Promise;
 }
 
 interface UnitOfWork {
-  begin(): Promise<void>;
-  commit(): Promise<void>;
-  rollback(): Promise<void>;
+  begin(): Promise;
+  commit(): Promise;
+  rollback(): Promise;
 }
 
 // Simplified Invoice and GRN types
@@ -2559,22 +2559,22 @@ interface GRN {
 }
 
 // In-memory implementations with UoW simulation
-class InMemoryInvoiceRepo implements DomainRepository<Invoice, InvoiceId> {
+class InMemoryInvoiceRepo implements DomainRepository {
   readonly store = new Map<string, Invoice>();
-  async save(i: Invoice): Promise<void> {
+  async save(i: Invoice): Promise {
     this.store.set(i.id.value, i);
   }
-  async findById(id: InvoiceId): Promise<Invoice | null> {
+  async findById(id: InvoiceId): Promise {
     return this.store.get(id.value) ?? null;
   }
 }
 
-class InMemoryGRNRepo implements DomainRepository<GRN, GRNId> {
+class InMemoryGRNRepo implements DomainRepository {
   readonly store = new Map<string, GRN>();
-  async save(g: GRN): Promise<void> {
+  async save(g: GRN): Promise {
     this.store.set(g.id.value, g);
   }
-  async findById(id: GRNId): Promise<GRN | null> {
+  async findById(id: GRNId): Promise {
     return this.store.get(id.value) ?? null;
   }
 }
@@ -2582,14 +2582,14 @@ class InMemoryGRNRepo implements DomainRepository<GRN, GRNId> {
 // Simple in-memory UoW (simulates transaction semantics)
 class InMemoryUnitOfWork implements UnitOfWork {
   private _committed = false;
-  async begin(): Promise<void> {
+  async begin(): Promise {
     this._committed = false;
   }
-  async commit(): Promise<void> {
+  async commit(): Promise {
     this._committed = true;
     console.log("UoW: committed");
   }
-  async rollback(): Promise<void> {
+  async rollback(): Promise {
     this._committed = false;
     console.log("UoW: rolled back");
   }
@@ -2597,12 +2597,12 @@ class InMemoryUnitOfWork implements UnitOfWork {
 
 // Application service: match invoice to GRN within a UoW
 async function matchInvoiceToGRN(
-  invoiceRepo: DomainRepository<Invoice, InvoiceId>,
-  grnRepo: DomainRepository<GRN, GRNId>,
+  invoiceRepo: DomainRepository,
+  grnRepo: DomainRepository,
   uow: UnitOfWork,
   invoiceId: InvoiceId,
   grnId: GRNId,
-): Promise<void> {
+): Promise {
   await uow.begin();
   try {
     const invoice = await invoiceRepo.findById(invoiceId);
@@ -2625,7 +2625,7 @@ async function matchInvoiceToGRN(
 }
 
 // Usage
-async function demo(): Promise<void> {
+async function demo(): Promise {
   const invoiceRepo = new InMemoryInvoiceRepo();
   const grnRepo = new InMemoryGRNRepo();
   const uow = new InMemoryUnitOfWork();
@@ -3561,9 +3561,9 @@ interface DomainEvent {
 }
 
 interface OutboxRepository {
-  saveEvent(event: DomainEvent): Promise<void>;
-  pullUnpublished(): Promise<DomainEvent[]>;
-  markPublished(id: string): Promise<void>;
+  saveEvent(event: DomainEvent): Promise;
+  pullUnpublished(): Promise;
+  markPublished(id: string): Promise;
 }
 
 // Invoice aggregate
@@ -3606,29 +3606,29 @@ class Invoice {
 class InMemoryOutboxRepository implements OutboxRepository {
   private readonly _events = new Map<string, { event: DomainEvent; published: boolean }>();
 
-  async saveEvent(event: DomainEvent): Promise<void> {
+  async saveEvent(event: DomainEvent): Promise {
     this._events.set(event.id, { event, published: false });
   }
 
-  async pullUnpublished(): Promise<DomainEvent[]> {
+  async pullUnpublished(): Promise {
     return [...this._events.values()].filter((e) => !e.published).map((e) => e.event);
   }
 
-  async markPublished(id: string): Promise<void> {
+  async markPublished(id: string): Promise {
     const entry = this._events.get(id);
     if (entry) entry.published = true; // => mark as dispatched
   }
 }
 
 // Application service: save invoice + outbox event atomically
-async function matchInvoice(invoice: Invoice, grnId: string, outboxRepo: OutboxRepository): Promise<void> {
+async function matchInvoice(invoice: Invoice, grnId: string, outboxRepo: OutboxRepository): Promise {
   const event = invoice.match(grnId); // => mutate aggregate; collect event
   await outboxRepo.saveEvent(event); // => persist event (simulates atomic save in transaction)
   // => In production: invoice save + outbox save in same DB transaction
 }
 
 // Usage
-async function demo(): Promise<void> {
+async function demo(): Promise {
   const invoice = new Invoice("inv_001");
   const outboxRepo = new InMemoryOutboxRepository();
 
@@ -3957,15 +3957,15 @@ interface Supplier {
 }
 
 interface InvoiceQueryPort {
-  findMatchedInvoices(): Promise<Invoice[]>;
+  findMatchedInvoices(): Promise;
 }
 
 interface SupplierQueryPort {
-  findById(supplierId: string): Promise<Supplier | null>;
+  findById(supplierId: string): Promise;
 }
 
 interface PaymentSchedulePort {
-  schedule(invoiceId: string, dueDate: Date, amount: number, currency: string): Promise<void>;
+  schedule(invoiceId: string, dueDate: Date, amount: number, currency: string): Promise;
 }
 
 // ── Application Service (depends only on ports) ────────────────────────────────
@@ -3977,7 +3977,7 @@ class PaymentSchedulingService {
     private readonly paymentSchedule: PaymentSchedulePort, // => injected port
   ) {}
 
-  async scheduleAllPendingPayments(): Promise<void> {
+  async scheduleAllPendingPayments(): Promise {
     const invoices = await this.invoiceQuery.findMatchedInvoices();
     // => retrieve all matched invoices waiting for payment scheduling
 
@@ -4005,7 +4005,7 @@ class InMemoryInvoiceAdapter implements InvoiceQueryPort {
   addInvoice(inv: Invoice): void {
     this._invoices.push(inv);
   }
-  async findMatchedInvoices(): Promise<Invoice[]> {
+  async findMatchedInvoices(): Promise {
     return this._invoices.filter((i) => i.status === "MATCHED");
   }
 }
@@ -4015,21 +4015,21 @@ class InMemorySupplierAdapter implements SupplierQueryPort {
   addSupplier(s: Supplier): void {
     this._suppliers.set(s.id, s);
   }
-  async findById(id: string): Promise<Supplier | null> {
+  async findById(id: string): Promise {
     return this._suppliers.get(id) ?? null;
   }
 }
 
 class LoggingPaymentScheduleAdapter implements PaymentSchedulePort {
-  readonly scheduled: Array<{ invoiceId: string; dueDate: Date; amount: number }> = [];
-  async schedule(invoiceId: string, dueDate: Date, amount: number, currency: string): Promise<void> {
+  readonly scheduled: Array = [];
+  async schedule(invoiceId: string, dueDate: Date, amount: number, currency: string): Promise {
     this.scheduled.push({ invoiceId, dueDate, amount });
     console.log(`Scheduled payment for ${invoiceId}: ${amount} ${currency} due ${dueDate.toISOString().slice(0, 10)}`);
   }
 }
 
 // Usage
-async function demo(): Promise<void> {
+async function demo(): Promise {
   const invoiceAdapter = new InMemoryInvoiceAdapter();
   const supplierAdapter = new InMemorySupplierAdapter();
   const paymentAdapter = new LoggingPaymentScheduleAdapter();
@@ -5381,7 +5381,7 @@ console.log(withLine1.status); // => Output: PARTIALLY_RECEIVED (withLine1 uncha
 
 ### Example 70: Immutable Aggregate State Transitions via Copy / With
 
-Kotlin's `data class` with `copy` enables immutable aggregate state — each transition returns a new instance instead of mutating in place. The tabs below show how the same pattern is expressed in Java (records + wither-style factory), Kotlin (the centerpiece), and C# (records with `with`).
+Immutable aggregate state means each state transition returns a new instance instead of mutating in place. The tabs below show how the same pattern is expressed across all four languages: Java (records + wither-style factory), Kotlin (data class with `copy`), C# (records with `with`), and TypeScript (readonly classes with factory methods).
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -5695,7 +5695,9 @@ class ThreeWayMatchService {
       const qtyDeltaPct = (Math.abs(grn.receivedQty - poLine.orderedQty) / poLine.orderedQty) * 100;
       if (qtyDeltaPct > qtyTolerancePct) {
         discrepancies.push(
-          `Quantity mismatch for ${poLine.skuCode}: ordered=${poLine.orderedQty}, received=${grn.receivedQty} (${qtyDeltaPct.toFixed(1)}% delta)`,
+          `Quantity mismatch for ${poLine.skuCode}: ordered=${poLine.orderedQty}, received=${
+            grn.receivedQty
+          } (${qtyDeltaPct.toFixed(1)}% delta)`,
         );
       }
 
@@ -5745,7 +5747,7 @@ console.log(result.discrepancies[0]);
 
 ### Example 71: Immutable Record Aggregates with Structural Copy in the Receiving Context
 
-C# positional records with `with` expressions mirror Kotlin's `copy` pattern, enabling immutable aggregate state transitions in the `receiving` context. All three languages express the same DDD principle — each state transition returns a new aggregate instance rather than mutating in place.
+Structural copy expressions enable immutable aggregate state transitions in the `receiving` context. All four languages express the same DDD principle — each state transition returns a new aggregate instance rather than mutating in place.
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
 {{< tab >}}
@@ -6899,7 +6901,7 @@ class PurchaseOrderIssuanceSaga {
   }
 
   // Step 1: verify supplier is approved
-  async verifySupplier(isApproved: boolean): Promise<void> {
+  async verifySupplier(isApproved: boolean): Promise {
     if (!isApproved) {
       this._state = { ...this._state, status: "FAILED", failureReason: "Supplier not approved" };
       throw new Error("Saga failed: Supplier not approved");
@@ -6908,7 +6910,7 @@ class PurchaseOrderIssuanceSaga {
   }
 
   // Step 2: issue the purchase order
-  async issuePurchaseOrder(issuedSuccessfully: boolean): Promise<void> {
+  async issuePurchaseOrder(issuedSuccessfully: boolean): Promise {
     if (this._state.status !== "RUNNING") throw new Error("Saga is not in RUNNING state");
     if (!issuedSuccessfully) {
       this._state = { ...this._state, status: "COMPENSATING", failureReason: "PO issuance failed" };
@@ -6922,7 +6924,7 @@ class PurchaseOrderIssuanceSaga {
   }
 
   // Compensation: reverse completed steps on failure
-  async compensate(): Promise<void> {
+  async compensate(): Promise {
     console.log(`Compensating saga ${this._state.sagaId}: reversing steps ${this._state.completedSteps.join(", ")}`);
     // => In production: each completed step has a compensation action (e.g. cancel PO)
     this._state = { ...this._state, status: "FAILED" };
@@ -6930,7 +6932,7 @@ class PurchaseOrderIssuanceSaga {
 }
 
 // Usage: happy path
-async function runHappyPath(): Promise<void> {
+async function runHappyPath(): Promise {
   const saga = new PurchaseOrderIssuanceSaga("saga_001", "po_001", "sup_001");
   await saga.verifySupplier(true); // => Step 1: supplier is approved
   await saga.issuePurchaseOrder(true); // => Step 2: PO issued successfully
@@ -6939,7 +6941,7 @@ async function runHappyPath(): Promise<void> {
 }
 
 // Usage: failure + compensation
-async function runFailurePath(): Promise<void> {
+async function runFailurePath(): Promise {
   const saga = new PurchaseOrderIssuanceSaga("saga_002", "po_002", "sup_002");
   await saga.verifySupplier(true); // => Step 1 passes
   try {
@@ -7246,7 +7248,7 @@ interface DomainEvent {
   readonly eventId: string;
   readonly type: EventType;
   readonly occurredAt: Date;
-  readonly payload: Record<string, unknown>;
+  readonly payload: Record;
 }
 
 // Event store: append-only log
@@ -7269,7 +7271,7 @@ class PurchaseRequisition {
   id: string = "";
   requesterId: string = "";
   status: string = "DRAFT";
-  lines: Array<{ lineId: string; skuCode: string; quantity: number }> = [];
+  lines: Array = [];
   total: number = 0;
 
   // Apply: advances state based on event type
@@ -8518,10 +8520,10 @@ catch (InvalidOperationException e)
 // Result type: discriminated union
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 
-function Ok<T>(value: T): Result<T, never> {
+function Ok<T>(value: T): Result {
   return { ok: true, value };
 }
-function Err<E>(error: E): Result<never, E> {
+function Err<E>(error: E): Result {
   return { ok: false, error };
 }
 
@@ -8556,9 +8558,9 @@ class Invoice {
     id: InvoiceId,
     supplierId: string,
     amount: Money,
-    existingInvoiceIds: Set<string>,
-    knownSupplierIds: Set<string>,
-  ): Result<Invoice, InvoiceRegistrationError> {
+    existingInvoiceIds: Set,
+    knownSupplierIds: Set,
+  ): Result {
     if (amount.amount <= 0) return Err({ kind: "InvalidAmount", message: `amount must be > 0, got: ${amount.amount}` });
 
     if (existingInvoiceIds.has(id.value)) return Err({ kind: "DuplicateInvoice", invoiceId: id.value });
@@ -8957,18 +8959,14 @@ class GoodsReceiptNote {
 
 // Repository port for PO existence check
 interface PurchaseOrderExistsPort {
-  existsAndIsIssued(id: PurchaseOrderId): Promise<boolean>;
+  existsAndIsIssued(id: PurchaseOrderId): Promise;
 }
 
 // Application-layer factory: coordinates domain + external validation
 class GoodsReceiptNoteApplicationFactory {
   constructor(private readonly poCheck: PurchaseOrderExistsPort) {}
 
-  async create(
-    id: GoodsReceiptNoteId,
-    purchaseOrderId: PurchaseOrderId,
-    receivedBy: string,
-  ): Promise<GoodsReceiptNote> {
+  async create(id: GoodsReceiptNoteId, purchaseOrderId: PurchaseOrderId, receivedBy: string): Promise {
     const exists = await this.poCheck.existsAndIsIssued(purchaseOrderId);
     if (!exists) {
       throw new Error(`PurchaseOrder ${purchaseOrderId.value} not found or not in ISSUED state`); // => external validation: PO must be ISSUED before GRN can be created
@@ -8979,7 +8977,7 @@ class GoodsReceiptNoteApplicationFactory {
 }
 
 // Usage
-async function demo(): Promise<void> {
+async function demo(): Promise {
   const issuedPOs = new Set(["po_550e8400-0001"]);
 
   const poCheck: PurchaseOrderExistsPort = {
@@ -9295,7 +9293,7 @@ interface InternalSupplier {
   readonly registrationDate: Date;
   readonly paymentTermsDays: number;
   readonly bankAccount: { accountNumber: string; bankCode: string; currency: string } | null;
-  readonly contacts: Array<{ name: string; email: string; role: string }>;
+  readonly contacts: Array;
 }
 
 // Open Host Service: published language (stable, versioned contract)
@@ -9337,7 +9335,7 @@ class SupplierOpenHostServiceV2 {
   }
 
   private formatPaymentTerms(days: number): string {
-    const map: Record<number, string> = { 0: "IMMEDIATE", 30: "NET_30", 60: "NET_60", 90: "NET_90" };
+    const map: Record = { 0: "IMMEDIATE", 30: "NET_30", 60: "NET_60", 90: "NET_90" };
     return map[days] ?? `NET_${days}`; // => fallback for non-standard terms
   }
 }
