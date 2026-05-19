@@ -5,7 +5,7 @@ date: 2026-05-17T00:00:00+07:00
 draft: false
 type: docs
 layout: list
-description: "FP variant — learn software architecture through 85 heavily annotated examples in F# (canonical), Clojure, TypeScript, and Haskell, covering patterns, principles, styles, trade-offs, and real-world architectural decisions (95% coverage)"
+description: "FP variant — learn software architecture through 93 heavily annotated examples (85 canonical + 5 FP-native extras + 3 OOP-native stubs for parity) in F# (canonical), Clojure, TypeScript, and Haskell, covering patterns, principles, styles, trade-offs, and real-world architectural decisions (95% coverage)"
 tags: ["software-architecture", "tutorial", "by-example", "fp", "fsharp", "clojure", "typescript", "haskell"]
 ---
 

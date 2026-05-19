@@ -19,7 +19,7 @@ Both disciplines complement each other. An e-commerce monolith primarily needs s
 
 This section explores proven architectural methodologies used in modern software engineering:
 
-- **By Example** (umbrella): 85 heavily annotated examples across all patterns, available in OOP (Java, Kotlin, C#, TypeScript) and FP (F#, Clojure, TypeScript, Haskell) variants
+- **By Example** (umbrella): 93 heavily annotated examples — 85 canonical + 5 FP-native extras (#86–90: ROP, Free Monads / Tagless Final, Reader, Kleisli, State) + 3 OOP-native extras (#91–93: Active Record, GRASP, Singleton-with-FP-counterexample). Available in OOP (Java, Kotlin, C#, TypeScript) and FP (F#, Clojure, TypeScript, Haskell) variants with explicit paradigm-fit framing (Norvig/Seemann/Wlaschin/Hickey/Evans/Fowler citations)
 - **C4 Model**: Hierarchical approach to visualizing software architecture at multiple levels of abstraction (Context, Containers, Components, Code)
 - **Domain-Driven Design (DDD)**: Strategic and tactical patterns for modeling complex business domains and organizing code around business concepts
 - **Hexagonal Architecture**: Ports-and-adapters approach that isolates the domain core from external concerns (databases, frameworks, UIs)
