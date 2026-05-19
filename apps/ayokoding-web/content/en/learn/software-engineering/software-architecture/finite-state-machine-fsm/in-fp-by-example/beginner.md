@@ -3,12 +3,15 @@ title: "Beginner"
 date: 2026-05-17T00:00:00+07:00
 draft: false
 weight: 10000001
-description: "Examples 1-25: PurchaseOrder state machine in F# — discriminated unions as state sets, pure transition functions, guard conditions with Result, and event replay (0-40% coverage)"
+description: "Examples 1-25: PurchaseOrder state machine in F# (canonical), Clojure, TypeScript, and Haskell — discriminated unions / ADTs as state sets, pure transition functions, guard conditions with Result / Either, and event replay (0-40% coverage)"
 tags:
   [
     "fsm",
     "finite-state-machine",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "state-machines",
     "discriminated-unions",
@@ -19,7 +22,7 @@ tags:
   ]
 ---
 
-This beginner section introduces Finite State Machine fundamentals through 25 annotated examples grounded in the `PurchaseOrder` aggregate from a Procure-to-Pay procurement platform. The central thesis — **model states as a closed union type and transitions as a pure `State -> Event -> State` function with exhaustive pattern matching** — applies across functional languages. Examples are shown in F# (canonical), with Clojure and TypeScript equivalents. The full PO approval-issuance lifecycle serves as the running domain throughout.
+This beginner section introduces Finite State Machine fundamentals through 25 annotated examples grounded in the `PurchaseOrder` aggregate from a Procure-to-Pay procurement platform. The central thesis — **model states as a closed union type and transitions as a pure `State -> Event -> State` function with exhaustive pattern matching** — applies across functional languages. Examples are shown in F# (canonical), with Clojure, TypeScript, and Haskell equivalents. The full PO approval-issuance lifecycle serves as the running domain throughout.
 
 ## What Is a Finite State Machine? (Examples 1–5)
 
@@ -50,7 +53,7 @@ stateDiagram-v2
     class Closed,Cancelled terminal
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -185,6 +188,46 @@ console.log("isTerminal Cancelled =", isTerminal({ kind: "Cancelled" }));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: discriminated union with pattern match — Haskell uses ADT case-of]
+-- ADT (algebraic data type): every valid PO state listed exactly once.
+-- The compiler rejects any value outside this set and -Wincomplete-patterns
+-- warns on non-exhaustive case-of expressions.
+{-# LANGUAGE DerivingStrategies #-}
+module PurchaseOrderFsm where
+
+-- | All eight PO states; deriving Show/Eq makes them printable and comparable.
+data POState
+  = Draft            -- => PO created, not yet submitted for approval
+  | AwaitingApproval -- => Submitted; waiting for manager decision
+  | Approved         -- => Manager approved; ready to issue to supplier
+  | Issued           -- => Sent to supplier; lines are now immutable
+  | Acknowledged     -- => Supplier confirmed receipt of the PO
+  | Closed           -- => PO fully complete — terminal state
+  | Cancelled        -- => Abandoned before payment — terminal state
+  | Disputed         -- => Discrepancy detected; resolution required
+  deriving stock (Show, Eq)
+
+-- | Pure predicate: is this state terminal?
+-- No side effects — result depends solely on the input value.
+isTerminal :: POState -> Bool
+isTerminal state = case state of
+  Closed    -> True   -- => Two terminal states
+  Cancelled -> True
+  _         -> False  -- => All others allow further transitions
+
+main :: IO ()
+main = do
+  putStrLn ("isTerminal Draft = "     <> show (isTerminal Draft))      -- => False
+  putStrLn ("isTerminal Closed = "    <> show (isTerminal Closed))     -- => True
+  putStrLn ("isTerminal Cancelled = " <> show (isTerminal Cancelled))  -- => True
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A closed union type seals the state space at compile time — the compiler enforces exhaustiveness so no invalid state can ever exist. F# uses a discriminated union; Clojure uses a spec-constrained keyword; TypeScript uses a string literal union with exhaustive `never` checks.
@@ -197,7 +240,7 @@ console.log("isTerminal Cancelled =", isTerminal({ kind: "Cancelled" }));
 
 A state machine needs identity and current state. In F# an immutable record bundles these two fields. Because records are immutable by default, "transitioning" means creating a new record — the old state is preserved, which simplifies auditing and testing.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -282,6 +325,44 @@ console.log("PO id:", po.id, "state:", po.state.kind);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: record with value-equality — Haskell record syntax + deriving Eq]
+-- Immutable record holds identity + current state.
+-- Haskell records are immutable; "update" returns a new value via record-update syntax.
+{-# LANGUAGE DerivingStrategies #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+-- | Plain record with two named fields; deriving Eq gives structural equality.
+data PurchaseOrder = PurchaseOrder
+  { poId    :: Text     -- => Business identifier (e.g. "PO-001")
+  , poState :: POState  -- => Current FSM state; starts as Draft
+  }
+  deriving stock (Show, Eq)
+
+-- | Smart constructor: build a PO in its only legal initial state.
+-- Hiding the data constructor (via module export list) prevents callers from
+-- bypassing this function; the FSM always starts in Draft.
+createPO :: Text -> PurchaseOrder
+createPO i = PurchaseOrder
+  { poId    = i      -- => Bind the provided identifier
+  , poState = Draft  -- => FSM always starts in Draft — invariant enforced here
+  }
+
+main :: IO ()
+main = do
+  let po = createPO (T.pack "PO-001")
+  -- => po = PurchaseOrder { poId = "PO-001", poState = Draft }
+  TIO.putStrLn (T.pack "PO id: " <> poId po <> T.pack ", state: " <> T.pack (show (poState po)))
+  -- => Output: PO id: PO-001, state: Draft
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An immutable record with a smart constructor enforces the "always start in Draft" invariant — no caller can skip straight to Approved.
@@ -294,7 +375,7 @@ console.log("PO id:", po.id, "state:", po.state.kind);
 
 Before writing a transition function, it helps to make the allowed transitions explicit as data. A `Map<POState * POEvent, POState>` is a declarative table: given current state and event, look up the next state. Invalid combinations return `None`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -428,6 +509,59 @@ console.log(lookupTransition({ kind: "Closed" }, "Submit"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: discriminated union POEvent + Map<POState*POEvent,POState> — Haskell ADT + Data.Map]
+-- Events are also an ADT — exhaustive case-of expressions are compiler-checked.
+{-# LANGUAGE DerivingStrategies #-}
+import qualified Data.Map.Strict as Map
+import Data.Map.Strict (Map)
+
+-- | Event ADT: one constructor per business event.
+data POEvent
+  = Submit      -- => Employee submits draft for approval
+  | Approve     -- => Manager approves the PO
+  | Reject      -- => Manager rejects — PO is cancelled
+  | Issue       -- => Finance issues PO to supplier
+  | Acknowledge -- => Supplier acknowledges receipt
+  | Close       -- => Finance closes fully-received PO
+  | Cancel      -- => Stakeholder cancels before payment
+  | Dispute     -- => Discrepancy detected; enter dispute
+  deriving stock (Show, Eq, Ord)
+
+-- | Transition table keyed by (POState, POEvent) tuple — values are POState.
+-- Data.Map.Strict.fromList builds an immutable balanced tree at module init time.
+transitionTable :: Map (POState, POEvent) POState
+transitionTable = Map.fromList
+  [ ((Draft,            Submit),      AwaitingApproval)
+  , ((AwaitingApproval, Approve),     Approved)
+  , ((AwaitingApproval, Reject),      Cancelled)
+  , ((Approved,         Issue),       Issued)
+  , ((Issued,           Acknowledge), Acknowledged)
+  , ((Acknowledged,     Close),       Closed)
+  , ((Draft,            Cancel),      Cancelled)
+  , ((Approved,         Cancel),      Cancelled)
+  , ((Issued,           Dispute),     Disputed)
+  ]
+-- => 9 valid transitions; all other (state, event) pairs are implicitly invalid
+
+-- | Lookup: pure function — returns Nothing for missing keys (no exceptions).
+lookupTransition :: POState -> POEvent -> Maybe POState
+lookupTransition s e = Map.lookup (s, e) transitionTable
+-- => Map.lookup returns Maybe; the type forces callers to handle absence
+
+main :: IO ()
+main = do
+  print (lookupTransition Draft Submit)
+  -- => Just AwaitingApproval
+  print (lookupTransition Closed Submit)
+  -- => Nothing  (terminal state rejects all events)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A data-driven transition table separates the "what transitions are valid" decision from the "how to execute a transition" logic, making the FSM readable as a specification.
@@ -440,7 +574,7 @@ console.log(lookupTransition({ kind: "Closed" }, "Submit"));
 
 The canonical FP FSM function signature is `POState -> POEvent -> POState`. It takes the current state and an event, then returns the next state. The implementation uses `match` on the state-event pair. Invalid transitions return the same state (or raise — see Example 7 for `Result`).
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -579,6 +713,56 @@ console.log("After Issue:   ", po3.state.kind); // => Issued
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: match on (state, event) tuple — Haskell uses case-of on the tuple]
+-- Pure transition function: no mutation, no IO, no exceptions.
+-- Adding -Wincomplete-patterns at the top of the module triggers a warning when
+-- a case is missing, so exhaustiveness is opt-in but compiler-checked.
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+
+-- | Pure State -> Event -> State function. Invalid pairs return the unchanged state.
+transition :: POState -> POEvent -> POState
+transition state event = case (state, event) of
+  -- => Happy path: linear approval-issuance lifecycle
+  (Draft,            Submit)      -> AwaitingApproval  -- => Draft + Submit -> AwaitingApproval
+  (AwaitingApproval, Approve)     -> Approved          -- => Approval granted
+  (AwaitingApproval, Reject)      -> Cancelled         -- => Approval denied -> terminal
+  (Approved,         Issue)       -> Issued            -- => PO sent to supplier
+  (Issued,           Acknowledge) -> Acknowledged      -- => Supplier confirmed
+  (Acknowledged,     Close)       -> Closed            -- => Fully complete -> terminal
+  -- => Cancel paths
+  (Draft,    Cancel)              -> Cancelled         -- => Cancel before submission
+  (Approved, Cancel)              -> Cancelled         -- => Cancel after approval
+  -- => Dispute path
+  (Issued,   Dispute)             -> Disputed          -- => Discrepancy on issued PO
+  -- => Default: invalid event for current state — return unchanged
+  -- => In production prefer Either Text POState (see Example 7)
+  _                               -> state
+
+-- | Helper to update only the poState field of a PurchaseOrder.
+withState :: PurchaseOrder -> POState -> PurchaseOrder
+withState po s = po { poState = s }
+-- => Record update syntax: builds a new value; original po is unchanged
+
+main :: IO ()
+main = do
+  let po0 = createPO (T.pack "PO-001")              -- => poState = Draft
+      po1 = withState po0 (transition (poState po0) Submit)
+      -- => poState = AwaitingApproval
+      po2 = withState po1 (transition (poState po1) Approve)
+      -- => poState = Approved
+      po3 = withState po2 (transition (poState po2) Issue)
+      -- => poState = Issued
+  putStrLn ("After Submit:   " <> show (poState po1))  -- => AwaitingApproval
+  putStrLn ("After Approve:  " <> show (poState po2))  -- => Approved
+  putStrLn ("After Issue:    " <> show (poState po3))  -- => Issued
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `State -> Event -> State` is the minimal, pure FSM function — every transition is visible in one `match` expression and testable without any setup.
@@ -591,7 +775,7 @@ console.log("After Issue:   ", po3.state.kind); // => Issued
 
 Exhaustiveness checking warns when a pattern-match expression does not cover every case. This example deliberately triggers the warning to show how exhaustiveness acts as a safety net — every time the state type gains a new case, the compiler flags every incomplete handler. F# raises a compile warning on non-exhaustive `match`; TypeScript raises a type error via the `never` fallthrough pattern; Clojure uses spec conformance checks.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -741,6 +925,46 @@ allStates.forEach((s) => console.log(s.kind + ":", describeState(s)));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: exhaustive match flags missing cases — Haskell -Wincomplete-patterns does the same]
+-- Exhaustive case-of: every POState constructor must appear once.
+-- Compile with -Wall to see "Pattern match(es) are non-exhaustive" warnings.
+{-# OPTIONS_GHC -Wincomplete-patterns -Wall #-}
+
+-- | Describe each state in a human-readable string. Compiler verifies coverage.
+describeState :: POState -> String
+describeState state = case state of
+  Draft            -> "PO created; awaiting submission"
+  -- => If Disputed were missing here, GHC emits: "Pattern match(es) are non-exhaustive"
+  AwaitingApproval -> "Submitted; awaiting manager decision"
+  Approved         -> "Approved; ready to issue to supplier"
+  Issued           -> "Issued to supplier; lines locked"
+  Acknowledged     -> "Supplier acknowledged receipt"
+  Closed           -> "Lifecycle complete"
+  Cancelled        -> "Abandoned; no further action"
+  Disputed         -> "Discrepancy under investigation"
+  -- => Every POState constructor covered — compiler is satisfied
+
+-- | Enumerate all states by hand; alternatively derive Enum and Bounded.
+allStates :: [POState]
+allStates =
+  [ Draft, AwaitingApproval, Approved, Issued
+  , Acknowledged, Closed, Cancelled, Disputed
+  ]
+-- => All 8 states listed
+
+main :: IO ()
+main = mapM_ (\s -> putStrLn (show s <> ": " <> describeState s)) allStates
+-- => Draft: PO created; awaiting submission
+-- => AwaitingApproval: Submitted; awaiting manager decision
+-- => ... (one line per state)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Exhaustive `match` expressions turn the addition of any new state into a compile-time task list — every handler that needs updating is immediately flagged.
@@ -755,7 +979,7 @@ allStates.forEach((s) => console.log(s.kind + ":", describeState(s)));
 
 Not every Submit event should succeed. A guard is a predicate evaluated before the transition fires. In FP a guard is just a function `context -> bool`. This example defines an approval-level guard that checks the requester's spending authority.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -880,6 +1104,47 @@ console.log("L2/75k:", canApprove(ctx3)); // => true
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: ApprovalLevel DU with pattern match — Haskell uses ADT case-of]
+-- Pure guard function: predicate on a context record, no side effects.
+{-# LANGUAGE DerivingStrategies #-}
+import Data.Decimal (Decimal)  -- => Data.Decimal from the Decimal package for exact money
+
+-- | Authority levels for purchase-order approval.
+data ApprovalLevel = L1 | L2 | L3
+  deriving stock (Show, Eq)
+-- => L1 ceiling 10,000; L2 ceiling 100,000; L3 unlimited
+
+-- | Guard context: requester level + the PO total being approved.
+data ApprovalContext = ApprovalContext
+  { requesterLevel :: ApprovalLevel  -- => Requester's authority level
+  , poTotal        :: Decimal        -- => Total value of the purchase order
+  }
+  deriving stock (Show, Eq)
+
+-- | Pure predicate: does the requester have sufficient authority?
+-- No IO, no mutation — depends only on context fields.
+canApprove :: ApprovalContext -> Bool
+canApprove ctx = case requesterLevel ctx of
+  L1 -> poTotal ctx <= 10000   -- => L1 limit: 10,000
+  L2 -> poTotal ctx <= 100000  -- => L2 limit: 100,000
+  L3 -> True                   -- => L3: unlimited authority
+
+main :: IO ()
+main = do
+  let ctx1 = ApprovalContext L1 5000     -- => 5,000 <= 10,000 -> True
+      ctx2 = ApprovalContext L1 15000    -- => 15,000 > 10,000 -> False
+      ctx3 = ApprovalContext L2 75000    -- => 75,000 <= 100,000 -> True
+  putStrLn ("L1/5k:  " <> show (canApprove ctx1))  -- => True
+  putStrLn ("L1/15k: " <> show (canApprove ctx2))  -- => False
+  putStrLn ("L2/75k: " <> show (canApprove ctx3))  -- => True
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A guard is a pure predicate on a context record — it is fully testable in isolation before being wired into the transition function.
@@ -892,7 +1157,7 @@ console.log("L2/75k:", canApprove(ctx3)); // => true
 
 When a guard fails, the transition should communicate why — not silently stay in the same state. `Result<POState, string>` encodes success (new state) or failure (error message) in the return type, forcing callers to handle both outcomes.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1013,13 +1278,13 @@ printfn "%A" result2  // => Ok AwaitingApproval
 type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
 // => Tagged union: callers must check .ok before accessing .value or .error
 
-const Ok = <T>(value: T): Result<T, never> => ({ ok: true, value });
-const Err = <E>(error: E): Result<never, E> => ({ ok: false, error });
+const Ok = <T>(value: T): Result => ({ ok: true, value });
+const Err = <E>(error: E): Result => ({ ok: false, error });
 // => Constructor helpers keep call sites readable
 
 // Guarded transition: returns Result to communicate guard failures explicitly.
 // [F#: compiler forces callers to handle Ok/Error; TS: type system enforces the same]
-const guardedTransition = (state: POState, event: POEvent, ctx: ApprovalContext): Result<POState, string> => {
+const guardedTransition = (state: POState, event: POEvent, ctx: ApprovalContext): Result => {
   if (state.kind === "Draft" && event === "Submit") {
     // => Guard: check requester authority before transitioning
     if (canApprove(ctx)) return Ok({ kind: "AwaitingApproval" });
@@ -1053,6 +1318,56 @@ console.log(result2); // => { ok: true, value: { kind: "AwaitingApproval" } }
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: Result<POState,string> with Ok/Error — Haskell uses Either Text POState]
+-- Either is the idiomatic Haskell Result. Left carries the error; Right the value.
+-- Callers MUST handle both via case-of or fmap — no silent ignoring.
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | Guarded transition returns Either to communicate guard failures explicitly.
+guardedTransition
+  :: POState
+  -> POEvent
+  -> ApprovalContext
+  -> Either Text POState
+guardedTransition state event ctx = case (state, event) of
+  (Draft, Submit) ->
+    -- => Guard: check requester authority before transitioning
+    if canApprove ctx
+      then Right AwaitingApproval         -- => Guard passed — advance state
+      else Left ("Requester level " <> T.pack (show (requesterLevel ctx))
+              <> " cannot approve PO of " <> T.pack (show (poTotal ctx)))
+      -- => Guard failed — return descriptive error, state unchanged
+  (AwaitingApproval, Approve) -> Right Approved   -- => No guard on manager approval
+  (AwaitingApproval, Reject)  -> Right Cancelled  -- => Rejection always valid
+  (Approved,         Issue)   -> Right Issued
+  (Issued,           Acknowledge) -> Right Acknowledged
+  (Acknowledged,     Close)   -> Right Closed
+  (Draft,            Cancel)  -> Right Cancelled
+  (Approved,         Cancel)  -> Right Cancelled
+  (Issued,           Dispute) -> Right Disputed
+  _ ->
+    -- => Invalid transition: state does not accept this event
+    Left ("Invalid transition: " <> T.pack (show state)
+       <> " + " <> T.pack (show event))
+
+main :: IO ()
+main = do
+  let highCtx = ApprovalContext L1 50000
+      lowCtx  = ApprovalContext L2 50000
+  print (guardedTransition Draft Submit highCtx)
+  -- => Left "Requester level L1 cannot approve PO of 50000"
+  print (guardedTransition Draft Submit lowCtx)
+  -- => Right AwaitingApproval
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result<POState, string>` makes guard failures explicit in the type system — callers cannot accidentally ignore a failed transition.
@@ -1065,7 +1380,7 @@ console.log(result2); // => { ok: true, value: { kind: "AwaitingApproval" } }
 
 A PO with zero line items should not be submittable. This guard validates the line-item collection before the Submit transition fires, demonstrating that guards can inspect aggregate contents, not just scalar fields.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1233,6 +1548,59 @@ console.log(lineItemsValid(validLines));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: LineItem record + list guards — Haskell record + list combinators]
+-- Guards on collection fields use standard Prelude functions: null and all.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Decimal (Decimal)
+
+-- | A single line item on a PO.
+data LineItem = LineItem
+  { sku       :: Text     -- => Stock-keeping unit identifier
+  , quantity  :: Int      -- => Requested quantity (must be > 0)
+  , unitPrice :: Decimal  -- => Price per unit
+  }
+  deriving stock (Show, Eq)
+
+-- | Guard: a PO must have at least one line item to be submittable.
+hasAtLeastOneLineItem :: [LineItem] -> Bool
+hasAtLeastOneLineItem = not . null
+-- => Function composition: not after null; O(1) check on the spine
+
+-- | Guard: every line item must have a positive quantity.
+allQuantitiesPositive :: [LineItem] -> Bool
+allQuantitiesPositive = all (\li -> quantity li > 0)
+-- => all short-circuits on the first False predicate result
+
+-- | Combined line-item guard for submission.
+-- Either Text () — Right () signals success with no payload.
+lineItemsValid :: [LineItem] -> Either Text ()
+lineItemsValid lines'
+  | not (hasAtLeastOneLineItem lines') =
+      Left "PO must have at least one line item"   -- => Empty PO rejected
+  | not (allQuantitiesPositive lines') =
+      Left "All line-item quantities must be positive"  -- => Zero qty rejected
+  | otherwise = Right ()                            -- => All checks passed
+
+main :: IO ()
+main = do
+  let emptyLines :: [LineItem]
+      emptyLines = []
+      validLines =
+        [ LineItem (T.pack "SKU-001") 3 150
+        , LineItem (T.pack "SKU-002") 1 800
+        ]
+  print (lineItemsValid emptyLines)  -- => Left "PO must have at least one line item"
+  print (lineItemsValid validLines)  -- => Right ()
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Guards on collection fields use standard list combinators (`List.isEmpty`, `List.forall`) — no special FSM infrastructure needed.
@@ -1245,7 +1613,7 @@ console.log(lineItemsValid(validLines));
 
 Once a PO is Issued, its line items must not change. In FP this invariant is enforced structurally: the transition function returns a record with locked lines, and callers work with that new record. This example models the lock as a type-level distinction.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1358,16 +1726,16 @@ printfn "%A" issued  // => Ok { Id = "PO-002"; Lines = [{ ... }]; State = Issued
 // TypeScript: branded types — DraftPO and IssuedPO are structurally distinct brands.
 
 declare const __draftBrand: unique symbol;
-type DraftPO = Readonly<{ id: string; lines: readonly LineItem[]; state: POState }> & { [__draftBrand]: true };
+type DraftPO = Readonly & { [__draftBrand]: true };
 // => Brand makes DraftPO a distinct type — cannot be passed where IssuedPO expected
 
 declare const __issuedBrand: unique symbol;
-type IssuedPO = Readonly<{ id: string; lines: readonly LineItem[]; state: POState }> & { [__issuedBrand]: true };
+type IssuedPO = Readonly & { [__issuedBrand]: true };
 // => Brand makes IssuedPO distinct — no "addLine" function accepts IssuedPO
 
 // Transition from DraftPO -> IssuedPO: type change enforces the lock.
 // [F#: returns IssuedPO type; TS: brand enforces same constraint at call sites]
-const issuePO = (po: DraftPO): Result<IssuedPO, string> => {
+const issuePO = (po: DraftPO): Result => {
   if (po.state.kind !== "Approved") return Err(`Cannot issue PO in state ${po.state.kind}; must be Approved`);
   // => Guard: only Approved POs can be issued
   return Ok({
@@ -1396,6 +1764,62 @@ console.log(issued.ok ? issued.value.state.kind : issued.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: two distinct record types DraftPO/IssuedPO — Haskell uses two newtypes /
+--  data types so the type system rejects mixing them; smart constructor enforces it]
+-- "Make illegal states unrepresentable": IssuedPO has no function that adds a line.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | Editable, pre-issue PO; carries line items that can still change.
+data DraftPO = DraftPO
+  { draftId    :: Text
+  , draftLines :: [LineItem]
+  , draftState :: POState  -- => Always Draft, AwaitingApproval, or Approved
+  }
+  deriving stock (Show, Eq)
+
+-- | Frozen, post-issue PO; no public function accepts it to add a line.
+data IssuedPO = IssuedPO
+  { issuedId    :: Text
+  , issuedLines :: [LineItem]
+  , issuedStateField :: POState  -- => Always Issued or later
+  }
+  deriving stock (Show, Eq)
+
+-- | Smart constructor for the type boundary: DraftPO -> IssuedPO.
+-- Returning Either makes the failure explicit; Issued carries the locked lines.
+issuePO :: DraftPO -> Either Text IssuedPO
+issuePO po = case draftState po of
+  Approved ->
+    -- => Lines copied verbatim; the type change IS the lock signal
+    Right IssuedPO
+      { issuedId         = draftId po
+      , issuedLines      = draftLines po
+      , issuedStateField = Issued
+      }
+  other ->
+    Left ("Cannot issue PO in state " <> T.pack (show other)
+       <> "; must be Approved")
+    -- => Guard: only Approved POs can be issued
+
+main :: IO ()
+main = do
+  let draftPO = DraftPO
+        { draftId    = T.pack "PO-002"
+        , draftLines = [LineItem (T.pack "SKU-A") 5 200]
+        , draftState = Approved
+        }
+  print (issuePO draftPO)
+  -- => Right (IssuedPO {issuedId = "PO-002", issuedLines = [...], issuedStateField = Issued})
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling pre-issue and post-issue POs as different types makes line-item immutability a compile-time guarantee rather than a runtime check. F# expresses this distinction as separate discriminated union cases with different payloads; TypeScript as separate type aliases with discriminant fields; Clojure through spec shapes validated at the state-entry boundary.
@@ -1408,7 +1832,7 @@ console.log(issued.ok ? issued.value.state.kind : issued.error);
 
 Cancellation is allowed from Draft and Approved but not from Issued, Acknowledged, or Closed. Rather than listing every allowed state, a guard function expresses the rule positively: "cancellable if not yet issued and not already terminal."
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1517,7 +1941,7 @@ const isCancellable = (state: POState): boolean => cancellableKinds.has(state.ki
 
 // Guarded cancel transition.
 // [F#: Result<PurchaseOrder,string>; Clojure: tagged result map]
-const cancelPO = (po: PORecord): Result<PORecord, string> => {
+const cancelPO = (po: PORecord): Result => {
   if (!isCancellable(po.state)) return Err(`Cannot cancel PO in state ${po.state.kind}`);
   // => Terminal or post-issue states cannot be cancelled
   return Ok({ ...po, state: { kind: "Cancelled" } });
@@ -1543,6 +1967,50 @@ console.log(!r3.ok ? r3.error : "");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: isCancellable with exhaustive match — Haskell uses case-of with -Wall]
+-- Set-based whitelist: Data.Set membership replaces a manual disjunction.
+{-# LANGUAGE OverloadedStrings #-}
+import qualified Data.Set as Set
+import Data.Set (Set)
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | Whitelist: only pre-issuance states are cancellable.
+cancellableStates :: Set POState
+cancellableStates = Set.fromList [Draft, Approved]
+-- => Adding a state to the whitelist is a one-line data change
+
+-- | Pure predicate: is this PO state eligible for cancellation?
+isCancellable :: POState -> Bool
+isCancellable s = Set.member s cancellableStates
+-- => O(log n) Set membership; mirrors F# | Draft | Approved -> True | _ -> False
+
+-- | Guarded cancel transition: Either Text PurchaseOrder.
+cancelPO :: PurchaseOrder -> Either Text PurchaseOrder
+cancelPO po
+  | isCancellable (poState po) =
+      Right (po { poState = Cancelled })
+      -- => Record update syntax: build new value with Cancelled
+  | otherwise =
+      Left ("Cannot cancel PO in state " <> T.pack (show (poState po)))
+      -- => Terminal or post-issue states cannot be cancelled
+
+main :: IO ()
+main = do
+  let draftPO'    = createPO (T.pack "PO-003")          -- => Draft
+      approvedPO' = draftPO' { poState = Approved }     -- => Approved
+      issuedPO'   = draftPO' { poState = Issued }       -- => Issued
+  print (cancelPO draftPO')     -- => Right (... poState = Cancelled)
+  print (cancelPO approvedPO')  -- => Right (... poState = Cancelled)
+  print (cancelPO issuedPO')    -- => Left "Cannot cancel PO in state Issued"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A single `isCancellable` predicate centralises the cancellation policy — change the rule in one place and every caller inherits the update.
@@ -1555,7 +2023,7 @@ console.log(!r3.ok ? r3.error : "");
 
 A dispute can arise when an issued PO has a delivery discrepancy. The Disputed state can resolve back to Acknowledged (discrepancy cleared) or to Cancelled (unresolvable). This example shows a two-outcome resolution using `Result`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1683,14 +2151,14 @@ type DisputeResolution = "Resolved" | "Unresolved";
 // => Two outcomes; compiler rejects any other string
 
 // Enter dispute from Issued state only.
-const enterDispute = (po: PORecord): Result<PORecord, string> => {
+const enterDispute = (po: PORecord): Result => {
   if (po.state.kind !== "Issued") return Err(`Cannot dispute PO in state ${po.state.kind}`);
   // => Only Issued POs can enter dispute
   return Ok({ ...po, state: { kind: "Disputed" } });
 };
 
 // Resolve a disputed PO: resolution determines next state.
-const resolveDispute = (po: PORecord, resolution: DisputeResolution): Result<PORecord, string> => {
+const resolveDispute = (po: PORecord, resolution: DisputeResolution): Result => {
   if (po.state.kind !== "Disputed") return Err(`Cannot resolve dispute for PO in state ${po.state.kind}`);
   // => Not in Disputed state — resolution makes no sense
   switch (resolution) {
@@ -1708,7 +2176,7 @@ const resolveDispute = (po: PORecord, resolution: DisputeResolution): Result<POR
 };
 
 // Result.bind helper: chain two fallible steps.
-const resultBind = <T, U, E>(r: Result<T, E>, f: (v: T) => Result<U, E>): Result<U, E> => (r.ok ? f(r.value) : r);
+const resultBind = <T, U, E>(r: Result, f: (v: T) => Result): Result => (r.ok ? f(r.value) : r);
 // => Short-circuits on error — same semantics as F# Result.bind
 
 const issuedPO2: PORecord = { ...createPO("PO-004"), state: { kind: "Issued" } };
@@ -1719,6 +2187,53 @@ const disputed = resultBind(resultBind(Ok(issuedPO2), enterDispute), (po) => res
 
 console.log(disputed.ok ? disputed.value.state.kind : disputed.error);
 // => "Acknowledged"
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: DisputeResolution DU + Result.bind pipeline — Haskell uses ADT and >>= on Either]
+-- Either is a Monad, so (>>=) chains fallible transitions and short-circuits on Left.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | Resolution outcome ADT — two cases only.
+data DisputeResolution
+  = Resolved    -- => Discrepancy cleared; PO proceeds
+  | Unresolved  -- => Discrepancy cannot be resolved; PO cancelled
+  deriving stock (Show, Eq)
+
+-- | Enter dispute from the Issued state only.
+enterDispute :: PurchaseOrder -> Either Text PurchaseOrder
+enterDispute po = case poState po of
+  Issued -> Right (po { poState = Disputed })
+  -- => Only Issued POs can enter dispute
+  other  -> Left ("Cannot dispute PO in state " <> T.pack (show other))
+  -- => Rejected for all other states
+
+-- | Resolve a disputed PO; outcome ADT determines next state.
+resolveDispute :: PurchaseOrder -> DisputeResolution -> Either Text PurchaseOrder
+resolveDispute po resolution = case (poState po, resolution) of
+  (Disputed, Resolved)   -> Right (po { poState = Acknowledged })
+  -- => Discrepancy cleared — treat as supplier acknowledged
+  (Disputed, Unresolved) -> Right (po { poState = Cancelled })
+  -- => Cannot resolve — cancel the PO
+  (other, _)             -> Left ("Cannot resolve dispute for PO in state "
+                                <> T.pack (show other))
+  -- => Not in Disputed state — resolution makes no sense
+
+main :: IO ()
+main = do
+  let issuedPO2 = (createPO (T.pack "PO-004")) { poState = Issued }
+      -- => Start in Issued state
+      result = enterDispute issuedPO2 >>= \po -> resolveDispute po Resolved
+      -- => >>= is Either's monadic bind; short-circuits on Left
+  print result
+  -- => Right (PurchaseOrder { poId = "PO-004", poState = Acknowledged })
 ```
 
 {{< /tab >}}
@@ -1737,7 +2252,7 @@ console.log(disputed.ok ? disputed.value.state.kind : disputed.error);
 
 The full PO transition table lists every valid (state, event) pair. Encoding it as an F# `Map` creates a queryable specification that can also drive tests and documentation generators.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1869,7 +2384,7 @@ const fullTransitionTable = new Map<string, POState["kind"]>([
 // => 11 valid transitions; all other [state, event] pairs are implicitly invalid
 
 // Table-driven transition: lookup then wrap in Result.
-const tableTransition = (state: POState, event: POEvent): Result<POState, string> => {
+const tableTransition = (state: POState, event: POEvent): Result => {
   const next = fullTransitionTable.get(`${state.kind}:${event}`);
   if (!next) return Err(`No transition: ${state.kind} + ${event}`);
   // => Pair not in table — invalid
@@ -1888,6 +2403,58 @@ console.log(tableTransition({ kind: "Disputed" }, "Approve"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: Map<POState*POEvent,POState> with Map.tryFind — Haskell Data.Map.Strict.lookup]
+-- Full transition table as an immutable Map keyed by the tuple (state, event).
+{-# LANGUAGE OverloadedStrings #-}
+import qualified Data.Map.Strict as Map
+import Data.Map.Strict (Map)
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | Full PO transition table: 11 valid pairs; all others implicitly invalid.
+fullTransitionTable :: Map (POState, POEvent) POState
+fullTransitionTable = Map.fromList
+  [ -- => Draft transitions
+    ((Draft,            Submit),      AwaitingApproval)
+  , ((Draft,            Cancel),      Cancelled)
+    -- => AwaitingApproval transitions
+  , ((AwaitingApproval, Approve),     Approved)
+  , ((AwaitingApproval, Reject),      Cancelled)
+    -- => Approved transitions
+  , ((Approved,         Issue),       Issued)
+  , ((Approved,         Cancel),      Cancelled)
+    -- => Issued transitions
+  , ((Issued,           Acknowledge), Acknowledged)
+  , ((Issued,           Dispute),     Disputed)
+    -- => Acknowledged transitions
+  , ((Acknowledged,     Close),       Closed)
+    -- => Disputed resolution paths
+  , ((Disputed,         Approve),     Acknowledged)   -- => Cleared
+  , ((Disputed,         Cancel),      Cancelled)      -- => Unresolvable
+  ]
+-- => 11 entries; any other (state, event) pair is invalid
+
+-- | Table-driven transition: lookup then wrap in Either with descriptive error.
+tableTransition :: POState -> POEvent -> Either Text POState
+tableTransition s e = case Map.lookup (s, e) fullTransitionTable of
+  Just next -> Right next  -- => Valid transition found
+  Nothing   -> Left ("No transition: " <> T.pack (show s)
+                  <> " + " <> T.pack (show e))
+  -- => Pair not in table -> invalid
+
+main :: IO ()
+main = do
+  print (tableTransition Draft Submit)       -- => Right AwaitingApproval
+  print (tableTransition Closed Submit)      -- => Left "No transition: Closed + Submit"
+  print (tableTransition Disputed Approve)   -- => Right Acknowledged
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A `Map`-based transition table is both a runtime lookup and a machine-readable specification of every valid FSM transition.
@@ -1900,7 +2467,7 @@ console.log(tableTransition({ kind: "Disputed" }, "Approve"));
 
 Procurement systems require an audit trail. Each transition should record what happened and when. In FP the audit log is a plain list of event records accumulated as a fold over the event sequence — no mutable state needed.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2072,6 +2639,62 @@ finalPO.auditLog.forEach((e) => console.log(`${e.fromState} -> ${e.toState} (${e
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: AuditEntry + AuditedPO records — Haskell records with strict fields]
+-- Append-only audit log built up by repeated record-update with (++).
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | One captured transition with metadata.
+data AuditEntry = AuditEntry
+  { fromState :: POState   -- => State before the transition
+  , event     :: POEvent   -- => Event that triggered the transition
+  , toState   :: POState   -- => State after the transition
+  , note      :: Text      -- => Optional business note
+  }
+  deriving stock (Show, Eq)
+
+-- | FSM record with an embedded audit log; AuditLog is a plain list.
+data AuditedPO = AuditedPO
+  { audId       :: Text
+  , audState    :: POState
+  , audLog      :: [AuditEntry]   -- => Append-only; newest entry at the tail
+  }
+  deriving stock (Show, Eq)
+
+-- | Apply one event; record the outcome in the audit log either way.
+applyEvent :: AuditedPO -> POEvent -> Text -> AuditedPO
+applyEvent po ev n = case tableTransition (audState po) ev of
+  Right nextState ->
+    let entry = AuditEntry (audState po) ev nextState n
+    in po { audState = nextState, audLog = audLog po ++ [entry] }
+    -- => (++) appends; for large logs prefer Difference Lists or a snoc-able sequence
+  Left msg ->
+    let entry = AuditEntry (audState po) ev (audState po)
+                           (T.pack "REJECTED: " <> msg)
+    in po { audLog = audLog po ++ [entry] }
+    -- => State unchanged; the rejection is recorded
+
+main :: IO ()
+main = do
+  let initialPO = AuditedPO (T.pack "PO-005") Draft []
+      finalPO   = applyEvent
+                    (applyEvent initialPO Submit (T.pack "Employee submitted"))
+                    Approve (T.pack "Manager approved")
+  mapM_ (\e -> putStrLn (show (fromState e) <> " -> " <> show (toState e)
+                       <> " (" <> T.unpack (note e) <> "): "
+                       <> show (event e)))
+        (audLog finalPO)
+  -- => Draft -> AwaitingApproval (Employee submitted): Submit
+  -- => AwaitingApproval -> Approved (Manager approved): Approve
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Accumulating transitions into an immutable list gives a complete audit trail as a natural by-product of applying events — no separate logging infrastructure required.
@@ -2084,7 +2707,7 @@ finalPO.auditLog.forEach((e) => console.log(`${e.fromState} -> ${e.toState} (${e
 
 A PO created with invalid data (empty ID, no lines) should fail at construction time, not at transition time. This example combines the smart constructor from Example 2 with validation, returning `Result<PurchaseOrder, string list>` to accumulate multiple errors.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2224,13 +2847,9 @@ printfn "%A" goodResult  // => Ok { ... }
 // [F#: Result<ValidatedPO,string list>; Clojure: error accumulation]
 // TypeScript: accumulate all errors — fail-all, not fail-fast.
 
-type ValidatedPO = Readonly<{
-  id: string;
-  lines: readonly LineItem[];
-  state: POState;
-}>;
+type ValidatedPO = Readonly;
 
-const createValidatedPO = (id: string, lines: readonly LineItem[]): Result<ValidatedPO, string[]> => {
+const createValidatedPO = (id: string, lines: readonly LineItem[]): Result => {
   // => Collect all errors — do not stop at the first failure
   const errors: string[] = [];
 
@@ -2265,6 +2884,61 @@ console.log(goodResult);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: Result<ValidatedPO,string list> with yield-based accumulation — Haskell list comprehension]
+-- Accumulate all errors first, then decide Right or Left ([Text]).
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Maybe (catMaybes)
+
+-- | Validated PO carries a guaranteed-non-empty line set after construction.
+data ValidatedPO = ValidatedPO
+  { vId    :: Text
+  , vLines :: [LineItem]
+  , vState :: POState
+  }
+  deriving stock (Show, Eq)
+
+-- | Accumulate every validation error; return Left only when the list is non-empty.
+createValidatedPO :: Text -> [LineItem] -> Either [Text] ValidatedPO
+createValidatedPO i ls =
+  let -- => Scalar checks return Maybe Text — Nothing means the check passed
+      idErr   = if T.null (T.strip i)
+                  then Just "PO id must not be empty"
+                  else Nothing
+      lineErr = if null ls
+                  then Just "PO must have at least one line item"
+                  else Nothing
+      -- => Per-line checks via list comprehension; one error per violation
+      qtyErrs   = [ "Line " <> sku li <> ": quantity must be positive"
+                  | li <- ls, quantity li <= 0
+                  ]
+      priceErrs = [ "Line " <> sku li <> ": unit price must be non-negative"
+                  | li <- ls, unitPrice li < 0
+                  ]
+      errors    = catMaybes [idErr, lineErr] ++ qtyErrs ++ priceErrs
+      -- => catMaybes drops Nothing values; (++) appends the lists
+  in case errors of
+       [] -> Right (ValidatedPO i ls Draft)
+       -- => No errors — construct PO in initial Draft state
+       es -> Left es
+       -- => One or more errors — return them all for the caller
+
+main :: IO ()
+main = do
+  print (createValidatedPO (T.pack "") [])
+  -- => Left ["PO id must not be empty","PO must have at least one line item"]
+  print (createValidatedPO (T.pack "PO-006")
+                           [LineItem (T.pack "SKU-X") 2 500])
+  -- => Right (ValidatedPO {vId = "PO-006", vLines = [...], vState = Draft})
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Returning `Result<_, string list>` from the constructor accumulates all validation errors in one pass — the caller sees a complete picture of what is wrong.
@@ -2277,7 +2951,7 @@ console.log(goodResult);
 
 Replacing the `POEvent` string-based enum with a discriminated union that carries payload makes transitions self-documenting and eliminates stringly-typed bugs. This example introduces a `Submit` case carrying the requester's authority level.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2423,7 +3097,7 @@ type RichPOEvent =
   | { kind: "Dispute" };
 // => Exhaustive tagged union: each case carries exactly the data it needs
 
-const richTransition = (state: POState, event: RichPOEvent): Result<POState, string> => {
+const richTransition = (state: POState, event: RichPOEvent): Result => {
   if (state.kind === "Draft" && event.kind === "Submit") {
     // => Destructure payload from the Submit variant
     const ctx: ApprovalContext = {
@@ -2459,6 +3133,60 @@ console.log(r2); // => { ok: true, value: { kind: "AwaitingApproval" } }
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: discriminated union with typed payload — Haskell ADT constructors carry fields]
+-- Rich event ADT: cases carry exactly the data the guard needs.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Decimal (Decimal)
+
+-- | Each constructor carries the data the guard for that event needs.
+data RichPOEvent
+  = RSubmit ApprovalLevel Decimal  -- => Carries requester context for the guard
+  | RApprove                       -- => Manager approves — no extra data
+  | RReject                        -- => Manager rejects — no extra data
+  | RIssue                         -- => Finance issues PO to supplier
+  | RAcknowledge                   -- => Supplier acknowledges
+  | RClose                         -- => Finance closes completed PO
+  | RCancel                        -- => Stakeholder cancels
+  | RDispute                       -- => Discrepancy detected
+  deriving stock (Show, Eq)
+
+-- | Transition with inline guard on the Submit case; pattern binds payload at use site.
+richTransition :: POState -> RichPOEvent -> Either Text POState
+richTransition state ev = case (state, ev) of
+  (Draft, RSubmit level total) ->
+    -- => Pattern binds level and total directly from the constructor
+    let ctx = ApprovalContext level total
+    in if canApprove ctx
+         then Right AwaitingApproval
+         else Left ("Level " <> T.pack (show level)
+                  <> " cannot approve " <> T.pack (show total))
+  (AwaitingApproval, RApprove) -> Right Approved
+  (AwaitingApproval, RReject)  -> Right Cancelled
+  (Approved,         RIssue)   -> Right Issued
+  (Issued,           RAcknowledge) -> Right Acknowledged
+  (Acknowledged,     RClose)   -> Right Closed
+  (Draft,            RCancel)  -> Right Cancelled
+  (Approved,         RCancel)  -> Right Cancelled
+  (Issued,           RDispute) -> Right Disputed
+  _ -> Left ("Invalid transition: " <> T.pack (show state)
+          <> " + " <> T.pack (show ev))
+
+main :: IO ()
+main = do
+  print (richTransition Draft (RSubmit L1 50000))
+  -- => Left "Level L1 cannot approve 50000"
+  print (richTransition Draft (RSubmit L2 50000))
+  -- => Right AwaitingApproval
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Carrying guard context as event payload eliminates a separate `context` parameter — the event itself is self-contained and self-documenting.
@@ -2471,7 +3199,7 @@ console.log(r2); // => { ok: true, value: { kind: "AwaitingApproval" } }
 
 Entry actions execute when a state is entered. In FP they are modelled as commands returned alongside the new state. The FSM function returns `(POState * SideEffect list)` so the caller decides when to execute the effects — keeping the transition itself pure.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2625,6 +3353,54 @@ effects.forEach((e) => console.log("Effect:", e.kind));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: SideEffect DU — Haskell ADT for commands-as-data]
+-- Transition returns (POState, [SideEffect]); caller interprets the effects
+-- only after persisting the state, keeping the function pure.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | Effects are plain data: not IO actions. The caller decides when to run them.
+data SideEffect
+  = SendEmail Text Text  -- => to, subject — notification command
+  | LogAudit  Text       -- => message — audit log command
+  deriving stock (Show, Eq)
+
+-- | Transition with effects; pure: same input always returns the same pair.
+transitionWithEffects :: POState -> POEvent -> (POState, [SideEffect])
+transitionWithEffects state event = case (state, event) of
+  (Draft, Submit) ->
+    -- => Entry action for AwaitingApproval: notify manager
+    ( AwaitingApproval
+    , [ SendEmail (T.pack "manager@company.com") (T.pack "PO awaiting your approval")
+      , LogAudit  (T.pack "PO submitted for approval")
+      ]
+    )
+  (AwaitingApproval, Approve) ->
+    ( Approved
+    , [ SendEmail (T.pack "requester@company.com") (T.pack "Your PO was approved")
+      , LogAudit  (T.pack "PO approved by manager")
+      ]
+    )
+  _ ->
+    -- => No entry action for this transition; reuse base transition with no effects
+    (transition state event, [])
+
+main :: IO ()
+main = do
+  let (nextState, effects) = transitionWithEffects Draft Submit
+  putStrLn ("Next state: " <> show nextState)         -- => AwaitingApproval
+  mapM_ (\e -> putStrLn ("Effect: " <> show e)) effects
+  -- => Effect: SendEmail "manager@company.com" "PO awaiting your approval"
+  -- => Effect: LogAudit "PO submitted for approval"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Returning side effects as a list keeps the transition function pure — the caller executes effects only after persisting the new state, preventing lost updates.
@@ -2637,7 +3413,7 @@ effects.forEach((e) => console.log("Effect:", e.kind));
 
 Exit actions fire when a state is left. This example triggers an action when the PO leaves AwaitingApproval — either to Approved or to Cancelled — to close the manager notification ticket.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2773,6 +3549,48 @@ effs.forEach((e) => console.log(e.kind, e.kind === "SendEmail" ? e.subject : e.m
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: exitAction returns SideEffect list — Haskell pattern-matches POState to [SideEffect]]
+-- Exit effects prepended to entry effects: FSM convention is exit -> transition -> entry.
+{-# LANGUAGE OverloadedStrings #-}
+import qualified Data.Text as T
+
+-- | Exit action: returns the list of effects to run when leaving a state.
+exitAction :: POState -> [SideEffect]
+exitAction fromS = case fromS of
+  AwaitingApproval ->
+    -- => Close the pending approval task when leaving AwaitingApproval
+    [ LogAudit (T.pack "Approval task closed") ]
+  Issued ->
+    -- => Archive the issued PO document when leaving Issued
+    [ LogAudit (T.pack "Issued PO document archived") ]
+  _ -> []  -- => No exit action for other states
+
+-- | Compose exit effects (source) with entry effects (destination).
+transitionWithExitAction :: POState -> POEvent -> (POState, [SideEffect])
+transitionWithExitAction state event =
+  let (nextState, entryEffects) = transitionWithEffects state event
+      -- => Compute entry effects from destination state
+      exitEffects = exitAction state
+      -- => Compute exit effects from source state
+  in (nextState, exitEffects ++ entryEffects)
+  -- => (++) concatenates; exit effects first per FSM convention
+
+main :: IO ()
+main = do
+  let (ns, effs) = transitionWithExitAction AwaitingApproval Approve
+  putStrLn ("Next: " <> show ns)         -- => Approved
+  mapM_ (\e -> putStrLn (show e)) effs
+  -- => LogAudit "Approval task closed"
+  -- => SendEmail "requester@company.com" "Your PO was approved"
+  -- => LogAudit "PO approved by manager"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Exit actions are modelled as an additive effect list prepended to entry effects — the composition is explicit and the order is controllable by the caller.
@@ -2787,7 +3605,7 @@ effs.forEach((e) => console.log(e.kind, e.kind === "SendEmail" ? e.subject : e.m
 
 Table-driven tests verify every valid transition and every invalid one in a single loop, making it easy to spot gaps in FSM coverage. F# uses script assertions (`assert` or `if/then/failwith`) to run the table inline; Clojure uses `clojure.test/is` assertions; TypeScript uses Jest `test.each` — all iterate the same transition matrix.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2930,6 +3748,60 @@ if (failures.length === 0) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: table-driven transition tests — Haskell uses a list of records]
+-- Pure function tests: no framework required; filter for mismatches.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- | One row of the test table.
+data TransitionTest = TransitionTest
+  { testState    :: POState
+  , testEvent    :: POEvent
+  , testExpected :: Either Text POState
+  }
+  deriving stock (Show, Eq)
+
+-- | Test rows: 9 valid + 1 invalid transition example.
+transitionTests :: [TransitionTest]
+transitionTests =
+  [ TransitionTest Draft            Submit      (Right AwaitingApproval)
+  , TransitionTest AwaitingApproval Approve     (Right Approved)
+  , TransitionTest AwaitingApproval Reject      (Right Cancelled)
+  , TransitionTest Approved         Issue       (Right Issued)
+  , TransitionTest Issued           Acknowledge (Right Acknowledged)
+  , TransitionTest Acknowledged     Close       (Right Closed)
+  , TransitionTest Draft            Cancel      (Right Cancelled)
+  , TransitionTest Approved         Cancel      (Right Cancelled)
+  , TransitionTest Issued           Dispute     (Right Disputed)
+  -- => Invalid: terminal state rejects events
+  , TransitionTest Closed Submit
+      (Left (T.pack "No transition: Closed + Submit"))
+  ]
+
+main :: IO ()
+main = do
+  let failures =
+        filter (\t -> tableTransition (testState t) (testEvent t)
+                  /= testExpected t)
+               transitionTests
+      -- => (/=) is structural inequality on Either — Eq derived for ADTs
+  if null failures
+    then putStrLn ("All transition tests passed ("
+                 <> show (length transitionTests) <> " tests)")
+    -- => All 10 tests passed
+    else mapM_ (\t -> putStrLn ("FAIL: " <> show (testState t)
+                              <> " + " <> show (testEvent t)
+                              <> " expected " <> show (testExpected t)))
+               failures
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Table-driven tests on a pure function require no test framework, no mocking, and no setup — just lists of inputs and expected outputs.
@@ -2942,7 +3814,7 @@ if (failures.length === 0) {
 
 The PO total is derived from line items — it is not a stored field. Deriving it as a pure function eliminates the consistency problem of a stored total diverging from the actual lines.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3064,6 +3936,43 @@ console.log("With 11% VAT:", totalWithTax); // => 1942.5
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: List.sumBy with typed records — Haskell uses sum + map (or foldr with (+))]
+-- Derive the PO total from its line items; pure function, no stored field.
+{-# LANGUAGE OverloadedStrings #-}
+import qualified Data.Text as T
+import Data.Decimal (Decimal)
+
+-- | Sum (quantity * unitPrice) across all lines. Empty list yields 0.
+calculateTotal :: [LineItem] -> Decimal
+calculateTotal = sum . map (\li -> fromIntegral (quantity li) * unitPrice li)
+-- => fromIntegral converts Int to Decimal so the multiplication type-checks
+
+-- | Apply a tax rate to the total: total * (1 + rate).
+applyTax :: Decimal -> Decimal -> Decimal
+applyTax rate total = total * (1 + rate)
+-- => 0.11 for 11% VAT
+
+main :: IO ()
+main = do
+  let sampleLines =
+        [ LineItem (T.pack "SKU-001") 3 150  -- => 3 * 150 = 450
+        , LineItem (T.pack "SKU-002") 1 800  -- => 1 * 800 = 800
+        , LineItem (T.pack "SKU-003") 2 250  -- => 2 * 250 = 500
+        ]
+      subtotal     = calculateTotal sampleLines
+      -- => 450 + 800 + 500 = 1750.00
+      totalWithTax = applyTax 0.11 subtotal
+      -- => 1750 * 1.11 = 1942.50
+  putStrLn ("Subtotal: " <> show subtotal)              -- => 1750
+  putStrLn ("With 11% VAT: " <> show totalWithTax)       -- => 1942.50
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Deriving aggregate values with `List.sumBy` keeps the total consistent with lines and eliminates the synchronisation bug of a cached total.
@@ -3076,7 +3985,7 @@ console.log("With 11% VAT:", totalWithTax); // => 1942.5
 
 Combining line-item validation, total derivation, and smart construction into one `createPO` pipeline shows how FP composition builds a robust domain constructor from small, reusable pieces.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3209,6 +4118,47 @@ console.log(good.ok ? `Total: ${good.value.total}` : good.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: buildPO pipeline with Result chaining — Haskell composes via Either bind]
+-- Smart constructor combining validation, derivation, and assembly in sequence.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Decimal (Decimal)
+
+-- | FullPO with a derived total field; never mutated after construction.
+data FullPO = FullPO
+  { fId    :: Text
+  , fLines :: [LineItem]
+  , fTotal :: Decimal     -- => Derived once at construction
+  , fState :: POState
+  }
+  deriving stock (Show, Eq)
+
+-- | Pipeline: validate -> derive -> construct.
+-- Either's Monad instance gives us natural short-circuiting on Left.
+buildPO :: Text -> [LineItem] -> Either [Text] FullPO
+buildPO i ls = do
+  -- => do-notation desugars to >>= over Either; Left short-circuits
+  _ <- createValidatedPO i ls    -- => Step 1: validate inputs
+  let total = calculateTotal ls  -- => Step 2: derive total from validated lines
+  Right (FullPO i ls total Draft)
+  -- => Step 3: construct the fully initialised record
+
+main :: IO ()
+main = do
+  print (buildPO (T.pack "PO-007") [])
+  -- => Left ["PO must have at least one line item"]
+  print (buildPO (T.pack "PO-007")
+                 [LineItem (T.pack "A") 5 100])
+  -- => Right (FullPO {fId = "PO-007", fLines = [...], fTotal = 500, fState = Draft})
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Composing validation, derivation, and construction into a `Result`-threaded pipeline gives a single entry point that either produces a valid PO or a complete list of reasons it could not.
@@ -3221,7 +4171,7 @@ console.log(good.ok ? `Total: ${good.value.total}` : good.error);
 
 Sometimes a state carries data specific to that state — for example, Approved carries the approver's name. Nesting payload inside a DU case removes the need for nullable optional fields on the record and makes illegal combinations unrepresentable.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3361,7 +4311,7 @@ type RichPOState =
 // => Carries dispute description; only present in Disputed
 // => No nullable fields — each variant carries exactly the data it needs
 
-const richStateTransition = (state: RichPOState, event: POEvent): Result<RichPOState, string> => {
+const richStateTransition = (state: RichPOState, event: POEvent): Result => {
   if (state.kind === "Draft" && event === "Submit")
     return Ok({ kind: "AwaitingApproval", submittedBy: "employee@company.com" });
   // => Payload set at transition time — same as F# AwaitingApproval "employee@..."
@@ -3384,6 +4334,59 @@ console.log(r);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: RichPOState DU with typed payload per case — Haskell ADT carries fields per constructor]
+-- Per-variant payload: only Approved carries an approver name; no nullable fields.
+{-# LANGUAGE DerivingStrategies, OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+-- | Rich state ADT: each constructor carries exactly what the state needs.
+data RichPOState
+  = RDraft                                  -- => No extra data
+  | RAwaitingApproval Text                  -- => submittedBy
+  | RApproved Text UTCTime                  -- => approvedBy, approvedAt
+  | RIssued UTCTime                         -- => issuedAt
+  | RAcknowledged                           -- => Supplier ack — no extra data
+  | RClosed                                 -- => Terminal — no extra data
+  | RCancelled Text                         -- => reason
+  | RDisputed Text                          -- => description
+  deriving stock (Show, Eq)
+
+-- | Transition pattern-matches on the (state, event) tuple and destructures payloads.
+richStateTransition :: RichPOState -> POEvent -> UTCTime -> Either Text RichPOState
+richStateTransition state event now = case (state, event) of
+  (RDraft, Submit) ->
+    Right (RAwaitingApproval (T.pack "employee@company.com"))
+    -- => Payload set at transition time
+  (RAwaitingApproval _, Approve) ->
+    Right (RApproved (T.pack "manager@company.com") now)
+    -- => _ ignores submittedBy; it is no longer needed after approval
+  (RApproved _ _, Issue) ->
+    Right (RIssued now)
+  (RIssued _, Acknowledge) ->
+    Right RAcknowledged
+  (RAcknowledged, Close) ->
+    Right RClosed
+  (RDraft, Cancel) ->
+    Right (RCancelled (T.pack "Cancelled before submission"))
+  _ ->
+    Left ("Invalid transition from " <> T.pack (show state)
+       <> " + " <> T.pack (show event))
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  print (richStateTransition RDraft Submit now)
+  -- => Right (RAwaitingApproval "employee@company.com")
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Payload inside DU cases scopes state-specific data to the states that need it — no nullable fields, no runtime null checks.
@@ -3396,7 +4399,7 @@ console.log(r);
 
 Observability requires knowing what state transitions happened in production. This example wraps the transition function with a logging decorator that records every state change to a `printfn` sink (replaceable with a structured logger).
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3483,7 +4486,7 @@ let _ = loggedTransition Closed Submit
 // [F#: withLogging higher-order function; Clojure: with-logging wrapping fn]
 // TypeScript: higher-order decorator — injects a logger without modifying the transition.
 
-type TransitionFn = (state: POState, event: POEvent) => Result<POState, string>;
+type TransitionFn = (state: POState, event: POEvent) => Result;
 
 // Higher-order function: wraps any transition function with logging.
 // The logger is injected — swap console.log for Winston/Pino in production.
@@ -3515,6 +4518,55 @@ loggedTransition({ kind: "Closed" }, "Submit");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: withLogging higher-order function — Haskell uses function-of-function]
+-- The logger is injected. The wrapper returns the same Either; only adds an IO effect.
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+-- | Wrap any pure transition with a logging side effect.
+-- The resulting function is IO-returning because logging is impure.
+withLogging
+  :: (Text -> IO ())
+  -> (POState -> POEvent -> Either Text POState)
+  -> POState
+  -> POEvent
+  -> IO (Either Text POState)
+withLogging logger fn state event = do
+  let result = fn state event
+  -- => Call the wrapped function first; result is pure
+  case result of
+    Right nextState ->
+      logger (T.pack "[FSM] " <> T.pack (show state)
+           <> T.pack " --" <> T.pack (show event)
+           <> T.pack "--> " <> T.pack (show nextState))
+      -- => Log successful transition with arrow notation
+    Left msg ->
+      logger (T.pack "[FSM] REJECTED " <> T.pack (show state)
+           <> T.pack " + " <> T.pack (show event)
+           <> T.pack ": " <> msg)
+      -- => Log rejection with reason
+  pure result
+  -- => Return the original result unchanged — pure wrapper adds only IO
+
+main :: IO ()
+main = do
+  let loggedTransition = withLogging TIO.putStrLn tableTransition
+      -- => putStrLn from Data.Text.IO is the logger sink
+  _ <- loggedTransition Draft Submit
+  -- => [FSM] Draft --Submit--> AwaitingApproval
+  _ <- loggedTransition Closed Submit
+  -- => [FSM] REJECTED Closed + Submit: No transition: Closed + Submit
+  pure ()
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A higher-order `withLogging` wrapper adds observability to any transition function without modifying it — open/closed principle applied functionally.
@@ -3527,7 +4579,7 @@ loggedTransition({ kind: "Closed" }, "Submit");
 
 In event-sourced systems the current state is derived by replaying all past events from the initial state. A `List.fold` over the event log naturally implements this — no stored current state needed.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3647,6 +4699,40 @@ console.log("After Submit only:", partialState.kind); // => AwaitingApproval
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: List.fold reconstructs state from events — Haskell uses foldl' over the event list]
+-- Replay: foldl' is the strict left fold; suitable for an accumulator that should not
+-- accumulate thunks.
+import Data.List (foldl')
+
+-- | Replay events from Draft using foldl'; invalid events are skipped silently.
+replayEvents :: [POEvent] -> POState
+replayEvents = foldl' step Draft
+  -- => Start from Draft; apply each event in order
+  where
+    step :: POState -> POEvent -> POState
+    step currentState ev = case tableTransition currentState ev of
+      Right nextState -> nextState   -- => Valid transition — advance
+      Left _          -> currentState -- => Invalid event — keep current (or error in strict mode)
+
+main :: IO ()
+main = do
+  let eventLog = [Submit, Approve, Issue, Acknowledge]
+      -- => Full approval-issuance lifecycle as an event sequence
+      reconstructedState = replayEvents eventLog
+      -- => foldl': Draft -> AwaitingApproval -> Approved -> Issued -> Acknowledged
+  putStrLn ("Reconstructed state: " <> show reconstructedState)
+  -- => Acknowledged
+  let partialState = replayEvents [Submit]
+      -- => AwaitingApproval
+  putStrLn ("After Submit only: " <> show partialState)  -- => AwaitingApproval
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `List.fold` over an event sequence is the minimal implementation of event-sourced state reconstruction — no framework, just standard functional combinators.
@@ -3659,7 +4745,7 @@ console.log("After Submit only:", partialState.kind); // => AwaitingApproval
 
 A DOT graph string can be generated from the transition table data without any external tool. Feeding the string to Graphviz produces a visual state diagram that stays in sync with the code.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3751,7 +4837,7 @@ printfn "%s" dotGraph
 
 // Generate a DOT language graph from the fullTransitionTable.
 // Pure function: same table always produces the same graph string.
-const generateDotGraph = (table: Map<string, POState["kind"]>): string => {
+const generateDotGraph = (table: Map): string => {
   const edges: string[] = [];
   table.forEach((toState, key) => {
     // => key is "FromState:Event"; toState is the next-state kind
@@ -3778,6 +4864,43 @@ console.log(dotGraph);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: Map.toList + List.map producing DOT lines — Haskell uses Map.toList + map + unlines]
+-- Pure DOT-graph generator from the fullTransitionTable.
+import qualified Data.Map.Strict as Map
+import Data.List (intercalate)
+
+-- | Generate a DOT digraph string from the transition table.
+generateDotGraph :: Map.Map (POState, POEvent) POState -> String
+generateDotGraph table =
+  let edges =
+        map (\((fromS, ev), toS) ->
+              "    " <> show fromS <> " -> " <> show toS
+                  <> " [label=\"" <> show ev <> "\"];")
+            (Map.toList table)
+      -- => One DOT edge line per (state, event, next-state) triple
+      header = "digraph PurchaseOrderFSM {"
+      -- => DOT digraph declaration
+      footer = "}"
+      -- => Closing brace
+  in intercalate "\n" ([header] ++ edges ++ [footer])
+  -- => intercalate joins lines with newlines; same as Data.Text.intercalate
+
+main :: IO ()
+main = putStrLn (generateDotGraph fullTransitionTable)
+-- => digraph PurchaseOrderFSM {
+-- =>     Draft -> AwaitingApproval [label="Submit"];
+-- =>     Draft -> Cancelled [label="Cancel"];
+-- =>     AwaitingApproval -> Approved [label="Approve"];
+-- =>     ... (one line per transition)
+-- => }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The transition table as data enables automatic diagram generation — the visualisation is always derived from the code, never a separately maintained artifact.
@@ -3790,7 +4913,7 @@ console.log(dotGraph);
 
 An FSM defines a protocol: a valid sequence of messages (events) that a PO can accept. This example makes the protocol explicit by providing a `validateSequence` function that checks whether an event list represents a valid lifecycle without actually executing the transitions.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3903,7 +5026,7 @@ printfn "Validate/replay consistent: %b" consistent  // => true
 // TypeScript: for-of loop with early return — same semantics without a stack.
 
 // Validate an event sequence against the FSM without executing side effects.
-const validateSequence = (events: readonly POEvent[]): Result<POState, string> => {
+const validateSequence = (events: readonly POEvent[]): Result => {
   let state: POState = { kind: "Draft" };
   // => Start from Draft — same invariant as F#
 
@@ -3936,6 +5059,53 @@ const consistent = vResult.ok && vResult.value.kind === rResult.kind;
 // => true — validate and replay agree on the final state
 
 console.log("Validate/replay consistent:", consistent); // => true
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderFsm.hs ───────────────────────────────────────────────
+-- [F#: recursive go with Result accumulator — Haskell uses foldM with Either monad]
+-- Validate an event sequence without executing side effects.
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Control.Monad (foldM)
+
+-- | Validate a sequence: thread state through tableTransition via foldM on Either.
+-- Either is a Monad; foldM short-circuits on the first Left.
+validateSequence :: [POEvent] -> Either Text POState
+validateSequence = foldM step Draft
+  where
+    step :: POState -> POEvent -> Either Text POState
+    step state ev = case tableTransition state ev of
+      Right nextState -> Right nextState
+      -- => Valid step — continue with new state
+      Left msg ->
+        Left ("At state " <> T.pack (show state)
+           <> ", event " <> T.pack (show ev)
+           <> ": " <> msg)
+      -- => Invalid step — annotate and stop
+
+main :: IO ()
+main = do
+  let validSeq   = [Submit, Approve, Issue, Acknowledge, Close]
+      invalidSeq = [Submit, Issue]
+      -- => Issue not valid from AwaitingApproval
+  print (validateSequence validSeq)
+  -- => Right Closed
+  print (validateSequence invalidSeq)
+  -- => Left "At state AwaitingApproval, event Issue: No transition: AwaitingApproval + Issue"
+
+  -- Consistency: validateSequence and replayEvents agree on the final state.
+  let seqToCheck = [Submit, Approve, Issue]
+      vResult    = validateSequence seqToCheck   -- => Right Issued
+      rResult    = replayEvents seqToCheck       -- => Issued
+      consistent = vResult == Right rResult
+      -- => Right Issued == Right Issued -> True
+  putStrLn ("Validate/replay consistent: " <> show consistent)  -- => True
 ```
 
 {{< /tab >}}

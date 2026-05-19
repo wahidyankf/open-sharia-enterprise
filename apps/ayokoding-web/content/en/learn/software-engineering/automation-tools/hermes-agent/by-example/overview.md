@@ -25,7 +25,7 @@ Hermes Agent is a **free, open-source, self-improving AI agent** built by Nous R
 
 - **CLI**: Python-based terminal UI (`hermes`) with multiline editing, autocomplete, streaming, and token/cost tracking
 - **Gateway**: Multi-platform messaging server connecting Telegram, Discord, Slack, WhatsApp, Signal, Email, and more
-- **Tools**: 47 built-in capabilities across 19 toolsets (terminal, file, browser, web, vision, delegation, memory, cron, and more)
+- **Tools**: 70+ built-in capabilities organized into pluggable toolsets (terminal, file, browser, web, vision, delegation, memory, cron, and more)
 - **Memory**: Persistent MEMORY.md and USER.md files injected into every session, with FTS5 session search
 - **Skills**: Self-improving procedural memory (SKILL.md format) — agent autonomously creates and refines skills after complex tasks
 - **Delegation**: Spawn isolated subagents for parallel workstreams (up to 3 concurrent, depth limit 2)

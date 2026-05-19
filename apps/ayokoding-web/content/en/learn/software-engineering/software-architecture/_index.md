@@ -27,5 +27,5 @@ draft: false
   - [FSM By Example in FP](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example)
 - [Cases](/en/learn/software-engineering/software-architecture/cases)
   - [Overview](/en/learn/software-engineering/software-architecture/cases/overview)
-  - [In FP — F# / Giraffe / Npgsql](/en/learn/software-engineering/software-architecture/cases/in-fp)
+  - [In FP — F# / Clojure / TypeScript / Haskell](/en/learn/software-engineering/software-architecture/cases/in-fp)
   - [In OOP — Java / Spring Boot](/en/learn/software-engineering/software-architecture/cases/in-oop)

@@ -3,13 +3,14 @@ title: "Advanced"
 weight: 10000003
 date: 2026-05-17T00:00:00+07:00
 draft: false
-description: "FP variant — advanced software architecture examples covering distributed systems, microservices patterns, resilience strategies, and expert-level architectural decisions, in F#"
-tags: ["software-architecture", "tutorial", "by-example", "advanced", "fp", "fsharp"]
+description: "FP variant — advanced software architecture examples covering distributed systems, microservices patterns, resilience strategies, and expert-level architectural decisions, in F# (canonical), Clojure, TypeScript, and Haskell"
+tags:
+  ["software-architecture", "tutorial", "by-example", "advanced", "fp", "fsharp", "clojure", "typescript", "haskell"]
 ---
 
 This section covers advanced software architecture patterns for distributed systems, microservices,
 resilience, and expert-level architectural decisions — using functional idioms. F# is the canonical
-language; Clojure and TypeScript equivalents appear in the tabbed code blocks. Examples 58–85 assume
+language; Clojure, TypeScript, and Haskell equivalents appear in the tabbed code blocks. Examples 58–85 assume
 familiarity with foundational and intermediate architecture concepts covered earlier in this series.
 
 ## Decomposition and Service Design
@@ -41,7 +42,7 @@ graph TD
     style E fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -194,8 +195,8 @@ printfn "Cancelled: %b, Reserved: %b" cancelled reserved
 // [F#: modules as service boundaries + single-case DU identifiers — TypeScript version]
 
 // => Domain value objects — branded types prevent OrderId/ProductId confusion
-type OrderId58 = Readonly<{ value: string; _brand: "OrderId" }>;
-type ProductId58 = Readonly<{ value: string; _brand: "ProductId" }>;
+type OrderId58 = Readonly;
+type ProductId58 = Readonly;
 
 const orderId58 = (v: string): OrderId58 => ({ value: v, _brand: "OrderId" });
 const productId58 = (v: string): ProductId58 => ({ value: v, _brand: "ProductId" });
@@ -257,6 +258,95 @@ console.log(`Cancelled: ${cancelled58}, Reserved: ${reserved58}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: MicroservicesDecomp.hs ───────────
+-- [F#: modules + DU wrappers — Haskell uses modules + newtype wrappers; the type system
+-- prevents OrderId/ProductId confusion at compile time, identical safety to F# DUs]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DerivingStrategies #-}
+
+module MicroservicesDecomp where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.IORef                       -- mutable cell for the in-memory store
+import qualified Data.UUID as UUID
+import qualified Data.UUID.V4 as UUID
+import           Data.Text (Text)
+import qualified Data.Text as T
+
+-- => Domain value objects — newtype wrappers carry zero runtime cost
+newtype OrderId   = OrderId   { unOrderId   :: Text } deriving stock (Show, Eq, Ord)
+-- => Wrapping Text in a newtype prevents accidental OrderId/ProductId confusion
+newtype ProductId = ProductId { unProductId :: Text } deriving stock (Show, Eq, Ord)
+
+-- => Order record: minimal fields for demo; real impl persists more
+data Order = Order { oProduct :: !ProductId, oQty :: !Int, oStatus :: !Text }
+  deriving stock (Show)
+
+-- => Orders capability: data record holds the in-memory store ref
+newtype OrdersService = OrdersService { ordersStore :: IORef (Map OrderId Order) }
+
+newOrdersService :: IO OrdersService
+newOrdersService = OrdersService <$> newIORef Map.empty
+-- => Constructor returns a fresh service value with empty in-memory store
+
+placeOrder :: OrdersService -> ProductId -> Int -> IO OrderId
+placeOrder (OrdersService ref) pid qty = do
+  uuid <- UUID.nextRandom                            -- => fresh UUID each call
+  let oid = OrderId (T.pack (UUID.toString uuid))    -- => wrap into OrderId newtype
+  modifyIORef' ref (Map.insert oid (Order pid qty "PLACED"))
+  pure oid                                           -- => stable reference returned
+
+cancelOrder :: OrdersService -> OrderId -> IO Bool
+cancelOrder (OrdersService ref) oid = do
+  m <- readIORef ref
+  case Map.lookup oid m of                           -- => total pattern match on Maybe
+    Nothing -> pure False                            -- => absent order is business outcome
+    Just o  -> do
+      writeIORef ref (Map.insert oid (o { oStatus = "CANCELLED" }) m)
+      pure True                                      -- => Bool, never exception
+
+-- => Inventory capability: independent service, no dependency on Orders internals
+newtype InventoryService = InventoryService { stockRef :: IORef (Map ProductId Int) }
+
+newInventoryService :: IO InventoryService
+newInventoryService = InventoryService <$> newIORef Map.empty
+-- => Each service constructed independently — Conway's Law materialised
+
+reserve :: InventoryService -> ProductId -> Int -> IO Bool
+reserve (InventoryService ref) pid qty = do
+  m <- readIORef ref
+  let current = Map.findWithDefault 10 pid m         -- => default 10 units for demo
+  if current >= qty
+    then do                                          -- => stock sufficient: decrement
+      writeIORef ref (Map.insert pid (current - qty) m)
+      pure True                                      -- => business outcome via Bool
+    else pure False                                  -- => caller decides what to do
+
+release :: InventoryService -> ProductId -> Int -> IO ()
+release (InventoryService ref) pid qty =
+  modifyIORef' ref (Map.insertWith (+) pid qty)      -- => compensating action
+-- => insertWith (+) returns existing+qty or qty if absent
+
+-- => Usage: services swapped independently — changing Orders never touches Inventory
+demo :: IO ()
+demo = do
+  orders <- newOrdersService                         -- => instantiate each capability
+  inv    <- newInventoryService                      -- => independent of orders
+  let pid = ProductId "SKU-001"                      -- => domain id, typed not stringly
+  oid       <- placeOrder orders pid 3               -- => returns OrderId newtype
+  reserved  <- reserve inv pid 3                     -- => True — stock available
+  cancelled <- cancelOrder orders oid                -- => True — order existed
+  putStrLn $ "Cancelled: " <> show cancelled
+          <> ", Reserved: " <> show reserved
+-- => Output: Cancelled: True, Reserved: True
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# modules with typed function signatures enforce service boundaries as firmly as
@@ -289,7 +379,7 @@ graph LR
     style Old fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -411,15 +501,11 @@ printfn "%A" result2
 ```typescript
 // [F#: immutable route table + pure dispatch function — TypeScript version]
 
-type RouteHandler59 = (path: string, payload: Record<string, string>) => { source: string; path: string };
+type RouteHandler59 = (path: string, payload: Record) => { source: string; path: string };
 // => Handler type: path and payload in, response out
 
 // => Register a route: returns a new Map with the route added — pure, no side effects
-const registerRoute59 = (
-  routes: ReadonlyMap<string, RouteHandler59>,
-  prefix: string,
-  handler: RouteHandler59,
-): ReadonlyMap<string, RouteHandler59> => {
+const registerRoute59 = (routes: ReadonlyMap, prefix: string, handler: RouteHandler59): ReadonlyMap => {
   const next = new Map(routes);
   next.set(prefix, handler);
   return next;
@@ -428,10 +514,10 @@ const registerRoute59 = (
 
 // => Route dispatch: tries each prefix, falls back to legacy handler
 const routeRequest59 = (
-  routes: ReadonlyMap<string, RouteHandler59>,
+  routes: ReadonlyMap,
   legacyHandler: RouteHandler59,
   path: string,
-  payload: Record<string, string>,
+  payload: Record,
 ): { source: string; path: string } => {
   const matchedPrefix = [...routes.keys()].find((p) => path.startsWith(p));
   // => Searches the route table for a matching prefix
@@ -458,6 +544,68 @@ console.log(JSON.stringify(result59a));
 const result59b = routeRequest59(routes59, legacyHandler59, "/api/products/abc", {});
 console.log(JSON.stringify(result59b));
 // => Output: {"source":"legacy_monolith","path":"/api/products/abc"}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: StranglerFig.hs ───────────
+-- [F#: Map<string, RouteHandler> + Option dispatch — Haskell uses Data.Map and Maybe;
+-- the route table is a pure immutable Map; adding a route returns a new Map]
+{-# LANGUAGE OverloadedStrings #-}
+
+module StranglerFig where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Data.Maybe (fromMaybe)
+import           Data.List  (find)
+
+-- => Response record: every handler returns this uniform shape
+data Response = Response { rSource :: !Text, rPath :: !Text } deriving (Show)
+
+-- => Handler type alias: path + payload → Response (pure function, no IO)
+type RouteHandler = Text -> Map Text Text -> Response
+
+-- => Register a route: produces a NEW Map with the route added — no mutation
+registerRoute :: Text -> RouteHandler -> Map Text RouteHandler -> Map Text RouteHandler
+registerRoute = Map.insert
+-- => Map.insert is point-free here — exactly the F# Map.add semantics
+
+-- => Dispatcher: scan prefixes, fall back to legacy if none match
+routeRequest :: Map Text RouteHandler -> RouteHandler -> Text -> Map Text Text -> Response
+routeRequest routes legacy path payload =
+  case find (\p -> p `T.isPrefixOf` path) (Map.keys routes) of  -- => first matching prefix
+    Just p  -> fromMaybe (legacy path payload)                  -- => safety net (impossible)
+                         (fmap (\h -> h path payload) (Map.lookup p routes))
+    Nothing -> legacy path payload                              -- => delegate to monolith
+
+-- => New Orders handler: already migrated to the new module
+newOrdersHandler :: RouteHandler
+newOrdersHandler path _ = Response "new_module" path
+-- => Pure function — perfect for property-based testing
+
+-- => Catch-all legacy handler for non-migrated paths
+legacyHandler :: RouteHandler
+legacyHandler path _ = Response "legacy_monolith" path
+
+-- => Build the route table by piping through registerRoute calls
+routes :: Map Text RouteHandler
+routes = registerRoute "/api/orders" newOrdersHandler Map.empty
+-- => Start empty; pipe each migrated route through registerRoute
+
+demo :: IO ()
+demo = do
+  let r1 = routeRequest routes legacyHandler "/api/orders/123" Map.empty
+  print r1
+  -- => Output: Response {rSource = "new_module", rPath = "/api/orders/123"}
+  let r2 = routeRequest routes legacyHandler "/api/products/abc" Map.empty
+  print r2
+  -- => Output: Response {rSource = "legacy_monolith", rPath = "/api/products/abc"}
 ```
 
 {{< /tab >}}
@@ -497,7 +645,7 @@ sequenceDiagram
     O->>I: ReleaseStock (compensation)
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -652,12 +800,12 @@ type Result60<T, E> = { ok: true; value: T } | { ok: false; error: E };
 // => SagaStep: forward action returns Result; compensate is always () => void
 type SagaStep60 = {
   name: string;
-  execute: () => Result60<void, string>;
+  execute: () => Result60;
   compensate: () => void;
 };
 
 // => Orchestrator: run steps in order, compensate completed steps on failure
-const runSaga60 = (steps: readonly SagaStep60[]): Result60<void, string> => {
+const runSaga60 = (steps: readonly SagaStep60[]): Result60 => {
   const completed: SagaStep60[] = [];
   for (const step of steps) {
     const result = step.execute();
@@ -676,7 +824,7 @@ const runSaga60 = (steps: readonly SagaStep60[]): Result60<void, string> => {
 // => Simulated participants with mutable state for demo
 let stockReserved60 = false;
 
-const reserveStock60 = (): Result60<void, string> => {
+const reserveStock60 = (): Result60 => {
   stockReserved60 = true;
   console.log("Stock reserved");
   return { ok: true, value: undefined };
@@ -688,7 +836,7 @@ const releaseStock60 = (): void => {
   console.log("Stock released (compensation)");
 };
 
-const chargePayment60 = (): Result60<void, string> => {
+const chargePayment60 = (): Result60 => {
   console.log("Payment failed");
   return { ok: false, error: "card declined" };
   // => Simulates payment processor rejection
@@ -709,6 +857,87 @@ console.log(`Saga ok: ${result60.ok}`);
 // => Output: Saga ok: false
 console.log(`Stock after failure: ${stockReserved60}`);
 // => Output: Stock after failure: false — compensation correctly unwound the reservation
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: SagaOrchestration.hs ───────────
+-- [F#: Result-chaining + compensation stack — Haskell uses Either + recursion;
+-- Either Text () is the moral equivalent of Result<unit, string>]
+{-# LANGUAGE OverloadedStrings #-}
+
+module SagaOrchestration where
+
+import           Data.IORef                      -- mutable cell to simulate per-service state
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import           Control.Monad (forM_)
+
+-- => SagaStep record: forward action + compensating action paired together
+data SagaStep = SagaStep
+  { stepName       :: !Text                      -- => human-readable identifier
+  , stepExecute    :: IO (Either Text ())        -- => returns Right () or Left errMsg
+  , stepCompensate :: IO ()                      -- => best-effort, always IO ()
+  }
+
+-- => Orchestrator: run steps; on failure compensate completed ones in LIFO order
+runSaga :: [SagaStep] -> IO (Either Text ())
+runSaga = go []                                  -- => start with empty completed stack
+  where
+    go _         []            = pure (Right ())   -- => all steps succeeded
+    go completed (step : rest) = do
+      result <- stepExecute step                   -- => attempt the forward action
+      case result of
+        Right () -> go (step : completed) rest     -- => push and continue
+        Left msg -> do
+          forM_ completed (stepCompensate)         -- => compensate LIFO (newest first)
+          pure (Left ("Saga failed at '" <> stepName step <> "': " <> msg))
+-- => Single recursive function; failure path is impossible to skip accidentally
+
+-- => Simulated participants — IORef makes the demo state observable
+stockReservedRef :: IORef Bool
+stockReservedRef = error "set up in demo"  -- placeholder, threaded explicitly below
+
+reserveStockIO :: IORef Bool -> IO (Either Text ())
+reserveStockIO ref = do
+  writeIORef ref True                            -- => reserve the stock
+  putStrLn "Stock reserved"
+  pure (Right ())                                -- => always succeeds in demo
+
+releaseStockIO :: IORef Bool -> IO ()
+releaseStockIO ref = do
+  writeIORef ref False                           -- => compensation: undo reservation
+  putStrLn "Stock released (compensation)"
+
+chargePaymentIO :: IO (Either Text ())
+chargePaymentIO = do
+  putStrLn "Payment failed"
+  pure (Left "card declined")                    -- => simulates processor rejection
+
+refundPaymentIO :: IO ()
+refundPaymentIO = putStrLn "Payment refunded (compensation)"
+-- => Would issue a refund; charge never succeeded so this is a no-op in demo
+
+demo :: IO ()
+demo = do
+  ref <- newIORef False                          -- => owned by the demo, not module-global
+  let steps =
+        [ SagaStep "reserve" (reserveStockIO ref) (releaseStockIO ref)
+        , SagaStep "payment" chargePaymentIO       refundPaymentIO
+        ]
+  result <- runSaga steps
+  putStrLn $ "Saga result: " <> show result
+  -- => Output: Stock reserved
+  -- => Output: Payment failed
+  -- => Output: Stock released (compensation)
+  -- => Output: Saga result: Left "Saga failed at 'payment': card declined"
+  s <- readIORef ref
+  putStrLn $ "Stock after failure: " <> show s
+  -- => Output: Stock after failure: False — compensation correctly unwound
 ```
 
 {{< /tab >}}
@@ -758,7 +987,7 @@ graph LR
     style F fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -950,6 +1179,90 @@ pub61({ tag: "OrderPlaced", orderId: "ord-1", productId: "SKU-001", qty: 2 });
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SagaChoreography.hs ───────────
+-- [F#: in-process bus + reactive handlers — Haskell uses STM TVar over a Map so subscribe
+-- and publish are atomic and thread-safe by construction]
+{-# LANGUAGE OverloadedStrings #-}
+
+module SagaChoreography where
+
+import           Control.Concurrent.STM           -- atomic transactions for the registry
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO              -- Text-aware IO putStrLn
+import           Control.Monad (forM_)
+
+-- => Event payload: simple Text→Text map; handlers select fields they need
+type Payload = Map Text Text
+
+-- => Handler signature: IO action consuming the payload
+type Handler = Payload -> IO ()
+
+-- => Bus state: TVar over event-type → handler list
+newtype Bus = Bus { busRegistry :: TVar (Map Text [Handler]) }
+
+newBus :: IO Bus
+newBus = Bus <$> newTVarIO Map.empty
+-- => STM TVar safer than IORef under concurrency — atomic compare-and-swap built-in
+
+subscribe :: Bus -> Text -> Handler -> IO ()
+subscribe (Bus reg) eventType h =
+  atomically $ modifyTVar' reg (Map.insertWith (<>) eventType [h])
+-- => insertWith (<>) appends to the existing handler list, or starts a new one
+
+publish :: Bus -> Text -> Payload -> IO ()
+publish (Bus reg) eventType payload = do
+  hs <- readTVarIO reg                            -- => snapshot the registry atomically
+  forM_ (Map.findWithDefault [] eventType hs) ($ payload)
+-- => Real bus: Kafka topic; handlers run in separate consumer processes
+
+-- => Inventory service state — TVar mirroring "stock held" flag
+mkInventory :: Bus -> IO (TVar Bool)
+mkInventory bus = do
+  stockHeld <- newTVarIO False                    -- => initial: nothing reserved
+
+  subscribe bus "OrderPlaced" $ \event -> do      -- => reactive: react to OrderPlaced
+    atomically $ writeTVar stockHeld True         -- => reserve stock atomically
+    TIO.putStrLn ("Inventory: reserved stock for order "
+                   <> Map.findWithDefault "?" "order_id" event)
+    publish bus "StockReserved" event             -- => emit next event, NOT call Payment
+
+  subscribe bus "PaymentFailed" $ \event -> do    -- => compensation listener
+    atomically $ writeTVar stockHeld False        -- => undo reservation
+    TIO.putStrLn ("Inventory: released stock for order "
+                   <> Map.findWithDefault "?" "order_id" event <> " (compensation)")
+
+  pure stockHeld
+
+-- => Payment service — reacts to StockReserved, emits PaymentFailed in this demo
+mkPayment :: Bus -> IO ()
+mkPayment bus =
+  subscribe bus "StockReserved" $ \event -> do
+    TIO.putStrLn ("Payment: charging for order "
+                   <> Map.findWithDefault "?" "order_id" event)
+    publish bus "PaymentFailed" event             -- => Inventory reacts without coupling
+
+demo :: IO ()
+demo = do
+  bus       <- newBus                             -- => single shared event bus
+  stockHeld <- mkInventory bus                    -- => Inventory subscribes
+  mkPayment bus                                   -- => Payment subscribes
+  publish bus "OrderPlaced" (Map.fromList [("order_id", "ORD-42")])
+  -- => Output: Inventory: reserved stock for order ORD-42
+  -- => Output: Payment: charging for order ORD-42
+  -- => Output: Inventory: released stock for order ORD-42 (compensation)
+  held <- readTVarIO stockHeld
+  putStrLn ("Stock held after failure: " <> show held)
+  -- => Output: Stock held after failure: False
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each handler is a plain function from payload map to unit side-effects; adding a
@@ -970,7 +1283,7 @@ API versioning prevents breaking changes from disrupting consumers. The version 
 function from method and path to a response value. Multiple version handlers coexist; the router
 selects the correct one based on path prefix or Accept header.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1143,6 +1456,82 @@ console.log(JSON.stringify(dispatchHeader62("GET", "/users", "application/vnd.my
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApiVersioning.hs ───────────
+-- [F#: module per version + match dispatch — Haskell uses sum types and aeson encoding;
+-- exhaustive pattern matching guarantees every route arm is considered]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric     #-}
+
+module ApiVersioning where
+
+import           Data.Aeson           (ToJSON, encode)
+import qualified Data.Aeson as A
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           GHC.Generics (Generic)
+import qualified Data.ByteString.Lazy.Char8 as BLC
+
+-- => V1 user shape: just a name string (legacy)
+newtype V1User = V1User Text deriving (Show, Generic)
+instance ToJSON V1User where
+  toJSON (V1User n) = A.String n
+
+-- => V2 user shape: richer record with email
+data V2User = V2User { v2Name :: !Text, v2Email :: !Text } deriving (Show, Generic)
+instance ToJSON V2User where
+  toJSON (V2User n e) = A.object ["name" A..= n, "email" A..= e]
+
+-- => Polymorphic response wrapper — Body is whatever each version returns
+data ApiResponse a = ApiResponse { resVersion :: !Int, resBody :: !a } deriving (Show, Generic)
+instance ToJSON a => ToJSON (ApiResponse a) where
+  toJSON r = A.object ["version" A..= resVersion r, "body" A..= resBody r]
+-- => Constrained ToJSON instance — works for any payload type that itself encodes
+
+-- => V1 handler: flat list of usernames
+v1GetUsers :: ApiResponse [V1User]
+v1GetUsers = ApiResponse 1 [V1User "alice"]
+-- => Pure value, not function — no inputs, no IO
+
+-- => V2 handler: richer object list
+v2GetUsers :: ApiResponse [V2User]
+v2GetUsers = ApiResponse 2 [V2User "alice" "alice@example.com"]
+-- => V2 body is incompatible with V1; clients pick which they want
+
+-- => URI path versioning: dispatch on (method, path) pair via case expression
+dispatchUri :: Text -> Text -> Maybe BLC.ByteString
+dispatchUri "GET" "/v1/users" = Just (encode v1GetUsers)
+-- => V1 path explicit — CDN caches /v1/users and /v2/users independently
+dispatchUri "GET" "/v2/users" = Just (encode v2GetUsers)
+-- => V2 path adds richer user; old clients keep calling /v1/users unchanged
+dispatchUri _     _           = Nothing
+-- => Nothing == 404; caller picks the HTTP status
+
+-- => Accept-header versioning: same URL, version selected from header
+dispatchHeader :: Text -> Text -> Text -> Maybe BLC.ByteString
+dispatchHeader _ "/users" accept
+  | "v2" `T.isInfixOf` accept = Just (encode v2GetUsers)  -- => negotiated v2
+  | otherwise                 = Just (encode v1GetUsers)  -- => default v1
+dispatchHeader _ _ _          = Nothing
+
+demo :: IO ()
+demo = do
+  mapM_ BLC.putStrLn
+    [ maybe "404" id (dispatchUri "GET" "/v1/users")
+    -- => Output: {"version":1,"body":["alice"]}
+    , maybe "404" id (dispatchUri "GET" "/v2/users")
+    -- => Output: {"version":2,"body":[{"email":"alice@example.com","name":"alice"}]}
+    , maybe "404" id (dispatchHeader "GET" "/users" "application/json")
+    -- => Output: V1 payload
+    , maybe "404" id (dispatchHeader "GET" "/users" "application/vnd.myapi.v2+json")
+    -- => Output: V2 payload
+    ]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** URI path versioning is expressed as a pure dispatch expression — adding a new
@@ -1180,7 +1569,7 @@ graph TD
     style DS fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1340,6 +1729,77 @@ console.log(JSON.stringify(webBffDashboard63("u1")));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: BackendForFrontend.hs ───────────
+-- [F#: anonymous records — Haskell uses distinct record types per BFF; each return type is
+-- declared explicitly, giving each client its own contract checked at compile time]
+{-# LANGUAGE OverloadedStrings #-}
+
+module BackendForFrontend where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- => Downstream profile shape — full data owned by the profile service
+data Profile = Profile
+  { pId :: !Text, pName :: !Text, pEmail :: !Text, pTheme :: !Text }
+  deriving (Show)
+
+-- => Downstream order shape — minimal fields for demo
+data Order = Order { oId :: !Text, oTotal :: !Double, oStatus :: !Text }
+  deriving (Show)
+
+-- => Downstream service stubs: return full data; BFFs pick what each client needs
+getUserProfile :: Text -> Profile
+getUserProfile userId = Profile userId "Alice" "alice@example.com" "dark"
+-- => Pure function — BFF unit tests construct profiles directly, no mocks
+
+getUserOrders :: Text -> [Order]
+getUserOrders _ =
+  [ Order "ORD-1" 99.99 "shipped"
+  , Order "ORD-2" 14.50 "pending"
+  ]
+-- => Full order list — may be large for active users; mobile BFF aggregates
+
+-- => Mobile BFF response: minimal fields for cellular bandwidth
+data MobileDash = MobileDash { mdName :: !Text, mdPendingOrders :: !Int }
+  deriving (Show)
+
+mobileBffDashboard :: Text -> MobileDash
+mobileBffDashboard userId =
+  let profile = getUserProfile userId
+      orders  = getUserOrders userId
+      pending = length (filter ((== "pending") . oStatus) orders)
+      -- => Pre-aggregated count: mobile renders one integer, not a full list
+  in MobileDash (pName profile) pending
+-- => Only name + count; email and theme omitted — mobile screen too small
+
+-- => Web BFF response: richer aggregate with full orders + preferences
+data WebDash = WebDash
+  { wdProfile    :: !Profile
+  , wdOrders     :: ![Order]
+  , wdOrderCount :: !Int
+  } deriving (Show)
+
+webBffDashboard :: Text -> WebDash
+webBffDashboard userId =
+  let profile = getUserProfile userId
+      orders  = getUserOrders userId
+  in WebDash profile orders (length orders)
+-- => Pre-computed convenience field; saves the JS client a .length call
+
+demo :: IO ()
+demo = do
+  print (mobileBffDashboard "u1")
+  -- => Output: MobileDash {mdName = "Alice", mdPendingOrders = 1}
+  print (webBffDashboard "u1")
+  -- => Output: WebDash {wdProfile = ..., wdOrders = [...], wdOrderCount = 2}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each BFF is a plain function that selects and shapes data; adding a new client
@@ -1370,7 +1830,7 @@ stateDiagram-v2
     HalfOpen --> Open : probe fails
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1615,6 +2075,111 @@ console.log(cb64.call(failSvc64)); // => Circuit OPEN — using fallback
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: CircuitBreaker.hs ───────────
+-- [F#: DU CBState with exhaustive match — Haskell uses a sum type; ghc warns on incomplete
+-- matches. STM TVar gives lock-free state transitions safe under concurrent calls]
+{-# LANGUAGE OverloadedStrings #-}
+
+module CircuitBreaker where
+
+import Control.Concurrent.STM
+import Data.Time.Clock           (UTCTime, getCurrentTime, diffUTCTime)
+import Control.Exception         (try, SomeException)
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+-- => Three explicit states; exhaustive match warned by ghc -Wall
+data CBState
+  = Closed                                     -- => calls pass through to dependency
+  | Open !UTCTime                              -- => carries timestamp of trip
+  | HalfOpen                                   -- => one probe call permitted
+
+-- => Mutable record. TVar replaces F# `mutable` — atomic compare-and-swap
+data CircuitBreaker = CircuitBreaker
+  { cbState           :: TVar CBState
+  , cbFailures        :: TVar Int
+  , cbThreshold       :: !Int                  -- => trips when failures hit threshold
+  , cbProbeTimeoutSec :: !Double               -- => seconds in Open before HalfOpen
+  }
+
+makeBreaker :: Int -> Double -> IO CircuitBreaker
+makeBreaker thr probe = do
+  st <- newTVarIO Closed                       -- => starts closed; all calls allowed
+  f  <- newTVarIO 0                            -- => failure counter
+  pure (CircuitBreaker st f thr probe)
+
+callWithBreaker
+  :: CircuitBreaker
+  -> IO (Either SomeException Text)            -- => operation: real call
+  -> IO Text                                   -- => fallback for fast-fail and failure
+  -> IO Text
+callWithBreaker cb operation fallback = do
+  now <- getCurrentTime
+  -- => First decide whether to short-circuit based on state
+  shouldProbe <- atomically $ do
+    s <- readTVar (cbState cb)
+    case s of
+      Open openedAt
+        | realToFrac (diffUTCTime now openedAt) >= cbProbeTimeoutSec cb -> do
+            writeTVar (cbState cb) HalfOpen    -- => probe timeout elapsed
+            pure True                          -- => proceed to attempt operation
+        | otherwise -> pure False              -- => fast-fail: still Open
+      _ -> pure True                           -- => Closed or HalfOpen — proceed
+  if not shouldProbe
+    then fallback                              -- => skip the real call entirely
+    else do
+      result <- operation                      -- => try the real dependency
+      case result of
+        Right v -> do
+          atomically $ do
+            writeTVar (cbState cb) Closed      -- => success resets state
+            writeTVar (cbFailures cb) 0
+          pure v
+        Left _ -> do
+          tripped <- atomically $ do
+            n <- (+ 1) <$> readTVar (cbFailures cb)
+            writeTVar (cbFailures cb) n        -- => increment failure count
+            if n >= cbThreshold cb
+              then do
+                writeTVar (cbState cb) (Open now)
+                pure True                      -- => trip the breaker
+              else pure False
+          if tripped
+            then TIO.putStrLn ("Circuit: tripped OPEN after " <> T.pack (show (cbThreshold cb)) <> " failures")
+            else pure ()
+          fallback                             -- => degraded response, not exception
+
+demo :: IO ()
+demo = do
+  cb        <- makeBreaker 3 0.0               -- => probe-timeout 0 → immediate HalfOpen
+  callCount <- newTVarIO (0 :: Int)
+  let flakyService = do
+        n <- atomically $ do
+          v <- readTVar callCount
+          writeTVar callCount (v + 1)
+          pure (v + 1)
+        if n <= 3
+          then try (error "service down" :: IO Text)  -- => transient outage
+          else pure (Right "fresh data")              -- => recovered after 3 fails
+  mapM_ (\i -> do
+            r <- callWithBreaker cb flakyService (pure "cached data")
+            TIO.putStrLn ("Call " <> T.pack (show i) <> ": " <> r))
+        ([1..6] :: [Int])
+  -- => Output: Call 1: cached data
+  -- => Output: Call 2: cached data
+  -- => Output: Circuit: tripped OPEN after 3 failures
+  -- => Output: Call 3: cached data
+  -- => Output: Call 4: fresh data
+  -- => Output: Call 5: fresh data
+  -- => Output: Call 6: fresh data
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# models the three circuit breaker states as a discriminated union with
@@ -1651,7 +2216,7 @@ graph TD
     style I fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1803,7 +2368,7 @@ const makeBulkhead65 = (maxConcurrent: number) => {
   const queue: (() => void)[] = [];
   // => queue holds pending work that is waiting for a slot
 
-  const acquire = (): Promise<void> => {
+  const acquire = (): Promise => {
     if (active < maxConcurrent) {
       active++;
       return Promise.resolve();
@@ -1825,7 +2390,7 @@ const makeBulkhead65 = (maxConcurrent: number) => {
     // => Release slot and wake next queued waiter
   };
 
-  const run = async <T>(fn: () => Promise<T>): Promise<T> => {
+  const run = async <T>(fn: () => Promise): Promise => {
     await acquire();
     // => Wait for a slot — bulkhead prevents overload
     try {
@@ -1864,6 +2429,82 @@ console.log(`DB stats after: ${JSON.stringify(dbBulkhead65.stats())}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: BulkheadPattern.hs ───────────
+-- [F#: SemaphoreSlim record returning Result — Haskell uses STM TSem; the acquire returns
+-- Either so callers cannot ignore the "pool full" outcome at compile time]
+{-# LANGUAGE OverloadedStrings #-}
+
+module BulkheadPattern where
+
+import Control.Concurrent.STM
+import Control.Exception      (bracket_)
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+-- => Bulkhead record: TSem holds slots, TVar counts rejections for metrics
+data Bulkhead = Bulkhead
+  { bhName     :: !Text
+  , bhSem      :: !TSem                        -- => STM semaphore — atomic acquire/release
+  , bhMax      :: !Int                         -- => upper bound preserved for diagnostics
+  , bhRejected :: TVar Int                     -- => non-blocking refusal counter
+  }
+
+makeBulkhead :: Text -> Int -> IO Bulkhead
+makeBulkhead name n = do
+  sem  <- atomically (newTSem (fromIntegral n))  -- => initial slots = max
+  rej  <- newTVarIO 0
+  pure (Bulkhead name sem n rej)
+
+-- => Non-blocking acquire: returns False if no slot was available
+tryAcquire :: TSem -> IO Bool
+tryAcquire sem = atomically $ do
+  -- => Try-and-rollback pattern: check slots without blocking
+  -- STM does not have built-in tryWait, so we implement via orElse with retry
+  (waitTSem sem >> pure True) `orElse` pure False
+
+withBulkhead
+  :: Bulkhead
+  -> IO a                                       -- => guarded action
+  -> IO (Either Text a)
+withBulkhead bh action = do
+  ok <- tryAcquire (bhSem bh)
+  if not ok
+    then do
+      atomically $ modifyTVar' (bhRejected bh) (+ 1)  -- => fail-fast: bump counter
+      pure (Left ("Bulkhead '" <> bhName bh <> "' full — call rejected"))
+    else
+      -- => bracket_ guarantees signalTSem runs even if action throws
+      fmap Right (bracket_ (pure ()) (atomically (signalTSem (bhSem bh))) action)
+
+-- => Two independent bulkheads — slow Payments cannot exhaust Inventory pool
+demo :: IO ()
+demo = do
+  paymentsBh  <- makeBulkhead "payments" 2
+  inventoryBh <- makeBulkhead "inventory" 5
+
+  -- => Saturate Payments: claim both slots non-blockingly
+  _ <- tryAcquire (bhSem paymentsBh)
+  _ <- tryAcquire (bhSem paymentsBh)            -- => pool now full
+
+  payRes <- withBulkhead paymentsBh  (pure "payment_ok:ORD-1")
+  TIO.putStrLn ("Payments result: " <> T.pack (show payRes))
+  -- => Output: Payments result: Left "Bulkhead 'payments' full — call rejected"
+
+  invRes <- withBulkhead inventoryBh (pure "stock_ok:SKU-1")
+  TIO.putStrLn ("Inventory result: " <> T.pack (show invRes))
+  -- => Output: Inventory result: Right "stock_ok:SKU-1"
+  -- => Demonstrates isolation: payments saturation never reached the inventory pool
+
+  atomically $ signalTSem (bhSem paymentsBh) >> signalTSem (bhSem paymentsBh)
+  -- => Release test slots back to the pool — keeps the demo idempotent
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Returning `Result<'a, string>` from `withBulkhead` means the compiler forces
@@ -1882,7 +2523,7 @@ Retrying transient failures is essential in distributed systems, but naive fixed
 cause thundering herds. In F#, the retry is a recursive `async` computation that accumulates
 attempts via tail-recursive loop without mutable loop counters.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2010,14 +2651,10 @@ printfn "Result: %A" result
 // [F#: recursive retry function with exponential backoff — TypeScript async version]
 type Result66<T, E> = { ok: true; value: T } | { ok: false; error: E };
 
-const sleep66 = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep66 = (ms: number): Promise => new Promise((resolve) => setTimeout(resolve, ms));
 // => Promise-based sleep — awaitable in async functions
 
-const retryWithBackoff66 = async <T>(
-  fn: () => Promise<T>,
-  maxRetries: number,
-  baseMs: number,
-): Promise<Result66<T, string>> => {
+const retryWithBackoff66 = async <T>(fn: () => Promise, maxRetries: number, baseMs: number): Promise => {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       const value = await fn();
@@ -2039,7 +2676,7 @@ const retryWithBackoff66 = async <T>(
 
 // Demo: service that fails twice then succeeds
 let attempt66 = 0;
-const flakySvc66 = async (): Promise<string> => {
+const flakySvc66 = async (): Promise => {
   attempt66++;
   if (attempt66 < 3) throw new Error("temporary failure");
   // => Fails on attempts 1 and 2, succeeds on attempt 3
@@ -2052,6 +2689,70 @@ if (r66.ok) console.log(r66.value);
 // => Attempt 2 failed; retrying in ...ms
 // => Success on attempt 3
 else console.log(`Error: ${r66.error}`);
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: RetryBackoff.hs ───────────
+-- [F#: tail-recursive retry with Result + Thread.Sleep — Haskell uses recursion + threadDelay
+-- in IO; the `retry` package also exposes this composably, shown via inline reimpl for clarity]
+{-# LANGUAGE OverloadedStrings #-}
+
+module RetryBackoff where
+
+import Control.Concurrent       (threadDelay)
+import System.Random            (randomRIO)
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import Data.IORef
+
+-- => Pure delay calculation: exponential growth + uniform jitter, capped
+exponentialBackoff :: Int -> Double -> Double -> IO Double
+exponentialBackoff attempt baseMs capMs = do
+  let delay = min (baseMs * (2 ** fromIntegral attempt)) capMs
+  -- => 100, 200, 400, 800 ... capped at capMs
+  jitter <- randomRIO (0, delay * 0.5)
+  -- => Up to 50% jitter — concurrent callers retry at staggered offsets
+  pure (delay + jitter)
+-- => Returns ms; caller converts to microseconds for threadDelay
+
+-- => Retry combinator: pure recursion threads attempt count, no mutable counter
+retry :: Int -> IO (Either Text a) -> IO (Either Text a)
+retry maxAttempts operation = go 0
+  where
+    go attempt = do
+      result <- operation                          -- => attempt the wrapped action
+      case result of
+        Right v -> pure (Right v)                  -- => success: return immediately
+        Left msg
+          | attempt >= maxAttempts - 1 ->
+              pure (Left ("All " <> T.pack (show maxAttempts)
+                                 <> " attempts failed: " <> msg))
+          | otherwise -> do
+              delayMs <- exponentialBackoff attempt 100.0 30000.0
+              TIO.putStrLn ("Attempt " <> T.pack (show (attempt + 1))
+                            <> " failed: " <> msg
+                            <> ". Retrying in " <> T.pack (show (round delayMs :: Int)) <> "ms")
+              threadDelay (round (delayMs * 1000))   -- => threadDelay takes microseconds
+              go (attempt + 1)                       -- => tail recursion: no stack growth
+
+demo :: IO ()
+demo = do
+  attemptCount <- newIORef (0 :: Int)
+  let unstableCall = do
+        n <- atomicModifyIORef' attemptCount (\v -> (v + 1, v + 1))
+        if n < 3
+          then pure (Left ("timeout on attempt " <> T.pack (show n)))
+          else pure (Right "success")              -- => third call succeeds
+  result <- retry 5 unstableCall
+  TIO.putStrLn ("Result: " <> T.pack (show result))
+  -- => Output: Attempt 1 failed: timeout on attempt 1. Retrying in ~100ms
+  -- => Output: Attempt 2 failed: timeout on attempt 2. Retrying in ~200ms
+  -- => Output: Result: Right "success"
 ```
 
 {{< /tab >}}
@@ -2091,7 +2792,7 @@ sequenceDiagram
     Note over A,C: All spans share traceId=abc
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2221,20 +2922,10 @@ let _ = finishSpan rootSpan    // => Gateway finishes last
 // [F#: trace context propagated through function calls — TypeScript version]
 
 // => Trace context: immutable value passed through every function call
-type TraceContext67 = Readonly<{
-  traceId: string;
-  spanId: string;
-  parentSpanId: string | undefined;
-}>;
+type TraceContext67 = Readonly;
 
 // => Span: wraps a function call with timing and correlation
-type Span67 = Readonly<{
-  traceId: string;
-  spanId: string;
-  parentSpanId: string | undefined;
-  name: string;
-  durationMs: number;
-}>;
+type Span67 = Readonly;
 
 const spans67: Span67[] = []; // => In production: sent to Jaeger/Zipkin
 
@@ -2292,6 +2983,91 @@ console.log(`Spans recorded: ${spans67.length}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DistributedTracing.hs ───────────
+-- [F#: immutable Span record + Option parents — Haskell uses an algebraic record + Maybe;
+-- propagation is explicit in every signature, no hidden ThreadLocal as in OpenTelemetry SDKs]
+{-# LANGUAGE OverloadedStrings #-}
+
+module DistributedTracing where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.UUID as UUID
+import qualified Data.UUID.V4 as UUID
+import Data.Time.Clock           (UTCTime, getCurrentTime, diffUTCTime)
+import Data.IORef
+import Control.Exception         (bracket)
+
+-- => Span: immutable; finishSpan returns a NEW value with end time set
+data Span = Span
+  { spanTraceId      :: !Text
+  , spanId           :: !Text
+  , spanParentId     :: !(Maybe Text)             -- => Nothing for root spans
+  , spanOperation    :: !Text
+  , spanStart        :: !UTCTime
+  , spanEnd          :: !(Maybe UTCTime)          -- => Nothing until finishSpan
+  } deriving (Show)
+
+newSpanId :: IO Text
+newSpanId = T.take 8 . T.pack . UUID.toString <$> UUID.nextRandom
+-- => 8-char prefix is enough for human inspection; full UUID elsewhere
+
+-- => Begin a span. Generate root traceId if absent
+startSpan :: Text -> Maybe Text -> Maybe Text -> IO Span
+startSpan op mTrace mParent = do
+  tid  <- maybe (T.pack . UUID.toString <$> UUID.nextRandom) pure mTrace
+  sid  <- newSpanId
+  now  <- getCurrentTime
+  pure (Span tid sid mParent op now Nothing)
+-- => Returns immutable Span — original cannot be reassigned
+
+-- => finishSpan : produce a NEW span with end time, do not mutate original
+finishSpan :: Span -> IO Span
+finishSpan s = do
+  now <- getCurrentTime
+  pure (s { spanEnd = Just now })
+-- => Pure transformation — original record still in scope unchanged
+
+-- => Tracing context: in-process sink collecting completed spans
+type Sink = IORef [Span]
+
+withSpan :: Sink -> Text -> Maybe Text -> Maybe Text -> (Span -> IO a) -> IO a
+withSpan sink op mTrace mParent body =
+  bracket (startSpan op mTrace mParent)            -- => acquire: start span
+          (\s -> finishSpan s >>= \done -> modifyIORef' sink (done :))
+          -- => release: finish + record; runs even on exception
+          body
+-- => bracket guarantees the span is closed and recorded, like try/finally
+
+-- => Application code: every function receives the parent trace context
+getUser :: Sink -> Span -> Text -> IO (Text, Text)
+getUser sink parent userId =
+  withSpan sink "getUser" (Just (spanTraceId parent)) (Just (spanId parent)) $ \_ ->
+    pure (userId, "Alice")
+-- => Returns business value; tracing is invisible to the caller
+
+processOrder :: Sink -> Maybe Text -> Text -> IO Text
+processOrder sink rootTrace userId =
+  withSpan sink "processOrder" rootTrace Nothing $ \span1 -> do
+    _ <- getUser sink span1 userId                 -- => child span linked to span1
+    pure "ord-1"
+
+demo :: IO ()
+demo = do
+  sink <- newIORef []                              -- => collects finished spans
+  oid  <- processOrder sink (Just "trace-abc123") "u1"
+  recorded <- readIORef sink
+  putStrLn ("Order: " <> show oid)
+  -- => Output: Order: "ord-1"
+  putStrLn ("Spans recorded: " <> show (length recorded))
+  -- => Output: Spans recorded: 2  (processOrder + getUser)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Immutable span records mean `finishSpan` always returns a new record; the original
@@ -2326,7 +3102,7 @@ graph LR
     style Collector fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2449,10 +3225,7 @@ const createOrderService68 = () => ({
 });
 
 // => Sidecar: wraps the service and adds cross-cutting concerns
-const withSidecar68 = <T extends Record<string, (...args: unknown[]) => unknown>>(
-  service: T,
-  config: { enableLogging: boolean; enableMetrics: boolean },
-): T => {
+const withSidecar68 = <T extends Record>(service: T, config: { enableLogging: boolean; enableMetrics: boolean }): T => {
   const metrics = new Map<string, number>();
 
   return new Proxy(service, {
@@ -2496,6 +3269,67 @@ svcWithSidecar68.cancelOrder("ord-123");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SidecarPattern.hs ───────────
+-- [F#: sidecarWrap : (Request -> Response) -> (Request -> Response) — Haskell composes
+-- with plain function composition; the higher-order wrapper is a one-liner type signature]
+{-# LANGUAGE OverloadedStrings #-}
+
+module SidecarPattern where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import Data.Time.Clock           (getCurrentTime, diffUTCTime)
+
+-- => Request/Response records — plain immutable data values
+data Request = Request
+  { reqMethod    :: !Text
+  , reqPath      :: !Text
+  , reqOrderId   :: !Text
+  , reqMtlsOK    :: !Bool                          -- => verified at TLS termination
+  }
+
+data Response = Response { resStatus :: !Int, resBody :: !Text } deriving (Show)
+
+-- => Sidecar: higher-order wrapper layering TLS check + timing + metrics around handler
+sidecarWrap :: (Request -> IO Response) -> Request -> IO Response
+sidecarWrap appHandler req
+  | not (reqMtlsOK req) =                          -- => Concern 1: TLS enforcement
+      pure (Response 401 "TLS handshake failed")   -- => app never sees this request
+  | otherwise = do
+      start    <- getCurrentTime                   -- => Concern 2: timing
+      response <- appHandler req                   -- => delegate to business logic
+      end      <- getCurrentTime
+      let dt = diffUTCTime end start * 1000        -- => milliseconds
+      TIO.putStrLn ("[SIDECAR] method=" <> reqMethod req
+                    <> " path=" <> reqPath req
+                    <> " status=" <> T.pack (show (resStatus response))
+                    <> " duration=" <> T.pack (show dt) <> "ms")
+      -- => Concern 3: metrics — application has no metrics client
+      pure response
+
+-- => Application handler: pure business logic, no TLS or metrics code
+orderApp :: Request -> IO Response
+orderApp req = pure (Response 200 ("Order " <> reqOrderId req <> " retrieved"))
+-- => No infrastructure code; sidecar owns all of it via composition
+
+demo :: IO ()
+demo = do
+  let handler = sidecarWrap orderApp               -- => compose once at startup
+  r1 <- handler (Request "GET" "/orders/1" "1" False)
+  print r1
+  -- => Output: Response {resStatus = 401, resBody = "TLS handshake failed"}
+  r2 <- handler (Request "GET" "/orders/1" "1" True)
+  print r2
+  -- => Output: [SIDECAR] method=GET path=/orders/1 status=200 duration=...ms
+  -- => Output: Response {resStatus = 200, resBody = "Order 1 retrieved"}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The sidecar as a higher-order function means cross-cutting concerns are composed,
@@ -2514,7 +3348,7 @@ The ambassador pattern places a proxy between an application and a remote servic
 connection management, retry logic, and credential injection. In F#, the ambassador is a record
 of configuration plus a function that returns `Result`, hiding all complexity from callers.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2650,11 +3484,8 @@ printfn "Total calls including retries: %d" db.CallCount
 // [F#: ambassador function that wraps a downstream call with retry and circuit breaker — TypeScript]
 
 // => The ambassador wraps a downstream client and provides resilience features
-const makeAmbassador69 = (
-  client: (path: string) => Promise<string>,
-  config: { maxRetries: number; timeoutMs: number },
-) => {
-  const call = async (path: string): Promise<string> => {
+const makeAmbassador69 = (client: (path: string) => Promise, config: { maxRetries: number; timeoutMs: number }) => {
+  const call = async (path: string): Promise => {
     // => TIMEOUT: race the client call against a timeout
     const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Timeout")), config.timeoutMs));
 
@@ -2684,7 +3515,7 @@ const makeAmbassador69 = (
 
 // => Downstream client: simulates a flaky HTTP service
 let callCount69 = 0;
-const flakyClient69 = async (path: string): Promise<string> => {
+const flakyClient69 = async (path: string): Promise => {
   callCount69++;
   if (callCount69 < 3) throw new Error("connection refused");
   // => Fails twice then succeeds — ambassador retries transparently
@@ -2698,6 +3529,84 @@ console.log(result69);
 // => [Ambassador] Attempt 2 failed; retrying in 200ms
 // => [Ambassador] Succeeded on attempt 3
 // => OK: /api/data
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: AmbassadorPattern.hs ───────────
+-- [F#: record holding config + mutable counter — Haskell uses a record with TVar for the
+-- counter and Either for the query result; the type system bars callers from ignoring failure]
+{-# LANGUAGE OverloadedStrings #-}
+
+module AmbassadorPattern where
+
+import Control.Concurrent       (threadDelay)
+import Control.Concurrent.STM
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+-- => Ambassador configuration: hidden inside the ambassador value
+data AmbassadorConfig = AmbassadorConfig
+  { acDsn        :: !Text
+  , acMaxRetries :: !Int
+  , acTimeoutMs  :: !Int
+  }
+
+-- => Row shape returned by query
+data Row = Row { rowId :: !Int, rowName :: !Text } deriving (Show)
+
+-- => Ambassador value: config + atomic call counter for metrics
+data Ambassador = Ambassador
+  { ambConfig    :: !AmbassadorConfig
+  , ambCallCount :: TVar Int
+  }
+
+makeAmbassador :: AmbassadorConfig -> IO Ambassador
+makeAmbassador cfg = Ambassador cfg <$> newTVarIO 0
+-- => Constructor returns an opaque ambassador value; DSN never leaks
+
+-- => Internal call: simulates a transient failure on the first attempt
+executeCall :: Ambassador -> Text -> IO (Either Text [Row])
+executeCall amb _sql = do
+  n <- atomically $ do
+         modifyTVar' (ambCallCount amb) (+ 1)
+         readTVar (ambCallCount amb)
+  if n == 1
+    then pure (Left "transient connection loss")
+    else pure (Right [Row 1 "Alice", Row 2 "Bob"])
+-- => First call fails; ambassador's retry logic hides this from the caller
+
+-- => Public query: retries with exponential backoff, exposes Either Text [Row]
+query :: Ambassador -> Text -> IO (Either Text [Row])
+query amb sql = go 0
+  where
+    go attempt = do
+      result <- executeCall amb sql
+      case result of
+        Right rows -> pure (Right rows)
+        Left msg
+          | attempt >= acMaxRetries (ambConfig amb) - 1 ->
+              pure (Left ("Ambassador exhausted retries: " <> msg))
+          | otherwise -> do
+              let waitMs = 100 * (2 ^ attempt) :: Int
+              threadDelay (waitMs * 1000)            -- => threadDelay is microseconds
+              go (attempt + 1)
+-- => Tail-recursive; no stack growth even with many retries
+
+demo :: IO ()
+demo = do
+  db   <- makeAmbassador (AmbassadorConfig "postgresql://localhost/mydb" 3 5000)
+  rows <- query db "SELECT id, name FROM users WHERE active = true"
+  TIO.putStrLn ("Rows: " <> T.pack (show rows))
+  -- => Output: Rows: Right [Row {rowId = 1, rowName = "Alice"},Row {rowId = 2, rowName = "Bob"}]
+  -- => (First call failed internally; ambassador retried transparently)
+  calls <- readTVarIO (ambCallCount db)
+  putStrLn ("Total calls including retries: " <> show calls)
+  -- => Output: Total calls including retries: 2
 ```
 
 {{< /tab >}}
@@ -2737,7 +3646,7 @@ graph TD
     style E4 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2866,13 +3775,7 @@ type OrderEvent70 =
   | { tag: "OrderCancelled"; orderId: string; reason: string }
   | { tag: "OrderShipped"; orderId: string; trackingCode: string };
 
-type OrderState70 = Readonly<{
-  orderId: string;
-  status: string;
-  customerId: string;
-  total: number;
-  trackingCode: string | undefined;
-}>;
+type OrderState70 = Readonly;
 
 // => FOLD: reconstruct current state from event log
 const applyOrderEvent70 = (state: OrderState70 | undefined, event: OrderEvent70): OrderState70 => {
@@ -2910,7 +3813,7 @@ const createOrder70 = (orderId: string, customerId: string, total: number): void
   appendEvent70({ tag: "OrderCreated", orderId, customerId, total });
 };
 
-const shipOrder70 = (orderId: string, trackingCode: string): Result70<void, string> => {
+const shipOrder70 = (orderId: string, trackingCode: string): Result70 => {
   const state = rebuildOrder70(eventStore70.filter((e) => e.orderId === orderId));
   if (!state || state.status !== "confirmed") return { ok: false, error: "Order must be confirmed before shipping" };
   appendEvent70({ tag: "OrderShipped", orderId, trackingCode });
@@ -2926,6 +3829,79 @@ console.log(`Status: ${final70?.status}, Tracking: ${final70?.trackingCode}`);
 // => Status: shipped, Tracking: TRACK-123
 console.log(`Events recorded: ${eventStore70.length}`);
 // => Events recorded: 3
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: EventSourcing.hs ───────────
+-- [F#: DU AccountEvent + List.fold applyEvent — Haskell uses a sum type + foldl';
+-- exhaustive pattern match guaranteed by ghc -Wall; aeson encodes events for persistence]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric     #-}
+
+module EventSourcing where
+
+import Data.List (foldl')
+import GHC.Generics (Generic)
+import Data.Aeson   (ToJSON, FromJSON)
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time.Clock        (UTCTime)
+import qualified Data.Scientific as S            -- precise money type (placeholder)
+
+-- => Domain events: one constructor per event type — exhaustive match enforced
+data AccountEvent
+  = AccountOpened  !Text                          -- => accountId
+  | MoneyDeposited !S.Scientific                  -- => amount; Scientific avoids Double drift
+  | MoneyWithdrawn !S.Scientific
+  deriving (Show, Eq, Generic)
+instance ToJSON   AccountEvent
+instance FromJSON AccountEvent
+-- => Generic-derived JSON for storage in EventStore / Postgres / Kafka
+
+-- => Aggregate state: derived from events, never mutated directly
+data AccountState = AccountState
+  { asAccountId :: !Text
+  , asBalance   :: !S.Scientific
+  } deriving (Show, Eq)
+
+initialState :: AccountState
+initialState = AccountState "" 0
+
+-- => Reducer: pure function from (state, event) to next state
+applyEvent :: AccountState -> AccountEvent -> AccountState
+applyEvent s (AccountOpened aid)    = s { asAccountId = aid, asBalance = 0 }
+applyEvent s (MoneyDeposited amt)   = s { asBalance = asBalance s + amt }
+applyEvent s (MoneyWithdrawn amt)   = s { asBalance = asBalance s - amt }
+-- => Three arms cover all constructors; ghc -Wall warns if you add a new one and miss a clause
+
+-- => Replay: left fold over the event list — direct FP equivalent of OOP "replay loop"
+replayEvents :: [AccountEvent] -> AccountState
+replayEvents = foldl' applyEvent initialState
+-- => foldl' is strict — avoids building thunks for long event histories
+
+-- => Event store: append-only list (in production, a database or Kafka topic)
+eventStore :: [AccountEvent]
+eventStore =
+  [ AccountOpened  "ACC-001"
+  , MoneyDeposited 500
+  , MoneyWithdrawn 200
+  ]
+
+demo :: IO ()
+demo = do
+  let current = replayEvents eventStore
+  putStrLn ("Account: " <> T.unpack (asAccountId current)
+            <> ", Balance: " <> show (asBalance current))
+  -- => Output: Account: ACC-001, Balance: 300.0
+
+  -- => Temporal query: balance after only first two events
+  let snapshotAtT2 = replayEvents (take 2 eventStore)
+  putStrLn ("Balance after deposit only: " <> show (asBalance snapshotAtT2))
+  -- => Output: Balance after deposit only: 500.0
 ```
 
 {{< /tab >}}
@@ -2951,7 +3927,7 @@ A modular monolith deploys as a single process but enforces strict module bounda
 boundaries are enforced by the file ordering in the project — types defined in later files cannot
 be referenced by earlier files, making circular dependencies a compile error.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3168,6 +4144,85 @@ console.log(`Total orders: ${orders71.findAll().length}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ModularMonolith.hs ───────────
+-- [F#: file-ordering enforces dependency direction — Haskell uses module imports;
+-- a circular import is a compile error, mirroring the F# rule]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards   #-}
+
+-- =================================================================
+-- module Orders : owns Order record + repository "interface"
+-- =================================================================
+module Orders where
+
+import           Data.IORef
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.UUID as UUID
+import qualified Data.UUID.V4 as UUID
+
+-- => Public Order record — exposed to other modules
+data Order = Order { orderId :: !Text, customerId :: !Text, total :: !Double }
+  deriving (Show)
+
+-- => Repository "interface" — record of functions, not type class
+data OrderRepo = OrderRepo
+  { repoSave :: Order -> IO ()                     -- => persistence injected here
+  , repoFind :: Text  -> IO (Maybe Order)           -- => Maybe for absent rows
+  }
+
+placeOrder :: OrderRepo -> Text -> Double -> IO Order
+placeOrder OrderRepo{..} cid tot = do
+  uuid <- UUID.nextRandom
+  let oid = T.take 8 (T.pack (UUID.toString uuid)) -- => opaque short id
+  let o   = Order oid cid tot
+  repoSave o                                       -- => delegate persistence
+  pure o                                           -- => return domain value
+
+-- =================================================================
+-- module Billing : depends on Orders.Order only (public surface)
+-- =================================================================
+-- In a real project this would be a separate .hs file. Inline here for brevity.
+data Invoice = Invoice
+  { invId    :: !Text
+  , invOrder :: !Text                              -- => opaque order-id reference
+  , amount   :: !Double
+  , paid     :: !Bool
+  } deriving (Show)
+
+issueInvoice :: Order -> IO Invoice
+issueInvoice o = do
+  uuid <- UUID.nextRandom
+  let iid = T.take 8 (T.pack (UUID.toString uuid))
+  pure (Invoice iid (orderId o) (total o) False)
+-- => Billing receives Order by value; never queries the order DB directly
+
+-- =================================================================
+-- composition root : wires modules together at startup
+-- =================================================================
+demo :: IO ()
+demo = do
+  store <- newIORef (Map.empty :: Map Text Order)  -- => in-memory store
+  let repo = OrderRepo
+        { repoSave = \o -> modifyIORef' store (Map.insert (orderId o) o)
+        -- => swap this for a real DB adapter in production
+        , repoFind = \i -> Map.lookup i <$> readIORef store
+        }
+  order   <- placeOrder repo "cust-1" 149.99
+  invoice <- issueInvoice order
+  putStrLn ("Order: "   <> T.unpack (orderId order)
+            <> ", Invoice: " <> T.unpack (invId invoice)
+            <> ", Amount: "  <> show (amount invoice))
+  -- => Output: Order: <id>, Invoice: <id>, Amount: 149.99
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F#'s file-ordering rule means module dependencies are enforced by the compiler —
@@ -3188,7 +4243,7 @@ slice is a module containing its own request and response types plus a single ha
 all layers for one feature in one place. In Clojure, each slice is a namespace containing its own
 data shapes and handler function.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3349,7 +4404,7 @@ const createProductSlice72 = (() => {
     return errors;
   };
 
-  const handle = (req: CreateProductSlice72["request"]): Result72<CreateProductSlice72["response"], string[]> => {
+  const handle = (req: CreateProductSlice72["request"]): Result72 => {
     const errors = validate(req);
     if (errors.length > 0) return { ok: false, errors };
     const id = `p${counter++}`;
@@ -3387,6 +4442,85 @@ console.log(`Found: ${JSON.stringify(found72)}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: VerticalSlice.hs ───────────
+-- [F#: module per feature with own Request/Response — Haskell uses one module per slice;
+-- each slice defines its own data shapes; no shared service layer]
+{-# LANGUAGE OverloadedStrings #-}
+
+-- =================================================================
+-- slice: PlaceOrder — all layers for placing an order
+-- =================================================================
+module PlaceOrder where
+
+import Data.IORef
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Printf (printf)
+
+-- => Request: slice-specific input contract
+data Request = Request
+  { reqCustomer :: !Text, reqProduct :: !Text, reqQty :: !Int }
+
+-- => Response: slice-specific output contract
+data Response = Response
+  { respOrderId :: !Text, respStatus :: !Text, respTotal :: !Double }
+  deriving (Show)
+
+-- => Internal store: would be injected repo in production
+type OrderRow = (Text, Text, Double)
+mkStore :: IO (IORef [OrderRow])
+mkStore = newIORef []
+
+-- => Handler owns all logic for this slice — no shared service dependency
+handle :: IORef [OrderRow] -> Double -> Request -> IO Response
+handle store pricePerUnit req = do
+  let total = pricePerUnit * fromIntegral (reqQty req)  -- => business rule
+  rows <- readIORef store
+  let oid = T.pack (printf "ORD-%04d" (length rows + 1))
+  modifyIORef' store ((oid, reqCustomer req, total) :)
+  pure (Response oid "placed" total)
+-- => Returns slice-specific response; no generic envelope
+
+-- =================================================================
+-- slice: GetOrder — independent slice with its own contracts
+-- =================================================================
+data GetRequest  = GetRequest  { getReqId :: !Text }
+data GetResponse = GetResponse
+  { getRespId    :: !Text
+  , getRespTotal :: !(Maybe Double)               -- => Maybe is the absent-result type
+  , getRespFound :: !Bool
+  } deriving (Show)
+
+-- => Inject the query function — CQRS read side stays decoupled from write side
+handleGet :: (Text -> IO (Maybe Double)) -> GetRequest -> IO GetResponse
+handleGet queryFn req = do
+  mTotal <- queryFn (getReqId req)
+  case mTotal of
+    Just t  -> pure (GetResponse (getReqId req) (Just t) True)
+    Nothing -> pure (GetResponse (getReqId req) Nothing False)
+-- => Explicit not-found, no exception thrown — caller decides HTTP status
+
+demo :: IO ()
+demo = do
+  store <- mkStore
+  placeResp <- handle store 12.50 (Request "C1" "P1" 4)
+  print placeResp
+  -- => Output: Response {respOrderId = "ORD-0001", respStatus = "placed", respTotal = 50.0}
+
+  let queryFn oid =
+        if oid == "ORD-0001"
+          then pure (Just 50.0)
+          else pure Nothing                       -- => CQRS read-model stand-in
+  getResp <- handleGet queryFn (GetRequest "ORD-0001")
+  print getResp
+  -- => Output: GetResponse {getRespId = "ORD-0001", getRespTotal = Just 50.0, getRespFound = True}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each feature lives in its own F# module or Clojure namespace — a developer reads
@@ -3407,7 +4541,7 @@ the shared kernel is a separate module containing only immutable record types. I
 shared kernel is a namespace exporting only data-manipulation functions and spec definitions — no
 application logic.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3582,8 +4716,8 @@ printfn "Overdue (35 days): %b" (BillingDomain.isOverdue invoice)
 
 // ── SHARED KERNEL: types and pure functions used by multiple contexts ──────────
 // => The shared kernel must be small and stable — it is a coordination cost
-type Money73 = Readonly<{ amount: number; currency: string }>;
-type Address73 = Readonly<{ street: string; city: string; country: string }>;
+type Money73 = Readonly;
+type Address73 = Readonly;
 // => Money73 and Address73 are stable domain concepts shared by multiple contexts
 
 const formatMoney73 = (m: Money73): string => `${m.currency} ${m.amount.toFixed(2)}`;
@@ -3626,6 +4760,82 @@ console.log(JSON.stringify(shipment73));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SharedKernel.hs ───────────
+-- [F#: SharedKernel module with Money/OrderId — Haskell uses a SharedKernel module with
+-- newtypes and records; both downstream domains import this module read-only]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DerivingStrategies #-}
+
+-- =================================================================
+-- module SharedKernel : value types only, no application logic
+-- =================================================================
+module SharedKernel where
+
+import Data.Text (Text)
+import qualified Data.Scientific as S
+
+-- => Money as a small record — shared across bounded contexts
+data Money = Money { mAmount :: !S.Scientific, mCurrency :: !Text }
+  deriving (Show, Eq)
+-- => Scientific avoids floating-point drift; Currency is ISO 4217 code
+
+-- => Pure helper for safe addition — currency mismatch is a domain error
+addMoney :: Money -> Money -> Either Text Money
+addMoney a b
+  | mCurrency a /= mCurrency b =
+      Left ("Cannot add " <> mCurrency a <> " and " <> mCurrency b)
+  | otherwise = Right (Money (mAmount a + mAmount b) (mCurrency a))
+-- => Returns Either — caller must handle the failure case at compile time
+
+-- => OrderId newtype — shared identifier; both Orders and Billing reference it
+newtype OrderId = OrderId Text deriving stock (Show, Eq, Ord)
+-- => newtype carries zero runtime overhead but blocks confusion with other id types
+
+-- =================================================================
+-- module OrdersDomain : uses shared kernel types
+-- =================================================================
+-- Real project: separate file. Inlined for brevity.
+data OrderLine = OrderLine
+  { olProduct :: !Text, olPrice :: !Money, olQty :: !Int }
+
+subtotal :: OrderLine -> Money
+subtotal ol =
+  Money (mAmount (olPrice ol) * fromIntegral (olQty ol)) (mCurrency (olPrice ol))
+-- => Uses SharedKernel.Money directly; no conversion or DTO needed
+
+-- =================================================================
+-- module BillingDomain : uses the same shared kernel types
+-- =================================================================
+data Invoice = Invoice
+  { invOrderId         :: !OrderId
+  , invTotal           :: !Money
+  , invDaysOutstanding :: !Int
+  } deriving (Show)
+
+isOverdue :: Invoice -> Bool
+isOverdue inv = invDaysOutstanding inv > 30
+-- => Billing's own business rule — kernel stays minimal, not polluted with this
+
+-- =================================================================
+-- usage: both domains speak the same Money + OrderId language
+-- =================================================================
+demo :: IO ()
+demo = do
+  let line    = OrderLine "P1" (Money 10 "USD") 3
+      total   = subtotal line
+      invoice = Invoice (OrderId "ORD-42") total 35
+  putStrLn ("Invoice total: " <> show (mAmount (invTotal invoice))
+            <> " " <> show (mCurrency (invTotal invoice)))
+  -- => Output: Invoice total: 30.0 "USD"
+  putStrLn ("Overdue (35 days): " <> show (isOverdue invoice))
+  -- => Output: Overdue (35 days): True
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The shared kernel module contains only type definitions and data helpers — no
@@ -3647,7 +4857,7 @@ The specification pattern encapsulates a business rule as a composable predicate
 specification is simply `'a -> bool` — functions compose with `&&`, `||`, and `not`. In Clojure,
 specifications are plain predicate functions composed with `every-pred` and `some-fn`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3784,13 +4994,13 @@ printfn "o3 eligible: %b" (discountEligible o3)
 interface Spec74<T> {
   readonly name: string;
   readonly isSatisfiedBy: (candidate: T) => boolean;
-  readonly and: (other: Spec74<T>) => Spec74<T>;
-  readonly or: (other: Spec74<T>) => Spec74<T>;
-  readonly not: () => Spec74<T>;
+  readonly and: (other: Spec74) => Spec74;
+  readonly or: (other: Spec74) => Spec74;
+  readonly not: () => Spec74;
 }
 
-const makeSpec74 = <T>(name: string, pred: (t: T) => boolean): Spec74<T> => {
-  const spec: Spec74<T> = {
+const makeSpec74 = <T>(name: string, pred: (t: T) => boolean): Spec74 => {
+  const spec: Spec74 = {
     name,
     isSatisfiedBy: pred,
     and: (other) => makeSpec74(`${name} AND ${other.name}`, (t) => spec.isSatisfiedBy(t) && other.isSatisfiedBy(t)),
@@ -3801,12 +5011,7 @@ const makeSpec74 = <T>(name: string, pred: (t: T) => boolean): Spec74<T> => {
 };
 
 // => Domain: loan application eligibility
-type LoanApplication74 = Readonly<{
-  creditScore: number;
-  income: number;
-  existingDebt: number;
-  age: number;
-}>;
+type LoanApplication74 = Readonly;
 
 // => Atomic specifications — each encodes one business rule
 const goodCreditSpec74 = makeSpec74<LoanApplication74>("goodCredit", (a) => a.creditScore >= 700);
@@ -3834,6 +5039,71 @@ for (const app of applications74) {
 // => Score 750, Income 60000: ELIGIBLE
 // => Score 650, Income 60000: REJECTED
 // => Score 750, Income 40000: REJECTED
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: SpecificationPattern.hs ───────────
+-- [F#: type Spec<'a> = 'a -> bool — Haskell uses a type alias for `a -> Bool`;
+-- combinators are plain Boolean composition with point-free style available]
+{-# LANGUAGE OverloadedStrings #-}
+
+module SpecificationPattern where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Scientific as S
+
+-- => A Spec is just a predicate. No class hierarchy required.
+type Spec a = a -> Bool
+
+-- => Combinators: ordinary function composition over Bool
+andSpec :: Spec a -> Spec a -> Spec a
+andSpec a b = \c -> a c && b c                    -- => short-circuits on a
+-- => Equivalent point-free form: andSpec a b c = a c && b c
+
+orSpec :: Spec a -> Spec a -> Spec a
+orSpec a b = \c -> a c || b c                     -- => short-circuits on truthy a
+
+notSpec :: Spec a -> Spec a
+notSpec a = not . a                                -- => point-free using Bool's `not`
+
+-- => Domain: Order eligibility for a discount
+data Order = Order
+  { oTotal        :: !S.Scientific
+  , oCustomerTier :: !Text
+  , oItemCount    :: !Int
+  }
+
+-- => Named atomic specifications — each captures one business rule
+highValueOrder :: Spec Order
+highValueOrder o = oTotal o >= 100                 -- => $100+ qualifies as high-value
+
+goldCustomer :: Spec Order
+goldCustomer o = oCustomerTier o == "gold"         -- => exact tier match
+
+bulkOrder :: Spec Order
+bulkOrder o = oItemCount o >= 10                   -- => 10+ items is bulk
+
+-- => Business rule: gold customer OR (high value AND bulk)
+discountEligible :: Spec Order
+discountEligible = goldCustomer `orSpec` (highValueOrder `andSpec` bulkOrder)
+-- => Composition reads like the policy document itself
+
+demo :: IO ()
+demo = do
+  let o1 = Order 150  "gold"   3
+      o2 = Order 150  "silver" 12
+      o3 = Order 50   "bronze" 5
+  putStrLn ("o1 eligible: " <> show (discountEligible o1))
+  -- => Output: o1 eligible: True  (gold customer)
+  putStrLn ("o2 eligible: " <> show (discountEligible o2))
+  -- => Output: o2 eligible: True  (high value AND bulk)
+  putStrLn ("o3 eligible: " <> show (discountEligible o3))
+  -- => Output: o3 eligible: False (no clause satisfied)
 ```
 
 {{< /tab >}}
@@ -3875,7 +5145,7 @@ graph LR
     style Resp3 fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4020,8 +5290,8 @@ printfn "%A" (chain { Path = "/orders"; ApiKey = Some "key-abc"; CallerId = "c1"
 
 // => Handler type: processes a request or passes it to the next handler
 type Handler75 = (request: Request75, next: () => Response75) => Response75;
-type Request75 = Readonly<{ path: string; method: string; headers: Record<string, string> }>;
-type Response75 = Readonly<{ status: number; body: string }>;
+type Request75 = Readonly;
+type Response75 = Readonly;
 
 // => LINK handler functions into a chain
 const makeChain75 = (...handlers: readonly Handler75[]): ((req: Request75) => Response75) => {
@@ -4081,6 +5351,92 @@ console.log(chain75({ path: "/api/orders", method: "GET", headers: {} }).status)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ChainOfResponsibility.hs ───────────
+-- [F#: Middleware = Request -> Result<Request, Response> + List.fold — Haskell uses Either
+-- + foldM over the kleisli arrows; short-circuit semantics are built into Either's Monad]
+{-# LANGUAGE OverloadedStrings #-}
+
+module ChainOfResponsibility where
+
+import qualified Data.Set as Set
+import           Data.Set (Set)
+import qualified Data.Map.Strict as Map
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import           Control.Concurrent.STM
+import           Control.Monad (foldM)
+
+-- => Request / Response records
+data HttpReq  = HttpReq  { reqPath :: !Text, reqApiKey :: !(Maybe Text), reqCallerId :: !Text }
+data HttpResp = HttpResp { respStatus :: !Int, respBody :: !Text } deriving (Show)
+
+-- => Middleware: HttpReq -> IO (Either HttpResp HttpReq)
+-- => Left short-circuits chain (rejection), Right continues with possibly-enriched req
+type Middleware = HttpReq -> IO (Either HttpResp HttpReq)
+
+-- => Auth middleware
+validKeys :: Set Text
+validKeys = Set.fromList ["key-abc", "key-xyz"]
+
+authMiddleware :: Middleware
+authMiddleware req = pure $ case reqApiKey req of
+  Just k | k `Set.member` validKeys -> Right req                                    -- => pass
+  _                                  -> Left (HttpResp 401 "Unauthorized")          -- => stop
+
+-- => Rate-limit middleware: TVar-backed concurrent counter
+mkRateLimitMW :: TVar (Map.Map Text Int) -> Middleware
+mkRateLimitMW countsRef req = do
+  n <- atomically $ do
+         modifyTVar' countsRef (Map.insertWith (+) (reqCallerId req) 1)
+         m <- readTVar countsRef
+         pure (Map.findWithDefault 0 (reqCallerId req) m)
+  if n > 2
+    then pure (Left (HttpResp 429 "Too Many Requests"))
+    else pure (Right req)
+
+-- => Business handler runs only if all middlewares pass
+businessHandler :: HttpReq -> IO HttpResp
+businessHandler req = pure (HttpResp 200 ("Orders for " <> reqCallerId req))
+
+-- => Build the chain: foldM on middlewares; Either gives free short-circuit on Left
+buildChain :: [Middleware] -> (HttpReq -> IO HttpResp) -> HttpReq -> IO HttpResp
+buildChain mws handler req = do
+  result <- foldM step (Right req) mws            -- => threads Right through, halts on Left
+  case result of
+    Right r -> handler r
+    Left  e -> pure e
+  where
+    step (Left e)  _  = pure (Left e)              -- => already rejected; skip remaining
+    step (Right r) mw = mw r                        -- => apply next middleware
+
+demo :: IO ()
+demo = do
+  counts <- newTVarIO Map.empty
+  let chain = buildChain [authMiddleware, mkRateLimitMW counts] businessHandler
+
+  r1 <- chain (HttpReq "/orders" Nothing "c1")
+  print r1
+  -- => Output: HttpResp {respStatus = 401, respBody = "Unauthorized"}
+
+  r2 <- chain (HttpReq "/orders" (Just "key-abc") "c1")
+  print r2
+  -- => Output: HttpResp {respStatus = 200, respBody = "Orders for c1"}
+
+  r3 <- chain (HttpReq "/orders" (Just "key-abc") "c1")
+  print r3
+  -- => Output: HttpResp {respStatus = 200, respBody = "Orders for c1"}
+
+  r4 <- chain (HttpReq "/orders" (Just "key-abc") "c1")
+  print r4
+  -- => Output: HttpResp {respStatus = 429, respBody = "Too Many Requests"}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# uses `Result.bind` for early-termination — `Ok` continues, `Error` short-
@@ -4102,7 +5458,7 @@ pattern matching — a discriminated union type represents the object hierarchy,
 algorithm" is a function that pattern-matches over it. In Clojure, multimethods provide open
 dispatch where each algorithm is a new `defmulti`/`defmethod` pair over shared data maps.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4300,7 +5656,7 @@ type AstNode76 =
 // => Each variant is a value — no class hierarchy; visitor is a function
 
 // => VISITOR 1: evaluate the AST to a number
-const evaluate76 = (node: AstNode76, env: Record<string, number>): number => {
+const evaluate76 = (node: AstNode76, env: Record): number => {
   switch (node.tag) {
     case "Literal":
       return node.value;
@@ -4358,6 +5714,92 @@ console.log(evaluate76(ast76, { x: 5 }));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: VisitorPattern.hs ───────────
+-- [F#: visitor as pattern match on a DU — Haskell uses a sum type + functions;
+-- exhaustiveness is checked by ghc -Wall, equivalent to F#'s match completeness]
+{-# LANGUAGE OverloadedStrings #-}
+
+module VisitorPattern where
+
+import qualified Data.Scientific as S
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import           Text.Printf (printf)
+
+-- => Stable domain: one constructor per component kind
+data ArchComponent
+  = Service  !Text !Int !Int                       -- => name, replicas, cpuMillicores
+  | Database !Text !Int !Bool                      -- => name, storageGb, multiAz
+
+data Architecture = Architecture { components :: ![ArchComponent] }
+
+-- =================================================================
+-- algorithm 1: cost estimation — a new function, no domain edits
+-- =================================================================
+estimateCost :: ArchComponent -> Double
+estimateCost (Service  _ replicas cpu)        =
+  fromIntegral replicas * (fromIntegral cpu / 1000) * 30 * 0.05
+  -- => $0.05 per vCPU per hour, 30 days
+estimateCost (Database _ storage multiAz)     =
+  fromIntegral storage * 0.10 * (if multiAz then 2 else 1)
+  -- => $0.10/GB/month, doubled for multi-AZ
+
+totalCost :: Architecture -> IO Double
+totalCost arch = do
+  results <- mapM perComp (components arch)
+  pure (sum results)
+  where
+    perComp c = do
+      let cost = estimateCost c
+      TIO.putStrLn ("  " <> nameOf c <> ": " <> T.pack (printf "$%.2f/month" cost))
+      pure cost
+    nameOf (Service n _ _)  = n
+    nameOf (Database n _ _) = n
+
+-- =================================================================
+-- algorithm 2: compliance check — another new function, no domain edits
+-- =================================================================
+checkCompliance :: ArchComponent -> [Text]
+checkCompliance (Service name replicas _) | replicas < 2 =
+  ["Service '" <> name <> "' has only " <> T.pack (show replicas) <> " replica (min 2 for HA)"]
+checkCompliance (Database name _ False) =
+  ["Database '" <> name <> "' is not multi-AZ (compliance requirement)"]
+checkCompliance _ = []                              -- => component passes compliance
+
+allViolations :: Architecture -> [Text]
+allViolations = concatMap checkCompliance . components
+-- => concatMap flattens the per-component violation lists into one
+
+demo :: IO ()
+demo = do
+  let arch = Architecture
+        [ Service  "orders-api" 3 500
+        , Service  "worker"     1 1000               -- => only 1 replica → violation
+        , Database "orders-db"  100 True
+        , Database "cache-db"   20 False             -- => not multi-AZ → violation
+        ]
+  TIO.putStrLn "Cost breakdown:"
+  total <- totalCost arch
+  TIO.putStrLn (T.pack (printf "Total: $%.2f/month" total))
+  -- => Output: Cost breakdown:
+  -- =>   orders-api: $2.25/month
+  -- =>   worker: $1.50/month
+  -- =>   orders-db: $20.00/month
+  -- =>   cache-db: $2.00/month
+  -- => Total: $25.75/month
+
+  putStrLn "Violations:"
+  mapM_ TIO.putStrLn (allViolations arch)
+  -- => Output: Service 'worker' has only 1 replica (min 2 for HA)
+  -- => Output: Database 'cache-db' is not multi-AZ (compliance requirement)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# pattern matching enforces exhaustive handling at compile time — a new DU case
@@ -4381,7 +5823,7 @@ reference. Cross-service data access goes through explicit function calls, not s
 a record of injected repository functions; Clojure uses an independent atom per service; TypeScript
 uses an injected repository interface — all enforce the same ownership boundary.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4603,6 +6045,87 @@ console.log(`Customer: ${view77?.customerName}, Total: $${view77?.total}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DatabasePerService.hs ───────────
+-- [F#: immutable Map per service — Haskell uses Data.Map.Strict; aggregation composes service
+-- functions, no cross-service DB join, no shared mutable state]
+{-# LANGUAGE OverloadedStrings #-}
+
+module DatabasePerService where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import           Data.Maybe (fromMaybe)
+import qualified Data.Scientific as S
+
+-- =================================================================
+-- service: Orders — owns ordersDb; never touches customersDb
+-- =================================================================
+data OrderRecord = OrderRecord
+  { orId :: !Text, orCustomerId :: !Text, orTotal :: !S.Scientific }
+  deriving (Show)
+
+type OrdersDb = Map Text OrderRecord
+
+insertOrder :: OrderRecord -> OrdersDb -> OrdersDb
+insertOrder r = Map.insert (orId r) r
+-- => Pure: returns new Map; no mutation — service owns its own snapshot
+
+findByCustomer :: Text -> OrdersDb -> [OrderRecord]
+findByCustomer cid = filter ((== cid) . orCustomerId) . Map.elems
+-- => Orders service's own read — no cross-service join, only its own data
+
+-- =================================================================
+-- service: Customers — owns customersDb; never touches ordersDb
+-- =================================================================
+data CustomerRecord = CustomerRecord
+  { crId :: !Text, crName :: !Text, crEmail :: !Text }
+  deriving (Show)
+
+type CustomersDb = Map Text CustomerRecord
+
+insertCustomer :: CustomerRecord -> CustomersDb -> CustomersDb
+insertCustomer r = Map.insert (crId r) r
+
+findCustomer :: Text -> CustomersDb -> Maybe CustomerRecord
+findCustomer = Map.lookup
+-- => Maybe is the absent-result type — no exception for expected absence
+
+-- =================================================================
+-- aggregation layer: composes data via service function calls
+-- =================================================================
+data EnrichedOrder = EnrichedOrder
+  { eoId      :: !Text
+  , eoTotal   :: !S.Scientific
+  , eoCust    :: !Text
+  } deriving (Show)
+
+getOrdersWithCustomer :: OrdersDb -> CustomersDb -> Text -> [EnrichedOrder]
+getOrdersWithCustomer ordersDb customersDb cid =
+  let orders   = findByCustomer cid ordersDb        -- => call Orders service function
+      customer = findCustomer   cid customersDb     -- => call Customers service function
+      name     = fromMaybe "Unknown" (crName <$> customer)
+  in  map (\o -> EnrichedOrder (orId o) (orTotal o) name) orders
+-- => Denormalise at the aggregation layer; neither service DB was cross-queried
+
+demo :: IO ()
+demo = do
+  let cid      = "CUST-1"
+      custDb   = insertCustomer (CustomerRecord cid "Alice" "alice@example.com") Map.empty
+      ordersDb = insertOrder (OrderRecord "ORD-1" cid 99.99)
+               $ insertOrder (OrderRecord "ORD-2" cid 49.50) Map.empty
+  mapM_ print (getOrdersWithCustomer ordersDb custDb cid)
+  -- => Output: EnrichedOrder {eoId = "ORD-2", eoTotal = 49.5, eoCust = "Alice"}
+  -- => Output: EnrichedOrder {eoId = "ORD-1", eoTotal = 99.99, eoCust = "Alice"}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# uses immutable Maps per service — functional separation is structural separation.
@@ -4647,7 +6170,7 @@ graph LR
     style F2 fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4839,6 +6362,77 @@ for (const user of users78) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: FeatureToggle.hs ───────────
+-- [F#: immutable Map<string, Toggle> + pure isEnabled — Haskell uses Data.Map + pure
+-- function; deterministic hashing keeps decisions stable per user across requests]
+{-# LANGUAGE OverloadedStrings #-}
+
+module FeatureToggle where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import qualified Data.Set as Set
+import           Data.Set (Set)
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import           Data.Hashable (hash)
+
+-- => Toggle record: all fields strict for predictable evaluation
+data Toggle = Toggle
+  { tName          :: !Text
+  , tEnabled       :: !Bool
+  , tRolloutPct    :: !Int                          -- => 0..100
+  , tAllowedIds    :: !(Set Text)                   -- => explicit allowlist always on
+  } deriving (Show)
+
+type ToggleStore = Map Text Toggle
+
+registerToggle :: Toggle -> ToggleStore -> ToggleStore
+registerToggle t = Map.insert (tName t) t
+-- => Returns new store; original unchanged — pure, no mutation
+
+-- => Deterministic decision: same userId always gets same answer for same toggle
+isEnabled :: ToggleStore -> Text -> Text -> Bool
+isEnabled store name userId =
+  case Map.lookup name store of
+    Nothing -> False                                -- => unknown toggle: fail closed
+    Just t
+      | not (tEnabled t)                       -> False
+      -- => globally off — no user sees it regardless of rollout
+      | userId `Set.member` tAllowedIds t      -> True
+      -- => allowlist always on — overrides rollout percentage
+      | otherwise                              -> bucket < tRolloutPct t
+      where
+        bucket = abs (hash (name <> ":" <> userId)) `mod` 100
+        -- => stable bucket per userId+name; rolling out 20% deterministically
+
+demo :: IO ()
+demo = do
+  let store = registerToggle
+                (Toggle "new_checkout" True 20 (Set.singleton "beta-tester-1"))
+                Map.empty
+  TIO.putStrLn ("beta-tester-1: "
+                 <> T.pack (show (isEnabled store "new_checkout" "beta-tester-1")))
+  -- => Output: beta-tester-1: True  (explicit allowlist overrides rollout)
+
+  let users   = ["user-" <> T.pack (show i) | i <- [1..10 :: Int]]
+      enabled = filter (isEnabled store "new_checkout") users
+  putStrLn ("Enabled for " <> show (length enabled) <> "/10 sample users (target ~20%)")
+  -- => Output: Enabled for ~2/10 sample users (target ~20%)
+
+  -- => Kill switch: create NEW store with toggle disabled; original store unchanged
+  let killedStore = Map.adjust (\t -> t { tEnabled = False }) "new_checkout" store
+  TIO.putStrLn ("beta after kill: "
+                 <> T.pack (show (isEnabled killedStore "new_checkout" "beta-tester-1")))
+  -- => Output: beta after kill: False
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** F# uses an immutable `ToggleStore` — the kill switch creates a new store value,
@@ -4881,7 +6475,7 @@ graph TD
     style CP fill:#DE8F05,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5035,17 +6629,14 @@ telemetry.Value |> List.rev |> List.iter (fun r ->
 // => Service mesh adds observability and resilience transparently
 // => Services call each other through the mesh — they don't know the mesh exists
 
-type ServiceRequest79 = Readonly<{ serviceId: string; path: string; payload: unknown }>;
-type ServiceResponse79 = Readonly<{ status: number; body: unknown; durationMs: number }>;
+type ServiceRequest79 = Readonly;
+type ServiceResponse79 = Readonly;
 
 // => Mesh proxy: wraps each service call with cross-cutting concerns
 const makeMeshProxy79 = (config: { enableRetry: boolean; maxRetries: number }) => {
   const metrics = new Map<string, { calls: number; errors: number; totalMs: number }>();
 
-  const call = async (
-    req: ServiceRequest79,
-    handler: (r: ServiceRequest79) => Promise<unknown>,
-  ): Promise<ServiceResponse79> => {
+  const call = async (req: ServiceRequest79, handler: (r: ServiceRequest79) => Promise): Promise => {
     const key = `${req.serviceId}:${req.path}`;
     const start = Date.now();
     let lastError: Error | undefined;
@@ -5090,6 +6681,92 @@ console.log(JSON.stringify(mesh79.getMetrics()));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ServiceMesh.hs ───────────
+-- [F#: meshProxy as higher-order wrapper — Haskell takes the call as `IO (Either Text a)`
+-- and threads retries + telemetry without touching the business function]
+{-# LANGUAGE OverloadedStrings #-}
+
+module ServiceMesh where
+
+import Control.Concurrent.STM
+import Control.Concurrent       (threadDelay)
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+-- => Mesh config: injected by the control plane, app code never reads it
+data MeshConfig = MeshConfig
+  { mcRetryLimit :: !Int
+  , mcTlsEnabled :: !Bool
+  }
+
+-- => Telemetry record: structured event for the observability pipeline
+data TelemetryRecord = TelemetryRecord
+  { trFrom    :: !Text
+  , trTo      :: !Text
+  , trAttempt :: !Int
+  , trOutcome :: !Text
+  } deriving (Show)
+
+-- => meshProxy: wraps an inter-service call with mTLS, retry, and telemetry
+meshProxy
+  :: MeshConfig
+  -> TVar [TelemetryRecord]
+  -> Text                                          -- => calling service name
+  -> Text                                          -- => target service name
+  -> IO (Either Text Text)                          -- => the inter-service call
+  -> IO (Either Text Text)
+meshProxy cfg telem from to call
+  | not (mcTlsEnabled cfg) =                        -- => Concern 1: mTLS enforcement
+      pure (Left "mTLS required by mesh policy")    -- => business call never made
+  | otherwise = go 1
+  where
+    record attempt outcome = atomically $
+      modifyTVar' telem (TelemetryRecord from to attempt outcome :)
+    go attempt = do
+      result <- call                                -- => actual inter-service request
+      case result of
+        Right v -> do
+          record attempt "success"                  -- => Concern 3: telemetry
+          pure (Right v)
+        Left msg
+          | attempt >= mcRetryLimit cfg -> do
+              record attempt "error"
+              pure (Left ("Mesh exhausted retries to " <> to <> ": " <> msg))
+          | otherwise -> do
+              record attempt "error"
+              threadDelay (100000 * 2 ^ (attempt - 1))  -- => Concern 2: backoff
+              go (attempt + 1)
+
+demo :: IO ()
+demo = do
+  invCalls <- newTVarIO (0 :: Int)                 -- => simulate transient flakiness
+  let inventoryCheck = do
+        n <- atomically $ do
+               modifyTVar' invCalls (+ 1)
+               readTVar invCalls
+        if n == 1
+          then pure (Left "transient network error")
+          else pure (Right "in_stock")
+
+  telem <- newTVarIO []
+  let cfg = MeshConfig 3 True
+  result <- meshProxy cfg telem "orders-svc" "inventory-svc" inventoryCheck
+  TIO.putStrLn ("Inventory response: " <> T.pack (show result))
+  -- => Output: Inventory response: Right "in_stock"
+
+  records <- reverse <$> readTVarIO telem
+  TIO.putStrLn "Telemetry:"
+  mapM_ (\r -> TIO.putStrLn ("  " <> T.pack (show r))) records
+  -- => Output:   TelemetryRecord {trFrom = "orders-svc", trTo = "inventory-svc", trAttempt = 1, trOutcome = "error"}
+  -- => Output:   TelemetryRecord {trFrom = "orders-svc", trTo = "inventory-svc", trAttempt = 2, trOutcome = "success"}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The mesh proxy higher-order function composes with any inter-service call — adding
@@ -5109,7 +6786,7 @@ The interpreter pattern defines a grammar and an evaluator. In F#, a configurati
 representing the AST; the interpreter is a recursive function that evaluates the tree against a
 context map — no class hierarchy, just pattern matching.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5284,7 +6961,7 @@ type ConfigExpr80 =
 // => Each case is an expression — the interpreter evaluates it recursively
 
 // => INTERPRETER: evaluates a ConfigExpr80 given an environment
-const evalConfig80 = (expr: ConfigExpr80, env: Record<string, string>): string | number | boolean => {
+const evalConfig80 = (expr: ConfigExpr80, env: Record): string | number | boolean => {
   switch (expr.tag) {
     case "Literal":
       return expr.value;
@@ -5345,6 +7022,73 @@ console.log(evalConfig80(dbUrlExpr80, {}));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InterpreterDSL.hs ───────────
+-- [F#: DU AST + recursive match — Haskell uses a GADT-free sum type + recursive evaluator;
+-- ghc -Wall enforces exhaustive pattern matching, mirroring F#'s exhaustiveness]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric     #-}
+
+module InterpreterDSL where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import           Text.Read (readMaybe)
+import           GHC.Generics (Generic)
+
+-- => AST: each constructor encodes one expression form
+data Expr
+  = GreaterThan !Text !Double                       -- => ctx[var] > threshold
+  | Equals      !Text !Text                          -- => ctx[var] == value
+  | And !Expr !Expr                                  -- => short-circuit conjunction
+  | Or  !Expr !Expr                                  -- => short-circuit disjunction
+  | Not !Expr                                        -- => inverts inner result
+  deriving (Show, Generic)
+
+type Context = Map Text Text
+
+-- => Evaluator: pattern match on each AST node — ghc -Wall flags missing arms
+eval :: Context -> Expr -> Bool
+eval ctx (GreaterThan var threshold) =
+  case Map.lookup var ctx >>= (readMaybe . T.unpack) of
+    Just n  -> n > threshold
+    Nothing -> False                                 -- => fail closed if absent or non-numeric
+
+eval ctx (Equals var value) =
+  Map.lookup var ctx == Just value
+-- => Eq on Maybe Text — False if variable absent
+
+eval ctx (And l r) = eval ctx l && eval ctx r        -- => && is short-circuiting
+eval ctx (Or  l r) = eval ctx l || eval ctx r        -- => || is short-circuiting
+eval ctx (Not e)   = not (eval ctx e)
+
+-- => Business rule as a value — load from JSON, store in DB, evaluate per request
+discountRule :: Expr
+discountRule =
+  Or (Equals "user.tier" "gold")
+     (And (GreaterThan "order.total" 100.0)
+          (Equals "user.tier" "silver"))
+
+demo :: IO ()
+demo = do
+  let ctxGold        = Map.fromList [("user.tier", "gold"),   ("order.total", "30")]
+      ctxSilverLarge = Map.fromList [("user.tier", "silver"), ("order.total", "150")]
+      ctxBronze      = Map.fromList [("user.tier", "bronze"), ("order.total", "200")]
+  TIO.putStrLn ("Gold: "         <> T.pack (show (eval ctxGold        discountRule)))
+  -- => Output: Gold: True   (first Or clause satisfied)
+  TIO.putStrLn ("Silver+large: " <> T.pack (show (eval ctxSilverLarge discountRule)))
+  -- => Output: Silver+large: True   (second And clause satisfied)
+  TIO.putStrLn ("Bronze: "       <> T.pack (show (eval ctxBronze      discountRule)))
+  -- => Output: Bronze: False  (neither clause satisfied)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The DU AST and recursive evaluator form a complete interpreter in under 30 lines
@@ -5388,7 +7132,7 @@ graph LR
     style RM fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5573,8 +7317,8 @@ const appendEvent81 = (event: WriteEvent81): void => {
 };
 
 // => READ MODELS: projections derived from events — each optimised for specific queries
-type ProductListItem81 = Readonly<{ id: string; name: string; price: number }>;
-type CategoryGroup81 = Readonly<{ category: string; count: number }>;
+type ProductListItem81 = Readonly;
+type CategoryGroup81 = Readonly;
 
 // => Projection 1: flat product list (optimised for list views)
 const buildProductList81 = (): readonly ProductListItem81[] => {
@@ -5618,6 +7362,95 @@ console.log(`Categories: ${JSON.stringify(buildCategoryGroups81())}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: CqrsPattern.hs ───────────
+-- [F#: write side returns Result<events, error> + read side projects via fold — Haskell
+-- uses Either for the write channel and foldl' on the read side; aeson serialises events]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric     #-}
+
+module CqrsPattern where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.List (foldl')
+import           Data.IORef
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import           GHC.Generics (Generic)
+import           Data.Aeson (ToJSON, FromJSON)
+import           Text.Printf (printf)
+
+-- =================================================================
+-- write side: command + domain events
+-- =================================================================
+data CreateProductCmd = CreateProductCmd
+  { cmdProductId :: !Text
+  , cmdName      :: !Text
+  , cmdPrice     :: !Double
+  , cmdStock     :: !Int
+  }
+
+-- => Domain events: closed sum type — exhaustive match enforced
+data ProductEvent
+  = ProductCreated !Text !Text !Double !Int          -- => id, name, price, stock
+  deriving (Show, Generic)
+instance ToJSON   ProductEvent
+instance FromJSON ProductEvent
+-- => aeson encoding lets events persist directly to EventStore or Kafka
+
+-- => Command handler: invariant checks → events or error
+handleCreate :: CreateProductCmd -> Either Text [ProductEvent]
+handleCreate cmd
+  | cmdPrice cmd <= 0 = Left "Price must be positive"            -- => invariant
+  | cmdStock cmd <  0 = Left "Stock cannot be negative"          -- => invariant
+  | otherwise        = Right
+      [ProductCreated (cmdProductId cmd) (cmdName cmd) (cmdPrice cmd) (cmdStock cmd)]
+
+-- =================================================================
+-- read side: denormalised projection for fast list queries
+-- =================================================================
+data ProductSummary = ProductSummary
+  { psId          :: !Text
+  , psDisplayName :: !Text                                       -- => pre-formatted for UI
+  , psInStock     :: !Bool                                       -- => derived boolean
+  } deriving (Show)
+
+projectEvent :: Map Text ProductSummary -> ProductEvent -> Map Text ProductSummary
+projectEvent readStore (ProductCreated i n p s) =
+  Map.insert i (ProductSummary i (n <> T.pack (printf " ($%.2f)" p)) (s > 0)) readStore
+-- => Pre-format DisplayName, derive InStock from raw stock — read model owns UI shape
+
+-- =================================================================
+-- composition: wire write side to read side via event projection
+-- =================================================================
+processCommand :: IORef (Map Text ProductSummary) -> CreateProductCmd -> IO ()
+processCommand readStoreRef cmd = case handleCreate cmd of
+  Right events -> do
+    modifyIORef' readStoreRef (\s -> foldl' projectEvent s events)
+    -- => Fold each event into the read store; pure projection function
+    putStrLn "Command succeeded; events projected"
+  Left  msg    ->
+    TIO.putStrLn ("Command rejected: " <> msg)
+
+demo :: IO ()
+demo = do
+  readStore <- newIORef Map.empty
+  processCommand readStore (CreateProductCmd "P1" "Widget"  9.99 100)
+  -- => Output: Command succeeded; events projected
+  rs <- readIORef readStore
+  mapM_ print (Map.elems rs)
+  -- => Output: ProductSummary {psId = "P1", psDisplayName = "Widget ($9.99)", psInStock = True}
+
+  processCommand readStore (CreateProductCmd "P2" "Gadget" (-5) 10)
+  -- => Output: Command rejected: Price must be positive
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The write side returns `Result<ProductEvent list, string>` — the compiler forces
@@ -5651,7 +7484,7 @@ graph LR
     style Consumers fill:#CA9161,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5907,6 +7740,94 @@ console.log(
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: OutboxPattern.hs ───────────
+-- [F#: AppState as record with Orders + Outbox — Haskell uses a record returning new
+-- AppState; atomicity is structural (single value), not transactional in the type sense]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric     #-}
+
+module OutboxPattern where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import qualified Data.UUID as UUID
+import qualified Data.UUID.V4 as UUID
+import           GHC.Generics (Generic)
+
+-- => Outbox entry mirrors what an Outbox row holds; aeson-serialisable in production
+data OutboxEntry = OutboxEntry
+  { oeId        :: !Text
+  , oeEventType :: !Text
+  , oePayload   :: !(Map Text Text)
+  , oePublished :: !Bool
+  } deriving (Show)
+
+-- => Business record stored in the same value as the outbox entry
+data Order = Order { ordId :: !Text, ordTotal :: !Double } deriving (Show)
+
+-- => AppState bundles both stores. Updating it is the "atomic write".
+data AppState = AppState
+  { asOrders :: !(Map Text Order)
+  , asOutbox :: ![OutboxEntry]
+  } deriving (Show)
+
+-- => Atomic write: returns a NEW AppState with order + outbox entry both added
+saveOrderWithEvent
+  :: AppState -> Text -> Double -> Text -> Map Text Text -> IO AppState
+saveOrderWithEvent st orderId total eventType payload = do
+  uuid <- UUID.nextRandom
+  let eid = T.take 8 (T.pack (UUID.toString uuid))
+      o   = Order orderId total
+      e   = OutboxEntry eid eventType payload False
+  -- => Both updates happen in ONE record-update expression — no partial state
+  pure st
+    { asOrders = Map.insert orderId o (asOrders st)
+    , asOutbox = e : asOutbox st
+    }
+
+-- => Relay: publishes unpublished entries; marks each one after broker confirms
+publishPending
+  :: AppState
+  -> (Text -> Map Text Text -> IO ())                -- => broker.publish
+  -> IO AppState
+publishPending st broker = do
+  updated <- mapM step (asOutbox st)
+  pure st { asOutbox = updated }
+  where
+    step entry
+      | oePublished entry = pure entry              -- => already delivered: idempotent
+      | otherwise = do
+          broker (oeEventType entry) (oePayload entry)
+          TIO.putStrLn ("Relay: published " <> oeEventType entry
+                         <> " (entry " <> oeId entry <> ")")
+          pure entry { oePublished = True }         -- => mark after broker ack
+
+demo :: IO ()
+demo = do
+  let initialState = AppState Map.empty []
+  stateAfterOrder <- saveOrderWithEvent initialState "ORD-99" 199.99 "OrderPlaced"
+                       (Map.fromList [("order_id", "ORD-99"), ("total", "199.99")])
+  putStrLn "DB: order saved + outbox entry added (atomic)"
+
+  let mockBroker eventType payload =
+        TIO.putStrLn ("Broker: received " <> eventType <> " — " <> T.pack (show payload))
+  stateAfterRelay <- publishPending stateAfterOrder mockBroker
+  -- => Output: Broker: received OrderPlaced — fromList [("order_id","ORD-99"), ("total","199.99")]
+  -- => Output: Relay: published OrderPlaced (entry <id>)
+
+  let unpublished = filter (not . oePublished) (asOutbox stateAfterRelay)
+  putStrLn ("Unpublished after relay: " <> show (length unpublished))
+  -- => Output: Unpublished after relay: 0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Returning a new `AppState` record from `saveOrderWithEvent` makes atomicity
@@ -5925,7 +7846,7 @@ The Anti-Corruption Layer (ACL) is a translation boundary between two bounded co
 the ACL is a pair of pure functions — `translateIn` and `translateOut` — with no class, no state,
 and no mutation.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6180,6 +8101,101 @@ console.log(JSON.stringify(payload83));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: AntiCorruptionLayer.hs ───────────
+-- [F#: ACL with DU CustomerStatus + Result return — Haskell uses a sum type + Either Text;
+-- the integer-to-DU translation lives only in the ACL, never leaks into domain code]
+{-# LANGUAGE OverloadedStrings #-}
+
+module AntiCorruptionLayer where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import qualified Data.Scientific as S
+import Text.Read (readMaybe)
+import Text.Printf (printf)
+
+-- =================================================================
+-- legacy CRM model — foreign vocabulary, wrong types
+-- =================================================================
+data LegacyCrmAccount = LegacyCrmAccount
+  { acctNum     :: !Text
+  , fullName    :: !Text
+  , emailAddr   :: !Text
+  , statusCode  :: !Int                              -- => 1/2/3, not a DU
+  , creditLimit :: !Text                              -- => string, not numeric — mismatch
+  }
+
+-- =================================================================
+-- our domain model — clean vocabulary, correct types
+-- =================================================================
+data CustomerStatus = Active | Suspended | Closed
+  deriving (Show, Eq)
+-- => sum type replaces integer status code; ghc -Wall enforces exhaustive matches
+
+data Customer = Customer
+  { custId     :: !Text
+  , custName   :: !Text
+  , custEmail  :: !Text
+  , custStatus :: !CustomerStatus                    -- => correct type
+  , custCredit :: !S.Scientific                      -- => correct type
+  } deriving (Show)
+
+-- =================================================================
+-- ACL — all translation here; domain never sees CRM types
+-- =================================================================
+parseStatus :: Int -> CustomerStatus
+parseStatus 1 = Active
+parseStatus 2 = Suspended
+parseStatus _ = Closed                               -- => fail-closed default
+-- => ACL owns the integer-code knowledge; domain only sees the sum type
+
+translateIn :: LegacyCrmAccount -> Either Text Customer
+translateIn crm =
+  case readMaybe (T.unpack (creditLimit crm)) :: Maybe S.Scientific of
+    Nothing    -> Left ("Invalid credit limit: " <> creditLimit crm)
+    -- => Type mismatch resolved here — garbage from CRM stops at the ACL
+    Just limit -> Right $ Customer
+      { custId     = acctNum crm                      -- => acct_num → customer_id
+      , custName   = fullName crm                     -- => full_name → name
+      , custEmail  = emailAddr crm                    -- => email_addr → email
+      , custStatus = parseStatus (statusCode crm)     -- => int → sum type
+      , custCredit = limit                            -- => Text parsed to Scientific
+      }
+
+translateOut :: Customer -> LegacyCrmAccount
+translateOut c = LegacyCrmAccount
+  { acctNum     = custId c
+  , fullName    = custName c
+  , emailAddr   = custEmail c
+  , statusCode  = case custStatus c of
+                    Active -> 1; Suspended -> 2; Closed -> 3
+  , creditLimit = T.pack (printf "%.2f" (toRealFloat (custCredit c) :: Double))
+  -- => Sum type → integer; Scientific → formatted text — type mismatch resolved
+  }
+  where toRealFloat = S.toRealFloat
+
+demo :: IO ()
+demo = do
+  let crmData = LegacyCrmAccount "ACC-001" "Alice Smith" "alice@crm.com" 1 "2500.00"
+  case translateIn crmData of
+    Right customer -> do
+      print customer
+      -- => Output: Customer {custId="ACC-001", custName="Alice Smith", custEmail="alice@crm.com",
+      --                      custStatus=Active, custCredit=2500.0}
+      let crmOut = translateOut customer
+      TIO.putStrLn ("CRM out: acct=" <> acctNum crmOut
+                     <> ", status=" <> T.pack (show (statusCode crmOut))
+                     <> ", credit=" <> creditLimit crmOut)
+      -- => Output: CRM out: acct=ACC-001, status=1, credit=2500.00
+    Left msg -> TIO.putStrLn ("ACL rejected CRM data: " <> msg)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Using a DU for `CustomerStatus` means the compiler enforces exhaustive handling
@@ -6218,7 +8234,7 @@ graph TD
     style Domain fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6375,7 +8391,7 @@ printfn "Event type: %s" publishedEvents.Head.eventType
 // [F#: comprehensive hexagonal architecture with multiple adapters — TypeScript version]
 
 // ── DOMAIN ────────────────────────────────────────────────────────────────────
-type Product84 = Readonly<{ id: string; name: string; price: number; stock: number }>;
+type Product84 = Readonly;
 type Result84<T, E> = { ok: true; value: T } | { ok: false; error: E };
 
 // ── PORTS (defined by the application core) ───────────────────────────────────
@@ -6389,7 +8405,7 @@ type EventBus84 = { publish: (topic: string, payload: unknown) => void };
 
 // ── APPLICATION CORE (depends only on port types) ─────────────────────────────
 const makeProductCore84 = (repo: ProductRepo84, logger: Logger84, bus: EventBus84) => ({
-  purchaseProduct: (productId: string, qty: number): Result84<Product84, string> => {
+  purchaseProduct: (productId: string, qty: number): Result84 => {
     const product = repo.findById(productId);
     if (!product) return { ok: false, error: `Product ${productId} not found` };
     if (product.stock < qty) return { ok: false, error: `Insufficient stock for ${product.name}` };
@@ -6442,6 +8458,94 @@ console.log(`Events published: ${events84.length}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PortsAndAdapters.hs ───────────
+-- [F#: ports as function-type aliases — Haskell uses records of functions OR type classes;
+-- the record-of-functions approach mirrors F# exactly and avoids type-class instance ambiguity]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards   #-}
+
+module PortsAndAdapters where
+
+import qualified Data.Map.Strict as Map
+import           Data.Map.Strict (Map)
+import           Data.IORef
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.UUID as UUID
+import qualified Data.UUID.V4 as UUID
+
+-- =================================================================
+-- domain types
+-- =================================================================
+data Order = Order { ordId :: !Text, ordCustomer :: !Text, ordTotal :: !Double }
+  deriving (Show)
+
+-- =================================================================
+-- ports: records of functions — any matching function value is a valid adapter
+-- =================================================================
+data OrderRepoPort = OrderRepoPort
+  { saveOrder :: Order -> IO ()                       -- => driven port
+  , findOrder :: Text  -> IO (Maybe Order)            -- => driven port
+  }
+
+data EventBusPort = EventBusPort
+  { publishEvent :: Text -> Map Text Text -> IO ()    -- => driven port
+  }
+
+-- =================================================================
+-- domain core: depends only on ports, never on concrete adapters
+-- =================================================================
+placeOrder
+  :: OrderRepoPort -> EventBusPort
+  -> Text -> Double -> IO Text
+placeOrder OrderRepoPort{..} EventBusPort{..} customerId total = do
+  uuid <- UUID.nextRandom
+  let oid = T.take 8 (T.pack (UUID.toString uuid))
+  saveOrder (Order oid customerId total)             -- => drives the repo port
+  publishEvent "OrderPlaced"
+    (Map.fromList [("order_id", oid), ("total", T.pack (show total))])
+  -- => drives the event port; nothing about Kafka or Postgres leaks here
+  pure oid
+
+-- =================================================================
+-- adapters: function values implementing each port
+-- =================================================================
+mkInMemoryRepo :: IO OrderRepoPort
+mkInMemoryRepo = do
+  store <- newIORef (Map.empty :: Map Text Order)
+  pure OrderRepoPort
+    { saveOrder = \o -> modifyIORef' store (Map.insert (ordId o) o)
+    , findOrder = \i -> Map.lookup i <$> readIORef store
+    }
+-- => Swap this for a Postgres adapter in production; domain code unchanged
+
+mkLoggingEventBus :: IORef [(Text, Map Text Text)] -> EventBusPort
+mkLoggingEventBus sink = EventBusPort
+  { publishEvent = \t p -> modifyIORef' sink ((t, p) :)
+  }
+-- => Swap for a Kafka adapter in production
+
+demo :: IO ()
+demo = do
+  repo  <- mkInMemoryRepo
+  evRef <- newIORef []
+  let bus = mkLoggingEventBus evRef
+  oid <- placeOrder repo bus "CUST-1" 75.50         -- => compose at startup
+  putStrLn ("Order placed: " <> T.unpack oid <> ", total=75.50")
+  -- => Output: Order placed: <id>, total=75.50
+
+  events <- readIORef evRef
+  putStrLn ("Events published: " <> show (length events))
+  -- => Output: Events published: 1
+  mapM_ (\(t, _) -> putStrLn ("Event type: " <> T.unpack t)) (take 1 events)
+  -- => Output: Event type: OrderPlaced
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Ports as function-type aliases mean any function with the matching signature is
@@ -6479,7 +8583,7 @@ graph LR
     style B fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6638,13 +8742,13 @@ const makeReactiveStream85 = <T>(bufferSize: number) => {
   const buffer: T[] = [];
   // => Bounded buffer — enforces backpressure at capacity
 
-  const subscribers: ((event: StreamEvent85<T>) => void)[] = [];
+  const subscribers: ((event: StreamEvent85) => void)[] = [];
 
-  const subscribe = (handler: (event: StreamEvent85<T>) => void): void => {
+  const subscribe = (handler: (event: StreamEvent85) => void): void => {
     subscribers.push(handler);
   };
 
-  const emit = (event: StreamEvent85<T>): void => {
+  const emit = (event: StreamEvent85): void => {
     for (const sub of subscribers) sub(event);
   };
 
@@ -6710,6 +8814,87 @@ stream85.consume();
 
 stream85.complete();
 // => Stream complete
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: ReactiveBackpressure.hs ───────────
+-- [F#: MailboxProcessor with bounded inbox + TryPost — Haskell uses STM TBQueue (bounded)
+-- and async; `tryWriteTBQueue` is the non-blocking try-put returning False on full]
+{-# LANGUAGE OverloadedStrings #-}
+
+module ReactiveBackpressure where
+
+import Control.Concurrent       (threadDelay)
+import Control.Concurrent.STM
+import Control.Concurrent.Async (async, wait)
+import Data.IORef
+import Control.Monad             (forM_, when)
+
+-- => Counters for demo metrics
+data Metrics = Metrics
+  { mDropped   :: TVar Int
+  , mProcessed :: TVar Int
+  , mProduced  :: TVar Int
+  }
+
+newMetrics :: IO Metrics
+newMetrics = Metrics <$> newTVarIO 0 <*> newTVarIO 0 <*> newTVarIO 0
+
+-- => Bounded queue IS the backpressure boundary — TBQueue capacity is the inbox size
+maxQueueSize :: Int
+maxQueueSize = 10
+
+-- => Non-blocking producer: returns False if queue is full
+tryProduce :: TBQueue Int -> Metrics -> Int -> IO Bool
+tryProduce q m item = do
+  accepted <- atomically $ do
+    full <- isFullTBQueue q
+    if full
+      then pure False                            -- => backpressure: drop or slow down
+      else do
+        writeTBQueue q item                       -- => enqueue inside same transaction
+        pure True
+  atomically $ if accepted
+    then modifyTVar' (mProduced m) (+ 1)
+    else modifyTVar' (mDropped  m) (+ 1)
+  pure accepted
+
+-- => Consumer worker: drains the queue at simulated slow rate
+consumerLoop :: TBQueue Int -> Metrics -> IO ()
+consumerLoop q m = do
+  _ <- atomically (readTBQueue q)                -- => blocks if empty — no busy wait
+  threadDelay 5000                               -- => 5ms ~ 200 items/s
+  atomically $ modifyTVar' (mProcessed m) (+ 1)
+  consumerLoop q m
+
+demo :: IO ()
+demo = do
+  q <- newTBQueueIO (fromIntegral maxQueueSize)  -- => bounded inbox of 10
+  m <- newMetrics
+  worker <- async (consumerLoop q m)             -- => start consumer in background
+
+  -- => Producer: emit 50 items as fast as possible
+  forM_ [0..49] (tryProduce q m)
+  -- => Some items dropped when queue full — backpressure in action
+
+  threadDelay 200000                              -- => 200ms for consumer to drain
+  prod    <- readTVarIO (mProduced  m)
+  drop_   <- readTVarIO (mDropped   m)
+  proc_   <- readTVarIO (mProcessed m)
+  putStrLn $ "Produced: " <> show prod
+           <> ", Dropped (backpressure): " <> show drop_
+           <> ", Processed: ~" <> show proc_
+  -- => Output: Produced: ~10-20, Dropped (backpressure): ~30-40, Processed: ~10-20
+
+  qLen <- atomically (lengthTBQueue q)
+  putStrLn ("Queue never exceeded maxQueueSize=" <> show maxQueueSize
+            <> ": " <> show (qLen <= fromIntegral maxQueueSize))
+  -- => Output: Queue never exceeded maxQueueSize=10: True
+  -- worker keeps running; cancel in production via Control.Concurrent.Async.cancel
 ```
 
 {{< /tab >}}

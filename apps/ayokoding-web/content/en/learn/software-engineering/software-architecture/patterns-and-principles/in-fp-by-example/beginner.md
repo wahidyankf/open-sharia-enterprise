@@ -3,11 +3,12 @@ title: "Beginner"
 weight: 10000001
 date: 2026-05-17T00:00:00+07:00
 draft: false
-description: "FP variant — foundational software architecture examples with heavily annotated F# code covering core patterns, layering, and basic structural decisions"
-tags: ["software-architecture", "tutorial", "by-example", "beginner", "fp", "fsharp"]
+description: "FP variant — foundational software architecture examples with heavily annotated code in F# (canonical), Clojure, TypeScript, and Haskell, covering core patterns, layering, and basic structural decisions"
+tags:
+  ["software-architecture", "tutorial", "by-example", "beginner", "fp", "fsharp", "clojure", "typescript", "haskell"]
 ---
 
-This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using functional programming idioms. F# is the canonical language (examples are compatible with `dotnet fsi`); Clojure and TypeScript equivalents appear in the tabbed code blocks. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working functional code. Each example uses its own small illustrative domain so the architectural pattern remains the focal point.
+This beginner level covers Examples 1-28, reaching approximately 0-35% of software architecture fundamentals. Each example demonstrates a core architectural concept using functional programming idioms. F# is the canonical language (examples are compatible with `dotnet fsi`); Clojure, TypeScript, and Haskell equivalents appear in the tabbed code blocks. These examples target developers who already know at least one language and want to rapidly build architectural instincts through working functional code. Each example uses its own small illustrative domain so the architectural pattern remains the focal point.
 
 ## Separation of Concerns
 
@@ -17,7 +18,7 @@ Separation of concerns means grouping code by responsibility so each function ha
 
 **Tightly coupled approach (no separation):**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -113,13 +114,50 @@ console.log(getUserDiscountMessage(1));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: GetUserDiscountMessage.hs ───────────
+-- [F#: single function with three embedded concerns — Haskell uses a Data.Map.Strict lookup
+--   yielding Maybe, but all three concerns still live in one function body]
+import qualified Data.Map.Strict as Map  -- => Map.lookup returns Maybe v — like F# Map.tryFind
+import Data.Maybe (fromMaybe)             -- => helper for default values on Nothing
+import Text.Printf (printf)               -- => printf for formatted strings, similar to sprintf
+
+-- => This function mixes data access, business logic, AND presentation in one body
+getUserDiscountMessage :: Int -> String
+-- => userId is Int input; returns the formatted greeting String
+getUserDiscountMessage userId =
+  -- => userDb simulates a database lookup — data access concern embedded here
+  let userDb = Map.fromList [(1, ("Alice", 12 :: Int))]
+      -- => Map.fromList builds an immutable map; pair stores (name, purchases)
+      result = Map.lookup userId userDb
+      -- => Map.lookup returns Just (name, purchases) or Nothing — safe absence
+  in case result of
+       Nothing -> "User not found"
+       -- => Nothing branch: guard for missing user (mirrors None in F#)
+       Just (name, purchases) ->
+         -- => Business rule embedded directly — hard to change independently
+         let discount = if purchases > 10 then 0.15 else 0.05 :: Double
+             -- => 0.15 for loyal customers (>10 purchases), 0.05 default
+         -- => Presentation formatted inline — impossible to reuse discount logic elsewhere
+         in printf "Hello %s, your discount is %.0f%%" name (discount * 100.0)
+            -- => Output: "Hello Alice, your discount is 15%"
+
+main :: IO ()
+main = putStrLn (getUserDiscountMessage 1)
+-- => Output: Hello Alice, your discount is 15%
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 Mixing all three responsibilities means any change — a new discount rule, a different greeting format, or a different data source — requires editing the same function.
 
 **Separated approach (three distinct pure functions):**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -254,6 +292,56 @@ console.log(getUserDiscountMessageSeparated(1));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SeparatedConcerns.hs ───────────
+-- [F#: three focused functions composed via pattern match — Haskell uses the same
+--   three-function decomposition; each function is pure and has one job]
+import qualified Data.Map.Strict as Map  -- => Data.Map.Strict for immutable maps
+import Text.Printf (printf)               -- => printf for the formatting concern
+
+-- => DATA ACCESS — only knows how to retrieve users
+findUser :: Int -> Maybe (String, Int)
+-- => Returns Just (name, purchases) or Nothing — no formatting, no rules
+findUser userId =
+  let userDb = Map.fromList [(1, ("Alice", 12))]
+      -- => In-memory map simulates a real data store
+  in Map.lookup userId userDb
+     -- => Map.lookup :: Ord k => k -> Map k v -> Maybe v
+
+-- => BUSINESS LOGIC — only knows discount rules, not storage or display
+calculateDiscount :: Int -> Double
+-- => Pure function: same input always produces same output
+calculateDiscount purchases =
+  if purchases > 10 then 0.15  -- => 15% for loyal customers (>10 purchases)
+  else 0.05                     -- => 5% default discount
+
+-- => PRESENTATION — only knows how to format, not compute or fetch
+formatDiscountMessage :: String -> Double -> String
+formatDiscountMessage name discount =
+  printf "Hello %s, your discount is %.0f%%" name (discount * 100.0)
+  -- => Output: "Hello Alice, your discount is 15%"
+
+-- => ORCHESTRATION — thin coordinator that pipelines the three functions
+getUserDiscountMessageSeparated :: Int -> String
+getUserDiscountMessageSeparated userId =
+  case findUser userId of
+    -- => delegates data access — result is Just (name, purchases) or Nothing
+    Nothing -> "User not found"
+    Just (name, purchases) ->
+      let discount = calculateDiscount purchases
+          -- => delegates business rule — discount :: Double
+      in formatDiscountMessage name discount
+         -- => delegates formatting — returns final string
+
+main :: IO ()
+main = putStrLn (getUserDiscountMessageSeparated 1)
+-- => Output: Hello Alice, your discount is 15%
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 Each function now has one reason to change: swap the data source without touching the discount rule; change the discount formula without touching the message format.
@@ -270,7 +358,7 @@ The Single Responsibility Principle (SRP) states that a module or function shoul
 
 **Violating SRP — one module does too much:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -388,11 +476,59 @@ const resetPassword = (userId: number): string => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: UserManagerBad.hs ───────────
+-- [F#: module with mutable private state — Haskell uses IORef to model the same
+--   bad design where one module holds storage, email, AND password concerns]
+import Data.IORef                       -- => IORef holds mutable references in IO
+import qualified Data.Map.Strict as Map -- => immutable Map kept inside the IORef
+import Text.Printf (printf)              -- => printf for formatted side-effecting output
+
+-- => Storage state: a Map from id to (name, email)
+type UserStore = IORef (Map.Map Int (String, String))
+-- => the IORef wraps a map; only readIORef/writeIORef/modifyIORef mutate it
+
+-- => CREATE the shared store — one global mutable cell holds all concerns
+newUserStore :: IO UserStore
+newUserStore = newIORef Map.empty
+-- => starts empty; addUser will populate it
+
+-- => STORAGE CONCERN: adds a user to the store
+addUser :: UserStore -> Int -> String -> String -> IO ()
+addUser store uid name email =
+  modifyIORef store (Map.insert uid (name, email))
+  -- => stores user under uid key; side-effecting mutation through IORef
+
+-- => EMAIL CONCERN embedded in the same module — mixing responsibilities
+sendWelcomeEmail :: UserStore -> Int -> IO ()
+sendWelcomeEmail store uid = do
+  m <- readIORef store              -- => reads the current map snapshot
+  case Map.lookup uid m of
+    Nothing -> pure ()              -- => user not found — silent no-op
+    Just (name, email) ->
+      printf "Sending email to %s: Welcome, %s!\n" email name
+      -- => Output: Sending email to alice@example.com: Welcome, Alice!
+
+-- => PASSWORD CONCERN also embedded — a third responsibility leaking in
+resetPassword :: Int -> IO String
+resetPassword uid = do
+  let newPassword = "pass_" ++ show uid ++ "_reset"
+      -- => deterministic fake password for this example
+  printf "Password reset for user %d: %s\n" uid newPassword
+  -- => Output: Password reset for user 1: pass_1_reset
+  pure newPassword
+  -- => returns the new password string
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Applying SRP — one module, one responsibility:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -500,8 +636,8 @@ EmailService.sendWelcome "Alice" "alice@example.com"
 // [F#: three focused modules — TypeScript uses focused pure functions]
 
 // => RESPONSIBILITY 1: User data management only
-type UserRecord = Readonly<{ name: string; email: string }>;
-type UserStore = ReadonlyMap<number, UserRecord>;
+type UserRecord = Readonly;
+type UserStore = ReadonlyMap;
 
 const addUserToStore = (id: number, name: string, email: string, store: UserStore): UserStore => {
   const next = new Map(store);
@@ -542,6 +678,71 @@ sendWelcomeSrp("Alice", "alice@example.com");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SrpApplied.hs ───────────
+-- [F#: three focused modules — Haskell uses three module-like groups of functions,
+--   each pure and returning new immutable values to thread between calls]
+import qualified Data.Map.Strict as Map  -- => immutable Map for the store
+import Text.Printf (printf)               -- => formatted IO for email/password output
+
+-- => DOMAIN TYPE shared by storage and email
+data UserRec = UserRec { userName :: String, userEmail :: String } deriving Show
+-- => record type captures the single user shape; deriving Show for printing
+
+-- ============================================================
+-- RESPONSIBILITY 1: User data management only
+-- ============================================================
+type UserStore = Map.Map Int UserRec
+-- => alias: storage is just an immutable Map; no shared mutable state
+
+addToStore :: Int -> String -> String -> UserStore -> UserStore
+-- => Pure function: returns a NEW map; original store unchanged
+addToStore uid name email = Map.insert uid (UserRec name email)
+-- => Map.insert returns a new map — structural sharing keeps this efficient
+
+getFromStore :: Int -> UserStore -> Maybe UserRec
+-- => returns Just user or Nothing — safe lookup
+getFromStore = Map.lookup
+
+-- ============================================================
+-- RESPONSIBILITY 2: Email notifications only
+-- ============================================================
+sendWelcome :: String -> String -> IO ()
+-- => Accepts name and email; prints the welcome message
+sendWelcome name email =
+  printf "Sending email to %s: Welcome, %s!\n" email name
+  -- => Output: Sending email to alice@example.com: Welcome, Alice!
+  -- => This function changes only when the email format/provider changes
+
+-- ============================================================
+-- RESPONSIBILITY 3: Password management only
+-- ============================================================
+resetUserPassword :: Int -> IO String
+-- => Generates a deterministic reset token — use a CSPRNG in production
+resetUserPassword uid = do
+  let newPassword = "pass_" ++ show uid ++ "_reset"
+      -- => deterministic for this example
+  printf "Password reset for user %d: %s\n" uid newPassword
+  -- => Output: Password reset for user 1: pass_1_reset
+  pure newPassword
+  -- => returns generated password string
+
+main :: IO ()
+main = do
+  let store0 = Map.empty :: UserStore
+      -- => empty map is our initial state — no users yet
+      store1 = addToStore 1 "Alice" "alice@example.com" store0
+      -- => store1 has one user entry; store0 still empty
+  sendWelcome "Alice" "alice@example.com"
+  -- => Output: Sending email to alice@example.com: Welcome, Alice!
+  print (Map.size store1)
+  -- => Output: 1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each module should have exactly one reason to change. When you update email templates, only `EmailService` changes. When you change password policy, only `PasswordService` changes.
@@ -572,7 +773,7 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -732,7 +933,7 @@ printfn "%s" (display 99) // => Error: Product not found
 // [F#: three modules with downward-only calls — TypeScript uses tagged unions and pure functions]
 
 // ── DATA ACCESS LAYER — only knows about storage ──────────────────────────────
-type ProductData = Readonly<{ name: string; price: number; stock: number }>;
+type ProductData = Readonly;
 const products = new Map<number, ProductData>([
   [1, { name: "Laptop", price: 1200.0, stock: 5 }],
   // => stock 5: available
@@ -788,6 +989,84 @@ console.log(display(99)); // => Error: Product not found
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ThreeLayer.hs ───────────
+-- [F#: three modules with downward-only calls — Haskell uses three function groups
+--   in one module; data flows upward through pure pipelines (data > business > view)]
+import qualified Data.Map.Strict as Map  -- => immutable Map for the data layer
+import Text.Printf (printf)               -- => printf for formatted strings
+
+-- ============================================================
+-- DATA ACCESS LAYER — only knows about storage
+-- ============================================================
+data ProductData = ProductData
+  { pName  :: String   -- => human-readable product name
+  , pPrice :: Double   -- => unit price in dollars
+  , pStock :: Int      -- => current stock count
+  } deriving Show
+
+-- => In-memory map simulates a database table
+productsDb :: Map.Map Int ProductData
+productsDb = Map.fromList
+  [ (1, ProductData "Laptop" 1200.0 5)  -- => stock 5: available
+  , (2, ProductData "Mouse"    25.0 0)  -- => stock 0: out of stock
+  ]
+
+findById :: Int -> Maybe ProductData
+-- => returns Just product or Nothing — caller decides what to do with absence
+findById pid = Map.lookup pid productsDb
+
+-- ============================================================
+-- BUSINESS LOGIC LAYER — only knows about rules
+-- ============================================================
+data ProductResult
+  = Available String Double  -- => product exists and is in stock (name, price)
+  | OutOfStock String        -- => product exists but stock is zero (name)
+  | NotFound                 -- => no product found for the given id
+  deriving Show
+
+checkAvailability :: Int -> ProductResult
+-- => delegates data retrieval; encodes the business rule in the return type
+checkAvailability pid =
+  case findById pid of
+    Nothing -> NotFound  -- => no product record — return NotFound case
+    Just p
+      | pStock p == 0 -> OutOfStock (pName p)
+      -- => business rule: zero stock means unavailable
+      | otherwise     -> Available (pName p) (pPrice p)
+      -- => product in stock — return name and price
+
+-- ============================================================
+-- PRESENTATION LAYER — only knows about formatting responses
+-- ============================================================
+formatResult :: ProductResult -> String
+-- => pattern match on the ADT — each case formats differently
+formatResult (Available name price) =
+  printf "Available: %s at $%.2f" name price
+  -- => Output (id=1): "Available: Laptop at $1200.00"
+formatResult (OutOfStock name) =
+  printf "Error: '%s' is out of stock" name
+  -- => Output (id=2): "Error: 'Mouse' is out of stock"
+formatResult NotFound =
+  "Error: Product not found"
+  -- => Output (id=99): "Error: Product not found"
+
+-- Wire and run — function composition is Haskell's pipeline equivalent
+display :: Int -> String
+display = formatResult . checkAvailability
+-- => . composes: id -> ProductResult -> String, right-to-left
+
+main :: IO ()
+main = do
+  putStrLn (display 1)   -- => Available: Laptop at $1200.00
+  putStrLn (display 2)   -- => Error: 'Mouse' is out of stock
+  putStrLn (display 99)  -- => Error: Product not found
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each layer communicates only with the layer directly below it. Presentation never touches the database; data access never formats strings for users. In FP, the `|>` pipeline operator makes this layered data flow explicit and readable.
@@ -800,7 +1079,7 @@ console.log(display(99)); // => Error: Product not found
 
 The presentation layer should translate raw input into domain calls and translate domain results into output format. It should contain no business logic and no data access code. In F#, keeping the presentation layer thin means it only pipes values through domain functions and formats results.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -907,7 +1186,7 @@ printfn "%s" (handleCancelRequest 999) // => Order 999 not found
 // [F#: three focused pure functions — TypeScript uses readonly maps and pure functions]
 
 // => DATA LAYER — retrieves raw records (pure function, no side effects)
-const orderDb = new Map<number, Readonly<{ total: number; status: string }>>([
+const orderDb = new Map<number, Readonly>([
   [101, { total: 299.99, status: "shipped" }],
   // => shipped: not eligible for cancellation
   [102, { total: 49.0, status: "pending" }],
@@ -939,6 +1218,61 @@ const handleCancelRequest = (orderId: number): string => {
 console.log(handleCancelRequest(101)); // => Order 101 cannot be cancelled (status: shipped)
 console.log(handleCancelRequest(102)); // => Order 102 cancelled successfully
 console.log(handleCancelRequest(999)); // => Order 999 not found
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: CancelOrderPresentation.hs ───────────
+-- [F#: three focused pure functions — Haskell uses pattern match on Maybe and
+--   a pure boolean rule; the presentation layer transforms but never decides]
+import qualified Data.Map.Strict as Map  -- => immutable Map for the order store
+import Text.Printf (printf)               -- => printf for user-facing strings
+
+-- => Domain record shared between data and presentation layers
+data Order = Order { oTotal :: Double, oStatus :: String } deriving Show
+-- => total in dollars; status is a free-form string for this example
+
+-- => DATA LAYER — retrieves raw records (pure function, no side effects)
+orderDb :: Map.Map Int Order
+orderDb = Map.fromList
+  [ (101, Order 299.99 "shipped")  -- => shipped: not eligible for cancellation
+  , (102, Order   49.0 "pending")  -- => pending with low total: eligible
+  ]
+
+findOrder :: Int -> Maybe Order
+-- => returns Just order or Nothing — pure lookup
+findOrder oid = Map.lookup oid orderDb
+
+-- => BUSINESS LAYER — applies domain rules (pure function)
+isEligibleForCancellation :: Double -> String -> Bool
+isEligibleForCancellation total status =
+  status == "pending" && total < 500.0
+  -- => cancellation rule: pending AND total below $500 threshold
+  -- => changing this rule affects only this function
+
+-- => PRESENTATION LAYER — translates, never decides
+handleCancelRequest :: Int -> String
+handleCancelRequest oid =
+  case findOrder oid of
+    -- => fetches from data layer — presentation never queries the map directly
+    Nothing -> printf "Order %d not found" oid
+    -- => Nothing branch: presentation transforms absence into a user message
+    Just order ->
+      if isEligibleForCancellation (oTotal order) (oStatus order)
+      -- => business logic evaluated by the business function; result consumed here
+        then printf "Order %d cancelled successfully" oid
+        -- => Output (id=102): "Order 102 cancelled successfully"
+        else printf "Order %d cannot be cancelled (status: %s)" oid (oStatus order)
+        -- => Output (id=101): "Order 101 cannot be cancelled (status: shipped)"
+
+main :: IO ()
+main = do
+  putStrLn (handleCancelRequest 101) -- => Order 101 cannot be cancelled (status: shipped)
+  putStrLn (handleCancelRequest 102) -- => Order 102 cancelled successfully
+  putStrLn (handleCancelRequest 999) -- => Order 999 not found
 ```
 
 {{< /tab >}}
@@ -976,7 +1310,7 @@ graph LR
     style V fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1196,8 +1530,8 @@ printfn "%s" (TodoController.listAll s3)
 // [F#: three modules with pure state threading — TypeScript uses readonly types and pure functions]
 
 // ── MODEL — data type + pure rule functions ───────────────────────────────────
-type Todo = Readonly<{ id: number; title: string; done: boolean }>;
-type Store = Readonly<{ items: readonly Todo[]; nextId: number }>;
+type Todo = Readonly;
+type Store = Readonly;
 // => immutable types mirror F# record types
 
 const emptyStore: Store = { items: [], nextId: 1 };
@@ -1279,6 +1613,118 @@ console.log(ctrlListAll(s3));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: TodoMvc.hs ───────────
+-- [F#: three modules with pure state threading — Haskell uses three record/function
+--   groups; immutable values are threaded explicitly through controller calls]
+import Data.List (intercalate)  -- => intercalate joins a list of strings with a separator
+import Text.Printf (printf)      -- => printf for the create confirmation
+
+-- ============================================================
+-- MODEL — data type + pure rule functions
+-- ============================================================
+data Todo = Todo
+  { todoId    :: Int     -- => unique identifier
+  , todoTitle :: String  -- => human-readable title
+  , todoDone  :: Bool    -- => true once completed
+  } deriving Show
+
+data Store = Store
+  { storeItems  :: [Todo]  -- => list of todos; head is oldest in this design
+  , storeNextId :: Int     -- => next id to assign on add
+  } deriving Show
+
+emptyStore :: Store
+emptyStore = Store { storeItems = [], storeNextId = 1 }
+-- => initial state: no items, next id starts at 1
+
+modelAdd :: String -> Store -> (Todo, Store)
+-- => Pure: returns the created Todo plus the updated Store
+modelAdd title store =
+  let item = Todo (storeNextId store) title False
+      -- => item has auto-incremented id and done=False
+      newStore = store { storeItems = storeItems store ++ [item]
+                       -- => ++ appends item to the items list
+                       , storeNextId = storeNextId store + 1 }
+                       -- => nextId incremented for next call
+  in (item, newStore)
+     -- => returns (created item, updated store)
+
+modelComplete :: Int -> Store -> (Bool, Store)
+-- => Marks matching id as done; returns (found?, updated store)
+modelComplete itemId store =
+  let updated = map (\t -> if todoId t == itemId then t { todoDone = True } else t)
+                    (storeItems store)
+      -- => map transforms each item; matching id → done=True
+      found = any (\t -> todoId t == itemId) updated
+      -- => found: True if any item matched the id
+  in (found, store { storeItems = updated })
+     -- => returns (success flag, updated store)
+
+-- ============================================================
+-- VIEW — formats data for display, no logic
+-- ============================================================
+renderList :: [Todo] -> String
+renderList [] = "No todos yet."
+-- => empty list: short message
+renderList items =
+  intercalate "\n" (map render1 items)
+  -- => render each item then join with newlines
+  where
+    render1 t =
+      let status = if todoDone t then "✓" else "○"
+          -- => status is "✓" for done items, "○" for pending
+      in printf "[%s] %d. %s" status (todoId t) (todoTitle t)
+         -- => each item formatted as "[○] 1. Buy milk"
+
+renderCreated :: Todo -> String
+renderCreated item = printf "Created todo #%d: %s" (todoId item) (todoTitle item)
+-- => Output: "Created todo #1: Buy milk"
+
+-- ============================================================
+-- CONTROLLER — coordinates model and view
+-- ============================================================
+ctrlCreate :: String -> Store -> (String, Store)
+ctrlCreate title store =
+  let (item, newStore) = modelAdd title store
+      -- => delegates creation to model — receives item + updated store
+  in (renderCreated item, newStore)
+     -- => delegates formatting to view — returns (message, store)
+
+ctrlListAll :: Store -> String
+ctrlListAll = renderList . storeItems
+-- => fetches items from store, delegates rendering to view
+
+ctrlMarkDone :: Int -> Store -> (String, Store)
+ctrlMarkDone itemId store =
+  let (found, newStore) = modelComplete itemId store
+      -- => delegates completion to model
+      msg = if found
+              then printf "Todo #%d marked as done" itemId
+              else printf "Todo #%d not found" itemId
+  in (msg, newStore)
+     -- => returns (message, updated store)
+
+main :: IO ()
+main = do
+  let (msg1, s1) = ctrlCreate "Buy milk" emptyStore
+      -- => msg1 = "Created todo #1: Buy milk", s1 has one item
+      (msg2, s2) = ctrlCreate "Write tests" s1
+      -- => msg2 = "Created todo #2: Write tests", s2 has two items
+      (msg3, s3) = ctrlMarkDone 1 s2
+      -- => msg3 = "Todo #1 marked as done", s3 has item 1 done=True
+  putStrLn msg1   -- => Created todo #1: Buy milk
+  putStrLn msg2   -- => Created todo #2: Write tests
+  putStrLn msg3   -- => Todo #1 marked as done
+  putStrLn (ctrlListAll s3)
+  -- => [✓] 1. Buy milk
+  -- => [○] 2. Write tests
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The Controller handles input and coordinates. The Model owns data types and rules. The View formats output. In F#, state flows explicitly from function to function rather than being mutated in place, making the data flow visible and testable.
@@ -1291,7 +1737,7 @@ console.log(ctrlListAll(s3));
 
 The Model is responsible for enforcing its own invariants. In F#, a module with a private constructor (or smart constructor) ensures that invalid data can never be constructed — the type system enforces the rule, not runtime guards scattered across callers.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1437,24 +1883,24 @@ type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
 
 // => POOR APPROACH: plain object with no invariant enforcement
 // => Nothing prevents: { balance: -9999, _brand: "BankAccount" }
-type BankAccount = Readonly<{ balance: number; _brand: "BankAccount" }>;
+type BankAccount = Readonly;
 // => _brand makes BankAccount structurally distinct — callers cannot create it without helper
 
-const createAccount = (initialBalance: number): Result<BankAccount, string> => {
+const createAccount = (initialBalance: number): Result => {
   if (initialBalance < 0) return { ok: false, error: "Initial balance cannot be negative" };
   // => enforced at construction time — invalid state never enters the system
   return { ok: true, value: { balance: initialBalance, _brand: "BankAccount" } };
   // => Ok wraps the valid account — callers must handle the Result
 };
 
-const deposit = (amount: number, account: BankAccount): Result<BankAccount, string> => {
+const deposit = (amount: number, account: BankAccount): Result => {
   if (amount <= 0) return { ok: false, error: "Deposit amount must be positive" };
   // => model rejects invalid inputs without caller involvement
   return { ok: true, value: { ...account, balance: account.balance + amount } };
   // => returns a NEW account with updated balance — immutable update
 };
 
-const withdraw = (amount: number, account: BankAccount): Result<BankAccount, string> => {
+const withdraw = (amount: number, account: BankAccount): Result => {
   if (amount <= 0) return { ok: false, error: "Withdrawal amount must be positive" };
   if (account.balance - amount < 0)
     return { ok: false, error: `Insufficient funds: balance is ${account.balance.toFixed(2)}` };
@@ -1467,7 +1913,7 @@ const getBalance = (account: BankAccount): number => account.balance;
 // => read-only accessor
 
 // => USAGE: chain Result values with a bind helper
-const bindResult = <T, U, E>(r: Result<T, E>, fn: (v: T) => Result<U, E>): Result<U, E> => (r.ok ? fn(r.value) : r);
+const bindResult = <T, U, E>(r: Result, fn: (v: T) => Result): Result => (r.ok ? fn(r.value) : r);
 // => if Ok apply fn; if Err propagate the error unchanged
 
 const result = bindResult(
@@ -1481,6 +1927,69 @@ const result = bindResult(
 if (result.ok) console.log(`Balance: $${getBalance(result.value).toFixed(2)}`);
 else console.log(`Error: ${result.error}`);
 // => Output: Error: Insufficient funds: balance is 50.00
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: BankAccount.hs ───────────
+-- [F#: module with private constructor and Result<T,E> — Haskell uses a newtype
+--   without exporting its constructor (smart constructor pattern) + Either]
+module BankAccount
+  ( BankAccount         -- => export the type but NOT the constructor
+  , createAccount       -- => smart constructor: only way to make a BankAccount
+  , deposit             -- => returns Either String BankAccount
+  , withdraw            -- => returns Either String BankAccount
+  , getBalance          -- => read-only accessor
+  ) where
+import Text.Printf (printf)  -- => printf for formatting messages and final output
+
+-- => Opaque newtype: outside this module, the MkBankAccount constructor is invisible
+newtype BankAccount = MkBankAccount { unBalance :: Double } deriving Show
+-- => unBalance is the internal accessor; not re-exported above
+
+createAccount :: Double -> Either String BankAccount
+-- => Either String BankAccount mirrors F# Result<T, string>
+createAccount initial
+  | initial < 0 = Left "Initial balance cannot be negative"
+    -- => enforced at construction time — invalid state never enters the system
+  | otherwise   = Right (MkBankAccount initial)
+    -- => Right wraps the valid account — callers must handle the Either
+
+deposit :: Double -> BankAccount -> Either String BankAccount
+deposit amount (MkBankAccount bal)
+  | amount <= 0 = Left "Deposit amount must be positive"
+    -- => model rejects invalid inputs without caller involvement
+  | otherwise   = Right (MkBankAccount (bal + amount))
+    -- => returns a NEW account with updated balance — immutable update
+
+withdraw :: Double -> BankAccount -> Either String BankAccount
+withdraw amount (MkBankAccount bal)
+  | amount <= 0      = Left "Withdrawal amount must be positive"
+  | bal - amount < 0 = Left (printf "Insufficient funds: balance is %.2f" bal)
+    -- => business rule enforced in model — callers cannot bypass
+  | otherwise        = Right (MkBankAccount (bal - amount))
+    -- => returns new account with reduced balance
+
+getBalance :: BankAccount -> Double
+getBalance (MkBankAccount bal) = bal
+-- => read-only accessor — caller cannot modify balance directly
+
+-- => USAGE: composition root creates and threads accounts through Either >>=
+example :: Either String BankAccount
+example =
+  createAccount 100.0       -- => Right { balance = 100.0 }
+    >>= withdraw 50.0       -- => Right { balance = 50.0 }
+    >>= withdraw 200.0      -- => Left "Insufficient funds: balance is 50.00"
+-- => >>= is Either's monadic bind: short-circuits on Left, threads on Right
+
+main :: IO ()
+main = case example of
+  Right acc -> printf "Balance: $%.2f\n" (getBalance acc)
+  Left err  -> printf "Error: %s\n" err
+  -- => Output: Error: Insufficient funds: balance is 50.00
 ```
 
 {{< /tab >}}
@@ -1516,7 +2025,7 @@ graph TD
 
 **Without dependency injection (hard-coded dependency):**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1576,11 +2085,34 @@ const greetUserHardcoded = (userId: number): string => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: GreetUserHardcoded.hs ───────────
+-- [F#: hard-coded data map embedded in the function — Haskell mirrors the same
+--   anti-pattern: the dependency is created inline, so the function is untestable]
+import qualified Data.Map.Strict as Map  -- => Map.lookup returns Maybe v
+import Text.Printf (printf)               -- => printf for formatting messages
+
+-- => Hard-coded dependency: greetUserHardcoded always queries this specific map
+-- => Cannot be tested without the real data store
+greetUserHardcoded :: Int -> String
+greetUserHardcoded userId =
+  let db = Map.fromList [(1, "Alice"), (2, "Bob")]
+      -- => dependency created inside function — impossible to substitute in tests
+  in case Map.lookup userId db of
+       Nothing   -> printf "User %d not found" userId
+       Just name -> printf "Hello, %s!" (name :: String)
+       -- => Output: "Hello, Alice!"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **With dependency injection (easy to test with any backend):**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1706,6 +2238,52 @@ console.log(greetUser(fakeUserFetcher, 1)); // => Hello, TestUser!
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: GreetUserDi.hs ───────────
+-- [F#: type alias UserFetcher = int -> string option — Haskell uses a type alias
+--   for a pure function value; any function matching the signature can be injected]
+import qualified Data.Map.Strict as Map  -- => Map for the real fetcher implementation
+import Text.Printf (printf)               -- => printf for the greeting format
+
+-- => TYPE ALIAS for the dependency — any function matching this signature works
+type UserFetcher = Int -> Maybe String
+-- => Int -> Maybe String mirrors F# int -> string option
+
+-- => REAL implementation for production
+realUserFetcher :: UserFetcher
+realUserFetcher =
+  let data_ = Map.fromList [(1, "Alice"), (2, "Bob")]
+      -- => captures data_ in a closure — simulates a real DB connection
+  in \userId -> Map.lookup userId data_
+     -- => returns Just "Alice" or Nothing — delegates to Map.lookup
+
+-- => FAKE implementation for tests — no DB required
+fakeUserFetcher :: UserFetcher
+fakeUserFetcher _ = Just "TestUser"
+-- => always returns Just "TestUser" — predictable in tests
+
+-- => SERVICE: accepts any UserFetcher — decoupled from specific implementation
+greetUser :: UserFetcher -> Int -> String
+greetUser fetchUser userId =
+  case fetchUser userId of
+    -- => delegates lookup to whatever fetcher was injected
+    Nothing   -> printf "User %d not found" userId
+    Just name -> printf "Hello, %s!" name
+    -- => Output: "Hello, Alice!"
+
+main :: IO ()
+main = do
+  -- => PRODUCTION: inject real fetcher
+  putStrLn (greetUser realUserFetcher 1)   -- => Hello, Alice!
+  putStrLn (greetUser realUserFetcher 99)  -- => User 99 not found
+  -- => TEST: inject fake fetcher — no database needed
+  putStrLn (greetUser fakeUserFetcher 1)   -- => Hello, TestUser!
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Inject dependencies as function parameters rather than hard-coding them. The function only knows the signature it needs, not which implementation provides it.
@@ -1718,7 +2296,7 @@ console.log(greetUser(fakeUserFetcher, 1)); // => Hello, TestUser!
 
 There are two common styles of dependency injection: constructor injection (dependencies fixed when an object is built) and method injection (dependencies passed per-call). In F#, both patterns appear as partial application (fixing some arguments upfront) versus full parameter threading (passing on every call). In Clojure, the same split maps to closing over dependencies in a factory function versus threading the dependency as a final argument on every call.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1853,6 +2431,56 @@ logMessage("File export", (msg) => console.log(`>> ${msg}`));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DiPatterns.hs ───────────
+-- [F#: partial application as constructor injection — Haskell does the same; it is
+--   naturally curried, so giving a function its dependency yields a smaller function]
+import Text.Printf (printf)  -- => printf for both the order and audit message formats
+
+-- => PARTIAL APPLICATION AS "CONSTRUCTOR" INJECTION
+-- => Use when: dependency is always required and does not change per call
+makeOrderProcessor :: (Double -> Bool) -> Int -> Double -> String
+-- => charge :: Double -> Bool is fixed at construction; returns Int -> Double -> String
+makeOrderProcessor charge orderId amount =
+  let success = charge amount
+      -- => uses the injected charge function — no knowledge of which gateway
+  in if success
+       then printf "Order %d paid ($%.0f)" orderId amount
+       -- => Output (success): "Order 1 paid ($500)"
+       else printf "Order %d payment failed" orderId
+
+-- => METHOD INJECTION (per-call dependency passing)
+-- => Use when: dependency varies per request (e.g., per-user logger)
+logMessage :: String -> (String -> IO ()) -> IO ()
+logMessage message output =
+  output (printf "[AUDIT] %s" message)
+  -- => output is passed per call — can be console, file, test spy, etc.
+
+-- => USAGE: wire concrete implementations at the composition root
+fakeCharge :: Double -> Bool
+fakeCharge amount = amount < 1000.0
+-- => fakeCharge returns True for amounts < 1000 (simulates approval limit)
+
+-- => Partial application: bake fakeCharge into a new function
+processOrder :: Int -> Double -> String
+processOrder = makeOrderProcessor fakeCharge
+-- => processOrder is (Int -> Double -> String) with charge baked in
+
+main :: IO ()
+main = do
+  putStrLn (processOrder 1 500.0)   -- => Order 1 paid ($500)
+  putStrLn (processOrder 2 1500.0)  -- => Order 2 payment failed
+  -- => Method injection — output function varies per call
+  logMessage "User login" putStrLn
+  -- => Output: [AUDIT] User login
+  logMessage "File export" (\msg -> putStrLn (">> " ++ msg))
+  -- => Output: >> [AUDIT] File export
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Use partial application (F#) or factory closures (Clojure) to fix stable dependencies at "construction" time. Use full parameter threading when the dependency varies per invocation.
@@ -1869,7 +2497,7 @@ The Interface Segregation Principle says that modules should not depend on opera
 
 **Fat dependency record — forces consumers to carry functions they do not use:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1967,11 +2595,43 @@ const contractorOps: EmployeeOperations = {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: EmployeeOperationsFat.hs ───────────
+-- [F#: fat record-of-functions — Haskell uses a fat record of IO actions where
+--   every consumer must populate every field even when it makes no sense]
+
+-- => FAT record: all consumers must provide ALL four functions
+data EmployeeOperations = EmployeeOperations
+  { calculateSalary :: IO Double  -- => relevant for paid employees
+  , clockIn         :: IO ()      -- => relevant for hourly workers
+  , generateReport  :: IO String  -- => relevant for managers
+  , requestLeave    :: Int -> IO () -- => relevant for all employees
+  }
+
+-- => CONTRACTOR only needs salary calculation
+-- => yet must provide all four — clockIn and generateReport are forced stubs
+contractorOps :: EmployeeOperations
+contractorOps = EmployeeOperations
+  { calculateSalary = pure 500.0
+    -- => useful: contractor's daily rate
+  , clockIn         = pure ()
+    -- => forced but meaningless for a contractor
+  , generateReport  = pure ""
+    -- => forced but meaningless for a contractor
+  , requestLeave    = \_ -> pure ()
+    -- => forced but meaningless — contractors don't accrue leave
+  }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Segregated dependency types — each consumer picks only what applies:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2125,6 +2785,64 @@ console.log(`FT salary: ${Math.round(ftPayable.calculateSalary())}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: EmployeeOperationsSeg.hs ───────────
+-- [F#: focused record types per capability — Haskell uses one focused record/type
+--   per capability; consumers select only what they need; no forced stubs]
+import Data.IORef             -- => IORef for the FT hours-tracking demo
+import Text.Printf (printf)    -- => printf for the final salary output
+
+-- => FOCUSED dependency types: each covers one capability
+newtype Payable    = Payable    { runCalculateSalary :: IO Double }
+-- => pay calculation only — newtype gives a tiny wrapper around the IO action
+newtype Trackable  = Trackable  { runClockIn         :: IO () }
+-- => time tracking only
+newtype Reportable = Reportable { runGenerateReport  :: IO String }
+-- => reporting only
+
+-- => CONTRACTOR: only salary matters, no forced stubs
+segContractor :: Payable
+segContractor = Payable { runCalculateSalary = pure 500.0 }
+-- => flat daily rate — contractor record has exactly one field
+
+-- => FULL-TIME EMPLOYEE: salary + time tracking (separate records)
+mkFullTimeOps :: IORef Int -> (Payable, Trackable)
+-- => share a single IORef for hoursWorked between both records
+mkFullTimeOps hoursRef =
+  ( Payable   { runCalculateSalary = do
+                  h <- readIORef hoursRef
+                  pure (fromIntegral h * 25.0) }
+    -- => $25/hour — only salary concern
+  , Trackable { runClockIn         = modifyIORef hoursRef (+ 8) }
+    -- => adds one full work day per clock-in — only tracking concern
+  )
+
+-- => MANAGER: salary + reporting
+mgPayable :: Payable
+mgPayable = Payable { runCalculateSalary = pure 8000.0 }
+-- => fixed monthly salary
+mgReportable :: Reportable
+mgReportable = Reportable { runGenerateReport = pure "Team performance: on track" }
+-- => manager-specific report — only reporting concern
+
+main :: IO ()
+main = do
+  contractorSalary <- runCalculateSalary segContractor
+  printf "Contractor salary: %.0f\n" contractorSalary
+  -- => Output: Contractor salary: 500
+  hoursRef <- newIORef 0
+  let (ftPay, ftTrack) = mkFullTimeOps hoursRef
+  runClockIn ftTrack
+  -- => hoursWorked is now 8
+  ftSalary <- runCalculateSalary ftPay
+  printf "FT salary: %.0f\n" ftSalary
+  -- => Output: FT salary: 200  (8 hours * $25)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Split dependency records (F#) or protocols (Clojure) by cohesive capability, not by the most complex consumer. Each consumer receives only the functions it genuinely uses.
@@ -2161,7 +2879,7 @@ graph TD
 
 **Closed approach — requires modifying existing code for every new discount:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2217,11 +2935,34 @@ const calculateDiscountBad = (price: number, discountType: string): number => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DiscountClosed.hs ───────────
+-- [F#: string-dispatch match — Haskell mirrors the same anti-pattern with case-on-string;
+--   every new discount type forces editing this function, violating Open/Closed]
+
+-- => VIOLATION: adding a new discount type requires editing this function
+calculateDiscountBad :: Double -> String -> Double
+calculateDiscountBad price discountType =
+  case discountType of
+    "regular" -> price * 0.10
+    -- => 10% off
+    "loyalty" -> price * 0.20
+    -- => 20% off for loyal customers
+    -- => Every new discount type requires adding another case here
+    -- => This is the "open for modification" anti-pattern
+    _         -> 0.0
+    -- => default: no discount — adding "seasonal" means editing this function
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Open/Closed approach — extend by adding new functions, never editing existing ones:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2362,6 +3103,58 @@ console.log(finalPrice(combinedDiscount([regularDiscount, loyaltyDiscount]), 100
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DiscountOpen.hs ───────────
+-- [F#: DiscountStrategy type alias + composable functions — Haskell uses a function
+--   type alias; first-class functions make every new strategy a pure addition]
+import Text.Printf (printf)  -- => printf for the final-price output
+
+-- => STRATEGY TYPE: defines the contract — any Double -> Double function qualifies
+type DiscountStrategy = Double -> Double
+-- => Takes a price, returns the discount amount — simple and composable
+
+-- => CONCRETE STRATEGIES — add new ones without touching existing code
+regularDiscount :: DiscountStrategy
+regularDiscount price = price * 0.10
+-- => 10% discount
+
+loyaltyDiscount :: DiscountStrategy
+loyaltyDiscount price = price * 0.20
+-- => 20% discount for loyal customers
+
+-- => EXTENSION: new discount type — existing strategies are UNTOUCHED
+seasonalDiscount :: DiscountStrategy
+seasonalDiscount price = price * 0.30
+-- => 30% seasonal sale — added without modifying the two above
+
+-- => CLIENT: accepts any DiscountStrategy — closed to modification, open to extension
+finalPrice :: DiscountStrategy -> Double -> Double
+finalPrice strategy price =
+  let discount = strategy price
+      -- => delegates discount computation to the injected strategy
+  in price - discount
+     -- => price minus discount amount
+
+-- => COMPOSING strategies: combine two strategies (e.g., regular + loyalty)
+combinedDiscount :: [DiscountStrategy] -> DiscountStrategy
+combinedDiscount strategies price =
+  sum (map ($ price) strategies)
+  -- => $ applies each strategy to the price; sum totals the discounts
+
+main :: IO ()
+main = do
+  printf "%.1f\n" (finalPrice regularDiscount 100.0)
+  -- => 100 - 10 = 90.0
+  printf "%.1f\n" (finalPrice seasonalDiscount 100.0)
+  -- => 100 - 30 = 70.0
+  printf "%.1f\n" (finalPrice (combinedDiscount [regularDiscount, loyaltyDiscount]) 100.0)
+  -- => 100 - (10 + 20) = 70.0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Depend on function types (F#) or function values (Clojure) and inject concrete strategies from outside. Adding new behavior means writing a new function, not modifying existing ones.
@@ -2378,7 +3171,7 @@ The Liskov Substitution Principle (LSP) says that any value of a subtype must be
 
 **LSP violation modeled — subtype breaks the contract:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2484,11 +3277,57 @@ console.log(`Expected area 15.0, got: ${(squareLike.width * squareLike.height).t
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: LspViolation.hs ───────────
+-- [F#: mutable record violation — Haskell uses IORef to model the same anti-pattern;
+--   we expose dimension setters whose contract a "square" subtype would break]
+import Data.IORef             -- => IORef holds mutable references in IO
+import Text.Printf (printf)    -- => printf for the diagnostic output
+
+-- => "Base type" data shape with mutable fields modeled via IORef
+data MutableRect = MutableRect
+  { rectW :: IORef Double  -- => width cell
+  , rectH :: IORef Double  -- => height cell
+  }
+
+-- => "Base type" contract: setWidth and setHeight change only one dimension each
+setWidth :: MutableRect -> Double -> IO ()
+setWidth r w = writeIORef (rectW r) w
+-- => intended: only width changes
+setHeight :: MutableRect -> Double -> IO ()
+setHeight r h = writeIORef (rectH r) h
+-- => intended: only height changes
+
+-- => "Square" variant VIOLATES the contract by coupling width and height
+makeSquare :: Double -> IO MutableRect
+makeSquare side = do
+  w <- newIORef side
+  h <- newIORef side
+  pure MutableRect { rectW = w, rectH = h }
+  -- => both dimensions equal — fine for a square, but…
+
+main :: IO ()
+main = do
+  sq <- makeSquare 1.0
+  setWidth sq 5.0
+  -- => changes width to 5.0, but height stays 1.0 in this representation
+  -- => a "true square" mutator would also set height = 5.0 — breaking the contract
+  setHeight sq 3.0
+  w <- readIORef (rectW sq)
+  h <- readIORef (rectH sq)
+  printf "Expected area 15.0, got: %.1f\n" (w * h)
+  -- => Output: Expected area 15.0, got: 15.0 — coincidence; fragile contract
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **LSP-compliant design — use a discriminated union (F#) or multimethod (Clojure), not inheritance:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2616,6 +3455,43 @@ describeAreas([
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: LspCompliant.hs ───────────
+-- [F#: discriminated union Shape — Haskell uses an algebraic data type with two
+--   independent constructors; every Shape is substitutable in area without surprise]
+import Text.Printf (printf)  -- => printf for the area output
+
+-- => SHAPE ADT: each constructor carries exactly the data it needs
+data Shape
+  = Rectangle Double Double  -- => Rectangle: independent width and height
+  | Square Double            -- => Square: single side length — no inherited confusion
+  deriving Show
+
+-- => AREA function: works for any Shape — LSP satisfied at the type level
+area :: Shape -> Double
+area (Rectangle w h) = w * h  -- => width * height — independent dimensions
+area (Square s)      = s * s  -- => side * side — no ambiguity
+
+-- => SUBSTITUTABILITY via list: every Shape value is interchangeable for area
+describeAreas :: [Shape] -> IO ()
+describeAreas shapes =
+  mapM_ (\s -> printf "Area: %.1f\n" (area s)) shapes
+  -- => any Shape satisfies the area function — ADT enforces LSP
+
+main :: IO ()
+main = do
+  printf "Area: %.1f\n" (area (Rectangle 5.0 3.0))  -- => Area: 15.0
+  printf "Area: %.1f\n" (area (Square 4.0))         -- => Area: 16.0
+  describeAreas [Rectangle 5.0 3.0, Square 4.0, Rectangle 2.0 6.0]
+  -- => Area: 15.0
+  -- => Area: 16.0
+  -- => Area: 12.0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Prefer discriminated unions (F#) or multimethods on tagged maps (Clojure) over inheritance hierarchies. When every case carries exactly the data it needs, no case can break the contract expected by a consumer.
@@ -2632,7 +3508,7 @@ DRY (Don't Repeat Yourself) means every piece of knowledge should have a single 
 
 **Violation — business rule duplicated in three places:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2707,11 +3583,42 @@ const allowPurchase = (active: boolean, age: number): boolean => active && age >
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DryViolation.hs ───────────
+-- [F#: duplicated inline conditions — Haskell mirrors the same anti-pattern;
+--   the same boolean rule appears verbatim in three functions]
+import Text.Printf (printf)  -- => printf for the notification side effect
+
+-- => VIOLATION: the "eligible user" rule is duplicated in every function
+-- => If the rule changes (e.g., add emailVerified check), all three must be updated
+
+sendNotification :: String -> Bool -> Int -> IO ()
+sendNotification name active age =
+  if active && age >= 18              -- => rule duplicated here
+    then printf "Notifying %s\n" name
+    -- => Output: Notifying Alice
+    else pure ()
+
+generateReport :: String -> Bool -> Int -> IO ()
+generateReport name active age =
+  if active && age >= 18              -- => same rule repeated
+    then printf "Report for %s\n" name
+    else pure ()
+
+allowPurchase :: Bool -> Int -> Bool
+allowPurchase active age = active && age >= 18
+-- => rule duplicated a third time — three places to update on rule change
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **DRY — single authoritative location for the rule:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2818,6 +3725,50 @@ console.log(allowPurchaseDry(false, 25)); // => false
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DryApplied.hs ───────────
+-- [F#: single named function for the rule — Haskell extracts the predicate to one
+--   top-level function; every caller delegates, giving one place to update on change]
+import Text.Printf (printf)  -- => printf for the notification output
+
+-- => SINGLE SOURCE OF TRUTH: rule defined once as a named function
+isEligibleUser :: Bool -> Int -> Bool
+isEligibleUser active age = active && age >= 18
+-- => returns True only if active AND adult
+-- => changing this function updates all three callers automatically
+
+-- => Each function delegates to the single rule
+sendNotificationDry :: String -> Bool -> Int -> IO ()
+sendNotificationDry name active age =
+  if isEligibleUser active age          -- => delegates to single rule
+    then printf "Notifying %s\n" name
+    -- => Output: Notifying Alice
+    else pure ()
+
+generateReportDry :: String -> Bool -> Int -> IO ()
+generateReportDry name active age =
+  if isEligibleUser active age          -- => same single rule
+    then printf "Report for %s\n" name
+    else pure ()
+
+allowPurchaseDry :: Bool -> Int -> Bool
+allowPurchaseDry = isEligibleUser
+-- => single rule, no duplication — point-free delegation
+
+main :: IO ()
+main = do
+  sendNotificationDry "Alice" True 25
+  -- => Output: Notifying Alice
+  print (allowPurchaseDry True 25)
+  -- => Output: True
+  print (allowPurchaseDry False 25)
+  -- => Output: False
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Extract repeated decisions into named functions. Code duplication is a symptom of knowledge duplication — fix the knowledge location, not just the syntax.
@@ -2832,7 +3783,7 @@ KISS means preferring the simplest design that satisfies the requirements. Compl
 
 **Over-engineered — excessive type machinery for a simple task:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2934,11 +3885,48 @@ console.log(greetFromStrategy(new FormalGreeting(), "Alice"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: GreetingOverEngineered.hs ───────────
+-- [F#: DU + factory + record — Haskell over-engineered version uses an ADT,
+--   a factory, AND a config record to do what a one-liner would]
+
+-- => OVER-ENGINEERED: ADT + factory + config record for a simple greeting
+data GreetingStyle = Formal | Casual deriving Show
+-- => Union type adds no value when there is only one consumer
+
+data GreetingConfig = GreetingConfig
+  { gStyle  :: GreetingStyle  -- => speculative tag
+  , gPrefix :: String         -- => only field anyone uses
+  } deriving Show
+-- => Config record: one more layer of indirection
+
+makeGreetingConfig :: GreetingStyle -> GreetingConfig
+-- => factory function creates config from style
+makeGreetingConfig Formal = GreetingConfig Formal "Good day"
+makeGreetingConfig Casual = GreetingConfig Casual "Hey"
+
+greetFromConfig :: GreetingConfig -> String -> String
+greetFromConfig cfg name = gPrefix cfg ++ ", " ++ name ++ "."
+-- => uses prefix from config record
+
+-- => Usage: 3 types + 2 functions + 1 config to print "Good day, Alice."
+main :: IO ()
+main = do
+  let cfg = makeGreetingConfig Formal
+  putStrLn (greetFromConfig cfg "Alice")
+  -- => Output: Good day, Alice.
+  -- => Five declarations to do what one function does
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **KISS — simplest solution that works:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2988,6 +3976,25 @@ console.log(greet("Alice"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: GreetingSimple.hs ───────────
+-- [F#: single greet function — Haskell uses one top-level function and no ceremony]
+
+-- => SIMPLE: one function, zero ceremony, achieves the same result
+greet :: String -> String
+greet name = "Good day, " ++ name ++ "."
+-- => Output: Good day, Alice.
+-- => If greeting styles are needed later, add them then (YAGNI)
+
+main :: IO ()
+main = putStrLn (greet "Alice")
+-- => Output: Good day, Alice.
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Add abstractions only when complexity is demonstrated, not anticipated. The simple solution is easier to read, debug, test, extend, and hand off.
@@ -3000,7 +4007,7 @@ console.log(greet("Alice"));
 
 YAGNI means do not add functionality until it is actually needed. Speculative features add code complexity without delivering current value, and they are often built for a requirement that never arrives in the form anticipated. In Clojure, speculative keys in a map namespace add invisible surface area — every function that reads the map must mentally filter out keys it does not need.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3122,7 +4129,7 @@ interface SpeculativeUserProfile {
 // ============================================================
 
 // => YAGNI COMPLIANT: only what the application actually needs right now
-type SimpleUserProfile = Readonly<{ name: string; email: string }>;
+type SimpleUserProfile = Readonly;
 // => No speculative fields — add when a feature actually needs them
 
 const displayName = (profile: SimpleUserProfile): string => profile.name;
@@ -3133,6 +4140,49 @@ const user: SimpleUserProfile = { name: "Alice", email: "alice@example.com" };
 // => construction is trivial — no speculative fields to supply
 console.log(displayName(user));
 // => Output: Alice
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: YagniContrast.hs ───────────
+-- [F#: speculative record vs. minimal record — Haskell shows both: the bloated
+--   record forces every callsite to supply meaningless fields; the lean one does not]
+
+-- => YAGNI VIOLATION: speculative fields not required by any current use case
+data SpeculativeUserProfile = SpeculativeUserProfile
+  { sName                :: String   -- => required today
+  , sEmail               :: String   -- => required today
+  , sTheme               :: String   -- => "might need dark mode someday"
+  , sPreferredLanguage   :: String   -- => "maybe we'll go international"
+  , sNewsletterFrequency :: String   -- => "for a newsletter we haven't built"
+  , sAiRecommendations   :: Bool     -- => "for an AI feature in the roadmap"
+  } deriving Show
+-- => speculative fields force every constructor and test to supply values
+-- => that have no business meaning yet — pure noise in the codebase
+
+-- ============================================================
+
+-- => YAGNI COMPLIANT: only what the application actually needs right now
+data SimpleUserProfile = SimpleUserProfile
+  { uName  :: String  -- => required today
+  , uEmail :: String  -- => required today
+  } deriving Show
+-- => No speculative fields — add when a feature actually needs them
+
+displayName :: SimpleUserProfile -> String
+displayName = uName
+-- => required today for display — Output: "Alice"
+-- => Add exportToXml when an export feature is actually built
+
+main :: IO ()
+main = do
+  let user = SimpleUserProfile { uName = "Alice", uEmail = "alice@example.com" }
+      -- => construction is trivial — no speculative fields to supply
+  putStrLn (displayName user)
+  -- => Output: Alice
 ```
 
 {{< /tab >}}
@@ -3151,7 +4201,7 @@ console.log(displayName(user));
 
 Coupling measures how much one module depends on the internals of another. High coupling means a change in one module forces changes in others, making the system brittle and hard to evolve. In F#, high coupling appears when one function directly accesses or mutates the internal fields of records owned by another module.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3255,7 +4305,7 @@ type Customer15 = {
 };
 
 type Inventory15 = {
-  items: Map<string, number>; // => exposed mutable Map — callers manipulate stock directly
+  items: Map; // => exposed mutable Map — callers manipulate stock directly
 };
 
 // => placeOrder KNOWS about Customer's fields AND Inventory's internals
@@ -3282,6 +4332,63 @@ const i15 = { items: new Map([["Laptop", 5]]) };
 console.log(tightlyCoupledPlaceOrder(c15, i15, "Laptop", 1200.0));
 // => Order placed: Laptop for Alice
 // => If Customer renames creditLimit to availableCredit, placeOrder breaks
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: HighCoupling.hs ───────────
+-- [F#: mutable record fields with direct internal access — Haskell uses IORef-backed
+--   records; placeOrder reads/writes both internal fields, demonstrating coupling]
+import Data.IORef                       -- => IORef for mutable cells
+import qualified Data.Map.Strict as Map -- => map type used as inventory backing store
+import Data.Maybe (fromMaybe)            -- => default value on missing key
+import Text.Printf (printf)              -- => printf for the order message
+
+-- => Customer's mutable internal fields are exposed via IORefs
+data Customer15 = Customer15
+  { cName          :: String           -- => exposed field — any caller can read
+  , cCreditLimit   :: Double           -- => exposed field
+  , cOutstandingRef :: IORef Double    -- => mutable cell — any caller can mutate
+  }
+
+-- => Inventory's mutable internal map is exposed via an IORef
+newtype Inventory15 = Inventory15
+  { invItemsRef :: IORef (Map.Map String Int) }
+
+-- => placeOrder KNOWS about Customer's fields AND Inventory's internals
+tightlyCoupledPlaceOrder :: Customer15 -> Inventory15 -> String -> Double -> IO String
+tightlyCoupledPlaceOrder customer inventory item price = do
+  bal <- readIORef (cOutstandingRef customer)
+  -- => directly reads customer's internal field — tight coupling
+  if bal + price > cCreditLimit customer
+    then pure "Credit limit exceeded"
+    else do
+      items <- readIORef (invItemsRef inventory)
+      -- => directly reads inventory's internal map — tight coupling
+      if fromMaybe 0 (Map.lookup item items) <= 0
+        then pure (item ++ " is out of stock")
+        else do
+          -- => directly mutates customer's internal field
+          writeIORef (cOutstandingRef customer) (bal + price)
+          -- => directly mutates inventory's internal map
+          writeIORef (invItemsRef inventory)
+                     (Map.adjust (subtract 1) item items)
+          pure (printf "Order placed: %s for %s" item (cName customer))
+
+main :: IO ()
+main = do
+  balRef   <- newIORef 0.0
+  itemsRef <- newIORef (Map.fromList [("Laptop", 5)])
+  let customer  = Customer15 "Alice" 2000.0 balRef
+      inventory = Inventory15 itemsRef
+  msg <- tightlyCoupledPlaceOrder customer inventory "Laptop" 1200.0
+  putStrLn msg
+  -- => Output: Order placed: Laptop for Alice
+  -- => If Customer renames cCreditLimit to cAvailableCredit, placeOrder breaks
+  -- => If Inventory changes its backing store, placeOrder breaks
 ```
 
 {{< /tab >}}
@@ -3314,7 +4421,7 @@ graph LR
     style I fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3473,12 +4580,7 @@ printfn "%s" msg
 // [F#: modules with private types — TypeScript uses branded types + smart constructors]
 
 // => ENCAPSULATED Customer — hides internals behind stable functions
-type CustomerT = Readonly<{
-  name: string;
-  creditLimit: number;
-  balance: number;
-  _brand: "Customer";
-}>;
+type CustomerT = Readonly;
 
 const createCustomer = (name: string, creditLimit: number): CustomerT => ({
   name,
@@ -3501,7 +4603,7 @@ const recordCharge = (amount: number, c: CustomerT): CustomerT => ({
 });
 
 // => ENCAPSULATED Inventory — hides the backing data structure
-type InventoryT = Readonly<{ stock: ReadonlyMap<string, number>; _brand: "Inventory" }>;
+type InventoryT = Readonly;
 
 const createInventory = (items: readonly [string, number][]): InventoryT => ({
   stock: new Map(items),
@@ -3550,6 +4652,87 @@ console.log(msg16);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: LowCoupling.hs ───────────
+-- [F#: modules with private types — Haskell uses two modules-as-record-types whose
+--   internal constructors are not exported; callers go through behavior functions]
+import qualified Data.Map.Strict as Map  -- => immutable Map for the inventory backing store
+import Data.Maybe (fromMaybe)             -- => default value when looking up missing keys
+import Text.Printf (printf)               -- => printf for the final order message
+
+-- ============================================================
+-- ENCAPSULATED CUSTOMER — opaque type + behavior functions
+-- ============================================================
+data CustomerT = CustomerT
+  { _cName        :: String  -- => underscore prefix signals "not for external read"
+  , _cCreditLimit :: Double
+  , _cBalance     :: Double
+  } -- => no Show instance; only the helpers below leak data
+
+createCustomer :: String -> Double -> CustomerT
+createCustomer name limit = CustomerT name limit 0.0
+-- => smart constructor: enforces valid initial state
+
+customerName :: CustomerT -> String
+customerName = _cName
+-- => read-only accessor — callers cannot reach the field directly
+
+canAcceptCharge :: Double -> CustomerT -> Bool
+canAcceptCharge amount c = _cBalance c + amount <= _cCreditLimit c
+-- => hides the credit logic — callers don't know the formula
+
+recordCharge :: Double -> CustomerT -> CustomerT
+recordCharge amount c = c { _cBalance = _cBalance c + amount }
+-- => returns a NEW customer — internal representation could change freely
+
+-- ============================================================
+-- ENCAPSULATED INVENTORY — opaque type + behavior functions
+-- ============================================================
+newtype InventoryT = InventoryT { _invStock :: Map.Map String Int }
+
+createInventory :: [(String, Int)] -> InventoryT
+createInventory items = InventoryT (Map.fromList items)
+-- => smart constructor: builds inventory from (item, qty) pairs
+
+isAvailable :: String -> InventoryT -> Bool
+isAvailable item (InventoryT stock) = fromMaybe 0 (Map.lookup item stock) > 0
+-- => hides how stock is stored — could be a database call
+
+decrementStock :: String -> InventoryT -> InventoryT
+decrementStock item (InventoryT stock) =
+  case Map.lookup item stock of
+    Just qty | qty > 0 -> InventoryT (Map.insert item (qty - 1) stock)
+    -- => returns new inventory with decremented count
+    _                  -> InventoryT stock
+    -- => no-op if missing or zero
+
+-- => LOOSELY COUPLED placeOrder — talks to behavior functions only
+placeOrder :: CustomerT -> InventoryT -> String -> Double -> (String, CustomerT, InventoryT)
+placeOrder customer inv item price
+  | not (canAcceptCharge price customer) = ("Credit limit exceeded", customer, inv)
+  | not (isAvailable item inv)           = (item ++ " is out of stock", customer, inv)
+  | otherwise =
+      let c2 = recordCharge price customer
+          -- => delegates state change to customer encapsulation
+          i2 = decrementStock item inv
+          -- => delegates state change to inventory encapsulation
+          msg = printf "Order placed: %s for %s" item (customerName customer)
+      in (msg, c2, i2)
+
+main :: IO ()
+main = do
+  let c = createCustomer "Alice" 2000.0
+      i = createInventory [("Laptop", 5)]
+      (msg, _, _) = placeOrder c i "Laptop" 1200.0
+  putStrLn msg
+  -- => Output: Order placed: Laptop for Alice
+  -- => Renaming _cCreditLimit has ZERO impact on placeOrder
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Define stable module functions that express what a concept can do, not what it contains. Callers depend on behavior, not representation.
@@ -3562,7 +4745,7 @@ console.log(msg16);
 
 Cohesion measures how related the responsibilities within a module are. High cohesion means everything in a module belongs together; low cohesion means the module mixes unrelated concerns.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3763,6 +4946,81 @@ console.log(taxCalculator.calculate(0.1, 200.0).toFixed(1));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Cohesion.hs ───────────
+-- [F#: mixed module vs. focused modules — Haskell uses module-style record blocks;
+--   each functional cluster groups behavior with one clear job]
+import Data.Char (toUpper)        -- => toUpper for string formatting
+import Data.Time                  -- => Day and toGregorian for date logic
+
+-- ============================================================
+-- LOW COHESION: MixedUtils handles three unrelated domains
+-- ============================================================
+formatTitleMixed :: String -> String
+formatTitleMixed = map toUpper
+-- => "hello" -> "HELLO" — string manipulation concern
+
+calculateTaxMixed :: Double -> Double -> Double
+calculateTaxMixed price rate = price * rate
+-- => 100 * 0.1 = 10.0 — financial concern, unrelated to strings
+
+isWeekendMixed :: Day -> Bool
+isWeekendMixed d =
+  let (_, _, _) = toGregorian d
+      dow = dayOfWeek d
+  in dow == Saturday || dow == Sunday
+-- => date concern — unrelated to both above
+
+-- ============================================================
+-- HIGH COHESION: each cluster groups only related behavior
+-- ============================================================
+
+-- → STRING FORMATTER — only text formatting
+formatTitle :: String -> String
+formatTitle = map toUpper
+-- => "hello world" -> "HELLO WORLD"
+
+truncateText :: Int -> String -> String
+truncateText maxLength text =
+  if length text > maxLength
+    then take maxLength text ++ "..."
+    -- => "Hello World" with maxLength=5 -> "Hello..."
+    else text
+    -- => shorter strings pass through unchanged
+
+-- → TAX CALCULATOR — only tax computation
+calculate :: Double -> Double -> Double
+calculate rate price = price * rate
+-- => 200 * 0.1 = 20.0
+
+calculateWithCap :: Double -> Double -> Double -> Double
+calculateWithCap rate cap price =
+  let tax = price * rate
+      -- => 100 * 0.15 = 15.0
+  in min tax cap
+     -- => min(15, 10) = 10.0 — capped
+
+-- → DATE HELPER — only date operations
+isWeekend :: Day -> Bool
+isWeekend d = let dow = dayOfWeek d in dow == Saturday || dow == Sunday
+-- => true on weekends
+
+dayName :: Day -> String
+dayName d = show (dayOfWeek d)
+-- => "Monday", "Tuesday", etc.
+
+main :: IO ()
+main = do
+  putStrLn (formatTitle "hello world")
+  -- => HELLO WORLD
+  print (calculate 0.1 200.0)
+  -- => 20.0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Group functions by what they do, not by convenience. A module with high cohesion has one clear job, making it easy to name, test, and locate.
@@ -3777,7 +5035,7 @@ console.log(taxCalculator.calculate(0.1, 200.0).toFixed(1));
 
 Encapsulation means controlling access to internal state so that external code cannot put the system into an inconsistent state. In F#, encapsulation is achieved through modules with private types and smart constructors, combined with immutable records that derive computed values on demand rather than caching them in parallel fields.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3925,9 +5183,9 @@ console.log(poorDrifted.fahrenheit.toFixed(1));
 // => Output: 212.0 (wrong! should be 122.0)
 
 // ── ENCAPSULATED temperature — single source of truth ─────────────────────────
-type TemperatureT = Readonly<{ celsius: number; _brand: "Temperature" }>;
+type TemperatureT = Readonly;
 
-const createTemperature = (celsius: number): Result2<TemperatureT, string> => {
+const createTemperature = (celsius: number): Result2 => {
   if (celsius < -273.15) return { ok: false, error: `Temperature below absolute zero: ${celsius.toFixed(2)}` };
   // => physics constraint enforced at construction time
   return { ok: true, value: { celsius, _brand: "Temperature" } };
@@ -3957,6 +5215,76 @@ if (r1.ok) {
 const r2 = createTemperature(-300.0);
 if (!r2.ok) console.log(`Error: ${r2.error}`);
 // => Output: Error: Temperature below absolute zero: -300.00
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Temperature.hs ───────────
+-- [F#: private type + smart constructor — Haskell uses an opaque newtype with a
+--   non-exported constructor; all derived values are computed from celsius only]
+module Temperature
+  ( Temperature           -- => exported type, NOT the constructor
+  , createTemperature     -- => smart constructor: only way to make one
+  , celsiusVal            -- => read-only accessor
+  , fahrenheit            -- => derived; always fresh
+  , kelvin                -- => derived; always fresh
+  ) where
+import Text.Printf (printf)  -- => printf for the error message
+
+-- ============================================================
+-- POOR ENCAPSULATION: parallel fields can drift out of sync
+-- ============================================================
+data PoorTemperature = PoorTemperature
+  { pCelsius    :: Double  -- => two parallel fields
+  , pFahrenheit :: Double  -- => if pCelsius changes, pFahrenheit goes stale
+  } deriving Show
+-- => no validation, no derivation — fields can drift
+
+-- ============================================================
+-- ENCAPSULATED Temperature: only celsius is stored
+-- ============================================================
+newtype Temperature = MkTemperature { _celsius :: Double }
+-- => MkTemperature is not exported; outside callers cannot construct directly
+
+createTemperature :: Double -> Either String Temperature
+-- => Either String Temperature mirrors F# Result<T, string>
+createTemperature c
+  | c < -273.15 = Left (printf "Temperature below absolute zero: %.2f" c)
+    -- => physics constraint enforced at construction time
+  | otherwise   = Right (MkTemperature c)
+    -- => Right wraps a valid temperature
+
+celsiusVal :: Temperature -> Double
+celsiusVal = _celsius
+-- => read-only accessor
+
+fahrenheit :: Temperature -> Double
+fahrenheit t = _celsius t * 9.0 / 5.0 + 32.0
+-- => always computed from celsius — never stale
+-- => celsius=100 → fahrenheit=212.0
+
+kelvin :: Temperature -> Double
+kelvin t = _celsius t + 273.15
+-- => always derived from single source of truth
+
+main :: IO ()
+main = do
+  case createTemperature 100.0 of
+    Left err -> printf "Error: %s\n" err
+    Right t  -> do
+      printf "Celsius:    %.1f\n" (celsiusVal t)
+      -- => Output: Celsius:    100.0
+      printf "Fahrenheit: %.1f\n" (fahrenheit t)
+      -- => Output: Fahrenheit: 212.0
+      printf "Kelvin:     %.2f\n" (kelvin t)
+      -- => Output: Kelvin:     373.15
+  case createTemperature (-300.0) of
+    Left err -> printf "Error: %s\n" err
+    -- => Output: Error: Temperature below absolute zero: -300.00
+    Right _  -> pure ()
 ```
 
 {{< /tab >}}
@@ -3999,7 +5327,7 @@ graph TD
 
 **Function composition approach — flexible assembly of behaviors:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4109,9 +5437,9 @@ const canSwim = (): string => "Swimming";
 // => used by aquatic birds — any bird that swims uses this
 
 // => BIRD OBJECTS — compose only the behaviors each bird actually has
-type Eagle = Readonly<{ fly: () => string }>;
-type Duck = Readonly<{ fly: () => string; swim: () => string }>;
-type Penguin = Readonly<{ fly: () => string; swim: () => string }>;
+type Eagle = Readonly;
+type Duck = Readonly;
+type Penguin = Readonly;
 
 const eagle: Eagle = { fly: canFly };
 // => eagle.fly = canFly — flying is the only capability
@@ -4125,6 +5453,60 @@ console.log(duck.fly()); // => Output: Flapping wings
 console.log(duck.swim()); // => Output: Swimming
 console.log(penguin.fly()); // => Output: Cannot fly (no exception — contract honored)
 console.log(penguin.swim()); // => Output: Swimming
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Birds.hs ───────────
+-- [F#: record-of-functions composition — Haskell uses three small records that pack
+--   only the capabilities each bird actually has; no exception-throwing inheritance]
+
+-- => BEHAVIOR FUNCTIONS — small, focused, reusable
+canFly :: String
+canFly = "Flapping wings"
+-- => standard flying behavior — any bird that flies uses this
+
+cannotFly :: String
+cannotFly = "Cannot fly"
+-- => used by non-flying birds — honest about capability
+
+canSwim :: String
+canSwim = "Swimming"
+-- => used by aquatic birds — any bird that swims uses this
+
+-- => BIRD RECORDS — compose only the behaviors each bird actually has
+newtype Eagle = Eagle { eagleFly :: String }
+-- => eagles can only fly — no swim field
+
+data Duck = Duck { duckFly :: String, duckSwim :: String }
+-- => ducks can fly AND swim — record composition
+
+data Penguin = Penguin { penguinFly :: String, penguinSwim :: String }
+-- => penguins have both fields — but Fly uses cannotFly behavior
+
+-- => Construct each bird by assembling the appropriate behaviors
+eagle :: Eagle
+eagle = Eagle { eagleFly = canFly }
+-- => eagle.fly = canFly — flying is the only capability
+
+duck :: Duck
+duck = Duck { duckFly = canFly, duckSwim = canSwim }
+-- => duck has both capabilities
+
+penguin :: Penguin
+penguin = Penguin { penguinFly = cannotFly, penguinSwim = canSwim }
+-- => penguin.fly = cannotFly — cannot fly; honest behavior
+
+main :: IO ()
+main = do
+  putStrLn (eagleFly eagle)        -- => Output: Flapping wings
+  putStrLn (duckFly duck)          -- => Output: Flapping wings
+  putStrLn (duckSwim duck)         -- => Output: Swimming
+  putStrLn (penguinFly penguin)    -- => Output: Cannot fly (no exception — contract honored)
+  putStrLn (penguinSwim penguin)   -- => Output: Swimming
 ```
 
 {{< /tab >}}
@@ -4143,7 +5525,7 @@ Mixins add behavior to a type without deep inheritance. In F#, mixin-like behavi
 
 **Module-function approach (F# equivalent of mixins) — reuses capability without inheritance:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4361,6 +5743,76 @@ console.log(orderToJson(order));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: MixinAndComposition.hs ───────────
+-- [F#: module-function mixin + explicit record-of-functions — Haskell uses one
+--   shared utility function (mixin-style) AND a record-of-functions composition]
+import Data.List (intercalate)        -- => intercalate joins pairs with comma-space
+import Data.Time                      -- => UTCTime + getCurrentTime for the Clock
+import Data.Time.Format.ISO8601       -- => iso8601Show for the timestamp string
+
+-- ── MODULE-FUNCTION APPROACH (mixin equivalent) ────────────────────────────────
+-- => Works on any data via parametric input — no inheritance needed
+toJson :: [(String, String)] -> String
+toJson fields =
+  let pairs = map (\(k, v) -> "\"" ++ k ++ "\": \"" ++ v ++ "\"") fields
+      -- => each field formatted as "key": "value"
+  in "{ " ++ intercalate ", " pairs ++ " }"
+     -- => wrapped in braces
+
+data Product = Product { pName :: String, pPrice :: Double }
+laptop :: Product
+laptop = Product "Laptop" 1200.0
+-- => product is a plain record — no mixin needed; toJson applies via tuples
+
+-- ── EXPLICIT COMPOSITION — behaviors injected as record-of-functions fields ────
+newtype Serializer = Serializer { serialize :: [(String, String)] -> String }
+-- => Serializer capability: takes key/value pairs, returns a string
+
+newtype Clock = Clock { now :: IO UTCTime }
+-- => Clock capability: returns current timestamp — injectable for tests
+
+data Order = Order
+  { oId          :: Int          -- => order id
+  , oAmount      :: Double       -- => amount in dollars
+  , oCreatedAt   :: UTCTime      -- => captured via injected Clock
+  , oSerializer  :: Serializer   -- => injected; swappable in tests
+  }
+
+makeOrder :: Int -> Double -> Clock -> Serializer -> IO Order
+makeOrder oid amount clock ser = do
+  t <- now clock
+  -- => invokes the injected clock — deterministic when test-doubled
+  pure Order { oId = oid, oAmount = amount, oCreatedAt = t, oSerializer = ser }
+
+orderToJson :: Order -> String
+orderToJson order =
+  serialize (oSerializer order)
+    [ ("id",        show (oId order))
+    , ("amount",    show (oAmount order))
+    , ("createdAt", iso8601Show (oCreatedAt order))
+      -- => ISO 8601 timestamp
+    ]
+  -- => delegates to the injected Serializer
+
+main :: IO ()
+main = do
+  -- => Module-function (mixin) usage
+  putStrLn (toJson [("name", pName laptop), ("price", show (pPrice laptop))])
+  -- => Output: { "name": "Laptop", "price": "1200.0" }
+  -- => Explicit composition usage
+  let realClock = Clock { now = getCurrentTime }
+      realSer   = Serializer { serialize = toJson }
+  order <- makeOrder 1 99.9 realClock realSer
+  putStrLn (orderToJson order)
+  -- => Output: { "id": "1", "amount": "99.9", "createdAt": "2026-05-17T..." }
+  -- => In tests: inject Clock { now = pure fixedTime } — fully deterministic
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Use module functions for optional, non-configurable capabilities shared across types. Use explicit record-of-functions composition when the behavior needs to be swapped, tested, or configured independently.
@@ -4392,7 +5844,7 @@ graph LR
     style ImplB fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4516,7 +5968,7 @@ printfn "%A" (getProduct repo 99)
 ```typescript
 // [F#: record of functions ProductRepository — TypeScript uses an interface + factory]
 
-type Product21 = Readonly<{ id: number; name: string; price: number }>;
+type Product21 = Readonly;
 
 // => REPOSITORY INTERFACE as a record-of-functions type
 interface ProductRepository {
@@ -4569,6 +6021,78 @@ console.log(getProduct(repo21, 99));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProductRepository.hs ───────────
+-- [F#: record of functions ProductRepository — Haskell uses a record of IO actions;
+--   the business layer depends only on the record type, never the implementation]
+import Data.IORef                       -- => IORef holds the mutable store
+import qualified Data.Map.Strict as Map -- => Map for the in-memory backing store
+
+-- => DOMAIN TYPE
+data Product = Product
+  { prodId    :: Int
+  , prodName  :: String
+  , prodPrice :: Double
+  } deriving Show
+
+-- => REPOSITORY INTERFACE as a record of IO functions
+data ProductRepository = ProductRepository
+  { findById :: Int -> IO (Maybe Product)
+    -- => given an id, returns Just product or Nothing
+  , save     :: Product -> IO ()
+    -- => persists a product — IO () means side effect only
+  , findAll  :: IO [Product]
+    -- => returns all products in the store
+  }
+
+-- => IN-MEMORY IMPLEMENTATION — for tests and fast prototyping
+makeInMemoryRepo :: IO ProductRepository
+makeInMemoryRepo = do
+  storeRef <- newIORef (Map.empty :: Map.Map Int Product)
+  -- => IORef holds the backing map; isolated per call
+  pure ProductRepository
+    { findById = \pid -> do
+        m <- readIORef storeRef
+        pure (Map.lookup pid m)
+        -- => returns Just product or Nothing — safe lookup
+    , save     = \p -> modifyIORef storeRef (Map.insert (prodId p) p)
+        -- => upsert: add or overwrite by id
+    , findAll  = do
+        m <- readIORef storeRef
+        pure (Map.elems m)
+        -- => snapshot of all values as a list
+    }
+
+-- => SERVICE — accepts any ProductRepository — decoupled from implementation
+addProduct :: ProductRepository -> Int -> String -> Double -> IO Product
+addProduct repo pid name price = do
+  let product = Product pid name price
+  save repo product
+  -- => delegates persistence to repository
+  pure product
+  -- => returns the created product
+
+getProduct :: ProductRepository -> Int -> IO (Maybe Product)
+getProduct repo pid = findById repo pid
+-- => delegates retrieval — business layer never sees storage details
+
+main :: IO ()
+main = do
+  -- => USAGE: inject the in-memory repo for this demo
+  repo <- makeInMemoryRepo
+  p    <- addProduct repo 1 "Laptop" 1200.0
+  print p
+  -- => Output: Product {prodId = 1, prodName = "Laptop", prodPrice = 1200.0}
+  print =<< getProduct repo 1
+  -- => Output: Just (Product ...)
+  print =<< getProduct repo 99
+  -- => Output: Nothing
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Define a record of functions for persistence and inject the implementation. The business layer never imports a database driver.
@@ -4581,7 +6105,7 @@ console.log(getProduct(repo21, 99));
 
 Real repositories go beyond simple CRUD. They expose domain-meaningful query functions that express business questions as named fields rather than raw queries embedded in business logic. In F#, these are simply additional function fields on the repository record. In Clojure, the repository is a plain map of keyword-to-function entries — the same data-orientation philosophy, no type definition required.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4702,7 +6226,7 @@ printfn "Pending above 500:  %d" (repo.FindPendingAbove 500.0 |> List.length)
 ```typescript
 // [F#: OrderRepository record type with domain-named query fields — TypeScript version]
 
-type Order22 = Readonly<{ id: number; customerId: number; total: number; status: string }>;
+type Order22 = Readonly;
 
 // => DOMAIN-SPECIFIC REPOSITORY — queries named for business intent
 interface OrderRepository {
@@ -4744,6 +6268,72 @@ console.log(`Pending above 500:  ${repo22.findPendingAbove(500.0).length}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: OrderRepository.hs ───────────
+-- [F#: OrderRepository record with domain-named query fields — Haskell uses a
+--   record of IO actions where every query is named for the business question it answers]
+import Data.IORef                       -- => mutable cell for the in-memory store
+import qualified Data.Map.Strict as Map -- => map for keyed storage
+
+-- => DOMAIN TYPE
+data Order = Order
+  { oId          :: Int      -- => order primary key
+  , oCustomerId  :: Int      -- => foreign key to Customer
+  , oTotal       :: Double   -- => total in dollars
+  , oStatus      :: String   -- => "pending" | "shipped" | ...
+  } deriving Show
+
+-- => DOMAIN-SPECIFIC REPOSITORY — queries named for business intent
+data OrderRepository = OrderRepository
+  { saveOrder        :: Order -> IO ()
+    -- => persist or update an order
+  , findByOrderId    :: Int -> IO (Maybe Order)
+    -- => lookup by primary key
+  , findByCustomerId :: Int -> IO [Order]
+    -- => business question: "which orders belong to this customer?"
+  , findPendingAbove :: Double -> IO [Order]
+    -- => business question: "which pending orders exceed this threshold?"
+  }
+
+-- => IN-MEMORY IMPLEMENTATION — satisfies all query functions
+makeInMemoryOrderRepo :: IO OrderRepository
+makeInMemoryOrderRepo = do
+  storeRef <- newIORef (Map.empty :: Map.Map Int Order)
+  pure OrderRepository
+    { saveOrder = \o -> modifyIORef storeRef (Map.insert (oId o) o)
+      -- => upsert by id
+    , findByOrderId = \oid -> Map.lookup oid <$> readIORef storeRef
+      -- => returns Just order or Nothing
+    , findByCustomerId = \cid -> do
+        m <- readIORef storeRef
+        pure (filter (\o -> oCustomerId o == cid) (Map.elems m))
+        -- => filters all orders where customer id matches
+    , findPendingAbove = \threshold -> do
+        m <- readIORef storeRef
+        pure (filter (\o -> oStatus o == "pending" && oTotal o > threshold)
+                     (Map.elems m))
+        -- => keeps only pending orders with total above threshold
+    }
+
+main :: IO ()
+main = do
+  -- => USAGE: business service uses named queries — reads like a business document
+  repo <- makeInMemoryOrderRepo
+  saveOrder repo Order { oId = 1, oCustomerId = 10, oTotal = 150.0, oStatus = "pending" }
+  saveOrder repo Order { oId = 2, oCustomerId = 10, oTotal = 800.0, oStatus = "pending" }
+  saveOrder repo Order { oId = 3, oCustomerId = 20, oTotal = 200.0, oStatus = "shipped" }
+  c10 <- findByCustomerId repo 10
+  putStrLn ("Customer 10 orders: " ++ show (length c10))
+  -- => Output: Customer 10 orders: 2  (orders 1 and 2)
+  pa  <- findPendingAbove repo 500.0
+  putStrLn ("Pending above 500:  " ++ show (length pa))
+  -- => Output: Pending above 500:  1  (only order 2: 800 > 500)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Repository function fields should read as business questions. Every query field should have a domain-meaningful name.
@@ -4758,7 +6348,7 @@ console.log(`Pending above 500:  ${repo22.findPendingAbove(500.0).length}`);
 
 The Service Layer pattern centralizes application use cases in dedicated functions. A use case (like "place an order") typically involves multiple domain types and repositories. In F#, the service layer is a module of pure functions that coordinate domain logic and repository calls. In Clojure, use-case functions operate on plain maps and return tagged result maps, coordinating pure helper functions in the same way.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4922,8 +6512,8 @@ print (placeOrder customers.[1] products.[11])
 ```typescript
 // [F#: PlaceOrderResult discriminated union + pure service functions — TypeScript version]
 
-type Customer23 = Readonly<{ id: number; credit: number }>;
-type Product23 = Readonly<{ id: number; name: string; price: number; stock: number }>;
+type Customer23 = Readonly;
+type Product23 = Readonly;
 
 // => PURE DOMAIN RULES
 const canAfford = (amount: number, customer: Customer23): boolean => customer.credit >= amount;
@@ -4984,6 +6574,92 @@ printResult23(placeOrder(customers23.get(1)!, products23.get(11)!));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PlaceOrderService.hs ───────────
+-- [F#: PlaceOrderResult discriminated union + pure service functions — Haskell uses
+--   an ADT for the use-case result; domain rules are tiny pure functions]
+import qualified Data.Map.Strict as Map  -- => Map for the sample data store
+import Text.Printf (printf)               -- => printf for formatted messages
+
+-- ============================================================
+-- DOMAIN TYPES AND PURE RULES
+-- ============================================================
+data Customer = Customer
+  { cId     :: Int
+  , cCredit :: Double  -- => available spending capacity
+  } deriving Show
+
+data Product = Product
+  { pId    :: Int
+  , pName  :: String
+  , pPrice :: Double
+  , pStock :: Int  -- => number of units available
+  } deriving Show
+
+canAfford :: Double -> Customer -> Bool
+canAfford amount c = cCredit c >= amount
+-- => pure predicate: True if credit covers amount
+
+isAvailable :: Product -> Bool
+isAvailable p = pStock p > 0
+-- => pure predicate: True when stock is positive
+
+deductCredit :: Double -> Customer -> Customer
+deductCredit amount c = c { cCredit = cCredit c - amount }
+-- => returns new customer with reduced credit — immutable update
+
+reserveStock :: Product -> Product
+reserveStock p = p { pStock = pStock p - 1 }
+-- => returns new product with decremented stock — immutable update
+
+-- ============================================================
+-- SERVICE LAYER — orchestrates the "place order" use case
+-- ============================================================
+data PlaceOrderResult
+  = Success String Customer Product  -- => message + updated entities
+  | Failure String                   -- => reason for failure
+  deriving Show
+
+placeOrder :: Customer -> Product -> PlaceOrderResult
+placeOrder customer product
+  | not (isAvailable product) =
+      Failure (printf "'%s' is out of stock" (pName product))
+  | not (canAfford (pPrice product) customer) =
+      Failure (printf "Insufficient credit for '%s' ($%.2f)" (pName product) (pPrice product))
+  | otherwise =
+      let updatedCustomer = deductCredit (pPrice product) customer
+          -- => updatedCustomer.cCredit = customer.cCredit - product.pPrice
+          updatedProduct  = reserveStock product
+          -- => updatedProduct.pStock = product.pStock - 1
+          msg = printf "Order placed: %s for customer %d" (pName product) (cId customer)
+      in Success msg updatedCustomer updatedProduct
+
+printResult :: PlaceOrderResult -> IO ()
+printResult (Success msg _ _) = putStrLn msg
+printResult (Failure reason)  = putStrLn ("Failed: " ++ reason)
+
+main :: IO ()
+main = do
+  let customers = Map.fromList
+        [ (1, Customer 1 2000.0)
+        , (2, Customer 2  100.0)
+        ]
+      products = Map.fromList
+        [ (10, Product 10 "Laptop"     1200.0 2)
+        , (11, Product 11 "Headphones"  150.0 0)
+        ]
+  printResult (placeOrder (customers Map.! 1) (products Map.! 10))
+  -- => Order placed: Laptop for customer 1
+  printResult (placeOrder (customers Map.! 2) (products Map.! 10))
+  -- => Failed: Insufficient credit for 'Laptop' ($1200.00)
+  printResult (placeOrder (customers Map.! 1) (products Map.! 11))
+  -- => Failed: 'Headphones' is out of stock
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** The service layer owns the sequence of steps for a use case. Domain functions own their own rules. In F#, the service layer is a composition of pure functions — no class required.
@@ -4996,7 +6672,7 @@ printResult23(placeOrder(customers23.get(1)!, products23.get(11)!));
 
 A mature service layer handles errors explicitly, returning structured result values rather than leaking exceptions to the presentation layer. In F#, `Result<'T, 'E>` is a first-class built-in type that makes every failure mode visible in the function signature. In Clojure, the idiomatic equivalent is a tagged result map with a `:status` key — the same data-orientation approach seen in Example 23.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5117,7 +6793,7 @@ let inventory24 = new Map<string, number>([
 // => mutable for demonstration; in production use repository pattern
 
 // => SERVICE with explicit Result return type
-const reserve = (item: string, quantity: number): Result3<{ item: string; reserved: number }, string> => {
+const reserve = (item: string, quantity: number): Result3 => {
   const stock = inventory24.get(item);
   if (stock === undefined) return { ok: false, error: `Item '${item}' does not exist` };
   // => explicit failure: item not in catalog
@@ -5146,6 +6822,67 @@ console.log(handleReserve("Gadget", 1));
 // => Reservation failed: Insufficient stock for 'Gadget': have 0, requested 1
 console.log(handleReserve("Unknown", 1));
 // => Reservation failed: Item 'Unknown' does not exist
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: ReserveService.hs ───────────
+-- [F#: Result<T, string> return type — Haskell uses Either String (item, qty) so
+--   the failure mode is encoded in the type signature, not in exceptions]
+import Data.IORef                       -- => mutable cell for the inventory store
+import qualified Data.Map.Strict as Map -- => Map for the in-memory inventory
+import Text.Printf (printf)               -- => printf for the error messages
+
+-- => DOMAIN: inventory is an IORef holding a Map
+type Inventory = IORef (Map.Map String Int)
+
+newInventory :: IO Inventory
+newInventory = newIORef (Map.fromList [("Widget", 10), ("Gadget", 0)])
+-- => initial state — mutable for demonstration
+
+-- => RESULT TYPE: Either String (item, quantity) mirrors F# Result<{|...|}, string>
+data Reservation = Reservation { rItem :: String, rReserved :: Int } deriving Show
+
+-- => SERVICE with explicit Either return type
+reserve :: Inventory -> String -> Int -> IO (Either String Reservation)
+reserve inv item quantity = do
+  m <- readIORef inv
+  case Map.lookup item m of
+    Nothing -> pure (Left (printf "Item '%s' does not exist" item))
+    -- => explicit failure: item not in catalog
+    Just stock
+      | stock < quantity ->
+          pure (Left (printf "Insufficient stock for '%s': have %d, requested %d"
+                              item stock quantity))
+          -- => explicit failure: not enough stock
+      | otherwise -> do
+          writeIORef inv (Map.insert item (stock - quantity) m)
+          -- => decrements stock — side effect in this demo
+          pure (Right (Reservation item quantity))
+          -- => explicit success with payload
+
+-- => HANDLER: pattern matches on Either — error path is always visible
+handleReserve :: Inventory -> String -> Int -> IO String
+handleReserve inv item quantity = do
+  result <- reserve inv item quantity
+  case result of
+    Right r   -> pure (printf "Reserved %dx %s" (rReserved r) (rItem r))
+    -- => Output: "Reserved 3x Widget"
+    Left reason -> pure (printf "Reservation failed: %s" reason)
+    -- => Output: "Reservation failed: ..."
+
+main :: IO ()
+main = do
+  inv <- newInventory
+  putStrLn =<< handleReserve inv "Widget" 3
+  -- => Reserved 3x Widget
+  putStrLn =<< handleReserve inv "Gadget" 1
+  -- => Reservation failed: Insufficient stock for 'Gadget': have 0, requested 1
+  putStrLn =<< handleReserve inv "Unknown" 1
+  -- => Reservation failed: Item 'Unknown' does not exist
 ```
 
 {{< /tab >}}
@@ -5185,7 +6922,7 @@ graph LR
     style RespDTO fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5357,6 +7094,73 @@ console.log(JSON.stringify(response25));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: UserDtos.hs ───────────
+-- [F#: distinct record types CreateUserRequest and UserResponse — Haskell uses
+--   distinct ADTs at the boundary; sensitive fields literally cannot leak into the
+--   response type because the type has no field for them]
+import Data.IORef                       -- => mutable references for id counter and store
+import qualified Data.Map.Strict as Map -- => Map for the user store
+
+-- => REQUEST DTO — represents data coming IN from the external world
+data CreateUserRequest = CreateUserRequest
+  { reqName  :: String  -- => raw string from HTTP request body
+  , reqEmail :: String  -- => raw string from HTTP request body
+  } deriving Show
+-- => no domain logic: just carries data across the boundary
+
+-- => RESPONSE DTO — represents data going OUT to the external world
+data UserResponse = UserResponse
+  { respUserId :: Int     -- => safe to expose externally
+  , respName   :: String
+  , respEmail  :: String
+  } deriving Show
+-- => notably MISSING: passwordHash, isAdmin — DTO shapes what clients can see
+
+-- => DOMAIN RECORD — internal representation with full context
+data User = User
+  { userId       :: Int
+  , userName     :: String
+  , userEmail    :: String
+  , passwordHash :: String  -- => internal only — never in DTO
+  , isAdmin      :: Bool    -- => internal only — never in DTO
+  } deriving Show
+
+-- => SERVICE: map CreateUserRequest -> User -> UserResponse
+createUser :: IORef Int -> IORef (Map.Map Int User) -> CreateUserRequest -> IO UserResponse
+createUser idRef usersRef request = do
+  uid <- readIORef idRef
+  let user = User
+        { userId       = uid
+        , userName     = reqName  request  -- => copied from DTO
+        , userEmail    = reqEmail request  -- => copied from DTO
+        , passwordHash = "hashed_secret"   -- => generated internally; NOT in DTO
+        , isAdmin      = False             -- => internal default; NOT in DTO
+        }
+  modifyIORef usersRef (Map.insert uid user)
+  writeIORef idRef (uid + 1)
+  -- => MAP: Domain User -> Response DTO; sensitive fields physically absent
+  pure UserResponse
+    { respUserId = userId user
+    , respName   = userName user
+    , respEmail  = userEmail user
+    }
+
+main :: IO ()
+main = do
+  idRef    <- newIORef 1
+  usersRef <- newIORef Map.empty
+  resp     <- createUser idRef usersRef
+                (CreateUserRequest "Alice" "alice@example.com")
+  print resp
+  -- => Output: UserResponse {respUserId = 1, respName = "Alice", respEmail = "alice@example.com"}
+  -- => passwordHash is NOT in the response — protected by DTO boundary
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** DTOs are the shape of data at a boundary — they protect internal domain structure from external exposure and decouple serialization from business logic.
@@ -5369,7 +7173,7 @@ console.log(JSON.stringify(response25));
 
 DTOs are the right place to validate external input before it enters the domain layer. In F#, validation is expressed as a smart constructor that returns `Result<DTO, errors>`, ensuring a successfully constructed DTO is always valid. In Clojure, the idiomatic equivalent collects errors into a sequence and returns a tagged result map — the same accumulate-all-errors philosophy without the type-system guarantees.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5520,13 +7324,9 @@ type ValidationError =
   | { tag: "NegativeStock"; given: number };
 
 // => REQUEST DTO with smart constructor
-type CreateProductRequest = Readonly<{ name: string; price: number; stock: number }>;
+type CreateProductRequest = Readonly;
 
-const createProductRequest = (
-  rawName: string,
-  rawPrice: number,
-  rawStock: number,
-): Result4<CreateProductRequest, ValidationError> => {
+const createProductRequest = (rawName: string, rawPrice: number, rawStock: number): Result4 => {
   // => Collect ALL errors rather than failing on the first
   const errors: ValidationError[] = [];
   if (rawName.trim() === "") errors.push({ tag: "EmptyName" });
@@ -5570,6 +7370,94 @@ console.log(createProduct25("Widget", -5.0, 100));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: CreateProductRequest.hs ───────────
+-- [F#: ValidationError DU + Result<T, errors list> — Haskell uses an ADT for
+--   ValidationError and Either accumulating all errors at the DTO boundary]
+module CreateProductRequest
+  ( CreateProductRequest        -- => export type
+  , createProductRequest        -- => smart constructor returning Either
+  , reqName, reqPrice, reqStock -- => read-only accessors
+  , ValidationError (..)
+  ) where
+import Data.Char (isSpace)        -- => isSpace for trimming
+import Data.List (dropWhileEnd)   -- => trimming the trailing whitespace
+import Data.Maybe (catMaybes)     -- => keep only Just errors
+import Text.Printf (printf)        -- => printf for error formatting
+
+-- => VALIDATION ERRORS as an ADT
+data ValidationError
+  = EmptyName                 -- => name field was blank
+  | NegativePrice Double      -- => price must be positive
+  | NegativeStock Int         -- => stock cannot be negative
+  deriving Show
+
+-- => REQUEST DTO with smart constructor — fields are not exported
+data CreateProductRequest = CreateProductRequest
+  { reqName  :: String
+  , reqPrice :: Double
+  , reqStock :: Int
+  } deriving Show
+
+-- => helper: trim leading/trailing whitespace
+trim :: String -> String
+trim = dropWhile isSpace . dropWhileEnd isSpace
+
+createProductRequest
+  :: String -> Double -> Int
+  -> Either [ValidationError] CreateProductRequest
+-- => Either [ValidationError] mirrors F# Result<T, ValidationError list>
+createProductRequest rawName rawPrice rawStock =
+  let -- => Collect ALL errors rather than failing on the first
+      errs = catMaybes
+        [ if null (trim rawName) then Just EmptyName             else Nothing
+        , if rawPrice <= 0       then Just (NegativePrice rawPrice) else Nothing
+        , if rawStock < 0        then Just (NegativeStock rawStock) else Nothing
+        ]
+  in if null errs
+       then Right CreateProductRequest
+              { reqName  = trim rawName
+              , reqPrice = rawPrice
+              , reqStock = rawStock
+              }
+            -- => Right wraps valid DTO — all fields guaranteed clean
+       else Left errs
+            -- => Left carries the full list of validation failures
+
+renderErr :: ValidationError -> String
+renderErr EmptyName          = "name must be non-empty"
+renderErr (NegativePrice p)  = printf "price must be positive, got %.2f" p
+renderErr (NegativeStock s)  = printf "stock must be non-negative, got %d" s
+
+-- => SERVICE receives only validated DTOs — no re-validation needed
+createProduct :: String -> Double -> Int -> String
+createProduct rawName rawPrice rawStock =
+  case createProductRequest rawName rawPrice rawStock of
+    Right req ->
+      printf "Product created: %s at $%.2f (stock: %d)"
+             (reqName req) (reqPrice req) (reqStock req)
+      -- => Output: "Product created: Widget at $9.99 (stock: 100)"
+    Left es ->
+      "Validation failed: " ++ joinSemi (map renderErr es)
+      -- => Output: "Validation failed: name must be non-empty"
+  where
+    joinSemi = foldr1 (\a b -> a ++ "; " ++ b)
+    -- => mirrors String.concat "; " in F#
+
+main :: IO ()
+main = do
+  putStrLn (createProduct "Widget" 9.99 100)
+  -- => Product created: Widget at $9.99 (stock: 100)
+  putStrLn (createProduct "" 9.99 100)
+  -- => Validation failed: name must be non-empty
+  putStrLn (createProduct "Widget" (-5.0) 100)
+  -- => Validation failed: price must be positive, got -5.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Validate external input in the DTO smart constructor so that a successfully constructed DTO is guaranteed valid. Business logic should never need to re-validate the same fields.
@@ -5584,7 +7472,7 @@ console.log(createProduct25("Widget", -5.0, 100));
 
 This example combines the patterns introduced in Examples 1-26 into a minimal but realistic layered application: a product catalog with separation of concerns, repository, service, and DTO layers all working together. F# uses records, modules, and the `|>` pipeline operator. Clojure uses plain maps, atoms, and threading macros — the same four-layer structure without a type definition in sight.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5862,6 +7750,121 @@ listAll27(repo27).forEach((s) => console.log(`  ${s.productId}. ${s.name}: $${s.
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProductCatalogApp.hs ───────────
+-- [F#: four-layer structure with records, modules, |> pipeline — Haskell uses
+--   distinct records for DTO/domain, a record-of-functions repo, and pure service fns]
+import Data.IORef                       -- => mutable cells for store + id counter
+import qualified Data.Map.Strict as Map -- => Map for the in-memory product store
+import Text.Printf (printf)               -- => printf for the summary output
+
+-- ============================================================
+-- DTOs — data shapes at the boundary
+-- ============================================================
+data AddProductRequest = AddProductRequest
+  { reqName  :: String  -- => name from the caller
+  , reqPrice :: Double  -- => price from the caller
+  } deriving Show
+
+data ProductSummary = ProductSummary
+  { sumProductId :: Int     -- => safe to expose externally
+  , sumName      :: String
+  , sumPrice     :: Double
+  } deriving Show
+
+-- ============================================================
+-- DOMAIN — internal representation
+-- ============================================================
+data Product = Product
+  { prodId         :: Int
+  , prodName       :: String
+  , prodPrice      :: Double
+  , prodIsFeatured :: Bool  -- => internal flag — absent from ProductSummary
+  } deriving Show
+
+-- ============================================================
+-- REPOSITORY — data access abstraction (record of IO functions)
+-- ============================================================
+data ProductRepo = ProductRepo
+  { save    :: Product -> IO ()
+  , findAll :: IO [Product]
+  , nextId  :: IO Int
+  }
+
+makeRepo :: IO ProductRepo
+makeRepo = do
+  storeRef   <- newIORef (Map.empty :: Map.Map Int Product)
+  counterRef <- newIORef 1
+  pure ProductRepo
+    { save    = \p -> modifyIORef storeRef (Map.insert (prodId p) p)
+      -- => upsert by prodId
+    , findAll = Map.elems <$> readIORef storeRef
+      -- => returns all products as a list
+    , nextId  = do
+        i <- readIORef counterRef
+        writeIORef counterRef (i + 1)
+        pure i
+        -- => returns current counter then increments
+    }
+
+-- ============================================================
+-- SERVICE — coordinates use cases
+-- ============================================================
+addProduct :: ProductRepo -> AddProductRequest -> IO (Either String ProductSummary)
+addProduct repo req
+  | reqPrice req <= 0 = pure (Left "Price must be positive")
+    -- => business rule: no free or negative-priced products
+  | otherwise = do
+      newId <- nextId repo
+      let product = Product
+            { prodId         = newId
+            , prodName       = reqName req
+            , prodPrice      = reqPrice req
+            , prodIsFeatured = False   -- => defaults; caller cannot set this via DTO
+            }
+      save repo product
+      -- => delegates persistence to repo
+      pure (Right ProductSummary
+        { sumProductId = prodId product
+        , sumName      = prodName product
+        , sumPrice     = prodPrice product
+        })
+      -- => maps domain -> output DTO; prodIsFeatured excluded
+
+listAll :: ProductRepo -> IO [ProductSummary]
+listAll repo = do
+  ps <- findAll repo
+  pure (map (\p -> ProductSummary (prodId p) (prodName p) (prodPrice p)) ps)
+  -- => maps each domain record to output DTO; prodIsFeatured excluded
+
+-- ============================================================
+-- PRESENTATION — wires and calls
+-- ============================================================
+printResult :: String -> Either String ProductSummary -> IO ()
+printResult label (Right s) =
+  printf "%s OK: %d. %s $%.2f\n" label (sumProductId s) (sumName s) (sumPrice s)
+printResult label (Left e)  =
+  printf "%s Error: %s\n" label e
+
+main :: IO ()
+main = do
+  repo <- makeRepo
+  printResult "Add Laptop" =<< addProduct repo (AddProductRequest "Laptop" 1200.0)
+  -- => Add Laptop OK: 1. Laptop $1200.00
+  printResult "Add Mouse"  =<< addProduct repo (AddProductRequest "Mouse"   25.0)
+  -- => Add Mouse  OK: 2. Mouse $25.00
+  printResult "Add Bad"    =<< addProduct repo (AddProductRequest "Free"     0.0)
+  -- => Add Bad    Error: Price must be positive
+  ss <- listAll repo
+  mapM_ (\s -> printf "  %d. %s: $%.2f\n" (sumProductId s) (sumName s) (sumPrice s)) ss
+  -- => 1. Laptop: $1200.00
+  -- => 2. Mouse: $25.00
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway:** Each layer has a clear job: DTOs carry data at boundaries, the domain holds types and rules, the repository manages storage, and the service coordinates use cases. The presentation layer does nothing but wire and call.
@@ -5896,7 +7899,7 @@ graph TD
 
 **Smell 1: God Module — one namespace knows everything:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5965,11 +7968,40 @@ const applicationManagerBad = {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApplicationManagerBad.hs ───────────
+-- [F#: module ApplicationManagerBad — Haskell mirrors the same smell: one module
+--   collects functions across unrelated domains; grows without bound]
+module ApplicationManagerBad where
+
+createUser :: String -> IO ()
+createUser _ = pure ()
+-- => user concern — belongs in a Users module
+
+placeOrder :: Int -> IO ()
+placeOrder _ = pure ()
+-- => order concern — belongs in an Orders module
+
+chargeCard :: Double -> IO ()
+chargeCard _ = pure ()
+-- => payment concern — unrelated to users and orders
+
+generateReport :: IO String
+generateReport = pure ""
+-- => reporting concern — unrelated to the other three
+-- => Every new feature goes here — module grows without bound
+-- => Fix: split into Users.hs, Orders.hs, Payments.hs, Reports.hs
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Smell 2: Layer leakage — data access in the handler:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6027,11 +8059,35 @@ const handleGetUserBad = (userId: number): string => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: HandleGetUserBad.hs ───────────
+-- [F#: HTTP handler with embedded DB call — Haskell mirrors the same smell:
+--   data access logic lives in what should be a presentation-layer function]
+import qualified Data.Map.Strict as Map  -- => Map.lookup stands in for a DB query
+import Text.Printf (printf)               -- => printf for the user-facing message
+
+-- => LAYER LEAK: handler function directly performs data access
+-- => Handler should never see Map lookups or database drivers
+handleGetUserBad :: Int -> String
+handleGetUserBad userId =
+  let fakeDb = Map.fromList [(1, "Alice"), (2, "Bob")]
+      -- => simulates a direct DB call inside a handler — wrong layer
+  in case Map.lookup userId fakeDb of
+       Just name -> printf "User: %s" (name :: String)
+       Nothing   -> "Not found"
+       -- => data access logic belongs in the repository layer
+       -- => Fix: extract to UserRepository.findById and call from service layer
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Smell 3: Anemic domain — domain types with no behavior:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6088,7 +8144,7 @@ type AnemicOrder = { id: number; total: number; status: string };
 // => All business logic forced into service functions, making them god functions
 
 // => FIX: move behavior INTO the domain by co-locating types with functions
-type RichOrder = Readonly<{ id: number; total: number; status: string }>;
+type RichOrder = Readonly;
 
 const canCancelOrder = (order: RichOrder): boolean => order.status === "pending";
 // => business rule lives next to the type — service calls canCancelOrder, not repeating the rule
@@ -6097,11 +8153,47 @@ const canCancelOrder = (order: RichOrder): boolean => order.status === "pending"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: OrderDomain.hs ───────────
+-- [F#: AnemicOrder vs. RichOrder with co-located function — Haskell mirrors the
+--   fix: co-locate domain predicates with the type they describe]
+
+-- => ANEMIC DOMAIN: Order is just a data bag — all logic in the service
+data AnemicOrder = AnemicOrder
+  { aId     :: Int
+  , aTotal  :: Double
+  , aStatus :: String
+  } deriving Show
+-- => No functions, no rules — just fields
+-- => All business logic forced into service functions, making them god functions
+
+-- => FIX: move behavior INTO the domain by pairing types with co-located functions
+data RichOrder = RichOrder
+  { rId     :: Int
+  , rTotal  :: Double
+  , rStatus :: String
+  } deriving Show
+
+canCancelOrder :: RichOrder -> Bool
+canCancelOrder o = rStatus o == "pending"
+-- => business rule lives next to the type — service calls canCancelOrder
+-- => co-location is the Haskell FP equivalent of OOP "behavior on the class"
+
+isPending :: RichOrder -> Bool
+isPending o = rStatus o == "pending"
+-- => additional domain predicate — belongs alongside canCancelOrder
+-- => grouping domain fns by concept prevents service layers becoming god functions
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Smell 4: Implicit coupling via global mutable state:**
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6173,6 +8265,38 @@ const getCurrentUser = (): string | undefined => currentUser;
 const loginPure = (name: string): string => name;
 // => returns the logged-in user instead of mutating global state
 // => callers thread the user explicitly — no hidden state, no concurrency hazard
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: GlobalStateSmell.hs ───────────
+-- [F#: let mutable currentUser — Haskell uses an IORef at the top level to model
+--   the same smell; any function in IO can read/write, creating invisible coupling]
+import Data.IORef            -- => IORef is Haskell's mutable reference
+import System.IO.Unsafe (unsafePerformIO)  -- => only used to model the smell
+
+-- => GLOBAL STATE: top-level IORef creates invisible coupling between functions
+{-# NOINLINE currentUser #-}
+currentUser :: IORef (Maybe String)
+currentUser = unsafePerformIO (newIORef Nothing)
+-- => global mutable cell — concurrency hazard; execution order matters everywhere
+
+loginBad :: String -> IO ()
+loginBad name = writeIORef currentUser (Just name)
+-- => mutates shared global — side effect invisible in function signature
+
+getCurrentUserBad :: IO (Maybe String)
+getCurrentUserBad = readIORef currentUser
+-- => any IO function can read this anytime — invisible dependency
+
+-- => Fix: return the logged-in user instead of mutating global state
+loginPure :: String -> String
+loginPure name = name
+-- => pure function: callers thread the user explicitly — no hidden state
+-- => no concurrency hazard, no implicit dependency, fully testable
 ```
 
 {{< /tab >}}

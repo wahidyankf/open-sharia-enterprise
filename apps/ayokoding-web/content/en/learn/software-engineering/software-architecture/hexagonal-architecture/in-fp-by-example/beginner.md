@@ -3,12 +3,15 @@ title: "Beginner"
 date: 2026-05-15T00:00:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 1-25: The three zones, ports as function types, adapters as function modules, the dependency rule, and the full flow from HTTP to domain to repository — using procurement-platform-be as the running domain in F#"
+description: "Examples 1-25: The three zones, ports as function types, adapters as function modules, the dependency rule, and the full flow from HTTP to domain to repository — using procurement-platform-be as the running domain in F# (canonical), Clojure, TypeScript, and Haskell"
 tags:
   [
     "hexagonal-architecture",
     "ports-and-adapters",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "domain-isolation",
     "by-example",
@@ -16,7 +19,7 @@ tags:
   ]
 ---
 
-This beginner-level section introduces Hexagonal Architecture (Ports and Adapters) through 25 progressive examples grounded in functional programming. The central thesis — that the **domain must be isolated from all infrastructure concerns** via a clean dependency rule — applies identically across functional languages. Examples are shown in F# (canonical for this track) and Clojure, with TypeScript variants. All examples use the `purchasing` bounded context of `procurement-platform-be`: employees draft `PurchaseOrder` records, submit them for approval, and receive confirmations when orders are issued to suppliers.
+This beginner-level section introduces Hexagonal Architecture (Ports and Adapters) through 25 progressive examples grounded in functional programming. The central thesis — that the **domain must be isolated from all infrastructure concerns** via a clean dependency rule — applies identically across functional languages. Examples are shown in F# (canonical for this track), with Clojure, TypeScript, and Haskell variants. All examples use the `purchasing` bounded context of `procurement-platform-be`: employees draft `PurchaseOrder` records, submit them for approval, and receive confirmations when orders are issued to suppliers.
 
 ## The Three Zones (Examples 1–7)
 
@@ -48,7 +51,7 @@ graph TD
     style Adapters fill:#DE8F05,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -210,6 +213,68 @@ console.log("Three zones defined — dependency rule enforced by module imports"
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Domain.hs ──────────────────────────────────────────
+-- The Domain zone imports ZERO infrastructure modules.
+-- No postgresql-simple, no servant, no aeson — only base + Text.
+-- This is the innermost zone: pure business logic, always testable in isolation.
+-- [F#: module ProcurementPlatform.Domain — Haskell uses module declarations]
+
+module Procurement.Domain where
+-- => The module declaration is the zone marker: no import of infra modules here
+
+import Data.Text (Text)
+-- => Text is from the text package — part of the Haskell platform, not infrastructure
+
+-- All types reference only Haskell prelude types and other domain types.
+newtype PurchaseOrderId = PurchaseOrderId Text
+-- => newtype wraps Text — zero runtime cost, prevents mixing with other IDs
+-- => [F#: type alias = string — Haskell uses newtype for nominal typing]
+
+newtype SupplierId = SupplierId Text
+-- => Distinct newtype from PurchaseOrderId — compiler rejects accidental swaps
+
+data PurchaseOrder = PurchaseOrder
+  -- => The aggregate root of the purchasing context
+  { poId         :: PurchaseOrderId
+  -- => Unique identifier in format po_<uuid>
+  , poSupplier   :: SupplierId
+  -- => Identifies the supplier this PO is addressed to
+  , poTotal      :: Double
+  -- => Sum of all line item values; drives approval-level routing
+  , poStatus     :: Text
+  -- => Current state: Draft, AwaitingApproval, Approved, etc.
+  } deriving (Show, Eq)
+
+-- ── file: Procurement/Application.hs ─────────────────────────────────────
+-- Application zone imports only the Domain module — no infrastructure.
+
+-- module Procurement.Application where
+-- import Procurement.Domain   -- ← only this import is permitted here
+
+-- ── file: Procurement/Adapters/Postgres.hs ───────────────────────────────
+-- Adapters zone imports Application zone plus infrastructure libraries.
+
+-- module Procurement.Adapters.Postgres where
+-- import Procurement.Application                  -- ← permitted: adapters depend on application
+-- import Database.PostgreSQL.Simple               -- ← permitted: adapters can import infra libs
+
+-- ── ANTI-PATTERN: what NOT to do ─────────────────────────────────────────
+-- import Database.PostgreSQL.Simple  ← inside Procurement.Domain — THIS IS WRONG
+-- Domain importing an infrastructure library violates the dependency rule.
+-- The domain would become untestable without a real database.
+-- => Any infra import inside Procurement.Domain.* modules is a zone violation.
+
+main :: IO ()
+main = putStrLn "Three zones defined — dependency rule enforced by module imports"
+-- => Output: Three zones defined — dependency rule enforced by module imports
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The three zones (Domain, Application, Adapters) map directly to module namespaces, and the dependency rule — inner zones never import outer zones — is a simple constraint on import/open statements. F# enforces this through module ordering; Clojure through namespace `require` direction; TypeScript through import path conventions and linting rules.
@@ -222,7 +287,7 @@ console.log("Three zones defined — dependency rule enforced by module imports"
 
 A pure domain function accepts only domain types and returns a `Result`. It has no `open` statements for external libraries. It cannot call a database, make an HTTP request, or read a file. This purity is not a limitation — it is what makes the function instantly testable and independently deployable.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -389,12 +454,12 @@ interface DraftPurchaseOrder {
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 // => Avoids exceptions as control flow; callers must handle both cases
 
-const ok = <T>(value: T): Result<T, never> => ({ ok: true, value });
+const ok = <T>(value: T): Result => ({ ok: true, value });
 // => Constructor helper for success case
-const err = <E>(error: E): Result<never, E> => ({ ok: false, error });
+const err = <E>(error: E): Result => ({ ok: false, error });
 // => Constructor helper for failure case
 
-const validateDraftPO = (input: DraftPurchaseOrder): Result<DraftPurchaseOrder, DomainError> => {
+const validateDraftPO = (input: DraftPurchaseOrder): Result => {
   // => Input: raw DTO from the outside world
   // => Output: ok DraftPurchaseOrder if all rules pass, error DomainError if any fail
   if (!input.id || input.id.trim() === "") {
@@ -432,6 +497,79 @@ if (result.ok) {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── CORRECT: pure domain function ────────────────────────────────────────
+-- Zero imports from any infrastructure library — only base + Text.
+-- This function can be tested by calling it directly with no setup.
+-- [F#: discriminated union DomainError — Haskell uses sum types via data]
+
+module Procurement.Domain.Validate where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+-- => qualified import keeps the namespace clean; T.null and T.strip below
+
+data Money = Money { amount :: Double, currency :: Text } deriving (Show, Eq)
+-- => Value object: amount must be >= 0, currency must be 3-letter ISO code
+
+data DraftPurchaseOrder = DraftPurchaseOrder
+  -- => Raw input arriving from the outside world; nothing validated yet
+  { draftId      :: Text
+  -- => Raw string — may be blank, may not follow po_<uuid> format
+  , draftSupp    :: Text
+  -- => Raw supplier identifier — not yet verified
+  , draftAmount  :: Double
+  -- => Raw amount — may be negative or zero
+  } deriving (Show, Eq)
+
+data DomainError
+  -- => Named errors as a sum type — not exceptions, not strings
+  = BlankOrderId
+  -- => The PO ID was empty or whitespace
+  | BlankSupplierId
+  -- => The supplier ID was empty or whitespace
+  | NonPositiveAmount Double
+  -- => Total amount was zero or negative; carries the invalid value
+  deriving (Show, Eq)
+
+isBlank :: Text -> Bool
+-- => Predicate: True for empty or whitespace-only text
+isBlank t = T.null (T.strip t)
+-- => T.strip drops surrounding whitespace; T.null checks for empty
+
+validateDraftPO :: DraftPurchaseOrder -> Either DomainError DraftPurchaseOrder
+-- => Input: raw DTO from the outside world
+-- => Output: Right DraftPurchaseOrder if rules pass, Left DomainError otherwise
+-- => Either is Haskell's idiomatic Result type — Left = error, Right = ok
+validateDraftPO input
+  | isBlank (draftId input)    = Left BlankOrderId
+  -- => Guard 1: the PO ID must be non-blank
+  | isBlank (draftSupp input)  = Left BlankSupplierId
+  -- => Guard 2: the supplier ID must be non-blank
+  | draftAmount input <= 0     = Left (NonPositiveAmount (draftAmount input))
+  -- => Guard 3: amount must be positive; carry the invalid value
+  | otherwise                  = Right input
+  -- => All guards passed — returns the validated draft PO
+
+-- Testing the pure function — no database, no HTTP, no setup
+main :: IO ()
+main = do
+  let result = validateDraftPO (DraftPurchaseOrder "po_abc-123" "sup_xyz-456" 500)
+  -- => All three guards pass; draftAmount 500 > 0
+  -- => result :: Either DomainError DraftPurchaseOrder = Right (DraftPurchaseOrder "po_abc-123" ...)
+  case result of
+    Right po -> putStrLn ("Valid PO: " <> T.unpack (draftId po))
+    -- => draftId po = "po_abc-123" — unwrapped from Right
+    Left  e  -> putStrLn ("Error: " <> show e)
+    -- => Not reached — input was valid
+  -- => Output: Valid PO: po_abc-123
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A pure domain function with no infrastructure imports is the most testable unit of code in the system — calling it requires nothing but the runtime and domain types, regardless of whether that runtime is F#, Clojure, or a TypeScript Node process.
@@ -464,7 +602,7 @@ graph LR
     style TEST fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -588,9 +726,7 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // => Exhaustive — callers must handle both branches
 
 // Input port type alias — the complete contract in one line
-type SubmitPurchaseOrderUseCase = (
-  draft: DraftPurchaseOrder,
-) => Promise<Result<SubmittedPurchaseOrder, SubmissionError>>;
+type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise;
 // => Input:  raw, unvalidated PO DTO from any delivery mechanism
 // => Output: ok SubmittedPurchaseOrder on success, or SubmissionError on failure
 // => Promise acknowledges that persistence is effectful (async I/O)
@@ -619,6 +755,67 @@ const submitPurchaseOrder: SubmitPurchaseOrderUseCase = async (draft) => {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- Input port: the complete contract for submitting a purchase order.
+-- A type alias for a function — not a class, not a typeclass hierarchy.
+-- [F#: type SubmitPurchaseOrderUseCase = ... -> Async<Result<...>> — Haskell uses IO]
+
+module Procurement.Application.SubmitPO where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+data DraftPurchaseOrder = DraftPurchaseOrder
+  { draftId    :: Text
+  , draftSupp  :: Text
+  , draftTotal :: Double
+  } deriving (Show, Eq)
+-- => Raw input from any delivery mechanism — nothing validated yet
+
+data SubmittedPurchaseOrder = SubmittedPurchaseOrder
+  { spoId     :: Text
+  , spoSupp   :: Text
+  , spoTotal  :: Double
+  , spoStatus :: Text
+  } deriving (Show, Eq)
+-- => Represents a PO in AwaitingApproval state — validated and persisted
+
+data SubmissionError
+  = ValidationError Text
+  -- => Domain rule violated — caller should fix the request
+  | RepositoryError Text
+  -- => Infrastructure failure — caller may retry
+  deriving (Show, Eq)
+
+-- Input port type alias — the complete contract in one line
+-- => Input:  raw, unvalidated PO DTO from any delivery mechanism
+-- => Output: Right SubmittedPurchaseOrder on success, or Left SubmissionError on failure
+-- => IO acknowledges that persistence is effectful
+type SubmitPurchaseOrderUseCase =
+  DraftPurchaseOrder -> IO (Either SubmissionError SubmittedPurchaseOrder)
+
+-- Any function with this signature satisfies the port — no instance declaration needed
+submitPurchaseOrder :: SubmitPurchaseOrderUseCase
+-- => This is ONE implementation of the port — tests can supply a different one
+submitPurchaseOrder draft
+  | T.null (T.strip (draftId draft)) =
+      pure (Left (ValidationError "PO Id must not be blank"))
+      -- => Domain rule enforced before any I/O
+  | otherwise =
+      pure (Right (SubmittedPurchaseOrder
+        (draftId draft) (draftSupp draft) (draftTotal draft) "AwaitingApproval"))
+      -- => State transition: Draft -> AwaitingApproval
+
+-- The HTTP adapter holds the injected port — it never names the implementation
+-- handler :: SubmitPurchaseOrderUseCase -> HttpDto -> IO HttpResponse
+-- => useCase is the port; the implementation is wired at the composition root
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An input port expressed as a function type alias gives every adapter (HTTP, CLI, test) a single, compiler-checked contract without requiring a base class or interface hierarchy.
@@ -631,7 +828,7 @@ const submitPurchaseOrder: SubmitPurchaseOrderUseCase = async (draft) => {
 
 An **output port** is a record of functions that the application layer calls but never implements. The record type is the contract; record literals in the adapters zone are the implementations. The `PurchaseOrderRepository` port appears identically in every example that uses it.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -755,11 +952,11 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // This type alias is THE port contract. Every adapter must satisfy it.
 // No adapter name, no SQL, no pg — just function signatures.
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly save: (po: PurchaseOrder) => Promise;
   // => Persist a PO — upsert semantics recommended
   // => Promise because disk/network I/O is involved
   // => Result<void, RepoError> because the database can fail with named cases
-  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  readonly findById: (id: POId) => Promise;
   // => Load a PO by its ID
   // => Returns null when the PO does not exist (not an error)
   // => Returns error RepoError on infrastructure failure
@@ -770,7 +967,7 @@ type PurchaseOrderRepo = {
 // The application service accepts this type — it never names an implementation.
 const exampleService =
   (repo: PurchaseOrderRepo) =>
-  async (id: POId): Promise<Result<PurchaseOrder | null, RepoError>> => {
+  async (id: POId): Promise => {
     // => repo is the injected port — could be Postgres, in-memory, or a spy
     return repo.findById(id);
     // => Calls the port — no knowledge of what is behind the boundary
@@ -781,6 +978,65 @@ console.log("PurchaseOrderRepo port defined — zero adapter knowledge in applic
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Domain types ──────────────────────────────────────────────────────────
+-- [F#: type alias PurchaseOrderId = string — Haskell uses newtype for nominal typing]
+module Procurement.Application.Repo where
+
+import Data.Text (Text)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+-- => Newtype alias for the PO primary key — format po_<uuid>
+
+data PurchaseOrder = PurchaseOrder
+  -- => Aggregate root of the purchasing context
+  { poId       :: PurchaseOrderId
+  , poSupplier :: Text
+  , poTotal    :: Double
+  , poStatus   :: Text
+  } deriving (Show, Eq)
+
+-- ── Infrastructure error type ─────────────────────────────────────────────
+data RepoError
+  = DatabaseError Text
+  -- => Named error — DatabaseError carries the message
+  | ConnectionTimeout
+  -- => Signals a retry opportunity
+  deriving (Show, Eq)
+
+-- ── Output port: the canonical PurchaseOrderRepository definition ─────────
+-- This record-of-functions IS the port contract. Every adapter must build
+-- a value of this type. No adapter name, no SQL, no postgresql-simple here.
+-- [F#: record type with save/load — Haskell records the same shape]
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  -- => Persist a PO — upsert semantics recommended
+  -- => IO because disk/network I/O is involved
+  -- => Either RepoError () because the database can fail with named cases
+  , loadPO :: PurchaseOrderId -> IO (Either RepoError (Maybe PurchaseOrder))
+  -- => Load a PO by its ID
+  -- => Returns Nothing when the PO does not exist (not an error)
+  -- => Returns Left RepoError on infrastructure failure
+  }
+-- => This exact record signature is used in every example that touches this port
+
+-- ── Demonstration: the port is just a record-of-functions ────────────────
+exampleService :: PurchaseOrderRepository -> PurchaseOrderId
+               -> IO (Either RepoError (Maybe PurchaseOrder))
+-- => repo is the injected port — could be Postgres, in-memory, or a spy
+exampleService repo poid = loadPO repo poid
+  -- => Calls the port — no knowledge of what is behind the boundary
+
+main :: IO ()
+main = putStrLn "PurchaseOrderRepository port defined — zero adapter knowledge in application layer"
+-- => Output: PurchaseOrderRepository port defined — zero adapter knowledge in application layer
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `PurchaseOrderRepository` record type is the complete port contract — any record literal that provides matching `save` and `load` functions satisfies it, regardless of the underlying storage mechanism.
@@ -793,7 +1049,7 @@ console.log("PurchaseOrderRepo port defined — zero adapter knowledge in applic
 
 The `Clock` port makes the current timestamp injectable. Without it, `System.DateTimeOffset.UtcNow` would be hard-coded in application services, making time-dependent domain rules (approval deadlines, order expiry) non-deterministic in tests.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -954,6 +1210,73 @@ console.log("Submitted at:", prodPO.submittedAt.toISOString());
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Clock port ────────────────────────────────────────────────────────────
+-- An IO action — reading the clock has no failure mode but is effectful.
+-- [F#: type Clock = unit -> System.DateTimeOffset — Haskell uses IO UTCTime]
+
+module Procurement.Application.Clock where
+
+import Data.Time (UTCTime, getCurrentTime)
+import Data.Time.Format.ISO8601 (iso8601ParseM)
+-- => UTCTime is the standard timestamp type from the time package
+
+-- Clock port as an IO action — no async wrapper, no Either; clocks do not fail
+type Clock = IO UTCTime
+-- => Returns the current timestamp as seen by the application layer
+-- => IO acknowledges that reading the clock is observable but never fails
+
+-- ── Domain type that depends on time ─────────────────────────────────────
+data PurchaseOrder = PurchaseOrder
+  { poId          :: String
+  , poTotal       :: Double
+  , poSubmittedAt :: UTCTime
+  -- => Timestamp is part of the domain aggregate — used for approval SLA tracking
+  } deriving (Show)
+
+-- ── Application service using the Clock port ──────────────────────────────
+-- The service is parameterised by the clock — never calls getCurrentTime directly.
+submitPO :: Clock -> String -> Double -> IO PurchaseOrder
+submitPO clock poid amount = do
+  -- => clock is the injected Clock port — IO action returning the current time
+  now <- clock
+  -- => Delegates timestamp resolution to the injected adapter
+  pure (PurchaseOrder poid amount now)
+  -- => PO timestamp is now deterministic in tests
+
+-- ── System clock adapter (production) ────────────────────────────────────
+systemClock :: Clock
+systemClock = getCurrentTime
+-- => Production adapter: reads the real wall-clock via Data.Time.getCurrentTime
+-- => Non-deterministic — different call, different timestamp
+
+-- ── Fixed clock adapter (tests) ───────────────────────────────────────────
+fixedClock :: Clock
+fixedClock = case iso8601ParseM "2026-01-15T09:00:00Z" of
+  -- => Test adapter: always returns the same timestamp
+  Just t  -> pure t
+  Nothing -> error "unreachable: literal ISO8601 string"
+  -- => iso8601ParseM is total but returns Maybe; literal is always parseable
+
+-- ── Demonstration ─────────────────────────────────────────────────────────
+main :: IO ()
+main = do
+  testPO <- submitPO fixedClock "po_test-001" 2500
+  -- => Uses fixed clock — deterministic
+  putStrLn ("Submitted at: " <> show (poSubmittedAt testPO))
+  -- => Output: Submitted at: 2026-01-15 09:00:00 UTC  (exact, always the same)
+
+  prodPO <- submitPO systemClock "po_prod-001" 2500
+  -- => Uses system clock — non-deterministic (different run = different value)
+  putStrLn ("Submitted at: " <> show (poSubmittedAt prodPO))
+  -- => Output: Submitted at: <current UTC time>  (varies by run)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A `Clock` port that returns a `DateTimeOffset` makes time a dependency like any other — injectable, swappable, and deterministic in tests.
@@ -966,7 +1289,7 @@ console.log("Submitted at:", prodPO.submittedAt.toISOString());
 
 The dependency rule states that the direction of source-code imports must always point inward: adapters import the application zone, the application zone imports the domain zone, and the domain zone imports nothing outside itself. Violating this rule is the single most common hexagonal architecture mistake.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1098,8 +1421,8 @@ type DomainError = { readonly kind: "InvalidAmount"; readonly amount: number } |
 
 type PurchaseOrderRepo = {
   // => Port defined in application — depends on domain types only
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Application knows domain; application does NOT know adapters
 
@@ -1127,6 +1450,67 @@ console.log("Dependency rule: Domain <- Application <- Adapters (arrows = allowe
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── CORRECT dependency directions ────────────────────────────────────────
+-- [F#: module ordering enforces dependency rule — Haskell uses import directives]
+
+-- Procurement/Domain.hs — zero external imports beyond base + Text
+module Procurement.Domain where
+
+import Data.Text (Text)
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show, Eq)
+-- => Domain type — defined without knowledge of any infrastructure
+
+data DomainError = InvalidAmount Double | BlankId deriving (Show, Eq)
+-- => Named errors — no exception types, no HTTP status codes here
+
+-- Procurement/Application.hs — imports Domain only
+-- module Procurement.Application where
+-- import Procurement.Domain   -- ← CORRECT: imports inner zone
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  -- => Port defined in Application — depends on Domain types only
+  { savePO :: PurchaseOrder -> IO (Either Text ())
+  , loadPO :: Text          -> IO (Either Text (Maybe PurchaseOrder))
+  }
+-- => Application knows Domain; Application does NOT know Adapters
+
+-- Procurement/Adapters/Postgres.hs — imports Application (and transitively Domain)
+-- module Procurement.Adapters.Postgres where
+-- import Procurement.Application                  -- ← CORRECT: imports middle zone
+-- import Database.PostgreSQL.Simple               -- ← CORRECT: adapters may import infra
+
+-- ── WRONG dependency directions ───────────────────────────────────────────
+-- These are the mistakes the dependency rule prevents.
+
+-- MISTAKE 1: Domain importing infrastructure
+-- module Procurement.Domain where
+-- import Database.PostgreSQL.Simple  ← WRONG: domain cannot import infra
+-- => Effect: domain is now untestable without a real Postgres connection
+
+-- MISTAKE 2: Application importing an adapter
+-- module Procurement.Application where
+-- import Procurement.Adapters.Postgres  ← WRONG
+-- => Effect: swapping the adapter requires changing the application layer
+
+-- MISTAKE 3: Domain importing application
+-- module Procurement.Domain where
+-- import Procurement.Application  ← WRONG
+-- => Effect: circular dependency; domain becomes aware of ports it should not know
+
+main :: IO ()
+main = putStrLn "Dependency rule: Domain <- Application <- Adapters (arrows = allowed imports)"
+-- => Output: Dependency rule: Domain <- Application <- Adapters (arrows = allowed imports)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The dependency rule — imports only point inward — is a structural constraint, not a framework feature. F# enforces it through module ordering (a module cannot open one defined later in compilation order); Clojure through namespace `require` topology; TypeScript through import linting rules such as `import/no-restricted-paths`.
@@ -1139,7 +1523,7 @@ console.log("Dependency rule: Domain <- Application <- Adapters (arrows = allowe
 
 Hexagonal Architecture's zone boundaries should be visible in the file system. The module namespace convention maps directly to folder structure, making zone violations easy to detect in a code review without reading any code.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1291,8 +1675,8 @@ interface PurchaseOrder {
 
 type PurchaseOrderRepo = {
   // => Port definition — ONLY in the application zone
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly findById: (id: POId) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: POId) => Promise;
 };
 // => Adapters implement this; the application service consumes it
 
@@ -1310,6 +1694,68 @@ console.log("File layout enforces zone boundaries — violations are visible at 
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── File system layout ────────────────────────────────────────────────────
+-- src/
+-- ├── Procurement/
+-- │   ├── Domain/
+-- │   │   └── PurchaseOrder.hs         ← inner zone: no infra imports
+-- │   ├── Application/
+-- │   │   ├── Ports.hs                 ← port records: PurchaseOrderRepository, Clock
+-- │   │   └── SubmitPO.hs              ← orchestration: domain + ports
+-- │   └── Adapters/
+-- │       ├── PostgresRepo.hs          ← output port implementation
+-- │       ├── InMemoryRepo.hs          ← test adapter
+-- │       ├── HttpHandler.hs           ← primary (driving) adapter
+-- │       └── Composition.hs           ← wires adapters to ports
+-- [F#: ProcurementPlatform.* namespaces — Haskell module path mirrors folder path]
+
+-- ── Procurement/Domain/PurchaseOrder.hs ───────────────────────────────────
+module Procurement.Domain.PurchaseOrder where
+
+import Data.Text (Text)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+-- => Thin newtype — prevents mixing PO IDs with other text identifiers
+
+data PurchaseOrder = PurchaseOrder
+  -- => Aggregate root of the purchasing context — lives only in this module
+  { poId       :: PurchaseOrderId
+  , poSupplier :: Text
+  , poTotal    :: Double
+  , poStatus   :: Text
+  } deriving (Show, Eq)
+
+-- ── Procurement/Application/Ports.hs ─────────────────────────────────────
+-- module Procurement.Application.Ports where
+-- import Procurement.Domain.PurchaseOrder  ← only domain types imported
+
+-- data PurchaseOrderRepository = PurchaseOrderRepository
+--   { savePO :: PurchaseOrder -> IO (Either Text ())
+--   , loadPO :: PurchaseOrderId -> IO (Either Text (Maybe PurchaseOrder))
+--   }
+-- => Port definition — ONLY in the application zone
+
+-- type Clock = IO UTCTime
+-- => Time port — all ports live alongside each other in Ports.hs
+
+-- ── Procurement/Adapters/Composition.hs ──────────────────────────────────
+-- The composition root is the ONLY module that knows about all adapters.
+-- module Procurement.Adapters.Composition where
+-- import Procurement.Application.Ports
+-- import Procurement.Adapters.PostgresRepo
+-- import Procurement.Adapters.HttpHandler
+
+main :: IO ()
+main = putStrLn "File layout enforces zone boundaries — violations are visible at a glance"
+-- => Output: File layout enforces zone boundaries — violations are visible at a glance
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Mapping the three zones directly to three top-level folders makes every dependency rule violation visible as a misplaced file, before any code is read.
@@ -1324,7 +1770,7 @@ console.log("File layout enforces zone boundaries — violations are visible at 
 
 The `PurchaseOrderRepository` port is the canonical output port for the `purchasing` context. It appears identically in every beginner example that persists or retrieves a `PurchaseOrder`. Here the focus is on understanding WHY the record-of-functions shape is the right abstraction.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1486,11 +1932,11 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // Port as a type alias for an object of function types
 type PurchaseOrderRepo = {
   // => The complete output port — two operations, two function signatures
-  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
+  readonly save: (po: PurchaseOrder) => Promise;
   // => save: persist the aggregate; returns void on success
   // => Promise because disk write is I/O-bound
   // => Result because the database can fail (constraint, connection, timeout)
-  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  readonly findById: (id: POId) => Promise;
   // => findById: retrieve by identity; returns null when not found (not an error)
   // => null distinguishes "not found" from "infrastructure failure"
 };
@@ -1499,7 +1945,7 @@ type PurchaseOrderRepo = {
 // ── How the application service depends on the port ───────────────────────
 const loadAndInspect =
   (repo: PurchaseOrderRepo) =>
-  async (id: POId): Promise<string> => {
+  async (id: POId): Promise => {
     // => repo is the port — injected by the composition root
     const result = await repo.findById(id);
     // => Delegates to whichever adapter was injected — no SQL in this function
@@ -1520,6 +1966,74 @@ console.log("PurchaseOrderRepo port declared — adapters implement; application
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── The canonical PurchaseOrderRepository port ────────────────────────────
+-- This record-of-functions is IDENTICAL in every example using this port.
+-- Never rename fields, never change signatures — the contract is the port.
+-- [F#: record-of-functions with save/load — Haskell uses the same pattern]
+
+module Procurement.Application.Ports where
+
+import Data.Text (Text)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+-- => PO primary key — format po_<uuid>; newtype prevents stringly-typed confusion
+
+data PurchaseOrder = PurchaseOrder
+  -- => Aggregate root — the only type the repository cares about
+  { poId       :: PurchaseOrderId
+  , poSupplier :: Text
+  , poTotal    :: Double
+  , poStatus   :: Text
+  } deriving (Show, Eq)
+
+data RepoError
+  = DatabaseError Text
+  -- => Infrastructure errors — named so callers can respond appropriately
+  -- => DatabaseError carries the message
+  | ConnectionTimeout
+  -- => ConnectionTimeout signals a retry opportunity
+  deriving (Show, Eq)
+
+-- Port as a record of IO actions returning Either RepoError ...
+data PurchaseOrderRepository = PurchaseOrderRepository
+  -- => The complete output port — two operations, two function fields
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  -- => save: persist the aggregate; returns () on success
+  -- => IO because disk write is I/O-bound
+  -- => Either because the database can fail (constraint, connection, timeout)
+  , loadPO :: PurchaseOrderId -> IO (Either RepoError (Maybe PurchaseOrder))
+  -- => load: retrieve by identity; returns Nothing when not found (not an error)
+  -- => Maybe distinguishes "not found" from "infrastructure failure"
+  }
+-- => Any record value of this type is a valid PurchaseOrderRepository adapter
+
+-- ── How the application service depends on the port ───────────────────────
+loadAndInspect :: PurchaseOrderRepository -> PurchaseOrderId -> IO Text
+-- => repo is the port — injected by the composition root
+loadAndInspect repo poid = do
+  result <- loadPO repo poid
+  -- => Delegates to whichever adapter was injected — no SQL in this function
+  pure $ case result of
+    Right (Just po)            -> "Found PO in status " <> poStatus po
+    -- => PO found — return a summary string
+    Right Nothing              -> "PO not found"
+    -- => Not found — explicit, not an error
+    Left  (DatabaseError msg)  -> "DB error: " <> msg
+    -- => Infrastructure failure — propagate with context
+    Left  ConnectionTimeout    -> "Timeout — retry later"
+    -- => Timeout — signal to the caller that a retry is safe
+
+main :: IO ()
+main = putStrLn "PurchaseOrderRepository port declared — adapters implement; application layer consumes"
+-- => Output: PurchaseOrderRepository port declared — adapters implement; application layer consumes
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The port contract makes substitution explicit — any implementation satisfying the required operations substitutes without changing the application service. F# represents this as a record type; Clojure as a protocol; TypeScript as an interface. The application service depends on the abstraction in all three cases.
@@ -1532,7 +2046,7 @@ console.log("PurchaseOrderRepo port declared — adapters implement; application
 
 Port signatures should be minimal: only the parameters the application service needs. Extra parameters are adapter concerns. This example shows the difference between a minimal port and an over-specified one.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1647,7 +2161,7 @@ printfn "Minimal port: connection management is the adapter's responsibility, no
 // The save function carries database-specific parameters.
 // The application service must now know connection pools and transaction handles.
 type OverSpecifiedRepo = {
-  save: (connectionString: string, txHandle: unknown, po: unknown) => Promise<unknown>;
+  save: (connectionString: string, txHandle: unknown, po: unknown) => Promise;
   // => WRONG: connectionString and txHandle are adapter concerns
   // => Application layer now knows about databases — zone violation
 };
@@ -1668,11 +2182,9 @@ type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | 
 
 type PurchaseOrderRepo = {
   // => Minimal: the application service needs exactly these two operations
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: RepoError }>;
+  readonly save: (po: PurchaseOrder) => Promise;
   // => CORRECT: no connection string, no transaction — adapter manages those internally
-  readonly findById: (
-    id: string,
-  ) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: RepoError }>;
+  readonly findById: (id: string) => Promise;
   // => CORRECT: only the identity is needed — the adapter knows where to look
 };
 // => The connection string is a constructor parameter of the adapter, not a port parameter
@@ -1700,6 +2212,66 @@ console.log("Minimal port: connection management is the adapter's responsibility
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── OVER-SPECIFIED port (wrong) ───────────────────────────────────────────
+-- The save function carries database-specific parameters.
+-- The application service must now know connection strings and transaction handles.
+-- data OverSpecifiedRepository = OverSpecifiedRepository
+--   { saveBad :: Text -> SomeTxHandle -> PurchaseOrder -> IO (Either Text ()) }
+-- => WRONG: connection string and tx handle are adapter concerns
+-- => Application layer now knows about databases — zone violation
+-- [F#: same anti-pattern — Haskell shows it via commented type declaration]
+
+module Procurement.Application.PortMinimal where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- ── MINIMAL port (correct) ────────────────────────────────────────────────
+-- Connection management is the adapter's responsibility — not visible here.
+data PurchaseOrder = PurchaseOrder { poId :: Text, poTotal :: Double } deriving (Show)
+-- => Domain type — no infrastructure fields
+
+data RepoError = DatabaseError Text | ConnectionTimeout deriving (Show)
+-- => Named errors — canonical for all PurchaseOrderRepository ports
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  -- => Minimal: the application service needs exactly these two operations
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  -- => CORRECT: no connection string, no tx — adapter manages those internally
+  , loadPO :: Text -> IO (Either RepoError (Maybe PurchaseOrder))
+  -- => CORRECT: only the identity is needed — the adapter knows where to look
+  }
+-- => The connection string is closed over by the adapter, not on the port signature
+
+-- ── Adapter: the connection string is captured at construction time ────────
+buildPostgresRepo :: Text -> PurchaseOrderRepository
+-- => connStr is closed over — not visible to the application layer
+buildPostgresRepo connStr = PurchaseOrderRepository
+  { savePO = \po -> do
+      -- import Database.PostgreSQL.Simple — this is where infra lives
+      putStrLn ("[PG] INSERT INTO purchase_orders id=" <> T.unpack (poId po))
+      -- => Real: execute INSERT with postgresql-simple; connStr in scope via closure
+      _ <- pure connStr  -- closure use marker for the reader
+      pure (Right ())
+      -- => Returns () on success — the PO identity is already in the input
+  , loadPO = \i -> do
+      putStrLn ("[PG] SELECT * FROM purchase_orders WHERE id = " <> T.unpack i)
+      -- => Real: execute SELECT; return Nothing if no rows
+      pure (Right Nothing)
+      -- => Simplified: always returns Nothing; real adapter queries Postgres
+  }
+
+main :: IO ()
+main = putStrLn "Minimal port: connection management is the adapter's responsibility, not the port's"
+-- => Output: Minimal port: connection management is the adapter's responsibility, not the port's
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Port signatures must contain only the domain concepts the application service needs — infrastructure parameters like connection strings belong inside the adapter, captured in a closure.
@@ -1712,7 +2284,7 @@ console.log("Minimal port: connection management is the adapter's responsibility
 
 Ports that perform I/O use `Async<Result<_,_>>`. Ports that are logically instantaneous (clock, ID generation) use synchronous signatures. Mixing these up leads to unnecessary async overhead or missed error-handling.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1834,9 +2406,9 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // => FP-style tagged union — callers must handle both branches
 
 type PurchaseOrderRepo = {
-  save: (po: PurchaseOrder) => Promise<Result<void, string>>;
+  save: (po: PurchaseOrder) => Promise;
   // => CORRECT: Promise because disk write is I/O; Result because write can fail
-  findById: (id: string) => Promise<Result<PurchaseOrder | null, string>>;
+  findById: (id: string) => Promise;
   // => CORRECT: Promise because network read; Result because read can fail
 };
 
@@ -1873,6 +2445,67 @@ console.log("Sync ports for instantaneous operations; Promise<Result<_,_>> for I
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Rule: I/O-bound ports return IO (Either e a) ─────────────────────────
+-- The database can fail and the call is I/O-bound — both reasons for IO+Either.
+-- [F#: Async<Result<_,_>> — Haskell uses IO (Either e a) for the same shape]
+
+module Procurement.Application.PortShape where
+
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+import Data.UUID (UUID)
+import qualified Data.UUID.V4 as UUIDv4
+
+data PurchaseOrder = PurchaseOrder { poId :: Text, poTotal :: Double, poStatus :: Text }
+-- => Domain aggregate — same type referenced by both ports below
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either Text ())
+  -- => CORRECT: IO because disk write; Either because write can fail
+  , loadPO :: Text          -> IO (Either Text (Maybe PurchaseOrder))
+  -- => CORRECT: IO because network read; Either because read can fail
+  }
+
+-- ── Rule: logically-instantaneous ports use plain IO actions ──────────────
+-- The clock never fails — no Either wrapper needed.
+-- [F#: type Clock = unit -> System.DateTimeOffset — Haskell uses IO UTCTime]
+type Clock = IO UTCTime
+-- => CORRECT: IO (effects), no Either (clocks do not fail)
+-- => Simplifies every call site: now <- clock  — no case-on-Either
+
+-- [F#: type IdGenerator = unit -> string — Haskell uses IO UUID]
+type IdGenerator = IO UUID
+-- => CORRECT: generating a UUID is effectful but infallible
+-- => Wrapping in Either would be purely ceremonial overhead
+
+-- ── WRONG: over-wrapping the clock ───────────────────────────────────────
+-- type BadClock = IO (Either Text UTCTime)
+-- => This forces every call site to: result <- clock; case result of ...
+-- => Both are meaningless ceremony — the clock cannot fail
+
+-- ── Demonstration: call-site simplicity ──────────────────────────────────
+buildPO :: Clock -> IdGenerator -> Text -> Double -> IO PurchaseOrder
+-- => Both effectful but infallible ports: no Either at call site
+buildPO clock gen _supplier amount = do
+  uid <- gen
+  -- => uid :: UUID — immediate UUID, no Either to unpack
+  now <- clock
+  -- => now :: UTCTime — immediate timestamp, no Either to unpack
+  let _ = now
+  pure (PurchaseOrder ("po_" <> (Data.Text.pack (show uid))) amount "Draft")
+  -- => PO constructed; supplier and timestamp available without Either-handling
+
+main :: IO ()
+main = putStrLn "Sync ports for instantaneous operations; IO (Either e a) for I/O-bound ports"
+-- => Output: Sync ports for instantaneous operations; IO (Either e a) for I/O-bound ports
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Match the port signature to the failure and timing characteristics of the operation — synchronous for infallible in-process operations, async with error representation for I/O-bound fallible operations.
@@ -1885,7 +2518,7 @@ console.log("Sync ports for instantaneous operations; Promise<Result<_,_>> for I
 
 The error type in a port's `Result` should be a discriminated union specific to that port, not a generic `exn` or `string`. Named error cases allow the application service to respond to different failures differently.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2066,14 +2699,14 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 
 type PurchaseOrderRepo = {
   // => Port with named error type — exhaustive matching at application layer
-  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
-  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 
 // ── Application service: branch on error case ─────────────────────────────
 const handleSaveError =
   (repo: PurchaseOrderRepo) =>
-  async (po: PurchaseOrder): Promise<string> => {
+  async (po: PurchaseOrder): Promise => {
     const result = await repo.save(po);
     // => Delegates to the injected adapter
     if (result.ok) return "Saved successfully";
@@ -2099,6 +2732,73 @@ console.log("Named RepoError union: exhaustive matching; no string parsing; comp
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── GENERIC error (wrong) ─────────────────────────────────────────────────
+-- data BadRepository = BadRepository
+--   { saveBad :: PurchaseOrder -> IO (Either SomeException ()) }
+-- => SomeException leaks exception semantics into the typed system
+-- => The caller cannot distinguish a timeout from a constraint violation
+
+-- ── STRING error (also wrong) ─────────────────────────────────────────────
+-- data BadRepository = BadRepository
+--   { saveBad :: PurchaseOrder -> IO (Either Text ()) }
+-- => Better than SomeException, but still untyped — caller must parse to branch
+-- => A typo in the error message string is a runtime bug
+
+module Procurement.Application.RepoErr where
+
+import Data.Text (Text)
+
+data PurchaseOrder = PurchaseOrder { poId :: Text, poTotal :: Double, poStatus :: Text }
+-- => Aggregate root — used in the port signatures below
+
+-- ── NAMED sum type (correct) ──────────────────────────────────────────────
+-- [F#: discriminated union RepoError — Haskell sum type via data]
+data RepoError
+  -- => Sum type: each case is a distinct failure mode
+  = DuplicateKey Text
+  -- => PO with this ID already exists — caller should not retry with same ID
+  | ConnectionTimeout
+  -- => Database unreachable — caller may retry after a delay
+  | ConstraintViolation Text
+  -- => Schema constraint failed — caller should inspect the PO for data errors
+  | UnexpectedError Text
+  -- => Catch-all for unexpected failures — carry message for diagnostics
+  deriving (Show, Eq)
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  -- => Port with named error type — exhaustive matching at application layer
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  , loadPO :: Text -> IO (Either RepoError (Maybe PurchaseOrder))
+  }
+
+-- ── Application service: branch on error case ────────────────────────────
+handleSaveError :: PurchaseOrderRepository -> PurchaseOrder -> IO Text
+handleSaveError repo po = do
+  result <- savePO repo po
+  -- => Delegates to the injected adapter
+  pure $ case result of
+    Right ()                       -> "Saved successfully"
+    -- => Happy path
+    Left  (DuplicateKey i)         -> "PO " <> i <> " already exists"
+    -- => Idempotency: PO already saved — not necessarily an error
+    Left  ConnectionTimeout        -> "Retry after delay — DB unreachable"
+    -- => Transient failure: safe to retry
+    Left  (ConstraintViolation m)  -> "Data error: " <> m
+    -- => Permanent failure: the PO data has a problem
+    Left  (UnexpectedError m)      -> "Unexpected: " <> m
+    -- => Catch-all: surface for diagnostics
+
+main :: IO ()
+main = putStrLn "Named RepoError sum type: exhaustive matching; no string parsing; compile-time completeness"
+-- => Output: Named RepoError sum type: exhaustive matching; no string parsing; compile-time completeness
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Using a typed error representation at the port boundary makes all failure modes explicit, enabling the application service to respond differently to transient vs permanent failures. F# uses a discriminated union; Clojure uses a typed error map; TypeScript uses a discriminated union — all ensure the service never receives an untyped exception from infrastructure.
@@ -2111,7 +2811,7 @@ console.log("Named RepoError union: exhaustive matching; no string parsing; comp
 
 The same input port type alias is satisfied by three different adapters: an HTTP handler, a CLI parser, and an event consumer. Each adapter translates its delivery-mechanism-specific input into the domain type, then calls the same port.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2305,7 +3005,7 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // => FP-style tagged union — identical for all three adapters below
 
 // Input port type alias — identical for all three adapters below
-type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise<Result<SubmittedPO, SubmissionError>>;
+type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise;
 // => Input port: identical for all three adapters below
 
 // ── Adapter 1: HTTP ───────────────────────────────────────────────────────
@@ -2318,7 +3018,7 @@ interface HttpPoDto {
 
 const httpAdapter =
   (useCase: SubmitPurchaseOrderUseCase) =>
-  async (dto: HttpPoDto): Promise<string> => {
+  async (dto: HttpPoDto): Promise => {
     // => dto: parsed from JSON request body by the framework (Express / Fastify)
     const draft: DraftPurchaseOrder = { id: dto.po_id, supplierId: dto.supplier_id, totalAmount: dto.total_amount };
     // => Translate: HTTP DTO → domain input type (snake_case → camelCase)
@@ -2332,7 +3032,7 @@ const httpAdapter =
 // ── Adapter 2: CLI ────────────────────────────────────────────────────────
 const cliAdapter =
   (useCase: SubmitPurchaseOrderUseCase) =>
-  async (args: string[]): Promise<void> => {
+  async (args: string[]): Promise => {
     // => args: command-line arguments ["--id", "po_001", "--supplier", "sup_001", "--amount", "1000"]
     const draft: DraftPurchaseOrder = { id: args[1], supplierId: args[3], totalAmount: parseFloat(args[5]) };
     // => Translate: argv → domain input type
@@ -2351,7 +3051,7 @@ interface KafkaMessage {
 
 const eventConsumerAdapter =
   (useCase: SubmitPurchaseOrderUseCase) =>
-  async (msg: KafkaMessage): Promise<void> => {
+  async (msg: KafkaMessage): Promise => {
     // => msg: deserialized Kafka message from the consumer loop
     const draft: DraftPurchaseOrder = { id: msg.key, supplierId: "sup_from_payload", totalAmount: 750 };
     // => Translate: Kafka message → domain input type
@@ -2366,6 +3066,88 @@ console.log("One input port type — three adapters, zero changes to the applica
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Shared domain and port types ──────────────────────────────────────────
+-- [F#: type alias for input port — Haskell uses a type synonym for the function shape]
+
+module Procurement.Application.SubmitInPort where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+data DraftPurchaseOrder = DraftPurchaseOrder
+  { dpoId :: Text, dpoSupp :: Text, dpoTotal :: Double } deriving (Show)
+-- => Raw input from any delivery mechanism
+
+data SubmittedPO = SubmittedPO { spoId :: Text, spoStatus :: Text } deriving (Show)
+-- => Simplified output confirming submission
+
+data SubmissionError
+  = ValidationError Text
+  | RepositoryError Text
+  deriving (Show)
+-- => Named errors — each delivery mechanism maps these to its own response format
+
+type SubmitPurchaseOrderUseCase =
+  DraftPurchaseOrder -> IO (Either SubmissionError SubmittedPO)
+-- => Input port: identical for all three adapters below
+
+-- ── Adapter 1: HTTP ───────────────────────────────────────────────────────
+-- The HTTP adapter receives a parsed JSON record, maps it to the domain type.
+data HttpPoDto = HttpPoDto { hPoId :: Text, hSupp :: Text, hTotal :: Double }
+-- => JSON shape modelled with vendor-style field names (snake_case in real JSON)
+
+httpAdapter :: SubmitPurchaseOrderUseCase -> HttpPoDto -> IO Text
+httpAdapter useCase dto = do
+  -- => dto: parsed from JSON request body by the framework (Servant / WAI)
+  let draft = DraftPurchaseOrder (hPoId dto) (hSupp dto) (hTotal dto)
+  -- => Translate: HTTP DTO → domain input type
+  result <- useCase draft
+  -- => Delegate to the port — the adapter does no business logic
+  pure $ case result of
+    Right po                       -> "201 Created: " <> spoId po
+    Left  (ValidationError msg)    -> "422: " <> msg
+    Left  (RepositoryError msg)    -> "503: " <> msg
+
+-- ── Adapter 2: CLI ────────────────────────────────────────────────────────
+-- The CLI adapter parses command-line arguments, maps to the domain type.
+cliAdapter :: SubmitPurchaseOrderUseCase -> [Text] -> IO ()
+cliAdapter useCase args = do
+  -- => args: e.g. ["--id", "po_001", "--supplier", "sup_001", "--amount", "1000"]
+  let draft = DraftPurchaseOrder (args !! 1) (args !! 3) (read (T.unpack (args !! 5)))
+  -- => Translate: argv → domain input type
+  result <- useCase draft
+  -- => Same port call — CLI and HTTP are interchangeable from the use case's view
+  case result of
+    Right po                    -> putStrLn ("PO submitted: " <> T.unpack (spoId po))
+    Left  (ValidationError m)   -> putStrLn ("Validation error: " <> T.unpack m)
+    Left  (RepositoryError m)   -> putStrLn ("Repository error: " <> T.unpack m)
+
+-- ── Adapter 3: Event consumer ─────────────────────────────────────────────
+data KafkaMessage = KafkaMessage { kKey :: Text, kPayload :: Text }
+-- => Raw Kafka message — key is the PO ID, payload is a JSON string
+
+eventConsumerAdapter :: SubmitPurchaseOrderUseCase -> KafkaMessage -> IO ()
+eventConsumerAdapter useCase msg = do
+  -- => msg: deserialized Kafka message from the consumer loop
+  let draft = DraftPurchaseOrder (kKey msg) "sup_from_payload" 750
+  -- => Translate: Kafka message → domain input type
+  result <- useCase draft
+  -- => Same port call — the use case is delivery-mechanism-agnostic
+  case result of
+    Right _ -> putStrLn ("PO consumed from Kafka: " <> T.unpack (kKey msg))
+    Left  e -> putStrLn ("Consumer error: " <> show e)
+
+main :: IO ()
+main = putStrLn "One input port type — three adapters, zero changes to the application service"
+-- => Output: One input port type — three adapters, zero changes to the application service
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The input port decouples the application service from its delivery mechanism — HTTP, CLI, and Kafka consumers all call the same function without the service knowing which adapter is in use.
@@ -2378,7 +3160,7 @@ console.log("One input port type — three adapters, zero changes to the applica
 
 An application service often needs more than one output port. Composing them as separate parameters (or as fields in a ports record) keeps each port independently testable and swappable.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2516,8 +3298,8 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // => FP-style tagged union
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
-  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Persistence port — same canonical definition
 
@@ -2528,7 +3310,7 @@ type Clock = () => Date;
 // Parameters: ports first, then domain inputs — enables partial application
 const submitPurchaseOrder =
   (repo: PurchaseOrderRepo, clock: Clock) =>
-  async (draft: { id: string; supplierId: string; totalAmount: number }): Promise<Result<PurchaseOrder, string>> => {
+  async (draft: { id: string; supplierId: string; totalAmount: number }): Promise => {
     // => Validation — pure, no ports used
     if (!draft.id || draft.id.trim() === "") return { ok: false, error: "PO Id must not be blank" };
     // => Domain rule enforced before any I/O
@@ -2562,6 +3344,73 @@ console.log("Two output ports — independently swappable — compose in applica
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Port types ─────────────────────────────────────────────────────────────
+-- [F#: record types for two ports — Haskell uses two record types or a ports record]
+
+module Procurement.Application.Compose where
+
+import Data.Text (Text)
+import Data.Time (UTCTime)
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show)
+-- => Aggregate root — used across multiple ports
+
+data RepoError = DatabaseError Text | ConnectionTimeout deriving (Show)
+-- => Named error sum type — canonical error type for PurchaseOrderRepository
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  , loadPO :: Text          -> IO (Either RepoError (Maybe PurchaseOrder))
+  }
+-- => Persistence port — same canonical definition
+
+type Clock = IO UTCTime
+-- => Time port — IO action returning UTCTime; no Either (clocks do not fail)
+
+data Draft = Draft { dId :: Text, dSupp :: Text, dTotal :: Double }
+
+-- ── Application service with two output ports ─────────────────────────────
+-- Parameters: ports first, then domain inputs — idiomatic partial application
+submitPurchaseOrder
+  :: PurchaseOrderRepository  -- => First output port: persistence
+  -> Clock                    -- => Second output port: time
+  -> Draft                    -- => Domain input: the draft PO from the adapter
+  -> IO (Either Text PurchaseOrder)
+submitPurchaseOrder repo clock draft
+  | dId draft == "" =
+      pure (Left "PO Id must not be blank")
+      -- => Domain rule enforced before any I/O
+  | otherwise = do
+      -- Clock port — IO action
+      submittedAt <- clock
+      -- => Timestamp from the injected clock — deterministic in tests
+      let po = PurchaseOrder (dId draft) (dSupp draft) (dTotal draft) "AwaitingApproval"
+      -- => State: Draft -> AwaitingApproval after valid submission
+      -- Repository port — IO call
+      saveResult <- savePO repo po
+      -- => Persist the PO — Postgres in production, in-memory in tests
+      case saveResult of
+        Left e  -> pure (Left ("Save failed: " <> Data.Text.pack (show e)))
+        -- => Propagate named RepoError to the caller
+        Right () -> do
+          putStrLn ("[" <> show submittedAt <> "] PO " <> Data.Text.unpack (dId draft) <> " submitted for approval")
+          -- => Log: real adapter would use a structured logger (katip / co-log)
+          pure (Right po)
+          -- => Return the submitted PO to the HTTP adapter
+
+main :: IO ()
+main = putStrLn "Two output ports — independently swappable — compose in application service parameters"
+-- => Output: Two output ports — independently swappable — compose in application service parameters
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Multiple output ports are composed as separate function parameters — each independently injectable and independently testable. This pattern holds identically in F#, Clojure, and TypeScript; the language does not affect the composability principle.
@@ -2574,7 +3423,7 @@ console.log("Two output ports — independently swappable — compose in applica
 
 Two syntactic styles for injecting ports: a named record (`Ports` record) vs individual curried parameters. Each has trade-offs. Both are valid; the record style scales better to many ports.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2755,8 +3604,8 @@ interface PurchaseOrder {
 // => Aggregate root shared by both port styles
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Canonical repository port — same signature in both styles
 
@@ -2767,7 +3616,7 @@ type Clock = () => Date;
 // Individual port parameters — readable for services with 1-3 ports.
 const submitPO_Individual =
   (repo: PurchaseOrderRepo, clock: Clock) =>
-  async (id: string, amount: number): Promise<string> => {
+  async (id: string, amount: number): Promise => {
     // => Each port is a separate parameter — explicit at every call site
     const now = clock();
     // => Clock port called synchronously
@@ -2806,7 +3655,7 @@ interface PurchasingPorts {
 
 const submitPO_Record =
   (ports: PurchasingPorts) =>
-  async (id: string, amount: number): Promise<string> => {
+  async (id: string, amount: number): Promise => {
     // => Single ports record — all dependencies in one value
     const now = ports.clock();
     // => Access clock via record field — named, self-documenting
@@ -2827,6 +3676,95 @@ console.log("Both styles valid — individual params for few ports, record for m
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Shared types ──────────────────────────────────────────────────────────
+-- [F#: PurchasingPorts named record — Haskell uses a record with field accessors]
+
+module Procurement.Application.PortStyles where
+
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+data PurchaseOrder = PurchaseOrder { poId :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show)
+-- => Aggregate root shared by both port styles
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either Text ())
+  , loadPO :: Text          -> IO (Either Text (Maybe PurchaseOrder))
+  }
+-- => Canonical repository port — same signature in both styles
+
+type Clock = IO UTCTime
+-- => Time port — IO action; no Either (clocks do not fail)
+
+-- ── Style A: curried parameters ────────────────────────────────────────────
+-- Individual port parameters — readable for services with 1-3 ports.
+submitPOCurried :: PurchaseOrderRepository -> Clock -> Text -> Double -> IO Text
+-- => Each port is a separate parameter — explicit at every call site
+submitPOCurried repo clock i amount = do
+  now <- clock
+  -- => Clock port called as IO action
+  let po = PurchaseOrder i amount "AwaitingApproval"
+  -- => Draft PO constructed before persistence
+  _ <- savePO repo po
+  -- => Repository port called; result ignored for brevity
+  pure ("Submitted at " <> Data.Text.pack (show now))
+  -- => Returns confirmation with timestamp
+
+-- Partial application: bake ports in, expose domain parameters
+productionSubmit :: Text -> Double -> IO Text
+productionSubmit = submitPOCurried postgresRepo systemClock
+-- => productionSubmit :: Text -> Double -> IO Text
+-- => "ports baked in" — callers only see the domain parameters
+
+-- ── Style B: ports record ─────────────────────────────────────────────────
+-- Bundle ports into a named record — preferred for services with 4+ ports.
+data PurchasingPorts = PurchasingPorts
+  { ppRepo  :: PurchaseOrderRepository
+  -- => Repository port field
+  , ppClock :: Clock
+  -- => Clock port field
+  }
+-- => Adding a new port: add one field here, one accessor where needed
+
+submitPORecord :: PurchasingPorts -> Text -> Double -> IO Text
+submitPORecord ports i amount = do
+  -- => Single ports record — all dependencies in one value
+  now <- ppClock ports
+  -- => Access clock via record accessor — named, self-documenting
+  let po = PurchaseOrder i amount "AwaitingApproval"
+  -- => Construct the PO before persisting
+  _ <- savePO (ppRepo ports) po
+  -- => Access repository via record accessor
+  pure ("Submitted at " <> Data.Text.pack (show now))
+  -- => Returns confirmation with timestamp
+
+-- In tests: replace any field independently using record-update syntax
+-- testPorts = PurchasingPorts { ppRepo = inMemRepo, ppClock = fixedClock }
+-- => Replace ppRepo with an in-memory stub; keep ppClock as fixed time
+
+postgresRepo :: PurchaseOrderRepository
+postgresRepo = PurchaseOrderRepository
+  { savePO = \po -> do putStrLn ("[PG] Saving " <> Data.Text.unpack (poId po)); pure (Right ())
+  , loadPO = \_  -> pure (Right Nothing)
+  }
+-- => Stub standing in for a real Postgres adapter
+
+systemClock :: Clock
+systemClock = getCurrentTime
+-- => Production clock: non-deterministic system time
+
+main :: IO ()
+main = putStrLn "Both styles valid — curried for few ports, record for many ports"
+-- => Output: Both styles valid — curried for few ports, record for many ports
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Individual parameters work well for 1–3 ports; a named ports record scales better when the application service depends on 4 or more ports. F# uses a named record; Clojure uses a named map; TypeScript uses a typed object literal — all group ports into a single injectable dependency.
@@ -2841,7 +3779,7 @@ console.log("Both styles valid — individual params for few ports, record for m
 
 The in-memory adapter is the simplest possible implementation of `PurchaseOrderRepository`. It stores `PurchaseOrder` values in a `Dictionary`, returns them on `load`, and is the default test adapter for all unit and integration tests.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3000,10 +3938,8 @@ type RepoError = { readonly kind: "DatabaseError"; readonly message: string } | 
 // => but must satisfy the same error type as the Postgres adapter
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: RepoError }>;
-  readonly findById: (
-    id: string,
-  ) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: RepoError }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Canonical port — the in-memory adapter satisfies this type exactly
 
@@ -3058,6 +3994,84 @@ console.log("Load (different store):", missResult);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Shared types ──────────────────────────────────────────────────────────
+-- [F#: Dictionary closed over by a record-of-functions — Haskell uses IORef + Map]
+
+module Procurement.Adapters.InMemory where
+
+import Data.Text (Text)
+import qualified Data.Map.Strict as Map
+import Data.Map.Strict (Map)
+import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef)
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show, Eq)
+-- => Aggregate root — the type the repository stores and retrieves
+
+data RepoError = DatabaseError Text | ConnectionTimeout deriving (Show, Eq)
+-- => Named error sum type — in-memory never produces ConnectionTimeout
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  , loadPO :: Text          -> IO (Either RepoError (Maybe PurchaseOrder))
+  }
+-- => Canonical port — the in-memory adapter satisfies this type exactly
+
+-- ── In-memory adapter ─────────────────────────────────────────────────────
+-- buildInMemoryRepo: factory; each call creates an isolated store via IORef.
+buildInMemoryRepo :: IO PurchaseOrderRepository
+buildInMemoryRepo = do
+  -- => Returns a new PurchaseOrderRepository value on each call
+  store <- newIORef (Map.empty :: Map Text PurchaseOrder)
+  -- => Fresh IORef per call — closed over by the record fields below
+  pure PurchaseOrderRepository
+    { savePO = \po -> do
+        -- => po :: PurchaseOrder — the aggregate to persist
+        atomicModifyIORef' store (\m -> (Map.insert (poId po) po m, ()))
+        -- => Atomic write — no SQL, no network, no disk
+        pure (Right ())
+        -- => Always succeeds — in-memory never produces ConnectionTimeout
+    , loadPO = \i -> do
+        -- => i :: Text — the PO ID to look up
+        m <- readIORef store
+        pure (Right (Map.lookup i m))
+        -- => Found: Just po; not found: Nothing — both are Right (no error)
+    }
+
+-- ── Demonstration ──────────────────────────────────────────────────────────
+main :: IO ()
+main = do
+  repo1 <- buildInMemoryRepo
+  -- => repo1 — empty store; independent of repo2
+  repo2 <- buildInMemoryRepo
+  -- => repo2 — separate empty store
+
+  let testPO = PurchaseOrder "po_test-001" "sup_acme-1" 1500 "Draft"
+  -- => A sample PurchaseOrder for demonstration
+
+  saveResult <- savePO repo1 testPO
+  -- => saveResult :: Either RepoError () = Right ()
+  putStrLn ("Save: " <> show saveResult)
+  -- => Output: Save: Right ()
+
+  loadResult <- loadPO repo1 "po_test-001"
+  -- => loadResult :: Either RepoError (Maybe PurchaseOrder) = Right (Just ...)
+  putStrLn ("Load: " <> show loadResult)
+  -- => Output: Load: Right (Just (PurchaseOrder {poId = "po_test-001", ...}))
+
+  missResult <- loadPO repo2 "po_test-001"
+  -- => missResult = Right Nothing — repo2 is independent of repo1
+  putStrLn ("Load (different store): " <> show missResult)
+  -- => Output: Load (different store): Right Nothing
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The in-memory adapter satisfies `PurchaseOrderRepository` exactly — same type, same error cases, isolated store per test — making unit tests fast, deterministic, and infrastructure-free.
@@ -3070,7 +4084,7 @@ console.log("Load (different store):", missResult);
 
 The HTTP handler is the primary (driving) adapter. It receives an HTTP request, translates it to a domain input type, calls the input port, and maps the result to an HTTP response. It contains zero business logic.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3249,7 +4263,7 @@ type SubmissionError =
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 // => FP-style tagged union — identical result shape for all ports
 
-type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise<Result<SubmittedPO, SubmissionError>>;
+type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise;
 // => Input port — the HTTP adapter calls this; never implements it
 
 // ── HTTP DTO (adapter zone only) ──────────────────────────────────────────
@@ -3285,7 +4299,7 @@ const toHttpResponse = (submitted: SubmittedPO): HttpSubmitPoResponse => ({
 // ── HTTP handler — the primary adapter ────────────────────────────────────
 const httpHandler =
   (useCase: SubmitPurchaseOrderUseCase) =>
-  async (req: HttpSubmitPoRequest): Promise<string> => {
+  async (req: HttpSubmitPoRequest): Promise => {
     // => useCase: injected input port — the handler never names the implementation
     // => req: JSON body parsed by the framework (Express / Fastify)
     const domainInput = toDomainInput(req);
@@ -3321,6 +4335,93 @@ console.log(response);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Domain and port types ──────────────────────────────────────────────────
+-- [F#: HttpSubmitPoRequest record — Haskell uses a record with vendor field names]
+
+module Procurement.Adapters.HttpHandler where
+
+import Data.Text (Text)
+
+data DraftPurchaseOrder = DraftPurchaseOrder
+  { dpoId :: Text, dpoSupp :: Text, dpoTotal :: Double } deriving (Show)
+-- => Domain input type — validated by the application service
+
+data SubmittedPO = SubmittedPO { spoId :: Text, spoStatus :: Text } deriving (Show)
+-- => Domain output type — returned by the application service on success
+
+data SubmissionError
+  = ValidationError Text
+  | RepositoryError Text
+  deriving (Show)
+-- => Named errors — each maps to a different HTTP status code
+
+type SubmitPurchaseOrderUseCase =
+  DraftPurchaseOrder -> IO (Either SubmissionError SubmittedPO)
+-- => Input port — the HTTP adapter calls this; never implements it
+
+-- ── HTTP DTO (adapter zone only) ──────────────────────────────────────────
+data HttpSubmitPoRequest = HttpSubmitPoRequest
+  { reqPoId :: Text, reqSupplierId :: Text, reqTotalAmount :: Double }
+-- => JSON request body shape — adapter-zone field names
+
+data HttpSubmitPoResponse = HttpSubmitPoResponse
+  { respPoId :: Text, respStatus :: Text } deriving (Show)
+-- => JSON response body — minimal confirmation
+
+-- ── Inbound translation: HTTP DTO → domain input ─────────────────────────
+toDomainInput :: HttpSubmitPoRequest -> DraftPurchaseOrder
+-- => Pure mapping: HTTP record → domain record; no validation logic here
+toDomainInput req = DraftPurchaseOrder
+  { dpoId    = reqPoId req
+  , dpoSupp  = reqSupplierId req
+  , dpoTotal = reqTotalAmount req
+  }
+-- => Field rename + identity coercion; pure function, no IO
+
+-- ── Outbound translation: domain output → HTTP response ──────────────────
+toHttpResponse :: SubmittedPO -> HttpSubmitPoResponse
+-- => Pure mapping: domain record → HTTP response record
+toHttpResponse s = HttpSubmitPoResponse { respPoId = spoId s, respStatus = spoStatus s }
+
+-- ── HTTP handler — the primary adapter ────────────────────────────────────
+httpHandler :: SubmitPurchaseOrderUseCase -> HttpSubmitPoRequest -> IO Text
+-- => useCase: injected input port — the handler never names the implementation
+httpHandler useCase req = do
+  let domainInput = toDomainInput req
+  -- => Translate: HTTP DTO → domain input type (adapter responsibility)
+  result <- useCase domainInput
+  -- => Call the input port — all business logic lives here, not in the handler
+  pure $ case result of
+    Right submitted ->
+      let r = toHttpResponse submitted
+       in "201 Created: " <> respPoId r <> " status=" <> respStatus r
+      -- => Real WAI/Servant: respond with JSON body and 201 status
+    Left (ValidationError m) -> "422 Unprocessable: " <> m
+    -- => Domain validation error → HTTP 422
+    Left (RepositoryError m) -> "503 Service Unavailable: " <> m
+    -- => Infrastructure failure → HTTP 503
+
+-- ── Demonstration ──────────────────────────────────────────────────────────
+stubUseCase :: SubmitPurchaseOrderUseCase
+stubUseCase draft = pure (Right (SubmittedPO (dpoId draft) "AwaitingApproval"))
+-- => Stub implementation — satisfies the port type alias for demonstration
+
+main :: IO ()
+main = do
+  let req = HttpSubmitPoRequest "po_001" "sup_001" 2000
+  -- => Sample HTTP request body
+  response <- httpHandler stubUseCase req
+  -- => response :: Text = "201 Created: po_001 status=AwaitingApproval"
+  putStrLn (Data.Text.unpack response)
+  -- => Output: 201 Created: po_001 status=AwaitingApproval
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The HTTP handler is a thin translation layer — it maps HTTP DTOs to domain types and back, delegates all logic to the input port, and never contains business rules.
@@ -3333,7 +4434,7 @@ console.log(response);
 
 The composition root is the single place where adapters are named and connected to ports. Every other module sees only the port type — only the composition root sees the adapter implementations.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3528,8 +4629,8 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // => FP-style tagged union — used by all port return types
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
-  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Canonical port — same definition throughout all examples
 
@@ -3546,7 +4647,7 @@ interface DraftPurchaseOrder {
 // ── Application service (application zone) ────────────────────────────────
 const submitPurchaseOrder =
   (repo: PurchaseOrderRepo, clock: Clock) =>
-  async (draft: DraftPurchaseOrder): Promise<Result<PurchaseOrder, string>> => {
+  async (draft: DraftPurchaseOrder): Promise => {
     if (!draft.id || draft.id.trim() === "") return { ok: false, error: "PO Id must not be blank" };
     // => Domain rule: invalid ID rejected before any I/O
     const now = clock();
@@ -3605,6 +4706,104 @@ console.log("Test result:", result);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── All shared types ───────────────────────────────────────────────────────
+-- [F#: composition root with partial application — Haskell uses higher-order functions]
+
+module Procurement.Adapters.Composition where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime)
+import Data.Time.Format.ISO8601 (iso8601ParseM)
+import qualified Data.Map.Strict as Map
+import Data.IORef (newIORef, atomicModifyIORef', readIORef)
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show)
+
+data RepoError = DatabaseError Text | ConnectionTimeout deriving (Show)
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  , loadPO :: Text          -> IO (Either RepoError (Maybe PurchaseOrder))
+  }
+-- => Canonical port — same definition throughout all examples
+
+type Clock = IO UTCTime
+-- => Time port — IO action; no Either (clocks do not fail)
+
+data Draft = Draft { dId :: Text, dSupp :: Text, dTotal :: Double }
+-- => Raw input from the HTTP layer — not yet validated
+
+-- ── Application service (application zone) ────────────────────────────────
+-- The application service knows only port types — not adapter names.
+submitPurchaseOrder
+  :: PurchaseOrderRepository -> Clock -> Draft -> IO (Either Text PurchaseOrder)
+submitPurchaseOrder repo clock draft
+  | T.null (T.strip (dId draft)) = pure (Left "PO Id must not be blank")
+  -- => Domain rule: invalid ID rejected before any I/O
+  | otherwise = do
+      now <- clock
+      -- => Timestamp from the injected Clock port
+      let _ = now
+      let po = PurchaseOrder (dId draft) (dSupp draft) (dTotal draft) "AwaitingApproval"
+      -- => State: Draft -> AwaitingApproval
+      saveResult <- savePO repo po
+      -- => Port call: persist via injected adapter
+      pure $ case saveResult of
+        Right () -> Right po
+        Left  e  -> Left ("Save failed: " <> T.pack (show e))
+
+-- ── Adapter implementations (adapters zone) ───────────────────────────────
+-- In-memory adapter — used in tests
+buildInMemoryRepo :: IO PurchaseOrderRepository
+buildInMemoryRepo = do
+  store <- newIORef Map.empty
+  -- => Isolated IORef per call — each test gets its own store
+  pure PurchaseOrderRepository
+    { savePO = \po -> do
+        atomicModifyIORef' store (\m -> (Map.insert (poId po) po m, ()))
+        pure (Right ())
+    , loadPO = \i -> do
+        m <- readIORef store
+        pure (Right (Map.lookup i m))
+    }
+
+-- Fixed clock adapter — used in tests
+fixedClock :: Clock
+fixedClock = case iso8601ParseM "2026-01-15T09:00:00Z" of
+  Just t  -> pure t
+  Nothing -> error "unreachable: literal"
+-- => Always returns the same timestamp — deterministic
+
+-- ── Composition root — the ONLY place that names adapters ─────────────────
+-- Test wiring:
+buildTestSubmit :: IO (Draft -> IO (Either Text PurchaseOrder))
+buildTestSubmit = do
+  repo <- buildInMemoryRepo
+  -- => One-line swap: replace with real Postgres builder in production
+  pure (submitPurchaseOrder repo fixedClock)
+-- => Returns a function awaiting only the draft — ports baked in
+
+-- ── Demonstration ──────────────────────────────────────────────────────────
+main :: IO ()
+main = do
+  testSubmit <- buildTestSubmit
+  let draft = Draft "po_001" "sup_acme-1" 5000
+  -- => Sample draft PO from the HTTP adapter
+  result <- testSubmit draft
+  -- => Uses in-memory adapter and fixed clock — fully deterministic
+  putStrLn ("Test result: " <> show result)
+  -- => Output: Test result: Right (PurchaseOrder {poId = "po_001", ..., poStatus = "AwaitingApproval"})
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The composition root is the single file that knows adapter names — every other module sees only port types, making adapter swaps a one-line change in one file.
@@ -3617,7 +4816,7 @@ console.log("Test result:", result);
 
 A spy adapter records the calls made to it, enabling tests to assert not only the return value but also the exact sequence and arguments of port calls.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3789,8 +4988,8 @@ interface PurchaseOrder {
 // => Aggregate root — the type saved and loaded via the port
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Canonical port — spy adapter must satisfy this exact type
 
@@ -3832,11 +5031,7 @@ const buildRepositorySpy = (): RepositorySpy => {
 // ── Application service under test ────────────────────────────────────────
 const submitAndSave =
   (repo: PurchaseOrderRepo) =>
-  async (
-    id: string,
-    supplierId: string,
-    amount: number,
-  ): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }> => {
+  async (id: string, supplierId: string, amount: number): Promise => {
     // => Application service: validates, builds PO, calls save
     if (!id || id.trim() === "") return { ok: false, error: "blank id" };
     // => Validation before any I/O
@@ -3868,6 +5063,100 @@ console.log(`findById called ${spy.loadedIds.length} time(s)`);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Port types ─────────────────────────────────────────────────────────────
+-- [F#: ResizeArray closed over by record fields — Haskell uses IORef [a] or IORef Vector]
+
+module Procurement.Adapters.Spy where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef)
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show)
+-- => Aggregate root — the type saved and loaded via the port
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either Text ())
+  , loadPO :: Text          -> IO (Either Text (Maybe PurchaseOrder))
+  }
+-- => Canonical port — spy adapter must satisfy this exact type
+
+-- ── Spy adapter ────────────────────────────────────────────────────────────
+data RepositorySpy = RepositorySpy
+  { spyRepo      :: PurchaseOrderRepository
+  -- => The spy exposes the port — application service receives this field
+  , spySaved     :: IORef [PurchaseOrder]
+  -- => Accumulates every PO passed to save — assert on this in tests
+  , spyLoaded    :: IORef [Text]
+  -- => Accumulates every ID passed to load — assert call order
+  }
+
+buildRepositorySpy :: IO RepositorySpy
+buildRepositorySpy = do
+  -- => Factory: each call creates an isolated spy with empty IORefs
+  saved  <- newIORef []
+  loaded <- newIORef []
+  -- => Closed over by the functions below — visible only in this scope
+  pure RepositorySpy
+    { spyRepo = PurchaseOrderRepository
+        { savePO = \po -> do
+            atomicModifyIORef' saved (\xs -> (xs ++ [po], ()))
+            -- => Record the call argument BEFORE returning
+            pure (Right ())
+            -- => Always succeeds — spy never simulates failure unless needed
+        , loadPO = \i -> do
+            atomicModifyIORef' loaded (\xs -> (xs ++ [i], ()))
+            -- => Record the ID looked up
+            pure (Right Nothing)
+            -- => Returns Nothing by default — override in specific tests
+        }
+    , spySaved  = saved
+    , spyLoaded = loaded
+    }
+
+-- ── Application service under test ────────────────────────────────────────
+submitAndSave :: PurchaseOrderRepository -> Text -> Text -> Double
+              -> IO (Either Text PurchaseOrder)
+submitAndSave repo i supp amount
+  | T.null (T.strip i) = pure (Left "blank id")
+  -- => Validation before any I/O
+  | otherwise = do
+      let po = PurchaseOrder i supp amount "AwaitingApproval"
+      -- => Build the PO aggregate
+      saveResult <- savePO repo po
+      -- => Port call — spy records this
+      pure (fmap (const po) saveResult)
+      -- => Return the PO on success
+
+-- ── Test assertions using the spy ─────────────────────────────────────────
+main :: IO ()
+main = do
+  spy <- buildRepositorySpy
+  -- => Fresh spy — empty call records
+
+  result <- submitAndSave (spyRepo spy) "po_spy-001" "sup_001" 800
+  -- => Runs the application service with the spy adapter
+  putStrLn ("Result: " <> show result)
+  -- => Output: Result: Right (PurchaseOrder {poId = "po_spy-001", ...})
+
+  savedList <- readIORef (spySaved spy)
+  putStrLn ("save called " <> show (length savedList) <> " time(s)")
+  -- => Output: save called 1 time(s)
+  putStrLn ("Saved PO id: " <> T.unpack (poId (head savedList)))
+  -- => Output: Saved PO id: po_spy-001
+  loadedList <- readIORef (spyLoaded spy)
+  putStrLn ("load called " <> show (length loadedList) <> " time(s)")
+  -- => Output: load called 0 time(s)  (submitAndSave does not call load)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A spy adapter records port calls for test assertions, enabling verification that the application service invokes ports with the correct arguments in the correct order.
@@ -3880,7 +5169,7 @@ console.log(`findById called ${spy.loadedIds.length} time(s)`);
 
 A failing adapter always returns `Error`, enabling tests to verify that the application service handles infrastructure failures correctly and propagates errors to the caller.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4037,8 +5326,8 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 // => FP-style tagged union
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<Result<void, RepoError>>;
-  readonly findById: (id: string) => Promise<Result<PurchaseOrder | null, RepoError>>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Canonical port — same definition throughout all examples
 
@@ -4054,7 +5343,7 @@ const alwaysFailRepo = (errorCase: RepoError): PurchaseOrderRepo => ({
 // ── Application service under test ────────────────────────────────────────
 const submitPOWithErrorHandling =
   (repo: PurchaseOrderRepo) =>
-  async (id: string, amount: number): Promise<Result<string, string>> => {
+  async (id: string, amount: number): Promise => {
     // => Application service: must gracefully handle repository failure
     if (!id || id.trim() === "") return { ok: false, error: "Validation: blank PO Id" };
     // => Validation runs before any I/O — no port call on invalid input
@@ -4088,6 +5377,85 @@ console.log("Timeout result:", timeoutResult);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Port types ─────────────────────────────────────────────────────────────
+-- [F#: parameterised failing adapter — Haskell uses a builder closing over RepoError]
+
+module Procurement.Adapters.Failing where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show)
+-- => Aggregate root
+
+data RepoError
+  = DatabaseError Text
+  | ConnectionTimeout
+  deriving (Show, Eq)
+-- => Named error cases the application service must handle
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either RepoError ())
+  , loadPO :: Text          -> IO (Either RepoError (Maybe PurchaseOrder))
+  }
+-- => Canonical port — same definition throughout all examples
+
+-- ── Failing adapter — always returns Left ─────────────────────────────────
+alwaysFailRepo :: RepoError -> PurchaseOrderRepository
+-- => Parameterised by the error to return — different tests use different errors
+alwaysFailRepo e = PurchaseOrderRepository
+  { savePO = \_  -> pure (Left e)
+  -- => Always fails — never persists anything
+  , loadPO = \_  -> pure (Left e)
+  -- => Always fails — never returns data
+  }
+
+-- ── Application service under test ────────────────────────────────────────
+submitPOWithErrorHandling
+  :: PurchaseOrderRepository -> Text -> Double -> IO (Either Text Text)
+submitPOWithErrorHandling repo i amount
+  | T.null (T.strip i) = pure (Left "Validation: blank PO Id")
+  -- => Validation runs before any I/O — no port call on invalid input
+  | otherwise = do
+      let po = PurchaseOrder i "sup_001" amount "AwaitingApproval"
+      -- => PO ready for persistence
+      saveResult <- savePO repo po
+      -- => Port call — failing adapter returns Left here
+      pure $ case saveResult of
+        Right ()                        -> Right ("Saved: " <> poId po)
+        -- => Happy path — not reached with failing adapter
+        Left (DatabaseError msg)        -> Left ("DB error: " <> msg)
+        -- => Permanent failure: surface for the HTTP adapter to return 500
+        Left ConnectionTimeout          -> Left "Timeout: retry later"
+        -- => Transient failure: surface for the HTTP adapter to return 503
+
+-- ── Test: database error path ──────────────────────────────────────────────
+main :: IO ()
+main = do
+  let dbErrorRepo = alwaysFailRepo (DatabaseError "constraint violation on purchase_orders")
+  -- => Adapter that always returns a DatabaseError
+  dbErrorResult <- submitPOWithErrorHandling dbErrorRepo "po_001" 1000
+  -- => Application service receives Left (DatabaseError ...)
+  putStrLn ("DB error result: " <> show dbErrorResult)
+  -- => Output: DB error result: Left "DB error: constraint violation on purchase_orders"
+
+  -- ── Test: timeout path ──────────────────────────────────────────────────
+  let timeoutRepo = alwaysFailRepo ConnectionTimeout
+  -- => Adapter that always returns ConnectionTimeout
+  timeoutResult <- submitPOWithErrorHandling timeoutRepo "po_002" 500
+  -- => Application service receives Left ConnectionTimeout
+  putStrLn ("Timeout result: " <> show timeoutResult)
+  -- => Output: Timeout result: Left "Timeout: retry later"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Failing adapters enable targeted testing of every error branch in the application service without modifying any production code or spinning up infrastructure.
@@ -4100,7 +5468,7 @@ console.log("Timeout result:", timeoutResult);
 
 Partial application is F#'s native mechanism for baking dependencies into a function. It eliminates the need for DI containers, reflection, and registration boilerplate while producing the same substitutability.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4250,8 +5618,8 @@ interface PurchaseOrder {
 // => Aggregate root — used across all adapter and application types
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Canonical port — satisfied by any object with matching save/findById fields
 
@@ -4262,7 +5630,7 @@ type Clock = () => Date;
 // Convention: ports provided at construction time — enables dependency injection.
 const buildSubmitPurchaseOrder =
   (repo: PurchaseOrderRepo, clock: Clock) =>
-  async (id: string, amount: number): Promise<{ ok: true; value: string } | { ok: false; error: string }> => {
+  async (id: string, amount: number): Promise => {
     const now = clock();
     // => Timestamp from the injected clock adapter
     const po: PurchaseOrder = { id, supplierId: "sup_001", totalAmount: amount, status: "AwaitingApproval" };
@@ -4306,6 +5674,95 @@ console.log("Result:", paResult);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Port types ─────────────────────────────────────────────────────────────
+-- [F#: partial application produces a curried function — Haskell has currying by default]
+
+module Procurement.Application.PartialApp where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime)
+import Data.Time.Format.ISO8601 (iso8601ParseM)
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show)
+-- => Aggregate root — used across all adapter and application types
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either Text ())
+  , loadPO :: Text          -> IO (Either Text (Maybe PurchaseOrder))
+  }
+-- => Canonical port — satisfied by any record-of-functions
+
+type Clock = IO UTCTime
+-- => Time port — IO action; no Either (clocks do not fail)
+
+-- ── Application service: ports as first parameters ────────────────────────
+-- Convention: ports come before domain inputs — enables curried partial application.
+submitPurchaseOrder
+  :: PurchaseOrderRepository  -- => First port parameter
+  -> Clock                    -- => Second port parameter
+  -> Text                     -- => Domain input: PO identifier
+  -> Double                   -- => Domain input: amount
+  -> IO (Either Text Text)
+submitPurchaseOrder repo clock i amount = do
+  now <- clock
+  -- => Timestamp from the baked-in clock adapter
+  let _ = now
+  let po = PurchaseOrder i "sup_001" amount "AwaitingApproval"
+  -- => Build PO aggregate with the runtime domain inputs
+  _ <- savePO repo po
+  -- => Persist via the baked-in repository adapter
+  pure (Right ("PO " <> i <> " submitted at " <> T.pack (show now)))
+  -- => Return confirmation to the HTTP adapter
+
+-- ── In-memory adapters for demonstration ──────────────────────────────────
+inMemRepo :: PurchaseOrderRepository
+inMemRepo = PurchaseOrderRepository
+  { savePO = \po -> do
+      putStrLn ("[MemDB] Saving " <> T.unpack (poId po))
+      -- => In-memory: prints to demonstrate the call without real infrastructure
+      pure (Right ())
+  , loadPO = \_ -> pure (Right Nothing)
+  -- => In-memory: always returns Nothing for this demonstration
+  }
+
+fixedClock :: Clock
+fixedClock = case iso8601ParseM "2026-01-15T09:00:00Z" of
+  Just t  -> pure t
+  Nothing -> error "unreachable"
+-- => Fixed time — deterministic in tests
+
+-- ── Partial application: bake in the ports ────────────────────────────────
+submitWithTestPorts :: Text -> Double -> IO (Either Text Text)
+submitWithTestPorts = submitPurchaseOrder inMemRepo fixedClock
+-- => submitWithTestPorts :: Text -> Double -> IO (Either Text Text)
+-- => The port parameters are baked in; only domain inputs remain
+-- => This is DI without a container — just function application
+
+-- ── Call site: only domain inputs needed ──────────────────────────────────
+main :: IO ()
+main = do
+  result <- submitWithTestPorts "po_001" 3500
+  -- => Calls submitPurchaseOrder with inMemRepo, fixedClock, "po_001", 3500
+  -- => submitWithTestPorts is a first-class function — passable, storable, composable
+  putStrLn ("Result: " <> show result)
+  -- => Output: [MemDB] Saving po_001
+  -- => Output: Result: Right "PO po_001 submitted at 2026-01-15 09:00:00 UTC"
+
+-- ── Swap to production ports — one line change ────────────────────────────
+-- submitWithProductionPorts = submitPurchaseOrder postgresRepo systemClock
+-- => One-line swap: different adapters, same application service function
+-- => No DI container to configure, no metadata to update
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Partial application bakes port adapters into application service functions, producing a DI-injected use case function without a container, reflection, or registration boilerplate.
@@ -4320,7 +5777,7 @@ console.log("Result:", paResult);
 
 Three distinct responsibilities live in three distinct code zones. Domain functions are pure; application services orchestrate ports; adapters translate between delivery mechanisms and domain types.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4548,7 +6005,7 @@ const determineApprovalLevel = (total: number): ApprovalLevel => {
   // => L3: CFO approval — required for high-value POs
 };
 
-const validateDraft = (id: string, supplierId: string, amount: number): ValidationResult<PurchaseOrder> => {
+const validateDraft = (id: string, supplierId: string, amount: number): ValidationResult => {
   // => Pure validation: domain rules only, no infrastructure
   if (!id || id.trim() === "") return { ok: false, error: "Blank PO Id" };
   if (!supplierId || supplierId.trim() === "") return { ok: false, error: "Blank SupplierId" };
@@ -4561,18 +6018,14 @@ const validateDraft = (id: string, supplierId: string, amount: number): Validati
 // application/ports.ts — import from domain only
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Output port: application layer defines, adapters implement
 
 const buildSubmitPO =
   (repo: PurchaseOrderRepo) =>
-  async (
-    id: string,
-    supplierId: string,
-    amount: number,
-  ): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }> => {
+  async (id: string, supplierId: string, amount: number): Promise => {
     // => Application service: calls domain functions + output ports; no HTTP knowledge
     const validation = validateDraft(id, supplierId, amount);
     if (!validation.ok) return validation;
@@ -4608,14 +6061,8 @@ const inMemRepo: PurchaseOrderRepo = {
 };
 
 const handleHttpRequest =
-  (
-    submit: (
-      id: string,
-      supplierId: string,
-      amount: number,
-    ) => Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: string }>,
-  ) =>
-  async (dto: HttpDto): Promise<string> => {
+  (submit: (id: string, supplierId: string, amount: number) => Promise) =>
+  async (dto: HttpDto): Promise => {
     // => Thin HTTP handler: translate, delegate, respond
     const result = await submit(dto.po_id, dto.supplier_id, dto.total_amount);
     // => Delegate to the injected application service
@@ -4638,6 +6085,111 @@ console.log(z1response);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── ZONE 1: Domain — pure functions, no I/O ────────────────────────────────
+-- [F#: module Domain — Haskell uses module declarations; only base imports]
+
+module Procurement.ThreeZones where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+-- => Derived from PO total — L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show)
+-- => Domain type: defined without knowledge of any infrastructure
+
+determineApprovalLevel :: Double -> ApprovalLevel
+-- => Pure function: no I/O, no side effects, always deterministic
+determineApprovalLevel total
+  | total <= 1000  = L1
+  -- => L1: low-value POs — immediate manager approval
+  | total <= 10000 = L2
+  -- => L2: mid-value POs — department head approval
+  | otherwise      = L3
+  -- => L3: high-value POs — CFO or executive approval
+
+validatePO :: Text -> Text -> Double -> Either Text PurchaseOrder
+-- => Pure validation: domain rules only, no infrastructure
+validatePO i supp amount
+  | T.null (T.strip i)    = Left "Blank PO Id"
+  | T.null (T.strip supp) = Left "Blank SupplierId"
+  | amount <= 0           = Left "Amount must be positive"
+  | otherwise             = Right (PurchaseOrder i supp amount "Draft")
+  -- => Returns validated PO or named error — no IO, no Either e ()
+
+-- ── ZONE 2: Application — orchestration only ──────────────────────────────
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either Text ())
+  , loadPO :: Text          -> IO (Either Text (Maybe PurchaseOrder))
+  }
+-- => Output port: application layer defines, adapters implement
+
+submitPO :: PurchaseOrderRepository -> Text -> Text -> Double
+         -> IO (Either Text PurchaseOrder)
+-- => Application service: calls domain functions + output ports; no HTTP knowledge
+submitPO repo i supp amount =
+  case validatePO i supp amount of
+    Left msg -> pure (Left msg)
+    -- => Domain validation failed — short-circuit before I/O
+    Right po -> do
+      let level = determineApprovalLevel (poTotal po)
+      -- => Pure domain function: determines which manager must approve
+      let awaitingPO = po { poStatus = "AwaitingApproval-" <> T.pack (show level) }
+      -- => State transition: Draft → AwaitingApproval-L1/L2/L3
+      saveResult <- savePO repo awaitingPO
+      -- => Output port call: persist the PO
+      pure $ case saveResult of
+        Right () -> Right awaitingPO
+        Left  e  -> Left e
+
+-- ── ZONE 3: Adapters — translation only ───────────────────────────────────
+data HttpDto = HttpDto { hPoId :: Text, hSupp :: Text, hTotal :: Double }
+-- => JSON request body shape — adapter zone only; never leaks into domain
+
+inMemRepo :: PurchaseOrderRepository
+inMemRepo = PurchaseOrderRepository
+  { savePO = \po -> do
+      putStrLn ("[Mem] Saved " <> T.unpack (poId po) <> " as " <> T.unpack (poStatus po))
+      pure (Right ())
+  , loadPO = \_ -> pure (Right Nothing)
+  }
+-- => In-memory adapter satisfying the output port
+
+handleHttpRequest
+  :: (Text -> Text -> Double -> IO (Either Text PurchaseOrder))
+  -> HttpDto -> IO Text
+handleHttpRequest submit dto = do
+  -- => Thin HTTP handler: translate, delegate, respond
+  result <- submit (hPoId dto) (hSupp dto) (hTotal dto)
+  -- => Delegate to the injected application service (partially applied)
+  pure $ case result of
+    Right po -> "201 Created: " <> poId po <> " in " <> poStatus po
+    Left  e  -> "422 Unprocessable: " <> e
+
+-- ── Composition root: wire everything together ────────────────────────────
+main :: IO ()
+main = do
+  let submitService = submitPO inMemRepo
+  -- => submitService :: Text -> Text -> Double -> IO (Either Text PurchaseOrder)
+  -- => Port baked in via partial application — domain inputs remain
+  let request = HttpDto "po_001" "sup_acme" 5500
+  -- => Sample HTTP request body
+  response <- handleHttpRequest submitService request
+  -- => Runs the full flow: HTTP → Application → Domain → In-memory adapter → HTTP
+  putStrLn (T.unpack response)
+  -- => Output: [Mem] Saved po_001 as AwaitingApproval-L2
+  -- => Output: 201 Created: po_001 in AwaitingApproval-L2
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Domain functions are pure, application services orchestrate ports, and adapters translate — three distinct responsibilities in three distinct zones, each independently testable.
@@ -4650,7 +6202,7 @@ console.log(z1response);
 
 Pure domain functions can be tested without any ports, adapters, or infrastructure. This is the fastest and most reliable test tier.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4848,7 +6400,7 @@ const determineApprovalLevel = (total: number): ApprovalLevel => {
   return "L3";
 };
 
-const validatePO = (id: string, supplierId: string, amount: number): Result<PurchaseOrder, ValidationError> => {
+const validatePO = (id: string, supplierId: string, amount: number): Result => {
   // => Pure validation: checks domain rules, returns Result
   if (!id || id.trim() === "") return { ok: false, error: { kind: "BlankId" } };
   if (!supplierId || supplierId.trim() === "") return { ok: false, error: { kind: "BlankSupplierId" } };
@@ -4896,6 +6448,101 @@ console.log("Valid PO:", valid);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Domain types and pure functions ────────────────────────────────────────
+-- [F#: discriminated union ApprovalLevel — Haskell uses sum type via data]
+-- [F#: Result<PurchaseOrder, ValidationError> — Haskell uses Either]
+
+module Procurement.Domain.Tests where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+-- => Derived from PO total threshold — L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show, Eq)
+-- => Aggregate root — domain type with no infrastructure dependencies
+
+data ValidationError
+  = BlankId
+  | BlankSupplierId
+  | NonPositiveAmount Double
+  deriving (Show, Eq)
+-- => Named domain errors — not strings, not exceptions
+
+determineApprovalLevel :: Double -> ApprovalLevel
+-- => Pure function: receives Double, returns sum-type constructor
+-- => No IO, no Either — can be called billions of times with zero infrastructure
+determineApprovalLevel total
+  | total <= 1000  = L1
+  | total <= 10000 = L2
+  | otherwise      = L3
+
+validatePO :: Text -> Text -> Double -> Either ValidationError PurchaseOrder
+-- => Pure validation: checks domain rules, returns Either
+validatePO i supp amount
+  | T.null (T.strip i)    = Left BlankId
+  | T.null (T.strip supp) = Left BlankSupplierId
+  | amount <= 0           = Left (NonPositiveAmount amount)
+  | otherwise             = Right (PurchaseOrder i supp amount "Draft")
+
+-- ── Domain tests — zero infrastructure ────────────────────────────────────
+-- These are the fastest tests in the system: no IO, no setup, no teardown.
+-- Real Haskell would use Hspec/HUnit — these are plain expressions.
+
+main :: IO ()
+main = do
+  -- Test 1: L1 approval for low-value PO
+  let level1 = determineApprovalLevel 999
+  -- => level1 :: ApprovalLevel = L1  (999 ≤ 1000 threshold)
+  putStrLn ("999 -> " <> show level1 <> " (expected L1)")
+  -- => Output: 999 -> L1 (expected L1)
+
+  -- Test 2: boundary — exactly at L1 threshold
+  let level2 = determineApprovalLevel 1000
+  -- => level2 :: ApprovalLevel = L1  (1000 ≤ 1000: at boundary, still L1)
+  putStrLn ("1000 -> " <> show level2 <> " (expected L1 at boundary)")
+  -- => Output: 1000 -> L1 (expected L1 at boundary)
+
+  -- Test 3: just over L1 threshold
+  let level2b = determineApprovalLevel 1001
+  -- => level2b :: ApprovalLevel = L2  (1001 > 1000)
+  putStrLn ("1001 -> " <> show level2b <> " (expected L2)")
+  -- => Output: 1001 -> L2 (expected L2)
+
+  -- Test 4: L3 for high-value PO
+  let level3 = determineApprovalLevel 15000
+  -- => level3 :: ApprovalLevel = L3  (15000 > 10000)
+  putStrLn ("15000 -> " <> show level3 <> " (expected L3)")
+  -- => Output: 15000 -> L3 (expected L3)
+
+  -- Test 5: validation — blank PO ID
+  let blankIdResult = validatePO "" "sup_001" 500
+  -- => blankIdResult :: Either ValidationError PurchaseOrder = Left BlankId
+  putStrLn ("Blank id: " <> show blankIdResult)
+  -- => Output: Blank id: Left BlankId
+
+  -- Test 6: validation — non-positive amount
+  let zeroAmount = validatePO "po_001" "sup_001" 0
+  -- => zeroAmount = Left (NonPositiveAmount 0.0)
+  putStrLn ("Zero amount: " <> show zeroAmount)
+  -- => Output: Zero amount: Left (NonPositiveAmount 0.0)
+
+  -- Test 7: valid PO passes all guards
+  let valid = validatePO "po_001" "sup_001" 7500
+  -- => valid = Right (PurchaseOrder { poId = "po_001", ..., poStatus = "Draft" })
+  putStrLn ("Valid PO: " <> show valid)
+  -- => Output: Valid PO: Right (PurchaseOrder {poId = "po_001", ...})
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Pure domain functions are tested by direct invocation with no setup — the fastest and most reliable test tier, covering all boundary conditions and error cases without infrastructure.
@@ -4908,7 +6555,7 @@ console.log("Valid PO:", valid);
 
 Application service tests inject in-memory adapters to verify orchestration without infrastructure. They run in milliseconds and can run in parallel with zero contention.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5097,8 +6744,8 @@ interface PurchaseOrder {
 // => Aggregate root — same type across domain, application, and adapter layers
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<{ ok: true } | { ok: false; error: string }>;
-  readonly findById: (id: string) => Promise<{ ok: true; value: PurchaseOrder | null } | { ok: false; error: string }>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: string) => Promise;
 };
 // => Canonical port — in-memory adapter satisfies this type
 
@@ -5108,11 +6755,7 @@ type Clock = () => Date;
 // ── Application service under test ────────────────────────────────────────
 const submitPO =
   (repo: PurchaseOrderRepo, clock: Clock) =>
-  async (
-    id: string,
-    supplierId: string,
-    amount: number,
-  ): Promise<{ ok: true; value: [PurchaseOrder, Date] } | { ok: false; error: string }> => {
+  async (id: string, supplierId: string, amount: number): Promise => {
     // => Application service: parameterised by ports — injectable in all environments
     if (!id || id.trim() === "") return { ok: false, error: "Blank PO Id" };
     if (!supplierId || supplierId.trim() === "") return { ok: false, error: "Blank SupplierId" };
@@ -5174,6 +6817,115 @@ console.log("Test 2 saved count:", saved2.length);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── Shared types ───────────────────────────────────────────────────────────
+-- [F#: ResizeArray spy — Haskell uses IORef [a] for the same purpose]
+
+module Procurement.Application.Tests where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime)
+import Data.Time.Format.ISO8601 (iso8601ParseM)
+import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef)
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: Text, poSupplier :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show, Eq)
+-- => Aggregate root — same type across domain, application, and adapter layers
+
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { savePO :: PurchaseOrder -> IO (Either Text ())
+  , loadPO :: Text          -> IO (Either Text (Maybe PurchaseOrder))
+  }
+-- => Canonical port — in-memory adapter satisfies this type
+
+type Clock = IO UTCTime
+-- => Time port — fixed in tests for deterministic assertions
+
+-- ── Application service under test ────────────────────────────────────────
+submitPO :: PurchaseOrderRepository -> Clock
+         -> Text -> Text -> Double
+         -> IO (Either Text (PurchaseOrder, UTCTime))
+submitPO repo clock i supp amount
+  | T.null (T.strip i)    = pure (Left "Blank PO Id")
+  | T.null (T.strip supp) = pure (Left "Blank SupplierId")
+  | amount <= 0           = pure (Left "Non-positive amount")
+  | otherwise = do
+      let level = if amount <= 1000 then "L1"
+                  else if amount <= 10000 then "L2" else "L3"
+      -- => Pure domain logic: approval level derived from amount
+      submittedAt <- clock
+      -- => Timestamp from injected Clock port — fixed in tests
+      let po = PurchaseOrder i supp amount ("AwaitingApproval-" <> level)
+      -- => State: Draft → AwaitingApproval-{level}
+      saveResult <- savePO repo po
+      -- => Output port call: persist via injected adapter
+      pure $ case saveResult of
+        Right () -> Right (po, submittedAt)
+        Left  e  -> Left e
+
+-- ── In-memory adapters ─────────────────────────────────────────────────────
+buildTestRepo :: IO (PurchaseOrderRepository, IORef [PurchaseOrder])
+buildTestRepo = do
+  -- => Isolated spy: records saves, returns Nothing on load (or override)
+  saved <- newIORef []
+  let repo = PurchaseOrderRepository
+        { savePO = \po -> do
+            atomicModifyIORef' saved (\xs -> (xs ++ [po], ()))
+            -- => Record the saved PO for assertion
+            pure (Right ())
+        , loadPO = \i -> do
+            xs <- readIORef saved
+            pure (Right (lookupBy (\p -> poId p == i) xs))
+            -- => Find in the accumulated saves — simulates SELECT query
+        }
+  pure (repo, saved)
+  -- => Returns both the port and the spy ref for assertions
+  where
+    lookupBy _ []     = Nothing
+    lookupBy p (x:xs) = if p x then Just x else lookupBy p xs
+
+fixedClock :: Clock
+fixedClock = case iso8601ParseM "2026-01-15T09:00:00Z" of
+  Just t  -> pure t
+  Nothing -> error "unreachable"
+-- => Always returns the same timestamp — assert on this literal value in tests
+
+-- ── Test 1: valid L2 PO ────────────────────────────────────────────────────
+main :: IO ()
+main = do
+  (repo1, saved1) <- buildTestRepo
+  -- => Fresh isolated repo — not shared with Test 2
+  result1 <- submitPO repo1 fixedClock "po_001" "sup_001" 5000
+  -- => 5000 → L2 approval level
+  putStrLn ("Test 1 result: " <> show result1)
+  -- => Output: Test 1 result: Right (PurchaseOrder {..., poStatus = "AwaitingApproval-L2"}, 2026-01-15 09:00:00 UTC)
+  xs1 <- readIORef saved1
+  putStrLn ("Test 1 saved count: " <> show (length xs1))
+  -- => Output: Test 1 saved count: 1
+  case xs1 of
+    (p:_) -> putStrLn ("Test 1 saved status: " <> T.unpack (poStatus p))
+    -- => Output: Test 1 saved status: AwaitingApproval-L2
+    []    -> putStrLn "no saves"
+
+  -- ── Test 2: validation failure — no save ──────────────────────────────
+  (repo2, saved2) <- buildTestRepo
+  -- => Fresh isolated repo — Test 1 state not visible here
+  result2 <- submitPO repo2 fixedClock "" "sup_001" 500
+  -- => Blank PO Id — validation fails before any port call
+  putStrLn ("Test 2 result: " <> show result2)
+  -- => Output: Test 2 result: Left "Blank PO Id"
+  xs2 <- readIORef saved2
+  putStrLn ("Test 2 saved count: " <> show (length xs2))
+  -- => Output: Test 2 saved count: 0  (validation failed before save was called)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Application service tests use in-memory adapters to verify orchestration — which ports are called, with which arguments, in which order — without spinning up any infrastructure.
@@ -5186,7 +6938,7 @@ console.log("Test 2 saved count:", saved2.length);
 
 The anti-corruption layer (ACL) is a translation function in the adapter zone that converts external API responses into domain types. It prevents vendor-specific naming, types, and error codes from leaking into the domain.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5421,6 +7173,99 @@ console.log("Unknown:", unknownDomain);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── External supplier API response (adapter zone only) ────────────────────
+-- [F#: SupplierAcknowledgementApiResponse record — Haskell uses a record with vendor fields]
+
+module Procurement.Adapters.SupplierACL where
+
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+import Data.Time.Format.ISO8601 (iso8601ParseM)
+
+data SupplierAckApiResponse = SupplierAckApiResponse
+  -- => External API shape — fields named by the supplier's engineering team
+  { srReferenceNo    :: Text
+  -- => Their name for what we call PurchaseOrderId
+  , srAcknowledgedAt :: Text
+  -- => ISO8601 string — not UTCTime
+  , srStatusCode     :: Int
+  -- => 200 = acknowledged, 404 = unknown PO, 500 = system error
+  , srErrorMessage   :: Maybe Text
+  -- => Just on failure; sometimes Nothing or Just "" even on success
+  }
+
+-- ── Domain types (domain zone) ────────────────────────────────────────────
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+-- => Our identifier — format po_<uuid>
+
+data AcknowledgementResult
+  = Acknowledged PurchaseOrderId UTCTime
+  -- => Supplier confirmed receipt of the PO
+  | UnknownPO PurchaseOrderId
+  -- => Supplier has no record of this PO
+  | SupplierSystemError Text
+  -- => Supplier's system is unavailable — caller may retry
+  deriving (Show)
+
+-- ── Anti-corruption layer: translate external response → domain type ───────
+-- Lives in the adapter zone — never in the application or domain zones.
+toAcknowledgementResult :: PurchaseOrderId -> SupplierAckApiResponse
+                        -> IO AcknowledgementResult
+-- => IO because timestamp parsing fallback may call getCurrentTime
+toAcknowledgementResult poid resp = case srStatusCode resp of
+  200 -> do
+    parsed <- case iso8601ParseM (Data.Text.unpack (srAcknowledgedAt resp)) of
+      Just t  -> pure t
+      -- => Parse succeeded — use the supplier's timestamp
+      Nothing -> getCurrentTime
+      -- => Parse failed (malformed timestamp) — fall back to current time
+    pure (Acknowledged poid parsed)
+    -- => Map 200 + timestamp → domain Acknowledged case
+  404 ->
+    pure (UnknownPO poid)
+    -- => Map 404 → domain UnknownPO case; suppress vendor error_message
+  code ->
+    let msg = case srErrorMessage resp of
+                Just m  -> m
+                Nothing -> "HTTP " <> Data.Text.pack (show code)
+        -- => Extract message or construct a generic one from the status code
+    in pure (SupplierSystemError msg)
+    -- => Map all other codes → domain SupplierSystemError case
+
+-- ── Demonstration ──────────────────────────────────────────────────────────
+main :: IO ()
+main = do
+  let successResp = SupplierAckApiResponse
+        { srReferenceNo    = "po_001"
+        , srAcknowledgedAt = "2026-01-15T09:00:00Z"
+        , srStatusCode     = 200
+        , srErrorMessage   = Nothing
+        }
+  -- => Simulates a successful supplier acknowledgement response
+  successDomain <- toAcknowledgementResult (PurchaseOrderId "po_001") successResp
+  -- => successDomain :: AcknowledgementResult = Acknowledged (PurchaseOrderId "po_001") ...
+  putStrLn ("Success: " <> show successDomain)
+  -- => Output: Success: Acknowledged (PurchaseOrderId "po_001") 2026-01-15 09:00:00 UTC
+
+  let unknownResp = SupplierAckApiResponse
+        { srReferenceNo    = "po_999"
+        , srAcknowledgedAt = ""
+        , srStatusCode     = 404
+        , srErrorMessage   = Just "Not found"
+        }
+  -- => Simulates a 404 response for an unknown PO
+  unknownDomain <- toAcknowledgementResult (PurchaseOrderId "po_999") unknownResp
+  -- => unknownDomain :: AcknowledgementResult = UnknownPO (PurchaseOrderId "po_999")
+  putStrLn ("Unknown: " <> show unknownDomain)
+  -- => Output: Unknown: UnknownPO (PurchaseOrderId "po_999")
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The anti-corruption layer translates external API responses into clean domain types inside the adapter, shielding the domain from vendor naming conventions and error codes.
@@ -5465,7 +7310,7 @@ graph TD
     style RESP fill:#808080,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5879,7 +7724,7 @@ const determineApprovalLevel = (total: number): ApprovalLevel => {
   return "L3";
 };
 
-const validateDraft = (input: DraftPurchaseOrder): Result<DraftPurchaseOrder, SubmissionError> => {
+const validateDraft = (input: DraftPurchaseOrder): Result => {
   if (!input.id || (input.id as string).trim() === "")
     return { ok: false, error: { kind: "ValidationError", message: "PO Id blank" } };
   if (!input.supplierId || input.supplierId.trim() === "")
@@ -5893,20 +7738,20 @@ const validateDraft = (input: DraftPurchaseOrder): Result<DraftPurchaseOrder, Su
 // port type aliases and application service orchestration.
 
 type PurchaseOrderRepo = {
-  readonly save: (po: PurchaseOrder) => Promise<Result<void, SubmissionError>>;
-  readonly findById: (id: POId) => Promise<Result<PurchaseOrder | null, SubmissionError>>;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly findById: (id: POId) => Promise;
 };
 // => Adapters implement this; the application service calls it
 
 type Clock = () => Date;
 // => Time port — synchronous, infallible
 
-type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise<Result<PurchaseOrder, SubmissionError>>;
+type SubmitPurchaseOrderUseCase = (draft: DraftPurchaseOrder) => Promise;
 // => Input port: the complete contract for the SubmitPurchaseOrder workflow
 
 const buildSubmitPurchaseOrder =
   (repo: PurchaseOrderRepo, clock: Clock): SubmitPurchaseOrderUseCase =>
-  async (input: DraftPurchaseOrder): Promise<Result<PurchaseOrder, SubmissionError>> => {
+  async (input: DraftPurchaseOrder): Promise => {
     const validation = validateDraft(input);
     if (!validation.ok) return validation;
     // => Validation failed — short-circuit before any port calls
@@ -5953,7 +7798,7 @@ const toHttpResponse = (po: PurchaseOrder): HttpPoResponse => ({
 
 const httpHandlerFull =
   (useCase: SubmitPurchaseOrderUseCase) =>
-  async (dto: HttpPoDto): Promise<string> => {
+  async (dto: HttpPoDto): Promise => {
     const input = toDomainInput(dto);
     // => Translate HTTP DTO to domain input type
     const result = await useCase(input);
@@ -6003,6 +7848,175 @@ console.log("Stored status:", store25.get("po_full-001")?.status);
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── ZONE 1: Domain (innermost — no external imports) ──────────────────────
+-- [F#: three modules separated by zone — Haskell uses three modules with strict imports]
+
+module Procurement.FullFlow where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime)
+import Data.Time.Format.ISO8601 (iso8601ParseM)
+import qualified Data.Map.Strict as Map
+import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq, Ord)
+-- => PO primary key — newtype prevents stringly-typed confusion
+
+data DraftPurchaseOrder = DraftPurchaseOrder
+  { dpoId :: PurchaseOrderId, dpoSupp :: Text, dpoTotal :: Double }
+  deriving (Show)
+-- => Raw input from any delivery mechanism — nothing validated yet
+
+data PurchaseOrder = PurchaseOrder
+  { poId :: PurchaseOrderId, poSupp :: Text, poTotal :: Double, poStatus :: Text }
+  deriving (Show, Eq)
+-- => Aggregate after validation — carries the approval-level status
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+-- => Derived from PO total: L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+data SubmissionError
+  = ValidationError Text
+  | RepositoryError Text
+  deriving (Show)
+-- => All named failure modes — exhaustively matched at adapter boundaries
+
+determineApprovalLevel :: Double -> ApprovalLevel
+determineApprovalLevel total
+  | total <= 1000  = L1
+  | total <= 10000 = L2
+  | otherwise      = L3
+
+validateDraft :: DraftPurchaseOrder -> Either SubmissionError DraftPurchaseOrder
+validateDraft input
+  | let PurchaseOrderId t = dpoId input, T.null (T.strip t) =
+      Left (ValidationError "PO Id blank")
+  | T.null (T.strip (dpoSupp input)) =
+      Left (ValidationError "SupplierId blank")
+  | dpoTotal input <= 0 =
+      Left (ValidationError "TotalAmount must be positive")
+  | otherwise = Right input
+  -- => Returns validated draft or named error — no IO
+
+-- ── ZONE 2: Application (middle — imports Domain only) ────────────────────
+data PurchaseOrderRepository = PurchaseOrderRepository
+  -- => Canonical output port — identical signature across all examples
+  { savePO :: PurchaseOrder -> IO (Either SubmissionError ())
+  , loadPO :: PurchaseOrderId -> IO (Either SubmissionError (Maybe PurchaseOrder))
+  }
+-- => Adapters implement this; the application service calls it
+
+type Clock = IO UTCTime
+-- => Time port — IO action; no Either (clocks do not fail)
+
+type SubmitPurchaseOrderUseCase =
+  DraftPurchaseOrder -> IO (Either SubmissionError PurchaseOrder)
+-- => Input port: the complete contract for the SubmitPurchaseOrder workflow
+
+buildSubmitPO :: PurchaseOrderRepository -> Clock -> SubmitPurchaseOrderUseCase
+-- => Partial application: bake the output ports in, return the input port function
+buildSubmitPO repo clock = \input ->
+  case validateDraft input of
+    Left e -> pure (Left e)
+    -- => Validation failed — short-circuit before any port calls
+    Right draft -> do
+      let level = determineApprovalLevel (dpoTotal draft)
+      -- => Approval level derived from total — pure, instant, no IO
+      now <- clock
+      -- => Timestamp from the Clock port — deterministic in tests
+      let _ = now
+      let po = PurchaseOrder
+            { poId     = dpoId draft
+            , poSupp   = dpoSupp draft
+            , poTotal  = dpoTotal draft
+            , poStatus = "AwaitingApproval-" <> T.pack (show level)
+            }
+      -- => State transition: Draft → AwaitingApproval-{L1|L2|L3}
+      saveResult <- savePO repo po
+      -- => Calls the injected adapter — could be Postgres or in-memory
+      pure (fmap (const po) saveResult)
+      -- => Return the saved PO or the infrastructure error
+
+-- ── ZONE 3: Adapters (outer — imports Application and infrastructure libs) ─
+data HttpPoDto = HttpPoDto { hPoId :: Text, hSupp :: Text, hTotal :: Double }
+-- => Mirrors the JSON request body
+data HttpPoResponse = HttpPoResponse { rPoId :: Text, rStatus :: Text } deriving (Show)
+-- => JSON response shape
+
+toDomainInput :: HttpPoDto -> DraftPurchaseOrder
+toDomainInput dto = DraftPurchaseOrder (PurchaseOrderId (hPoId dto)) (hSupp dto) (hTotal dto)
+-- => Field rename + newtype wrap — pure mapping, no side effects
+
+toHttpResponse :: PurchaseOrder -> HttpPoResponse
+toHttpResponse po = let PurchaseOrderId t = poId po
+                    in HttpPoResponse t (poStatus po)
+-- => Unwrap newtype + extract status; pure mapping
+
+httpHandler :: SubmitPurchaseOrderUseCase -> HttpPoDto -> IO Text
+httpHandler useCase dto = do
+  let input = toDomainInput dto
+  -- => Translate HTTP DTO to domain input type
+  result <- useCase input
+  -- => Call the input port — application service handles all logic
+  pure $ case result of
+    Right po ->
+      let r = toHttpResponse po
+       in "201 Created: " <> rPoId r <> " status=" <> rStatus r
+    Left (ValidationError m) -> "422 Unprocessable: " <> m
+    Left (RepositoryError m) -> "503 Service Unavailable: " <> m
+
+-- ── Composition root: wire adapters to ports ──────────────────────────────
+buildInMemRepo :: IO (PurchaseOrderRepository, IORef (Map.Map PurchaseOrderId PurchaseOrder))
+buildInMemRepo = do
+  store <- newIORef Map.empty
+  -- => In-memory store backed by an IORef + Map; simulates Postgres
+  let repo = PurchaseOrderRepository
+        { savePO = \po -> do
+            atomicModifyIORef' store (\m -> (Map.insert (poId po) po m, ()))
+            pure (Right ())
+        , loadPO = \i -> do
+            m <- readIORef store
+            pure (Right (Map.lookup i m))
+        }
+  pure (repo, store)
+
+fixedClock :: Clock
+fixedClock = case iso8601ParseM "2026-01-15T09:00:00Z" of
+  Just t  -> pure t
+  Nothing -> error "unreachable"
+-- => Fixed clock adapter: deterministic timestamp for this demonstration
+
+-- ── Full flow demonstration ────────────────────────────────────────────────
+main :: IO ()
+main = do
+  (inMemRepo, store) <- buildInMemRepo
+  let productionUseCase = buildSubmitPO inMemRepo fixedClock
+  -- => Input port function: ports baked in via partial application
+
+  let request = HttpPoDto "po_full-001" "sup_acme-1" 7500
+  -- => Sample HTTP request body — $7,500 PO → L2 approval required
+  response <- httpHandler productionUseCase request
+  -- => Runs the full hexagonal flow: HTTP → Application → Domain → Repository → HTTP
+  putStrLn (T.unpack response)
+  -- => Output: 201 Created: po_full-001 status=AwaitingApproval-L2
+
+  -- Verify the PO was persisted in the in-memory store
+  m <- readIORef store
+  putStrLn ("Stored POs: " <> show (Map.size m))
+  -- => Output: Stored POs: 1
+  case Map.lookup (PurchaseOrderId "po_full-001") m of
+    Just po -> putStrLn ("Stored status: " <> T.unpack (poStatus po))
+    -- => Output: Stored status: AwaitingApproval-L2
+    Nothing -> putStrLn "missing"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The full hexagonal flow — HTTP adapter → input port → application service → domain functions → output port → repository adapter → response — demonstrates that each zone's responsibilities are cleanly separated and independently swappable.

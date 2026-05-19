@@ -3,7 +3,7 @@ title: "Overview"
 date: 2026-05-15T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Overview of Hexagonal Architecture using Functional Programming — ports as function types, adapters as implementations, and dependency injection via partial application, shown in F# (canonical), Clojure, and TypeScript through procurement-platform-be"
+description: "Overview of Hexagonal Architecture using Functional Programming — ports as function types, adapters as implementations, and dependency injection via partial application, shown in F# (canonical), Clojure, TypeScript, and Haskell through procurement-platform-be"
 tags:
   [
     "hexagonal-architecture",
@@ -14,20 +14,21 @@ tags:
     "by-example",
     "clojure",
     "typescript",
+    "haskell",
   ]
 ---
 
-**Want to build systems where business logic is a pure function that cannot touch a database even if it tries?** This tutorial teaches Hexagonal Architecture through a functional programming lens, using three languages — F# (canonical), Clojure, and TypeScript. Each example presents all three as parallel tabs; F# carries the deepest annotations and the framing prose, while Clojure and TypeScript are first-class variants. The central observation is that functional programming and hexagonal architecture solve the same problem from different angles: both insist that the domain core is pure and that all effects live at the edges — and this insight holds equally in all three languages.
+**Want to build systems where business logic is a pure function that cannot touch a database even if it tries?** This tutorial teaches Hexagonal Architecture through a functional programming lens, using four languages — F# (canonical), Clojure, TypeScript, and Haskell. Each example presents all four as parallel tabs; F# carries the deepest annotations and the framing prose, while Clojure, TypeScript, and Haskell are first-class variants. The central observation is that functional programming and hexagonal architecture solve the same problem from different angles: both insist that the domain core is pure and that all effects live at the edges — and this insight holds equally in all four languages.
 
 ## What This Tutorial Covers
 
-Hexagonal Architecture in functional languages rests on three interlocking ideas that make the structural boundaries impossible to violate accidentally. Each idea is expressed differently across F#, Clojure, and TypeScript, but the constraint is identical in all three:
+Hexagonal Architecture in functional languages rests on three interlocking ideas that make the structural boundaries impossible to violate accidentally. Each idea is expressed differently across F#, Clojure, TypeScript, and Haskell, but the constraint is identical in all four:
 
-**Ports as function contracts** — In F#, a port is a record type alias with named function fields. In Clojure, a port is a protocol or a plain map of functions. In TypeScript, a port is an interface or an object type with function properties. In all three, the compiler (or runtime) enforces substitutability without inheritance.
+**Ports as function contracts** — In F#, a port is a record type alias with named function fields. In Clojure, a port is a protocol or a plain map of functions. In TypeScript, a port is an interface or an object type with function properties. In Haskell, a port is a record of functions (the canonical "record-of-functions" idiom for runtime dependency injection). In all four, the compiler (or runtime) enforces substitutability without inheritance.
 
-**Adapters as function implementations** — An adapter satisfies a port contract: a PostgreSQL adapter and an in-memory test adapter satisfy the same port. Swap adapters by passing different records / maps / objects at startup — no DI container or reflection needed in any of the three languages.
+**Adapters as function implementations** — An adapter satisfies a port contract: a PostgreSQL adapter and an in-memory test adapter satisfy the same port. Swap adapters by passing different records / maps / objects at startup — no DI container or reflection needed in any of the four languages.
 
-**Dependency injection via function application** — Application services take their port implementations as parameters. In F#, partial application bakes in the production adapters. In Clojure, higher-order functions or component systems do the same. In TypeScript, constructor injection or closure-based factories achieve the equivalent result.
+**Dependency injection via function application** — Application services take their port implementations as parameters. In F#, partial application bakes in the production adapters. In Clojure, higher-order functions or component systems do the same. In TypeScript, constructor injection or closure-based factories achieve the equivalent result. In Haskell, partial application or a `Reader` monad threading a record of functions through pure code provides the same compositional guarantee.
 
 ## The Functional Core / Imperative Shell Connection
 
@@ -57,7 +58,7 @@ Employee submits PurchaseOrder draft
   → Paid (banking port disburses funds)
 ```
 
-This is the same domain used in the [DDD By Example in FP](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview) tutorial, and the same domain shown in F#, Clojure, and TypeScript tabs throughout both tutorials. The two tutorials complement each other: the DDD tutorial teaches how to model the domain; this tutorial teaches how to isolate it from infrastructure.
+This is the same domain used in the [DDD By Example in FP](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview) tutorial, and the same domain shown in F#, Clojure, TypeScript, and Haskell tabs throughout both tutorials. The two tutorials complement each other: the DDD tutorial teaches how to model the domain; this tutorial teaches how to isolate it from infrastructure.
 
 ## Prerequisites
 

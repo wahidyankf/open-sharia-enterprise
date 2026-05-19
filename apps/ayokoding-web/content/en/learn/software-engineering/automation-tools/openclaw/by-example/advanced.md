@@ -72,7 +72,7 @@ graph TD
 
 **Key Takeaway**: Plugins are Node.js packages with an `openclaw-plugin.json` manifest. They register tools, channels, model providers, or skills via the `contributions` field.
 
-**Why It Matters**: The plugin system is what makes OpenClaw extensible beyond its built-in capabilities. Without plugins, you're limited to the tools the OpenClaw team ships. With plugins, the community builds integrations — database clients, cloud provider CLIs, proprietary API wrappers, custom communication channels — and shares them via ClawHub (5,700+ packages). This ecosystem effect is what transforms OpenClaw from "a chatbot framework" into "an AI agent platform" — the distinction being that platforms grow through community contributions while frameworks grow through core team effort.
+**Why It Matters**: The plugin system is what makes OpenClaw extensible beyond its built-in capabilities. Without plugins, you're limited to the tools the OpenClaw team ships. With plugins, the community builds integrations — database clients, cloud provider CLIs, proprietary API wrappers, custom communication channels — and shares them via ClawHub (13,000+ packages). This ecosystem effect is what transforms OpenClaw from "a chatbot framework" into "an AI agent platform" — the distinction being that platforms grow through community contributions while frameworks grow through core team effort.
 
 ### Example 56: Creating a Custom Tool Plugin
 
@@ -221,7 +221,7 @@ export default defineChannel({
 
 ### Example 58: Installing Plugins from ClawHub
 
-ClawHub is OpenClaw's community plugin marketplace with 5,700+ packages. Install plugins with a single command — similar to npm packages but scoped to your OpenClaw workspace.
+ClawHub is OpenClaw's community plugin marketplace with 13,000+ packages. Install plugins with a single command — similar to npm packages but scoped to your OpenClaw workspace.
 
 ```bash
 openclaw plugins install @clawhub/weather
@@ -834,7 +834,7 @@ in the denied_chains list in the same turn as web_fetch.
 
 ### Example 68.2: Supply Chain — Vetting Skills and Plugins from ClawHub
 
-ClawHub hosts 5,700+ community packages. Installing one is executing arbitrary third-party code with full gateway privileges. A typosquatted skill or a compromised maintainer account yields instant takeover. Treat ClawHub like npm: pin versions, audit dependencies, and disable auto-update.
+ClawHub hosts 13,000+ community packages. Installing one is executing arbitrary third-party code with full gateway privileges. A typosquatted skill or a compromised maintainer account yields instant takeover. Treat ClawHub like npm: pin versions, audit dependencies, and disable auto-update.
 
 ```bash
 # Enable strict install mode (refuses unpinned versions)

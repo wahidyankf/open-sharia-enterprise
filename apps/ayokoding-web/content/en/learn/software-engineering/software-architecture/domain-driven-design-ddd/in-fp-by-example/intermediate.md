@@ -3,11 +3,14 @@ title: "Intermediate"
 date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000004
-description: "Examples 26-55: Function composition, pipelines, Railway-Oriented Programming, domain events, PurchaseOrder state machine, and the functional core / imperative shell boundary in F# for a Procure-to-Pay platform"
+description: "Examples 26-55: Function composition, pipelines, Railway-Oriented Programming, domain events, PurchaseOrder state machine, and the functional core / imperative shell boundary for a Procure-to-Pay platform, in F# (canonical), Clojure, TypeScript, and Haskell"
 tags:
   [
     "ddd",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "railway-oriented-programming",
     "result",
@@ -57,7 +60,7 @@ graph LR
     style Out fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -166,7 +169,7 @@ printfn "Trim only: '%s'" (trimInput raw)
 
 // Compose helper: applies functions left-to-right (mirrors F# >>)
 const pipe =
-  <T>(...fns: Array<(x: T) => T>) =>
+  <T>(...fns: Array) =>
   (x: T): T =>
     fns.reduce((v, f) => f(v), x);
 // => pipe(f, g, h)(x) = h(g(f(x))) — matches F# f >> g >> h
@@ -207,6 +210,61 @@ console.log(`Trim only: '${trimInput(raw)}'`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: NormaliseRequisitionId.hs ──
+-- [F#: >> for left-to-right composition — Haskell uses . (right-to-left) or >>> from Control.Category for left-to-right]
+-- [Clojure: comp right-to-left, -> threading macro; Haskell mirrors comp via . and provides >>> for left-to-right reading]
+import Data.Char (toUpper)             -- toUpper :: Char -> Char, used to uppercase a single character
+import Data.Text (Text)                -- Text is the canonical efficient string type in production Haskell
+import qualified Data.Text as T        -- qualified import keeps Text functions namespaced
+import Control.Category ((>>>))        -- >>> is left-to-right composition, the direct analogue of F#'s >>
+
+-- Individual pipeline steps — each is a pure function, independently testable
+trimInput :: Text -> Text              -- Type signature reads "Text in, Text out"
+trimInput = T.strip                    -- T.strip removes leading and trailing whitespace
+-- => trimInput "  req-f4c2  " == "req-f4c2"
+
+toUpperCase :: Text -> Text            -- Convert all characters to uppercase
+toUpperCase = T.toUpper                -- T.toUpper is the Text-specific uppercase function
+-- => toUpperCase "req-f4c2" == "REQ-F4C2"
+
+normaliseReqId :: Text -> Text         -- Apply REQ_ prefix and replace hyphens with underscores
+normaliseReqId s = "REQ_" <> T.replace "-" "_" s
+                                       -- <> is the Semigroup append operator, equivalent to ++ for Text
+-- => normaliseReqId "REQ-F4C2" == "REQ_F4C2"
+
+-- Composing three steps using >>> — reads left-to-right like F#'s >>
+normaliseRequisitionId :: Text -> Text
+normaliseRequisitionId = trimInput >>> toUpperCase >>> normaliseReqId
+                                       -- Equivalent: normaliseReqId . toUpperCase . trimInput
+-- => normaliseRequisitionId : Text -> Text — three functions become one
+
+-- Test the composed function
+raw :: Text
+raw = "  req-f4c2  "                   -- Raw user input with whitespace and hyphens
+-- => raw == "  req-f4c2  "
+
+normalised :: Text
+normalised = normaliseRequisitionId raw
+-- => Step 1: trimInput  -> "req-f4c2"
+-- => Step 2: toUpperCase -> "REQ-F4C2"
+-- => Step 3: normaliseReqId -> "REQ_F4C2"
+-- => normalised == "REQ_F4C2"
+
+main :: IO ()                          -- IO () is the entry point; printing is the only effect here
+main = do
+  putStrLn $ "Raw: '" <> T.unpack raw <> "'"
+  -- => Output: Raw: '  req-f4c2  '
+  putStrLn $ "Normalised: '" <> T.unpack normalised <> "'"
+  -- => Output: Normalised: 'REQ_F4C2'
+  putStrLn $ "Trim only: '" <> T.unpack (trimInput raw) <> "'"
+  -- => Output: Trim only: 'req-f4c2'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `>>` operator composes functions left-to-right, producing a single function from a sequence of steps, each of which can be tested and reasoned about independently.
@@ -219,7 +277,7 @@ console.log(`Trim only: '${trimInput(raw)}'`);
 
 The `|>` (pipe) operator passes a value as the last argument to a function: `x |> f = f x`. It enables a left-to-right reading of data transformations, matching how procurement domain experts describe workflows — "take the requisition, validate it, compute the total, derive the approval level."
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -358,7 +416,7 @@ const deriveLevel = (total: number): ApprovalLevel => (total <= 1000 ? "L1" : to
 // => Pure derivation — same input always produces same output
 
 // Reading a pipeline left-to-right using explicit chaining
-const rawLines: Array<[number, number]> = [
+const rawLines: Array = [
   [10, 8.5],
   [3, 899.99],
   [5, 25.0],
@@ -397,6 +455,74 @@ console.log("Approval level v2:", approvalLevelV2);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovalPipeline.hs ─────────
+-- [F#: |> forward pipe — Haskell uses & (Data.Function) for left-to-right, or $ for right-to-left function application]
+-- [Clojure: ->> thread-last — Haskell's & gives equivalent left-to-right reading at the value level]
+import Data.Function ((&))               -- & is the flipped $: x & f == f x, mirroring F#'s |>
+import Data.List (foldl')                -- strict left fold for summing without thunk build-up
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+-- => Three approval tiers; deriving Show lets us print them, Eq supports equality checks
+
+-- Pure domain functions — no IO, fully testable
+validateNotEmpty :: String -> Maybe String
+validateNotEmpty s
+  | null (dropWhile (== ' ') s) = Nothing  -- treat whitespace-only as Nothing
+  | otherwise = Just (dropWhile (== ' ') (reverse (dropWhile (== ' ') (reverse s))))
+                                         -- => Returns Just trimmed for valid input, Nothing for empty
+
+computeLineTotal :: Int -> Double -> Double
+computeLineTotal qty price = fromIntegral qty * price
+                                         -- fromIntegral converts Int -> Double for the multiplication
+-- => Pure arithmetic — quantity times unit price
+
+sumLineTotals :: [Double] -> Double
+sumLineTotals = foldl' (+) 0             -- strict sum avoids space leak
+-- => sumLineTotals [85.00, 2699.97, 125.00] == 2909.97
+
+deriveLevel :: Double -> ApprovalLevel
+deriveLevel total
+  | total <= 1000  = L1                  -- Up to $1,000 — L1 line manager approval
+  | total <= 10000 = L2                  -- Up to $10,000 — L2 department head
+  | otherwise      = L3                  -- Over $10,000 — L3 CFO sign-off
+-- => Pure derivation — referentially transparent
+
+-- Reading a pipeline left-to-right using & (Haskell's pipe)
+rawLines :: [(Int, Double)]
+rawLines = [(10, 8.50), (3, 899.99), (5, 25.00)]
+-- => list of (quantity, unitPrice) pairs
+
+approvalLevel :: ApprovalLevel
+approvalLevel =
+  rawLines
+    & map (uncurry computeLineTotal)     -- uncurry adapts the curried fn to take a pair
+    -- => maps to [85.00, 2699.97, 125.00]
+    & sumLineTotals
+    -- => 85.00 + 2699.97 + 125.00 == 2909.97
+    & deriveLevel
+    -- => 2909.97 is > 1000 and <= 10000, so result is L2
+-- => approvalLevel == L2
+
+-- Contrast: without &, the nesting reads right-to-left via function application
+approvalLevelNested :: ApprovalLevel
+approvalLevelNested =
+  deriveLevel (sumLineTotals (map (uncurry computeLineTotal) rawLines))
+-- => Same answer, less readable composition direction
+-- => approvalLevelNested == L2
+
+main :: IO ()
+main = do
+  putStrLn $ "Approval level: " <> show approvalLevel
+  -- => Output: Approval level: L2
+  putStrLn $ "Same result: " <> show approvalLevelNested
+  -- => Output: Same result: L2
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `|>` operator enables left-to-right pipeline reading that matches how procurement domain experts describe workflows, making code readable without sacrificing functional purity.
@@ -409,7 +535,7 @@ console.log("Approval level v2:", approvalLevelV2);
 
 Every F# function technically takes one argument and returns a function or a value. This is currying. It enables partial application: supplying some arguments up front to produce a specialised function. In the procurement domain, partial application injects dependencies like approval thresholds into workflow functions.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -553,6 +679,45 @@ console.log(`$50000: L2=${requiresL2Approval(total3)}, L3=${requiresL3Approval(t
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovalThreshold.hs ────────
+-- [F#: automatic currying — every multi-arg fn is curried; Haskell is identical — all functions are curried by default]
+-- [Clojure: explicit partial; Haskell partially applies just by omitting trailing arguments]
+
+-- A two-argument function — its type a -> b -> Bool reveals the curried structure
+applyApprovalThreshold :: Double -> Double -> Bool
+applyApprovalThreshold threshold total = total > threshold
+                                           -- => True when the total exceeds the threshold
+
+-- Partial application: supply threshold, get a (Double -> Bool) function for free
+requiresL2Approval :: Double -> Bool
+requiresL2Approval = applyApprovalThreshold 1000
+                                           -- => threshold 1000 baked in; only total is needed now
+
+requiresL3Approval :: Double -> Bool
+requiresL3Approval = applyApprovalThreshold 10000
+                                           -- => threshold 10000 baked in
+
+-- Use the specialised functions
+total1, total2, total3 :: Double
+total1 = 500                               -- => under both thresholds
+total2 = 5000                              -- => over L2 threshold but under L3
+total3 = 50000                             -- => over both thresholds
+
+main :: IO ()
+main = do
+  putStrLn $ "$500: L2="   <> show (requiresL2Approval total1) <> ", L3=" <> show (requiresL3Approval total1)
+  -- => Output: $500: L2=False, L3=False
+  putStrLn $ "$5000: L2="  <> show (requiresL2Approval total2) <> ", L3=" <> show (requiresL3Approval total2)
+  -- => Output: $5000: L2=True, L3=False
+  putStrLn $ "$50000: L2=" <> show (requiresL2Approval total3) <> ", L3=" <> show (requiresL3Approval total3)
+  -- => Output: $50000: L2=True, L3=True
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Currying turns multi-argument functions into pipelines of one-argument functions, enabling partial application that bakes in dependencies (like approval thresholds) to produce specialised, reusable functions.
@@ -577,7 +742,7 @@ graph LR
     style D fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -773,9 +938,9 @@ match result with
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
-const mapR = <T, U, E>(r: Result<T, E>, f: (v: T) => U): Result<U, E> => (r.ok ? okR(r.value) : r); // simplification — preserves error
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
+const mapR = <T, U, E>(r: Result, f: (v: T) => U): Result => (r.ok ? okR(r.value) : r); // simplification — preserves error
 
 type ApprovalLevel = "L1" | "L2" | "L3";
 type RequisitionId = string & { readonly __brand: "RequisitionId" };
@@ -797,7 +962,7 @@ interface RequisitionSubmittedPayload {
 // => Event payload — everything a downstream consumer needs
 
 // Individual pure steps
-function validateLines(lines: RawLine[]): Result<RawLine[], string> {
+function validateLines(lines: RawLine[]): Result {
   if (lines.length === 0) return errR("At least one line item is required");
   // => Business rule: blank requisitions cannot be submitted
   if (lines.some((l) => l.qty <= 0)) return errR("All quantities must be > 0");
@@ -823,7 +988,7 @@ const buildEvent =
 // => Curried builder — requestedBy bound first, level second, total third
 
 // Composed workflow
-function submitRequisition(requestedBy: string, lines: RawLine[]): Result<RequisitionSubmittedPayload, string> {
+function submitRequisition(requestedBy: string, lines: RawLine[]): Result {
   const validated = validateLines(lines);
   // => Step 1: validate — returns Result; short-circuits on error
   if (!validated.ok) return validated;
@@ -853,6 +1018,93 @@ else console.log("Error:", result.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SubmitRequisition.hs ────────
+-- [F#: Result<T,E> + Result.map; Haskell uses Either e a — Left = error, Right = success]
+-- [Clojure: {:ok}/{:error} maps + threading; Haskell composes via fmap/(<$>) on Either]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)                    -- production-grade text type
+import qualified Data.Text as T
+
+-- Domain types — newtype wrappers prevent mixing ids of different aggregates
+newtype RequisitionId = RequisitionId Text deriving (Show, Eq)
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+                                            -- => L1 ≤ $1k, L2 ≤ $10k, L3 > $10k
+
+-- Raw line arriving from the HTTP layer; record syntax names fields explicitly
+data RawLine = RawLine
+  { sku   :: Text
+  , qty   :: Int
+  , price :: Double
+  } deriving (Show)
+
+-- Event payload — everything a downstream consumer needs
+data RequisitionSubmittedPayload = RequisitionSubmittedPayload
+  { reqId         :: RequisitionId
+  , approvalLevel :: ApprovalLevel
+  , requestedBy   :: Text
+  , totalAmount   :: Double
+  } deriving (Show)
+
+-- Individual pure steps — each returns Either Text on the error side
+validateLines :: [RawLine] -> Either Text [RawLine]
+validateLines [] = Left "At least one line item is required"
+                                            -- => empty list short-circuits with Left
+validateLines ls
+  | any (\l -> qty l <= 0) ls = Left "All quantities must be > 0"
+                                            -- => zero/negative quantities are invalid
+  | otherwise = Right ls                    -- => all lines pass basic validation
+
+computeTotal :: [RawLine] -> Double
+computeTotal = sum . map (\l -> fromIntegral (qty l) * price l)
+                                            -- => pure: sums (qty * price) across lines
+
+deriveLevel :: Double -> ApprovalLevel
+deriveLevel total
+  | total <= 1000  = L1                     -- => L1: up to $1,000
+  | total <= 10000 = L2                     -- => L2: up to $10,000
+  | otherwise      = L3                     -- => L3: over $10,000
+
+buildEvent :: Text -> ApprovalLevel -> Double -> RequisitionSubmittedPayload
+buildEvent rb lvl total =
+  RequisitionSubmittedPayload
+    { reqId         = RequisitionId "req_a1b2c3d4"  -- in production: UUID v4
+    , approvalLevel = lvl                  -- captured at submission — immutable
+    , requestedBy   = rb                   -- employee id of the requester
+    , totalAmount   = total                -- locked from validated lines
+    }
+
+-- Composed workflow — fmap on Either short-circuits at the first Left
+submitRequisition :: Text -> [RawLine] -> Either Text RequisitionSubmittedPayload
+submitRequisition rb lines_ =
+  fmap (\validLines ->
+          let total = computeTotal validLines
+              lvl   = deriveLevel total
+          in  buildEvent rb lvl total)
+       (validateLines lines_)
+-- => Step 1 validate, Step 2 total, Step 3 level, Step 4 event payload
+
+-- Test
+testLines :: [RawLine]
+testLines =
+  [ RawLine "OFF-0042" 10 8.50      -- => 10 × $8.50 = $85.00
+  , RawLine "ELE-0099" 3  899.99    -- => 3 × $899.99 = $2,699.97
+  ]
+-- => total = 85.00 + 2699.97 = 2784.97
+
+main :: IO ()
+main = case submitRequisition "emp_00456" testLines of
+  Right p -> putStrLn $ "Submitted: level=" <> show (approvalLevel p)
+                                            <> " total=" <> show (totalAmount p)
+  -- => Output: Submitted: level=L2 total=2784.97
+  Left  e -> putStrLn $ "Error: " <> T.unpack e
+  -- => prints the error message on any short-circuit
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A procurement workflow assembled from pure composable steps is easier to test, extend, and reason about than a single monolithic function — each step is independently testable and the composition is explicit.
@@ -867,7 +1119,7 @@ else console.log("Error:", result.error);
 
 The Result type models computations that can fail by returning either a success value or a typed error, without throwing exceptions. F# provides `Result<'T, 'Error>` as a built-in discriminated union with `Ok value` and `Error err` cases. Clojure uses a `[value nil]` / `[nil error]` pair convention or libraries such as `failjure`; TypeScript uses a discriminated union with `{ ok: true; value: T }` / `{ ok: false; error: E }`. All three keep failure handling in the type system and force callers to acknowledge both paths.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -999,8 +1251,8 @@ match budgetErr with
 
 // Result type — either a success value or a failure
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 // => [F#: Ok and Error constructors; TS: plain object constructors]
 
 // Branded types
@@ -1008,7 +1260,7 @@ type RequisitionId = string & { readonly __brand: "RequisitionId" };
 const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
 
 // A fallible smart constructor — returns Result instead of throwing
-function createRequisitionId(raw: string): Result<RequisitionId, string> {
+function createRequisitionId(raw: string): Result {
   if (!raw || raw.trim() === "") return errR("RequisitionId cannot be blank");
   // => Error case: blank input
   if (!raw.startsWith("req_")) return errR(`RequisitionId '${raw}' must start with 'req_'`);
@@ -1032,6 +1284,69 @@ if (!err1.ok) console.log("Error 1:", err1.error);
 // => Output: Error 1: RequisitionId cannot be blank
 if (!err2.ok) console.log("Error 2:", err2.error);
 // => Output: Error 2: RequisitionId '12345' must start with 'req_'
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementError.hs ─────────
+-- [F#: Result<'T,'E> built-in; Haskell uses Either e a — Left = failure, Right = success]
+-- [Clojure: tagged maps; Haskell uses a sum type ADT for compile-time exhaustiveness]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)                     -- production text type
+import qualified Data.Text as T
+import Data.Map.Strict (Map)                -- strict map for the lookup demo
+import qualified Data.Map.Strict as Map
+
+-- Domain errors as an algebraic data type — each constructor carries its own payload
+data ProcurementError
+  = RequisitionNotFound Text                -- => lookup returned nothing for this id
+  | InsufficientBudget  Double Double       -- => required vs available amount
+  | SupplierNotApproved Text                -- => supplier is Suspended or Blacklisted
+  | DuplicateRequisition Text               -- => duplicate of an existing id
+  deriving (Show, Eq)
+
+-- Fallible functions return Either instead of throwing
+findRequisition :: Text -> Map Text Text -> Either ProcurementError Text
+findRequisition rid store =
+  case Map.lookup rid store of              -- Map.lookup returns Maybe a
+    Just req -> Right req                   -- => found — Right is the success rail
+    Nothing  -> Left (RequisitionNotFound rid)
+                                            -- => missing — Left carries a named error
+
+checkBudget :: Double -> Double -> Either ProcurementError ()
+checkBudget required available
+  | required > available = Left (InsufficientBudget required available)
+                                            -- => over budget — error carries both numbers
+  | otherwise            = Right ()         -- => sufficient — Right () mirrors F#'s Ok ()
+
+-- Test the Either-returning functions
+store :: Map Text Text
+store = Map.fromList [("req_f4c2a1b7", "requisition data")]
+                                            -- single-entry simulated data store
+
+found, notFound :: Either ProcurementError Text
+found    = findRequisition "req_f4c2a1b7" store
+                                            -- => Right "requisition data"
+notFound = findRequisition "req_missing"   store
+                                            -- => Left (RequisitionNotFound "req_missing")
+
+budgetOk, budgetErr :: Either ProcurementError ()
+budgetOk  = checkBudget 2784.97 5000        -- => Right ()
+budgetErr = checkBudget 2784.97 1000        -- => Left (InsufficientBudget 2784.97 1000.0)
+
+main :: IO ()
+main = do
+  case notFound of
+    Right req -> putStrLn $ "Found: " <> T.unpack req
+    Left  e   -> putStrLn $ "Error: " <> show e
+  -- => Output: Error: RequisitionNotFound "req_missing"
+  case budgetErr of
+    Right () -> putStrLn "Budget ok"
+    Left  e  -> putStrLn $ "Error: " <> show e
+  -- => Output: Error: InsufficientBudget 2784.97 1000.0
 ```
 
 {{< /tab >}}
@@ -1086,7 +1401,7 @@ graph LR
     style S3 fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1230,11 +1545,11 @@ printfn "Missing: %A" missing
 
 // Result type and bind
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // bind: applies f to Ok value; passes Error through unchanged
-function bind<T, U, E>(r: Result<T, E>, f: (v: T) => Result<U, E>): Result<U, E> {
+function bind<T, U, E>(r: Result, f: (v: T) => Result): Result {
   return r.ok ? f(r.value) : r;
   // => [F#: Result.bind f r — if Ok(v) then f(v) else Error passthrough]
 }
@@ -1244,12 +1559,12 @@ type SkuCode = string & { readonly __brand: "SkuCode" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
 
 // Individual fallible validation steps
-function validateSku(raw: string): Result<SkuCode, string> {
+function validateSku(raw: string): Result {
   return /^[A-Z]{3}-\d{4,8}$/.test(raw) ? okR(raw as SkuCode) : errR(`Invalid SKU: '${raw}'`);
   // => Ok when format matches; Error otherwise
 }
 
-function validateSupplier(raw: string): Result<SupplierId, string> {
+function validateSupplier(raw: string): Result {
   return raw.startsWith("sup_") ? okR(raw as SupplierId) : errR(`Invalid SupplierId: '${raw}' must start with 'sup_'`);
   // => Ok when starts with sup_; Error otherwise
 }
@@ -1260,13 +1575,13 @@ interface ValidatedLine {
   readonly qty: number;
 }
 
-function validateQty(qty: number, sku: SkuCode, supplier: SupplierId): Result<ValidatedLine, string> {
+function validateQty(qty: number, sku: SkuCode, supplier: SupplierId): Result {
   return qty > 0 ? okR({ sku, supplier, qty }) : errR(`Quantity must be > 0, got ${qty}`);
   // => Ok when positive; Error otherwise
 }
 
 // Chaining three fallible steps with bind
-function validateOrderLine(rawSku: string, rawSupplier: string, qty: number): Result<ValidatedLine, string> {
+function validateOrderLine(rawSku: string, rawSupplier: string, qty: number): Result {
   return bind(
     bind(
       validateSku(rawSku),
@@ -1296,6 +1611,67 @@ if (!bad.ok) console.log("Error:", bad.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovalWorkflow.hs ─────────
+-- [F#: Result.bind via |>; Haskell uses >>= (bind) on Either e a — short-circuits on Left]
+-- [Clojure: hand-rolled ok-bind helper; Haskell gets it from the Monad Either instance for free]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+
+data ProcurementError
+  = RequisitionNotFound Text                  -- => not in the data store
+  | InsufficientBudget  Double Double         -- => required vs available
+  | SupplierNotApproved Text                  -- => supplier off-roster
+  deriving (Show, Eq)
+
+-- Three fallible steps; each returns Either to stay on the railway
+lookupRequisition :: Text -> Either ProcurementError Double
+lookupRequisition "req_f4c2a1b7" = Right 2784.97   -- => found — return the total
+lookupRequisition rid            = Left (RequisitionNotFound rid)
+                                                    -- => missing — short-circuits
+
+verifyBudget :: Double -> Either ProcurementError Double
+verifyBudget total
+  | total <= 5000 = Right total               -- => within department budget of $5,000
+  | otherwise     = Left (InsufficientBudget total 5000)
+                                              -- => over budget — short-circuits
+
+computeLevel :: Double -> Either ProcurementError ApprovalLevel
+computeLevel total = Right level              -- always succeeds for non-negative totals
+  where level                                 -- where-binding scopes the tier choice
+          | total <= 1000  = L1               -- => L1 up to $1k
+          | total <= 10000 = L2               -- => L2 up to $10k
+          | otherwise      = L3               -- => L3 over $10k
+
+-- Chaining with monadic bind — >>= is Either's Result.bind
+approvalWorkflow :: Text -> Either ProcurementError ApprovalLevel
+approvalWorkflow reqId =
+  lookupRequisition reqId                     -- Step 1
+    >>= verifyBudget                          -- => Step 2 runs only if Step 1 == Right
+    >>= computeLevel                          -- => Step 3 runs only if Step 2 == Right
+
+-- Happy path
+happy :: Either ProcurementError ApprovalLevel
+happy = approvalWorkflow "req_f4c2a1b7"       -- => Right L2
+
+-- Error path — fails at Step 1; Steps 2 and 3 are skipped
+missing :: Either ProcurementError ApprovalLevel
+missing = approvalWorkflow "req_missing"      -- => Left (RequisitionNotFound "req_missing")
+
+main :: IO ()
+main = do
+  putStrLn $ "Happy: "   <> show happy
+  -- => Output: Happy: Right L2
+  putStrLn $ "Missing: " <> show missing
+  -- => Output: Missing: Left (RequisitionNotFound "req_missing")
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.bind` creates a clean error-propagation pipeline where the first failure short-circuits the rest of the chain — no nested if/else, no try/catch, no null checks.
@@ -1308,7 +1684,7 @@ if (!bad.ok) console.log("Error:", bad.error);
 
 `Result.map` transforms the `Ok` value of a `Result` without touching the `Error` case. It is the non-fallible counterpart to `Result.bind` — use `map` when the transformation cannot fail, `bind` when it can.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1454,10 +1830,10 @@ match errorResult with
 
 // Result type and map
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
-function mapR<T, U, E>(r: Result<T, E>, f: (v: T) => U): Result<U, E> {
+function mapR<T, U, E>(r: Result, f: (v: T) => U): Result {
   return r.ok ? okR(f(r.value)) : r;
   // => [F#: Result.map f — applies f when Ok; Error passes through unchanged]
 }
@@ -1466,7 +1842,7 @@ function mapR<T, U, E>(r: Result<T, E>, f: (v: T) => U): Result<U, E> {
 type SkuCode = string & { readonly __brand: "SkuCode" };
 
 // A validated SKU code result
-function createSkuCode(raw: string): Result<SkuCode, string> {
+function createSkuCode(raw: string): Result {
   return /^[A-Z]{3}-\d{4,8}$/.test(raw) ? okR(raw as SkuCode) : errR(`Invalid SKU: '${raw}'`);
 }
 
@@ -1491,7 +1867,7 @@ interface LineData {
   readonly qty: number;
   readonly price: number;
 }
-const lineResult: Result<LineData, string> = mapR(
+const lineResult: Result = mapR(
   createSkuCode("ELE-0099"),
   (sku) => ({ sku, qty: 3, price: 899.99 }),
   // => Wraps the valid SKU into a line data record
@@ -1509,6 +1885,72 @@ if (!errLabel.ok) console.log("Error passes through:", errLabel.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovalRouting.hs ──────────
+-- [F#: Result.map; Haskell uses fmap or <$> on Either — Functor instance is built-in]
+-- [Clojure: ok-map helper; Haskell gets identical semantics from the Functor type class]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+
+-- The output of the routing step — derived from an approval level
+data ApprovalRouting = ApprovalRouting
+  { routingLevel  :: ApprovalLevel
+  , approverEmail :: Text
+  , slaDays       :: Int
+  } deriving (Show)
+
+-- Infallible transformation: every ApprovalLevel maps to a routing record
+buildRouting :: ApprovalLevel -> ApprovalRouting
+buildRouting L1 = ApprovalRouting L1 "manager@co.example"   2
+                                                -- => L1: direct manager, 2-day SLA
+buildRouting L2 = ApprovalRouting L2 "dept-head@co.example" 5
+                                                -- => L2: department head, 5-day SLA
+buildRouting L3 = ApprovalRouting L3 "cfo@co.example"       10
+                                                -- => L3: CFO, 10-day SLA
+
+-- A fallible step returning Either Text ApprovalLevel
+deriveLevel :: Double -> Either Text ApprovalLevel
+deriveLevel total
+  | total < 0      = Left "Total cannot be negative"
+                                                -- => guard: negative totals invalid
+  | total <= 1000  = Right L1                   -- => L1 tier
+  | total <= 10000 = Right L2                   -- => L2 tier
+  | otherwise      = Right L3                   -- => L3 tier
+
+-- Using fmap (Functor instance for Either) to apply buildRouting
+routingResult :: Either Text ApprovalRouting
+routingResult = fmap buildRouting (deriveLevel 2784.97)
+                                                -- => Right (ApprovalRouting L2 ...)
+
+-- Equivalent infix syntax with <$> — common in production Haskell
+routingResultInfix :: Either Text ApprovalRouting
+routingResultInfix = buildRouting <$> deriveLevel 2784.97
+                                                -- => same value as routingResult
+
+-- Error case — fmap is skipped; Left passes through unchanged
+errorResult :: Either Text ApprovalRouting
+errorResult = fmap buildRouting (deriveLevel (-1))
+                                                -- => Left "Total cannot be negative"
+
+main :: IO ()
+main = do
+  case routingResult of
+    Right r -> putStrLn $ "Route to " <> show (approverEmail r)
+                                     <> " (SLA: " <> show (slaDays r) <> " days)"
+    -- => Output: Route to "dept-head@co.example" (SLA: 5 days)
+    Left e  -> putStrLn $ "Error: " <> show e
+  case errorResult of
+    Right _ -> putStrLn "Should not reach here"
+    Left  e -> putStrLn $ "Error passthrough: " <> show e
+  -- => Output: Error passthrough: "Total cannot be negative"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.map` applies an infallible transformation to the `Ok` value and passes `Error` through unchanged — keeping the error channel clean without re-wrapping or unwrapping.
@@ -1521,7 +1963,7 @@ if (!errLabel.ok) console.log("Error passes through:", errLabel.error);
 
 `Result.bind` short-circuits on the first error. But form validation requires collecting _all_ errors so the user can fix everything at once. Applicative validation accumulates errors using a custom `Validation` type.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1683,8 +2125,8 @@ match result with
 type ValidationResult<T> =
   | { readonly valid: true; readonly value: T }
   | { readonly valid: false; readonly errors: string[] };
-const validR = <T>(v: T): ValidationResult<T> => ({ valid: true, value: v });
-const invalidR = (errors: string[]): ValidationResult<never> => ({ valid: false, errors });
+const validR = <T>(v: T): ValidationResult => ({ valid: true, value: v });
+const invalidR = (errors: string[]): ValidationResult => ({ valid: false, errors });
 // => [F#: Ok value vs Error (errors : string list) — full list of failures]
 
 // Validate a purchase order line and accumulate ALL errors
@@ -1702,7 +2144,7 @@ interface ValidatedPOLine {
   readonly unit: string;
 }
 
-function validatePOLine(raw: UnvalidatedPOLine): ValidationResult<ValidatedPOLine> {
+function validatePOLine(raw: UnvalidatedPOLine): ValidationResult {
   const errors: string[] = [];
   // => Accumulate all errors rather than short-circuiting
   if (!raw.skuCode || !/^[A-Z]{3}-\d{4,8}$/.test(raw.skuCode)) {
@@ -1748,6 +2190,78 @@ if (goodLine.valid) console.log("Valid line:", goodLine.value.skuCode);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ValidatePOLine.hs ───────────
+-- [F#: applicative apply with custom Validation DU; Haskell uses Validation from `validation` (or `These`)]
+-- [Clojure: filterv some? over a vector of errors; Haskell uses a Semigroup on the error side for accumulation]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Lightweight Validation that accumulates errors via list concatenation
+data Validation e a
+  = Failure [e]                                 -- => one or more errors collected
+  | Success a                                   -- => everything passed
+  deriving (Show)
+
+-- Applicative-like apply: combine errors from both sides
+apV :: Validation e (a -> b) -> Validation e a -> Validation e b
+apV (Success f)    (Success x)    = Success (f x)     -- => both succeed: apply f
+apV (Failure es)   (Success _)    = Failure es        -- => carry function errors
+apV (Success _)    (Failure es)   = Failure es        -- => carry value errors
+apV (Failure es1)  (Failure es2)  = Failure (es1 <> es2)
+                                                       -- => accumulate both sides
+
+-- Field-level validators, each producing a Validation
+validateSku :: Text -> Validation Text Text
+validateSku raw
+  | T.null (T.strip raw) = Failure ["SkuCode is required"]
+                                                -- => blank guard
+  | T.length raw < 5     = Failure ["SkuCode '" <> raw <> "' is too short (min 5 chars)"]
+                                                -- => length guard
+  | otherwise            = Success raw          -- => passes both guards
+
+validateQty :: Int -> Validation Text Int
+validateQty q
+  | q <= 0    = Failure ["Quantity must be > 0, got " <> T.pack (show q)]
+                                                -- => non-positive guard
+  | otherwise = Success q
+
+validatePrice :: Double -> Validation Text Double
+validatePrice p
+  | p <= 0    = Failure ["UnitPrice must be > 0, got " <> T.pack (show p)]
+                                                -- => non-positive guard
+  | otherwise = Success p
+
+-- Validated line — record shape mirrors F#'s ValidLine
+data ValidLine = ValidLine { sku :: Text, qty :: Int, price :: Double } deriving (Show)
+
+-- Accumulate all field errors via three apV applications
+validateLine :: Text -> Int -> Double -> Validation Text ValidLine
+validateLine s q p =
+  Success ValidLine                             -- lift the constructor
+    `apV` validateSku   s                       -- => first field
+    `apV` validateQty   q                       -- => second field
+    `apV` validatePrice p                       -- => third field
+-- => All three failures concatenate into one error list
+
+-- Test: a line with two errors
+result :: Validation Text ValidLine
+result = validateLine "" (-1) 10
+-- => Failure ["SkuCode is required", "Quantity must be > 0, got -1"]
+
+main :: IO ()
+main = case result of
+  Success line -> putStrLn $ "Valid line: " <> show line
+  Failure errs -> mapM_ (\e -> putStrLn ("- " <> T.unpack e)) errs
+  -- => Output: - SkuCode is required
+  -- => Output: - Quantity must be > 0, got -1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Applicative validation accumulates all errors from all fields simultaneously, enabling user-facing form validation that reports every problem at once rather than one at a time.
@@ -1760,7 +2274,7 @@ if (goodLine.valid) console.log("Valid line:", goodLine.value.skuCode);
 
 Computation expressions (a.k.a. "do notation") let you write `Result.bind` chains in imperative-looking syntax without explicit nesting. In F#, the `result { }` CE desugars `let!` to `Result.bind`, making the pipeline read as sequential steps. Clojure achieves the same feel with threading macros (`->>`) plus an early-exit helper; TypeScript uses `async/await`-style patterns or generator-based monads for the same sequential illusion.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1917,27 +2431,26 @@ printfn "%A" blocked
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // A helper that sequences Result steps — mirrors F# result CE
-function resultOf<T, E>(steps: () => Result<T, E>): Result<T, E> {
+function resultOf<T, E>(steps: () => Result): Result {
   try {
     return steps();
   } catch (e) {
-    return errR(e instanceof Error ? e.message : String(e)) as Result<T, E>;
+    return errR(e instanceof Error ? e.message : String(e)) as Result;
   }
 }
 // => resultOf(() => { const x = ...; const y = ... }) mirrors result { ... } CE block
 
 type SkuCode = string & { readonly __brand: "SkuCode" };
-const createSkuCode = (raw: string): Result<SkuCode, string> =>
+const createSkuCode = (raw: string): Result =>
   /^[A-Z]{3}-\d{4,8}$/.test(raw) ? okR(raw as SkuCode) : errR(`Invalid SKU: '${raw}'`);
 
-const createQuantity = (qty: number): Result<number, string> =>
-  qty > 0 ? okR(qty) : errR(`Quantity must be > 0, got ${qty}`);
+const createQuantity = (qty: number): Result => (qty > 0 ? okR(qty) : errR(`Quantity must be > 0, got ${qty}`));
 
-const createUnitPrice = (price: number): Result<number, string> =>
+const createUnitPrice = (price: number): Result =>
   price > 0 ? okR(price) : errR(`UnitPrice must be > 0, got ${price}`);
 
 interface ValidatedLine {
@@ -1947,7 +2460,7 @@ interface ValidatedLine {
 }
 
 // Sequenced validation using explicit binding — mirrors F# result CE
-function validateLine(rawSku: string, rawQty: number, rawPrice: number): Result<ValidatedLine, string> {
+function validateLine(rawSku: string, rawQty: number, rawPrice: number): Result {
   const skuResult = createSkuCode(rawSku);
   // => let! sku = createSkuCode rawSku
   if (!skuResult.ok) return skuResult;
@@ -1975,6 +2488,71 @@ if (!bad.ok) console.log("Error:", bad.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApproveRequisition.hs ───────
+-- [F#: result { let! } computation expression; Haskell uses do-notation on the Either monad]
+-- [Clojure: ok-bind helper; Haskell gets sequential binding from Monad Either for free]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Named errors for the procurement domain
+data ProcurementError
+  = NotFound Text                                -- => requisition id missing
+  | InvalidAmount Double                         -- => total exceeds override threshold
+  | SupplierBlocked Text                         -- => supplier on blocklist
+  deriving (Show)
+
+-- Three fallible steps returning Either
+loadRequisition :: Text -> Either ProcurementError Double
+loadRequisition "req_f4c2" = Right 2784.97       -- => found — return total
+loadRequisition rid        = Left (NotFound rid) -- => missing — named error
+
+checkApprovalBudget :: Double -> Either ProcurementError Double
+checkApprovalBudget total
+  | total > 50000 = Left (InvalidAmount total)   -- => requires special override
+  | otherwise     = Right total                  -- => pass-through
+
+lookupSupplier :: Text -> Either ProcurementError Text
+lookupSupplier "sup_blacklisted" = Left (SupplierBlocked "sup_blacklisted")
+                                                  -- => blocked
+lookupSupplier _                 = Right "approved-supplier"
+                                                  -- => eligible
+
+-- do-notation on Either reads top-to-bottom like F#'s result CE
+approveRequisition :: Text -> Text -> Either ProcurementError Text
+approveRequisition reqId supplierId = do
+  total    <- loadRequisition reqId               -- => <- desugars to >>=
+                                                  --    short-circuits on Left
+  verified <- checkApprovalBudget total           -- => runs only on prior Right
+  supplier <- lookupSupplier supplierId           -- => third sequential step
+  pure $ "Approved: req=" <> reqId
+                          <> " total=" <> T.pack (show verified)
+                          <> " supplier=" <> supplier
+                                                  -- => pure = Right; the happy path
+
+-- Happy path
+happy :: Either ProcurementError Text
+happy = approveRequisition "req_f4c2" "sup_acme"
+-- => Right "Approved: req=req_f4c2 total=2784.97 supplier=approved-supplier"
+
+-- Short-circuit path: supplier blocked
+blocked :: Either ProcurementError Text
+blocked = approveRequisition "req_f4c2" "sup_blacklisted"
+-- => Left (SupplierBlocked "sup_blacklisted")
+
+main :: IO ()
+main = do
+  print happy
+  -- => Output: Right "Approved: req=req_f4c2 total=2784.97 supplier=approved-supplier"
+  print blocked
+  -- => Output: Left (SupplierBlocked "sup_blacklisted")
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `result` computation expression writes `Result.bind` chains in familiar sequential syntax, making complex multi-step procurement pipelines readable without sacrificing functional error propagation.
@@ -1987,7 +2565,7 @@ if (!bad.ok) console.log("Error:", bad.error);
 
 Real procurement workflows involve I/O: loading a requisition from Postgres, calling the approval router API, publishing a domain event. `Async<Result<'T, 'Error>>` composes the two: `Async` handles the effect, `Result` handles the failure.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2129,17 +2707,15 @@ printfn "Result: %A" runResult
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // Branded types
 type RequisitionId = string & { readonly __brand: "RequisitionId" };
 const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
 
 // Simulated async repository (effect at the edge)
-async function fetchRequisitionFromDb(
-  id: RequisitionId,
-): Promise<Result<{ id: RequisitionId; total: number }, string>> {
+async function fetchRequisitionFromDb(id: RequisitionId): Promise {
   await new Promise((r) => setTimeout(r, 0));
   // => Simulates async I/O — real implementation queries a database
   if (!(id as string).startsWith("req_")) return errR(`Requisition ${id} not found`);
@@ -2154,7 +2730,7 @@ function deriveApprovalLevel(total: number): "L1" | "L2" | "L3" {
 }
 
 // Async Result chaining — effect wraps the pure core
-async function getApprovalLevel(rawId: string): Promise<Result<"L1" | "L2" | "L3", string>> {
+async function getApprovalLevel(rawId: string): Promise {
   if (!rawId.startsWith("req_")) return errR(`Invalid RequisitionId: '${rawId}'`);
   // => Synchronous guard at the edge
   const reqResult = await fetchRequisitionFromDb(asRequisitionId(rawId));
@@ -2172,6 +2748,60 @@ const result = await getApprovalLevel("req_f4c2a1b7");
 if (result.ok) console.log("Approval level:", result.value);
 // => Output: Approval level: L2
 else console.log("Error:", result.error);
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: SubmitWorkflowIO.hs ─────────
+-- [F#: Async<Result<'T,'E>>; Haskell uses IO (Either e a), commonly wrapped as ExceptT e IO a]
+-- [Clojure: core.async channels of tagged maps; Haskell composes IO + Either via the monad transformer ExceptT]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Control.Monad.Except (ExceptT(..), runExceptT, throwError, liftIO)
+                                              -- ExceptT layers Either on top of IO
+
+-- Named errors covering both infra and domain failures
+data ProcurementError
+  = DbTimeout                                 -- => infrastructure failure
+  | NotFound Text                             -- => domain lookup miss
+  | PublishFailed Text                        -- => message bus failure
+  deriving (Show)
+
+-- IO-bound load — returns IO (Either e a) so it composes with ExceptT
+loadRequisitionAsync :: Text -> IO (Either ProcurementError Double)
+loadRequisitionAsync "req_f4c2" = pure (Right 2784.97)
+                                              -- => simulated DB hit
+loadRequisitionAsync rid        = pure (Left (NotFound rid))
+                                              -- => simulated miss
+
+publishEventAsync :: Text -> Double -> IO (Either ProcurementError ())
+publishEventAsync reqId total = do
+  putStrLn $ "[EventBus] Publishing RequisitionSubmitted for "
+           <> T.unpack reqId <> " (total: " <> show total <> ")"
+                                              -- side effect happens at the edge
+  pure (Right ())                             -- => simulated successful publish
+
+-- The workflow composes inside ExceptT — Left short-circuits the chain
+submitWorkflow :: Text -> ExceptT ProcurementError IO ()
+submitWorkflow reqId = do
+  total <- ExceptT (loadRequisitionAsync reqId)
+                                              -- => Step 1: lift IO (Either) into ExceptT
+  ExceptT (publishEventAsync reqId total)
+                                              -- => Step 2: only runs if Step 1 succeeded
+
+main :: IO ()
+main = do
+  result <- runExceptT (submitWorkflow "req_f4c2")
+                                              -- runExceptT unwraps to IO (Either e a)
+  case result of
+    Right () -> putStrLn "Result: Ok ()"
+    -- => Output: [EventBus] Publishing RequisitionSubmitted for req_f4c2 (total: 2784.97)
+    -- => Output: Result: Ok ()
+    Left  e  -> putStrLn $ "Result: Error " <> show e
 ```
 
 {{< /tab >}}
@@ -2208,7 +2838,7 @@ graph TD
     style I fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2437,6 +3067,65 @@ console.log(describeDomainError(err2), "->", httpStatusFor(err2));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchasingError.hs ──────────
+-- [F#: discriminated union with exhaustive match; Haskell ADT + pattern match — same compile-time exhaustiveness]
+-- [Clojure: namespaced keywords + multimethod, no exhaustiveness check; Haskell catches missing cases at compile time]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+
+-- Newtype wrappers prevent mixing IDs of different aggregates at the type level
+newtype RequisitionId   = RequisitionId   Text deriving (Show, Eq)
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+newtype SupplierId      = SupplierId      Text deriving (Show, Eq)
+
+-- The complete purchasing-context error ADT — every constructor is a named failure mode
+data PurchasingError
+  = RequisitionNotFound RequisitionId         -- => 404: missing requisition
+  | RequisitionAlreadySubmitted RequisitionId -- => 409: duplicate submit attempt
+  | RequisitionHasNoLines RequisitionId       -- => 422: empty requisition
+  | InvalidSkuCode Text                       -- => 422: malformed SKU
+  | NegativeQuantity Text Int                 -- => 422: non-positive qty
+  | NegativePrice Text Double                 -- => 422: non-positive price
+  | SupplierNotFound SupplierId               -- => 404: missing supplier
+  | SupplierNotApproved SupplierId            -- => 422: supplier off-roster
+  | BudgetExceeded Double Double              -- => 422: required vs available
+  | ApprovalLevelNotMet Text Text             -- => 403: required vs actual level
+  deriving (Show, Eq)
+
+-- Exhaustive pattern match — the compiler warns on any missing constructor with -Wall
+toHttpStatus :: PurchasingError -> Int
+toHttpStatus (RequisitionNotFound      _)       = 404
+toHttpStatus (SupplierNotFound         _)       = 404
+toHttpStatus (RequisitionAlreadySubmitted _)    = 409
+toHttpStatus (ApprovalLevelNotMet      _ _)     = 403
+toHttpStatus (RequisitionHasNoLines    _)       = 422
+toHttpStatus (InvalidSkuCode           _)       = 422
+toHttpStatus (NegativeQuantity         _ _)     = 422
+toHttpStatus (NegativePrice            _ _)     = 422
+toHttpStatus (SupplierNotApproved      _)       = 422
+toHttpStatus (BudgetExceeded           _ _)     = 422
+-- => Every business-rule violation maps to 422 Unprocessable Entity
+
+-- Test
+err1, err2 :: PurchasingError
+err1 = SupplierNotApproved (SupplierId "sup_blocked")
+                                              -- => named failure with payload
+err2 = BudgetExceeded 15000 10000
+                                              -- => named failure with two amounts
+
+main :: IO ()
+main = do
+  putStrLn $ "Status: " <> show (toHttpStatus err1) <> " — " <> show err1
+  -- => Output: Status: 422 — SupplierNotApproved (SupplierId "sup_blocked")
+  putStrLn $ "Status: " <> show (toHttpStatus err2) <> " — " <> show err2
+  -- => Output: Status: 422 — BudgetExceeded 15000.0 10000.0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A comprehensive named error DU makes every failure mode visible, testable, and precisely mappable to API responses — stringly-typed errors or generic exceptions cannot provide this level of precision.
@@ -2493,7 +3182,7 @@ graph LR
     style DI fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2706,6 +3395,85 @@ console.log("PO status:", issued.status, "supplier:", issued.supplierId);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrder.hs ────────────
+-- [F#: DU with anonymous records per case; Haskell uses ADT with one record per state — same illegal-state-impossible guarantee]
+-- [Clojure: :po/status keyword on a map; Haskell encodes status in the type itself, not a field]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+newtype RequisitionId   = RequisitionId   Text deriving (Show, Eq)
+newtype SupplierId      = SupplierId      Text deriving (Show, Eq)
+
+-- Line item record — shared across states that retain lines
+data PoLine = PoLine { sku :: Text, qty :: Int, price :: Double } deriving (Show)
+
+-- Each constructor carries only the fields meaningful in that state
+data PurchaseOrder
+  = Draft            { poId :: PurchaseOrderId
+                     , reqId :: RequisitionId
+                     , lines_ :: [PoLine]
+                     }                                -- => Draft: editable lines
+  | AwaitingApproval { poId :: PurchaseOrderId
+                     , supplier :: SupplierId
+                     , lines_ :: [PoLine]
+                     , total :: Double
+                     }                                -- => Submitted; lines locked
+  | Approved         { poId :: PurchaseOrderId
+                     , supplier :: SupplierId
+                     , total :: Double
+                     , approvedAt :: UTCTime
+                     }                                -- => Approved; ready to issue
+  | Issued           { poId :: PurchaseOrderId
+                     , supplier :: SupplierId
+                     , issuedAt :: UTCTime
+                     }                                -- => Sent to supplier; immutable
+  | Cancelled        { poId :: PurchaseOrderId
+                     , reason :: Text
+                     }                                -- => Off-ramp from any pre-Paid state
+  | Disputed         { poId :: PurchaseOrderId
+                     , disputeReason :: Text
+                     }                                -- => Under dispute
+  deriving (Show)
+
+-- Transition: Draft -> AwaitingApproval; Either Text rejects illegal moves
+submitPO :: SupplierId -> PurchaseOrder -> Either Text PurchaseOrder
+submitPO supId (Draft pid _ ls)
+  | null ls   = Left "Cannot submit a PO with no line items"
+                                                      -- => invariant: at least one line
+  | otherwise = Right $ AwaitingApproval pid supId ls totalAmt
+                                                      -- => compute total at submit time
+  where totalAmt = sum [fromIntegral (qty l) * price l | l <- ls]
+submitPO _ other = Left $ "Cannot submit PO in state: "
+                       <> case other of               -- show only the constructor name
+                            AwaitingApproval{} -> "AwaitingApproval"
+                            Approved{}         -> "Approved"
+                            Issued{}           -> "Issued"
+                            Cancelled{}        -> "Cancelled"
+                            Disputed{}         -> "Disputed"
+                            Draft{}            -> "Draft"   -- unreachable, exhaustive
+
+-- Build a sample Draft PO
+draftPO :: PurchaseOrder
+draftPO = Draft (PurchaseOrderId "po_e3d1f8a0")
+                (RequisitionId   "req_f4c2")
+                [PoLine "ELE-0099" 3 899.99]          -- single-line example
+
+main :: IO ()
+main = do
+  let submitted = submitPO (SupplierId "sup_acme") draftPO
+                                                      -- => Right (AwaitingApproval ... 2699.97)
+  print submitted
+  -- => Output: Right (AwaitingApproval ... {total = 2699.97})
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling `PurchaseOrder` states as discriminated union cases with typed payloads enforces the state machine at the type level — a transition function that accepts `Draft` cannot be accidentally called with `Issued`.
@@ -2718,7 +3486,7 @@ console.log("PO status:", issued.status, "supplier:", issued.supplierId);
 
 When a `PurchaseOrder` transitions to `Issued`, it emits a `PurchaseOrderIssued` event. Domain events are the outputs of aggregate state transitions — they notify downstream contexts (`receiving`, `invoicing`, `supplier-notifier`) that something happened.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2964,6 +3732,85 @@ console.log("Event type:", events[0].type);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderEvents.hs ──────
+-- [F#: DU event payload returned in a tuple with new state; Haskell ADT + tuple — same structural pattern]
+-- [Clojure: plain maps with :event/type; Haskell ADT gives compile-time exhaustive consumer dispatch]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Specific event payloads — each event is its own record
+data PurchaseOrderIssuedEv = PurchaseOrderIssuedEv
+  { evPoId       :: PurchaseOrderId               -- => receiving uses this for GRN expectation
+  , evSupplierId :: SupplierId                    -- => supplier-notifier addresses EDI/email
+  , evIssuedAt   :: UTCTime                       -- => SLA tracking + audit trail
+  , evTotal      :: Double                        -- => accounting records commitment value
+  } deriving (Show)
+
+data RequisitionApprovedEv = RequisitionApprovedEv
+  { evReqId      :: Text                          -- => which requisition was approved
+  , evApprovedBy :: Text                          -- => manager id for audit trail
+  , evApprovedAt :: UTCTime                       -- => SLA reporting reads this
+  } deriving (Show)
+
+-- Union of all purchasing events — consumers pattern-match exhaustively
+data PurchasingEvent
+  = EvPurchaseOrderIssued    PurchaseOrderIssuedEv
+  | EvRequisitionApproved    RequisitionApprovedEv
+  | EvPurchaseOrderCancelled PurchaseOrderId Text  -- => carries reason for accounting reversal
+  deriving (Show)
+
+-- State records — minimal for the example
+data PoLine     = PoLine { sku :: Text, qty :: Int, price :: Double } deriving (Show)
+data ApprovedPo = ApprovedPo
+  { apId         :: PurchaseOrderId
+  , apSupplier   :: SupplierId
+  , apLines      :: [PoLine]
+  , apTotal      :: Double
+  , apApprovedAt :: UTCTime
+  } deriving (Show)
+data IssuedPo   = IssuedPo
+  { ipId         :: PurchaseOrderId
+  , ipSupplier   :: SupplierId
+  , ipIssuedAt   :: UTCTime
+  } deriving (Show)
+
+-- Transition returns (newState, events) — emission is structural, not optional
+issuePO :: ApprovedPo -> IO (IssuedPo, [PurchasingEvent])
+issuePO ap = do
+  ts <- getCurrentTime                            -- capture once; used in state + event
+  let newState = IssuedPo (apId ap) (apSupplier ap) ts
+      event    = EvPurchaseOrderIssued
+                   (PurchaseOrderIssuedEv (apId ap) (apSupplier ap) ts (apTotal ap))
+                                                  -- payload mirrors apTotal for accounting
+  pure (newState, [event])
+                                                  -- => caller routes events to the bus
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  let approvedPo = ApprovedPo
+        (PurchaseOrderId "po_e3d1f8a0")
+        (SupplierId      "sup_acme")
+        [PoLine "ELE-0099" 3 899.99]
+        2699.97
+        now
+  (issuedState, events) <- issuePO approvedPo
+                                                  -- => transition + events together
+  putStrLn $ "Issued: " <> show (ipId issuedState)
+  -- => Output: Issued: PurchaseOrderId "po_e3d1f8a0"
+  putStrLn $ "Events: " <> show (length events)
+  -- => Output: Events: 1
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: State transition functions that return `(newState, events)` pairs keep event emission co-located with the state change — ensuring events are always emitted when the transition occurs, never accidentally omitted.
@@ -2987,7 +3834,7 @@ stateDiagram-v2
     Blacklisted --> [*] : permanent exclusion
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3237,6 +4084,84 @@ console.log(describeSupplier(approved));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Supplier.hs ─────────────────
+-- [F#: DU SupplierStatus + record Supplier; Haskell models status as a sum type embedded in the record]
+-- [Clojure: keyword-tagged map; Haskell encodes status with type-level distinction via ADT]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+
+newtype SupplierId = SupplierId Text deriving (Show, Eq)
+newtype Email      = Email      Text deriving (Show, Eq)
+
+-- Supplier lifecycle states — exactly one is active at a time
+data SupplierStatus
+  = Pending                                       -- => awaiting compliance vetting
+  | Approved                                      -- => eligible for new POs
+  | Suspended                                     -- => temporarily ineligible
+  | Blacklisted                                   -- => permanently excluded
+  deriving (Show, Eq)
+
+-- Supplier aggregate root
+data Supplier = Supplier
+  { supplierId  :: SupplierId
+  , supplierNm  :: Text                           -- legal entity name
+  , supplierEm  :: Email                          -- primary contact email
+  , status      :: SupplierStatus                 -- current lifecycle state
+  , riskScore   :: Maybe Int                      -- Nothing until vetting complete
+  } deriving (Show)
+
+-- Domain events emitted by supplier transitions
+data SupplierEvent
+  = SupplierApproved    SupplierId               -- => purchasing updates eligible list
+  | SupplierSuspended   SupplierId Text          -- => purchasing blocks new POs
+  | SupplierBlacklisted SupplierId Text          -- => purchasing forces existing POs to Disputed
+  deriving (Show)
+
+-- Transition: approve a Pending supplier
+approveSupplier :: Int -> Supplier -> Either Text (Supplier, [SupplierEvent])
+approveSupplier rs supplier
+  | status supplier /= Pending =
+      Left $ "Cannot approve a supplier in state: " <> textOf (status supplier)
+                                                    -- guard: only Pending may be approved
+  | rs < 0 || rs > 100 =
+      Left $ "Risk score must be 0-100, got " <> textOf rs
+                                                    -- guard: risk score range
+  | otherwise =
+      Right ( supplier { status = Approved, riskScore = Just rs }
+                                                    -- record update via copy syntax
+            , [SupplierApproved (supplierId supplier)]
+                                                    -- emit SupplierApproved
+            )
+  where textOf x = pack (show x)
+        pack = id . (\s -> s) . (Data.Text.pack . show) -- inline alias to avoid extra import
+        -- demo-only show helper; production code would use Data.Text.pack directly
+
+-- Test
+pendingSupplier :: Supplier
+pendingSupplier = Supplier
+  { supplierId = SupplierId "sup_acme_001"
+  , supplierNm = "Acme Office Supplies Pte Ltd"
+  , supplierEm = Email "procurement@acme-supplies.com"
+  , status     = Pending                            -- starts at Pending
+  , riskScore  = Nothing                            -- not yet vetted
+  }
+
+main :: IO ()
+main = case approveSupplier 35 pendingSupplier of
+  Right (s, events) -> do
+    putStrLn $ "Supplier status: " <> show (status s)
+                                  <> ", risk: " <> show (riskScore s)
+    -- => Output: Supplier status: Approved, risk: Just 35
+    putStrLn $ "Events emitted: " <> show (length events)
+    -- => Output: Events emitted: 1
+  Left e -> putStrLn $ "Error: " <> show e
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `Supplier` aggregate's discriminated union status makes eligibility checks (`isEligibleForNewPO`) compile-time safe — the purchasing context checks the status before creating a PO, and the status field cannot be in an undefined intermediate state.
@@ -3269,7 +4194,7 @@ graph TD
     style ReqRef fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3492,6 +4417,79 @@ console.log("Lines count:", withLine.lines.length);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderAgg.hs ─────────
+-- [F#: record + DU; Haskell record + ADT — owns its lines, references other aggregates by id]
+-- [Clojure: namespaced keys; Haskell uses newtype wrappers for cross-aggregate id distinction]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+-- Cross-aggregate references are id-only — never embed full aggregates
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+newtype SupplierId      = SupplierId      Text deriving (Show, Eq)  -- => reference only
+newtype RequisitionId   = RequisitionId   Text deriving (Show, Eq)  -- => reference only
+
+-- Line owned inside the PO aggregate
+data PoLine = PoLine
+  { lineNumber :: Int
+  , sku        :: Text
+  , quantity   :: Int
+  , unitPrice  :: Double
+  } deriving (Show)
+
+-- Status lives inside the boundary — must stay consistent with lines
+data PoStatus = Draft | AwaitingApproval | Approved | Issued | Cancelled
+  deriving (Show, Eq)
+
+-- Aggregate root: only fields that must update atomically
+data PurchaseOrderAgg = PurchaseOrderAgg
+  { poId          :: PurchaseOrderId             -- aggregate identity
+  , poReqId       :: RequisitionId               -- id-only reference
+  , poSupplierId  :: SupplierId                  -- id-only reference
+  , poStatus      :: PoStatus                    -- inside boundary
+  , poLines       :: [PoLine]                    -- inside boundary; owned
+  , poTotal       :: Double                      -- derived; stored for perf
+  , poUpdatedAt   :: UTCTime                     -- optimistic concurrency token
+  } deriving (Show)
+
+-- Invariant enforcer: lines can only change while Draft
+addLine :: PoLine -> PurchaseOrderAgg -> IO (Either Text PurchaseOrderAgg)
+addLine line po = case poStatus po of
+  Draft -> do
+    now <- getCurrentTime                        -- single timestamp for atomic update
+    let newLines = poLines po <> [line]          -- append, returning new list
+        newTotal = sum [fromIntegral (quantity l) * unitPrice l | l <- newLines]
+                                                  -- recompute total inside boundary
+    pure $ Right po { poLines = newLines
+                    , poTotal = newTotal
+                    , poUpdatedAt = now
+                    }                            -- atomic three-field update
+  AwaitingApproval -> pure $ Left "Lines are locked — PO has been submitted"
+  Approved         -> pure $ Left "Lines are locked — PO has been approved"
+  Issued           -> pure $ Left "Lines are locked — PO has been issued"
+  Cancelled        -> pure $ Left "Cannot add lines to a Cancelled PO"
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  let emptyDraft = PurchaseOrderAgg
+        (PurchaseOrderId "po_e3d1")
+        (RequisitionId   "req_f4c2")
+        (SupplierId      "sup_acme")
+        Draft [] 0 now                           -- new Draft PO with no lines
+  result <- addLine (PoLine 1 "ELE-0099" 3 899.99) emptyDraft
+  case result of
+    Right po -> putStrLn $ "Lines: " <> show (length (poLines po))
+                                    <> ", Total: " <> show (poTotal po)
+    -- => Output: Lines: 1, Total: 2699.97
+    Left e   -> putStrLn $ "Error: " <> show e
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An aggregate owns everything that must be consistent together and references other aggregates by ID only — this keeps transaction boundaries small and prevents cross-aggregate consistency violations.
@@ -3504,7 +4502,7 @@ console.log("Lines count:", withLine.lines.length);
 
 Primitive obsession is the anti-pattern of using raw `string`, `int`, or `decimal` where a domain type should be used. This example shows a before/after refactor of a PO approval function that suffers from primitive obsession and the improvement from introducing typed wrappers.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3679,6 +4677,60 @@ if (sku && supplier && currency) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: TypedIds.hs ─────────────────
+-- [F#: single-case DU wrappers; Haskell uses newtype — zero-cost, compile-time distinction]
+-- [Clojure: namespaced keys + spec; Haskell catches ID swaps at compile time without runtime checks]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+-- BEFORE: primitive obsession — both ids are Text, indistinguishable to the compiler
+approvePrimitive :: Text -> Text -> UTCTime -> Text
+approvePrimitive poId approverId at =
+  "PO " <> poId <> " approved by " <> approverId <> " at " <> T.pack (show at)
+-- => caller can swap poId and approverId; compiler won't flag it
+
+-- AFTER: newtype wrappers create distinct types
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+                                                    -- => identity for purchase orders
+newtype ApproverId      = ApproverId      Text deriving (Show, Eq)
+                                                    -- => identity for approvers
+
+-- Value object grouping the three components of an approval
+data ApprovalRecord = ApprovalRecord
+  { recPoId       :: PurchaseOrderId               -- typed PO id
+  , recApproverId :: ApproverId                    -- typed approver id
+  , recApprovedAt :: UTCTime                       -- immutable timestamp
+  } deriving (Show)
+
+-- Now swapping arguments is a compile error
+approveTyped :: PurchaseOrderId -> ApproverId -> UTCTime -> ApprovalRecord
+approveTyped poId aid at = ApprovalRecord poId aid at
+                                                    -- => returns a structured record
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  let record = approveTyped
+                 (PurchaseOrderId "po_e3d1f8a0")    -- typed PO id
+                 (ApproverId      "emp_mgr_007")    -- typed approver id
+                 now
+  putStrLn $ "Approved: PO=po_e3d1f8a0 by=emp_mgr_007"
+  -- => Output: Approved: PO=po_e3d1f8a0 by=emp_mgr_007
+  print record
+  -- => Output: ApprovalRecord {recPoId = PurchaseOrderId "po_e3d1f8a0", ...}
+
+  -- Try uncommenting the next line — it will not compile:
+  -- let bad = approveTyped (ApproverId "emp_mgr_007") (PurchaseOrderId "po_e3d1f8a0") now
+  -- => GHC rejects with "expected PurchaseOrderId, got ApproverId"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Replacing raw primitives with named wrapper types eliminates the ID-confusion class of bugs at compile time — the cost is minimal syntactic overhead for a permanent correctness guarantee.
@@ -3691,7 +4743,7 @@ if (sku && supplier && currency) {
 
 The validation step of the approval workflow produces a `ValidatedPurchaseOrder` — a type that can only exist if all business rules passed. Downstream functions accept this type, not the raw `UnvalidatedPurchaseOrderCommand`, making the validation guarantee structural.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3885,7 +4937,7 @@ const asPOId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
 // The raw DTO arriving from the HTTP layer
 interface UnvalidatedPO {
   readonly supplierId: string;
-  readonly lines: ReadonlyArray<{ skuCode: string; qty: number; unitPrice: number }>;
+  readonly lines: ReadonlyArray;
 }
 // => All fields are primitives — domain invariants not yet checked
 
@@ -3894,17 +4946,17 @@ interface ValidatedPurchaseOrder {
   readonly __validated: true; // phantom field — prevents accidental construction
   readonly purchaseOrderId: PurchaseOrderId;
   readonly supplierId: SupplierId;
-  readonly lines: ReadonlyArray<{ skuCode: SkuCode; qty: number; unitPrice: number }>;
+  readonly lines: ReadonlyArray;
   readonly validatedAt: string;
 }
 // => ValidatedPurchaseOrder : emitted only by validatePO — downstream steps can trust it
 
 // The validation step — the only function that can produce a ValidatedPurchaseOrder
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
-function validatePO(raw: UnvalidatedPO): Result<ValidatedPurchaseOrder, string> {
+function validatePO(raw: UnvalidatedPO): Result {
   if (!raw.supplierId.startsWith("sup_")) return errR(`Invalid SupplierId: '${raw.supplierId}'`);
   if (raw.lines.length === 0) return errR("PO must have at least one line");
   const lines = raw.lines.map((l) => ({ skuCode: l.skuCode as SkuCode, qty: l.qty, unitPrice: l.unitPrice }));
@@ -3926,6 +4978,94 @@ if (result.ok) console.log("Validated PO:", result.value.purchaseOrderId, result
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ValidatedPurchaseOrder.hs ───
+-- [F#: distinct ValidatedPurchaseOrder record produced by validation; Haskell uses a separate ADT — same parse-don't-validate guarantee]
+-- [Clojure: tagged map with spec validation; Haskell encodes the validation stage in the type itself]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Raw command arriving from the HTTP layer
+data CreatePOCommand = CreatePOCommand
+  { rawReqId    :: Text                       -- raw — may be blank
+  , rawSupId    :: Text                       -- raw — may be blank
+  , rawLines    :: [(Text, Int, Double)]      -- raw tuples — not validated
+  } deriving (Show)
+
+-- Validated line — invariants met by construction
+data ValidatedPoLine = ValidatedPoLine
+  { vlSku   :: Text                           -- format-checked SKU
+  , vlQty   :: Int                            -- > 0 guarantee
+  , vlPrice :: Double                         -- > 0 guarantee
+  } deriving (Show)
+
+-- Validated PO — only producible by validateCreatePO
+data ValidatedPurchaseOrder = ValidatedPurchaseOrder
+  { vpoId     :: PurchaseOrderId              -- assigned at validation time
+  , vpoReqId  :: Text                         -- validated non-blank
+  , vpoSupId  :: SupplierId                   -- validated, wrapped
+  , vpoLines  :: [ValidatedPoLine]            -- all lines validated
+  , vpoTotal  :: Double                       -- computed from validated lines
+  } deriving (Show)
+
+-- Validate a single line (1-based index for human-friendly error messages)
+validateLine :: Int -> (Text, Int, Double) -> Either Text ValidatedPoLine
+validateLine i (sku, qty, price)
+  | qty   <= 0 = Left $ "Line " <> T.pack (show i) <> ": quantity must be > 0"
+  | price <= 0 = Left $ "Line " <> T.pack (show i) <> ": price must be > 0"
+  | otherwise  = Right (ValidatedPoLine sku qty price)
+
+-- Sole constructor for ValidatedPurchaseOrder
+validateCreatePO :: CreatePOCommand -> Either Text ValidatedPurchaseOrder
+validateCreatePO cmd
+  | T.null (T.strip (rawReqId cmd)) = Left "RequisitionId required"
+                                                -- guard 1
+  | T.null (T.strip (rawSupId cmd)) = Left "SupplierId required"
+                                                -- guard 2
+  | null (rawLines cmd)             = Left "At least one line item required"
+                                                -- guard 3
+  | otherwise = do
+      let lineResults = zipWith validateLine [1..] (rawLines cmd)
+                                                -- validate each line
+          errs        = [e | Left e <- lineResults]
+                                                -- collect all error messages
+      if not (null errs)
+        then Left (T.intercalate "; " errs)     -- concatenate errors
+        else do
+          let valids = [v | Right v <- lineResults]
+              total  = sum [fromIntegral (vlQty l) * vlPrice l | l <- valids]
+                                                -- total from validated lines
+          Right ValidatedPurchaseOrder
+            { vpoId    = PurchaseOrderId "po_a1b2c3d4"  -- production: UUID
+            , vpoReqId = rawReqId cmd
+            , vpoSupId = SupplierId (rawSupId cmd)
+            , vpoLines = valids
+            , vpoTotal = total
+            }
+
+-- Test
+testCmd :: CreatePOCommand
+testCmd = CreatePOCommand "req_f4c2" "sup_acme"
+            [ ("ELE-0099", 3,  899.99)
+            , ("OFF-0042", 10, 8.50)
+            ]                                   -- both lines valid
+
+main :: IO ()
+main = case validateCreatePO testCmd of
+  Right po -> putStrLn $ "Validated PO: " <> show (vpoId po)
+                                        <> " total=" <> show (vpoTotal po)
+  -- => Output: Validated PO: PurchaseOrderId "po_a1b2c3d4" total=2784.97
+  Left e   -> putStrLn $ "Error: " <> show e
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Introducing a `ValidatedPurchaseOrder` type makes the validation guarantee structural — downstream functions that accept it cannot be called before validation runs, because the type cannot be constructed any other way.
@@ -3938,7 +5078,7 @@ if (result.ok) console.log("Validated PO:", result.value.purchaseOrderId, result
 
 After an `Approved` PO is issued to the supplier, it enters the `Issued` state. The `IssuedPurchaseOrder` type carries the issuance timestamp and the event that was emitted, providing a typed record that downstream steps (receiving context) can depend on.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4082,7 +5222,7 @@ type SkuCode = string & { readonly __brand: "SkuCode" };
 interface ApprovedPurchaseOrder {
   readonly purchaseOrderId: PurchaseOrderId;
   readonly supplierId: SupplierId;
-  readonly lines: ReadonlyArray<{ skuCode: SkuCode; qty: number; unitPrice: number }>;
+  readonly lines: ReadonlyArray;
   readonly approvedAt: string;
 }
 
@@ -4091,7 +5231,7 @@ interface IssuedPurchaseOrder {
   readonly __issued: true; // phantom field — marks this as issued
   readonly purchaseOrderId: PurchaseOrderId;
   readonly supplierId: SupplierId;
-  readonly lines: ReadonlyArray<{ skuCode: SkuCode; qty: number; unitPrice: number }>;
+  readonly lines: ReadonlyArray;
   readonly approvedAt: string;
   readonly issuedAt: string;
   readonly expectedDelivery: string;
@@ -4099,11 +5239,11 @@ interface IssuedPurchaseOrder {
 // => IssuedPurchaseOrder can only be created by issuePO — downstream trusts it
 
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // The issue step — the only function that can produce an IssuedPurchaseOrder
-function issuePO(approved: ApprovedPurchaseOrder, expectedDelivery: string): Result<IssuedPurchaseOrder, string> {
+function issuePO(approved: ApprovedPurchaseOrder, expectedDelivery: string): Result {
   if (!expectedDelivery) return errR("Expected delivery date is required");
   return okR({
     __issued: true,
@@ -4126,6 +5266,70 @@ const approved: ApprovedPurchaseOrder = {
 const result = issuePO(approved, "2026-06-15");
 if (result.ok) console.log("Issued PO:", result.value.purchaseOrderId, "delivery:", result.value.expectedDelivery);
 // => Output: Issued PO: po_e3d1f8a0 delivery: 2026-06-15
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: IssuePO.hs ──────────────────
+-- [F#: tuple return (IssuedPurchaseOrder * Event); Haskell uses a plain tuple — event emission is structurally required]
+-- [Clojure: vector return [state event]; Haskell tuple gives same "both outputs required" contract]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Input: the approved PO ready to be issued
+data ApprovedPurchaseOrder = ApprovedPurchaseOrder
+  { apoId         :: PurchaseOrderId           -- same id throughout lifecycle
+  , apoSupplierId :: SupplierId                -- supplier receiving the order
+  , apoTotal      :: Double                    -- total locked at approval
+  , apoApprovedAt :: UTCTime                   -- audit trail for the transition
+  } deriving (Show)
+
+-- Output: the issued PO state — only fields meaningful post-issuance
+data IssuedPurchaseOrder = IssuedPurchaseOrder
+  { ipoId         :: PurchaseOrderId           -- preserve identity
+  , ipoSupplierId :: SupplierId                -- supplier receiving
+  , ipoIssuedAt   :: UTCTime                   -- transmission timestamp
+  } deriving (Show)
+
+-- Domain event produced by issuance — fields needed by downstream consumers
+data PurchaseOrderIssuedEvent = PurchaseOrderIssuedEvent
+  { evtPoId        :: PurchaseOrderId          -- routes the event
+  , evtSupplierId  :: SupplierId               -- supplier context routing
+  , evtIssuedAt    :: UTCTime                  -- SLA tracking
+  , evtTotalAmount :: Double                   -- accounting/receiving consumer payload
+  } deriving (Show)
+
+-- Issue transition: returns (state, event); caller cannot discard the event
+issuePO :: ApprovedPurchaseOrder -> IO (IssuedPurchaseOrder, PurchaseOrderIssuedEvent)
+issuePO approved = do
+  now <- getCurrentTime                        -- same timestamp in state + event
+  let issued = IssuedPurchaseOrder (apoId approved) (apoSupplierId approved) now
+      event  = PurchaseOrderIssuedEvent
+                 (apoId approved) (apoSupplierId approved) now (apoTotal approved)
+  pure (issued, event)
+                                                -- => structural co-emission
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  let approved = ApprovedPurchaseOrder
+                   (PurchaseOrderId "po_e3d1f8a0")
+                   (SupplierId      "sup_acme")
+                   2699.97
+                   now
+  (issued, event) <- issuePO approved
+  putStrLn $ "Issued PO: " <> show (ipoId issued)
+                          <> " at "  <> show (ipoIssuedAt issued)
+  -- => Output: Issued PO: PurchaseOrderId "po_e3d1f8a0" at ...
+  putStrLn $ "Event total: " <> show (evtTotalAmount event)
+  -- => Output: Event total: 2699.97
 ```
 
 {{< /tab >}}
@@ -4159,7 +5363,7 @@ graph TD
     style Out fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4319,8 +5523,8 @@ printfn "ApprovePO workflow signature defined — dependencies are function para
 // [Clojure: defn with injected function args; TS uses dependency parameter objects]
 
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
@@ -4344,16 +5548,16 @@ type POApprovedEvent = {
 
 // Dependencies the ApprovePO workflow needs — injected, not imported
 interface ApprovePODeps {
-  readonly getApprovalThreshold: (requestedBy: string) => Promise<number>;
+  readonly getApprovalThreshold: (requestedBy: string) => Promise;
   // => Looks up the approval threshold for this employee's level — async I/O
-  readonly savePO: (po: ApprovedPO) => Promise<void>;
+  readonly savePO: (po: ApprovedPO) => Promise;
   // => Persists the approved PO to the database — async I/O
   readonly currentApprover: string;
   // => The identity of the approver — injected at the edge
 }
 
 // The workflow function type — dependencies are explicit parameters
-type ApprovePOWorkflow = (deps: ApprovePODeps, po: PendingApprovalPO) => Promise<Result<POApprovedEvent, string>>;
+type ApprovePOWorkflow = (deps: ApprovePODeps, po: PendingApprovalPO) => Promise;
 
 // Implementation
 const approvePO: ApprovePOWorkflow = async (deps, po) => {
@@ -4378,6 +5582,99 @@ console.log("ApprovePO workflow signature defined — dependencies are explicit 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovePOWorkflow.hs ────────
+-- [F#: type aliases for each port; Haskell uses type aliases over function types — same compile-time contract]
+-- [Clojure: explicit fn arguments + docstring contract; Haskell encodes the contract in the type signature]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+newtype ApproverId      = ApproverId      Text deriving (Show)
+
+-- Command DTO from the HTTP layer
+data ApprovePOCommand = ApprovePOCommand
+  { cmdPoId :: Text                              -- raw PO id from request body
+  , cmdApId :: Text                              -- raw approver id from JWT
+  } deriving (Show)
+
+-- Named domain errors — each maps to an HTTP status at the boundary
+data ApprovalError
+  = PONotFound       Text
+  | AlreadyApproved  PurchaseOrderId
+  | SupplierBlocked  SupplierId
+  | InsufficientAuth ApproverId
+  deriving (Show)
+
+-- Port aliases — dependencies expressed as function types (no classes, no DI container)
+type LoadPurchaseOrder        =
+  PurchaseOrderId -> IO (Either ApprovalError (Double, SupplierId))
+                                                  -- => returns total + supplier id
+
+type CheckSupplierEligibility =
+  SupplierId -> IO (Either ApprovalError ())
+                                                  -- => Ok () if supplier Approved
+
+type RecordApproval           =
+  PurchaseOrderId -> ApproverId -> IO (Either ApprovalError ())
+                                                  -- => persists approval record
+
+-- Workflow signature — dependencies are explicit function parameters
+type ApprovePOWorkflow =
+     LoadPurchaseOrder
+  -> CheckSupplierEligibility
+  -> RecordApproval
+  -> ApprovePOCommand
+  -> IO (Either ApprovalError Text)
+                                                  -- => returns confirmation text
+
+-- One implementation of the workflow shape; production wires real adapters
+approvePO :: ApprovePOWorkflow
+approvePO loadPO checkSupplier recordApproval cmd = do
+  let poId  = PurchaseOrderId (cmdPoId cmd)
+      apvId = ApproverId      (cmdApId cmd)
+                                                  -- wrap raw IDs at the boundary
+  loadResult <- loadPO poId
+  case loadResult of
+    Left e -> pure (Left e)                       -- => short-circuit on load failure
+    Right (_total, supId) -> do
+      checkResult <- checkSupplier supId          -- => Step 2: supplier eligibility
+      case checkResult of
+        Left e  -> pure (Left e)
+        Right () -> do
+          recResult <- recordApproval poId apvId  -- => Step 3: persist approval
+          case recResult of
+            Left  e  -> pure (Left e)
+            Right () -> pure $ Right $
+              "PO " <> cmdPoId cmd <> " approved by " <> cmdApId cmd
+                                                  -- => happy path summary
+
+-- Stub adapters for testing — replace with real adapters at the composition root
+stubLoadPO :: LoadPurchaseOrder
+stubLoadPO _ = pure (Right (2699.97, SupplierId "sup_acme"))
+
+stubCheckSupplier :: CheckSupplierEligibility
+stubCheckSupplier _ = pure (Right ())
+
+stubRecordApproval :: RecordApproval
+stubRecordApproval _ _ = pure (Right ())
+
+main :: IO ()
+main = do
+  let cmd = ApprovePOCommand "po_e3d1" "emp_mgr_007"
+  result <- approvePO stubLoadPO stubCheckSupplier stubRecordApproval cmd
+  case result of
+    Right msg -> putStrLn $ T.unpack msg
+    -- => Output: PO po_e3d1 approved by emp_mgr_007
+    Left  e   -> putStrLn $ "Error: " <> show e
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Expressing workflow dependencies as function-type parameters makes the contract explicit — the caller must supply real or test implementations for every dependency, and the compiler verifies the types match.
@@ -4390,7 +5687,7 @@ console.log("ApprovePO workflow signature defined — dependencies are explicit 
 
 The `IssuePO` workflow composes four steps: load the approved PO, verify it is in `Approved` state, persist the `Issued` state, and publish the `PurchaseOrderIssued` event. Each dependency is a function type parameter.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4567,8 +5864,8 @@ match result with
 // [Clojure: defn with injected function args; TS uses dependency parameter object]
 
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
@@ -4595,17 +5892,17 @@ type POIssuedEvent = {
 
 // Dependencies the IssuePO workflow needs — injected, not imported
 interface IssuePODeps {
-  readonly validateSupplierStatus: (supplierId: SupplierId) => Promise<boolean>;
+  readonly validateSupplierStatus: (supplierId: SupplierId) => Promise;
   // => Checks that the supplier is still Approved — async I/O
-  readonly savePO: (po: IssuedPO) => Promise<void>;
+  readonly savePO: (po: IssuedPO) => Promise;
   // => Persists the issued PO — async I/O
-  readonly notifySupplier: (supplierId: SupplierId, poId: PurchaseOrderId) => Promise<void>;
+  readonly notifySupplier: (supplierId: SupplierId, poId: PurchaseOrderId) => Promise;
   // => Sends PO to supplier via EDI or email — async I/O
   readonly computeExpectedDelivery: (supplierId: SupplierId) => string;
   // => Computes delivery date from supplier SLA rules — pure function injected
 }
 
-type IssuePOWorkflow = (deps: IssuePODeps, approved: ApprovedPO) => Promise<Result<POIssuedEvent, string>>;
+type IssuePOWorkflow = (deps: IssuePODeps, approved: ApprovedPO) => Promise;
 
 const issuePO: IssuePOWorkflow = async (deps, approved) => {
   const supplierOk = await deps.validateSupplierStatus(approved.supplierId);
@@ -4631,6 +5928,90 @@ console.log("IssuePO workflow signature defined — all effects injected as depe
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: IssuePOWorkflow.hs ──────────
+-- [F#: Async<Result<>> + port aliases; Haskell uses IO + Either with type aliases for each port]
+-- [Clojure: core.async channels of tagged maps; Haskell composes the same four steps via do-notation]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- States and event payload
+data IssuedPO = IssuedPO
+  { ipoId         :: PurchaseOrderId
+  , ipoSupplierId :: SupplierId
+  , ipoIssuedAt   :: UTCTime
+  } deriving (Show)
+
+data PoIssuedEvent = PoIssuedEvent
+  { peId         :: PurchaseOrderId
+  , peSupplierId :: SupplierId
+  , peIssuedAt   :: UTCTime
+  , peTotal      :: Double
+  } deriving (Show)
+
+-- Each constructor drives a different alert + retry policy
+data IssueError
+  = PONotFound    PurchaseOrderId               -- => 404
+  | NotApproved   PurchaseOrderId               -- => 422: wrong state
+  | SaveFailed    Text                          -- => 503, retry-eligible
+  | PublishFailed Text                          -- => 503, retry-eligible
+  deriving (Show)
+
+-- Port aliases — each dependency is a function type
+type LoadApprovedPO = PurchaseOrderId -> IO (Either IssueError (Double, SupplierId))
+type SaveIssuedPO   = IssuedPO        -> IO (Either IssueError ())
+type PublishEvent   = PoIssuedEvent   -> IO (Either IssueError ())
+
+-- Four sequential steps; short-circuits on the first Left
+issuePOWorkflow
+  :: LoadApprovedPO -> SaveIssuedPO -> PublishEvent
+  -> PurchaseOrderId
+  -> IO (Either IssueError IssuedPO)
+issuePOWorkflow load save publish poId = do
+  loadR <- load poId
+  case loadR of
+    Left e -> pure (Left e)                     -- => Step 1 short-circuit
+    Right (total, supId) -> do
+      now <- getCurrentTime                     -- single timestamp for state + event
+      let issued = IssuedPO poId supId now
+          event  = PoIssuedEvent poId supId now total
+      saveR <- save issued                      -- => Step 2: persist new state
+      case saveR of
+        Left e -> pure (Left e)                 --   short-circuit on DB failure
+        Right () -> do
+          pubR <- publish event                 -- => Step 3: publish to event bus
+          case pubR of
+            Left e   -> pure (Left e)           --   short-circuit on publish failure
+            Right () -> pure (Right issued)     -- => Step 4: return new state
+
+-- Stub adapters for testing
+stubLoad :: LoadApprovedPO
+stubLoad _ = pure (Right (2699.97, SupplierId "sup_acme"))
+
+stubSave :: SaveIssuedPO
+stubSave _ = pure (Right ())
+
+stubPublish :: PublishEvent
+stubPublish _ = pure (Right ())
+
+main :: IO ()
+main = do
+  result <- issuePOWorkflow stubLoad stubSave stubPublish (PurchaseOrderId "po_e3d1")
+  case result of
+    Right issued -> putStrLn $ "Issued: " <> show (ipoId issued)
+                                         <> " at "  <> show (ipoIssuedAt issued)
+    -- => Output: Issued: PurchaseOrderId "po_e3d1" at ...
+    Left  e      -> putStrLn $ "Error: " <> show e
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A four-step async workflow expressed with typed function dependencies is fully testable with in-memory stubs — no database, no Kafka, no network required to test the workflow logic.
@@ -4643,7 +6024,7 @@ console.log("IssuePO workflow signature defined — all effects injected as depe
 
 Once a `PurchaseOrder` is issued to the supplier, the supplier acknowledges receipt. The `AcknowledgePO` workflow transitions `Issued → Acknowledged` and emits `PurchaseOrderAcknowledged`, which opens a GRN expectation in the receiving context.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4860,8 +6241,8 @@ match result with
 // [Clojure: defn with injected function args; TS explicit dependency parameter]
 
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
@@ -4890,17 +6271,13 @@ type POAcknowledgedEvent = {
 interface AcknowledgePODeps {
   readonly getCurrentTime: () => string;
   // => Current UTC timestamp — injected so the workflow is deterministic in tests
-  readonly savePO: (po: AcknowledgedPO) => Promise<void>;
+  readonly savePO: (po: AcknowledgedPO) => Promise;
   // => Persists the acknowledged state — async I/O at the edge
-  readonly sendAcknowledgmentNotification: (poId: PurchaseOrderId) => Promise<void>;
+  readonly sendAcknowledgmentNotification: (poId: PurchaseOrderId) => Promise;
   // => Notifies the purchasing team — async I/O at the edge
 }
 
-type AcknowledgePOWorkflow = (
-  deps: AcknowledgePODeps,
-  issued: IssuedPO,
-  confirmedDelivery: string,
-) => Promise<Result<POAcknowledgedEvent, string>>;
+type AcknowledgePOWorkflow = (deps: AcknowledgePODeps, issued: IssuedPO, confirmedDelivery: string) => Promise;
 
 const acknowledgePO: AcknowledgePOWorkflow = async (deps, issued, confirmedDelivery) => {
   if (!confirmedDelivery) return errR("Confirmed delivery date is required");
@@ -4918,6 +6295,97 @@ const acknowledgePO: AcknowledgePOWorkflow = async (deps, issued, confirmedDeliv
 
 console.log("AcknowledgePO workflow signature defined — timestamp is an injected dependency");
 // => Output: AcknowledgePO workflow signature defined — timestamp is an injected dependency
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: AcknowledgePOWorkflow.hs ────
+-- [F#: same load/save/publish ports — Haskell uses identical function-type aliases]
+-- [Clojure: docstring contract; Haskell encodes contract in the type signature]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Acknowledged state — opens the GRN receiving window
+data AcknowledgedPO = AcknowledgedPO
+  { ackPoId             :: PurchaseOrderId
+  , ackSupplierId       :: SupplierId
+  , ackAcknowledgedAt   :: UTCTime
+  , ackExpectedDelivery :: Maybe UTCTime         -- supplier-provided, optional
+  } deriving (Show)
+
+-- Event payload consumed by the receiving context
+data POAcknowledgedEvent = POAcknowledgedEvent
+  { eaPoId             :: PurchaseOrderId
+  , eaSupplierId       :: SupplierId
+  , eaAcknowledgedAt   :: UTCTime
+  , eaExpectedDelivery :: Maybe UTCTime
+  } deriving (Show)
+
+-- Command from supplier portal or EDI ingestion
+data AcknowledgePOCommand = AcknowledgePOCommand
+  { cmdPoId          :: Text                     -- raw PO id
+  , cmdDelivery      :: Maybe UTCTime            -- optional delivery commitment
+  } deriving (Show)
+
+-- Named errors driving HTTP status + retry policy
+data AckError
+  = PONotFound Text
+  | NotIssued  Text
+  | SaveFailed
+  deriving (Show)
+
+-- Port aliases
+type LoadIssuedPO     = PurchaseOrderId -> IO (Either AckError SupplierId)
+type SaveAcknowledged = AcknowledgedPO  -> IO (Either AckError ())
+type PublishAckEvent  = POAcknowledgedEvent -> IO (Either AckError ())
+
+-- Workflow shape — three injected ports + one command
+acknowledgePO
+  :: LoadIssuedPO -> SaveAcknowledged -> PublishAckEvent
+  -> AcknowledgePOCommand
+  -> IO (Either AckError AcknowledgedPO)
+acknowledgePO load save publish cmd = do
+  let poId = PurchaseOrderId (cmdPoId cmd)        -- typed wrapper at boundary
+  loadR <- load poId
+  case loadR of
+    Left e -> pure (Left e)                       -- => not Issued or missing
+    Right supId -> do
+      now <- getCurrentTime                       -- single timestamp
+      let acked = AcknowledgedPO poId supId now (cmdDelivery cmd)
+          event = POAcknowledgedEvent poId supId now (cmdDelivery cmd)
+      saveR <- save acked
+      case saveR of
+        Left e -> pure (Left e)                   -- => persistence failure
+        Right () -> do
+          _ <- publish event                      -- => receiving opens GRN expectation
+          pure (Right acked)
+
+-- Stubs for testing
+stubLoad :: LoadIssuedPO
+stubLoad _ = pure (Right (SupplierId "sup_acme"))
+
+stubSave :: SaveAcknowledged
+stubSave _ = pure (Right ())
+
+stubPublish :: PublishAckEvent
+stubPublish _ = pure (Right ())
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  let cmd = AcknowledgePOCommand "po_e3d1" (Just now)
+  result <- acknowledgePO stubLoad stubSave stubPublish cmd
+  case result of
+    Right acked -> putStrLn $ "Acknowledged: delivery=" <> show (ackExpectedDelivery acked)
+    -- => Output: Acknowledged: delivery=Just ...
+    Left  e     -> putStrLn $ "Error: " <> show e
 ```
 
 {{< /tab >}}
@@ -4946,7 +6414,7 @@ graph LR
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5131,8 +6599,8 @@ match errorResult with
 // [Clojure: sequential async operations; TS chains async/await with Result checks]
 
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
@@ -5161,7 +6629,7 @@ interface IssuedPO {
 }
 
 // Individual workflow steps
-function validatePO(raw: UnvalidatedPO): Result<ValidatedPO, string> {
+function validatePO(raw: UnvalidatedPO): Result {
   if (!raw.supplierId.startsWith("sup_")) return errR(`Invalid supplier: ${raw.supplierId}`);
   return okR({
     purchaseOrderId: asPOId(`po_${Math.random().toString(36).slice(2, 10)}`),
@@ -5171,7 +6639,7 @@ function validatePO(raw: UnvalidatedPO): Result<ValidatedPO, string> {
   });
 }
 
-async function approvePO(validated: ValidatedPO): Promise<Result<ApprovedPO, string>> {
+async function approvePO(validated: ValidatedPO): Promise {
   await new Promise((r) => setTimeout(r, 0));
   // => Simulates async approval lookup
   return okR({
@@ -5181,14 +6649,14 @@ async function approvePO(validated: ValidatedPO): Promise<Result<ApprovedPO, str
   });
 }
 
-async function issuePO(approved: ApprovedPO): Promise<Result<IssuedPO, string>> {
+async function issuePO(approved: ApprovedPO): Promise {
   await new Promise((r) => setTimeout(r, 0));
   // => Simulates async EDI notification to supplier
   return okR({ purchaseOrderId: approved.purchaseOrderId, issuedAt: new Date().toISOString() });
 }
 
 // Composed pipeline — validate >> approve >> issue
-async function submitAndIssuePO(raw: UnvalidatedPO): Promise<Result<IssuedPO, string>> {
+async function submitAndIssuePO(raw: UnvalidatedPO): Promise {
   const validated = validatePO(raw);
   // => Step 1: synchronous validation — short-circuit on error
   if (!validated.ok) return validated;
@@ -5206,6 +6674,77 @@ if (result.ok) console.log("Issued PO:", result.value.purchaseOrderId, "at", res
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: LifecyclePipeline.hs ────────
+-- [F#: createDraft |> approveDraft |> Result.map issueApproved; Haskell composes via fmap on Either]
+-- [Clojure: ->> threading + result-map helper; Haskell gets the same via the Functor instance]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Simplified state records for each stage
+data DraftPO    = DraftPO    { dpId :: PurchaseOrderId, dpTotal :: Double, dpSup :: SupplierId } deriving (Show)
+data ApprovedPO = ApprovedPO { apId :: PurchaseOrderId, apTotal :: Double, apSup :: SupplierId, apApprovedAt :: UTCTime } deriving (Show)
+data IssuedPO   = IssuedPO   { ipId :: PurchaseOrderId, ipSup :: SupplierId, ipIssuedAt :: UTCTime } deriving (Show)
+
+-- Step 1: pure — creation always succeeds
+createDraft :: Double -> SupplierId -> DraftPO
+createDraft total supId =
+  DraftPO (PurchaseOrderId "po_a1b2c3d4") total supId
+                                                  -- production uses UUID generation
+
+-- Step 2: pure — business rule check
+approveDraft :: UTCTime -> DraftPO -> Either Text ApprovedPO
+approveDraft now d
+  | dpTotal d <= 0 = Left "Cannot approve a zero-total PO"
+                                                  -- => business rule: positive total
+  | otherwise      = Right (ApprovedPO (dpId d) (dpTotal d) (dpSup d) now)
+
+-- Step 3: pure — returns new state + event summary
+issueApproved :: UTCTime -> ApprovedPO -> (IssuedPO, Text)
+issueApproved now ap =
+  ( IssuedPO (apId ap) (apSup ap) now
+  , "PurchaseOrderIssued: " <> tShow (apId ap)
+                            <> " to "  <> tShow (apSup ap)
+                            <> " total=" <> tShow (apTotal ap)
+                                                  -- event summary mirrors F# sprintf
+  )
+  where tShow = T.pack . show
+
+-- Pipeline: wire all three steps via fmap on Either
+lifecyclePipeline :: UTCTime -> Double -> SupplierId -> Either Text (IssuedPO, Text)
+lifecyclePipeline now total supId =
+  fmap (issueApproved now) (approveDraft now (createDraft total supId))
+                                                  -- => fmap = Result.map for Either
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+
+  -- Happy path
+  case lifecyclePipeline now 2699.97 (SupplierId "sup_acme") of
+    Right (issued, ev) -> do
+      putStrLn $ "Issued: " <> show (ipId issued)
+      -- => Output: Issued: PurchaseOrderId "po_a1b2c3d4"
+      putStrLn $ "Event: "  <> T.unpack ev
+      -- => Output: Event: PurchaseOrderIssued: ...
+    Left e -> putStrLn $ "Pipeline error: " <> T.unpack e
+
+  -- Error path
+  case lifecyclePipeline now 0 (SupplierId "sup_acme") of
+    Right _ -> putStrLn "Should not reach here"
+    Left e  -> putStrLn $ "Error: " <> T.unpack e
+    -- => Output: Error: Cannot approve a zero-total PO
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Composing three workflow steps into a pipeline using `|>` and `Result.map` produces a readable, linear representation of the PO lifecycle without nested conditionals or try/catch blocks.
@@ -5218,7 +6757,7 @@ if (result.ok) console.log("Issued PO:", result.value.purchaseOrderId, "at", res
 
 A comprehensive `PurchasingContextError` DU covers every failure the purchasing workflows can produce — from field-level validation to infrastructure failures. This is the full error taxonomy for the context.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5496,6 +7035,79 @@ console.log(describeError(err2), "->", httpStatus(err2));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchasingContextError.hs ───
+-- [F#: detailed DU with categories; Haskell ADT — same exhaustive match with -Wall]
+-- [Clojure: error maps + cond dispatch; Haskell encodes policy via exhaustive pattern matching]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype RequisitionId   = RequisitionId   Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Comprehensive error ADT — categories grouped by comment blocks
+data PurchasingContextError
+  -- Requisition errors
+  = RequisitionNotFound       RequisitionId       -- => 404
+  | RequisitionAlreadyExists  RequisitionId       -- => 409
+  | RequisitionHasNoLines     RequisitionId       -- => 422
+  | InvalidSkuFormat          Text                -- => 422
+  | InvalidQuantity           Text Int            -- => 422
+  | InvalidUnitPrice          Text Double         -- => 422
+  -- PO errors
+  | PONotFound                PurchaseOrderId     -- => 404
+  | POInvalidTransition       Text Text           -- => 422: from/to states
+  | POLinesLocked             PurchaseOrderId     -- => 422
+  -- Supplier errors
+  | SupplierNotFound          SupplierId          -- => 404
+  | SupplierNotEligible       SupplierId          -- => 422
+  -- Budget / authority errors
+  | BudgetExceeded            Double Double       -- => 422
+  | ApprovalAuthorityTooLow   Text Text           -- => 403
+  -- Infrastructure errors
+  | DatabaseTimeout           Text                -- => 503 retry-eligible
+  | EventPublishFailed        Text                -- => 500
+  | ConcurrencyConflict       PurchaseOrderId     -- => 409 retry-eligible
+  deriving (Show)
+
+-- (httpStatus, isRetryEligible) policy table
+errorPolicy :: PurchasingContextError -> (Int, Bool)
+errorPolicy (RequisitionNotFound _)      = (404, False)
+errorPolicy (PONotFound _)               = (404, False)
+errorPolicy (SupplierNotFound _)         = (404, False)
+errorPolicy (RequisitionAlreadyExists _) = (409, True)
+errorPolicy (ConcurrencyConflict _)      = (409, True)
+errorPolicy (ApprovalAuthorityTooLow _ _) = (403, False)
+errorPolicy (DatabaseTimeout _)          = (503, True)
+errorPolicy (EventPublishFailed _)       = (500, True)
+errorPolicy _                            = (422, False)
+                                                   -- => business rule violations
+
+-- Test
+errors :: [PurchasingContextError]
+errors =
+  [ RequisitionNotFound (RequisitionId "req_missing")
+  , BudgetExceeded 15000 10000
+  , DatabaseTimeout "save_po"
+  ]
+
+main :: IO ()
+main = mapM_ printPolicy errors
+  where
+    printPolicy e = do
+      let (status, retry) = errorPolicy e
+      putStrLn $ show e <> " -> status=" <> show status
+                       <> " retry=" <> show retry
+      -- => Output: RequisitionNotFound ... -> status=404 retry=False
+      -- => Output: BudgetExceeded 15000.0 10000.0 -> status=422 retry=False
+      -- => Output: DatabaseTimeout "save_po" -> status=503 retry=True
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A comprehensive named error DU enables precise, policy-driven handling at the API boundary — each error case maps to an exact HTTP status, alerting severity, and retry eligibility without string parsing or `instanceof` checks.
@@ -5508,7 +7120,7 @@ console.log(describeError(err2), "->", httpStatus(err2));
 
 The API boundary translates `PurchasingContextError` into HTTP responses. This translation is a pure function that lives outside the domain — it is infrastructure, not domain logic.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5718,7 +7330,7 @@ interface ApiError {
   // => Machine-readable code for clients to handle programmatically
   readonly message: string;
   // => Human-readable message for developers
-  readonly details?: Record<string, unknown>;
+  readonly details?: Record;
   // => Optional structured details for rich error responses
 }
 
@@ -5777,6 +7389,89 @@ console.log("Details:", apiError.details);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApiErrorMapping.hs ──────────
+-- [F#: pure toApiError function with exhaustive match; Haskell uses the same pure function with ADT pattern matching]
+-- [Clojure: cond-based dispatch on :error/type; Haskell encodes exhaustiveness in the type system]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Printf (printf)
+
+newtype SupplierId = SupplierId Text deriving (Show)
+
+-- Subset of PurchasingContextError for this example
+data PurchasingContextError
+  = RequisitionNotFound Text                       -- => 404
+  | BudgetExceeded      Double Double              -- => 422 (required, available)
+  | SupplierNotEligible SupplierId                 -- => 422
+  | DatabaseTimeout     Text                       -- => 503 retry-eligible
+  deriving (Show)
+
+-- API error response DTO — what the HTTP layer returns
+data ApiError = ApiError
+  { apiStatus  :: Int                              -- HTTP status code
+  , apiCode    :: Text                             -- machine-readable code
+  , apiMessage :: Text                             -- human-readable message
+  , apiRetry   :: Bool                             -- whether retry is safe
+  } deriving (Show)
+
+-- Pure boundary translation — fully testable, no IO
+toApiError :: PurchasingContextError -> ApiError
+toApiError (RequisitionNotFound rid) = ApiError
+  { apiStatus  = 404
+  , apiCode    = "REQUISITION_NOT_FOUND"
+  , apiMessage = "Requisition '" <> rid <> "' not found"
+  , apiRetry   = False                             -- => deterministic miss
+  }
+toApiError (BudgetExceeded required available) = ApiError
+  { apiStatus  = 422
+  , apiCode    = "BUDGET_EXCEEDED"
+  , apiMessage = T.pack $ printf "Required %.2f exceeds available budget %.2f"
+                                  required available
+  , apiRetry   = False                             -- => business-rule failure
+  }
+toApiError (SupplierNotEligible (SupplierId sid)) = ApiError
+  { apiStatus  = 422
+  , apiCode    = "SUPPLIER_NOT_ELIGIBLE"
+  , apiMessage = "Supplier '" <> sid
+                              <> "' is not approved for new purchase orders"
+  , apiRetry   = False                             -- => requires state change
+  }
+toApiError (DatabaseTimeout op) = ApiError
+  { apiStatus  = 503
+  , apiCode    = "SERVICE_UNAVAILABLE"
+  , apiMessage = "Database operation '" <> op <> "' timed out — please retry"
+  , apiRetry   = True                              -- => transient infrastructure
+  }
+
+-- Handler: runs the domain workflow, translates the result for HTTP
+handleRequest :: Either PurchasingContextError Text -> (Int, Text)
+handleRequest (Right msg) =
+  (200, "{\"status\":\"ok\",\"message\":\"" <> msg <> "\"}")
+                                                   -- => success envelope
+handleRequest (Left err) =
+  let a = toApiError err                           -- pure translation
+  in  ( apiStatus a
+      , "{\"code\":\"" <> apiCode a
+      <> "\",\"message\":\"" <> apiMessage a
+      <> "\",\"retry\":" <> T.pack (show (apiRetry a)) <> "}"
+      )
+
+main :: IO ()
+main = do
+  let okResult  = handleRequest (Right "PO po_e3d1 approved")
+      errResult = handleRequest (Left (BudgetExceeded 15000 10000))
+  putStrLn $ "Success: " <> show (fst okResult)  <> " " <> T.unpack (snd okResult)
+  -- => Output: Success: 200 {"status":"ok","message":"PO po_e3d1 approved"}
+  putStrLn $ "Error:   " <> show (fst errResult) <> " " <> T.unpack (snd errResult)
+  -- => Output: Error:   422 {"code":"BUDGET_EXCEEDED","message":"...","retry":False}
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The API boundary translation is a pure function from domain errors to HTTP responses — it lives outside the domain, is independently testable, and keeps HTTP concerns out of the domain layer.
@@ -5800,7 +7495,7 @@ graph TD
     style Core fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5993,8 +7688,8 @@ printfn "Approved at: %O" approved.ApprovedAt
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
@@ -6016,28 +7711,24 @@ function computeTotal(po: PO): number {
   // => Pure arithmetic — no I/O, deterministic, testable without infrastructure
 }
 
-function validateApprovalAmount(total: number, threshold: number): Result<number, string> {
+function validateApprovalAmount(total: number, threshold: number): Result {
   return total <= threshold ? okR(total) : errR(`Total ${total} exceeds approval threshold ${threshold}`);
   // => Pure domain rule — no database, no clock, no randomness
 }
 
-function buildApprovalEvent(id: PurchaseOrderId, approvedBy: string): Record<string, unknown> {
+function buildApprovalEvent(id: PurchaseOrderId, approvedBy: string): Record {
   return { type: "POApproved", purchaseOrderId: id, approvedBy };
   // => Pure event construction — no side effects
 }
 
 // ── Imperative shell — I/O wraps the pure core ───────────────────────────────
 interface ApprovePOPort {
-  readonly loadPO: (id: PurchaseOrderId) => Promise<PO | null>;
-  readonly getThreshold: (approver: string) => Promise<number>;
-  readonly saveApproval: (event: Record<string, unknown>) => Promise<void>;
+  readonly loadPO: (id: PurchaseOrderId) => Promise;
+  readonly getThreshold: (approver: string) => Promise;
+  readonly saveApproval: (event: Record) => Promise;
 }
 
-async function approvePOShell(
-  port: ApprovePOPort,
-  id: PurchaseOrderId,
-  approver: string,
-): Promise<Result<string, string>> {
+async function approvePOShell(port: ApprovePOPort, id: PurchaseOrderId, approver: string): Promise {
   const po = await port.loadPO(id);
   // => I/O at the edge: load from database
   if (!po) return errR(`PO ${id} not found`);
@@ -6057,6 +7748,82 @@ async function approvePOShell(
 
 console.log("Pure core defined — effects pushed to the shell");
 // => Output: Pure core defined — effects pushed to the shell
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: PureCoreImperativeShell.hs ──
+-- [F#: Async-wrapped shell + pure core; Haskell uses IO for the shell + pure functions for the core]
+-- [Clojure: core.async channels for shell; Haskell composes the same separation via IO + pure values]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- ── PURE CORE ────────────────────────────────────────────────────────────────
+data DraftPO    = DraftPO    { dpId :: PurchaseOrderId, dpSup :: SupplierId, dpTotal :: Double }
+  deriving (Show)
+data ApprovedPO = ApprovedPO { apId :: PurchaseOrderId, apSup :: SupplierId
+                             , apTotal :: Double, apApprovedAt :: UTCTime }
+  deriving (Show)
+
+-- Pure business rule check — no IO, returns Either
+canApprove :: DraftPO -> Double -> Either Text ()
+canApprove po budget
+  | dpTotal po <= 0      = Left "Cannot approve a zero-total PO"
+                                                    -- => Rule 1
+  | dpTotal po > budget  = Left $ T.pack $
+      "PO total " <> show (dpTotal po) <> " exceeds approver budget " <> show budget
+                                                    -- => Rule 2
+  | otherwise            = Right ()                 -- => both rules pass
+
+-- Pure transition — caller supplies the timestamp, keeping core deterministic
+applyApproval :: UTCTime -> DraftPO -> ApprovedPO
+applyApproval now po = ApprovedPO (dpId po) (dpSup po) (dpTotal po) now
+
+-- ── IMPERATIVE SHELL ─────────────────────────────────────────────────────────
+-- Port aliases capture the I/O contract
+type LoadDraftPO    = PurchaseOrderId -> IO (Maybe DraftPO)
+type SaveApprovedPO = ApprovedPO       -> IO ()
+type NotifyApprover = PurchaseOrderId  -> IO ()
+
+-- Shell function — orchestrates I/O; pure core decisions are inlined
+approvePOShell
+  :: LoadDraftPO -> SaveApprovedPO -> NotifyApprover
+  -> PurchaseOrderId -> Double
+  -> IO (Either Text ApprovedPO)
+approvePOShell load save notify poId budget = do
+  mPo <- load poId                                  -- => I/O: load PO
+  case mPo of
+    Nothing -> pure $ Left (T.pack $ "PO " <> show poId <> " not found")
+    Just po -> case canApprove po budget of         -- => PURE CORE decision
+      Left e   -> pure (Left e)                     --   no I/O on rule failure
+      Right () -> do
+        now <- getCurrentTime                       -- => I/O: clock at the edge
+        let approved = applyApproval now po         -- => PURE CORE transition
+        save approved                                -- => I/O: persist
+        notify poId                                  -- => I/O: notify
+        pure (Right approved)
+
+-- The pure core is testable without any IO infrastructure
+draftSample :: DraftPO
+draftSample = DraftPO (PurchaseOrderId "po_e3d1") (SupplierId "sup_acme") 2699.97
+
+main :: IO ()
+main = do
+  let canResult = canApprove draftSample 5000       -- => Right ()
+  putStrLn $ "canApprove: " <> show canResult
+  -- => Output: canApprove: Right ()
+  now <- getCurrentTime
+  let approved = applyApproval now draftSample
+  putStrLn $ "Approved at: " <> show (apApprovedAt approved)
+  -- => Output: Approved at: ...
 ```
 
 {{< /tab >}}
@@ -6085,7 +7852,7 @@ graph LR
     style Pub fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6260,8 +8027,8 @@ match coreResult with
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 const asPOId = (s: string): PurchaseOrderId => s as PurchaseOrderId;
@@ -6279,7 +8046,7 @@ interface ValidatedRequisition {
 }
 type ApprovalLevel = "L1" | "L2" | "L3";
 
-function validateRequisition(requestedBy: string, lines: RequisitionLine[]): Result<ValidatedRequisition, string> {
+function validateRequisition(requestedBy: string, lines: RequisitionLine[]): Result {
   if (!requestedBy.trim()) return errR("RequestedBy is required");
   if (lines.length === 0) return errR("At least one line required");
   return okR({ requestedBy, lines, total: lines.reduce((s, l) => s + l.qty * l.price, 0) });
@@ -6292,14 +8059,14 @@ function deriveApprovalLevel(total: number): ApprovalLevel {
 // ── Application service (the "edge wrapper") ─────────────────────────────────
 interface SubmitRequisitionPort {
   readonly generateId: () => PurchaseOrderId;
-  readonly persistEvent: (event: Record<string, unknown>) => Promise<void>;
+  readonly persistEvent: (event: Record) => Promise;
 }
 
 async function submitRequisitionHandler(
   port: SubmitRequisitionPort,
   requestedBy: string,
   lines: RequisitionLine[],
-): Promise<Result<Record<string, unknown>, string>> {
+): Promise {
   // ── Edge: resolve dependencies ────────────────────────────────────────────
   const id = port.generateId();
   // => I/O: generate ID (could involve a sequence in the DB)
@@ -6323,6 +8090,96 @@ console.log("Pure core wrapped at the edge — application service pattern");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PureCoreEdge.hs ─────────────
+-- [F#: pure transition + async shell; Haskell uses pure functions + IO wrapper — same load/pure/save/publish sandwich]
+-- [Clojure: go block with <! between pure call; Haskell composes via do-notation in IO]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Data types — minimal records for the sandwich pattern
+data PoData   = PoData
+  { pdId       :: PurchaseOrderId
+  , pdSupplier :: SupplierId
+  , pdTotal    :: Double
+  , pdStatus   :: Text
+  } deriving (Show)
+
+data PoIssued = PoIssued
+  { piId       :: PurchaseOrderId
+  , piSupplier :: SupplierId
+  , piIssuedAt :: UTCTime
+  } deriving (Show)
+
+data PoEvent  = PoEvent
+  { peKind :: Text
+  , pePoId :: Text
+  , peAt   :: UTCTime
+  } deriving (Show)
+
+-- ── PURE CORE ────────────────────────────────────────────────────────────────
+-- Pure: takes data + timestamp, returns Either with new state and event
+transition :: UTCTime -> PoData -> Either Text (PoIssued, PoEvent)
+transition now d
+  | pdStatus d /= "Approved" =
+      Left $ "Cannot issue PO in status '" <> pdStatus d <> "' — must be Approved"
+                                                    -- => business rule guard
+  | otherwise =
+      let issued = PoIssued (pdId d) (pdSupplier d) now
+          event  = PoEvent "PurchaseOrderIssued"
+                           (T.pack (show (pdId d))) now
+      in  Right (issued, event)                     -- => both outputs returned
+
+-- ── IMPERATIVE SHELL ─────────────────────────────────────────────────────────
+type LoadPo     = PurchaseOrderId -> IO (Maybe PoData)
+type SaveIssued = PoIssued        -> IO ()
+type PublishEv  = PoEvent         -> IO ()
+
+issueShell :: LoadPo -> SaveIssued -> PublishEv
+           -> PurchaseOrderId
+           -> IO (Either Text PoIssued)
+issueShell load save publish poId = do
+  -- ── LOAD (I/O read) ───────────────────────────────────────
+  mData <- load poId
+  case mData of
+    Nothing   -> pure $ Left (T.pack $ "PO " <> show poId <> " not found")
+    Just dat  -> do
+      now <- getCurrentTime                         -- => clock effect at edge
+      -- ── PURE CORE ────────────────────────────────────────
+      case transition now dat of
+        Left e -> pure (Left e)                     --   no I/O on guard failure
+        Right (issued, event) -> do
+          -- ── SAVE + PUBLISH (I/O writes) ────────────────
+          save issued                               -- => persist state
+          publish event                             -- => publish event
+          pure (Right issued)
+
+-- Test the pure core in isolation — no IO infrastructure needed
+testData :: PoData
+testData = PoData (PurchaseOrderId "po_e3d1")
+                  (SupplierId      "sup_acme")
+                  2699.97 "Approved"                -- Approved → eligible
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  case transition now testData of
+    Right (issued, event) -> putStrLn $
+      "Core: issued=" <> show (piId issued)
+                     <> " event=" <> T.unpack (peKind event)
+      -- => Output: Core: issued=PurchaseOrderId "po_e3d1" event=PurchaseOrderIssued
+    Left e -> putStrLn $ "Error: " <> T.unpack e
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The composition point has a clear three-phase structure: I/O read → pure core → I/O write. This structure makes the boundary visible, testable, and replaceable at each phase independently.
@@ -6335,7 +8192,7 @@ console.log("Pure core wrapped at the edge — application service pattern");
 
 Partial application wires the production implementations of port functions into workflow functions at the composition root. The workflow is defined with all dependencies as parameters; the composition root supplies the real implementations.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6496,32 +8353,30 @@ printfn "Result: %A" result
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
 
 // Dependency interfaces (ports)
 interface PORepository {
-  readonly findById: (
-    id: PurchaseOrderId,
-  ) => Promise<{ id: PurchaseOrderId; supplierId: SupplierId; total: number } | null>;
-  readonly save: (po: Record<string, unknown>) => Promise<void>;
+  readonly findById: (id: PurchaseOrderId) => Promise;
+  readonly save: (po: Record) => Promise;
 }
 interface ApprovalService {
-  readonly getThreshold: (approver: string) => Promise<number>;
+  readonly getThreshold: (approver: string) => Promise;
 }
 
 // Pure domain function — no dependencies, no async
-function validateApprovalThreshold(total: number, threshold: number): Result<number, string> {
+function validateApprovalThreshold(total: number, threshold: number): Result {
   return total <= threshold ? okR(total) : errR(`${total} exceeds threshold ${threshold}`);
 }
 
 // Curried workflow factory — takes dependencies first, returns the workflow function
 const makeApprovePOWorkflow =
   (repo: PORepository, approval: ApprovalService) =>
-  async (id: PurchaseOrderId, approver: string): Promise<Result<string, string>> => {
+  async (id: PurchaseOrderId, approver: string): Promise => {
     const po = await repo.findById(id);
     // => I/O: load PO from repo
     if (!po) return errR(`PO ${id} not found`);
@@ -6550,6 +8405,68 @@ console.log("Dependency injection via currying — dependencies baked in at comp
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PartialAppDI.hs ─────────────
+-- [F#: partial application via curried let bindings; Haskell is identical — all functions are curried]
+-- [Clojure: explicit `partial`; Haskell needs no helper — supply fewer arguments]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Port aliases — one per I/O operation
+type LoadPO             = PurchaseOrderId -> IO (Maybe (Double, SupplierId))
+type SavePO             = PurchaseOrderId -> UTCTime -> IO ()
+type PublishIssuedEvent = PurchaseOrderId -> SupplierId -> Double -> IO ()
+
+-- Workflow function with all deps as explicit parameters
+issueWorkflow
+  :: LoadPO -> SavePO -> PublishIssuedEvent
+  -> PurchaseOrderId
+  -> IO (Either Text ())
+issueWorkflow load save publish poId = do
+  mPo <- load poId                              -- => I/O: load PO
+  case mPo of
+    Nothing -> pure $ Left (T.pack $ "PO " <> show poId <> " not found")
+    Just (total, supId) -> do
+      now <- getCurrentTime                     -- => I/O: clock at the edge
+      save poId now                             -- => I/O: persist
+      publish poId supId total                  -- => I/O: emit event
+      pure (Right ())
+
+-- ── Stub adapters (test) ─────────────────────────────────────────────────────
+stubLoad :: LoadPO
+stubLoad _ = pure (Just (2699.97, SupplierId "sup_acme"))
+
+stubSave :: SavePO
+stubSave _ _ = pure ()                          -- no-op for tests
+
+stubPublish :: PublishIssuedEvent
+stubPublish _ _ _ = putStrLn "[stub] PurchaseOrderIssued published"
+
+-- ── Composition root: partial application binds the dependencies ─────────────
+testIssueWorkflow :: PurchaseOrderId -> IO (Either Text ())
+testIssueWorkflow = issueWorkflow stubLoad stubSave stubPublish
+                                                -- => single-arg function ready to call
+
+-- In production: replace stubs with real adapters at this point
+-- productionIssueWorkflow = issueWorkflow pgLoad pgSave kafkaPublish
+
+main :: IO ()
+main = do
+  result <- testIssueWorkflow (PurchaseOrderId "po_e3d1")
+  putStrLn $ "Result: " <> show result
+  -- => Output: [stub] PurchaseOrderIssued published
+  -- => Output: Result: Right ()
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Partial application binds dependencies to workflows at the composition root — the workflow function itself never changes, only the implementations supplied to it, making production and test configurations a matter of which functions are partially applied.
@@ -6562,7 +8479,7 @@ console.log("Dependency injection via currying — dependencies baked in at comp
 
 In functional F#, a repository is not an interface or an abstract class — it is a record of functions. This record is the port; the PostgreSQL implementation is one value of this record type; the in-memory test implementation is another.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6751,13 +8668,13 @@ interface PurchaseOrder {
 
 // Repository interface — an object of typed functions
 interface PORepository {
-  readonly findById: (id: PurchaseOrderId) => Promise<PurchaseOrder | null>;
+  readonly findById: (id: PurchaseOrderId) => Promise;
   // => Loads a PO by its identity — null when not found
-  readonly save: (po: PurchaseOrder) => Promise<void>;
+  readonly save: (po: PurchaseOrder) => Promise;
   // => Persists a PO (insert or update)
-  readonly findBySupplier: (supplierId: SupplierId) => Promise<readonly PurchaseOrder[]>;
+  readonly findBySupplier: (supplierId: SupplierId) => Promise;
   // => Lists all POs for a given supplier — for supplier portal view
-  readonly delete: (id: PurchaseOrderId) => Promise<boolean>;
+  readonly delete: (id: PurchaseOrderId) => Promise;
   // => Removes a cancelled PO — returns true if deleted, false if not found
 }
 // => [F#: type PORepository = { findById: ...; save: ...; ... } — record of functions]
@@ -6797,6 +8714,78 @@ console.log("Loaded PO status:", loaded?.status);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: RepositoryPort.hs ───────────
+-- [F#: record of functions; Haskell uses a record of functions — same first-class port pattern]
+-- [Clojure: defprotocol; Haskell prefers explicit records over type classes for swappable adapters]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.IORef
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq, Ord)
+newtype SupplierId      = SupplierId      Text deriving (Show, Eq)
+
+-- Simplified PO record stored in the repository
+data PoRecord = PoRecord
+  { poId       :: PurchaseOrderId
+  , poSupplier :: SupplierId
+  , poStatus   :: Text
+  , poTotal    :: Double
+  } deriving (Show)
+
+-- The repository port — a record of functions (no type class, no inheritance)
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { load           :: PurchaseOrderId -> IO (Maybe PoRecord)
+  , save           :: PoRecord -> IO ()
+  , listBySupplier :: SupplierId -> IO [PoRecord]
+  }                                                 -- first-class port value
+
+-- In-memory adapter — closure captures the IORef-backed store
+inMemoryRepo :: IORef (Map PurchaseOrderId PoRecord) -> PurchaseOrderRepository
+inMemoryRepo storeRef = PurchaseOrderRepository
+  { load = \pid -> do
+      store <- readIORef storeRef                   -- snapshot the current map
+      pure (Map.lookup pid store)                   -- => Maybe PoRecord
+  , save = \po -> modifyIORef' storeRef (Map.insert (poId po) po)
+                                                    -- => atomic upsert
+  , listBySupplier = \sid -> do
+      store <- readIORef storeRef
+      pure [p | p <- Map.elems store, poSupplier p == sid]
+                                                    -- linear scan, fine for tests
+  }
+
+-- Use the repository through the port — agnostic of adapter
+loadAndPrint :: PurchaseOrderRepository -> PurchaseOrderId -> IO ()
+loadAndPrint repo pid = do
+  mPo <- load repo pid
+  case mPo of
+    Just po -> putStrLn $ "PO: " <> show (poId po)
+                                <> " status=" <> T.unpack (poStatus po)
+                                <> " total="  <> show (poTotal po)
+    Nothing -> putStrLn $ "PO " <> show pid <> " not found"
+
+main :: IO ()
+main = do
+  storeRef <- newIORef Map.empty                    -- empty in-memory store
+  let testPO = PoRecord (PurchaseOrderId "po_e3d1")
+                        (SupplierId "sup_acme")
+                        "Draft" 2699.97
+  modifyIORef' storeRef (Map.insert (poId testPO) testPO)
+                                                    -- seed the store
+  let repo = inMemoryRepo storeRef                  -- wire the in-memory adapter
+  loadAndPrint repo (PurchaseOrderId "po_e3d1")
+  -- => Output: PO: PurchaseOrderId "po_e3d1" status=Draft total=2699.97
+  loadAndPrint repo (PurchaseOrderId "po_missing")
+  -- => Output: PO PurchaseOrderId "po_missing" not found
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A record of functions (F#), a protocol (Clojure), or an interface-shaped object (TypeScript) groups related I/O operations into a cohesive port that can be swapped between test and production implementations without changing the workflow code. The concept is identical across all three: the port is a value, not a base class.
@@ -6809,7 +8798,7 @@ console.log("Loaded PO status:", loaded?.status);
 
 The invariant "a PO with total > $10,000 must be approved at L3" is a domain rule. It is checked inside the approval workflow, not in the controller or the database. If the approver's level is L1 or L2, the workflow returns a named error before any persistence occurs.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6967,8 +8956,8 @@ printfn "Large PO: %A" largePO
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type ApprovalLevel = "L1" | "L2" | "L3";
 
@@ -6979,7 +8968,7 @@ interface PurchaseOrder {
 }
 
 // Approval invariant: enforced in the domain layer, not in the HTTP layer
-function requiresApproval(po: PurchaseOrder): Result<ApprovalLevel, string> {
+function requiresApproval(po: PurchaseOrder): Result {
   if (po.status !== "PendingApproval") {
     return errR(`Approval only valid in PendingApproval state; got ${po.status}`);
     // => Invariant: approval only applies to the correct state
@@ -7021,6 +9010,72 @@ console.log(routeForApproval(draft));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovalAuthority.hs ────────
+-- [F#: ApprovalLevel DU + exhaustive matrix; Haskell ADT + pattern match — compile-time exhaustiveness]
+-- [Clojure: keywords + cond; Haskell catches missing combinations at compile time]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype ApproverId      = ApproverId      Text deriving (Show)
+
+-- Three approval tiers — derived from PO total
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq, Ord)
+
+data ApproverProfile = ApproverProfile
+  { aprId    :: ApproverId
+  , aprLevel :: ApprovalLevel
+  , aprName  :: Text
+  } deriving (Show)
+
+-- Named errors for the approval step
+data ApprovalError
+  = InsufficientAuthority ApprovalLevel ApprovalLevel  -- required, actual
+  | AlreadyApproved       PurchaseOrderId
+  deriving (Show)
+
+-- Pure domain rule: required level from total
+requiredLevel :: Double -> ApprovalLevel
+requiredLevel total
+  | total <= 1000  = L1                              -- => up to $1k
+  | total <= 10000 = L2                              -- => up to $10k
+  | otherwise      = L3                              -- => over $10k
+
+-- Authority matrix as pure function — Ord lets us compare levels directly
+sufficient :: ApprovalLevel -> ApprovalLevel -> Bool
+sufficient approver required = approver >= required
+                                                    -- => L3 >= L2 >= L1 ordering
+                                                    --    matches the F# matrix
+
+-- Pure invariant check: returns Either with named error
+checkAuthority :: ApproverProfile -> Double -> Either ApprovalError ()
+checkAuthority appr poTotal =
+  let required = requiredLevel poTotal
+  in  if sufficient (aprLevel appr) required
+        then Right ()                                -- => permitted
+        else Left (InsufficientAuthority required (aprLevel appr))
+                                                    -- => carries both levels
+
+-- Test the invariant
+l2Approver :: ApproverProfile
+l2Approver = ApproverProfile (ApproverId "emp_mgr_dept") L2 "Department Head"
+                                                    -- L2 covers L1+L2
+
+main :: IO ()
+main = do
+  print $ checkAuthority l2Approver 500
+  -- => Output: Right ()  (small PO needs L1; L2 sufficient)
+  print $ checkAuthority l2Approver 5000
+  -- => Output: Right ()  (medium PO needs L2; L2 sufficient)
+  print $ checkAuthority l2Approver 50000
+  -- => Output: Left (InsufficientAuthority L3 L2)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Domain invariants enforced as pure functions in the domain layer are independently testable and guaranteed consistent — the same rule applies whether the approval request comes from the web UI, a batch job, or an API integration.
@@ -7033,7 +9088,7 @@ console.log(routeForApproval(draft));
 
 The cancellation off-ramp applies to any PO in a pre-`Paid` state. Modelling cancellation as a typed transition that accepts a union of cancellable states prevents it from being accidentally called on a `Paid` or `Closed` PO.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -7201,8 +9256,8 @@ printfn "Event: %A at %O" event.PurchaseOrderId event.CancelledAt
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 
@@ -7224,9 +9279,9 @@ interface CancelledPO {
 type POCancelledEvent = { readonly type: "POCancelled"; readonly id: PurchaseOrderId; readonly reason: string };
 
 // Domain rule: which states allow cancellation?
-const cancellableStatuses: Set<CancellableState> = new Set(["Draft", "PendingApproval", "Approved"]);
+const cancellableStatuses: Set = new Set(["Draft", "PendingApproval", "Approved"]);
 
-function cancelPO(po: PurchaseOrder, reason: string): Result<[CancelledPO, POCancelledEvent], string> {
+function cancelPO(po: PurchaseOrder, reason: string): Result {
   if (!cancellableStatuses.has(po.status as CancellableState)) {
     return errR(
       `Cannot cancel a PO in ${po.status} state — only Draft, PendingApproval, and Approved can be cancelled`,
@@ -7254,6 +9309,82 @@ if (r1.ok) console.log("Cancelled:", r1.value[1].type, "reason:", r1.value[1].re
 // => Output: Cancelled: POCancelled reason: Budget cut — Q3 freeze
 if (!r2.ok) console.log("Error:", r2.error);
 // => Output: Error: Cannot cancel a PO in Issued state — only Draft, PendingApproval, and Approved can be cancelled
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: CancelPO.hs ─────────────────
+-- [F#: CancellablePO DU restricts callable source states; Haskell ADT — same compile-time impossibility]
+-- [Clojure: runtime set guard; Haskell prevents calling cancel on Paid/Closed at compile time]
+{-# LANGUAGE OverloadedStrings #-}
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show)
+newtype SupplierId      = SupplierId      Text deriving (Show)
+
+-- Only cancellable states — Paid and Closed are deliberately absent
+data CancellablePO
+  = CancellableDraft            PurchaseOrderId
+                                                    -- => no supplier yet
+  | CancellableAwaitingApproval PurchaseOrderId SupplierId
+  | CancellableApproved         PurchaseOrderId SupplierId
+  | CancellableIssued           PurchaseOrderId SupplierId
+                                                    -- => supplier must be notified
+  deriving (Show)
+
+-- Terminal state — no further transitions allowed
+data CancelledPO = CancelledPO
+  { cpId          :: PurchaseOrderId
+  , cpSupplierId  :: Maybe SupplierId               -- Nothing for Draft
+  , cpReason      :: Text                           -- mandatory audit context
+  , cpCancelledAt :: UTCTime                        -- SLA + reporting
+  } deriving (Show)
+
+-- Event consumed by supplier-notifier + accounting
+data PurchaseOrderCancelledEvent = PurchaseOrderCancelledEvent
+  { evCanPoId    :: PurchaseOrderId
+  , evCanReason  :: Text
+  , evCanWhen    :: UTCTime
+  } deriving (Show)
+
+-- Cancel transition — pattern-match guarantees only cancellable states are accepted
+cancelPO :: Text -> CancellablePO -> IO (CancelledPO, PurchaseOrderCancelledEvent)
+cancelPO reason po
+  | T.null (T.strip reason) =
+      error "Cancellation reason is required"       -- blank reason guard
+  | otherwise = do
+      now <- getCurrentTime                         -- single timestamp
+      let (pid, mSup) = case po of
+            CancellableDraft i              -> (i, Nothing)
+            CancellableAwaitingApproval i s -> (i, Just s)
+            CancellableApproved         i s -> (i, Just s)
+            CancellableIssued           i s -> (i, Just s)
+          cancelled = CancelledPO pid mSup reason now
+          event     = PurchaseOrderCancelledEvent pid reason now
+      pure (cancelled, event)
+
+-- Test: cancel a PO that is awaiting approval
+awaitingPO :: CancellablePO
+awaitingPO = CancellableAwaitingApproval
+               (PurchaseOrderId "po_e3d1")
+               (SupplierId      "sup_acme")
+
+main :: IO ()
+main = do
+  (cancelled, event) <- cancelPO "Budget freeze — all non-essential POs cancelled"
+                                 awaitingPO
+  putStrLn $ "Cancelled PO: " <> show (cpId cancelled)
+  -- => Output: Cancelled PO: PurchaseOrderId "po_e3d1"
+  putStrLn $ "Reason: " <> T.unpack (cpReason cancelled)
+  -- => Output: Reason: Budget freeze — all non-essential POs cancelled
+  putStrLn $ "Event: " <> show (evCanPoId event)
+                       <> " at " <> show (evCanWhen event)
+  -- => Output: Event: PurchaseOrderId "po_e3d1" at ...
 ```
 
 {{< /tab >}}

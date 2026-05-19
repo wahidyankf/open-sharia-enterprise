@@ -3,12 +3,15 @@ title: "Intermediate"
 weight: 10000004
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Intermediate Cases guides (Guides 7–14) — Npgsql adapter seam, in-memory adapter for tests, domain event publisher port, outbox adapter, deeper Giraffe handler wiring, contract codegen, cross-context ACL, and composition root"
+description: "Intermediate Cases guides (Guides 7–14) — repository adapters, in-memory test adapters, domain event publisher port, outbox adapter, HTTP handler wiring, contract codegen, cross-context ACL, and composition root, in F# (canonical), Clojure, TypeScript, and Haskell"
 tags:
   [
     "ddd",
     "hexagonal-architecture",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "cases",
     "npgsql",
     "integration-testing",
@@ -28,7 +31,7 @@ A repository port is the seam that separates your application layer from the dat
 
 F# lets you alias any function type with a single `type` declaration. The standard library gives you the full type system but no I/O primitive for PostgreSQL — you would fall back to `System.Data.Common.DbConnection` and raw SQL strings:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -130,17 +133,60 @@ export type FindPurchaseOrder = (
   poId: PurchaseOrderId,
   conn: Client,
   // => Client: raw pg connection — caller must open, pass, and close it manually
-) => Promise<Result<PurchaseOrder | null, Error>>;
+) => Promise;
 // => Promise: pg operations are async; synchronous DB calls are not possible in Node.js
 // => null represents absence (Option/None) — standard in TS stdlib-style code
 // => Error: opaque catch-all — caller cannot distinguish constraint from connection failure
 
 // Write port — synchronous-style function type
 // [F#: type SavePurchaseOrder = PurchaseOrder -> IDbConnection -> Result<unit, exn>]
-export type SavePurchaseOrder = (po: PurchaseOrder, conn: Client) => Promise<Result<void, Error>>;
+export type SavePurchaseOrder = (po: PurchaseOrder, conn: Client) => Promise;
 // => void success mirrors F# unit — caller does not re-read after a successful save
 // => Error is untyped: UniqueConstraintViolation vs ConnectionFailure must be inferred from message
 // => Limitation: manual Client threading — caller opens, passes, and closes the connection
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Application/Ports.hs ───────────────────────
+-- Standard library: repository port as a bare function-type alias over postgresql-simple
+-- [F#: type alias over System.Data — Haskell uses type synonyms over Database.PostgreSQL.Simple]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Application.Ports where
+
+import Data.UUID (UUID)
+-- => UUID: standard library identity type — no wrapper needed at this stdlib stage
+import Database.PostgreSQL.Simple (Connection)
+-- => Connection: postgresql-simple's raw connection handle — equivalent to IDbConnection
+-- => This dependency leaks into the application layer at the stdlib stage; production layer hides it
+import Control.Exception (SomeException)
+-- => SomeException: catch-all error — loses semantic information about the failure cause
+-- => Equivalent to F# exn — caller cannot discriminate constraint vs connection error
+import Purchasing.Domain (PurchaseOrder, PurchaseOrderId)
+-- => Domain types are the port's language — no database type crosses the boundary at the type level
+
+-- Read port — synchronous IO style, stdlib shape
+-- [F#: PurchaseOrderId -> IDbConnection -> Result<PurchaseOrder option, exn>]
+type FindPurchaseOrder =
+  PurchaseOrderId
+  -> Connection
+  -> IO (Either SomeException (Maybe PurchaseOrder))
+-- => IO: effects must be marked; postgresql-simple performs network I/O
+-- => Either SomeException: the Left branch is untyped — same limitation as F# exn
+-- => Maybe PurchaseOrder: absence is a valid outcome — mirrors PurchaseOrder option
+
+-- Write port — synchronous IO style, stdlib shape
+-- [F#: PurchaseOrder -> IDbConnection -> Result<unit, exn>]
+type SavePurchaseOrder =
+  PurchaseOrder
+  -> Connection
+  -> IO (Either SomeException ())
+-- => () success: caller does not re-read after save — mirrors F# unit
+-- => Connection threading is manual: caller acquires, passes, and releases
+-- => Limitation: SomeException hides constraint violation vs connection failure
 ```
 
 {{< /tab >}}
@@ -171,7 +217,7 @@ flowchart LR
 
 The application layer port record:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -284,11 +330,11 @@ import type { Result } from "neverthrow";
 // Repository port as a function-type record — canonical shape used across all guides
 // [F#: type PurchaseOrderRepository record-of-functions — TS uses a readonly object type]
 export type PurchaseOrderRepository = {
-  readonly findPurchaseOrder: (poId: PurchaseOrderId) => Promise<Result<PurchaseOrder | null, RepositoryError>>;
+  readonly findPurchaseOrder: (poId: PurchaseOrderId) => Promise;
   // => Promise: pg operations are async — never blocks the Node.js event loop
   // => PurchaseOrder | null: null represents Option None — a missing row is a valid outcome
   // [F#: Async<Result<PurchaseOrder option, RepositoryError>> — TS uses Promise<Result<T|null, E>>]
-  readonly savePurchaseOrder: (po: PurchaseOrder) => Promise<Result<void, RepositoryError>>;
+  readonly savePurchaseOrder: (po: PurchaseOrder) => Promise;
   // => void success: caller does not re-read after a successful save
   // => Adapter wraps pg's error codes into RepositoryError at the seam
   // [F#: record literal field — TS readonly property; both pg and in-memory adapters satisfy this shape]
@@ -299,11 +345,60 @@ export type PurchaseOrderRepository = {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Application/Ports.hs ───────────────────────
+-- Production port record — application layer, no postgresql-simple import
+-- [F#: record-of-functions PurchaseOrderRepository — Haskell uses a record with effect-typed fields]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Application.Ports
+  ( RepositoryError (..)
+  , PurchaseOrderRepository (..)
+  ) where
+
+import Control.Exception (SomeException)
+-- => SomeException carried inside the typed ConnectionFailure variant only — not exposed bare
+import Purchasing.Domain (PurchaseOrder, PurchaseOrderId)
+-- => Only domain types — no postgresql-simple, no persistent, no ORM
+-- => Isolation invariant: application layer has zero infrastructure imports beyond exceptions
+
+-- [F#: discriminated union RepositoryError — Haskell uses an algebraic data type]
+data RepositoryError
+  = NotFound PurchaseOrderId
+  -- => Read-side: a missing PO is a domain outcome, not an infrastructure failure
+  | UniqueConstraintViolation
+  -- => Write-side: postgresql-simple raises SqlError with sqlState = "23505" on duplicate
+  | ConnectionFailure SomeException
+  -- => Infrastructure failure: carry the raw exception for logging; caller returns HTTP 500
+  deriving (Show)
+-- => Show: enables logging; Eq omitted because SomeException has no Eq instance
+
+-- Repository port as a record of effectful functions — canonical shape used across guides
+-- [F#: record-of-functions with Async<Result<...>> — Haskell uses IO with Either]
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { findPurchaseOrder
+      :: PurchaseOrderId
+      -> IO (Either RepositoryError (Maybe PurchaseOrder))
+      -- => IO: postgresql-simple performs network I/O — never blocks a green thread unnecessarily
+      -- => Maybe PurchaseOrder: a missing row is a valid domain outcome, not an error
+  , savePurchaseOrder
+      :: PurchaseOrder
+      -> IO (Either RepositoryError ())
+      -- => () success: caller does not re-read after a successful save
+      -- => Adapter wraps SqlError into RepositoryError at the infrastructure seam
+  }
+-- => Record-of-functions: application service receives one value, not two parameters
+-- => postgresql-simple adapter and in-memory test stub both satisfy this record shape
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The Npgsql adapter in the infrastructure layer satisfies the port record. It opens a connection from the pool and translates database exceptions:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -525,7 +620,7 @@ import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
 
 // Row → domain translation — private to this module
 // [F#: purchaseOrderRowToDomain — private function, same purpose]
-const rowToPurchaseOrder = (row: Record<string, unknown>): PurchaseOrder => ({
+const rowToPurchaseOrder = (row: Record): PurchaseOrder => ({
   id: row.po_id as PurchaseOrderId,
   // => Cast the raw UUID string to branded PurchaseOrderId — valid because DB enforces uniqueness
   supplierId: row.supplier_id as string,
@@ -623,6 +718,104 @@ export const makePgPurchaseOrderRepository = (
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Infrastructure/PgPurchaseOrderRepository.hs ───────────────────────
+-- Production postgresql-simple adapter — infrastructure layer only
+-- [F#: npgsqlPurchaseOrderRepository factory — Haskell uses a factory function over a Pool]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
+module Purchasing.Infrastructure.PgPurchaseOrderRepository
+  ( mkPgPurchaseOrderRepository
+  ) where
+
+import Control.Exception (try, SomeException)
+-- => try: catches synchronous exceptions and returns Either SomeException a
+import Data.Pool (Pool, withResource)
+-- => Pool: resource-pool's connection pool — equivalent to Npgsql's built-in pool
+import Database.PostgreSQL.Simple
+  ( Connection, SqlError (..), execute, query )
+-- => SqlError: postgresql-simple's typed error carrying sqlState (the SQLSTATE code)
+-- => Confined to infrastructure — the seam absorbs the framework dependency
+import qualified Data.ByteString.Char8 as BS8
+-- => SQLSTATE arrives as ByteString — compared against "23505" for unique_violation
+import Purchasing.Application.Ports
+  ( PurchaseOrderRepository (..), RepositoryError (..) )
+-- => Import the port record — the adapter must satisfy PurchaseOrderRepository exactly
+import Purchasing.Domain
+  ( PurchaseOrder (..), PurchaseOrderId, purchaseOrderRowToDomain, PurchaseOrderRow )
+-- => Domain types and row translation — adapter maps PurchaseOrderRow ↔ PurchaseOrder
+
+-- Factory: closes over the Pool, returns the satisfying record
+-- [F#: let npgsqlPurchaseOrderRepository (connStr: string) : PurchaseOrderRepository]
+mkPgPurchaseOrderRepository :: Pool Connection -> PurchaseOrderRepository
+mkPgPurchaseOrderRepository pool = PurchaseOrderRepository {..}
+  -- => RecordWildCards: binds findPurchaseOrder and savePurchaseOrder by name below
+  where
+    savePurchaseOrder po = do
+      -- => Per-call closure over pool — equivalent to F# closure over connStr
+      result <- try $ withResource pool $ \conn ->
+        -- => withResource: borrows a connection, guarantees return — mirrors `use conn = ...`
+        execute conn
+          "INSERT INTO purchasing.purchase_orders \
+          \(po_id, supplier_id, total_amount, currency, status, created_at) \
+          \VALUES (?, ?, ?, ?, ?, ?)"
+          po
+          -- => ToRow instance on PurchaseOrder encodes fields to SQL parameters
+      case result of
+        -- => Pattern-match on Either SomeException Int64 — translate at the seam boundary
+        Right _ ->
+          pure (Right ())
+          -- => Right (): mirrors F# Ok () — caller does not re-read after a successful save
+        Left ex ->
+          case fromExceptionSqlState ex of
+            -- => Inspect the exception for SqlError "23505"
+            Just "23505" ->
+              pure (Left UniqueConstraintViolation)
+              -- => Translate to typed RepositoryError — application never sees raw SqlError
+            _ ->
+              pure (Left (ConnectionFailure ex))
+              -- => Any other error becomes ConnectionFailure — caller logs and returns 500
+
+    findPurchaseOrder poId = do
+      -- => Fresh connection per call — pool manages the underlying socket lifecycle
+      result <- try $ withResource pool $ \conn ->
+        query conn
+          "SELECT * FROM purchasing.purchase_orders WHERE po_id = ?"
+          (Only poId)
+          -- => Only poId: postgresql-simple's single-element parameter wrapper
+      case result of
+        Right rows ->
+          case rows of
+            -- => [] means no row found — valid domain outcome, not a failure
+            []       -> pure (Right Nothing)
+            -- => Right Nothing: mirrors Ok None — absence is a valid outcome
+            (row:_)  -> pure (Right (Just (purchaseOrderRowToDomain row)))
+            -- => Right (Just po): map PurchaseOrderRow ↦ PurchaseOrder via translator
+        Left ex ->
+          pure (Left (ConnectionFailure ex))
+          -- => Connection timeout, SSL error, unexpected PostgreSQL error — all ConnectionFailure
+
+-- Helper: inspect SomeException for a SqlError and return its SQLSTATE bytes
+fromExceptionSqlState :: SomeException -> Maybe BS8.ByteString
+fromExceptionSqlState ex = do
+  -- => Using Control.Exception.fromException for safe downcast
+  SqlError {..} <- fromExceptionSqlError ex
+  pure sqlState
+-- => Returning Maybe ByteString — Nothing for non-SqlError causes; Just code otherwise
+
+-- Local stub for the downcast helper, name kept short to keep this snippet self-contained.
+-- In production this is `Control.Exception.fromException :: SomeException -> Maybe SqlError`.
+fromExceptionSqlError :: SomeException -> Maybe SqlError
+fromExceptionSqlError = error "fromException downcast — wired by Control.Exception in production"
+
+-- Only is from Database.PostgreSQL.Simple; importer alias kept implicit for brevity.
+data Only a = Only a
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: Dapper maps result rows to F# records efficiently without a full ORM change-tracker overhead. For write-heavy aggregates, Dapper's explicit SQL gives you fine-grained control over the INSERT shape. For read-heavy workloads, the lack of a change-tracker means no accidental N+1 queries. Npgsql-specific error codes (`SqlState`) are stable within PostgreSQL major versions — test your error handling against the target server version.
@@ -639,7 +832,7 @@ An integration test that hits a real PostgreSQL database is slow, requires Docke
 
 F# mutable dictionaries and `ref` cells give you an in-memory store with no dependencies:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -713,6 +906,44 @@ const inMemorySave = (po: unknown): { ok: true; value: void } => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InMemoryStdlib.hs ───────────────────────
+-- Standard library: in-memory store using an IORef holding a String-keyed Map
+-- [F#: global Dictionary<Guid, string> — Haskell uses module-private IORef of Map UUID String]
+{-# LANGUAGE OverloadedStrings #-}
+module InMemoryStdlib where
+
+import Data.IORef (IORef, newIORef, modifyIORef')
+-- => IORef: stdlib mutable cell — atomic but global; tests share state
+import qualified Data.Map.Strict as Map
+-- => Data.Map.Strict: persistent ordered map — strict in values
+import Data.UUID (UUID, nil)
+-- => UUID: standard identity type — no wrapper here at the stdlib stage
+import System.IO.Unsafe (unsafePerformIO)
+-- => unsafePerformIO: used here only to demonstrate the stdlib anti-pattern; production avoids it
+
+-- Module-private store — global mutable state, same drift risk as F# Dictionary
+{-# NOINLINE store #-}
+store :: IORef (Map.Map UUID String)
+store = unsafePerformIO (newIORef Map.empty)
+-- => Global IORef shared across all callers — parallel tests corrupt state
+-- => Map UUID String: untyped value — no compile-time enforcement of domain shape
+
+-- Save with no type safety on the value — mirrors F# `obj` parameter
+inMemorySave :: Show a => a -> IO (Either String ())
+inMemorySave po = do
+  modifyIORef' store (Map.insert nil (show po))
+  -- => Map.insert nil: random UUID would require IO; nil sentinel chosen for illustration
+  -- => show po: serializes via Show — round-trip fidelity not guaranteed
+  pure (Right ())
+-- => Either String () mirrors Result<unit, exn> — message replaces the structured error
+-- => Limitation: global IORef + Show serialization — no FindPurchaseOrder support
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: global mutable state fails under parallel test execution. Untyped storage introduces silent type mismatch bugs. The adapter does not satisfy the `PurchaseOrderRepository` record — a different shape means a different seam, not the same seam with a different implementation.
@@ -721,7 +952,7 @@ const inMemorySave = (po: unknown): { ok: true; value: void } => {
 
 The in-memory adapter satisfies the same `PurchaseOrderRepository` record as the Npgsql adapter. It uses an F# `Map` (immutable) wrapped in a `ref` cell for thread-safety in tests:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -857,7 +1088,7 @@ import type { PurchaseOrder, PurchaseOrderId } from "../domain/value-objects";
 
 // Per-test-instance store factory — returns a fresh isolated Map
 // [F#: let makeStore () = ref Map.empty — TS returns a new Map object per call]
-export const makeStore = (): Map<PurchaseOrderId, PurchaseOrder> => new Map<PurchaseOrderId, PurchaseOrder>();
+export const makeStore = (): Map => new Map<PurchaseOrderId, PurchaseOrder>();
 // => new Map(): creates an empty typed store — no global state; parallel tests are safe
 // => Calling makeStore() in each test gives an isolated store instance
 // => Map<PurchaseOrderId, PurchaseOrder>: typed — compiler prevents storing the wrong value
@@ -865,7 +1096,7 @@ export const makeStore = (): Map<PurchaseOrderId, PurchaseOrder> => new Map<Purc
 // In-memory adapter factory satisfying PurchaseOrderRepository
 // [F#: let inMemoryPurchaseOrderRepository (store: Map ref) : PurchaseOrderRepository]
 export const makeInMemoryPurchaseOrderRepository = (
-  store: Map<PurchaseOrderId, PurchaseOrder>,
+  store: Map,
   // => store: injected per-test instance — same closure pattern as the pg adapter
 ): PurchaseOrderRepository => ({
   // => Object literal matching PurchaseOrderRepository exactly — TS structural typing enforces this
@@ -901,11 +1132,66 @@ export const makeInMemoryPurchaseOrderRepository = (
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Infrastructure/InMemoryPurchaseOrderRepository.hs ───────────────────────
+-- In-memory adapter satisfying the PurchaseOrderRepository record
+-- [F#: inMemoryPurchaseOrderRepository — Haskell uses an IORef of Map for the store]
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
+module Purchasing.Infrastructure.InMemoryPurchaseOrderRepository
+  ( makeStore
+  , mkInMemoryPurchaseOrderRepository
+  ) where
+
+import Data.IORef (IORef, newIORef, readIORef, atomicModifyIORef')
+-- => IORef + atomicModifyIORef': thread-safe mutable cell — equivalent to F# `ref Map`
+import qualified Data.Map.Strict as Map
+import Purchasing.Application.Ports
+  ( PurchaseOrderRepository (..), RepositoryError (..) )
+-- => Import the port record — the in-memory adapter must satisfy it exactly
+import Purchasing.Domain (PurchaseOrder (..), PurchaseOrderId)
+-- => Domain types — the store is strongly typed Map PurchaseOrderId PurchaseOrder
+
+-- Per-test store factory — returns a fresh IORef so tests are isolated
+-- [F#: let makeStore () = ref Map.empty — Haskell uses newIORef]
+makeStore :: IO (IORef (Map.Map PurchaseOrderId PurchaseOrder))
+makeStore = newIORef Map.empty
+-- => Each call yields a fresh cell; parallel tests are safe with no shared global state
+
+-- Adapter factory: closes over the store IORef and returns the satisfying record
+-- [F#: inMemoryPurchaseOrderRepository — Haskell uses RecordWildCards to bind fields]
+mkInMemoryPurchaseOrderRepository
+  :: IORef (Map.Map PurchaseOrderId PurchaseOrder)
+  -> PurchaseOrderRepository
+mkInMemoryPurchaseOrderRepository ref = PurchaseOrderRepository {..}
+  where
+    savePurchaseOrder po = do
+      -- => atomicModifyIORef' computes the new map and returns a verdict in one CAS
+      result <- atomicModifyIORef' ref $ \m ->
+        case Map.lookup (purchaseOrderId po) m of
+          -- => Duplicate found: mirror the postgresql-simple adapter's UniqueConstraintViolation
+          Just _  -> (m, Left UniqueConstraintViolation)
+          -- => Empty slot: insert and return Right ()
+          Nothing -> (Map.insert (purchaseOrderId po) po m, Right ())
+      pure result
+      -- => Result is the verdict — Left for violation, Right () for success
+
+    findPurchaseOrder poId = do
+      -- => Pure read against the immutable snapshot — atomically reads current state
+      m <- readIORef ref
+      pure (Right (Map.lookup poId m))
+      -- => Right Nothing for absent rows, Right (Just po) for hits — mirrors Ok None / Ok (Some _)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 A test wires the in-memory adapter at the application service seam:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1116,6 +1402,76 @@ describe("submitPurchaseOrder", () => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: test/Purchasing/SubmitPurchaseOrderSpec.hs ───────────────────────
+-- Integration test using the in-memory adapter — no Docker, no PostgreSQL
+-- [F#: xUnit [<Fact>] — Haskell uses hspec describe/it]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.SubmitPurchaseOrderSpec (spec) where
+
+import Test.Hspec (Spec, describe, it, shouldBe)
+-- => hspec: describe/it/shouldBe mirror xUnit [<Fact>] + Assert.Equal
+import Data.UUID.V4 (nextRandom)
+-- => Fresh UUID per test — no shared state, no ordering coupling
+import qualified Data.Time as Time
+-- => UTC timestamp source for createdAt
+import Purchasing.Application.Ports
+  ( PurchaseOrderRepository (..), EventPublisher (..) )
+-- => Port records — the test wires real values, not mocks
+import Purchasing.Application.SubmitPurchaseOrder (submitPurchaseOrder)
+-- => Application service under test — imported directly; no DI container
+import Purchasing.Infrastructure.InMemoryPurchaseOrderRepository
+  ( makeStore, mkInMemoryPurchaseOrderRepository )
+-- => Brings store factory and adapter factory into scope
+import Purchasing.Domain
+  ( PurchaseOrder (..), PurchaseOrderId (..), SupplierId (..)
+  , Money (..), Currency (..), POStatus (..) )
+-- => Domain types — constructors are exposed only inside the test module via a Test re-export
+
+spec :: Spec
+spec = describe "submitPurchaseOrder" $ do
+  -- => hspec describe groups related tests under a label
+  it "stores a valid PO via the in-memory adapter" $ do
+    -- => hspec it: single test case — IO action that may throw on failure
+    store <- makeStore
+    -- => Fresh IORef per test — isolated from all other tests
+    let repo    = mkInMemoryPurchaseOrderRepository store
+        -- => Wired directly — no DI container, no service locator
+        nullPub = EventPublisher { publish = \_ -> pure (Right ()) }
+        -- => Null publisher: satisfies EventPublisher with a no-op — mirrors F# null pub
+    poId       <- PurchaseOrderId <$> nextRandom
+    -- => Fresh UUID wrapped in the smart-constructor newtype
+    supplierId <- SupplierId <$> nextRandom
+    now        <- Time.getCurrentTime
+    let po = PurchaseOrder
+              { purchaseOrderId = poId
+              , supplierId      = supplierId
+              , totalAmount     = Money 500 USD
+              -- => Money 500 USD: 500 USD value object — passes smart constructor checks
+              , status          = Draft
+              -- => All POs start as Draft before submission
+              , createdAt       = now
+              }
+    result <- submitPurchaseOrder repo nullPub po
+    -- => submitPurchaseOrder: application service from Guide 4 returns IO (Either ...)
+    case result of
+      -- => Pattern-match on Either — Left fails the test, Right asserts identity
+      Right saved -> do
+        purchaseOrderId saved `shouldBe` purchaseOrderId po
+        -- => Saved aggregate ID matches input — no mutation occurred
+        found <- findPurchaseOrder repo (purchaseOrderId po)
+        -- => Verify the adapter persisted the PO in the store
+        found `shouldBe` Right (Just saved)
+        -- => Right (Just saved) mirrors Ok (Some saved) in F#
+      Left e ->
+        fail ("Expected Right, got Left: " <> show e)
+        -- => fail: hspec helper that fails the test with a descriptive message
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the in-memory adapter faithfully mirrors the Npgsql adapter's semantics only as far as you code it. If the Npgsql adapter introduces a new `RepositoryError` variant (e.g., `SerializationFailure`), the in-memory adapter must be updated too. Use the compiler: both adapters satisfy the same record type, so adding a new `RepositoryError` variant causes a compile error in both. That is the intended effect — the compiler enforces adapter parity.
@@ -1132,7 +1488,7 @@ A domain event publisher port solves the same problem as a repository port, but 
 
 F# `Event<_>` and `IEvent<_>` are the stdlib's in-process pub/sub primitives. They work within a single process but provide no persistence, no retry, and no cross-process delivery:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1249,6 +1605,59 @@ export const publish = (event: PurchasingEvent): void => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Domain/Events.hs ───────────────────────
+-- Standard library: in-process event using an IORef of subscribers
+-- [F#: F# Event<_> — Haskell uses an IORef of subscriber callbacks]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Domain.Events
+  ( PurchasingEvent (..)
+  , publish
+  , subscribe
+  ) where
+
+import Data.IORef (IORef, newIORef, readIORef, modifyIORef')
+-- => IORef: stdlib mutable cell; equivalent to F#'s module-private Event<_>
+import Data.UUID (UUID)
+-- => UUID: identity type used as a primitive event payload
+import System.IO.Unsafe (unsafePerformIO)
+-- => unsafePerformIO: stdlib-stage shortcut; production uses an injected publisher record
+
+-- [F#: type PurchasingEvent DU — Haskell uses an algebraic data type]
+data PurchasingEvent
+  = PurchaseOrderSubmitted { eventPoId :: UUID, eventSupplierId :: UUID }
+  -- => Carries only primitive UUIDs — safe to serialize, safe to log
+  -- => No aggregate reference: events are immutable facts, not live objects
+  | PurchaseOrderIssued    { eventPoId :: UUID }
+  -- => Issued event carries only the PO ID — downstream contexts fetch details via ACL
+  deriving (Show, Eq)
+
+-- Module-private subscriber list — global mutable state, same caveats as F# stdlib
+{-# NOINLINE subscribers #-}
+subscribers :: IORef [PurchasingEvent -> IO ()]
+subscribers = unsafePerformIO (newIORef [])
+-- => Single-process only: subscribers are functions inside the current GHC RTS
+-- => No persistence: if the process crashes, all subscriptions are lost
+
+-- Register a subscriber — fire-and-forget callback style
+subscribe :: (PurchasingEvent -> IO ()) -> IO ()
+subscribe sub = modifyIORef' subscribers (sub :)
+-- => Prepend onto the list — order of subscription becomes order of dispatch
+
+-- [F#: publisher.Trigger event — Haskell calls each subscriber in turn]
+publish :: PurchasingEvent -> IO ()
+publish event = do
+  subs <- readIORef subscribers
+  -- => Read the current subscriber list snapshot
+  mapM_ ($ event) subs
+  -- => mapM_ ($ event): apply each subscriber to the event — synchronous fire-and-forget
+  -- => Limitation: if a subscriber throws, the IO action propagates the exception upwards
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: in-process events die with the process. If the application crashes after saving the aggregate but before publishing the event, the event is lost. The at-least-once delivery guarantee requires an outbox.
@@ -1273,7 +1682,7 @@ flowchart LR
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1390,7 +1799,7 @@ export type DomainEvent =
 // Event publisher port — function-type record with a single publish field
 // [F#: type EventPublisher = { Publish: DomainEvent -> Async<Result<unit, string>> }]
 export type EventPublisher = {
-  readonly publish: (event: DomainEvent) => Promise<Result<void, string>>;
+  readonly publish: (event: DomainEvent) => Promise;
   // => Single publish function: dispatches any DomainEvent variant
   // => Promise<Result<void, string>>: mirrors F# Async<Result<unit, string>>
   // => The outbox adapter writes to DB — async I/O, typed error string
@@ -1406,10 +1815,81 @@ export type ApprovalRouterPort = {
     // => PO being routed — workflow engine uses this to fetch context
     level: ApprovalLevel,
     // => ApprovalLevel: "L1" | "L2" | "L3" literal union — determines which manager receives the request
-  ) => Promise<Result<void, string>>;
+  ) => Promise;
   // => Adapter: workflow engine in production; stub returning ok(undefined) in tests
   // [F#: ApprovalLevel (L1/L2/L3) DU — TS uses a literal union string]
 };
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Application/Ports.hs (extended) ───────────────────────
+-- Domain event publisher port — record-of-functions style
+-- [F#: type EventPublisher record — Haskell uses a record with effectful field]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Application.Ports
+  ( DomainEvent (..)
+  , EventPublisher (..)
+  , ApprovalRouterPort (..)
+  , ApprovalLevel (..)
+  , PublishError
+  ) where
+
+import Data.Text (Text)
+-- => Text: efficient strings — used for typed error messages
+import Purchasing.Domain (PurchaseOrderId, SupplierId)
+-- => Domain types — no messaging library imported here
+
+-- Typed error alias — production code uses a richer ADT
+type PublishError = Text
+-- => Mirrors F# Result<unit, string> — string used for stdlib parity in this guide
+
+-- [F#: type DomainEvent DU — Haskell uses an ADT with named record fields per case]
+data DomainEvent
+  = PurchaseOrderSubmitted
+      { eventPoId       :: PurchaseOrderId
+      , eventSupplierId :: SupplierId
+      }
+  -- => Carries structured payload — outbox adapter serializes to JSON
+  | PurchaseOrderIssued
+      { eventPoId       :: PurchaseOrderId
+      , eventSupplierId :: SupplierId
+      }
+  -- => Consumed by receiving and supplier-notifier contexts
+  | PurchaseOrderCancelled
+      { eventPoId   :: PurchaseOrderId
+      , eventReason :: Text
+      }
+  -- => Cancellation reason consumed by accounting + supplier-notifier
+  deriving (Show, Eq)
+
+-- Record-of-functions publisher port
+-- [F#: { Publish: DomainEvent -> Async<Result<unit, string>> }]
+data EventPublisher = EventPublisher
+  { publish :: DomainEvent -> IO (Either PublishError ())
+    -- => Single publish field: dispatches any DomainEvent constructor
+    -- => IO (Either PublishError ()): mirrors Async<Result<unit, string>>
+    -- => Adding a new event variant: extend DomainEvent; pattern matches surface gaps at compile time
+  }
+
+-- Approval level enumeration — closed set of three levels
+data ApprovalLevel
+  = L1 | L2 | L3
+  -- => Closed-set ADT: deriving Bounded/Enum supports exhaustive iteration in tests
+  deriving (Show, Eq, Ord, Bounded, Enum)
+
+-- Approval router port — separate from event publishing
+-- [F#: type ApprovalRouterPort record]
+data ApprovalRouterPort = ApprovalRouterPort
+  { routeApproval
+      :: PurchaseOrderId
+      -> ApprovalLevel
+      -> IO (Either PublishError ())
+    -- => Adapter: workflow engine in production; stub returning Right () in tests
+  }
 ```
 
 {{< /tab >}}
@@ -1430,7 +1910,7 @@ Two adapters satisfy the `EventPublisher` port from Guide 9: an in-memory adapte
 
 The stdlib `ResizeArray<_>` (mutable list) captures events in memory for test assertions:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1499,6 +1979,43 @@ const captureEvent = (e: unknown): void => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: EventCaptureStdlib.hs ───────────────────────
+-- Standard library: capture events in a global IORef of a list
+-- [F#: ResizeArray<obj> — Haskell uses a module-private IORef [Dynamic]]
+{-# LANGUAGE OverloadedStrings #-}
+module EventCaptureStdlib where
+
+import Data.IORef (IORef, newIORef, modifyIORef')
+-- => IORef: stdlib mutable cell — thread-safe enough but globally shared
+import Data.Dynamic (Dynamic, toDyn)
+-- => Dynamic: type-erased container — mirrors F# `obj`
+import System.IO.Unsafe (unsafePerformIO)
+
+-- Module-private capture list — global mutable state, no per-test isolation
+{-# NOINLINE captured #-}
+captured :: IORef [Dynamic]
+captured = unsafePerformIO (newIORef [])
+-- => Global IORef [Dynamic] — same drift hazard as F#'s ResizeArray<obj>
+
+-- Capture an event of any type via Dynamic — mirrors F# `obj` parameter
+captureEvent :: Typeable a => a -> IO ()
+captureEvent e =
+  modifyIORef' captured (toDyn e :)
+  -- => Prepend to the list — Dynamic erases type info; assertions must downcast
+  -- => Limitation: shared across all tests in the same process; parallel runs corrupt state
+  where
+    -- Typeable comes from Data.Typeable in base; import not shown to keep snippet short.
+    _ = ()
+
+-- Stand-in import marker for Typeable so the snippet reads cleanly
+class Typeable a
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: global mutable state breaks parallel test execution. Untyped storage makes assertion code fragile. The outbox pattern requires transactional writes — the stdlib has no transactional in-memory store.
@@ -1507,7 +2024,7 @@ const captureEvent = (e: unknown): void => {
 
 **In-memory adapter** (for tests):
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1611,7 +2128,7 @@ export const makeInMemoryPublisher = (): [EventPublisher, readonly DomainEvent[]
   const publisher: EventPublisher = {
     // => Object literal satisfying EventPublisher structurally — TS enforces all fields
     // [F#: record literal { Publish = fun event -> async { ... } }]
-    publish: async (event): Promise<Result<void, string>> => {
+    publish: async (event): Promise => {
       // => async arrow: maintains identical Promise calling convention to the outbox adapter
       captured.push(event);
       // => push: appends the typed DomainEvent — O(1) amortized; no thread-safety concern in Node.js
@@ -1630,11 +2147,54 @@ export const makeInMemoryPublisher = (): [EventPublisher, readonly DomainEvent[]
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Infrastructure/InMemoryEventPublisher.hs ───────────────────────
+-- In-memory event publisher adapter satisfying EventPublisher
+-- [F#: inMemoryPublisher factory — Haskell uses an IORef [DomainEvent] for captures]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Infrastructure.InMemoryEventPublisher
+  ( makeInMemoryPublisher
+  , readCaptured
+  ) where
+
+import Data.IORef (IORef, newIORef, readIORef, atomicModifyIORef')
+-- => IORef + atomicModifyIORef': thread-safe mutable cell — equivalent to F# ref
+import Purchasing.Application.Ports
+  ( DomainEvent, EventPublisher (..) )
+-- => Port type — the adapter must satisfy EventPublisher exactly
+
+-- Factory: returns (publisher, captureRef) so tests can assert on captured events
+-- [F#: inMemoryPublisher: ResizeArray * EventPublisher — Haskell uses an explicit tuple]
+makeInMemoryPublisher :: IO (EventPublisher, IORef [DomainEvent])
+makeInMemoryPublisher = do
+  -- => Each call yields a fresh IORef; parallel tests stay isolated
+  captureRef <- newIORef []
+  let publisher = EventPublisher
+        { publish = \event -> do
+            -- => Append the typed event — no Dynamic erasure unlike the stdlib version
+            atomicModifyIORef' captureRef (\xs -> (event : xs, ()))
+            -- => atomicModifyIORef' guarantees a single CAS — thread-safe under parallel publishes
+            pure (Right ())
+            -- => Right (): mirrors Ok () in F#; the publisher contract is satisfied
+        }
+  pure (publisher, captureRef)
+  -- => Tuple return: caller binds `(pub, captured) <- makeInMemoryPublisher`
+
+-- Convenience reader to snapshot the captured events in test assertions
+readCaptured :: IORef [DomainEvent] -> IO [DomainEvent]
+readCaptured ref = reverse <$> readIORef ref
+-- => reverse: list was prepended; restore insertion order for human-readable assertions
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Outbox adapter** (for production):
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1817,7 +2377,7 @@ const buildOutboxRow = (event: DomainEvent): OutboxRow => ({
 export const makeOutboxPublisher = (pool: Pool): EventPublisher => ({
   // => pool: injected by composition root — shared per process
   // [F#: record literal { Publish = fun event -> async { ... } }]
-  publish: async (event): Promise<Result<void, string>> => {
+  publish: async (event): Promise => {
     // => async arrow: pg is always async — maintains identical contract to in-memory adapter
     const client: PoolClient = await pool.connect();
     // => Borrow connection from pool; must release in finally
@@ -1850,6 +2410,85 @@ export const makeOutboxPublisher = (pool: Pool): EventPublisher => ({
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Infrastructure/OutboxEventPublisher.hs ───────────────────────
+-- Outbox publisher adapter — writes event rows in the same DB transaction as aggregate save
+-- [F#: outboxEventPublisher — Haskell uses a Pool + withTransaction wrapper]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Infrastructure.OutboxEventPublisher
+  ( mkOutboxEventPublisher
+  ) where
+
+import Control.Exception (try, SomeException)
+import qualified Data.Aeson as Aeson
+-- => aeson: standard JSON encoding; outbox event payload is stored as JSONB
+import qualified Data.ByteString.Lazy as LBS
+import Data.Pool (Pool, withResource)
+-- => Connection pool injected by the composition root
+import Data.Text (Text)
+import qualified Data.Text as Text
+import qualified Data.Time as Time
+import qualified Data.UUID.V4 as UUIDv4
+import Database.PostgreSQL.Simple (Connection, execute)
+-- => postgresql-simple: the same dependency used by the repository adapter
+import Purchasing.Application.Ports
+  ( DomainEvent (..), EventPublisher (..) )
+
+-- Factory: closes over the Pool and returns the EventPublisher record
+-- [F#: outboxEventPublisher (connStr: string) : EventPublisher]
+mkOutboxEventPublisher :: Pool Connection -> EventPublisher
+mkOutboxEventPublisher pool = EventPublisher
+  { publish = publishOne pool
+    -- => Single publish field — outbox INSERT inside the same connection as the aggregate save
+  }
+
+-- Internal helper to publish one event
+publishOne :: Pool Connection -> DomainEvent -> IO (Either Text ())
+publishOne pool event = do
+  result <- try $ withResource pool $ \conn ->
+    -- => withResource: borrows + releases a connection automatically
+    insertOutboxRow conn event
+  case result of
+    Right _  -> pure (Right ())
+    -- => Right (): caller does not re-read; relay worker reads outbox rows asynchronously
+    Left ex  -> pure (Left ("outbox-insert-failed: " <> Text.pack (show (ex :: SomeException))))
+    -- => Lift the exception into a typed error message — caller logs and may retry
+
+insertOutboxRow :: Connection -> DomainEvent -> IO ()
+insertOutboxRow conn event = do
+  outboxId <- UUIDv4.nextRandom
+  -- => Fresh UUID for the outbox row — independent of the event's PO ID
+  now      <- Time.getCurrentTime
+  -- => UTC timestamp for created_at column
+  let payload = LBS.toStrict (Aeson.encode (eventToJson event))
+      -- => Encode the event into JSON bytes; stored in payload jsonb column
+      eventType :: Text
+      eventType = case event of
+        PurchaseOrderSubmitted {} -> "purchasing.purchase-order-submitted"
+        PurchaseOrderIssued {}    -> "purchasing.purchase-order-issued"
+        PurchaseOrderCancelled {} -> "purchasing.purchase-order-cancelled"
+      -- => Stable string identifier — consumers dispatch on this column
+  _ <- execute conn
+        "INSERT INTO purchasing.outbox_events (outbox_id, event_type, payload, created_at) \
+        \VALUES (?, ?, ?, ?)"
+        (outboxId, eventType, payload, now)
+  pure ()
+
+-- Minimal JSON encoder — pattern matches on the closed DomainEvent ADT
+eventToJson :: DomainEvent -> Aeson.Value
+eventToJson (PurchaseOrderSubmitted poId sId) =
+  Aeson.object [("poId", Aeson.toJSON poId), ("supplierId", Aeson.toJSON sId)]
+eventToJson (PurchaseOrderIssued poId sId) =
+  Aeson.object [("poId", Aeson.toJSON poId), ("supplierId", Aeson.toJSON sId)]
+eventToJson (PurchaseOrderCancelled poId reason) =
+  Aeson.object [("poId", Aeson.toJSON poId), ("reason", Aeson.toJSON reason)]
+-- => Closed ADT means a future variant produces a compile-time non-exhaustive warning
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the outbox pattern guarantees at-least-once delivery — the relay worker may deliver an event more than once if it crashes between delivery and marking `processed_at`. Consumers must be idempotent. The relay worker itself (polling the `outbox_events` table and forwarding to consumers) is covered in Guide 19. For contexts that emit events at low volume (< 100/s), a simple polling relay suffices. High-throughput contexts benefit from a CDC-based relay (e.g., Debezium) that reads the PostgreSQL WAL instead of polling.
@@ -1866,7 +2505,7 @@ Guide 6 showed the HTTP handler concept using a sketch of a domain-backed adapte
 
 ASP.NET Core's minimal API (`MapPost`) handles the binding and response in a flat function without Giraffe's combinator chain:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1959,7 +2598,7 @@ const handleSubmitStdlib = async (
   req: IncomingMessage,
   res: ServerResponse,
   // => IncomingMessage/ServerResponse: Node.js stdlib request/response — no Request/Response objects
-): Promise<void> => {
+): Promise => {
   const chunks: Buffer[] = [];
   // => Manual body buffering — no middleware-provided body parsing
   for await (const chunk of req) {
@@ -1990,6 +2629,61 @@ const handleSubmitStdlib = async (
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchasingHandlerStdlib.hs ───────────────────────
+-- Standard library: bare WAI Application — no Servant/Yesod framework
+-- [F#: ASP.NET Core Minimal API — Haskell stdlib equivalent is a raw WAI Application]
+{-# LANGUAGE OverloadedStrings #-}
+module PurchasingHandlerStdlib where
+
+import qualified Data.Aeson as Aeson
+-- => aeson: JSON serialization library — closest "stdlib" equivalent in the Haskell ecosystem
+import qualified Data.ByteString.Lazy as LBS
+import Network.HTTP.Types (status201, status400)
+-- => http-types: HTTP status constants — no Successful.CREATED combinator
+import Network.Wai (Application, responseLBS, strictRequestBody)
+-- => WAI: low-level web app abstraction; equivalent to bare http.createServer in Node
+import qualified Data.UUID.V4 as UUIDv4
+
+-- Stdlib handler — reads body, validates inline, responds with raw status constants
+-- [F#: app.MapPost route closure — Haskell uses a single Application function]
+handleSubmitStdlib :: Application
+handleSubmitStdlib req respond = do
+  -- => req: WAI Request; respond: response continuation
+  body <- strictRequestBody req
+  -- => Manual body read — no framework body-binding combinator
+  case Aeson.decode body :: Maybe Aeson.Value of
+    -- => Untyped decode — accepts any JSON shape; mirrors anonymous-record DTO
+    Just (Aeson.Object o) -> do
+      let totalAmount =
+            case Aeson.lookup "totalAmount" o of
+              Just (Aeson.Number n) -> realToFrac n :: Double
+              _                     -> 0
+      if totalAmount <= 0
+        then
+          -- => Validation inline in the handler — duplicated at every endpoint
+          respond $ responseLBS status400
+            [("Content-Type", "application/json")]
+            (Aeson.encode (Aeson.object [("error", "totalAmount must be positive")]))
+        else do
+          poId <- UUIDv4.nextRandom
+          -- => Business logic (ID generation) leaks into the handler — no application service
+          respond $ responseLBS status201
+            [("Content-Type", "application/json")]
+            (Aeson.encode (Aeson.object
+              [ ("id", Aeson.toJSON poId)
+              , ("currency", Aeson.lookupDefault "USD" "currency" o)
+              ]))
+    _ ->
+      -- => Body wasn't a JSON object — return a generic 400
+      respond $ responseLBS status400 [] (LBS.fromStrict "bad request")
+-- => Limitation: validation duplicated; status numbers magic; service boundary absent
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: validation logic duplicated across every `MapPost` lambda. Business logic in the handler. No typed error discrimination — status codes are magic numbers. The flat closure cannot compose with Giraffe middleware.
@@ -1998,7 +2692,7 @@ const handleSubmitStdlib = async (
 
 The full Giraffe handler pipeline enforces a strict translation discipline:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2337,6 +3031,125 @@ export const makePurchasingRouter = (
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Presentation/PurchasingHandlers.hs ───────────────────────
+-- Production Servant handler: full DTO → smart constructor → service → response pipeline
+-- [F#: Giraffe HttpHandler — Haskell uses Servant API types + Handler]
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators #-}
+module Purchasing.Presentation.PurchasingHandlers
+  ( PurchasingAPI
+  , purchasingServer
+  ) where
+
+import Control.Monad.IO.Class (liftIO)
+import Data.Aeson (FromJSON, ToJSON)
+import qualified Data.Text as Text
+import Data.Text (Text)
+import GHC.Generics (Generic)
+import Servant
+  ( (:>), (:<|>) (..), Server, Handler, Post, ReqBody, JSON, ServerError
+  , err400, err409, err500, errBody, throwError )
+-- => Servant: type-level API description — equivalent to Giraffe combinators in type-land
+import Purchasing.Application.Ports
+  ( PurchaseOrderRepository, EventPublisher )
+import Purchasing.Application.SubmitPurchaseOrder
+  ( submitPurchaseOrder, SubmitPurchaseOrderError (..) )
+import Purchasing.Domain
+  ( PurchaseOrder (..), PurchaseOrderId (..), SupplierId (..)
+  , mkSupplierId, mkMoney )
+-- => Smart constructors hide raw Guid/UUID at the boundary — DTO mapping calls them
+
+-- Request DTO — separate type from the domain aggregate
+-- [F#: [<CLIMutable>] type SubmitPurchaseOrderRequest — Haskell uses a plain record]
+data SubmitPurchaseOrderRequest = SubmitPurchaseOrderRequest
+  { reqSupplierId   :: Text
+  , reqTotalAmount  :: Double
+  , reqCurrency     :: Text
+  } deriving (Generic, Show)
+
+instance FromJSON SubmitPurchaseOrderRequest
+-- => FromJSON derived via Generic — equivalent to Giraffe's BindJsonAsync
+
+-- Response DTO — never exposes domain types directly
+data SubmitPurchaseOrderResponse = SubmitPurchaseOrderResponse
+  { resId       :: Text
+  , resCurrency :: Text
+  } deriving (Generic, Show)
+
+instance ToJSON SubmitPurchaseOrderResponse
+
+-- Servant API type — equivalent to Giraffe's route combinators
+type PurchasingAPI =
+       "api" :> "v1" :> "purchase-orders"
+    :> ReqBody '[JSON] SubmitPurchaseOrderRequest
+    :> Post '[JSON] SubmitPurchaseOrderResponse
+-- => Type-level route: Servant enforces method + body type at compile time
+
+-- Server factory: closes over ports, returns the Server PurchasingAPI value
+-- [F#: handler function returning HttpHandler — Haskell returns a Server PurchasingAPI]
+purchasingServer
+  :: PurchaseOrderRepository
+  -> EventPublisher
+  -> Server PurchasingAPI
+purchasingServer repo pub = submit
+  where
+    submit :: SubmitPurchaseOrderRequest -> Handler SubmitPurchaseOrderResponse
+    submit dto = do
+      -- => Step 1: bind DTO — Servant deserializes via FromJSON before reaching us
+      supplierIdResult <-
+        pure (mkSupplierId (reqSupplierId dto))
+        -- => Smart constructor: validates UUID shape — returns Either Text SupplierId
+      moneyResult <-
+        pure (mkMoney (reqTotalAmount dto) (reqCurrency dto))
+        -- => Smart constructor: validates positive amount + ISO 4217 currency
+      case (supplierIdResult, moneyResult) of
+        (Left e, _) -> throwError (err400 { errBody = jsonError e })
+        -- => Step 2 failure: invalid SupplierId → HTTP 400; mirrors RequestErrors.BAD_REQUEST
+        (_, Left e) -> throwError (err400 { errBody = jsonError e })
+        -- => Step 2 failure: invalid Money → HTTP 400
+        (Right sId, Right money) -> do
+          -- => Step 3: dispatch to application service — pure pipeline so far
+          aggregate <- liftIO (newDraftPO sId money)
+          -- => Build a Draft aggregate using domain constructors only
+          result <- liftIO (submitPurchaseOrder repo pub aggregate)
+          case result of
+            -- => Step 4: pattern-match on Either SubmitPurchaseOrderError PurchaseOrder
+            Right saved ->
+              -- => Success: translate aggregate → response DTO
+              pure (toResponse saved)
+            Left InvariantViolated  ->
+              throwError (err400 { errBody = jsonError "invariant violated" })
+            Left DuplicatePO        ->
+              throwError (err409 { errBody = jsonError "duplicate purchase order" })
+              -- => HTTP 409 Conflict mirrors RequestErrors.CONFLICT
+            Left (InfraFailure msg) ->
+              throwError (err500 { errBody = jsonError msg })
+
+-- Helpers (would live next to the domain in production)
+newDraftPO :: SupplierId -> Money -> IO PurchaseOrder
+newDraftPO = error "domain factory wired in production"
+
+toResponse :: PurchaseOrder -> SubmitPurchaseOrderResponse
+toResponse po = SubmitPurchaseOrderResponse
+  { resId       = Text.pack (show (purchaseOrderId po))
+  , resCurrency = currencyText (totalAmount po)
+  }
+
+jsonError :: Text -> LBS.ByteString
+jsonError = error "JSON error envelope wired with Aeson in production"
+
+-- Local imports to keep the snippet syntactically self-contained
+import qualified Data.ByteString.Lazy as LBS
+import Purchasing.Domain (Money, totalAmount, currencyText, SubmitPurchaseOrderError (..))
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the four-step pipeline (bind → construct → service → respond) adds three translation functions compared to a flat Minimal API handler. For CRUD endpoints that map directly to database rows, the overhead feels disproportionate. The payoff appears when domain invariants are non-trivial: the smart constructor enforces them once, and every downstream component receives only valid aggregates.
@@ -2353,7 +3166,7 @@ The HTTP handler in Guide 11 references hand-authored request and response DTO t
 
 Without codegen, the team writes CLIMutable DTOs by hand and keeps them in sync with the spec manually:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2441,6 +3254,42 @@ export interface SubmitPurchaseOrderRequestManual {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Contracts/Manual.hs ───────────────────────
+-- Standard library: hand-authored Haskell record matching OpenAPI spec manually
+-- [F#: CLIMutable record by hand — Haskell uses a Generic-derived FromJSON instance]
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Contracts.Manual where
+
+import Data.Aeson (FromJSON, ToJSON)
+import Data.Text (Text)
+import GHC.Generics (Generic)
+-- => GHC.Generics: derives JSON instances; no codegen contract attached
+
+-- Hand-authored request DTO — drift from the OpenAPI spec is invisible until runtime
+-- [F#: type SubmitPurchaseOrderRequest CLIMutable record]
+data SubmitPurchaseOrderRequestManual = SubmitPurchaseOrderRequestManual
+  { supplierId  :: Text
+  -- => Field name must match the JSON key exactly — no codegen guard
+  , totalAmount :: Double
+  -- => Adding a new field requires touching this record and the spec separately
+  , currency    :: Text
+  -- => ISO 4217 currency code — domain validation enforces allowed values
+  , notes       :: Maybe Text
+  -- => Maybe Text mirrors `string option` — optional field, drift still possible
+  } deriving (Generic, Show)
+
+instance FromJSON SubmitPurchaseOrderRequestManual
+instance ToJSON   SubmitPurchaseOrderRequestManual
+-- => Generic deriving: JSON shape follows the record; spec drift is silent
+-- => Limitation: renaming a field in the OpenAPI spec causes no compile error here
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: manual synchronization between spec and DTOs is error-prone at scale. A field rename in the spec produces no compile error — only a runtime JSON deserialization failure.
@@ -2464,7 +3313,7 @@ The `.fsproj` conditionally includes generated contract types produced by the Nx
 
 A handler consuming a generated type looks identical to Guide 11 — the import changes, not the handler logic:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2559,6 +3408,42 @@ export const registerHealthHandler = (app: Hono): void => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Presentation/HealthHandler.hs ───────────────────────
+-- Handler consuming generated contract types
+-- [F#: HealthResponse generated record — Haskell uses an openapi3-generated module]
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators #-}
+module Procurement.Presentation.HealthHandler
+  ( HealthAPI
+  , healthServer
+  ) where
+
+import Servant ((:>), Get, JSON, Server, Handler)
+import Procurement.Contracts.Generated (HealthResponse (..))
+-- => Procurement.Contracts.Generated: produced by `cabal build` running the OpenAPI codegen step
+-- => The module is gitignored; build script regenerates it from specs/apps/procurement-platform/openapi.yaml
+-- => Field names of HealthResponse are spec-authoritative; renames in the spec break this import
+
+-- Servant API type for the health endpoint
+type HealthAPI = "health" :> Get '[JSON] HealthResponse
+-- => Type-level route: equivalent to Giraffe's `route "/health" >=> GET`
+
+healthServer :: Server HealthAPI
+healthServer = pure response
+  where
+    response :: HealthResponse
+    response = HealthResponse { status = "healthy" }
+    -- => HealthResponse constructor is generated — adding required fields in the spec
+    -- => regenerates the constructor and produces a compile error here until fields are supplied
+    -- => Zero drift between spec and code, enforced at build time
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: codegen introduces a build-time step (`nx run procurement-platform-be:codegen`) that must run before `dotnet build`. Teams must run codegen as part of their onboarding script. The payoff: adding a new response field to the OpenAPI spec and running codegen produces a compile error at every handler that constructs the response type without the new field — zero drift, enforced by the compiler.
@@ -2575,7 +3460,7 @@ The `receiving` context needs summary information about a purchase order when cr
 
 Without an ACL, `receiving` opens `purchasing` domain types directly:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2646,6 +3531,31 @@ const createGoodsReceiptNote = (po: PurchaseOrder, receivedQty: number): void =>
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Receiving/Domain.hs ───────────────────────
+-- No ACL: receiving domain imports purchasing domain directly — anti-pattern
+-- [F#: open Purchasing.Domain inside Receiving.Domain — Haskell uses direct module import]
+{-# LANGUAGE OverloadedStrings #-}
+module Receiving.Domain where
+
+import Purchasing.Domain (PurchaseOrder)
+-- => Direct cross-context import — couples receiving domain to purchasing domain
+-- => A rename of `totalAmount` to `amount` in Purchasing.Domain breaks this module
+-- => The two contexts can no longer evolve their domain models independently
+
+-- Takes purchasing's PurchaseOrder directly — no translation boundary
+createGoodsReceiptNote :: PurchaseOrder -> Int -> ()
+createGoodsReceiptNote po receivedQty =
+  -- => po: purchasing's domain type — direct structural coupling
+  -- => receivedQty: quantity of goods received at the dock
+  ()
+-- => Limitation: refactoring purchasing's domain shape requires simultaneous edits here
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: direct domain coupling means that refactoring one context requires simultaneous changes to all consuming contexts. In a large team, this creates merge-conflict pressure and prevents independent deployment.
@@ -2672,7 +3582,7 @@ flowchart LR
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2752,9 +3662,41 @@ export type PurchaseOrderSummary = {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Receiving/Domain.hs ───────────────────────
+-- receiving domain: its own type for PO information — no cross-context import
+-- [F#: module Receiving.Domain — Haskell uses a separate module with no Purchasing imports]
+{-# LANGUAGE OverloadedStrings #-}
+module Receiving.Domain
+  ( PurchaseOrderSummary (..)
+  ) where
+
+import Data.UUID (UUID)
+-- => Plain UUID — receiving does not need purchasing's newtype PurchaseOrderId
+import Data.Scientific (Scientific)
+-- => Decimal-friendly numeric type — used for expected totals across currencies
+
+-- receiving's view of a purchase order — independent of purchasing's domain types
+-- [F#: type PurchaseOrderSummary record — Haskell uses a Haskell record]
+data PurchaseOrderSummary = PurchaseOrderSummary
+  { purchaseOrderId     :: UUID
+    -- => Plain UUID; receiving does not import Purchasing.Domain.PurchaseOrderId
+  , supplierId          :: UUID
+    -- => Supplier identifier — used to route GRN to the correct supplier
+  , expectedTotalAmount :: Scientific
+    -- => Expected total — compared against goods actually received at the dock
+  } deriving (Show, Eq)
+-- => Adding a field to PurchaseOrder in purchasing does not affect this record
+-- => A rename in purchasing's domain causes no compile error here — contexts evolve independently
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2837,7 +3779,7 @@ export type PurchaseOrderSummaryPort = {
     poId: string,
     // => Plain string UUID — receiving does not wrap it in a branded type
     // [F#: System.Guid — TS uses string; no strongly-typed wrapper at the cross-context boundary]
-  ) => Promise<Result<PurchaseOrderSummary | null, string>>;
+  ) => Promise;
   // => PurchaseOrderSummary | null: null represents absence (Option None)
   // => The ACL adapter satisfies this port — receiving never knows where the data comes from
 };
@@ -2845,10 +3787,10 @@ export type PurchaseOrderSummaryPort = {
 // GoodsReceiptRepository port — save and load GRNs
 // [F#: type GoodsReceiptRepository record-of-functions — TS uses a readonly object type]
 export type GoodsReceiptRepository = {
-  readonly saveGoodsReceipt: (grn: GoodsReceiptNote) => Promise<Result<void, string>>;
+  readonly saveGoodsReceipt: (grn: GoodsReceiptNote) => Promise;
   // => Persist a GRN — called after goods are verified at the receiving dock
   // [F#: SaveGoodsReceipt: GoodsReceiptNote -> Async<Result<unit, string>>]
-  readonly findGoodsReceipt: (grnId: GoodsReceiptNoteId) => Promise<Result<GoodsReceiptNote | null, string>>;
+  readonly findGoodsReceipt: (grnId: GoodsReceiptNoteId) => Promise;
   // => Load by identity — used for three-way match lookup in invoicing context
   // [F#: FindGoodsReceipt: GoodsReceiptNoteId -> Async<Result<GoodsReceiptNote option, string>>]
 };
@@ -2856,9 +3798,50 @@ export type GoodsReceiptRepository = {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Receiving/Application/Ports.hs ───────────────────────
+-- receiving application layer: port records for PO summary and GRN persistence
+-- [F#: PurchaseOrderSummaryPort type alias — Haskell uses a record-of-functions]
+{-# LANGUAGE OverloadedStrings #-}
+module Receiving.Application.Ports
+  ( PurchaseOrderSummaryPort (..)
+  , GoodsReceiptRepository (..)
+  ) where
+
+import Data.Text (Text)
+import Data.UUID (UUID)
+-- => Plain UUID at the application boundary — no cross-context wrapper
+import Receiving.Domain
+  ( PurchaseOrderSummary, GoodsReceiptNote, GoodsReceiptNoteId )
+-- => Only receiving domain types — no Purchasing import in this module
+
+-- PO summary port — function record used by the ACL adapter to satisfy receiving's queries
+-- [F#: type PurchaseOrderSummaryPort = Guid -> Async<Result<PurchaseOrderSummary option, string>>]
+data PurchaseOrderSummaryPort = PurchaseOrderSummaryPort
+  { fetchPurchaseOrderSummary
+      :: UUID
+      -> IO (Either Text (Maybe PurchaseOrderSummary))
+    -- => Maybe represents absence (Option None) — caller decides what to do
+    -- => Either Text: typed error message at the cross-context boundary
+  }
+
+-- GoodsReceiptRepository port — save and load GRNs
+-- [F#: type GoodsReceiptRepository record-of-functions]
+data GoodsReceiptRepository = GoodsReceiptRepository
+  { saveGoodsReceipt :: GoodsReceiptNote -> IO (Either Text ())
+    -- => Persist a GRN — called after goods are verified at the receiving dock
+  , findGoodsReceipt :: GoodsReceiptNoteId -> IO (Either Text (Maybe GoodsReceiptNote))
+    -- => Load by identity — used for three-way match lookup in invoicing context
+  }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2989,12 +3972,10 @@ export const makePurchasingAcl = (
   // => Object literal satisfying PurchaseOrderSummaryPort structurally
   // [F#: returns a PurchaseOrderSummaryPort function — TS returns an object with the method]
 
-  fetchPurchaseOrderSummary: async (poId): Promise<Result<PurchaseOrderSummary | null, string>> => {
+  fetchPurchaseOrderSummary: async (poId): Promise => {
     // => poId: plain string UUID — receiving passes a raw UUID; ACL adapts for purchasing's port
     // [F#: fun poId -> async { let! result = findPO.FindPurchaseOrder (PurchaseOrderId poId) }]
-    const result = await purchasingRepo.findPurchaseOrder(
-      poId as Parameters<typeof purchasingRepo.findPurchaseOrder>[0],
-    );
+    const result = await purchasingRepo.findPurchaseOrder(poId as Parameters[0]);
     // => Cast to branded PurchaseOrderId — ACL owns this translation; receiving never touches the brand
     if (!result.isOk()) {
       return err(`ACL translation failure: ${result.error.kind}`);
@@ -3029,6 +4010,65 @@ export const makePurchasingAcl = (
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Receiving/Infrastructure/PurchasingAcl.hs ───────────────────────
+-- ACL adapter in receiving infrastructure: translates purchasing types into receiving types
+-- [F#: PurchasingAcl module — Haskell uses a factory function returning the port record]
+{-# LANGUAGE OverloadedStrings #-}
+module Receiving.Infrastructure.PurchasingAcl
+  ( mkPurchasingAcl
+  ) where
+
+import qualified Data.Text as Text
+import Receiving.Application.Ports (PurchaseOrderSummaryPort (..))
+-- => Port being satisfied — receiving's own application contract
+import qualified Purchasing.Application.Ports as PurApp
+-- => ACL imports purchasing's APPLICATION port (not its domain) — query model only
+import qualified Purchasing.Domain as PurDom
+-- => purchasing domain types are referenced ONLY inside this ACL module
+-- => receiving's domain layer remains free of any Purchasing import
+import Receiving.Domain (PurchaseOrderSummary (..))
+-- => receiving's own domain type — the ACL's translation target
+
+-- Factory: takes purchasing's repository, returns receiving's port
+-- [F#: purchasingAcl (findPo: FindPurchaseOrder) : PurchaseOrderSummaryPort]
+mkPurchasingAcl
+  :: PurApp.PurchaseOrderRepository
+  -- => Inject the purchasing repository — the ACL queries it but never returns its types
+  -> PurchaseOrderSummaryPort
+mkPurchasingAcl purRepo = PurchaseOrderSummaryPort
+  { fetchPurchaseOrderSummary = \poId -> do
+      -- => poId arrives as a plain UUID — wrap in purchasing's newtype for the query
+      result <- PurApp.findPurchaseOrder purRepo (PurDom.PurchaseOrderId poId)
+      case result of
+        Left e ->
+          -- => Translate purchasing's RepositoryError into a plain Text — boundary translation
+          pure (Left (Text.pack (show e)))
+        Right Nothing ->
+          -- => Absence: deliver Right Nothing — caller treats as Option None
+          pure (Right Nothing)
+        Right (Just po) ->
+          -- => Translate purchasing's PurchaseOrder aggregate → receiving's PurchaseOrderSummary
+          pure (Right (Just (translate po)))
+  }
+  where
+    translate :: PurDom.PurchaseOrder -> PurchaseOrderSummary
+    translate po = PurchaseOrderSummary
+      { purchaseOrderId     = PurDom.unPurchaseOrderId (PurDom.purchaseOrderId po)
+        -- => Unwrap purchasing's newtype — receiving stores the plain UUID
+      , supplierId          = PurDom.unSupplierId (PurDom.supplierId po)
+        -- => Same: unwrap the cross-context wrapper
+      , expectedTotalAmount = PurDom.amount (PurDom.totalAmount po)
+        -- => Project Money → Scientific — receiving's needs are simpler than purchasing's
+      }
+-- => The translate helper is the only place where Purchasing.Domain types appear in receiving
+-- => Adding a field to purchasing's aggregate does not require receiving's domain to change
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the ACL adapter adds a translation step and an additional port. For contexts that share a large read model, the translation code is verbose. Use a shared read model (a separate query module both contexts import from a `SharedKernel` library) when the translation is purely structural with no semantic difference. Reserve the full ACL for cases where the two contexts genuinely use different ubiquitous language — which is the case for `receiving` and `purchasing` in `procurement-platform-be`.
@@ -3045,7 +4085,7 @@ The composition root is the single place in the application where adapter implem
 
 Without a DI container or explicit composition, each function creates its own dependencies — the poor man's composition:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3103,7 +4143,7 @@ import { Pool } from "pg";
 import { makePgPurchaseOrderRepository } from "../infrastructure/pg-purchase-order-repository";
 // => Infrastructure adapter required at the call site — not injected by a composition root
 
-const handleRequestStdlib = async (): Promise<void> => {
+const handleRequestStdlib = async (): Promise => {
   // => Inline construction: reads config and builds adapter per call
   const connStr = process.env["DATABASE_URL"] ?? "";
   // => process.env: reads DATABASE_URL at call time — not from a typed config object
@@ -3121,6 +4161,48 @@ const handleRequestStdlib = async (): Promise<void> => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: HandleRequestStdlib.hs ───────────────────────
+-- Standard library: inline dependency construction — poor man's DI
+-- [F#: each call site constructs its own adapter — Haskell does the same antipattern]
+{-# LANGUAGE OverloadedStrings #-}
+module HandleRequestStdlib where
+
+import qualified Data.ByteString.Char8 as BS8
+import Data.Pool (createPool, destroyAllResources)
+-- => createPool: builds a fresh pool every call — pool sharing lost
+import qualified Database.PostgreSQL.Simple as PG
+import System.Environment (getEnv)
+-- => getEnv reads DATABASE_URL at call time — not from a typed config record
+import qualified Purchasing.Infrastructure.PgPurchaseOrderRepository as PgRepo
+
+-- Poor man's DI: constructs the adapter inline on every request
+-- [F#: handleRequest () reads env + builds repo per call]
+handleRequestStdlib :: IO ()
+handleRequestStdlib = do
+  connStr <- BS8.pack <$> getEnv "DATABASE_URL"
+  -- => Connection string read at call time — not propagated through a typed AppConfig
+  pool <- createPool
+            (PG.connectPostgreSQL connStr)
+            -- => Connect action — postgresql-simple opens a fresh socket
+            PG.close
+            -- => Close action — pool returns sockets when destroyed
+            1   -- subPools (number of stripes)
+            10  -- keep-alive seconds before closing idle connections
+            5   -- max resources per stripe
+  -- => New Pool per call: every request rebuilds the pool — efficiency lost
+  let _repo = PgRepo.mkPgPurchaseOrderRepository pool
+      -- => Adapter constructed inline — not shared across requests
+      -- => Adding a new adapter forces every handler to grow more setup code
+  destroyAllResources pool
+  -- => Tear down immediately — the inline pattern cannot reuse the pool
+  -- => Limitation: inline construction is the antipattern this guide replaces with a composition root
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: inline construction creates adapter instances per call, bypassing connection pool sharing. Adding a new adapter requires touching all call sites.
@@ -3129,7 +4211,7 @@ const handleRequestStdlib = async (): Promise<void> => {
 
 `Composition/Program.fs` in `procurement-platform-be` demonstrates the correct pattern: adapters are constructed once at startup and injected via partial application:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3404,6 +4486,84 @@ export const startSystem = (): Hono => {
   // => Return the root Hono app — main.ts passes it to serve(); tests call it directly
   // [F#: app.Run() blocks the process — TS returns the app; caller decides how to start the server]
 };
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Composition/Main.hs ───────────────────────
+-- Composition root: wires all context ports to adapters once at startup
+-- [F#: Program.fs — Haskell uses an entry-point module that builds a Servant Server]
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators #-}
+module Main (main) where
+
+import qualified Data.ByteString.Char8 as BS8
+import Data.Pool (Pool, createPool, destroyAllResources)
+import qualified Database.PostgreSQL.Simple as PG
+import Network.Wai.Handler.Warp (run)
+-- => Warp: production Haskell web server — equivalent role to Kestrel under ASP.NET Core
+import Servant ((:<|>) (..), Proxy (..), Server, serve)
+-- => Servant.serve: turns Server api + Proxy into a WAI Application
+import System.Environment (getEnv)
+
+-- Context wiring
+import qualified Purchasing.Infrastructure.PgPurchaseOrderRepository as PurPg
+import qualified Purchasing.Infrastructure.OutboxEventPublisher       as PurOutbox
+import qualified Purchasing.Presentation.PurchasingHandlers           as PurH
+import qualified Receiving.Infrastructure.PurchasingAcl               as RecAcl
+import qualified Receiving.Infrastructure.JdbcGoodsReceiptRepository  as RecRepo
+import qualified Receiving.Presentation.ReceivingHandlers             as RecH
+
+-- Composite API type — Servant combines per-context APIs with :<|>
+type AppAPI = PurH.PurchasingAPI :<|> RecH.ReceivingAPI
+-- => Type-level composition: equivalent to Giraffe's `choose` combinator
+
+main :: IO ()
+main = do
+  -- => Step 1: load configuration from environment once
+  connStr <- BS8.pack <$> getEnv "DATABASE_URL"
+  port    <- read <$> getEnv "PORT"
+  -- => PORT: Warp listens here; default 8080 in production
+
+  -- => Step 2: build a single shared connection pool — reused for the process lifetime
+  pool <- mkPool connStr
+
+  -- => Step 3: construct purchasing adapters once
+  let purRepo = PurPg.mkPgPurchaseOrderRepository pool
+      -- => Repository adapter shared across all requests
+      purPub  = PurOutbox.mkOutboxEventPublisher pool
+      -- => Event publisher writes outbox rows in the same pool's transactions
+
+  -- => Step 4: construct receiving adapters once
+  let recRepo = RecRepo.mkJdbcGoodsReceiptRepository pool
+      -- => GoodsReceipt repository — independent of purchasing
+      recAcl  = RecAcl.mkPurchasingAcl purRepo
+      -- => ACL: receiving's PurchaseOrderSummaryPort backed by purchasing's repository
+
+  -- => Step 5: assemble the Servant Server tree by partial application
+  let server :: Server AppAPI
+      server = PurH.purchasingServer purRepo purPub
+            :<|> RecH.receivingServer recRepo recAcl purPub
+
+  -- => Step 6: serve over Warp
+  putStrLn ("Listening on port " <> show port)
+  run port (serve (Proxy :: Proxy AppAPI) server)
+  -- => Warp blocks the main thread — equivalent to app.Run() in F#
+
+-- Helper: builds a resource-pool with sensible defaults
+mkPool :: BS8.ByteString -> IO (Pool PG.Connection)
+mkPool connStr = createPool
+  (PG.connectPostgreSQL connStr)
+  PG.close
+  1   -- one stripe is sufficient for typical workloads
+  60  -- 60 seconds idle keep-alive
+  20  -- 20 concurrent connections — tune per deployment
+-- => destroyAllResources is invoked implicitly when the process terminates
+-- => Adding a new context: import its presentation module, add an :<|> branch above
 ```
 
 {{< /tab >}}

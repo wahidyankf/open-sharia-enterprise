@@ -85,7 +85,7 @@ Each example follows a five-part structure:
 **Excluded (the 5% edge cases)**:
 
 - Internal Gateway WebSocket protocol implementation details
-- Third-party plugin ecosystem (5,700+ ClawHub packages)
+- Third-party plugin ecosystem (13,000+ ClawHub packages)
 - Platform-specific mobile deployment (OpenClaw Android internals)
 - Cloudflare MoltWorker serverless runtime specifics
 - Source-level Gateway architecture and contribution workflow
@@ -93,7 +93,7 @@ Each example follows a five-part structure:
 ## Prerequisites
 
 - **Required**: Command-line proficiency (terminal, shell basics)
-- **Required**: Node.js 22.16+ or 24+ (recommended) installed
+- **Required**: Node.js 22.19+ or 24+ (recommended) installed
 - **Required**: Basic understanding of JSON/JSON5 syntax
 - **Helpful**: Familiarity with at least one LLM API (Anthropic, OpenAI, etc.)
 - **Helpful**: Experience with messaging platform bots (Telegram, Slack, Discord)
@@ -113,7 +113,7 @@ Each example follows a five-part structure:
 ```bash
 # Install OpenClaw CLI globally
 npm install -g openclaw@latest          # => Installs openclaw command
-                                        # => Requires Node.js 22.16+ or 24+ (recommended)
+                                        # => Requires Node.js 22.19+ or 24+ (recommended)
 
 # Run interactive onboarding
 openclaw onboard --install-daemon       # => Walks through initial setup

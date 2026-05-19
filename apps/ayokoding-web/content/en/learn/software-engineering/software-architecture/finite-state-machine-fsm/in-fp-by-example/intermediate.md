@@ -3,12 +3,15 @@ title: "Intermediate"
 date: 2026-05-17T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Examples 26-50: Invoice state machine in F# — three-way match guards, state-entry actions as command lists, FSM composition, parallel machine coordination, and event versioning (40-75% coverage)"
+description: "Examples 26-50: Invoice state machine in F# (canonical), Clojure, TypeScript, and Haskell — three-way match guards, state-entry actions as command lists, FSM composition, parallel machine coordination, and event versioning (40-75% coverage)"
 tags:
   [
     "fsm",
     "finite-state-machine",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "state-machines",
     "invoice",
@@ -50,7 +53,7 @@ stateDiagram-v2
     class Rejected terminal
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -135,8 +138,8 @@ type InvoiceEvent = "Review" | "Approve" | "Dispute" | "Resubmit" | "Reject" | "
 
 // Branded Result type for all invoice operations
 type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
-const Ok = <T>(v: T): Result<T, never> => ({ ok: true, value: v });
-const Err = <E>(e: E): Result<never, E> => ({ ok: false, error: e });
+const Ok = <T>(v: T): Result => ({ ok: true, value: v });
+const Err = <E>(e: E): Result => ({ ok: false, error: e });
 
 // Pure predicate: is this invoice state terminal?
 // [F#: | Rejected | Paid -> true | _ -> false]
@@ -145,6 +148,56 @@ const isInvoiceTerminal = (state: InvoiceState): boolean => state === "Rejected"
 
 console.log("Received terminal?", isInvoiceTerminal("Received")); // => false
 console.log("Paid terminal?", isInvoiceTerminal("Paid")); // => true
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceFsm.hs ────────────────────────────────────────────────
+-- [F#: InvoiceState/InvoiceEvent discriminated unions; Clojure: keyword values]
+-- Haskell: sum types (ADTs) — compiler enforces exhaustive pattern matching.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceFsm where
+
+-- Invoice state ADT: every valid invoice state listed once.
+-- The compiler rejects any InvoiceState value outside this set.
+data InvoiceState
+  = Received     -- => Invoice registered in the system; not yet reviewed
+  | UnderReview  -- => AP team is reviewing against PO and receipt
+  | Approved     -- => Three-way match passed; ready for payment
+  | Disputed     -- => Discrepancy found; awaiting supplier correction
+  | Rejected     -- => Invoice rejected — terminal state
+  | Paid         -- => Payment disbursed — terminal state
+  deriving stock (Show, Eq, Ord)
+  -- => Show enables printing; Eq/Ord enable comparisons and map keys
+
+-- Invoice event ADT: all events that drive an invoice through its lifecycle.
+data InvoiceEvent
+  = Review    -- => AP team starts review
+  | ApproveE  -- => Three-way match passes; AP approves
+  | Dispute   -- => Discrepancy flagged during review
+  | Resubmit  -- => Supplier corrects and resubmits
+  | RejectE   -- => AP permanently rejects invoice
+  | PayE      -- => Finance disburses payment
+  deriving stock (Show, Eq, Ord)
+
+-- Pure predicate: is this invoice state terminal?
+-- The two terminal states are listed explicitly; the wildcard handles the rest.
+isInvoiceTerminal :: InvoiceState -> Bool
+isInvoiceTerminal Rejected = True   -- => Rejected is terminal
+isInvoiceTerminal Paid     = True   -- => Paid is terminal
+isInvoiceTerminal _        = False  -- => All other states allow further events
+
+-- Demo: exercise the predicate over a few state values.
+demo :: IO ()
+demo = do
+  putStrLn ("Received terminal: " <> show (isInvoiceTerminal Received))
+  -- => Received terminal: False
+  putStrLn ("Paid terminal: "     <> show (isInvoiceTerminal Paid))
+  -- => Paid terminal: True
 ```
 
 {{< /tab >}}
@@ -161,7 +214,7 @@ console.log("Paid terminal?", isInvoiceTerminal("Paid")); // => true
 
 The three-way match checks that invoice amount, PO committed amount, and goods-receipt amount agree within a configurable tolerance. The guard is a pure function on domain values — easy to test in isolation from the FSM.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -314,6 +367,72 @@ console.log(threeWayMatch(ctx2)); // => { ok: false, error: "Invoice 1100 vs PO 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ThreeWayMatch.hs ─────────────────────────────────────────────
+-- [F#: ThreeWayMatchContext record + threeWayMatch; Clojure: plain map]
+-- Haskell: record + pure guard using Either Text () to carry failure detail.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module ThreeWayMatch where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Printf (printf)                  -- => Compose helpful error strings
+
+-- Three-way match context: the three amounts that must agree.
+data ThreeWayMatchContext = ThreeWayMatchContext
+  { invoiceAmount    :: Double   -- => Amount billed by the supplier
+  , poAmount         :: Double   -- => Amount committed on the purchase order
+  , receiptAmount    :: Double   -- => Amount confirmed by the warehouse
+  , tolerancePercent :: Double   -- => Allowed variance (e.g. 0.02 for 2%)
+  } deriving stock (Show, Eq)    -- => Show used by demo printouts
+
+-- Helper: is |a - b| within tolerance of b?
+withinTolerance :: Double -> Double -> Double -> Bool
+withinTolerance a b tol = abs (a - b) <= b * tol
+-- => True when the absolute difference falls inside the allowed band
+
+-- Pure guard: all three amounts must agree within the tolerance percentage.
+-- Either Text () mirrors F#'s Result<unit, string>.
+threeWayMatch :: ThreeWayMatchContext -> Either Text ()
+threeWayMatch ctx
+  | not (withinTolerance (invoiceAmount ctx)
+                         (poAmount ctx)
+                         (tolerancePercent ctx)) =
+      Left (T.pack $ printf "Invoice %.2f vs PO %.2f: outside tolerance %.2f"
+                            (invoiceAmount ctx) (poAmount ctx)
+                            (tolerancePercent ctx))
+      -- => Invoice amount diverges too much from PO commitment
+  | not (withinTolerance (invoiceAmount ctx)
+                         (receiptAmount ctx)
+                         (tolerancePercent ctx)) =
+      Left (T.pack $ printf
+              "Invoice %.2f vs receipt %.2f: outside tolerance %.2f"
+              (invoiceAmount ctx) (receiptAmount ctx)
+              (tolerancePercent ctx))
+      -- => Invoice amount diverges too much from what was received
+  | otherwise = Right ()
+      -- => All three amounts agree within tolerance: match passes
+
+-- Test guard with sample data.
+demo :: IO ()
+demo = do
+  let ctx1 = ThreeWayMatchContext 1010 1000 1005 0.02
+  -- => 1010 vs 1000: diff=10, allowed=20 -> within
+  -- => 1010 vs 1005: diff=5, allowed=20.1 -> within
+  print (threeWayMatch ctx1)
+  -- => Right ()
+  let ctx2 = ThreeWayMatchContext 1100 1000 1000 0.02
+  -- => 1100 vs 1000: diff=100, allowed=20 -> outside
+  print (threeWayMatch ctx2)
+  -- => Left "Invoice 1100.00 vs PO 1000.00: outside tolerance 0.02"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The three-way match is a composable pure function on domain values — it can be tested exhaustively before being wired into the transition function.
@@ -326,7 +445,7 @@ console.log(threeWayMatch(ctx2)); // => { ok: false, error: "Invoice 1100 vs PO 
 
 Combining the three-way match guard with the invoice transition function produces a full guarded FSM. The Approve event succeeds only when `threeWayMatch` returns `Ok ()`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -508,6 +627,89 @@ console.log(rejected.ok ? "" : rejected.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceTransition.hs ─────────────────────────────────────────
+-- [F#: invoiceTransition match + Result.map; Clojure: cond + bind-result]
+-- Haskell: Either monad's fmap/>>= compose the guard with the state update.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceTransition where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice and event ADTs.
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | Dispute | Resubmit | RejectE | PayE
+  deriving stock (Show, Eq, Ord)
+
+-- Three-way match context kept on the invoice for guard evaluation.
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+-- Invoice record with embedded three-way match context.
+data Invoice = Invoice
+  { invId       :: Text
+  , invState    :: InvState
+  , invMatchCtx :: MatchCtx
+  } deriving stock (Show, Eq)
+
+-- Three-way match guard returning Either to thread error info.
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | abs (invoiceAmount ctx - poAmount ctx)
+      <= poAmount ctx * tolerancePercent ctx &&
+    abs (invoiceAmount ctx - receiptAmount ctx)
+      <= receiptAmount ctx * tolerancePercent ctx
+      = Right ()                              -- => All within tolerance
+  | otherwise = Left "three-way match failed" -- => Outside tolerance
+
+-- Guarded invoice transition.
+-- The Approve case uses fmap (Functor for Either) to lift the state update.
+invoiceTransition :: Invoice -> InvEvent -> Either Text Invoice
+invoiceTransition inv ev = case (invState inv, ev) of
+  (Received, Review) ->
+    Right inv { invState = UnderReview }      -- => No guard
+  (UnderReview, ApproveE) ->
+    fmap (\() -> inv { invState = Approved })
+         (threeWayMatch (invMatchCtx inv))
+    -- => fmap: if Right () -> Right (inv { Approved }); Left propagates
+  (UnderReview, Dispute) ->
+    Right inv { invState = Disputed }
+  (Disputed, Resubmit) ->
+    Right inv { invState = UnderReview }      -- => Re-enter review
+  (UnderReview, RejectE) ->
+    Right inv { invState = Rejected }
+  (Approved, PayE) ->
+    Right inv { invState = Paid }
+  (s, e) ->
+    Left (T.pack $ "Invalid invoice transition: "
+                <> show s <> " + " <> show e)
+
+-- Simulate approve with passing and failing three-way matches.
+demo :: IO ()
+demo = do
+  let goodCtx = MatchCtx 1010 1000 1005 0.02
+      inv     = Invoice "INV-001" UnderReview goodCtx
+  print (invoiceTransition inv ApproveE)
+  -- => Right (Invoice {invState = Approved, ...})
+  let badCtx = goodCtx { invoiceAmount = 1200 }
+      inv2   = inv { invMatchCtx = badCtx }
+  print (invoiceTransition inv2 ApproveE)
+  -- => Left "three-way match failed"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.map` threads the guard result into the state update without nested `match` expressions — the guard failure propagates automatically.
@@ -520,7 +722,7 @@ console.log(rejected.ok ? "" : rejected.error);
 
 An invoice is always linked to a PO. When an invoice is approved, the PO may need to advance to `Invoiced`. This example shows how to coordinate two FSMs by returning a command list from the invoice transition.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -673,10 +875,7 @@ type InvoiceCommand =
 // => Notify the requester
 
 // Transition returns [newInvoice, commands[]] — pure, no direct PO FSM calls.
-const invoiceTransitionWithCommands = (
-  inv: Invoice,
-  event: InvoiceEvent,
-): Result<[Invoice, InvoiceCommand[]], string> => {
+const invoiceTransitionWithCommands = (inv: Invoice, event: InvoiceEvent): Result => {
   const s = inv.state;
   if (s === "Received" && event === "Review") return Ok([{ ...inv, state: "UnderReview" }, []]);
   // => Review: no cross-machine commands needed
@@ -721,6 +920,92 @@ if (r.ok) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceCommands.hs ───────────────────────────────────────────
+-- [F#: InvoiceCommand DU + tuple result; Clojure: command maps + result map]
+-- Haskell: ADT for cross-machine commands; transition returns (state, [cmd]).
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceCommands where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice ADTs and MatchCtx (subset).
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | Dispute | Resubmit | RejectE | PayE
+  deriving stock (Show, Eq, Ord)
+
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+data Invoice = Invoice
+  { invId       :: Text
+  , invState    :: InvState
+  , invMatchCtx :: MatchCtx
+  } deriving stock (Show, Eq)
+
+-- Three-way match guard.
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | abs (invoiceAmount ctx - poAmount ctx)
+      <= poAmount ctx * tolerancePercent ctx
+      = Right ()
+  | otherwise = Left "outside tolerance"
+
+-- Cross-machine commands the application layer must execute.
+data InvoiceCommand
+  = AdvancePOToInvoiced Text                       -- => Tell PO FSM to advance
+  | SendPaymentRequest  Text Double                -- => Queue payment
+  | NotifyRequester     Text Text                  -- => Notify employee
+  deriving stock (Show, Eq)
+
+-- Transition returns (newInvoice, commands) — pure, no direct PO FSM calls.
+invoiceTransitionWithCommands
+  :: Invoice -> InvEvent -> Either Text (Invoice, [InvoiceCommand])
+invoiceTransitionWithCommands inv ev = case (invState inv, ev) of
+  (Received, Review) ->
+    Right (inv { invState = UnderReview }, [])     -- => No commands
+  (UnderReview, ApproveE) -> do
+    _ <- threeWayMatch (invMatchCtx inv)           -- => Three-way match guard
+    let cmds = [ AdvancePOToInvoiced "PO-001"      -- => Coordinate PO state
+               , SendPaymentRequest (invId inv)
+                                    (invoiceAmount (invMatchCtx inv))
+               , NotifyRequester "PO-001" "Invoice approved" ]
+    Right (inv { invState = Approved }, cmds)
+  (UnderReview, Dispute) ->
+    Right ( inv { invState = Disputed }
+          , [NotifyRequester "PO-001"
+                             "Invoice disputed — awaiting supplier"] )
+  (Disputed, Resubmit) ->
+    Right (inv { invState = UnderReview }, [])
+  (Approved, PayE) ->
+    Right (inv { invState = Paid }, [])
+  (s, e) ->
+    Left (T.pack $ "Invalid: " <> show s <> " + " <> show e)
+
+-- Simulate approval and inspect the produced commands.
+demo :: IO ()
+demo = do
+  let inv3 = Invoice "INV-002" UnderReview (MatchCtx 500 500 500 0.01)
+  case invoiceTransitionWithCommands inv3 ApproveE of
+    Right (next, cmds) -> do
+      putStrLn ("Next state: " <> show (invState next))   -- => Approved
+      mapM_ print cmds                                     -- => one per command
+    Left err -> putStrLn ("Error: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Returning a command list from the invoice transition delegates cross-machine coordination to the application layer — the FSM itself remains a pure function.
@@ -733,7 +1018,7 @@ if (r.ok) {
 
 Different procurement categories have different match tolerances. This example shows parameterising the tolerance at the FSM level, so the same transition function works for capital goods (strict) and consumables (relaxed).
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -837,7 +1122,7 @@ type ProcurementCategory = "CapitalGoods" | "Consumables" | "Services";
 // => Literal union: compiler rejects unknown categories
 
 // Tolerance policy as a lookup object — data-driven, easy to extend.
-const categoryTolerances: Record<ProcurementCategory, number> = {
+const categoryTolerances: Record = {
   CapitalGoods: 0.005, // => 0.5% — tight control for expensive assets
   Consumables: 0.03, // => 3% — relaxed for bulk low-value items
   Services: 0.01, // => 1% — moderate for service invoices
@@ -876,6 +1161,73 @@ console.log("Consumables:  ", threeWayMatch(consumablesCtx).ok ? "pass" : "fail"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceCategory.hs ───────────────────────────────────────────
+-- [F#: ProcurementCategory DU + toleranceFor; Clojure: category-tolerances map]
+-- Haskell: ADT for category + exhaustive lookup function, no Map needed.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceCategory where
+
+import Data.Text (Text)
+
+-- Procurement category determines match tolerance.
+data ProcurementCategory
+  = CapitalGoods    -- => High-value equipment; strict tolerance (0.5%)
+  | Consumables     -- => Everyday supplies; relaxed tolerance (3%)
+  | Services        -- => Professional services; moderate tolerance (1%)
+  deriving stock (Show, Eq, Ord)
+
+-- Three-way match context (subset for this example).
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+-- Look up tolerance by category — pure pattern match.
+-- The compiler enforces exhaustive coverage when a new category is added.
+toleranceFor :: ProcurementCategory -> Double
+toleranceFor CapitalGoods = 0.005   -- => 0.5% — tight control
+toleranceFor Consumables  = 0.03    -- => 3% — relaxed for bulk
+toleranceFor Services     = 0.01    -- => 1% — moderate
+
+-- Build a match context with category-derived tolerance.
+buildMatchCtx
+  :: Double -> Double -> Double -> ProcurementCategory -> MatchCtx
+buildMatchCtx invAmt poAmt recAmt cat = MatchCtx
+  { invoiceAmount    = invAmt
+  , poAmount         = poAmt
+  , receiptAmount    = recAmt
+  , tolerancePercent = toleranceFor cat   -- => Tolerance derived from category
+  }
+
+-- Three-way match: returns Right () if all amounts agree within tolerance.
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | abs (invoiceAmount ctx - poAmount ctx)
+      <= poAmount ctx * tolerancePercent ctx &&
+    abs (invoiceAmount ctx - receiptAmount ctx)
+      <= receiptAmount ctx * tolerancePercent ctx
+      = Right ()
+  | otherwise = Left "outside tolerance"
+
+-- Test: same amounts, different categories.
+demo :: IO ()
+demo = do
+  let capitalCtx     = buildMatchCtx 10200 10000 10100 CapitalGoods
+      consumablesCtx = buildMatchCtx 10200 10000 10100 Consumables
+  print (threeWayMatch capitalCtx)
+  -- => Left "outside tolerance"  (2% variance > 0.5% tolerance)
+  print (threeWayMatch consumablesCtx)
+  -- => Right ()  (2% variance < 3% tolerance)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Parameterising tolerance by category keeps the guard function generic while expressing category-specific business rules as data, not branching logic.
@@ -888,7 +1240,7 @@ console.log("Consumables:  ", threeWayMatch(consumablesCtx).ok ? "pass" : "fail"
 
 A complete invoice approval workflow involves multiple steps: validate the invoice, run the three-way match, check budget availability, then approve. `Result.bind` chains these into a pipeline where any failure short-circuits the rest.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1009,7 +1361,7 @@ printfn "%A" (approveInvoicePipeline invOk 500m)
 // TypeScript: Result pipeline helper — sequential guards short-circuit on first error.
 
 // Budget check: ensure department has remaining budget for this invoice.
-const checkBudget = (departmentBudget: number, invoiceAmount: number): Result<true, string> =>
+const checkBudget = (departmentBudget: number, invoiceAmount: number): Result =>
   invoiceAmount <= departmentBudget
     ? Ok(true as const)
     : // => Budget available
@@ -1017,7 +1369,7 @@ const checkBudget = (departmentBudget: number, invoiceAmount: number): Result<tr
 // => Budget exceeded — approval blocked
 
 // Multi-step approval pipeline using Result.bind.
-const approveInvoicePipeline = (inv: Invoice, departmentBudget: number): Result<Invoice, string> =>
+const approveInvoicePipeline = (inv: Invoice, departmentBudget: number): Result =>
   // => Step 1: must be in UnderReview state
   resultBind(
     inv.state === "UnderReview" ? Ok(inv) : Err(`Invoice must be UnderReview, got ${inv.state}`),
@@ -1051,6 +1403,84 @@ console.log(approveInvoicePipeline(invOk, 500));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoicePipeline.hs ───────────────────────────────────────────
+-- [F#: Result.bind pipeline; Clojure: bind-result helper]
+-- Haskell: Either monad's >>= IS the pipeline — short-circuits on first Left.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoicePipeline where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice ADTs and MatchCtx.
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+data Invoice = Invoice
+  { invId       :: Text
+  , invState    :: InvState
+  , invMatchCtx :: MatchCtx
+  } deriving stock (Show, Eq)
+
+-- Three-way match guard.
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | abs (invoiceAmount ctx - poAmount ctx)
+      <= poAmount ctx * tolerancePercent &&
+    abs (invoiceAmount ctx - receiptAmount ctx)
+      <= receiptAmount ctx * tolerancePercent
+      = Right ()                              -- => Within tolerance
+  | otherwise = Left "three-way match failed" -- => Outside tolerance
+
+-- Budget check: ensure department has remaining budget for this invoice.
+checkBudget :: Double -> Double -> Either Text ()
+checkBudget departmentBudget invoiceAmt
+  | invoiceAmt <= departmentBudget = Right ()  -- => Budget available
+  | otherwise =
+      Left (T.pack $ "Invoice " <> show invoiceAmt
+                  <> " exceeds remaining budget " <> show departmentBudget)
+      -- => Budget exceeded: approval blocked
+
+-- Multi-step approval pipeline using do-notation over Either.
+-- Each step must succeed before the next runs; failure aborts the chain.
+approveInvoicePipeline :: Invoice -> Double -> Either Text Invoice
+approveInvoicePipeline inv departmentBudget = do
+  -- => Step 1: must be in UnderReview state
+  _ <- if invState inv == UnderReview
+         then Right ()
+         else Left (T.pack $ "Invoice must be UnderReview, got "
+                          <> show (invState inv))
+  -- => Step 2: three-way match must pass
+  _ <- threeWayMatch (invMatchCtx inv)
+  -- => Step 3: budget must be available
+  _ <- checkBudget departmentBudget (invoiceAmount (invMatchCtx inv))
+  -- => Step 4: advance state to Approved
+  Right inv { invState = Approved }
+
+-- Test: all checks pass.
+demo :: IO ()
+demo = do
+  let invOk = Invoice "INV-003" UnderReview (MatchCtx 800 800 800 0.02)
+  print (approveInvoicePipeline invOk 1000)
+  -- => Right (Invoice {invState = Approved, ...})
+  print (approveInvoicePipeline invOk 500)
+  -- => Left "Invoice 800.0 exceeds remaining budget 500.0"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result.bind` chains compose multi-step approval logic into a single readable pipeline where each step is independently testable.
@@ -1063,7 +1493,7 @@ console.log(approveInvoicePipeline(invOk, 500));
 
 A declarative FSM definition stores both the transition table and guard functions in a data structure. The interpreter is a generic function that looks up the transition and evaluates the guard — no machine-specific code required.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1188,17 +1618,17 @@ printfn "%A" (runMachine machine Received Pay)
 // TypeScript: data-driven machine definition — generic interpreter.
 
 type TransitionDef<S extends string> = {
-  guard: () => Result<true, string>; // => Guard closure (or always-pass)
+  guard: () => Result; // => Guard closure (or always-pass)
   nextState: S; // => Target state if guard passes
 };
 // => Generic over state type so the same interpreter drives any machine
 
-type MachineDef<S extends string, E extends string> = Map<string, TransitionDef<S>>;
+type MachineDef<S extends string, E extends string> = Map;
 // => Keys are "State:Event" composite strings
 
 // Build the invoice machine definition with guards embedded as closures.
-const buildInvoiceMachine = (matchCtx: ThreeWayMatchContext): MachineDef<InvoiceState, InvoiceEvent> => {
-  const alwaysOk = (): Result<true, string> => Ok(true as const);
+const buildInvoiceMachine = (matchCtx: ThreeWayMatchContext): MachineDef => {
+  const alwaysOk = (): Result => Ok(true as const);
   // => Reusable no-guard sentinel — keeps definitions concise
   return new Map([
     ["Received:Review", { guard: alwaysOk, nextState: "UnderReview" }],
@@ -1213,11 +1643,7 @@ const buildInvoiceMachine = (matchCtx: ThreeWayMatchContext): MachineDef<Invoice
 };
 
 // Generic interpreter: same code runs any conformant machine definition.
-const runMachine = <S extends string, E extends string>(
-  machine: MachineDef<S, E>,
-  state: S,
-  event: E,
-): Result<S, string> => {
+const runMachine = <S extends string, E extends string>(machine: MachineDef, state: S, event: E): Result => {
   const def = machine.get(`${state}:${event}`);
   if (!def) return Err(`No transition for ${state} + ${event}`);
   // => Transition not defined — reject the event
@@ -1241,6 +1667,93 @@ console.log(runMachine(machine, "Received", "Pay"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceMachineDef.hs ─────────────────────────────────────────
+-- [F#: MachineDef Map<State*Event, TransitionDef>; Clojure: map-of-maps]
+-- Haskell: parametric Map-based machine definition + generic interpreter.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceMachineDef where
+
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice ADTs and MatchCtx (subset).
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | Dispute | Resubmit | RejectE | PayE
+  deriving stock (Show, Eq, Ord)
+
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | abs (invoiceAmount ctx - poAmount ctx)
+      <= poAmount ctx * tolerancePercent
+      = Right ()
+  | otherwise = Left "three-way match failed"
+
+-- A transition definition pairs a guard with the target state.
+-- () -> Either Text () lets us capture the guard context in a closure.
+data TransitionDef s = TransitionDef
+  { transGuard :: () -> Either Text ()        -- => Lazy guard predicate
+  , transNext  :: s                           -- => Target state on success
+  }
+
+-- Generic machine definition: any (s, e) pair maps to a TransitionDef.
+type MachineDef s e = Map (s, e) (TransitionDef s)
+
+-- Helper for the no-guard case (always passes).
+noGuard :: () -> Either Text ()
+noGuard () = Right ()
+
+-- Build the invoice machine definition with all guards as closures.
+buildInvoiceMachine :: MatchCtx -> MachineDef InvState InvEvent
+buildInvoiceMachine ctx = Map.fromList
+  [ ((Received,    Review),   TransitionDef noGuard                  UnderReview)
+  -- => Received + Review: no guard required
+  , ((UnderReview, ApproveE), TransitionDef (\() -> threeWayMatch ctx) Approved)
+  -- => UnderReview + Approve: three-way match must pass (closure captures ctx)
+  , ((UnderReview, Dispute),  TransitionDef noGuard                  Disputed)
+  , ((Disputed,    Resubmit), TransitionDef noGuard                  UnderReview)
+  , ((UnderReview, RejectE),  TransitionDef noGuard                  Rejected)
+  , ((Approved,    PayE),     TransitionDef noGuard                  Paid)
+  ]
+
+-- Generic interpreter: same code runs any conformant MachineDef.
+runMachine
+  :: (Ord s, Ord e, Show s, Show e)
+  => MachineDef s e -> s -> e -> Either Text s
+runMachine machine s e = case Map.lookup (s, e) machine of
+  Nothing  -> Left "No transition for this state/event pair"
+  Just def -> do
+    _ <- transGuard def ()                    -- => Evaluate guard
+    Right (transNext def)                     -- => Guard passed: return next
+
+-- Test the declarative machine.
+demo :: IO ()
+demo = do
+  let ctx     = MatchCtx 1000 1000 1000 0.01
+      machine = buildInvoiceMachine ctx
+  print (runMachine machine UnderReview ApproveE)
+  -- => Right Approved
+  print (runMachine machine Received PayE)
+  -- => Left "No transition for this state/event pair"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A declarative machine definition separates FSM data from FSM execution — the same generic `runMachine` interpreter drives any conformant machine definition.
@@ -1253,7 +1766,7 @@ console.log(runMachine(machine, "Received", "Pay"));
 
 Extending the declarative machine with named guards — identified by string keys and resolved through a registry — makes the machine definition serialisable and the guards swappable at runtime.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1397,11 +1910,11 @@ type NamedTransitionDef<S extends string> = {
 };
 // => No closures — definition is serialisable to JSON/database
 
-type GuardRegistry = Map<string, () => Result<true, string>>;
+type GuardRegistry = Map;
 // => Maps guard name strings to their implementations; built at startup
 
 // Resolve and run a named guard from the registry.
-const resolveGuard = (registry: GuardRegistry, guardName: string | null): Result<true, string> => {
+const resolveGuard = (registry: GuardRegistry, guardName: string | null): Result => {
   if (guardName === null) return Ok(true as const);
   // => No guard — transition always allowed
   const guardFn = registry.get(guardName);
@@ -1412,7 +1925,7 @@ const resolveGuard = (registry: GuardRegistry, guardName: string | null): Result
 };
 
 // Serialisable invoice machine definition — no closures, just strings.
-const serialisableInvoiceMachine = new Map<string, NamedTransitionDef<InvoiceState>>([
+const serialisableInvoiceMachine = new Map<string, NamedTransitionDef>([
   ["Received:Review", { guardName: null, nextState: "UnderReview" }],
   ["UnderReview:Approve", { guardName: "threeWayMatch", nextState: "Approved" }],
   ["UnderReview:Dispute", { guardName: null, nextState: "Disputed" }],
@@ -1428,12 +1941,7 @@ const buildRegistry = (matchCtx: ThreeWayMatchContext): GuardRegistry =>
 // => Only "threeWayMatch" defined; new guards added by setting additional entries
 
 // Generic named-machine runner.
-const runNamedMachine = (
-  registry: GuardRegistry,
-  machine: Map<string, NamedTransitionDef<InvoiceState>>,
-  state: InvoiceState,
-  event: InvoiceEvent,
-): Result<InvoiceState, string> => {
+const runNamedMachine = (registry: GuardRegistry, machine: Map, state: InvoiceState, event: InvoiceEvent): Result => {
   const def = machine.get(`${state}:${event}`);
   if (!def) return Err(`No transition: ${state} + ${event}`);
   return resultBind(resolveGuard(registry, def.guardName), () => Ok(def.nextState));
@@ -1453,6 +1961,103 @@ console.log(runNamedMachine(registry, serialisableInvoiceMachine, "UnderReview",
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceNamedGuards.hs ────────────────────────────────────────
+-- [F#: NamedTransitionDef + GuardRegistry; Clojure: serialisable map + registry]
+-- Haskell: named guards as Text identifiers + a Map registry resolving names to fns.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceNamedGuards where
+
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice ADTs and MatchCtx (subset).
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | Dispute | Resubmit | RejectE | PayE
+  deriving stock (Show, Eq, Ord)
+
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | abs (invoiceAmount ctx - poAmount ctx)
+      <= poAmount ctx * tolerancePercent
+      = Right ()                                    -- => Within tolerance
+  | otherwise = Left "three-way match failed"
+
+-- Named transition: identified by a Text key for serialisation.
+data NamedTransitionDef s = NamedTransitionDef
+  { guardName :: Maybe Text                          -- => Nothing = no guard
+  , nextState :: s                                   -- => Target state
+  } deriving stock (Show, Eq)
+
+-- Guard registry: maps guard names to their implementations.
+-- In production this would be dependency-injected at startup.
+type GuardRegistry = Map Text (Either Text ())
+
+-- Build registry with the concrete guard implementations.
+buildRegistry :: MatchCtx -> GuardRegistry
+buildRegistry ctx = Map.fromList
+  [ ("threeWayMatch", threeWayMatch ctx) ]           -- => Evaluated up front
+
+-- Resolve and run a named guard from the registry.
+resolveGuard :: GuardRegistry -> Maybe Text -> Either Text ()
+resolveGuard _        Nothing     = Right ()         -- => No guard
+resolveGuard registry (Just name) =
+  case Map.lookup name registry of
+    Just result -> result                            -- => Found: use result
+    Nothing     -> Left (T.pack $ "Guard '" <> T.unpack name
+                                <> "' not found in registry")
+                   -- => Missing guard: fail safe
+
+-- Serialisable machine definition — no closures, just Text guard names.
+serialisableInvoiceMachine
+  :: Map (InvState, InvEvent) (NamedTransitionDef InvState)
+serialisableInvoiceMachine = Map.fromList
+  [ ((Received,    Review),   NamedTransitionDef Nothing                UnderReview)
+  , ((UnderReview, ApproveE), NamedTransitionDef (Just "threeWayMatch") Approved)
+  , ((UnderReview, Dispute),  NamedTransitionDef Nothing                Disputed)
+  , ((Disputed,    Resubmit), NamedTransitionDef Nothing                UnderReview)
+  , ((UnderReview, RejectE),  NamedTransitionDef Nothing                Rejected)
+  , ((Approved,    PayE),     NamedTransitionDef Nothing                Paid)
+  ]
+
+-- Run a named-guard machine: look up transition, resolve guard, return state.
+runNamedMachine
+  :: GuardRegistry
+  -> Map (InvState, InvEvent) (NamedTransitionDef InvState)
+  -> InvState -> InvEvent -> Either Text InvState
+runNamedMachine registry machine s e =
+  case Map.lookup (s, e) machine of
+    Nothing  -> Left (T.pack $ "No transition: "
+                            <> show s <> " + " <> show e)
+    Just def -> do
+      _ <- resolveGuard registry (guardName def)     -- => Evaluate guard
+      Right (nextState def)                          -- => Return target
+
+demo :: IO ()
+demo = do
+  let ctx      = MatchCtx 950 1000 990 0.05
+      registry = buildRegistry ctx
+  print (runNamedMachine registry serialisableInvoiceMachine UnderReview ApproveE)
+  -- => Right Approved  (950 vs 1000 = 5% diff, tolerance = 5%)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Named guards decouple the machine definition from guard implementations — the definition can be stored in a database while implementations are registered at startup.
@@ -1467,7 +2072,7 @@ console.log(runNamedMachine(registry, serialisableInvoiceMachine, "UnderReview",
 
 Entry actions are business operations that must execute when a state is entered. Modelling them as a `InvoiceState -> Command list` function keeps the transition pure — effects are queued, not executed.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1625,10 +2230,7 @@ const entryActions = (state: InvoiceState, inv: Invoice): InvoiceEntryCommand[] 
 };
 
 // Combine transition and entry action into one result.
-const invoiceTransitionWithEntry = (
-  inv: Invoice,
-  event: InvoiceEvent,
-): Result<[Invoice, InvoiceEntryCommand[]], string> =>
+const invoiceTransitionWithEntry = (inv: Invoice, event: InvoiceEvent): Result =>
   resultBind(invoiceTransition(inv, event), (nextInv) =>
     Ok([nextInv, entryActions(nextInv.state, nextInv)] as [Invoice, InvoiceEntryCommand[]]),
   );
@@ -1651,6 +2253,81 @@ if (r.ok) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceEntry.hs ──────────────────────────────────────────────
+-- [F#: InvoiceEntryCommand DU + entryActions; Clojure: tagged maps + condp]
+-- Haskell: ADT for entry commands; pure function deferring effects to caller.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceEntry where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice ADTs and MatchCtx (subset).
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | Dispute | Resubmit | RejectE | PayE
+  deriving stock (Show, Eq, Ord)
+
+data MatchCtx = MatchCtx { invoiceAmount :: Double }
+  deriving stock (Show, Eq)
+
+data Invoice = Invoice
+  { invId       :: Text
+  , invState    :: InvState
+  , invMatchCtx :: MatchCtx
+  } deriving stock (Show, Eq)
+
+-- Commands triggered on state entry — one list per target state.
+data InvoiceEntryCommand
+  = AssignReviewer Text                          -- => Entry to UnderReview
+  | SchedulePayment Text Double                  -- => Entry to Approved
+  | ArchiveInvoice Text                          -- => Entry to Rejected/Paid
+  deriving stock (Show, Eq)
+
+-- Entry action function: pure, deterministic, no side effects.
+entryActions :: InvState -> Invoice -> [InvoiceEntryCommand]
+entryActions UnderReview inv = [AssignReviewer (invId inv)]
+-- => Assign a reviewer when invoice enters review
+entryActions Approved    inv = [SchedulePayment (invId inv)
+                                                (invoiceAmount (invMatchCtx inv))]
+-- => Schedule payment when invoice is approved
+entryActions Rejected    inv = [ArchiveInvoice (invId inv)]
+entryActions Paid        inv = [ArchiveInvoice (invId inv)]
+-- => Archive when lifecycle ends (either terminal state)
+entryActions _           _   = []                       -- => No actions
+
+-- Stub base transition for demo (Approve case only).
+invoiceTransition :: Invoice -> InvEvent -> Either Text Invoice
+invoiceTransition inv ApproveE
+  | invState inv == UnderReview = Right inv { invState = Approved }
+invoiceTransition inv _ = Left (T.pack $ "Invalid in state " <> show (invState inv))
+
+-- Combine transition and entry action into one result.
+invoiceTransitionWithEntry
+  :: Invoice -> InvEvent -> Either Text (Invoice, [InvoiceEntryCommand])
+invoiceTransitionWithEntry inv event = do
+  next <- invoiceTransition inv event              -- => Run the transition
+  let cmds = entryActions (invState next) next     -- => Compute entry actions
+  Right (next, cmds)
+
+-- Test: transition to Approved triggers SchedulePayment.
+demo :: IO ()
+demo = do
+  let invU = Invoice "INV-004" UnderReview (MatchCtx 600)
+  case invoiceTransitionWithEntry invU ApproveE of
+    Right (next, cmds) -> do
+      putStrLn ("State: " <> show (invState next))   -- => Approved
+      mapM_ print cmds                                -- => SchedulePayment ...
+    Left err -> putStrLn ("Error: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `entryActions state inv` separates the "what should happen when entering this state" decision from the "execute those effects" step — the transition function stays pure.
@@ -1663,7 +2340,7 @@ if (r.ok) {
 
 When a supplier resubmits a disputed invoice, the system should track how many times resubmission has occurred. This example extends the invoice record with a counter maintained by the FSM.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1856,6 +2533,94 @@ console.log(result.ok ? "" : result.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: TrackedInvoice.hs ────────────────────────────────────────────
+-- [F#: TrackedInvoice record + canResubmit guard; Clojure: extended map]
+-- Haskell: record extension + retry-limit guard composed with Either monad.
+
+{-# LANGUAGE DerivingStrategies #-}
+module TrackedInvoice where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice ADTs and three-way match context (subset).
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | Dispute | Resubmit | RejectE | PayE
+  deriving stock (Show, Eq, Ord)
+
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+-- Stub three-way match guard (full version lives elsewhere).
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | abs (invoiceAmount ctx - poAmount ctx)
+      <= poAmount ctx * tolerancePercent &&
+    abs (invoiceAmount ctx - receiptAmount ctx)
+      <= receiptAmount ctx * tolerancePercent
+      = Right ()                                          -- => Within tolerance
+  | otherwise = Left "three-way match failed"             -- => Outside tolerance
+
+-- Tracked invoice carries resubmission counter and maximum allowed retries.
+data TrackedInvoice = TrackedInvoice
+  { tiId                :: Text
+  , tiState             :: InvState
+  , tiMatchCtx          :: MatchCtx
+  , tiResubmissionCount :: Int                  -- => Increments on each Resubmit
+  , tiMaxResubmissions  :: Int                  -- => Business rule limit
+  } deriving stock (Show, Eq)
+
+-- Guard: resubmission is only allowed below the maximum.
+canResubmit :: TrackedInvoice -> Either Text ()
+canResubmit inv
+  | tiResubmissionCount inv < tiMaxResubmissions inv = Right ()  -- => Below limit
+  | otherwise =
+      Left (T.pack $ "Invoice " <> T.unpack (tiId inv)
+                  <> " has reached the maximum of "
+                  <> show (tiMaxResubmissions inv) <> " resubmissions")
+      -- => Limit reached: caller must reject or escalate
+
+-- Transition function for tracked invoice.
+trackedInvoiceTransition
+  :: TrackedInvoice -> InvEvent -> Either Text TrackedInvoice
+trackedInvoiceTransition inv ev = case (tiState inv, ev) of
+  (Received,    Review)   -> Right inv { tiState = UnderReview }
+  (UnderReview, ApproveE) -> do
+    _ <- threeWayMatch (tiMatchCtx inv)                  -- => Three-way match
+    Right inv { tiState = Approved }
+  (UnderReview, Dispute)  -> Right inv { tiState = Disputed }
+  (Disputed,    Resubmit) -> do
+    _ <- canResubmit inv                                 -- => Guard: limit check
+    Right inv { tiState = UnderReview                    -- => Back to review
+              , tiResubmissionCount = tiResubmissionCount inv + 1 }
+              -- => Increment counter on every successful resubmit
+  (UnderReview, RejectE)  -> Right inv { tiState = Rejected }
+  (Approved,    PayE)     -> Right inv { tiState = Paid }
+  (s, e) ->
+    Left (T.pack $ "Invalid: " <> show s <> " + " <> show e)
+
+-- Test: resubmission blocked at maximum.
+demo :: IO ()
+demo = do
+  let tinv = TrackedInvoice
+               "INV-005" Disputed
+               (MatchCtx 500 500 500 0.01)
+               2 2                                       -- => Already at max
+  print (trackedInvoiceTransition tinv Resubmit)
+  -- => Left "Invoice INV-005 has reached the maximum of 2 resubmissions"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Embedding a resubmission counter in the record and guarding `Resubmit` against a maximum keeps retry-limit enforcement inside the FSM — no external counter needed.
@@ -1868,7 +2633,7 @@ console.log(result.ok ? "" : result.error);
 
 An FSM is a protocol: only certain event sequences are valid. Enforcing the protocol at the API layer means rejecting HTTP requests that would trigger invalid transitions before any database writes occur.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1955,11 +2720,7 @@ handleApproveRequest Paid         // => HTTP 422: Event 'Approve' not allowed in
 // TypeScript: protocol validator at the API boundary — pure, no I/O.
 
 // Protocol validator: check whether the requested event is legal in the current state.
-const enforceProtocol = (
-  machine: Map<string, NamedTransitionDef<InvoiceState>>,
-  currentState: InvoiceState,
-  requestedEvent: InvoiceEvent,
-): Result<true, string> =>
+const enforceProtocol = (machine: Map, currentState: InvoiceState, requestedEvent: InvoiceEvent): Result =>
   machine.has(`${currentState}:${requestedEvent}`)
     ? Ok(true as const)
     : // => Transition found in the machine definition — event is legal
@@ -1967,10 +2728,7 @@ const enforceProtocol = (
 // => No matching transition — protocol violation
 
 // Simulate API request handling
-const handleApproveRequest = (
-  machine: Map<string, NamedTransitionDef<InvoiceState>>,
-  currentState: InvoiceState,
-): void => {
+const handleApproveRequest = (machine: Map, currentState: InvoiceState): void => {
   const result = enforceProtocol(machine, currentState, "Approve");
   if (!result.ok) {
     console.log("HTTP 422:", result.error);
@@ -2001,6 +2759,67 @@ handleApproveRequest(serialisableInvoiceMachine, "Paid");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceProtocol.hs ───────────────────────────────────────────
+-- [F#: enforceProtocol via Map.tryFind; Clojure: get on machine map]
+-- Haskell: pure protocol validator using Map.member on the machine definition.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceProtocol where
+
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice state and event ADTs.
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | Dispute | Resubmit | RejectE | PayE
+  deriving stock (Show, Eq, Ord)
+
+-- Serialisable machine definition: (state, event) -> next-state.
+-- No closures — pure data, safe to store in a database.
+serialisableInvoiceMachine :: Map (InvState, InvEvent) InvState
+serialisableInvoiceMachine = Map.fromList
+  [ ((Received,    Review),   UnderReview) -- => Received + Review allowed
+  , ((UnderReview, ApproveE), Approved)    -- => UnderReview + Approve
+  , ((UnderReview, Dispute),  Disputed)    -- => UnderReview + Dispute
+  , ((Disputed,    Resubmit), UnderReview) -- => Disputed + Resubmit
+  , ((UnderReview, RejectE),  Rejected)    -- => UnderReview + Reject
+  , ((Approved,    PayE),     Paid)        -- => Approved + Pay
+  ]
+
+-- Pure validator: legality check at the API boundary — no I/O, no DB access.
+enforceProtocol :: InvState -> InvEvent -> Either Text ()
+enforceProtocol currentState requestedEvent =
+  if Map.member (currentState, requestedEvent) serialisableInvoiceMachine
+    then Right ()                              -- => Transition exists: legal
+    else Left (T.pack $ "Event '"              -- => Build rejection message
+                     <> show requestedEvent
+                     <> "' is not allowed when invoice is in state '"
+                     <> show currentState <> "'")
+
+-- Simulate API request handling for Approve.
+handleApproveRequest :: InvState -> IO ()
+handleApproveRequest s = case enforceProtocol s ApproveE of
+  Left  msg -> putStrLn ("HTTP 422: " <> T.unpack msg)
+               -- => Unprocessable Entity: reject before any DB write
+  Right ()  -> putStrLn "HTTP 200: Approval transition is valid — proceeding"
+
+demo :: IO ()
+demo = do
+  handleApproveRequest UnderReview  -- => HTTP 200: ... valid
+  handleApproveRequest Received     -- => HTTP 422: not allowed in 'Received'
+  handleApproveRequest Paid         -- => HTTP 422: not allowed in 'Paid'
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Using the machine definition as a protocol enforcer at the API layer prevents invalid state transitions before any database access — cheap, early rejection.
@@ -2013,7 +2832,7 @@ handleApproveRequest(serialisableInvoiceMachine, "Paid");
 
 The PO lifecycle needs a `PartiallyReceived` state for partial deliveries. This example introduces it as a new DU case and shows how F#'s exhaustiveness check immediately flags every incomplete handler.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2196,19 +3015,96 @@ const extendedPOTable = new Map<string, ExtendedPOState>([
   // => Dispute can also arise after a partial delivery
 ]);
 
-const extendedTransition = (state: ExtendedPOState, event: ExtendedPOEvent): Result<ExtendedPOState, string> => {
+const extendedTransition = (state: ExtendedPOState, event: ExtendedPOEvent): Result => {
   const next = extendedPOTable.get(`${state}:${event}`);
   if (!next) return Err(`No transition: ${state} + ${event}`);
   return Ok(next);
 };
 
 // Test: two partial deliveries then full acknowledgement
-const chainResult = (["ReceivePartial", "ReceivePartial", "Acknowledge"] as ExtendedPOEvent[]).reduce<
-  Result<ExtendedPOState, string>
->((acc, ev) => resultBind(acc, (s) => extendedTransition(s, ev)), Ok("Issued" as ExtendedPOState));
+const chainResult = (["ReceivePartial", "ReceivePartial", "Acknowledge"] as ExtendedPOEvent[]).reduce<Result>(
+  (acc, ev) => resultBind(acc, (s) => extendedTransition(s, ev)),
+  Ok("Issued" as ExtendedPOState),
+);
 
 console.log(chainResult);
 // => { ok: true, value: "Acknowledged" }
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: ExtendedPO.hs ────────────────────────────────────────────────
+-- [F#: ExtendedPOState DU + extendedTransition; Clojure: keyword + table]
+-- Haskell: ADT extension produces non-exhaustive warnings for incomplete handlers.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module ExtendedPO where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Extended PO state ADT with PartiallyReceived.
+-- Adding this case causes ghc to flag every non-wildcard pattern match.
+data ExtendedPOState
+  = Draft
+  | AwaitingApproval
+  | Approved'
+  | Issued
+  | PartiallyReceived       -- => New: partial delivery confirmed
+  | Acknowledged            -- => Full delivery confirmed
+  | Closed
+  | Cancelled
+  | Disputed
+  deriving stock (Show, Eq, Ord)
+
+-- Extended event ADT with ReceivePartial.
+data ExtendedPOEvent
+  = Submit | ApproveE | Reject | Issue' | ReceivePartial
+  | Acknowledge | Close | Cancel | Dispute
+  deriving stock (Show, Eq, Ord)
+
+-- Extended transition function — ghc forces exhaustive matching.
+extendedTransition
+  :: ExtendedPOState -> ExtendedPOEvent -> Either Text ExtendedPOState
+extendedTransition Draft            Submit         = Right AwaitingApproval
+extendedTransition AwaitingApproval ApproveE       = Right Approved'
+extendedTransition AwaitingApproval Reject         = Right Cancelled
+extendedTransition Approved'        Issue'         = Right Issued
+extendedTransition Issued           ReceivePartial = Right PartiallyReceived
+-- => First partial delivery moves to PartiallyReceived
+extendedTransition PartiallyReceived ReceivePartial = Right PartiallyReceived
+-- => Self-loop: more partial deliveries keep state the same
+extendedTransition PartiallyReceived Acknowledge   = Right Acknowledged
+-- => Full receipt acknowledged from partial state
+extendedTransition Issued            Acknowledge   = Right Acknowledged
+-- => Full receipt from Issued without partial step
+extendedTransition Acknowledged      Close         = Right Closed
+extendedTransition Draft             Cancel        = Right Cancelled
+extendedTransition Approved'         Cancel        = Right Cancelled
+extendedTransition Issued            Dispute       = Right Disputed
+extendedTransition PartiallyReceived Dispute       = Right Disputed
+-- => Dispute can arise after a partial delivery
+extendedTransition state event =
+  Left (T.pack $ "No transition: " <> show state <> " + " <> show event)
+
+-- Bind helper: chain transitions with short-circuit on Left.
+chain
+  :: Either Text ExtendedPOState
+  -> ExtendedPOEvent
+  -> Either Text ExtendedPOState
+chain acc ev = acc >>= \s -> extendedTransition s ev
+
+-- Test: two partial deliveries then full acknowledgement.
+demo :: IO ()
+demo = do
+  let result = foldl chain (Right Issued)
+                [ReceivePartial, ReceivePartial, Acknowledge]
+  print result
+  -- => Right Acknowledged
 ```
 
 {{< /tab >}}
@@ -2225,7 +3121,7 @@ console.log(chainResult);
 
 When an invoice is approved, the PO must advance to `Invoiced`. This example models a simple in-process event bus that routes the `InvoiceApproved` domain event to the PO FSM handler.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2348,7 +3244,7 @@ type DomainEvent =
 type POState2 = "Issued" | "Acknowledged" | "Closed";
 // => Simplified PO states used in this example
 
-const handleInvoiceApproved = (poId: string, currentPOState: POState2): Result<[POState2, DomainEvent[]], string> => {
+const handleInvoiceApproved = (poId: string, currentPOState: POState2): Result => {
   if (currentPOState === "Issued" || currentPOState === "Acknowledged")
     return Ok(["Acknowledged", [{ kind: "POInvoiced", poId }]]);
   // => Advance PO to Acknowledged; emit POInvoiced for downstream consumers
@@ -2357,11 +3253,11 @@ const handleInvoiceApproved = (poId: string, currentPOState: POState2): Result<[
 
 // Simple in-process event bus: Map of handlers keyed by event kind.
 type EventHandler<E extends DomainEvent> = (event: E) => void;
-const eventBus = new Map<DomainEvent["kind"], EventHandler<any>>();
+const eventBus = new Map<DomainEvent["kind"], EventHandler>();
 // => Handlers registered at startup; event processing is synchronous and pure
 
 // Register the PO handler for InvoiceApproved
-eventBus.set("InvoiceApproved", (event: Extract<DomainEvent, { kind: "InvoiceApproved" }>) => {
+eventBus.set("InvoiceApproved", (event: Extract) => {
   console.log("Handling InvoiceApproved:", event.invoiceId, event.poId, event.amount);
   const result = handleInvoiceApproved(event.poId, "Issued");
   if (result.ok) {
@@ -2388,6 +3284,88 @@ dispatch({ kind: "InvoiceApproved", invoiceId: "INV-006", poId: "PO-010", amount
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: P2PEventBus.hs ───────────────────────────────────────────────
+-- [F#: DomainEvent DU + EventBus; Clojure: defmulti on :type]
+-- Haskell: tagged ADT for domain events + Map-based handler dispatch.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module P2PEventBus where
+
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Simplified PO state ADT for this example.
+data POState2 = Issued | Acknowledged | Closed
+  deriving stock (Show, Eq, Ord)
+
+-- Domain events published to the event bus after state transitions.
+data DomainEvent
+  = InvoiceApproved Text Text Double          -- => (invoiceId, poId, amount)
+  | InvoicePaid     Text Text                 -- => (invoiceId, poId)
+  | POInvoiced      Text                      -- => (poId)
+  deriving stock (Show, Eq)
+
+-- PO FSM handler for InvoiceApproved event.
+-- Pure computation; side effects are deferred to the caller.
+handleInvoiceApproved
+  :: Text -> POState2 -> Either Text (POState2, [DomainEvent])
+handleInvoiceApproved poId Issued =
+  Right (Acknowledged, [POInvoiced poId])      -- => Emit POInvoiced
+handleInvoiceApproved poId Acknowledged =
+  Right (Acknowledged, [POInvoiced poId])      -- => Same response
+handleInvoiceApproved poId other =
+  Left (T.pack $ "PO " <> T.unpack poId
+                <> " in state " <> show other
+                <> " cannot be marked Invoiced")
+
+-- Simple in-process event bus: a map from event tag to a handler action.
+-- IO is appropriate here because handlers log; production would use a STM queue.
+type EventHandler = DomainEvent -> IO ()
+
+-- Tag is a discriminator extracted from the constructor for map keys.
+eventTag :: DomainEvent -> Text
+eventTag (InvoiceApproved {}) = "InvoiceApproved"
+eventTag (InvoicePaid {})     = "InvoicePaid"
+eventTag (POInvoiced {})      = "POInvoiced"
+
+-- Register a single handler for InvoiceApproved that drives the PO FSM.
+poHandler :: EventHandler
+poHandler (InvoiceApproved invId poId amount) = do
+  putStrLn $ "Handling InvoiceApproved: inv=" <> T.unpack invId
+           <> " po=" <> T.unpack poId <> " amt=" <> show amount
+  case handleInvoiceApproved poId Issued of
+    Right (newState, emitted) -> do
+      putStrLn ("PO new state: " <> show newState)        -- => Acknowledged
+      mapM_ print emitted                                  -- => POInvoiced "..."
+    Left err -> putStrLn ("Error: " <> T.unpack err)
+poHandler _ = pure ()                                      -- => Ignore others
+
+-- The event bus is a Map from event-tag to its handler.
+eventBus :: Map Text EventHandler
+eventBus = Map.fromList [ ("InvoiceApproved", poHandler) ]
+
+-- Dispatch an event through the bus.
+dispatch :: DomainEvent -> IO ()
+dispatch ev = case Map.lookup (eventTag ev) eventBus of
+  Just handler -> handler ev                               -- => Found handler
+  Nothing      -> pure ()                                  -- => No subscribers
+
+-- Demo dispatch of an InvoiceApproved event.
+demo :: IO ()
+demo = dispatch (InvoiceApproved "INV-006" "PO-010" 1500.0)
+-- => Handling InvoiceApproved: inv=INV-006 po=PO-010 amt=1500.0
+-- => PO new state: Acknowledged
+-- => POInvoiced "PO-010"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An event bus decouples the Invoice and PO FSMs — each machine publishes domain events, and handlers update the other machine, without direct function calls between machines.
@@ -2400,7 +3378,7 @@ dispatch({ kind: "InvoiceApproved", invoiceId: "INV-006", poId: "PO-010", amount
 
 Testing cross-machine coordination requires verifying that the correct commands and events are produced, not that side effects occurred. This example tests the coordination logic by inspecting the returned command list.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2513,11 +3491,8 @@ match applyInvoiceEvents startInv lifecycle with
 // [F#: List.fold + Result.bind test harness; Clojure: reduce with short-circuit]
 // TypeScript: Array.reduce accumulator — collect all commands in one pass.
 
-const applyInvoiceEvents = (
-  inv: Invoice,
-  events: readonly InvoiceEvent[],
-): Result<[Invoice, InvoiceCommand[]], string> =>
-  events.reduce<Result<[Invoice, InvoiceCommand[]], string>>(
+const applyInvoiceEvents = (inv: Invoice, events: readonly InvoiceEvent[]): Result =>
+  events.reduce<Result>(
     (acc, event) =>
       resultBind(acc, ([currentInv, allCmds]) =>
         resultBind(invoiceTransitionWithCommands(currentInv, event), ([nextInv, newCmds]) =>
@@ -2551,6 +3526,92 @@ if (result.ok) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceTestHarness.hs ────────────────────────────────────────
+-- [F#: applyInvoiceEvents fold; Clojure: reduce with short-circuit]
+-- Haskell: foldl with Either threads invoice state and collects all commands.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceTestHarness where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice ADTs (mirrors prior examples).
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | PayE
+  deriving stock (Show, Eq, Ord)
+
+data MatchCtx = MatchCtx { invAmt :: Double } deriving stock (Show, Eq)
+
+data Invoice = Invoice
+  { invId       :: Text
+  , invState    :: InvState
+  , invMatchCtx :: MatchCtx
+  } deriving stock (Show, Eq)
+
+-- Cross-machine commands.
+data InvCommand
+  = AdvancePO Text
+  | SendPaymentRequest Text Double
+  | NotifyRequester Text Text
+  deriving stock (Show, Eq)
+
+-- Stub transition with commands.
+invoiceTransitionWithCommands
+  :: Invoice -> InvEvent -> Either Text (Invoice, [InvCommand])
+invoiceTransitionWithCommands inv ev = case (invState inv, ev) of
+  (Received, Review) ->
+    Right (inv { invState = UnderReview }, [])              -- => No commands
+  (UnderReview, ApproveE) ->
+    let next = inv { invState = Approved }                   -- => Approved
+        cmds = [ AdvancePO "PO-001"
+               , SendPaymentRequest (invId inv) (invAmt (invMatchCtx inv))
+               , NotifyRequester "PO-001" "Invoice approved" ]
+    in Right (next, cmds)
+  (Approved, PayE) ->
+    Right (inv { invState = Paid }, [])                      -- => No new cmds
+  (s, e) ->
+    Left (T.pack $ "Invalid: " <> show s <> " + " <> show e)
+
+-- Test harness: apply events, collect commands; pure short-circuit on error.
+applyInvoiceEvents
+  :: Invoice -> [InvEvent] -> Either Text (Invoice, [InvCommand])
+applyInvoiceEvents initial = foldl step (Right (initial, []))
+  where
+    step (Left e) _   = Left e                               -- => Propagate err
+    step (Right (cur, allCmds)) ev =                         -- => Apply event
+      case invoiceTransitionWithCommands cur ev of
+        Right (nxt, newCmds) ->
+          Right (nxt, allCmds ++ newCmds)                    -- => Concat cmds
+        Left err -> Left err                                  -- => Halt
+
+-- Test: full invoice lifecycle from Received to Paid.
+demo :: IO ()
+demo = do
+  let startInv = Invoice "INV-007" Received (MatchCtx 1000.0)
+      lifecycle = [Review, ApproveE, PayE]                   -- => Happy path
+  case applyInvoiceEvents startInv lifecycle of
+    Right (final, cmds) -> do
+      putStrLn ("Final state: "       <> show (invState final))
+      putStrLn ("Commands produced: " <> show (length cmds))
+      mapM_ (\(i, c) -> putStrLn ("  [" <> show i <> "] " <> show c))
+            (zip [0 :: Int ..] cmds)
+      -- => Final state: Paid
+      -- => Commands produced: 3
+      -- => [0] AdvancePO "PO-001"
+      -- => [1] SendPaymentRequest "INV-007" 1000.0
+      -- => [2] NotifyRequester "PO-001" "Invoice approved"
+    Left err -> putStrLn ("Error: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Testing FSM coordination by inspecting the returned command list requires no mocking, no I/O, and no test doubles — commands are plain data.
@@ -2563,7 +3624,7 @@ if (result.ok) {
 
 Invoice creation requires multiple field validations. Using a list of errors rather than fail-fast gives the supplier a complete picture of what needs correcting, reducing the number of correction-resubmission cycles.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2691,12 +3752,7 @@ match validateInvoice badInput goodCtx2 with
 // [F#: Result<Invoice, string list>; Clojure: error accumulation vector]
 // TypeScript: accumulate all validation errors in one pass — same fail-all pattern.
 
-type InvoiceInput = Readonly<{
-  invoiceId: string;
-  poReference: string;
-  amount: number;
-  lineCount: number;
-}>;
+type InvoiceInput = Readonly;
 // => Raw input before validation — may contain invalid fields
 
 type Validator = (input: InvoiceInput) => string | null;
@@ -2714,7 +3770,7 @@ const invoiceValidators: readonly Validator[] = [
 ];
 // => Array of validators — add new checks by appending, no branching logic to change
 
-const validateInvoice = (input: InvoiceInput, matchCtx: ThreeWayMatchContext): Result<Invoice, string[]> => {
+const validateInvoice = (input: InvoiceInput, matchCtx: ThreeWayMatchContext): Result => {
   const errors = invoiceValidators.map((v) => v(input)).filter((e): e is string => e !== null);
   // => Collect all failing validators; filter removes nulls (passing validators)
   if (errors.length > 0) return Err(errors);
@@ -2744,6 +3800,94 @@ if (!vResult.ok) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceValidate.hs ───────────────────────────────────────────
+-- [F#: Result<Invoice, string list>; Clojure: validators vector + filter+map]
+-- Haskell: accumulate all validation errors in a single pass with mapMaybe.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceValidate where
+
+import Data.Maybe (mapMaybe)             -- => mapMaybe = map + catMaybes
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Three-way match context kept for the Invoice record body.
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+-- Invoice state ADT and Invoice record.
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)
+
+data Invoice = Invoice
+  { invId       :: Text
+  , invState    :: InvState
+  , invMatchCtx :: MatchCtx
+  } deriving stock (Show, Eq)
+
+-- Raw input before validation — may contain invalid fields.
+data InvoiceInput = InvoiceInput
+  { inpInvoiceId   :: Text
+  , inpPOReference :: Text
+  , inpAmount      :: Double
+  , inpLineCount   :: Int
+  } deriving stock (Show, Eq)
+
+-- A validator returns Just error or Nothing (valid).
+type Validator = InvoiceInput -> Maybe Text
+
+-- Validators as data — add new checks by appending to this list.
+invoiceValidators :: [Validator]
+invoiceValidators =
+  [ \i -> if T.null (T.strip (inpInvoiceId i))
+            then Just "Invoice ID must not be empty" else Nothing
+          -- => Blank invoice id rejected
+  , \i -> if T.null (T.strip (inpPOReference i))
+            then Just "PO reference must not be empty" else Nothing
+          -- => Blank PO reference rejected
+  , \i -> if inpAmount i <= 0
+            then Just "Invoice amount must be positive" else Nothing
+          -- => Non-positive amount rejected
+  , \i -> if inpLineCount i <= 0
+            then Just "Invoice must have at least one line" else Nothing
+          -- => Zero or negative line count rejected
+  ]
+
+-- Validate all fields and accumulate errors in one pass.
+-- Either [Text] Invoice is Haskell's idiomatic shape for fail-all validation.
+validateInvoice :: InvoiceInput -> MatchCtx -> Either [Text] Invoice
+validateInvoice input ctx =
+  case mapMaybe ($ input) invoiceValidators of   -- => Run every validator
+    []     -> Right (Invoice (inpInvoiceId input) Received ctx)
+              -- => All validators passed: construct Invoice in Received state
+    errors -> Left errors
+              -- => Return all errors at once for the caller to display
+
+-- Test with multiple invalid fields.
+demo :: IO ()
+demo = do
+  let badInput = InvoiceInput "" "" (-100) 0
+      goodCtx  = MatchCtx 0 0 0 0.01
+  case validateInvoice badInput goodCtx of
+    Left errs -> do
+      putStrLn "Validation errors:"
+      mapM_ (\e -> putStrLn ("  - " <> T.unpack e)) errs
+      -- =>   - Invoice ID must not be empty
+      -- =>   - PO reference must not be empty
+      -- =>   - Invoice amount must be positive
+      -- =>   - Invoice must have at least one line
+    Right _ -> putStrLn "Invoice created"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Result<Invoice, string list>` accumulates all validation errors in a single pass — the caller sees a complete list, not just the first failure.
@@ -2756,7 +3900,7 @@ if (!vResult.ok) {
 
 A PO aggregate can own its associated invoices. This example models a `CompositePO` that holds both the PO state and a list of invoice states, with a transition function that coordinates both.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2923,6 +4067,71 @@ console.log(closePO(cpoPaid));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: CompositePO.hs ───────────────────────────────────────────────
+-- [F#: CompositePO record + allInvoicesPaid; Clojure: nested map; TS: composite]
+-- Haskell: composite ADT with cross-aggregate guard reading invoice states.
+
+{-# LANGUAGE DerivingStrategies #-}
+module CompositePO where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice state and Invoice record (mirrors prior examples).
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)
+
+data Invoice = Invoice
+  { invId    :: Text                  -- => Stable invoice identifier
+  , invState :: InvState              -- => Current FSM state
+  } deriving stock (Show, Eq)
+
+-- Simplified PO state ADT for this example.
+data POState = Acknowledged | Closed | OtherPO
+  deriving stock (Show, Eq, Ord)
+
+-- Composite PO: PO state machine owns its invoices.
+data CompositePO = CompositePO
+  { cpoId       :: Text               -- => PO identifier
+  , cpoPOState  :: POState            -- => Current PO FSM state
+  , cpoInvoices :: [Invoice]          -- => Associated invoices
+  } deriving stock (Show, Eq)
+
+-- Predicate: are all invoices paid? Returns True for the empty list.
+-- all matches F#'s List.forall semantics on the empty collection.
+allInvoicesPaid :: [Invoice] -> Bool
+allInvoicesPaid = all (\inv -> invState inv == Paid)
+
+-- Guarded close: PO can only close when all invoices are paid.
+closePO :: CompositePO -> Either Text CompositePO
+closePO po
+  | cpoPOState po /= Acknowledged =
+      Left (T.pack $ "Cannot close PO in state "       -- => Wrong state
+                  <> show (cpoPOState po)
+                  <> ": must be Acknowledged")
+  | not (allInvoicesPaid (cpoInvoices po)) =
+      Left "Cannot close PO: not all invoices are paid" -- => Outstanding
+  | otherwise =
+      Right po { cpoPOState = Closed }                  -- => All paid: close
+
+-- Test: one invoice paid, one pending.
+demo :: IO ()
+demo = do
+  let paidInv    = Invoice "INV-A" Paid
+      pendingInv = Invoice "INV-B" Approved
+      cpo = CompositePO "PO-020" Acknowledged [paidInv, pendingInv]
+  print (closePO cpo)
+  -- => Left "Cannot close PO: not all invoices are paid"
+  let cpoPaid = cpo { cpoInvoices = [paidInv, pendingInv { invState = Paid }] }
+  print (closePO cpoPaid)
+  -- => Right (CompositePO {..., cpoPOState = Closed, ...})
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Composing PO and Invoice states into a `CompositePO` record enables guards that span both machines — the PO close guard reads invoice states from the same record.
@@ -2935,7 +4144,7 @@ console.log(closePO(cpoPaid));
 
 An invoice that has been under review for more than a configurable number of days should escalate automatically. This example models timeout as a guard that compares the review start date against the current date.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3121,6 +4330,92 @@ console.log(timedApprove(timedInv, new Date(), 48));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceTimeout.hs ────────────────────────────────────────────
+-- [F#: TimedInvoice + withinReviewSla; Clojure: review-started-at ms]
+-- Haskell: timeout guard composes with three-way match via Either monad.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceTimeout where
+
+import Data.Time (UTCTime, diffUTCTime, NominalDiffTime) -- => Time arithmetic
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Printf (printf)
+
+-- Invoice state ADT (simplified).
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)
+
+-- Three-way match context (subset used here).
+data MatchCtx = MatchCtx
+  { invoiceAmount    :: Double
+  , poAmount         :: Double
+  , receiptAmount    :: Double
+  , tolerancePercent :: Double
+  } deriving stock (Show, Eq)
+
+-- Timed invoice carrying an optional review start timestamp.
+data TimedInvoice = TimedInvoice
+  { tiId              :: Text
+  , tiState           :: InvState
+  , tiMatchCtx        :: MatchCtx
+  , tiReviewStartedAt :: Maybe UTCTime  -- => Nothing = not yet under review
+  } deriving stock (Show, Eq)
+
+-- Pure helper: |a - b| <= b * tolerance.
+withinTolerance :: Double -> Double -> Double -> Bool
+withinTolerance a b tol = abs (a - b) <= b * tol
+
+-- Three-way match guard.
+threeWayMatch :: MatchCtx -> Either Text ()
+threeWayMatch ctx
+  | not (withinTolerance (invoiceAmount ctx) (poAmount ctx) (tolerancePercent ctx)) =
+      Left "Invoice vs PO outside tolerance"
+  | not (withinTolerance (invoiceAmount ctx) (receiptAmount ctx) (tolerancePercent ctx)) =
+      Left "Invoice vs receipt outside tolerance"
+  | otherwise = Right ()                              -- => Match passes
+
+-- Timeout guard: returns Left if review has exceeded the SLA.
+withinReviewSla :: Int -> UTCTime -> TimedInvoice -> Either Text ()
+withinReviewSla _ _ inv
+  | tiReviewStartedAt inv == Nothing = Right ()       -- => Review not started
+withinReviewSla slaHours now inv =
+  case tiReviewStartedAt inv of
+    Nothing -> Right ()                               -- => No start: no timeout
+    Just startedAt ->
+      let elapsed :: NominalDiffTime
+          elapsed = diffUTCTime now startedAt          -- => Seconds elapsed
+          elapsedH :: Double
+          elapsedH = realToFrac elapsed / 3600.0       -- => Convert to hours
+      in if elapsedH <= fromIntegral slaHours
+           then Right ()                               -- => Within SLA window
+           else Left (T.pack $ printf
+                "Invoice %s review SLA exceeded: %.1fh > %dh"
+                (T.unpack (tiId inv)) elapsedH slaHours)
+                -- => SLA breached: caller must escalate
+
+-- Timed approval: SLA guard, then three-way match, then state advance.
+-- Either is the natural composition vehicle (the >>= chain short-circuits).
+timedApprove
+  :: TimedInvoice -> UTCTime -> Int -> Either Text TimedInvoice
+timedApprove inv now slaHours
+  | tiState inv /= UnderReview =
+      Left (T.pack $ "Cannot approve in state " <> show (tiState inv))
+  | otherwise = do
+      _ <- withinReviewSla slaHours now inv            -- => Step 1: timeout
+      _ <- threeWayMatch (tiMatchCtx inv)              -- => Step 2: match
+      Right inv { tiState = Approved                   -- => Step 3: advance
+                , tiReviewStartedAt = Nothing }        -- => Clear timestamp
+
+-- => Example: invoice started 50h ago with 48h SLA returns Left "...SLA exceeded".
+-- => Pure: same inputs always yield the same Either — no clock side effect.
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Timeout guards are pure functions that compare timestamps — they integrate with the `Result.bind` chain like any other guard, requiring no special FSM infrastructure.
@@ -3133,7 +4428,7 @@ console.log(timedApprove(timedInv, new Date(), 48));
 
 A runner applies a sequence of events to an invoice, threading the state through each transition and collecting all commands. It is the invoice equivalent of the `replayEvents` function from the beginner level.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3264,11 +4559,8 @@ match runInvoiceFSM freshInv events with
 // [F#: runInvoiceFSM with List.fold + Result.bind; Clojure: reduce with reduced]
 // TypeScript: Array.reduce — collect final state and all commands.
 
-const runInvoiceFSM = (
-  initialInv: Invoice,
-  events: readonly InvoiceEvent[],
-): Result<[Invoice, InvoiceCommand[]], string> =>
-  events.reduce<Result<[Invoice, InvoiceCommand[]], string>>(
+const runInvoiceFSM = (initialInv: Invoice, events: readonly InvoiceEvent[]): Result =>
+  events.reduce<Result>(
     (acc, event) =>
       resultBind(acc, ([inv, cmds]) =>
         resultBind(invoiceTransitionWithCommands(inv, event), ([nextInv, newCmds]) =>
@@ -3304,6 +4596,91 @@ if (runResult.ok) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceRunner.hs ─────────────────────────────────────────────
+-- [F#: runInvoiceFSM with List.fold + Result.bind; Clojure: reduce + reduced]
+-- Haskell: foldl with Either threads state through events; short-circuits on Left.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceRunner where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Text.IO as TIO
+
+-- Invoice ADT and event ADT (simplified).
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveE | PayE
+  deriving stock (Show, Eq, Ord)
+
+data Invoice = Invoice
+  { invId    :: Text                  -- => Stable invoice id
+  , invState :: InvState              -- => Current FSM state
+  , invAmt   :: Double                -- => Invoice amount (for command payload)
+  } deriving stock (Show, Eq)
+
+-- Cross-machine commands emitted by transitions.
+data InvCommand
+  = AdvancePO Text                          -- => Tell PO FSM to advance
+  | SendPaymentRequest Text Double          -- => Queue payment
+  | NotifyRequester Text Text               -- => Notify employee
+  deriving stock (Show, Eq)
+
+-- Transition with commands: pure, deterministic, no I/O.
+invoiceTransitionWithCommands
+  :: Invoice -> InvEvent -> Either Text (Invoice, [InvCommand])
+invoiceTransitionWithCommands inv ev = case (invState inv, ev) of
+  (Received, Review) ->
+    Right (inv { invState = UnderReview }, [])         -- => No commands
+  (UnderReview, ApproveE) ->
+    let next = inv { invState = Approved }              -- => Approved invoice
+        cmds = [ AdvancePO "PO-001"                     -- => Coordinate PO
+               , SendPaymentRequest (invId inv) (invAmt inv) -- => Queue pay
+               , NotifyRequester "PO-001" "Invoice approved" ]
+    in Right (next, cmds)
+  (Approved, PayE) ->
+    Right (inv { invState = Paid }, [])                 -- => No new commands
+  (s, e) ->
+    Left (T.pack $ "Invalid: " <> show s <> " + " <> show e)
+
+-- Runner: apply a sequence of events; accumulate commands; short-circuit on Left.
+runInvoiceFSM
+  :: Invoice -> [InvEvent] -> Either Text (Invoice, [InvCommand])
+runInvoiceFSM initial = foldl step (Right (initial, []))
+  -- => Left fold threads (invoice, cmds) pair through events
+  where
+    step (Left err) _ = Left err                        -- => Propagate prior error
+    step (Right (inv, cmds)) ev =                       -- => Apply next event
+      case invoiceTransitionWithCommands inv ev of
+        Right (next, newCmds) ->
+          Right (next, cmds ++ newCmds)                 -- => Append new cmds
+        Left err -> Left err                            -- => Halt on failure
+
+-- Run a complete lifecycle from Received through to Paid.
+demo :: IO ()
+demo = do
+  let freshInv = Invoice "INV-009" Received 2500.0       -- => Starting invoice
+      events   = [Review, ApproveE, PayE]                -- => Happy-path log
+  case runInvoiceFSM freshInv events of
+    Right (final, cmds) -> do
+      TIO.putStrLn ("Final state: " <> T.pack (show (invState final)))
+      TIO.putStrLn ("Total commands: " <> T.pack (show (length cmds)))
+      mapM_ print cmds                                   -- => Show each command
+      -- => Final state: Paid
+      -- => Total commands: 3
+      -- => AdvancePO "PO-001"
+      -- => SendPaymentRequest "INV-009" 2500.0
+      -- => NotifyRequester "PO-001" "Invoice approved"
+    Left err -> TIO.putStrLn ("Runner error: " <> err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A generic FSM runner built on `List.fold` and `Result.bind` applies any sequence of events to any machine that follows the `(State, Event) -> Result<(State, Commands), Error>` signature.
@@ -3316,7 +4693,7 @@ if (runResult.ok) {
 
 Tracking all states across both machines provides a coverage map that shows which lifecycle combinations are possible and which are mutually exclusive.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3461,6 +4838,68 @@ validCoverageSnapshots.forEach((s) =>
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: P2PCoverage.hs ───────────────────────────────────────────────
+-- [F#: P2PCoverageState list; Clojure: snapshot vector; TS: array of records]
+-- Haskell: data-driven snapshot of valid (PO, Invoice) state combinations.
+
+{-# LANGUAGE DerivingStrategies #-}
+module P2PCoverage where
+
+import Text.Printf (printf)               -- => Padding for column alignment
+
+-- PO and Invoice state ADTs.
+data POState  = Draft | AwaitingApproval | Approved' | Issued
+              | Acknowledged | Closed
+  deriving stock (Show, Eq, Ord)
+
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)
+
+-- Coverage record: pairs a PO state with an optional invoice state.
+-- Maybe encodes "no invoice yet created" without using a separate field.
+data P2PCoverageState = P2PCoverageState
+  { coverPO  :: POState                  -- => Current PO lifecycle position
+  , coverInv :: Maybe InvState           -- => Nothing = no invoice yet
+  } deriving stock (Show, Eq)
+
+-- Valid lifecycle snapshots — the reachable (PO, Invoice) pairs.
+validCoverageSnapshots :: [P2PCoverageState]
+validCoverageSnapshots =
+  [ P2PCoverageState Draft            Nothing             -- => No invoice yet
+  , P2PCoverageState AwaitingApproval Nothing             -- => Still no invoice
+  , P2PCoverageState Approved'        Nothing             -- => Pre-issuance
+  , P2PCoverageState Issued           Nothing             -- => Invoice may arrive
+  , P2PCoverageState Issued           (Just Received)     -- => Invoice registered
+  , P2PCoverageState Acknowledged     (Just UnderReview)  -- => Goods received
+  , P2PCoverageState Acknowledged     (Just Approved)     -- => Three-way ok
+  , P2PCoverageState Acknowledged     (Just Paid)         -- => Payment done
+  , P2PCoverageState Closed           (Just Paid)         -- => Terminal: complete
+  ]
+  -- => 9 reachable combinations — adding a state requires extending this list
+
+-- Summarise coverage: count and print one line per snapshot.
+demo :: IO ()
+demo = do
+  printf "Valid P2P state combinations: %d\n"
+         (length validCoverageSnapshots)              -- => 9
+  mapM_ printRow validCoverageSnapshots               -- => One row per snapshot
+  where
+    printRow s = printf "  PO: %-20s | Invoice: %s\n"
+                        (show (coverPO s))            -- => PO state label
+                        (maybe "<none>" show (coverInv s))
+                        -- => "<none>" or wrapped Invoice state name
+-- => Valid P2P state combinations: 9
+-- => PO: Draft                | Invoice: <none>
+-- => PO: AwaitingApproval     | Invoice: <none>
+-- => PO: Issued               | Invoice: Received
+-- => ... (one line per snapshot)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Enumerating valid cross-machine state combinations as data makes the P2P lifecycle specification explicit and queryable — a snapshot test can assert this list is stable.
@@ -3475,7 +4914,7 @@ validCoverageSnapshots.forEach((s) =>
 
 Network retries can cause the same event to arrive twice. An idempotent transition function returns `Ok currentState` when the transition has already been applied, rather than `Error`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3596,7 +5035,7 @@ const idempotentPairs = new Set<string>([
 ]);
 // => Set of "State:Event" composite keys that represent already-applied operations
 
-const idempotentInvoiceTransition = (inv: Invoice, event: InvoiceEvent): Result<[Invoice, boolean], string> => {
+const idempotentInvoiceTransition = (inv: Invoice, event: InvoiceEvent): Result => {
   if (idempotentPairs.has(`${inv.state}:${event}`)) return Ok([inv, false]);
   // => false signals a no-op; caller should skip command execution
   return resultBind(invoiceTransition(inv, event), (nextInv) => Ok([nextInv, true] as [Invoice, boolean]));
@@ -3623,6 +5062,77 @@ console.log(r2.ok ? `transitioned: ${r2.value[1]}` : r2.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceIdempotent.hs ─────────────────────────────────────────
+-- [F#: idempotentInvoiceTransition + bool flag; Clojure: idempotent-pairs set]
+-- Haskell: Set-based idempotency check; (newState, transitioned?) pair result.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceIdempotent where
+
+import Data.Set (Set)                    -- => Set for O(log n) membership
+import qualified Data.Set as Set         -- => Qualified import idiomatic in Haskell
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Invoice state and event ADTs (simplified for this example).
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)        -- => Ord required for Set membership
+
+data InvEvent = Review | ApproveE | PayE
+  deriving stock (Show, Eq, Ord)
+
+-- Invoice record (smart constructor would normally hide the data constructor).
+data Invoice = Invoice
+  { invId    :: Text                    -- => Stable invoice identifier
+  , invState :: InvState                -- => Current FSM state
+  } deriving stock (Show, Eq)
+
+-- Set of (state, event) pairs that are already-applied and should be no-ops.
+idempotentPairs :: Set (InvState, InvEvent)
+idempotentPairs = Set.fromList
+  [ (UnderReview, Review)               -- => Already UnderReview: Review is no-op
+  , (Approved,    ApproveE)             -- => Already Approved: Approve is no-op
+  , (Paid,        PayE)                 -- => Already Paid: Pay is no-op
+  ]
+
+-- Base transition function (kept small for clarity).
+invoiceTransition :: Invoice -> InvEvent -> Either Text Invoice
+invoiceTransition inv ev = case (invState inv, ev) of
+  (Received,    Review)   -> Right inv { invState = UnderReview }
+  (UnderReview, ApproveE) -> Right inv { invState = Approved }
+  (Approved,    PayE)     -> Right inv { invState = Paid }
+  (s, e)                  ->
+    Left (T.pack $ "Invalid: " <> show s <> " + " <> show e)
+
+-- Idempotent wrapper: already-applied events are accepted silently.
+-- Returns (next-invoice, transitioned?) — False signals a no-op for the caller.
+idempotentTransition :: Invoice -> InvEvent -> Either Text (Invoice, Bool)
+idempotentTransition inv ev
+  | Set.member (invState inv, ev) idempotentPairs =
+      Right (inv, False)                -- => Idempotent: return unchanged
+  | otherwise =
+      case invoiceTransition inv ev of  -- => Delegate to base transition
+        Right next -> Right (next, True)            -- => Real transition occurred
+        Left  err  -> Left err                      -- => Propagate base error
+
+-- Test: duplicate Approve event on an already-Approved invoice.
+demo :: IO ()
+demo = do
+  let approvedInv = Invoice "INV-010" Approved          -- => Already approved
+      r1 = idempotentTransition approvedInv ApproveE    -- => Should be no-op
+      reviewedInv = approvedInv { invState = UnderReview }
+      r2 = idempotentTransition reviewedInv ApproveE    -- => Real transition
+  print r1
+  -- => Right (Invoice {invId = "INV-010", invState = Approved}, False)
+  print r2
+  -- => Right (Invoice {invId = "INV-010", invState = Approved}, True)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Idempotency is a property of the transition function, not the messaging infrastructure — encoding it here makes the FSM safe to use with at-least-once delivery messaging.
@@ -3635,7 +5145,7 @@ console.log(r2.ok ? `transitioned: ${r2.value[1]}` : r2.error);
 
 Over time, the domain model evolves. An `InvoiceState` value serialised two years ago may not match the current DU definition. This example shows a migration function that upgrades old state values to the current model.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3808,6 +5318,61 @@ console.log(migrateEvent(v2Event) === v2Event); // => true (pass-through)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceMigration.hs ──────────────────────────────────────────
+-- [F#: VersionedInvoiceState DU + migrateInvoiceState; Clojure: v1->v2 map]
+-- Haskell: versioned ADT wrapper + total migration function returning Either.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceMigration where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Current canonical state ADT.
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)
+
+-- Versioned state: V1 legacy strings or V2 typed ADT.
+data VersionedInvoiceState
+  = V1 Text          -- => Old states stored as raw strings
+  | V2 InvState      -- => Current ADT representation
+  deriving stock (Show, Eq)
+
+-- Migration: upgrade any version to the V2 representation.
+-- Total function — every legacy string explicitly listed; unknown -> Left.
+migrateInvoiceState :: VersionedInvoiceState -> Either Text InvState
+migrateInvoiceState (V2 current) = Right current      -- => Already current
+migrateInvoiceState (V1 "new")        = Right Received     -- => V1 "new" -> Received
+migrateInvoiceState (V1 "in_review")  = Right UnderReview  -- => V1 -> UnderReview
+migrateInvoiceState (V1 "approved")   = Right Approved     -- => V1 -> Approved
+migrateInvoiceState (V1 "paid")       = Right Paid         -- => V1 -> Paid
+migrateInvoiceState (V1 "rejected")   = Right Rejected     -- => V1 -> Rejected
+migrateInvoiceState (V1 unknown)      =                    -- => Unknown legacy value
+  Left ("Unknown V1 invoice state: '" <> unknown
+        <> "' — manual migration required")
+  -- => Fail safe — refuse to guess the mapping for unknown legacy strings
+
+-- Test migration from V1 raw states.
+demo :: IO ()
+demo = do
+  let legacy = [ V1 "new", V1 "in_review", V1 "approved"
+               , V1 "legacy_unknown", V2 Paid ]            -- => Mixed inputs
+  mapM_ printResult (map migrateInvoiceState legacy)
+  where
+    printResult (Right s) = putStrLn ("Ok " <> show s)
+    printResult (Left e)  = putStrLn ("Error " <> T.unpack e)
+-- => Ok Received
+-- => Ok UnderReview
+-- => Ok Approved
+-- => Error Unknown V1 invoice state: 'legacy_unknown' — manual migration required
+-- => Ok Paid
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A versioned state wrapper with a migration function makes schema evolution explicit — unknown legacy values produce recoverable `Error` results rather than silent data corruption.
@@ -3820,7 +5385,7 @@ console.log(migrateEvent(v2Event) === v2Event); // => true (pass-through)
 
 The FSM defines which operations are currently available. A query function derives this from the current state, providing the UI with an up-to-date set of allowed actions without coupling the UI to FSM internals.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3947,10 +5512,7 @@ let actionLabel (action: InvoiceAction) : string =
 // TypeScript: pure query functions — derive answers from state without side effects.
 
 // Query: what events are valid in the current state?
-const validEventsForState = (
-  machine: Map<string, NamedTransitionDef<InvoiceState>>,
-  state: InvoiceState,
-): InvoiceEvent[] => {
+const validEventsForState = (machine: Map, state: InvoiceState): InvoiceEvent[] => {
   const valid: InvoiceEvent[] = [];
   machine.forEach((_, key) => {
     const [s, e] = key.split(":") as [InvoiceState, InvoiceEvent];
@@ -4001,6 +5563,67 @@ console.log(invoiceStateLabel("UnderReview")); // => "Under AP Review"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceQueries.hs ────────────────────────────────────────────
+-- [F#: InvoiceAction DU + availableActions; Clojure: action lookup map]
+-- Haskell: pure query functions deriving UI actions from FSM state.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceQueries where
+
+import Data.Text (Text)
+
+-- Invoice state ADT (mirrors the canonical InvoiceState).
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq, Ord)         -- => Show/Eq/Ord for tests and maps
+
+-- Available actions for a given invoice state — drives UI button visibility.
+data InvoiceAction
+  = CanReview     -- => "Start Review" button
+  | CanApprove    -- => "Approve" button
+  | CanDispute    -- => "Flag Dispute" button
+  | CanResubmit   -- => "Resubmit" button (supplier portal)
+  | CanReject     -- => "Reject" button
+  | CanPay        -- => "Process Payment" button
+  deriving stock (Show, Eq)              -- => Show used by mapM_ print below
+
+-- Pure query: derive available actions from current state.
+-- Exhaustive — adding a new InvState case yields a non-exhaustive warning.
+availableActions :: InvState -> [InvoiceAction]
+availableActions Received    = [CanReview]                              -- => Only review
+availableActions UnderReview = [CanApprove, CanDispute, CanReject]      -- => AP options
+availableActions Disputed    = [CanResubmit]                            -- => Supplier resubmits
+availableActions Approved    = [CanPay]                                 -- => Finance pays
+availableActions Rejected    = []                                       -- => Terminal
+availableActions Paid        = []                                       -- => Terminal
+
+-- Generate human-readable labels for display.
+actionLabel :: InvoiceAction -> Text
+actionLabel CanReview   = "Start Review"
+actionLabel CanApprove  = "Approve Invoice"
+actionLabel CanDispute  = "Flag Dispute"
+actionLabel CanResubmit = "Resubmit Invoice"
+actionLabel CanReject   = "Reject Invoice"
+actionLabel CanPay      = "Process Payment"
+
+-- Test: query available actions for each state.
+demo :: IO ()
+demo = mapM_ printState [Received, UnderReview, Disputed, Approved, Paid]
+  where
+    printState s = do
+      let labels = map actionLabel (availableActions s)   -- => Look up labels
+      putStrLn $ show s <> ": " <> show labels            -- => Print pair
+-- => Received: ["Start Review"]
+-- => UnderReview: ["Approve Invoice","Flag Dispute","Reject Invoice"]
+-- => Disputed: ["Resubmit Invoice"]
+-- => Approved: ["Process Payment"]
+-- => Paid: []
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `availableActions` is a pure query on the FSM state — the UI reads it to show only valid actions, eliminating the need for per-button permission checks scattered across the frontend.
@@ -4032,7 +5655,7 @@ sequenceDiagram
     POFSM->>POFSM: Close (Acknowledged -> Closed)
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4239,6 +5862,99 @@ console.log(diagram);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: P2PCoSim.hs ──────────────────────────────────────────────────
+-- [F#: P2PEvent DU + applyP2PEvent; Clojure: tagged event map; TS: diagram gen]
+-- Haskell: co-simulate PO and Invoice FSMs by folding over a tagged event log.
+
+{-# LANGUAGE DerivingStrategies #-}
+module P2PCoSim where
+
+import Data.Map.Strict (Map)            -- => Strict map for transition tables
+import qualified Data.Map.Strict as Map -- => Qualified to avoid name clashes
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- PO and Invoice state ADTs (simplified for this example).
+data POState  = Draft | AwaitApprove | POApproved | Issued | Acknowledged | Closed
+  deriving stock (Show, Eq, Ord)
+
+data POEvent  = Submit | ApproveP | Issue' | AckE | CloseE
+  deriving stock (Show, Eq, Ord)
+
+data InvState = Received | UnderReview | InvApproved | Paid
+  deriving stock (Show, Eq, Ord)
+
+data InvEvent = Review | ApproveI | PayE
+  deriving stock (Show, Eq, Ord)
+
+-- Tagged P2P event: targets either the PO FSM or the Invoice FSM.
+data P2PEvent = PoEv POEvent | InvEv InvEvent
+  deriving stock (Show, Eq)             -- => Sum type discriminates by machine
+
+-- Shared state: both machines run concurrently, held in a record.
+data P2PState = P2PState
+  { poState  :: POState                  -- => Current PO state
+  , invState :: Maybe InvState           -- => Maybe: invoice may not exist yet
+  } deriving stock (Show, Eq)
+
+-- PO transition table (closed map; lookup is total via Maybe).
+poTable :: Map (POState, POEvent) POState
+poTable = Map.fromList
+  [ ((Draft,        Submit),   AwaitApprove)  -- => Submit moves to AwaitApprove
+  , ((AwaitApprove, ApproveP), POApproved)    -- => Manager approves
+  , ((POApproved,   Issue'),   Issued)        -- => Issue to supplier
+  , ((Issued,       AckE),     Acknowledged)  -- => Supplier acknowledges
+  , ((Acknowledged, CloseE),   Closed)        -- => Close terminal
+  ]
+
+-- Invoice transition table.
+invTable :: Map (InvState, InvEvent) InvState
+invTable = Map.fromList
+  [ ((Received,    Review),   UnderReview)   -- => AP starts review
+  , ((UnderReview, ApproveI), InvApproved)   -- => Three-way match assumed ok
+  , ((InvApproved, PayE),     Paid)          -- => Disburse payment
+  ]
+
+-- Step function: apply one P2P event to the shared state.
+applyP2PEvent :: P2PState -> P2PEvent -> Either Text P2PState
+applyP2PEvent st (PoEv ev) =                  -- => Route to PO FSM
+  case Map.lookup (poState st, ev) poTable of
+    Just next -> Right st { poState = next }  -- => Update PO state only
+    Nothing   -> Left (T.pack $ "PO bad event: "
+                              <> show ev <> " in " <> show (poState st))
+applyP2PEvent st (InvEv ev) =                 -- => Route to Invoice FSM
+  case invState st of
+    Nothing -> Left "No invoice to process"   -- => Event before invoice exists
+    Just s  -> case Map.lookup (s, ev) invTable of
+      Just next -> Right st { invState = Just next }  -- => Update invoice only
+      Nothing   -> Left (T.pack $ "Inv bad event: "
+                                <> show ev <> " in " <> show s)
+
+-- Fold a shared event log; short-circuit on first Left.
+runP2PLog :: P2PState -> [P2PEvent] -> Either Text P2PState
+runP2PLog = foldl step . Right                -- => Seed reduce with Right initial
+  where
+    step (Left e)  _  = Left e                -- => Propagate error
+    step (Right s) ev = applyP2PEvent s ev    -- => Apply next event
+
+-- Run a combined P2P lifecycle and report the final state of both machines.
+demo :: IO ()
+demo = do
+  let initial = P2PState Draft (Just Received)        -- => Both machines start
+      events  = [ PoEv Submit, PoEv ApproveP, PoEv Issue'
+                , InvEv Review, InvEv ApproveI ]      -- => Mixed event sequence
+  case runP2PLog initial events of
+    Right s ->
+      putStrLn $ "PO: " <> show (poState s)           -- => Issued
+              <> " | Inv: " <> show (invState s)      -- => Just InvApproved
+    Left  e -> putStrLn $ "Error: " <> T.unpack e
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling the two-machine interaction as a fold over a shared event log produces a co-simulation: both FSMs advance in response to the same ordered event stream.
@@ -4251,7 +5967,7 @@ console.log(diagram);
 
 SLA metadata — review deadlines, payment terms, escalation thresholds — can be attached to the FSM as a record of policy values. This example associates SLA metadata with each invoice state.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4431,6 +6147,73 @@ invoiceMachineWithSLA.forEach((def, key) => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceSla.hs ─────────────────────────────────────────────────
+-- [F#: InvoiceSLA record + isOverdue; Clojure: SLA map + overdue?]
+-- Haskell: SLA record + pure overdue check using UTCTime.
+
+{-# LANGUAGE DerivingStrategies #-}
+module InvoiceSla where
+
+import Data.Time (UTCTime, NominalDiffTime, diffUTCTime) -- => Time arithmetic
+import Data.Text (Text)                                  -- => Text identifiers
+
+-- SLA metadata — pure data, no functions, no side effects.
+data InvoiceSLA = InvoiceSLA
+  { reviewDeadlineHours   :: Int   -- => Hours allowed in UnderReview
+  , paymentTermsDays      :: Int   -- => Days from approval to payment due
+  , disputeResolutionDays :: Int   -- => Days to resolve a dispute
+  } deriving stock (Show, Eq)      -- => Show/Eq enable testing and printing
+
+-- Default SLA policy — typically loaded from configuration.
+defaultSLA :: InvoiceSLA
+defaultSLA = InvoiceSLA
+  { reviewDeadlineHours   = 48     -- => 48-hour review window
+  , paymentTermsDays      = 30     -- => Net 30 payment terms
+  , disputeResolutionDays = 5      -- => 5-day dispute resolution window
+  }
+
+-- Invoice state ADT (simplified for this example).
+data InvState = Received | UnderReview | Approved | Disputed | Rejected | Paid
+  deriving stock (Show, Eq)
+
+-- State-specific SLA: how long may the invoice stay in each state?
+stateDeadlineHours :: InvoiceSLA -> InvState -> Maybe Int
+stateDeadlineHours sla UnderReview =
+  Just (reviewDeadlineHours sla)               -- => Review deadline applies
+stateDeadlineHours sla Disputed   =
+  Just (disputeResolutionDays sla * 24)        -- => Days converted to hours
+stateDeadlineHours sla Approved   =
+  Just (paymentTermsDays sla * 24)             -- => Payment terms in hours
+stateDeadlineHours _   _          = Nothing    -- => No deadline elsewhere
+
+-- Timed invoice: pairs an invoice id+state with optional review start time.
+data TimedInvoice = TimedInvoice
+  { tiId              :: Text
+  , tiState           :: InvState
+  , tiReviewStartedAt :: Maybe UTCTime          -- => Set when entering UnderReview
+  } deriving stock (Show, Eq)
+
+-- Check if an invoice is overdue — pure given an explicit "now" parameter.
+isOverdue :: InvoiceSLA -> TimedInvoice -> UTCTime -> Bool
+isOverdue sla inv now =
+  case (tiReviewStartedAt inv, stateDeadlineHours sla (tiState inv)) of
+    (Just startedAt, Just deadlineH) ->
+      let elapsed :: NominalDiffTime
+          elapsed = diffUTCTime now startedAt    -- => Time elapsed since start
+          elapsedH :: Double
+          elapsedH = realToFrac elapsed / 3600.0 -- => Convert seconds to hours
+      in elapsedH > fromIntegral deadlineH       -- => True when over deadline
+    _ -> False                                   -- => Missing data => not overdue
+
+-- => Example use: with a 50-hour-old review and a 48-hour SLA, returns True.
+-- => Pure: same inputs always yield the same Bool — no implicit clock.
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: SLA metadata as a record attached to the FSM makes policy values auditable and configurable without changing the transition logic.
@@ -4443,7 +6226,7 @@ invoiceMachineWithSLA.forEach((def, key) => {
 
 The PO and Invoice FSMs together define the core protocol of a Procure-to-Pay system. This summary example demonstrates how composition, guards, commands, and replay combine into a coherent architectural pattern.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4612,13 +6395,7 @@ runP2PLifecycle
 // TypeScript: FSM system summary — all machines and their invariants as typed data.
 
 // System-level FSM registry: documents all machines in the P2P domain.
-type MachineRegistryEntry = Readonly<{
-  name: string;
-  states: readonly string[];
-  events: readonly string[];
-  terminalStates: readonly string[];
-  description: string;
-}>;
+type MachineRegistryEntry = Readonly;
 // => Each entry documents one FSM aggregate
 
 const p2pMachineRegistry: readonly MachineRegistryEntry[] = [
@@ -4663,6 +6440,99 @@ console.log(summariseMachines(p2pMachineRegistry));
 // =>
 // => Machine: Invoice
 // => ...
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: InvoiceFsm.hs ──────────────────────────────────────────────────
+-- [F#: runP2PLifecycle; Clojure: run-p2p-lifecycle; TS: machine registry]
+-- Architectural summary: small, composable pieces for the P2P FSM system.
+
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module InvoiceFsm where
+
+import Data.Map.Strict (Map)            -- => Strict map for transition tables
+import qualified Data.Map.Strict as Map -- => Qualified import avoids clashes
+import Data.Text (Text)                 -- => Text for human-readable identifiers
+import qualified Data.Text as T         -- => Text helpers for output formatting
+import qualified Data.Text.IO as TIO    -- => IO operations limited to logging
+
+-- 1. Domain data: ADTs for states, events, records — no classes.
+data POState  = Draft | AwaitingApproval | Approved' | Issued | Acknowledged | Closed
+  deriving stock (Show, Eq, Ord)        -- => Show/Eq/Ord enable maps and printing
+
+data POEvent  = Submit | ApproveP | Issue' | AckE | CloseE
+  deriving stock (Show, Eq, Ord)        -- => Event ADT mirrors PO lifecycle
+
+data InvState = Received | UnderReview | Approved | Paid
+  deriving stock (Show, Eq, Ord)        -- => Simplified invoice state ADT
+
+data InvEvent = Review | ApproveI | PayE
+  deriving stock (Show, Eq, Ord)        -- => Simplified invoice event ADT
+
+-- 2. Transition tables: pure data; the runner reads them.
+poTable :: Map (POState, POEvent) POState
+poTable = Map.fromList
+  [ ((Draft,            Submit),   AwaitingApproval) -- => Employee submits
+  , ((AwaitingApproval, ApproveP), Approved')        -- => Manager approves
+  , ((Approved',        Issue'),   Issued)           -- => PO issued
+  , ((Issued,           AckE),     Acknowledged)     -- => Supplier acks
+  , ((Acknowledged,     CloseE),   Closed)           -- => PO closed
+  ]
+  -- => Closed key-set — adding a transition requires editing this table
+
+invTable :: Map (InvState, InvEvent) InvState
+invTable = Map.fromList
+  [ ((Received,    Review),   UnderReview) -- => AP starts review
+  , ((UnderReview, ApproveI), Approved)    -- => Three-way match ok
+  , ((Approved,    PayE),     Paid)        -- => Payment disbursed
+  ]
+
+-- 3. Generic step: lookup the table; Either carries the error track.
+applyEvent
+  :: (Ord s, Ord e, Show s, Show e)
+  => Map (s, e) s -> s -> e -> Either Text s
+applyEvent table s e =
+  case Map.lookup (s, e) table of
+    Just next -> Right next                            -- => Transition found
+    Nothing   -> Left (T.pack $ "Invalid: "            -- => Build error message
+                              <> show s <> " + " <> show e)
+
+-- 4. Runner: foldM over an event log, short-circuiting on Left.
+runLog
+  :: (Ord s, Ord e, Show s, Show e)
+  => Map (s, e) s -> s -> [e] -> Either Text s
+runLog table = foldl step . Right                      -- => Seed with Right initial
+  where
+    step (Left err) _ = Left err                       -- => Propagate prior error
+    step (Right s)  e = applyEvent table s e           -- => Apply next event
+
+-- 5. Orchestration: run both machines and print the summary.
+runP2PLifecycle :: [POEvent] -> [InvEvent] -> InvState -> IO ()
+runP2PLifecycle poEvs invEvs invStart = do
+  let poRes  = runLog poTable  Draft     poEvs        -- => Replay PO log
+      invRes = runLog invTable invStart  invEvs       -- => Replay invoice log
+  TIO.putStrLn "=== P2P Lifecycle Summary ==="        -- => Header line
+  case poRes of                                       -- => Branch on PO outcome
+    Right s  -> TIO.putStrLn ("PO final state:      " <> T.pack (show s))
+    Left  e  -> TIO.putStrLn ("PO error:            " <> e)
+  case invRes of                                      -- => Branch on invoice outcome
+    Right s  -> TIO.putStrLn ("Invoice final state: " <> T.pack (show s))
+    Left  e  -> TIO.putStrLn ("Invoice error:       " <> e)
+
+-- Run the canonical P2P happy path
+main :: IO ()
+main = runP2PLifecycle
+         [Submit, ApproveP, Issue', AckE]              -- => PO lifecycle events
+         [Review, ApproveI, PayE]                      -- => Invoice lifecycle events
+         Received
+-- => === P2P Lifecycle Summary ===
+-- => PO final state:      Acknowledged
+-- => Invoice final state: Paid
 ```
 
 {{< /tab >}}

@@ -3,8 +3,19 @@ title: "FSM By Example in FP"
 weight: 10000002
 date: 2026-05-17T00:00:00+07:00
 draft: false
-description: "Learn Finite State Machines with Functional Programming in F# through 75 annotated code examples using the shared procurement-platform-be Procure-to-Pay domain"
-tags: ["fsm", "finite-state-machine", "f#", "functional-programming", "state-machines", "by-example"]
+description: "Learn Finite State Machines with Functional Programming through 75 annotated code examples in F# (canonical), Clojure, TypeScript, and Haskell, using the shared procurement-platform-be Procure-to-Pay domain"
+tags:
+  [
+    "fsm",
+    "finite-state-machine",
+    "f#",
+    "clojure",
+    "typescript",
+    "haskell",
+    "functional-programming",
+    "state-machines",
+    "by-example",
+  ]
 ---
 
 - [Overview](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example/overview)

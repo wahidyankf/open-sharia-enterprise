@@ -11,7 +11,7 @@ tags: ["hermes-agent", "overview", "ai-agent", "nous-research", "automation"]
 
 ## What is Hermes Agent?
 
-Hermes Agent is a **free, open-source, self-improving AI agent** that connects large language models (Claude, GPT, Gemini, DeepSeek, Llama, and 200+ models via OpenRouter) to messaging platforms (Telegram, Discord, Slack, WhatsApp, Signal, Email, and more) and enables AI to take real actions through 47 built-in tools across 19 toolsets.
+Hermes Agent is a **free, open-source, self-improving AI agent** that connects large language models (Claude, GPT, Gemini, DeepSeek, Llama, and 200+ models via OpenRouter) to messaging platforms (Telegram, Discord, Slack, WhatsApp, Signal, Email, and more) and enables AI to take real actions through 70+ built-in tools organized into pluggable toolsets.
 
 **Key differentiator**: Hermes Agent has a built-in closed learning loop:
 
@@ -26,16 +26,16 @@ Hermes Agent is a **free, open-source, self-improving AI agent** that connects l
 ### Core Capabilities
 
 - **Full TUI terminal interface**: Multiline editing, slash-command autocomplete, streaming output, token/cost tracking
-- **Multi-platform messaging gateway**: 17+ platforms (Telegram, Discord, Slack, WhatsApp, Signal, Email, Home Assistant, Matrix, Mattermost, DingTalk, Feishu, Lark, WeCom, WeChat, BlueBubbles, Signal, webhooks)
-- **47 built-in tools**: Web search/extract, terminal/files, browser automation, vision/image generation, memory, session search, cron scheduling, delegation, code execution, MCP, Home Assistant, RL training
+- **Multi-platform messaging gateway**: 20+ platforms (CLI, Telegram, Discord, Slack, WhatsApp, Signal, Email, SMS, Home Assistant, Matrix, Mattermost, DingTalk, Feishu, WeCom, Weixin, QQ Bot, Yuanbao, BlueBubbles, Microsoft Teams, Google Chat)
+- **70+ built-in tools**: Web search/extract, terminal/files, browser automation, vision/image generation, memory, session search, cron scheduling, delegation, code execution, MCP, Home Assistant, RL training
 - **6 terminal backends**: local, Docker, SSH, Daytona, Singularity, Modal — from laptop to serverless cloud
-- **Subagent delegation**: Spawn isolated child agents for parallel workstreams (up to 3 concurrent, depth limit 2)
+- **Subagent delegation**: Spawn isolated child agents for parallel workstreams (up to 3 concurrent by default, configurable)
 - **Smart model routing**: Automatic routing between primary and cheap models based on message complexity
 - **Context compression**: Automatic lossy summarization when approaching token limits
-- **Mixture of Agents**: Multi-model orchestration with 4 parallel reference models + aggregator
+- **Mixture of Agents**: Multi-model orchestration with parallel reference models and an aggregator
 - **MCP integration**: Connect any MCP server; Hermes can also serve as MCP server
-- **Voice mode**: Push-to-talk TTS/STT (6 TTS providers, 4 STT providers)
-- **Seven-layer security model**: Command approval, container isolation, SSRF protection, Tirith scanning, secret redaction, DM pairing, context injection protection
+- **Voice mode**: Push-to-talk TTS/STT (10 TTS providers including Edge TTS, ElevenLabs, OpenAI TTS, MiniMax, Mistral Voxtral, Google Gemini, xAI, NeuTTS, KittenTTS, Piper; 5 STT providers — local, Groq, OpenAI, Mistral, xAI)
+- **Multi-layer security model**: Command approval, container isolation, SSRF protection, secret redaction, DM pairing, prompt-injection defense
 
 ### Architecture Components
 
@@ -50,7 +50,7 @@ Hermes Agent is a **free, open-source, self-improving AI agent** that connects l
 ## Prerequisites
 
 - **Required**: Git (only system prerequisite — installer provisions everything else)
-- **Required**: Linux, macOS, WSL2, or Android/Termux (Windows native unsupported)
+- **Required**: Linux, macOS, WSL2, or Android/Termux; Windows native is supported in early beta
 - **Required**: Basic command-line proficiency
 - **Helpful**: Familiarity with YAML syntax and at least one LLM API
 - **Not required**: Prior Hermes Agent or OpenClaw experience

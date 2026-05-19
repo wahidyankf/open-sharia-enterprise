@@ -3,7 +3,7 @@ title: "Overview"
 weight: 10000000
 date: 2026-05-17T00:00:00+07:00
 draft: false
-description: "FP variant — learn software architecture through 85 heavily annotated examples in F# (canonical), Clojure, and TypeScript, covering 95% of essential concepts (ideal for experienced developers)"
+description: "FP variant — learn software architecture through 85 heavily annotated examples in F# (canonical), Clojure, TypeScript, and Haskell, covering 95% of essential concepts (ideal for experienced developers)"
 tags:
   [
     "software-architecture",
@@ -15,22 +15,23 @@ tags:
     "fsharp",
     "clojure",
     "typescript",
+    "haskell",
   ]
 ---
 
-This section provides a code-first approach to learning software architecture through heavily annotated examples in three functional languages: F# (canonical), Clojure, and TypeScript. Each example presents all three languages as parallel tabs — F# carries the deepest annotations and the framing prose, while Clojure and TypeScript are first-class variants showing the same architectural decision in their respective idioms. Each example also mirrors its counterpart in the OOP variant (same number, same conceptual title) so the two paradigms can be compared side-by-side.
+This section provides a code-first approach to learning software architecture through heavily annotated examples in four functional languages: F# (canonical), Clojure, TypeScript, and Haskell. Each example presents all four languages as parallel tabs — F# carries the deepest annotations and the framing prose, while Clojure, TypeScript, and Haskell are first-class variants showing the same architectural decision in their respective idioms. Each example also mirrors its counterpart in the OOP variant (same number, same conceptual title) so the two paradigms can be compared side-by-side.
 
 ## What You Will Learn
 
-The examples in this section cover patterns, principles, architectural styles, trade-offs, and real-world architectural decisions across three progressive levels, expressed in idiomatic F#, Clojure, and TypeScript:
+The examples in this section cover patterns, principles, architectural styles, trade-offs, and real-world architectural decisions across three progressive levels, expressed in idiomatic F#, Clojure, TypeScript, and Haskell:
 
-- **Beginner**: Foundational architectural concepts with simple, self-contained examples in all three languages
+- **Beginner**: Foundational architectural concepts with simple, self-contained examples in all four languages
 - **Intermediate**: Composite patterns and common enterprise architecture challenges
 - **Advanced**: Complex systems, distributed architecture, and nuanced trade-off analysis
 
 ## How to Use This Section
 
-Each example is self-contained and annotated to explain not just what the code does, but why each architectural decision was made. The F# tab runs under `dotnet fsi`; the Clojure tab runs as a standalone namespace; the TypeScript tab runs under `ts-node` or `deno`. Start at the level that matches your current understanding and progress through the examples in order. Each FP example shares the same number as its OOP counterpart in the [in-oop-by-example](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example) sibling tutorial, enabling cross-paradigm comparison.
+Each example is self-contained and annotated to explain not just what the code does, but why each architectural decision was made. The F# tab runs under `dotnet fsi`; the Clojure tab runs as a standalone namespace; the TypeScript tab runs under `ts-node` or `deno`; the Haskell tab runs under `runghc` or `cabal run`. Start at the level that matches your current understanding and progress through the examples in order. Each FP example shares the same number as its OOP counterpart in the [in-oop-by-example](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example) sibling tutorial, enabling cross-paradigm comparison.
 
 ## Structure of Each Example
 
@@ -38,7 +39,7 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation** — what the pattern or principle addresses and why it matters (2-3 sentences)
 2. **Mermaid Diagram** — visual representation of component relationships, pipelines, or data flow (when appropriate)
-3. **Heavily Annotated Code** — parallel tabs showing F# (canonical), Clojure, and TypeScript, each with `// =>` comments documenting architectural decisions and trade-offs
+3. **Heavily Annotated Code** — parallel tabs showing F# (canonical), Clojure, TypeScript, and Haskell, each with `// =>` (or `;;` in Clojure, `-- =>` in Haskell) comments documenting architectural decisions and trade-offs
 4. **Key Takeaway** — the core insight to retain from the example (1-2 sentences)
 5. **Why It Matters** — production relevance and real-world impact (50-100 words)
 

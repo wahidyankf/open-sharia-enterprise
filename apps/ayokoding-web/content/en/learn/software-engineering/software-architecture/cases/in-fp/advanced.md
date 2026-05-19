@@ -3,9 +3,22 @@ title: "Advanced"
 weight: 10000005
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Advanced Cases guides (Guides 15–27) — docker-compose integration harness, schema migrations, banking port and payment adapter, retry and circuit-breaker, end-to-end domain event flow, OpenTelemetry observability adapter, optional murabaha-finance context, hexagonal anti-patterns, Kubernetes deployment topology, observability wiring at the deploy seam, failure-mode degraded adapters, configuration adapter, and background-job port"
+description: "Advanced Cases guides (Guides 15–27) — docker-compose integration harness, schema migrations, banking port and payment adapter, retry and circuit-breaker, end-to-end domain event flow, OpenTelemetry observability adapter, optional murabaha-finance context, hexagonal anti-patterns, Kubernetes deployment topology, observability wiring at the deploy seam, failure-mode degraded adapters, configuration adapter, and background-job port, in F# (canonical), Clojure, TypeScript, and Haskell"
 tags:
-  ["ddd", "hexagonal-architecture", "f#", "cases", "docker-compose", "dbup", "opentelemetry", "polly", "anti-patterns"]
+  [
+    "ddd",
+    "hexagonal-architecture",
+    "f#",
+    "clojure",
+    "typescript",
+    "haskell",
+    "cases",
+    "docker-compose",
+    "dbup",
+    "opentelemetry",
+    "polly",
+    "anti-patterns",
+  ]
 ---
 
 ## Guide 15 — Database Integration Test via docker-compose Harness
@@ -18,7 +31,7 @@ Unit tests with an in-memory adapter (Guide 8) prove port correctness but cannot
 
 `System.Data.Common.DbConnection` and raw ADO.NET let you open a connection to any database — but you manage the lifecycle entirely yourself:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -97,7 +110,7 @@ const connectionString = process.env["DATABASE_URL"];
 // => Read from environment — the same variable docker-compose sets for the test-runner service
 // => If the variable is missing, new Client({ connectionString: undefined }) throws at connect time
 
-async function smokeConnect(): Promise<void> {
+async function smokeConnect(): Promise {
   // => async function: all pg I/O is Promise-based — await prevents blocking the event loop
   const client = new Client({ connectionString });
   // => Client: pg's single-connection object; not pooled — equivalent to new NpgsqlConnection(connStr)
@@ -121,6 +134,44 @@ async function smokeConnect(): Promise<void> {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: test/Integration/SmokeConnect.hs ───────────
+-- Standard library: raw postgresql-simple connection to a test database
+-- [F#: NpgsqlConnection over ADO.NET — Haskell uses postgresql-simple as the idiomatic low-level driver]
+module Integration.SmokeConnect (smokeConnect) where
+
+import Control.Exception (bracket)
+-- => bracket: resource-safe acquire/release; equivalent to F# `use` and TS try/finally
+import Database.PostgreSQL.Simple (Connection, Only (..), connectPostgreSQL, close, query_)
+-- => postgresql-simple: thin idiomatic wrapper over libpq — same role as Npgsql/pg/JDBC
+import qualified Data.ByteString.Char8 as BS
+-- => ByteString.Char8: connectPostgreSQL expects a libpq URI as a ByteString
+import System.Environment (lookupEnv)
+-- => lookupEnv: returns Maybe String — explicit absence rather than null
+import Data.Maybe (fromMaybe)
+
+smokeConnect :: IO ()
+-- => IO (): integration tests live in IO; no implicit async machinery required
+smokeConnect = do
+  connStr <- fromMaybe (error "DATABASE_URL missing") <$> lookupEnv "DATABASE_URL"
+  -- => Read DATABASE_URL — the same variable docker-compose injects into the test runner
+  -- => error if absent: explicit fail-fast instead of NullReferenceException / undefined-passed-through
+  bracket (connectPostgreSQL (BS.pack connStr)) close $ \conn -> do
+    -- => bracket open close use: guarantees `close conn` runs even on exception
+    -- => connectPostgreSQL is synchronous — no health-check polling in the standard library
+    rows <- query_ conn "SELECT 1 AS probe" :: IO [Only Int]
+    -- => query_ : parameterless SELECT returning rows of the inferred shape
+    -- => Only Int: postgresql-simple's single-column row wrapper — equivalent to F# ExecuteScalar's obj
+    putStrLn $ "Connected: " <> show rows
+    -- => Prints [Only 1] — structured row, like Clojure {:probe 1} / TS { probe: 1 }
+-- => No health-check polling: if PostgreSQL is not ready yet, connectPostgreSQL throws SqlError
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: raw ADO.NET requires manual health-check polling before running tests, manual connection lifecycle management, and manual schema setup. The harness logic duplicates across every project that needs integration tests against PostgreSQL.
@@ -210,7 +261,7 @@ flowchart LR
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -415,6 +466,76 @@ test("npgsqlPurchaseOrderRepository saves a PO and reads it back from PostgreSQL
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: test/Integration/Purchasing/PostgresPurchaseOrderRepoSpec.hs ───────────
+-- Integration test consuming the docker-compose harness
+-- [F#: xUnit [<Fact>] — Haskell uses hspec with describe/it; same round-trip contract]
+module Integration.Purchasing.PostgresPurchaseOrderRepoSpec (spec) where
+
+import Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
+-- => hspec: standard Haskell testing framework — discovers Spec values via hspec-discover
+import qualified Data.UUID.V4 as UUIDv4
+-- => UUID v4: fresh random IDs so test rows never collide with each other
+import Data.Time (getCurrentTime)
+-- => UTC timestamp source; stored in timestamptz on PostgreSQL
+import System.Environment (getEnv)
+-- => getEnv: throws IOException if DATABASE_URL is missing — fail-fast in tests
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.Pool as Pool
+import Database.PostgreSQL.Simple (Connection, connectPostgreSQL, close)
+
+import Purchasing.Domain (PurchaseOrder (..), Status (..), ApprovalLevel (..), mkMoney)
+-- => Domain types and smart constructors — equivalent to F# `open Purchasing.Domain`
+import Purchasing.Infrastructure.PostgresRepo (mkPostgresRepository)
+-- => Real adapter under test — not the in-memory stub
+
+spec :: Spec
+spec = describe "postgresPurchaseOrderRepository" $ do
+  it "saves a PO and reads it back from PostgreSQL" $ do
+    -- => Each `it` is a single test case — equivalent to xUnit [<Fact>] / Jest test()
+    connStr <- getEnv "DATABASE_URL"
+    -- => DATABASE_URL: injected by docker-compose into the test runner container
+    pool <- Pool.newPool (Pool.defaultPoolConfig
+              (connectPostgreSQL (BS.pack connStr)) close 60 8)
+    -- => Data.Pool: shared connection pool — equivalent to TS pg Pool / F# Npgsql DataSource
+    let Right money = mkMoney 5000 "USD"
+    -- => Smart constructor returns Either e Money; pattern-bind on Right asserts validity
+    -- => 5000 USD: above L1 threshold — ApprovalLevel will be L2 in production logic
+    poId <- UUIDv4.nextRandom
+    -- => Fresh UUID: guarantees no collision with other test rows
+    supplierId <- UUIDv4.nextRandom
+    now <- getCurrentTime
+    let po = PurchaseOrder
+              { poId = poId
+              , poSupplierId = supplierId
+              , poTotalAmount = money
+              , poStatus = Draft
+              -- => Draft constructor: initial state — adapter stores whatever status the aggregate carries
+              , poApprovalLevel = L2
+              -- => L2: persisted as "L2" varchar via the adapter
+              , poCreatedAt = now
+              }
+    let repo = mkPostgresRepository pool
+    -- => Factory returns a record-of-functions repo closed over the pool
+
+    saveResult <- savePurchaseOrder repo po
+    -- => Performs a real INSERT via postgresql-simple to PostgreSQL
+    saveResult `shouldBe` Right ()
+    -- => Right (): INSERT committed; Left would carry a SqlError
+
+    found <- findPurchaseOrder repo poId
+    -- => Round-trip read: confirms the committed row is readable
+    found `shouldSatisfy` \r -> case r of
+      Right (Just saved) -> poId == poId saved
+      -- => Round-trip verified: the persisted row maps back to the same PO ID
+      _ -> False
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: docker-compose integration tests are slower than in-memory tests (typically 5–30 seconds to start PostgreSQL) and require Docker on the CI runner and developer machine. They are not cacheable by Nx. Run them only on the `test:integration` Nx target, not `test:quick`. The payoff is that they catch schema drift, PostgreSQL-specific constraint behavior, and migration ordering bugs that no in-memory test can surface.
@@ -431,7 +552,7 @@ Every database integration test relies on a schema that matches the application'
 
 F# `System.IO.File` and raw ADO.NET can execute SQL files in order — but you manage ordering, idempotency, and error handling manually:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -502,7 +623,7 @@ import { readFile } from "fs/promises";
 import { Client } from "pg";
 // => pg Client: raw connection — no migration tracking abstraction; same as Npgsql + raw command
 
-export async function runMigration(connStr: string, sqlFilePath: string): Promise<void> {
+export async function runMigration(connStr: string, sqlFilePath: string): Promise {
   // => connStr: PostgreSQL connection string; sqlFilePath: path to the .sql migration file
   // => Promise<void>: async function — all pg I/O is Promise-based
   const sql = await readFile(sqlFilePath, "utf8");
@@ -526,6 +647,43 @@ export async function runMigration(connStr: string, sqlFilePath: string): Promis
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Migrations/Manual.hs ───────────
+-- Standard library: manual SQL file execution without a migration library
+-- [F#: File.ReadAllText + ExecuteNonQuery — Haskell uses readFile + postgresql-simple execute_]
+module Migrations.Manual (runMigration) where
+
+import qualified Data.Text.IO as TIO
+-- => Data.Text.IO: reads the .sql file as Text — base library, no extra deps
+import Data.Text (Text)
+import qualified Data.Text.Encoding as TE
+import Control.Exception (bracket)
+-- => bracket: resource-safe acquire/release — equivalent to F# `use` and TS try/finally
+import Database.PostgreSQL.Simple (connectPostgreSQL, close, execute_, Query (..))
+-- => postgresql-simple: execute_ runs a parameterless statement; Query wraps a SQL ByteString
+import qualified Data.ByteString.Char8 as BS
+
+runMigration :: String -> FilePath -> IO ()
+-- => connStr: PostgreSQL URI; sqlFilePath: path to the .sql migration file
+runMigration connStr sqlFilePath = do
+  sql <- TIO.readFile sqlFilePath
+  -- => Reads the entire .sql file as Text — equivalent to F# File.ReadAllText
+  -- => No templating, no parameter binding — raw DDL executed as-is
+  bracket (connectPostgreSQL (BS.pack connStr)) close $ \conn -> do
+    -- => bracket open close use: closes connection even on DDL error — like try/finally
+    _ <- execute_ conn (Query (TE.encodeUtf8 sql))
+    -- => execute_: runs the SQL string as one statement — returns rows-affected which we discard
+    -- => No tracking table: if the migration was already applied, it runs again — idempotency manual
+    -- => DDL errors mid-file throw SqlError; schema is left in a partial state
+    pure ()
+-- => Returns (): callers must implement their own tracking logic to avoid re-running scripts
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: no tracking table means migrations can run twice. No ordering means alphabetical file naming must be enforced by convention. No error recovery means a failed migration leaves the schema in a partial state.
@@ -534,7 +692,7 @@ export async function runMigration(connStr: string, sqlFilePath: string): Promis
 
 `procurement-platform-be` uses DbUp embedded in `Infrastructure/Migrations.fs`. DbUp maintains an applied-scripts journal table (`schemaversions`) in the database and applies scripts in order:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -653,7 +811,7 @@ export function makeUpgrader(connectionString: string) {
   });
 }
 
-export async function upgrade(connectionString: string): Promise<void> {
+export async function upgrade(connectionString: string): Promise {
   // => upgrade: applies all unapplied migration scripts in order
   // => [F#: let result = upgrader.PerformUpgrade() — TypeScript throws on failure]
   const upgrader = makeUpgrader(connectionString);
@@ -664,9 +822,50 @@ export async function upgrade(connectionString: string): Promise<void> {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Infrastructure/Migrations.hs ───────────
+-- Postgres migration runner using postgresql-simple-migration
+-- [F#: DbUp journal "schemaversions" — Haskell uses "schema_migrations"; same idempotency contract]
+module Infrastructure.Migrations (upgrade) where
+
+import Control.Exception (bracket)
+import Database.PostgreSQL.Simple (Connection, connectPostgreSQL, close, withTransaction)
+import Database.PostgreSQL.Simple.Migration
+  ( MigrationCommand (..), MigrationResult (..), runMigration, defaultOptions )
+-- => postgresql-simple-migration: applies .sql files in alphabetical order
+-- => Maintains a "schema_migrations" journal table — equivalent to DbUp's "schemaversions"
+import qualified Data.ByteString.Char8 as BS
+
+upgrade :: String -> IO (Either String ())
+-- => connectionString: PostgreSQL URI; returns Right () on success, Left msg on failure
+upgrade connectionString =
+  bracket (connectPostgreSQL (BS.pack connectionString)) close $ \conn -> do
+    -- => bracket: resource-safe — equivalent to F# `use conn = new NpgsqlConnection(...)`
+    result <- withTransaction conn $
+      -- => withTransaction: wraps the journal-create + per-script apply in one transaction
+      runMigration conn defaultOptions $
+        MigrationCommands
+          [ MigrationInitialization
+          -- => MigrationInitialization: creates schema_migrations journal on first run
+          , MigrationDirectory "migrations"
+          -- => Scans the migrations/ directory for *.sql files in alphabetical order
+          -- => Files named "0001_create_purchase_orders.sql" — prefix with numeric order
+          ]
+    case result of
+      MigrationSuccess -> pure (Right ())
+      -- => MigrationSuccess: all pending scripts applied; journal updated
+      MigrationError msg -> pure (Left msg)
+      -- => MigrationError: callers exit with code 1 on Left, equivalent to F# pattern match on Successful
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -770,6 +969,44 @@ test("migrations are idempotent on second run", async () => {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: test/Integration/Migrations/MigrationSmokeSpec.hs ───────────
+-- Integration test: verify migrations apply cleanly against the docker-compose database
+-- [F#: xUnit [<Fact>] — Haskell uses hspec; same smoke + idempotency assertions]
+module Integration.Migrations.MigrationSmokeSpec (spec) where
+
+import Test.Hspec (Spec, describe, it, shouldBe)
+import System.Environment (getEnv)
+-- => getEnv: throws on missing env — matches docker-compose's required DATABASE_URL
+import Infrastructure.Migrations (upgrade)
+-- => upgrade: postgresql-simple-migration runner from src/Infrastructure/Migrations.hs
+
+spec :: Spec
+spec = describe "migrations" $ do
+  it "apply successfully to the test database on first run" $ do
+    -- => Smoke test: first invocation creates schema_migrations and applies all scripts
+    connStr <- getEnv "DATABASE_URL"
+    -- => DATABASE_URL: injected by docker-compose.integration.yml — same env var as the adapter
+    result <- upgrade connStr
+    -- => upgrade returns Either String () — Right () on success, Left msg on failure
+    result `shouldBe` Right ()
+    -- => Fails with the first script error — message carries script name and SqlError
+
+  it "are idempotent on second run" $ do
+    -- => Second invocation: schema_migrations already lists every script — applies zero
+    -- => Idempotency assertion: production restarts always run migrations — must be safe to repeat
+    connStr <- getEnv "DATABASE_URL"
+    result2 <- upgrade connStr
+    -- => Migratus/DbUp/postgresql-simple-migration all skip scripts already in the journal
+    result2 `shouldBe` Right ()
+    -- => Right (): zero scripts applied, no SqlError thrown — process-restart safe
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: DbUp applies scripts in alphabetical order — naming discipline (`0001_`, `0002_`) is mandatory. A mislabeled script that should run after `0010_` but is named `002_` runs second and breaks. For teams that prefer a declarative diff-based migration tool, FluentMigrator provides an equivalent with C#-style migration classes.
@@ -786,7 +1023,7 @@ The `payments` context must disburse funds to suppliers via a bank API. Like the
 
 `System.Net.Http.HttpClient` sends HTTP requests without any bank-specific library. You can call a bank REST API directly using the BCL:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -889,7 +1126,7 @@ export async function callBankDisbursement(
   paymentId: string,
   amount: number,
   iban: string,
-): Promise<{ transactionRef: string; status: string }> {
+): Promise {
   // => Five primitive parameters: easy to pass in the wrong order — no branded types, no type safety
   // => [F#: five primitive parameters with no type safety — same risk of wrong-order pass]
   const body = JSON.stringify({
@@ -920,12 +1157,69 @@ export async function callBankDisbursement(
     // => Caller cannot tell InvalidIban from AuthenticationFailure from network error
   }
 
-  return response.json() as Promise<{ transactionRef: string; status: string }>;
+  return response.json() as Promise;
   // => No schema validation: fragile if bank changes the field name — no compile error, just undefined
 }
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Payments/Stdlib/BankCall.hs ───────────
+-- Standard library: http-client calling a bank disbursement endpoint
+-- [F#: static HttpClient with no retry — Haskell uses http-client with the same raw-HTTP limitations]
+module Payments.Stdlib.BankCall (callBankDisbursement) where
+
+import Network.HTTP.Client
+  ( Manager, parseRequest, httpLbs, requestHeaders, requestBody, method
+  , RequestBody (RequestBodyLBS), responseStatus, responseBody )
+-- => http-client: idiomatic Haskell HTTP client wrapping libcurl-style connection pooling
+import Network.HTTP.Types.Status (statusIsSuccessful)
+import qualified Data.ByteString.Lazy as LBS
+import qualified Data.ByteString.Char8 as BS
+import Data.Aeson (encode, decode, (.=), object, Value)
+-- => aeson: standard JSON encode/decode — equivalent to System.Text.Json / cheshire
+import Data.Scientific (Scientific)
+-- => Scientific: arbitrary-precision number; suitable for currency before swapping to Money
+
+callBankDisbursement
+  :: Manager -> String -> String -> String -> Scientific -> String -> IO (Maybe Value)
+-- => Five primitive parameters: easy to pass in the wrong order — no newtypes, no port boundary
+-- => [F#: same risk of wrong-order pass; Maybe Value mirrors decoder fragility]
+callBankDisbursement mgr apiKey baseUrl paymentId amount iban = do
+  let body = encode $ object
+        [ "paymentReference" .= paymentId
+        -- => paymentId is a raw String — no PaymentId newtype, no type safety
+        , "amount" .= amount
+        -- => Raw Scientific — no Money value object, no currency field
+        , "beneficiaryIban" .= iban
+        -- => Missing BIC field — bank API may require it; silent omission
+        ]
+  -- => Hand-crafted JSON via aeson object — no schema validation
+  initReq <- parseRequest (baseUrl <> "/disbursements")
+  -- => String concatenation — trailing slash errors are silent
+  let request = initReq
+        { method = "POST"
+        , requestHeaders =
+            [ ("Authorization", BS.pack ("Bearer " <> apiKey))
+            -- => Bearer token inline; no encapsulation
+            , ("Content-Type", "application/json")
+            ]
+        , requestBody = RequestBodyLBS body
+        }
+  response <- httpLbs request mgr
+  -- => httpLbs: actual HTTP call — no retry, no circuit-breaker, no typed error union
+  if statusIsSuccessful (responseStatus response)
+    then pure (decode (responseBody response) :: Maybe Value)
+    -- => Maybe Value: returns Nothing on parse failure — fragile if bank renames a field
+    else error ("HTTP error: " <> show (responseStatus response))
+    -- => error on 4xx/5xx — caller cannot tell InvalidIban from AuthFailure from network error
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: no typed error discrimination between rate-limit errors (429), authentication failures (401), and insufficient-funds errors (422). No retry logic. The application layer must import `HttpClient` to call this function — the bank boundary is not behind a port.
@@ -934,7 +1228,7 @@ export async function callBankDisbursement(
 
 The hexagonal approach defines a port in the `payments` application layer and implements the bank HTTP adapter in infrastructure:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1068,32 +1362,96 @@ export type BankingError =
 
 // Banking port interface
 export interface BankingPort {
-  readonly initiateDisbursement: (
-    payment: Payment,
-    account: BankAccount,
-  ) => Promise<Result<TransactionRef, BankingError>>;
+  readonly initiateDisbursement: (payment: Payment, account: BankAccount) => Promise;
   // => initiateDisbursement: given a Payment aggregate and beneficiary IBAN, submit to bank
   // => TransactionRef: the bank's reference ID for tracking and reconciliation
   // => [F#: InitiateDisbursement: Payment -> BankAccount -> Async<Result<TransactionRef, BankingError>>]
-  readonly queryDisbursementStatus: (ref: TransactionRef) => Promise<Result<DisbursementStatus, BankingError>>;
+  readonly queryDisbursementStatus: (ref: TransactionRef) => Promise;
   // => queryDisbursementStatus: poll the bank for final settlement status
   // => [F#: QueryDisbursementStatus: TransactionRef -> Async<Result<DisbursementStatus, BankingError>>]
 }
 
 // Supplier notifier port
 export interface SupplierNotifierPort {
-  readonly notifyPaymentDisbursed: (supplierId: SupplierId, payment: Payment) => Promise<Result<void, string>>;
+  readonly notifyPaymentDisbursed: (supplierId: SupplierId, payment: Payment) => Promise;
   // => notifyPaymentDisbursed: aligns with the canonical PaymentDisbursed domain event
   // => Send email or EDI remittance advice to the supplier
-  readonly notifyPurchaseOrderIssued: (supplierId: SupplierId, poId: PurchaseOrderId) => Promise<Result<void, string>>;
+  readonly notifyPurchaseOrderIssued: (supplierId: SupplierId, poId: PurchaseOrderId) => Promise;
   // => Send PO acknowledgement request to supplier — EDI fallback if SMTP fails
 }
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Payments/Application/Ports.hs ───────────
+-- payments context: application layer BankingPort + SupplierNotifierPort
+-- [F#: record type BankingPort — Haskell uses a record-of-functions with newtype-branded IDs]
+module Payments.Application.Ports
+  ( PaymentId (..), TransactionRef (..)
+  , DisbursementStatus (..), BankingError (..)
+  , BankingPort (..), SupplierNotifierPort (..)
+  ) where
+
+import Data.Text (Text)
+import Data.UUID (UUID)
+import Payments.Domain (Payment, BankAccount, SupplierId, PurchaseOrderId)
+
+-- Branded domain identifiers — prevent passing wrong values
+newtype PaymentId = PaymentId UUID deriving (Eq, Show)
+-- => newtype: zero-cost wrapper; PaymentId cannot be confused with a raw UUID by the type checker
+-- => [F#: single-case DU `PaymentId of Guid`; TypeScript uses structural branding]
+
+newtype TransactionRef = TransactionRef Text deriving (Eq, Show)
+-- => Bank's reference ID — distinct from PaymentId by type, not by runtime check
+
+-- Disbursement status reported by the bank
+data DisbursementStatus
+  = Pending | Settled | Failed Text
+  -- => Failed carries a textual reason — bank-defined; not yet a typed sub-error
+  deriving (Eq, Show)
+
+-- Typed banking errors — exhaustive at the call site via case
+data BankingError
+  = InsufficientFunds PaymentId
+  -- => Bank rejected: account balance too low — alert finance team
+  | InvalidIban Text
+  -- => Bank rejected: IBAN failed bank-side format validation — data error
+  | BankApiUnavailable Text
+  -- => Transient: bank API is down — retry with circuit-breaker (Guide 18)
+  | AuthenticationFailure
+  -- => API key invalid or expired — alert operations team immediately
+  deriving (Eq, Show)
+-- => Exhaustive ADT: GHC warns on missing case branches — equivalent to F# DU exhaustiveness
+
+-- Banking port: record of functions, mirroring F# port shape
+data BankingPort = BankingPort
+  { initiateDisbursement
+      :: Payment -> BankAccount -> IO (Either BankingError TransactionRef)
+    -- => initiateDisbursement: submit Payment to bank; returns Left BankingError or Right ref
+    -- => [F#: Payment -> BankAccount -> Async<Result<TransactionRef, BankingError>>]
+  , queryDisbursementStatus
+      :: TransactionRef -> IO (Either BankingError DisbursementStatus)
+    -- => Poll the bank for final settlement status; used by the payment relay worker
+  }
+
+-- Supplier notifier port
+data SupplierNotifierPort = SupplierNotifierPort
+  { notifyPaymentDisbursed :: SupplierId -> Payment -> IO (Either Text ())
+    -- => Aligns with canonical PaymentDisbursed domain event name
+    -- => Adapter: SMTP in production; stub in tests
+  , notifyPurchaseOrderIssued :: SupplierId -> PurchaseOrderId -> IO (Either Text ())
+    -- => Send PO acknowledgement to supplier — EDI fallback if SMTP fails
+  }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1421,11 +1779,134 @@ export function makeBankApiAdapter(settings: BankApiSettings): BankingPort {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Payments/Infrastructure/BankApiAdapter.hs ───────────
+-- payments context: bank HTTP adapter implementing BankingPort
+-- [F#: BankApiAdapter.make returns a BankingPort record — Haskell builds the same record-of-functions]
+module Payments.Infrastructure.BankApiAdapter
+  ( BankApiSettings (..), makeBankApiAdapter ) where
+
+import Control.Exception (try, SomeException, displayException)
+import Data.Aeson (encode, decode, (.=), object, FromJSON (..), withObject, (.:))
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.ByteString.Char8 as BS
+import Network.HTTP.Client
+  ( Manager, parseRequest, httpLbs, requestHeaders, requestBody, method
+  , RequestBody (RequestBodyLBS), responseStatus, responseBody, responseTimeout
+  , responseTimeoutMicro )
+import Network.HTTP.Types.Status (statusCode)
+
+import Payments.Application.Ports
+  ( BankingPort (..), BankingError (..), TransactionRef (..), DisbursementStatus (..) )
+import Payments.Domain (Payment (..), BankAccount (..), Money (..))
+
+-- Typed settings record for the bank API adapter
+data BankApiSettings = BankApiSettings
+  { apiKey       :: Text
+  -- => API key loaded from Kubernetes Secret at startup — never hardcoded
+  , baseUrl      :: Text
+  -- => Bank API base URL — environment-specific, injected from ConfigMap
+  , timeoutSecs  :: Int
+  -- => Per-call timeout; bank APIs can be slow — 30s is a reasonable default
+  }
+
+-- Bank adapter factory: returns a BankingPort record-of-functions closed over (settings, manager)
+-- [F#: let make (settings: BankApiSettings) (factory: IHttpClientFactory) : BankingPort]
+makeBankApiAdapter :: BankApiSettings -> Manager -> BankingPort
+makeBankApiAdapter settings mgr = BankingPort
+  { initiateDisbursement = \payment account -> do
+      -- => async by virtue of IO: GHC threads make this non-blocking — no thread-pool starvation
+      let body = encode $ object
+            [ "paymentReference" .= show (paymentId payment)
+            -- => paymentId: newtype PaymentId unwrapped via show — bank API expects a UUID string
+            , "amount"           .= moneyAmount (payTotal payment)
+            -- => Decimal amount from Money value object
+            , "currency"         .= moneyCurrency (payTotal payment)
+            -- => ISO 4217 currency code
+            , "beneficiaryIban"  .= accountIban account
+            -- => IBAN from the bank account value object
+            , "beneficiaryBic"   .= accountBic account
+            -- => BIC (SWIFT code) required by the bank API for routing
+            ]
+      initReq <- parseRequest (T.unpack (baseUrl settings) <> "/disbursements")
+      let req = initReq
+            { method = "POST"
+            , requestHeaders =
+                [ ("Authorization", BS.pack ("Bearer " <> T.unpack (apiKey settings)))
+                -- => Bearer token: API key from Kubernetes Secret — never in source
+                , ("Content-Type", "application/json")
+                ]
+            , requestBody = RequestBodyLBS body
+            , responseTimeout = responseTimeoutMicro (timeoutSecs settings * 1000000)
+            -- => Per-call timeout: equivalent to F# HttpClient.Timeout / TS AbortController
+            }
+      result <- try (httpLbs req mgr) :: IO (Either SomeException _)
+      case result of
+        Left ex ->
+          -- => Network timeout / SSL error: caller may retry, circuit-breaker handles repeats
+          pure (Left (BankApiUnavailable (T.pack (displayException ex))))
+        Right resp ->
+          case statusCode (responseStatus resp) of
+            -- => Pattern-match on status — same typed discrimination as F# match int resp.StatusCode
+            201 -> case decode (responseBody resp) :: Maybe BankResp of
+              -- => 201 Created: parse transaction reference from JSON body
+              Just (BankResp txRef) -> pure (Right (TransactionRef txRef))
+              Nothing -> pure (Left (BankApiUnavailable "malformed bank response"))
+            422 -> pure (Left (InvalidIban (accountIban account)))
+            -- => HTTP 422: bank rejected IBAN — [F#: Error (InvalidIban account.Iban)]
+            401 -> pure (Left AuthenticationFailure)
+            403 -> pure (Left AuthenticationFailure)
+            -- => 401/403: API key invalid or expired — alert ops team
+            other -> pure (Left (BankApiUnavailable (T.pack ("HTTP " <> show other))))
+            -- => Unexpected status: treat as unavailable — circuit-breaker catches repeats
+
+  , queryDisbursementStatus = \(TransactionRef ref) -> do
+      -- => ref: unwrapped from newtype — bank GET endpoint expects the raw string
+      initReq <- parseRequest (T.unpack (baseUrl settings) <> "/disbursements/" <> T.unpack ref)
+      let req = initReq
+            { requestHeaders =
+                [ ("Authorization", BS.pack ("Bearer " <> T.unpack (apiKey settings))) ]
+                -- => Same API key — all bank API calls use Bearer authentication
+            , responseTimeout = responseTimeoutMicro (timeoutSecs settings * 1000000)
+            }
+      result <- try (httpLbs req mgr) :: IO (Either SomeException _)
+      case result of
+        Left ex ->
+          pure (Left (BankApiUnavailable (T.pack (displayException ex))))
+        Right resp ->
+          case decode (responseBody resp) :: Maybe StatusResp of
+            Just (StatusResp s) -> pure (Right (statusFromText s))
+            -- => Map bank status string to domain DisbursementStatus
+            Nothing -> pure (Left (BankApiUnavailable "malformed status response"))
+  }
+
+-- JSON helper records — kept private to the adapter
+data BankResp = BankResp Text
+instance FromJSON BankResp where
+  parseJSON = withObject "BankResp" $ \o -> BankResp <$> o .: "transactionRef"
+
+data StatusResp = StatusResp Text
+instance FromJSON StatusResp where
+  parseJSON = withObject "StatusResp" $ \o -> StatusResp <$> o .: "status"
+
+statusFromText :: Text -> DisbursementStatus
+statusFromText "pending"   = Pending
+statusFromText "completed" = Settled
+statusFromText other       = Failed other
+-- => Map bank-specific strings to the typed DisbursementStatus ADT
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The stub adapter for tests needs no API key:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1534,6 +2015,38 @@ export const deterministicStub: BankingPort = {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: test/Payments/StubBankingPort.hs ───────────
+-- Stub bank adapter for tests — no HTTP call, no API key required
+-- [F#: deterministicStub : BankingPort = { ... } — Haskell builds the same record literal]
+module Test.Payments.StubBankingPort (deterministicStub) where
+
+import Payments.Application.Ports
+  ( BankingPort (..), DisbursementStatus (..), TransactionRef (..) )
+-- => BankingPort: the record type the stub must satisfy — same contract as the real adapter
+-- => No http-client import: stub returns fixed values without any network I/O
+
+deterministicStub :: BankingPort
+-- => deterministicStub: always returns fixed results — exercises the happy path
+-- => Deterministic result enables reproducible assertions without network access
+deterministicStub = BankingPort
+  { initiateDisbursement = \_ _ ->
+      -- => _ _: discards Payment and BankAccount — fixed result drives assertions
+      pure (Right (TransactionRef "test-txn-ref-001"))
+      -- => Known string: tests assert on this exact value
+      -- => [F#: async { return Ok (TransactionRef "test-txn-ref-001") }]
+  , queryDisbursementStatus = \_ ->
+      -- => _: discards the TransactionRef — always returns the same status
+      pure (Right Settled)
+      -- => Settled: maps to F# Remitted / TS "Remitted" — tests verify the downstream state transition
+  }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the adapter owns bank API error mapping — this is intentional. If the bank changes its error codes, only the adapter changes; the application service and domain layer are unaffected. The trade-off is that the port stub cannot test bank-specific error paths; use recorded HTTP fixtures or a sandbox environment for those cases.
@@ -1550,7 +2063,7 @@ External HTTP calls — including the bank API adapter from Guide 17 — fail tr
 
 F# recursion can implement a simple retry loop without any library:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1628,10 +2141,7 @@ let rec retryAsync (attempt: int) (maxAttempts: int) (f: unit -> Async<Result<'a
 export type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
 // => Result<T, E>: tagged union — the retry wrapper is type-agnostic over the success type
 
-export async function retryAsync<T>(
-  maxAttempts: number,
-  f: () => Promise<Result<T, string>>,
-): Promise<Result<T, string>> {
+export async function retryAsync<T>(maxAttempts: number, f: () => Promise): Promise {
   // => Generic T: the success type — retry logic is type-agnostic, same as F# 'a
   // => f: () => Promise<...>: the operation to retry — lazy via function, same as F# unit -> Async
   let attempt = 1;
@@ -1662,6 +2172,41 @@ export async function retryAsync<T>(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Resilience/Stdlib.hs ───────────
+-- Standard library: recursive retry with exponential backoff
+-- [F#: let rec retryAsync — Haskell uses a recursive IO function; GHC eliminates the tail call]
+module Resilience.Stdlib (retryIO) where
+
+import Control.Concurrent (threadDelay)
+-- => threadDelay: non-blocking (per-thread) sleep — equivalent to F# Async.Sleep / TS setTimeout
+import Data.Text (Text)
+
+retryIO :: Int -> Int -> IO (Either Text a) -> IO (Either Text a)
+-- => maxAttempts, attempt, operation — generic over the success type `a`
+-- => Operation is `IO (Either Text a)`: lazy by virtue of being IO, like F# unit -> Async
+retryIO maxAttempts = go 1
+  where
+    go attempt f = do
+      result <- f
+      -- => f: execute the IO action — each call is an independent attempt
+      case result of
+        Right v -> pure (Right v)
+        -- => Success on any attempt: return immediately, no further retries
+        Left _ | attempt >= maxAttempts -> pure result
+        -- => Exceeded retry budget: return the last error without retrying
+        Left _ -> do
+          threadDelay (1000000 * attempt)
+          -- => Exponential backoff: 1s, 2s, 3s... (microseconds) — non-blocking via the GHC RTS
+          go (attempt + 1) f
+          -- => Recursive call: GHC compiles this loop without stack growth
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: the recursive retry has no circuit-breaker — if the downstream is down, every request retries until `maxAttempts` is exhausted, amplifying load on the failing service. No exponential jitter means thundering herd when many requests retry simultaneously.
@@ -1670,7 +2215,7 @@ export async function retryAsync<T>(
 
 `Microsoft.Extensions.Http.Resilience` provides retry, circuit-breaker, timeout, and hedging as a typed pipeline added to the `HttpClient` registration at startup:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1761,7 +2306,7 @@ import CircuitBreaker from "opossum";
 
 // Circuit-breaker for the bank API
 export const bankApiCircuitBreaker = new CircuitBreaker(
-  async (fn: () => Promise<unknown>) => fn(),
+  async (fn: () => Promise) => fn(),
   // => Wraps any async function — the bank adapter calls bankApiCircuitBreaker.fire(() => ...)
   // => [F#: the Polly pipeline wraps SendAsync inside IHttpClientFactory — same decoration intent]
   {
@@ -1778,7 +2323,7 @@ export const bankApiCircuitBreaker = new CircuitBreaker(
 );
 
 // Retry policy factory for the bank API
-export function bankApiRetry<T>(fn: () => Promise<T>): Promise<T> {
+export function bankApiRetry<T>(fn: () => Promise): Promise {
   // => [F#: AddStandardResilienceHandler default retry: 3 retries, exponential backoff + jitter]
   return pRetry(fn, {
     retries: 3,
@@ -1794,9 +2339,73 @@ export function bankApiRetry<T>(fn: () => Promise<T>): Promise<T> {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Composition/HttpClients.hs ───────────
+-- Startup: configure retry + circuit-breaker policies for the bank API client
+-- [F#: AddStandardResilienceHandler — Haskell composes `retry` library + a custom circuit-breaker IORef]
+module Composition.HttpClients
+  ( BankApiPolicy (..), configureBankApiClients, runWithPolicy ) where
+
+import Control.Retry
+  ( RetryPolicyM, exponentialBackoff, limitRetries, retrying, RetryStatus (..) )
+-- => retry: standard Haskell retry library — exponential backoff with optional jitter
+import Control.Concurrent.STM (TVar, newTVarIO, readTVarIO, atomically, writeTVar)
+import Data.Time (UTCTime, getCurrentTime, diffUTCTime, addUTCTime)
+import Data.Text (Text)
+
+-- Combined retry + circuit-breaker policy passed to adapters
+data BankApiPolicy = BankApiPolicy
+  { retryPolicy   :: RetryPolicyM IO
+  -- => 3 retries, exponential backoff base 1s + jitter — matches F# default
+  , breakerState  :: TVar BreakerState
+  -- => Shared mutable state for circuit-breaker; TVar for safe concurrent updates
+  }
+
+data BreakerState = Closed | Open UTCTime | HalfOpen
+-- => Closed: normal; Open until <time>: short-circuit; HalfOpen: probing
+-- => [F#: AddStandardResilienceHandler default: 30s open before half-open]
+
+configureBankApiClients :: IO BankApiPolicy
+-- => Called once from Main/CompositionRoot at startup — equivalent to F# configureBankApiHttpClient
+configureBankApiClients = do
+  st <- newTVarIO Closed
+  -- => Start in Closed (normal) state — circuit opens on repeated failures
+  pure BankApiPolicy
+    { retryPolicy = exponentialBackoff 1000000 <> limitRetries 3
+    -- => 1s base delay × exponential factor; 3 retries — same defaults as Polly / p-retry
+    , breakerState = st
+    }
+
+-- Run an IO action under the combined policy
+-- [F#: invisible — Polly wraps SendAsync transparently; Haskell wraps explicitly]
+runWithPolicy
+  :: BankApiPolicy
+  -> IO (Either Text a) -> IO (Either Text a)
+runWithPolicy policy action = do
+  state <- readTVarIO (breakerState policy)
+  now <- getCurrentTime
+  case state of
+    Open until_ | now < until_ ->
+      -- => Circuit open: short-circuit without calling the underlying action
+      pure (Left "circuit open")
+    _ ->
+      retrying (retryPolicy policy)
+        (\_ result -> pure (isFailure result))
+        -- => Retry on Left (failure) — same intent as Polly's HandleTransientHttpError predicate
+        (\_ -> action)
+  where
+    isFailure (Left _)  = True
+    isFailure (Right _) = False
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1964,7 +2573,7 @@ export function makeResilientBankApiAdapter(settings: BankApiSettings): BankingP
           () => bankApiCircuitBreaker.fire(() => inner.initiateDisbursement(payment, account)),
           // => fire(): opossum executes the function and tracks success/failure for the circuit
           // => bankApiRetry: wraps fire() in p-retry — retries on transient errors with backoff
-        )) as Awaited<ReturnType<BankingPort["initiateDisbursement"]>>;
+        )) as Awaited;
       } catch (err) {
         // => Retries exhausted or circuit opened during retries
         // => [F#: with | :? BrokenCircuitException -> return Error (BankApiUnavailable ...)]
@@ -1989,7 +2598,7 @@ export function makeResilientBankApiAdapter(settings: BankApiSettings): BankingP
         return (await bankApiRetry(
           () => bankApiCircuitBreaker.fire(() => inner.queryDisbursementStatus(ref)),
           // => Same circuit and retry policy — both port methods share circuit state
-        )) as Awaited<ReturnType<BankingPort["queryDisbursementStatus"]>>;
+        )) as Awaited;
       } catch (err) {
         const cause = err instanceof Error ? err.message : String(err);
         return { _tag: "Left", left: { type: "BankApiUnavailable", cause } satisfies BankingError };
@@ -2001,6 +2610,56 @@ export function makeResilientBankApiAdapter(settings: BankApiSettings): BankingP
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Payments/Infrastructure/ResilientBankApiAdapter.hs ───────────
+-- Resilient bank adapter: shares circuit-breaker state across both port methods
+-- [F#: makeResilient catches BrokenCircuitException — Haskell short-circuits via TVar]
+module Payments.Infrastructure.ResilientBankApiAdapter (makeResilientBankApiAdapter) where
+
+import Composition.HttpClients (BankApiPolicy (..), runWithPolicy)
+import Payments.Application.Ports
+  ( BankingPort (..), BankingError (..) )
+import Payments.Infrastructure.BankApiAdapter (BankApiSettings, makeBankApiAdapter)
+import Network.HTTP.Client (Manager)
+import qualified Data.Text as T
+
+makeResilientBankApiAdapter
+  :: BankApiSettings -> Manager -> BankApiPolicy -> BankingPort
+-- => Decorates the non-resilient adapter; application service cannot tell decorated apart
+-- => [F#: makeResilient factory settings : BankingPort — Haskell takes the policy explicitly]
+makeResilientBankApiAdapter settings mgr policy =
+  let inner = makeBankApiAdapter settings mgr
+      -- => inner: the non-resilient BankingPort from Guide 17 — wrapped by the resilience layer
+  in BankingPort
+       { initiateDisbursement = \payment account -> do
+           result <- runWithPolicy policy
+             (mapLeft toBankingError <$> initiateDisbursement inner payment account)
+           -- => runWithPolicy: applies retry + circuit-breaker around the inner call
+           -- => [F#: Polly retry+circuit-breaker pipeline wraps SendAsync transparently]
+           case result of
+             Right _ -> pure result
+             Left _  -> pure (Left (BankApiUnavailable "Bank API circuit open"))
+             -- => Circuit open or retries exhausted — surface as BankApiUnavailable
+       , queryDisbursementStatus = \ref -> do
+           result <- runWithPolicy policy
+             (mapLeft toBankingError <$> queryDisbursementStatus inner ref)
+           -- => Same policy state shared across both port methods — single circuit-breaker
+           case result of
+             Right _ -> pure result
+             Left _  -> pure (Left (BankApiUnavailable "Bank API circuit open — status query unavailable"))
+       }
+  where
+    mapLeft f (Left e)  = Left (f e)
+    mapLeft _ (Right v) = Right v
+    -- => mapLeft: convert inner BankingError to Text for runWithPolicy; then back at the boundary
+    toBankingError be = T.pack (show be)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: `AddStandardResilienceHandler` applies a fixed policy suitable for most external HTTP calls. For bank APIs that are inherently slow (5–30 seconds per disbursement), the default 30-second total timeout may be too short — use `ConfigureHttpClient` to set a longer timeout specifically for the `"bank-api"` named client. Circuit-breaker state is in-memory and per-process; in a multi-instance deployment, each instance has an independent circuit.
@@ -2017,7 +2676,7 @@ Guides 9 and 10 showed the publisher port and its two adapters in isolation. Thi
 
 An in-process event queue using `System.Collections.Concurrent.ConcurrentQueue` can relay events within a single process:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2121,6 +2780,43 @@ export function dequeue(): string | undefined {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Stdlib/EventRelay.hs ───────────
+-- Standard library: in-process event relay using a TQueue (STM)
+-- [F#: ConcurrentQueue<string> — Haskell uses STM's TQueue for thread-safe FIFO]
+module Purchasing.Stdlib.EventRelay (newEventQueue, enqueue, dequeue, EventQueue) where
+
+import Control.Concurrent.STM (TQueue, atomically, newTQueueIO, writeTQueue, tryReadTQueue)
+-- => TQueue: STM-backed FIFO; safe across many threads — equivalent to ConcurrentQueue
+-- => Not persistent: events lost on restart — no at-least-once guarantee
+import Data.Text (Text)
+
+newtype EventQueue = EventQueue (TQueue Text)
+-- => Wrap TQueue in a newtype to hide the STM type from callers
+
+newEventQueue :: IO EventQueue
+-- => Allocate the queue at startup — equivalent to `let private queue = ConcurrentQueue<string>()`
+newEventQueue = EventQueue <$> newTQueueIO
+
+enqueue :: EventQueue -> Text -> IO ()
+enqueue (EventQueue q) eventJson =
+  atomically (writeTQueue q eventJson)
+  -- => writeTQueue under STM: atomic append — thread-safe by construction
+  -- => eventJson: serialized event — loses type safety across the boundary, same as F#/TS
+
+dequeue :: EventQueue -> IO (Maybe Text)
+-- => Maybe Text: Just eventJson or Nothing — equivalent to F# Some/None
+dequeue (EventQueue q) =
+  atomically (tryReadTQueue q)
+  -- => tryReadTQueue: non-blocking read; returns Nothing if empty
+  -- => Poll pattern: relay loops calling dequeue until Nothing — same as F# TryDequeue loop
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: in-process queues do not survive process restarts. No delivery guarantee — if the relay crashes between dequeue and consumer acknowledgement, the event is lost.
@@ -2129,7 +2825,7 @@ export function dequeue(): string | undefined {
 
 The full end-to-end event flow crosses four port boundaries:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2326,7 +3022,7 @@ function dispatchEvent(event: DomainEvent): void {
   }
 }
 
-async function pollAndRelay(pool: Pool): Promise<void> {
+async function pollAndRelay(pool: Pool): Promise {
   // => [F#: use conn = ... let! rows = conn.QueryAsync — TypeScript awaits pool.query]
   const client = await pool.connect();
   // => client: pg.PoolClient — equivalent to F# use conn = new NpgsqlConnection(connStr)
@@ -2375,6 +3071,90 @@ export function startRelayWorker(pool: Pool, stopSignal: { stopped: boolean }): 
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/OutboxRelayWorker.hs ───────────
+-- End-to-end domain event flow — four boundary crossings
+-- [F#: IHostedService with task {} loop — Haskell uses async + forever loop with threadDelay]
+module Purchasing.Infrastructure.OutboxRelayWorker
+  ( startRelayWorker ) where
+
+import Control.Concurrent (threadDelay)
+import Control.Concurrent.Async (Async, async)
+import Control.Concurrent.STM (TVar, readTVarIO)
+import Control.Exception (try, SomeException, displayException)
+import Control.Monad (forever, when, unless)
+import Data.Aeson (decode)
+import Data.Pool (Pool, withResource)
+import Database.PostgreSQL.Simple (Connection, query_, execute, Only (..))
+import qualified Data.ByteString.Lazy as LBS
+import qualified Data.Text as T
+import Data.Time (getCurrentTime)
+
+import Purchasing.Application.Ports (DomainEvent (..))
+
+-- Boundary 1: Application service emits PurchaseOrderIssued after successful save (Guide 9).
+-- The outbox adapter writes an outbox_events row in the same transaction.
+
+-- Boundary 2: dispatch one deserialized event to its downstream consumers
+-- [F#: match event with | PurchaseOrderIssued -> ... — Haskell dispatches via case]
+dispatchEvent :: DomainEvent -> IO ()
+dispatchEvent event = case event of
+  PurchaseOrderIssued poId supplierId ->
+    -- => In production: call the receiving context's port and the supplier-notifier port
+    -- => Both contexts receive the same event — relay delivers to each independently
+    putStrLn $ "Relaying PurchaseOrderIssued: poId=" <> show poId <> " supplierId=" <> show supplierId
+  PurchaseOrderCancelled poId ->
+    -- => Cancelled events route to accounting (credit note) and supplier-notifier (cancellation EDI)
+    putStrLn $ "Relaying PurchaseOrderCancelled: poId=" <> show poId
+-- => Exhaustive case: GHC warns on missing branches — equivalent to TS `never` exhaustiveness
+
+-- Poll up to 10 unprocessed rows, dispatch each, mark as processed
+pollAndRelay :: Pool Connection -> IO ()
+pollAndRelay pool = withResource pool $ \conn -> do
+  -- => withResource: borrows a Connection from the pool — equivalent to F# `use` / TS pool.connect
+  rows <- query_ conn
+    "SELECT id, payload FROM purchasing.outbox_events \
+    \ WHERE processed_at IS NULL ORDER BY created_at LIMIT 10"
+    :: IO [(Int, LBS.ByteString)]
+  -- => LIMIT 10: prevents long transactions under high event volume
+  -- => ORDER BY created_at: FIFO delivery — older events dispatched first
+  mapM_ (processRow conn) rows
+  where
+    processRow conn (rowId, payload) =
+      case decode payload :: Maybe DomainEvent of
+        Just event -> do
+          dispatchEvent event
+          -- => Dispatch to downstream ports before marking processed
+          now <- getCurrentTime
+          _ <- execute conn
+                 "UPDATE purchasing.outbox_events SET processed_at = ? WHERE id = ?"
+                 (now, rowId)
+          -- => Mark as processed: non-null processed_at means relay has delivered the event
+          pure ()
+        Nothing ->
+          putStrLn $ "Skipping un-decodable payload at row " <> show rowId
+
+-- Boundary 3: start the background relay; caller flips stopSignal to request shutdown
+-- [F#: IHostedService.StartAsync — Haskell uses async to spawn a separate green thread]
+startRelayWorker :: Pool Connection -> TVar Bool -> IO (Async ())
+startRelayWorker pool stopSignal = async $ forever $ do
+  stopped <- readTVarIO stopSignal
+  unless stopped $ do
+    -- => Skip the cycle when the caller has flipped the stop signal
+    result <- try (pollAndRelay pool) :: IO (Either SomeException ())
+    case result of
+      Left ex -> putStrLn ("Relay worker error: " <> displayException ex)
+      -- => Catch-all: a single failed batch must not stop the worker — log and continue
+      Right () -> pure ()
+    threadDelay 5_000_000
+    -- => 5 seconds between polls — equivalent to F# Task.Delay(5000) / TS setInterval(5000)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the polling relay is simple and self-contained but adds 0–5 seconds of latency between aggregate commit and event delivery. For latency-sensitive use cases, replace the polling loop with PostgreSQL `LISTEN/NOTIFY`. For high-throughput scenarios (> 1000 events/second), a CDC-based relay reading the PostgreSQL WAL (Debezium) eliminates the polling overhead entirely.
@@ -2391,7 +3171,7 @@ In production, you need to know which port call is slow, which adapter is produc
 
 `System.Diagnostics.Activity` is the BCL's span representation. OpenTelemetry builds on this without adding its own threading model:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2503,7 +3283,7 @@ const tracer = trace.getTracer("ProcurementPlatform.Adapters");
 // => Named tracer: equivalent to new ActivitySource("ProcurementPlatform.Adapters")
 // => trace.getTracer: returns the globally registered tracer — no-op if SDK not configured
 
-export async function withSpan<T>(name: string, f: () => Promise<T>): Promise<T> {
+export async function withSpan<T>(name: string, f: () => Promise): Promise {
   // => Generic T: wraps any async port call — [F#: withSpan (string -> (unit -> Async<'a>) -> Async<'a>)]
   // => f: () => Promise<T>: the port call to wrap — lazy via function
   const span = tracer.startSpan(name);
@@ -2536,6 +3316,55 @@ export async function withSpan<T>(name: string, f: () => Promise<T>): Promise<T>
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Stdlib/Tracing.hs ───────────
+-- Standard library-ish: hs-opentelemetry wrappers around port calls
+-- [F#: ActivitySource.StartActivity — Haskell uses hs-opentelemetry-api Tracer directly]
+module Purchasing.Stdlib.Tracing (withSpan) where
+
+import Control.Exception (try, SomeException, throwIO)
+import qualified OpenTelemetry.Trace as Otel
+-- => hs-opentelemetry-api: vendor-neutral OTel API — equivalent to @opentelemetry/api / ActivitySource
+import qualified OpenTelemetry.Trace.Core as Core
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Acquire the named tracer once at module load — safe to share across threads
+-- [F#: new ActivitySource("ProcurementPlatform.Adapters") — Haskell calls getTracer on the global provider]
+getProcurementTracer :: IO Otel.Tracer
+getProcurementTracer = do
+  tp <- Otel.getGlobalTracerProvider
+  -- => Global provider: registered at startup by Otel.initializeGlobalTracerProvider in Main
+  pure (Otel.makeTracer tp "procurement-platform.adapters" Otel.tracerOptions)
+  -- => "procurement-platform.adapters": instrumentation scope name — visible in Jaeger / Honeycomb
+
+withSpan :: Text -> IO a -> IO a
+-- => Generic helper: wraps any IO a operation in a span — reusable across all port calls
+-- => [F#: withSpan (string -> (unit -> Async<'a>) -> Async<'a>)]
+withSpan name action = do
+  tracer <- getProcurementTracer
+  Otel.inSpan tracer name Otel.defaultSpanArguments $ \span_ -> do
+    -- => inSpan: starts a span, runs the action, ends the span — like F# `use activity = ...`
+    result <- try action :: IO (Either SomeException a)
+    case result of
+      Right v -> do
+        Core.setStatus span_ Core.Ok
+        -- => Ok status: marks span as successful — [F#: SetStatus(ActivityStatusCode.Ok)]
+        pure v
+      Left ex -> do
+        Core.setStatus span_ (Core.Error (T.pack (show ex)))
+        -- => Error status: span appears red in trace backends
+        Core.recordException span_ [] (Just (T.pack (show ex))) ex
+        -- => recordException: captures stack trace as a span event — searchable in Jaeger/Honeycomb
+        throwIO ex
+        -- => Re-throw: preserve original exception — withSpan does not swallow errors
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: raw ActivitySource spans have no automatic attribute enrichment (HTTP method, DB statement, error type). OpenTelemetry instrumentation libraries add these automatically when you wrap at the adapter level.
@@ -2544,7 +3373,7 @@ export async function withSpan<T>(name: string, f: () => Promise<T>): Promise<T>
 
 The observability adapter wraps the `PurchaseOrderRepository` in a span without the application service knowing:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2783,7 +3612,7 @@ const source = trace.getTracer("ProcurementPlatform.Purchasing");
 // => Named tracer: [F#: new ActivitySource("ProcurementPlatform.Purchasing")]
 // => Static: created once at module load — Tracer instances are thread-safe and shareable
 
-async function runWithSpan<T>(spanName: string, tags: Record<string, string>, f: () => Promise<T>): Promise<T> {
+async function runWithSpan<T>(spanName: string, tags: Record, f: () => Promise): Promise {
   // => Helper: execute async thunk f inside a named span with attribute tags
   // => [Clojure: run-with-span extracted to avoid duplication — TypeScript extracts the same helper]
   const span = source.startSpan(spanName);
@@ -2837,11 +3666,90 @@ export function withRepositorySpans(inner: PurchaseOrderRepository): PurchaseOrd
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/ObservabilityAdapter.hs ───────────
+-- Observability adapter: hs-opentelemetry span decorator for PurchaseOrderRepository
+-- [F#: record-of-functions wrapping inner — Haskell builds the same shape]
+module Purchasing.Infrastructure.ObservabilityAdapter
+  ( withRepositorySpans ) where
+
+import qualified OpenTelemetry.Trace as Otel
+import qualified OpenTelemetry.Trace.Core as Core
+import qualified Data.HashMap.Strict as HM
+import qualified Data.Text as T
+import Control.Exception (try, SomeException, throwIO)
+
+import Purchasing.Application.Ports
+  ( PurchaseOrderRepository (..), RepositoryError (..) )
+import Purchasing.Domain (PurchaseOrder (..), PurchaseOrderId (..))
+
+-- Acquire the named tracer once at module load — safe to share across threads
+-- [F#: new ActivitySource("ProcurementPlatform.Purchasing")]
+getPurchasingTracer :: IO Otel.Tracer
+getPurchasingTracer = do
+  tp <- Otel.getGlobalTracerProvider
+  pure (Otel.makeTracer tp "procurement-platform.purchasing" Otel.tracerOptions)
+
+-- Helper: run an IO action inside a span with the given attribute tags
+-- [Clojure: run-with-span extracted — Haskell extracts the same shape]
+runWithSpan
+  :: T.Text -> HM.HashMap T.Text Core.Attribute -> IO a -> IO a
+runWithSpan spanName tags action = do
+  tracer <- getPurchasingTracer
+  Otel.inSpan tracer spanName Otel.defaultSpanArguments $ \span_ -> do
+    Core.addAttributes span_ tags
+    -- => addAttributes: searchable tags — equivalent to F# SetTag / TS setAttribute
+    result <- try action :: IO (Either SomeException a)
+    case result of
+      Right v -> do
+        Core.setStatus span_ Core.Ok
+        -- => Ok: span green in Jaeger/Honeycomb
+        pure v
+      Left ex -> do
+        Core.setStatus span_ (Core.Error (T.pack (show ex)))
+        Core.recordException span_ [] (Just (T.pack (show ex))) ex
+        -- => Stack trace as span event — searchable in trace backends
+        throwIO ex
+
+-- Decorator: wraps a PurchaseOrderRepository in spans
+-- [F#: withRepositorySpans (inner: PurchaseOrderRepository) : PurchaseOrderRepository]
+withRepositorySpans :: PurchaseOrderRepository -> PurchaseOrderRepository
+withRepositorySpans inner = PurchaseOrderRepository
+  { savePurchaseOrder = \po ->
+      runWithSpan
+        "purchasing.save-purchase-order"
+        -- => Span name: "context.operation" convention — consistent with F# / TS / Clojure
+        (HM.fromList
+          [ ("po.id",             Core.toAttribute (T.pack (show (poId po))))
+          -- => Tag the PO ID: enables filtering all spans for a specific PO
+          , ("po.approval_level", Core.toAttribute (T.pack (show (poApprovalLevel po))))
+          -- => approval level tag: useful for latency analysis by approval tier
+          , ("context",           Core.toAttribute ("purchasing" :: T.Text))
+          ])
+        (savePurchaseOrder inner po)
+        -- => Delegate: inner repo performs the actual DB INSERT inside the span
+  , findPurchaseOrder = \pid ->
+      runWithSpan
+        "purchasing.find-purchase-order"
+        (HM.fromList
+          [ ("po.id",   Core.toAttribute (T.pack (show pid)))
+          , ("context", Core.toAttribute ("purchasing" :: T.Text))
+          ])
+        (findPurchaseOrder inner pid)
+        -- => Delegate to inner — pg query runs inside the span
+  }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The composition root chains the observability decorator over the Npgsql adapter:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2899,6 +3807,34 @@ export function buildPurchaseOrderRepository(pool: Pool) {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Composition/Program.hs ───────────
+-- Composition root: chain observability decorator over the postgresql-simple adapter
+-- [F#: let poRepo = npgsqlPurchaseOrderRepository connStr |> withRepositorySpans]
+module Composition.Program (buildPurchaseOrderRepository) where
+
+import Data.Pool (Pool)
+import Database.PostgreSQL.Simple (Connection)
+
+import Purchasing.Application.Ports (PurchaseOrderRepository)
+import Purchasing.Infrastructure.PostgresRepo (mkPostgresRepository)
+-- => Factory: returns the raw postgresql-simple adapter
+import Purchasing.Infrastructure.ObservabilityAdapter (withRepositorySpans)
+-- => Decorator: wraps both savePurchaseOrder and findPurchaseOrder in OTel spans
+
+buildPurchaseOrderRepository :: Pool Connection -> PurchaseOrderRepository
+buildPurchaseOrderRepository pool =
+  withRepositorySpans (mkPostgresRepository pool)
+  -- => Forward composition: raw repo on the inside, observability on the outside
+  -- => [F#: |> ObservabilityAdapter.withRepositorySpans]
+  -- => Application service receives the decorated PurchaseOrderRepository — transparent to it
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the decorator pattern adds one function call overhead per port call — negligible compared to network I/O. OpenTelemetry requires the SDK to be configured (`.AddOpenTelemetry().WithTracing(...)` in `Program.fs`) before spans are exported; the SDK silently drops spans that emit before configuration completes.
@@ -2915,7 +3851,7 @@ export function buildPurchaseOrderRepository(pool: Pool) {
 
 A simple boolean flag in the flat module approach enables or disables the financing path at the call site:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2981,6 +3917,30 @@ export function submitPurchaseOrder(enableMurabaha: boolean, po: PurchaseOrder):
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/ProcurementPlatform/Application.hs ───────────
+-- Standard library: feature flag boolean in application service — no port
+-- [F#: bool enableMurabaha parameter — Haskell uses the same primitive Bool approach]
+module ProcurementPlatform.Application (submitPurchaseOrder) where
+
+import Purchasing.Domain (PurchaseOrder (..), Money (..))
+
+submitPurchaseOrder :: Bool -> PurchaseOrder -> IO ()
+-- => Bool enableMurabaha: feature flag injected by the caller — not a port
+-- => The application service knows about the feature flag — violates single-responsibility
+submitPurchaseOrder enableMurabaha po =
+  if enableMurabaha && moneyAmount (poTotalAmount po) > 100000
+    -- => 100000: hard-coded threshold — cannot be tuned per organization without code change
+    then putStrLn $ "Initiating murabaha financing for PO " <> show (poId po)
+    -- => Inline financing logic — no port boundary, not testable in isolation
+    else pure ()
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: the feature flag is a boolean — not a port. The application service cannot be tested for the murabaha path without enabling the flag globally. Adding a second financing provider requires changing the service signature.
@@ -2989,7 +3949,7 @@ export function submitPurchaseOrder(enableMurabaha: boolean, po: PurchaseOrder):
 
 The murabaha-finance context defines its own ports and aggregates. The purchasing application service receives a `MurabahaFinancingPort option` — `None` when the feature is disabled, `Some port` when it is enabled:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3093,11 +4053,11 @@ export type MurabahaContractId = string & { [MurabahaContractIdBrand]: typeof Mu
 
 // Murabaha financing port
 export interface MurabahaFinancingPort {
-  readonly quoteContract: (poId: PurchaseOrderId, totalAmount: Money) => Promise<Result<MurabahaQuote, string>>;
+  readonly quoteContract: (poId: PurchaseOrderId, totalAmount: Money) => Promise;
   // => quoteContract: given PO ID and total amount, request a financing quote from the murabaha bank
   // => MurabahaQuote carries the markup (basis points) and repayment schedule
   // => [F#: QuoteContract: PurchaseOrderId -> Money -> Async<Result<MurabahaQuote, string>>]
-  readonly acceptContract: (quote: MurabahaQuote) => Promise<Result<MurabahaContract, string>>;
+  readonly acceptContract: (quote: MurabahaQuote) => Promise;
   // => acceptContract: buyer accepts the quote — creates a signed MurabahaContract aggregate
   // => Emits MurabahaContractSigned event — consumed by purchasing and accounting
   // => [F#: AcceptContract: MurabahaQuote -> Async<Result<MurabahaContract, string>>]
@@ -3105,18 +4065,74 @@ export interface MurabahaFinancingPort {
 
 // Murabaha contract repository
 export interface MurabahaContractRepository {
-  readonly saveContract: (contract: MurabahaContract) => Promise<Result<void, string>>;
+  readonly saveContract: (contract: MurabahaContract) => Promise;
   // => saveContract: persists the signed MurabahaContract aggregate
   // => [F#: SaveContract: MurabahaContract -> Async<Result<unit, string>>]
-  readonly findContract: (contractId: MurabahaContractId) => Promise<Result<MurabahaContract | null, string>>;
+  readonly findContract: (contractId: MurabahaContractId) => Promise;
   // => findContract: retrieves by ID; null means not found — [F#: Result<MurabahaContract option, string>]
 }
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/MurabahaFinance/Application/Ports.hs ───────────
+-- murabaha-finance context: application layer ports
+-- [F#: record types MurabahaFinancingPort and MurabahaContractRepository — Haskell mirrors with records]
+module MurabahaFinance.Application.Ports
+  ( MurabahaQuote (..), MurabahaContract (..), MurabahaContractId (..)
+  , MurabahaFinancingPort (..), MurabahaContractRepository (..)
+  ) where
+
+import Data.Text (Text)
+import Data.UUID (UUID)
+import Purchasing.Domain (PurchaseOrderId, Money)
+
+-- Branded identifier — prevents passing wrong UUIDs
+newtype MurabahaContractId = MurabahaContractId UUID deriving (Eq, Show)
+-- => [F#: MurabahaContractId single-case DU; TS branded type]
+
+-- Quote returned by the murabaha bank
+data MurabahaQuote = MurabahaQuote
+  { quoteMarkupBps :: Int
+  -- => Markup in basis points (1% = 100 bps) — bank-set financing premium
+  , quoteSchedule  :: [Text]
+  -- => Repayment installments — opaque strings here; richer domain in production
+  } deriving (Eq, Show)
+
+-- Signed financing contract
+data MurabahaContract = MurabahaContract
+  { contractId    :: MurabahaContractId
+  , contractQuote :: MurabahaQuote
+  } deriving (Eq, Show)
+
+-- Murabaha financing port
+-- [F#: record type MurabahaFinancingPort with two function fields]
+data MurabahaFinancingPort = MurabahaFinancingPort
+  { quoteContract  :: PurchaseOrderId -> Money -> IO (Either Text MurabahaQuote)
+    -- => quoteContract: request a financing quote from the murabaha bank
+    -- => [F#: PurchaseOrderId -> Money -> Async<Result<MurabahaQuote, string>>]
+  , acceptContract :: MurabahaQuote -> IO (Either Text MurabahaContract)
+    -- => acceptContract: buyer accepts the quote — creates a signed MurabahaContract
+    -- => Emits MurabahaContractSigned event — consumed by purchasing + accounting
+  }
+
+-- Murabaha contract repository
+-- [F#: record type MurabahaContractRepository — same shape]
+data MurabahaContractRepository = MurabahaContractRepository
+  { saveContract :: MurabahaContract -> IO (Either Text ())
+  , findContract :: MurabahaContractId -> IO (Either Text (Maybe MurabahaContract))
+    -- => Maybe MurabahaContract: Nothing means not found — [F#: Result<option, string>]
+  }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3270,11 +4286,11 @@ type PurchaseOrder = { id: PurchaseOrderId; totalAmount: { amount: number }; sup
 type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
 type IssuePOError = { type: "RepositoryFailure"; detail: string } | { type: "PONotFound"; poId: string };
 interface PurchaseOrderRepository {
-  findPurchaseOrder(id: PurchaseOrderId): Promise<Result<PurchaseOrder | null, string>>;
-  savePurchaseOrder(po: PurchaseOrder): Promise<Result<void, string>>;
+  findPurchaseOrder(id: PurchaseOrderId): Promise;
+  savePurchaseOrder(po: PurchaseOrder): Promise;
 }
 interface EventPublisher {
-  publish(event: object): Promise<Result<void, string>>;
+  publish(event: object): Promise;
 }
 
 export async function issuePurchaseOrder(
@@ -3286,7 +4302,7 @@ export async function issuePurchaseOrder(
   // => null when murabaha is disabled; non-null when enabled for this organization
   // => [F#: (murabahaPort: MurabahaFinancingPort option) — TypeScript uses | null for the absent case]
   poId: PurchaseOrderId,
-): Promise<Result<PurchaseOrder, IssuePOError>> {
+): Promise {
   const poResult = await repo.findPurchaseOrder(poId);
   // => await: [F#: let! poResult = repo.FindPurchaseOrder poId]
 
@@ -3331,6 +4347,74 @@ export async function issuePurchaseOrder(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Application/IssuePurchaseOrder.hs ───────────
+-- purchasing application service: optional murabaha financing port
+-- [F#: (murabahaPort: MurabahaFinancingPort option) — Haskell uses Maybe MurabahaFinancingPort]
+module Purchasing.Application.IssuePurchaseOrder (issuePurchaseOrder) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+import Purchasing.Domain
+  ( PurchaseOrder (..), PurchaseOrderId, Status (..), Money (..) )
+import Purchasing.Application.Ports
+  ( PurchaseOrderRepository (..), EventPublisher (..)
+  , DomainEvent (..), IssuePOError (..) )
+import MurabahaFinance.Application.Ports
+  ( MurabahaFinancingPort (..) )
+
+issuePurchaseOrder
+  :: PurchaseOrderRepository
+  -- => repo: database adapter injected at composition root
+  -> EventPublisher
+  -- => pub: outbox adapter injected at composition root
+  -> Maybe MurabahaFinancingPort
+  -- => Nothing: murabaha disabled; Just port: enabled for this organization
+  -- => [F#: MurabahaFinancingPort option — Haskell Maybe makes optionality explicit]
+  -> PurchaseOrderId
+  -> IO (Either IssuePOError PurchaseOrder)
+issuePurchaseOrder repo pub murabahaPort pid = do
+  poResult <- findPurchaseOrder repo pid
+  -- => findPurchaseOrder: reads the PO from the database — must exist and be Draft/Approved
+  case poResult of
+    Left e -> pure (Left (RepositoryFailure (T.pack (show e))))
+    -- => Infrastructure failure: propagate as typed error — caller returns HTTP 500
+    Right Nothing -> pure (Left (PONotFound pid))
+    -- => PO not found: typed error — caller returns HTTP 404
+    Right (Just po) -> do
+      -- Optional murabaha branch
+      case murabahaPort of
+        Just mPort | moneyAmount (poTotalAmount po) > 100000 -> do
+          -- => Murabaha enabled and PO exceeds threshold — request financing quote
+          -- => 100000: threshold configurable via feature flag in production
+          quoteResult <- quoteContract mPort pid (poTotalAmount po)
+          case quoteResult of
+            Left err ->
+              -- => Quote failed: log and continue — murabaha is optional, PO issuance not blocked
+              putStrLn $ "Murabaha quote failed for PO " <> show pid <> ": " <> T.unpack err
+            Right _quote ->
+              -- => Quote received — buyer accepts in a separate step in the full implementation
+              pure ()
+        _ -> pure ()
+        -- => Nothing or PO below threshold — standard issuance path
+
+      let issuedPO = po { poStatus = Issued }
+      -- => Immutable update: Draft/Approved → Issued — [F#: { po with Status = Issued }]
+      saveResult <- savePurchaseOrder repo issuedPO
+      case saveResult of
+        Left e -> pure (Left (RepositoryFailure (T.pack (show e))))
+        Right () -> do
+          publish pub (PurchaseOrderIssued (poId po) (poSupplierId po))
+          -- => Outbox adapter writes the event row in a separate transaction
+          pure (Right issuedPO)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the `option` parameter makes optionality explicit at the type level — the caller cannot accidentally pass `None` where `Some` is required or vice versa. The composition root wires the murabaha port based on an organization-level feature flag read from configuration. Adding a second Sharia-compliant bank adapter requires no change to the application service — only a new adapter module and a composition-root branch.
@@ -3347,7 +4431,7 @@ Three anti-patterns reliably erode hexagonal architectures over time: the leaky 
 
 F# modules give you no boundary enforcement, so these anti-patterns occur naturally with the stdlib flat layout:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3424,7 +4508,7 @@ export interface PurchaseOrder {
 }
 
 // WRONG: serialization logic in the domain layer — infrastructure concern bleeding in
-export function purchaseOrderToPgRow(po: PurchaseOrder): Record<string, unknown> {
+export function purchaseOrderToPgRow(po: PurchaseOrder): Record {
   // => Serialization in the domain: this belongs in the infrastructure adapter
   // => [F#: NpgsqlColumn("po_id") attribute on Id field — same domain-infrastructure coupling]
   return {
@@ -3438,9 +4522,44 @@ export function purchaseOrderToPgRow(po: PurchaseOrder): Record<string, unknown>
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Domain.hs ─────────── (ANTI-PATTERN)
+-- Anti-pattern 1: Leaky hexagon — postgresql-simple types in the domain module
+-- [F#: NpgsqlTypeMapping attribute — Haskell version imports the driver into the domain]
+module Purchasing.Domain.Leaky where
+
+import Database.PostgreSQL.Simple (Connection)
+-- => WRONG: postgresql-simple imported into the domain — driver type bleeds into PurchaseOrder
+import Database.PostgreSQL.Simple.ToRow (ToRow (..), toField)
+-- => WRONG: ToRow typeclass instance in the domain — DB serialization is an adapter concern
+
+data PurchaseOrder = PurchaseOrder
+  { poId          :: String
+  , poTotalAmount :: Double
+  , poPgTable     :: String   -- "purchase_orders"
+  -- => WRONG: column/table metadata embedded in the domain shape
+  -- => Any DB schema rename forces a domain change — breaks hexagonal isolation
+  }
+
+-- WRONG: serialization logic in the domain module — infrastructure concern bleeding in
+-- [F#: NpgsqlColumn attributes — same domain/infrastructure coupling]
+instance ToRow PurchaseOrder where
+  toRow po =
+    [ toField (poId po)
+    , toField (poTotalAmount po)
+    ]
+-- => Domain type now coupled to postgresql-simple — cannot unit-test without the driver
+-- => Fix: move ToRow instance to Purchasing.Infrastructure.PostgresRepo
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3536,7 +4655,7 @@ export async function godSaveAndDisburse(
   pool: Pool,
   bankBaseUrl: string,
   po: { id: string; totalAmount: number },
-): Promise<void> {
+): Promise {
   // => pool + bankBaseUrl: two infrastructure resources signal multiple port responsibilities
   // => SYMPTOM: function signature crosses two port boundaries — DB and bank API
   const client = await pool.connect();
@@ -3563,9 +4682,54 @@ export async function godSaveAndDisburse(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/GodAdapter.hs ─────────── (ANTI-PATTERN)
+-- Anti-pattern 2: God adapter — DB save + bank call + event print in one function
+-- [F#: godSaveAndDisburse takes connStr + bankClient — Haskell version takes Pool + Manager]
+module Purchasing.Infrastructure.GodAdapter (godSaveAndDisburse) where
+
+import Data.Pool (Pool, withResource)
+import Database.PostgreSQL.Simple (Connection, execute)
+-- => DB dependency
+import Network.HTTP.Client
+  ( Manager, parseRequest, httpLbs, method, requestBody, RequestBody (..) )
+-- => HTTP dependency — two infrastructure dependencies in one module
+import qualified Data.Aeson as Aeson
+import qualified Data.ByteString.Lazy as LBS
+
+import Purchasing.Domain (PurchaseOrder (..))
+
+-- ANTI-PATTERN: pool + manager + bank URL signals multiple port boundaries
+godSaveAndDisburse :: Pool Connection -> Manager -> String -> PurchaseOrder -> IO ()
+godSaveAndDisburse pool mgr bankBaseUrl po = withResource pool $ \conn -> do
+  -- => DB connection: one responsibility
+  _ <- execute conn
+         "INSERT INTO purchasing.purchase_orders (id, total_amount) VALUES (?, ?)"
+         (poId po, poTotalAmount po)
+  -- => First port responsibility: persistence
+  initReq <- parseRequest (bankBaseUrl <> "/disbursements")
+  let req = initReq
+        { method = "POST"
+        , requestBody = RequestBodyLBS (Aeson.encode (Aeson.object ["poId" Aeson..= poId po]))
+        }
+  _ <- httpLbs req mgr
+  -- => Call bank API — a different port responsibility mixed in
+  -- => If the bank call fails, should the DB save roll back? This function cannot answer that.
+  putStrLn $ "Event: PurchaseOrderIssued " <> show (poId po)
+  -- => Publish event via putStrLn — not behind a port at all
+  -- => stdout is not a port: no test can assert on it or replace it
+  pure ()
+-- => Fix: split into PostgresRepo, BankApiAdapter, OutboxEventPublisher — each satisfies one port
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3676,9 +4840,9 @@ export interface PurchaseOrder {
 
 // Application service forced to carry business logic (symptom of anemic domain)
 export async function submitPurchaseOrder(
-  save: (po: PurchaseOrder) => Promise<{ ok: boolean }>,
+  save: (po: PurchaseOrder) => Promise,
   dto: { supplierId: string; totalAmount: number },
-): Promise<{ ok: boolean } | { error: string }> {
+): Promise {
   // => dto: plain object — no domain types at the boundary; validation is the service's problem
   if (dto.totalAmount <= 0) {
     return { error: "Total amount must be positive" };
@@ -3703,6 +4867,54 @@ export async function submitPurchaseOrder(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Domain.hs ─────────── (ANTI-PATTERN)
+-- Anti-pattern 3: Anemic domain — no invariants, no smart constructors, all exported raw
+-- [F#: CLIMutable record — Haskell anemic version exports all fields and skips validation]
+module Purchasing.Domain.Anemic
+  ( PurchaseOrder (..)         -- exports the constructor raw — no smart constructor
+  , submitPurchaseOrder
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.UUID (UUID)
+
+-- Anemic domain type: no behavior, no invariants — equivalent to a DTO
+data PurchaseOrder = PurchaseOrder
+  { poId          :: UUID
+  -- => Constructor exported: any caller writes (PurchaseOrder undefined ...) with bogus values
+  , poSupplierId  :: Text
+  -- => No validation: empty Text accepted; smart constructor would reject this
+  , poTotalAmount :: Double
+  -- => No newtype wrapper, no positivity check — -500.0 is a valid PurchaseOrder
+  , poStatus      :: Text
+  -- => Status as raw Text: "invalid-status-string" compiles cleanly
+  } deriving (Eq, Show)
+-- => No mkPurchaseOrder smart constructor — invariants live nowhere
+
+-- Application service forced to carry business logic (symptom of anemic domain)
+submitPurchaseOrder
+  :: (PurchaseOrder -> IO (Either Text ()))
+  -> Text -> Double -> IO (Either Text ())
+submitPurchaseOrder save supplierId totalAmount
+  | totalAmount <= 0       = pure (Left "Total amount must be positive")
+  -- => Validation in the application service: belongs in a smart constructor
+  | T.null (T.strip supplierId) = pure (Left "Supplier ID must not be blank")
+  -- => Each call site must remember to call submitPurchaseOrder — no compile enforcement
+  | otherwise = do
+      let po = PurchaseOrder undefined supplierId totalAmount "Draft"
+      -- => Raw constructor: invariants are not enforced — invalid amounts compile fine
+      save po
+-- => Fix: add mkMoney and mkPurchaseOrder smart constructors returning Either Text PurchaseOrder
+-- => Hide the data constructor via module exports; only smart constructors leak out of the module
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 ### Production Framework
@@ -3944,7 +5156,7 @@ Guide 20 showed how to add OpenTelemetry spans to individual port calls. At the 
 
 `System.Diagnostics.ActivitySource` creates spans, and you can write a minimal listener that prints spans to stdout — verifying that spans are emitted before adding the OpenTelemetry SDK:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4068,6 +5280,50 @@ export function registerStdoutListener(): void {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Composition/StdlibTracing.hs ───────────
+-- Standard library: hs-opentelemetry SDK writing spans to stdout for verification
+-- [F#: ActivityListener with ActivityStopped callback — Haskell uses a stdout span exporter]
+module Composition.StdlibTracing (registerStdoutListener) where
+
+import qualified OpenTelemetry.Trace as Otel
+import qualified OpenTelemetry.Exporter.OTLP as Exporter
+import qualified OpenTelemetry.Processor.Simple as Proc
+import qualified Data.Text.IO as TIO
+import qualified Data.Text as T
+
+-- A trivial stdout exporter: prints span name + duration when each span finishes
+-- [F#: printfn "[TRACE] %s duration=%dms status=%A" — same one-line shape]
+stdoutExporter :: Otel.Exporter Otel.ImmutableSpan
+stdoutExporter = Otel.Exporter
+  { Otel.exporterExport = \spans -> do
+      mapM_ printSpan spans
+      pure Otel.ExportSuccess
+  , Otel.exporterShutdown = pure ()
+  }
+  where
+    printSpan span_ =
+      TIO.putStrLn $
+        "[TRACE] " <> Otel.spanName span_ <>
+        " duration=" <> T.pack (show (Otel.spanEndTime span_ - Otel.spanStartTime span_)) <>
+        " status=" <> T.pack (show (Otel.spanStatus span_))
+-- => Equivalent to TS ConsoleSpanExporter; not queryable, lost on pod restart
+
+registerStdoutListener :: IO ()
+-- => [F#: ActivitySource.AddActivityListener(listener) — Haskell sets the global TracerProvider]
+registerStdoutListener = do
+  processor <- Proc.simpleProcessor stdoutExporter
+  -- => SimpleProcessor: forwards each finished span to stdoutExporter synchronously
+  tp <- Otel.createTracerProvider [processor] Otel.emptyTracerProviderOptions
+  Otel.setGlobalTracerProvider tp
+  -- => Must run before any inSpan call — same constraint as F# / TS / Clojure
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: stdout span output is unstructured — you cannot query duration percentiles, correlate trace IDs across services, or set up alerts. Spans are lost when the pod restarts.
@@ -4076,7 +5332,7 @@ export function registerStdoutListener(): void {
 
 `procurement-platform-be` wires OpenTelemetry in `Composition/Program.fs` using the `OpenTelemetry.Extensions.Hosting` NuGet package:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4280,6 +5536,62 @@ export function configureObservability(): void {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Composition/Observability.hs ───────────
+-- OpenTelemetry SDK wiring at startup using hs-opentelemetry-sdk
+-- [F#: configureObservability builder — Haskell calls setGlobalTracerProvider at process startup]
+module Composition.Observability (configureObservability, shutdownObservability) where
+
+import qualified OpenTelemetry.Trace as Otel
+import qualified OpenTelemetry.Resource as Res
+import qualified OpenTelemetry.Exporter.OTLP as Otlp
+import qualified OpenTelemetry.Processor.Batch as Batch
+import qualified Data.Text as T
+import System.Environment (lookupEnv)
+import Data.Maybe (fromMaybe)
+import Network.HostName (getHostName)
+
+configureObservability :: IO Otel.TracerProvider
+-- => Called once at startup — wires telemetry before the WAI/Servant app accepts requests
+configureObservability = do
+  otlpEndpoint <- fromMaybe "http://localhost:4317"
+                    <$> lookupEnv "OTEL_EXPORTER_OTLP_ENDPOINT"
+  -- => Read OTLP endpoint from env; Kubernetes ConfigMap injects this key
+  -- => [F#: Option.ofObj |> Option.defaultValue "http://localhost:4317"]
+  hostname <- getHostName
+
+  let resource = Res.mkResource
+        [ Res.serviceName "procurement-platform-be"
+        -- => service.name resource attribute — visible in Jaeger / Honeycomb
+        , Res.serviceVersion "1.0.0"
+        -- => service.version: correlates spans to a specific release
+        , Res.serviceInstanceId (T.pack hostname)
+        -- => Pod hostname in Kubernetes — [F#: Environment.MachineName / TS os.hostname()]
+        ]
+
+  otlpExporter <- Otlp.makeOTLPExporter
+                    (Otlp.OTLPExporterConfig (T.pack otlpEndpoint))
+  -- => OTLP gRPC exporter: sends spans to the OpenTelemetry Collector in protobuf format
+  batchProcessor <- Batch.batchProcessor Batch.batchTimeoutConfig otlpExporter
+  -- => BatchSpanProcessor: buffers spans and exports in batches — production default
+
+  tp <- Otel.createTracerProvider [batchProcessor]
+          Otel.emptyTracerProviderOptions { Otel.tracerProviderOptionsResource = resource }
+  Otel.setGlobalTracerProvider tp
+  -- => Sets the global provider — all subsequent inSpan calls emit to OTLP
+  -- => Equivalent to NodeSDK.start() / WebApplication.Build() activating the SDK
+  pure tp
+
+shutdownObservability :: Otel.TracerProvider -> IO ()
+-- => Graceful shutdown: flushes pending spans — [F#: IHostedService ForceFlush]
+shutdownObservability tp = Otel.shutdownTracerProvider tp
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The Kubernetes ConfigMap from Guide 23 adds the OTLP endpoint key so no code change is needed per environment:
@@ -4310,7 +5622,7 @@ When the PostgreSQL pod is unhealthy during a rolling restart, or the bank API r
 
 F# option types and simple try/catch at the handler level provide a primitive fallback:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4415,13 +5727,13 @@ import type { Request, Response } from "express";
 
 // Placeholder repository type (defined in application/ports)
 interface PurchaseOrderRepository {
-  findPurchaseOrder(id: string): Promise<{ _tag: string; right?: unknown; left?: string }>;
+  findPurchaseOrder(id: string): Promise;
 }
 
 export function handleGetPurchaseOrder(repo: PurchaseOrderRepository, poId: string) {
   // => repo: PurchaseOrderRepository injected at composition root
   // => poId: raw string from the URL — not yet validated or typed
-  return async (_req: Request, res: Response): Promise<void> => {
+  return async (_req: Request, res: Response): Promise => {
     // => Express handler: (req, res) => Promise<void>; [F#: fun next ctx -> task { ... }]
     try {
       const result = await repo.findPurchaseOrder(poId);
@@ -4447,6 +5759,50 @@ export function handleGetPurchaseOrder(repo: PurchaseOrderRepository, poId: stri
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/HandlerStdlib.hs ─────────── (ANTI-PATTERN)
+-- Standard library: try/catch fallback at the Servant handler level (ANTI-PATTERN)
+-- [F#: Giraffe HttpHandler — Haskell uses Servant's Handler monad]
+module Purchasing.Infrastructure.HandlerStdlib (handleGetPurchaseOrder) where
+
+import Servant (Handler, ServerError (..), err404, err500, err503, throwError)
+import Control.Exception (try, SomeException, displayException)
+import Data.UUID (UUID)
+import Control.Monad.IO.Class (liftIO)
+
+import Purchasing.Application.Ports (PurchaseOrderRepository (..))
+import Purchasing.Domain (PurchaseOrder, PurchaseOrderId (..))
+
+handleGetPurchaseOrder :: PurchaseOrderRepository -> UUID -> Handler PurchaseOrder
+-- => repo: PurchaseOrderRepository injected at composition root
+-- => UUID: raw value from the URL — wrapped in PurchaseOrderId newtype inside the handler
+handleGetPurchaseOrder repo uuid = do
+  result <- liftIO $ try (findPurchaseOrder repo (PurchaseOrderId uuid))
+                       :: Handler (Either SomeException (Either _ (Maybe PurchaseOrder)))
+  -- => try: catches unhandled exceptions from the repo — no typed discrimination
+  case result of
+    Left ex -> throwError err500 { errBody = "Unhandled: " <> packMsg (displayException ex) }
+    -- => 500 with the exception message — leaks internal details to the caller
+    -- => ANTI-PATTERN: expose RepositoryError variant in the port to avoid this
+    Right (Left _) ->
+      throwError err503 { errBody = "Storage unavailable" }
+      -- => Repository failure: 503 — caller should retry or show degraded state
+    Right (Right Nothing) ->
+      throwError err404 { errBody = "Not found" }
+      -- => PO not found: 404 — [F#: RequestErrors.notFound]
+    Right (Right (Just po)) ->
+      pure po
+      -- => PO found: Servant serializes to JSON automatically — [F#: json po next ctx]
+  where
+    packMsg = id  -- placeholder: convert String to LBS in real code
+-- => PROBLEM: every handler must duplicate this — no centralised fallback
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: the fallback logic is inside the handler — every handler must duplicate it. When the database goes down, all handlers fail the same way, but the logic must be audited and updated in every file.
@@ -4455,7 +5811,7 @@ export function handleGetPurchaseOrder(repo: PurchaseOrderRepository, poId: stri
 
 The degraded-mode pattern introduces a `DegradedPurchaseOrderRepository` that wraps a cached snapshot and a `NullEventPublisher` that silently drops events when the broker is unavailable:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4625,8 +5981,8 @@ type PurchaseOrderId = string;
 type PurchaseOrder = { id: PurchaseOrderId; approvalLevel: string; supplierId: string };
 type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
 interface PurchaseOrderRepository {
-  findPurchaseOrder(id: PurchaseOrderId): Promise<Result<PurchaseOrder | null, string>>;
-  savePurchaseOrder(po: PurchaseOrder): Promise<Result<void, string>>;
+  findPurchaseOrder(id: PurchaseOrderId): Promise;
+  savePurchaseOrder(po: PurchaseOrder): Promise;
 }
 
 // Shared degraded-mode flag: true when the circuit-breaker has opened
@@ -4683,9 +6039,81 @@ export function withCachePopulation(inner: PurchaseOrderRepository): PurchaseOrd
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/DegradedRepo.hs ───────────
+-- Degraded read adapter: returns a cached snapshot when the DB port fails
+-- [F#: DegradedPurchaseOrderRepository module — Haskell uses TVar Map + global IORef flag]
+module Purchasing.Infrastructure.DegradedRepo
+  ( isDegradedRef, cachedRepository, withCachePopulation ) where
+
+import Control.Concurrent.STM (TVar, atomically, newTVarIO, readTVar, writeTVar, modifyTVar')
+import Data.IORef (IORef, newIORef)
+import qualified Data.Map.Strict as Map
+import System.IO.Unsafe (unsafePerformIO)
+import Data.Text (Text)
+
+import Purchasing.Application.Ports
+  ( PurchaseOrderRepository (..), RepositoryError (..) )
+import Purchasing.Domain (PurchaseOrder (..), PurchaseOrderId)
+
+-- Shared degraded-mode flag — set by the circuit-breaker callback
+isDegradedRef :: IORef Bool
+isDegradedRef = unsafePerformIO (newIORef False)
+{-# NOINLINE isDegradedRef #-}
+-- => Module-level mutable IORef — composition root reads to select between adapters
+-- => [F#: let mutable isDegraded = false — TS export let isDegraded]
+
+-- Shared cache holding the last successful PO snapshots
+cacheRef :: TVar (Map.Map PurchaseOrderId PurchaseOrder)
+cacheRef = unsafePerformIO (newTVarIO Map.empty)
+{-# NOINLINE cacheRef #-}
+-- => TVar Map: thread-safe via STM — equivalent to ConcurrentDictionary / atom<map>
+
+-- Degraded PurchaseOrderRepository: serves from the in-memory cache without DB I/O
+cachedRepository :: PurchaseOrderRepository
+-- => Satisfies PurchaseOrderRepository — composition root substitutes when isDegraded == True
+cachedRepository = PurchaseOrderRepository
+  { findPurchaseOrder = \poId -> do
+      m <- atomically (readTVar cacheRef)
+      case Map.lookup poId m of
+        Just po -> pure (Right (Just po))
+        -- => Cache hit: return last-known PO without touching the database
+        -- => Stale data: the PO may have changed since the last successful DB read
+        Nothing -> pure (Right Nothing)
+        -- => Cache miss: handler returns 404 — consistent with a live DB miss
+  , savePurchaseOrder = \_po ->
+      -- => Write path: rejects writes during degraded mode
+      pure (Left (ConnectionFailure "Service degraded — writes unavailable"))
+      -- => Callers translate to 503 + Retry-After header
+  }
+
+-- Cache-populating decorator over the real adapter
+withCachePopulation :: PurchaseOrderRepository -> PurchaseOrderRepository
+withCachePopulation inner = PurchaseOrderRepository
+  { findPurchaseOrder = \poId -> do
+      result <- findPurchaseOrder inner poId
+      -- => Call the real adapter — actual DB query
+      case result of
+        Right (Just po) ->
+          atomically (modifyTVar' cacheRef (Map.insert (poId po) po))
+        -- => Populate cache on success — degraded adapter can serve this entry later
+        _ -> pure ()
+      -- => Error or Right Nothing: keep the last-good snapshot in the cache
+      pure result
+      -- => Pass-through: decorator is transparent to the caller
+  , savePurchaseOrder = savePurchaseOrder inner
+    -- => Save path: no cache to populate on writes — delegate directly to inner
+  }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4757,7 +6185,7 @@ let nullEventPublisher : EventPublisher =
 // Placeholder EventPublisher type (defined in application/ports)
 type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
 interface EventPublisher {
-  publish(event: object): Promise<Result<void, string>>;
+  publish(event: object): Promise;
 }
 
 export const nullEventPublisher: EventPublisher = {
@@ -4776,9 +6204,37 @@ export const nullEventPublisher: EventPublisher = {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/NullEventPublisher.hs ───────────
+-- Null event publisher: silently drops events when the outbox is unavailable
+-- [F#: NullEventPublisher module — Haskell exports a null-object record]
+module Purchasing.Infrastructure.NullEventPublisher (nullEventPublisher) where
+
+import Purchasing.Application.Ports (EventPublisher (..))
+-- => EventPublisher: the port this null adapter satisfies
+
+nullEventPublisher :: EventPublisher
+-- => Module-level value: shared per process — stateless, no side effects
+-- => [F#: let nullEventPublisher : EventPublisher = { ... } — TS const binding]
+nullEventPublisher = EventPublisher
+  { publish = \_event ->
+      -- => _event: ignored — the event is discarded without network I/O
+      pure (Right ())
+      -- => Right (): application service proceeds as if the event was published
+      -- => Silent drop: add a logging decorator in production for observability
+  }
+-- => When the circuit-breaker closes, the composition root swaps back to the real outbox adapter
+-- => Events emitted during degraded mode are permanently lost — acceptable for non-critical notifications
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4909,6 +6365,56 @@ export function buildEventPublisher(pool: Pool) {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Composition/DegradedSwap.hs ───────────
+-- Composition root: circuit-breaker state selects the correct adapter at request time
+-- [F#: Program.fs buildPurchaseOrderRepository — Haskell exports the same factory shape]
+module Composition.DegradedSwap
+  ( buildPurchaseOrderRepository, buildEventPublisher ) where
+
+import Data.IORef (readIORef)
+import Data.Pool (Pool)
+import Database.PostgreSQL.Simple (Connection)
+
+import Purchasing.Application.Ports (PurchaseOrderRepository, EventPublisher)
+import Purchasing.Infrastructure.PostgresRepo (mkPostgresRepository)
+-- => Real postgresql-simple adapter factory — equivalent to F# NpgsqlPurchaseOrderRepository
+import Purchasing.Infrastructure.DegradedRepo
+  ( isDegradedRef, cachedRepository, withCachePopulation )
+-- => isDegradedRef: shared flag set by the circuit-breaker callback
+-- => cachedRepository: the degraded adapter; withCachePopulation: cache-populating decorator
+import Purchasing.Infrastructure.NullEventPublisher (nullEventPublisher)
+import Purchasing.Infrastructure.OutboxEventPublisher (makeOutboxPublisher)
+
+buildPurchaseOrderRepository :: Pool Connection -> IO PurchaseOrderRepository
+-- => Called at request time — re-reads isDegradedRef on each call
+buildPurchaseOrderRepository pool = do
+  degraded <- readIORef isDegradedRef
+  -- => readIORef: deref the flag — IORef is the Haskell equivalent of F# mutable / atom / let
+  pure $ if degraded
+    then cachedRepository
+    -- => Circuit open: serve from cache — no database I/O
+    -- => Application service sees a valid PurchaseOrderRepository — no code change needed
+    else withCachePopulation (mkPostgresRepository pool)
+    -- => Circuit closed: real adapter populates the cache as a side-effect
+    -- => [F#: npgsqlPurchaseOrderRepository connStr |> withCachePopulation]
+
+buildEventPublisher :: Pool Connection -> IO EventPublisher
+-- => Same two-branch pattern as buildPurchaseOrderRepository
+buildEventPublisher pool = do
+  degraded <- readIORef isDegradedRef
+  pure $ if degraded
+    then nullEventPublisher
+    -- => Circuit open: drop events silently — application service sees Right ()
+    else makeOutboxPublisher pool
+    -- => Circuit closed: write to outbox — at-least-once delivery resumes
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the degraded read adapter serves stale data — clients receive a response that may be minutes or hours old. For a procurement platform, serving a stale PO list is better than returning 503 and blocking a manager who needs to check approval status. The null event publisher silently drops events — if at-least-once delivery is a hard requirement, replace it with an in-memory buffer that replays to the outbox when the broker recovers, accepting the risk of buffer overflow under sustained outages.
@@ -4925,7 +6431,7 @@ export function buildEventPublisher(pool: Pool) {
 
 `Environment.GetEnvironmentVariable` reads a single key directly — the manual approach:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5032,7 +6538,7 @@ export interface BankApiSettings {
 
 type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
 
-export function readBankApiSettings(): Result<BankApiSettings, string> {
+export function readBankApiSettings(): Result {
   // => Returns Result<BankApiSettings, string>: Right on success, Left with a message on missing key
   // => [F#: let readBankApiSettings () : Result<BankApiSettings, string>]
   const apiKey = process.env["BankApi__ApiKey"] ?? null;
@@ -5077,6 +6583,54 @@ export function readBankApiSettings(): Result<BankApiSettings, string> {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Payments/Infrastructure/BankApiSettingsStdlib.hs ───────────
+-- Standard library: read BankApiSettings manually from environment variables
+-- [F#: Result<BankApiSettings, string> — Haskell uses Either Text BankApiSettings]
+module Payments.Infrastructure.BankApiSettingsStdlib (readBankApiSettings) where
+
+import System.Environment (lookupEnv)
+-- => lookupEnv: returns Maybe String — Nothing for missing keys, like F# null check
+import Text.Read (readMaybe)
+-- => readMaybe: parses a String to Int returning Maybe — like Int32.TryParse
+import Data.Text (Text)
+import qualified Data.Text as T
+
+import Payments.Infrastructure.BankApiAdapter (BankApiSettings (..))
+-- => BankApiSettings: typed config record the adapter requires
+
+readBankApiSettings :: IO (Either Text BankApiSettings)
+-- => Returns Either Text BankApiSettings — Right on success, Left with descriptive error
+readBankApiSettings = do
+  apiKey   <- lookupEnv "BankApi__ApiKey"
+  -- => Double-underscore: matches .NET IConfiguration's hierarchy separator convention
+  -- => Nothing when absent — explicit absence rather than nullable string
+  baseUrl  <- lookupEnv "BankApi__BaseUrl"
+  -- => baseUrl: bank API base URL — must be a valid HTTPS URI (not validated in stdlib)
+  timeStr  <- lookupEnv "BankApi__TimeoutSeconds"
+  -- => timeStr: raw string — must be parsed; no type coercion from the environment
+  case (apiKey, baseUrl, timeStr) of
+    -- => Tuple pattern match: check all three required keys before constructing the record
+    (Nothing, _, _) -> pure (Left "BankApi__ApiKey is not set")
+    -- => Missing API key: bank adapter cannot authenticate — fail fast at startup
+    (_, Nothing, _) -> pure (Left "BankApi__BaseUrl is not set")
+    -- => Missing base URL: bank adapter has no endpoint to call
+    (_, _, Nothing) -> pure (Left "BankApi__TimeoutSeconds is not set")
+    -- => Missing timeout: bank adapter cannot configure per-call HTTP timeout
+    (Just k, Just u, Just ts) ->
+      case readMaybe ts :: Maybe Int of
+        Just n  -> pure (Right (BankApiSettings (T.pack k) (T.pack u) n))
+        -- => Successful parse: construct and return the typed settings record
+        -- => [F#: Ok { ApiKey = key; BaseUrl = url; TimeoutSeconds = timeout }]
+        Nothing -> pure (Left (T.pack ("BankApi__TimeoutSeconds is not a valid integer: " <> ts)))
+        -- => Parse failure: descriptive error — caller (startup) should abort the process
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: `GetEnvironmentVariable` reads at call time — no binding validation (empty-string keys pass the null check). Changes to the key names in the Kubernetes ConfigMap/Secret must be manually mirrored in every `GetEnvironmentVariable` call.
@@ -5085,7 +6639,7 @@ export function readBankApiSettings(): Result<BankApiSettings, string> {
 
 `procurement-platform-be` uses `builder.Services.Configure<ValidatedBankApiSettings>` in `Composition/Program.fs`. This makes the full binding chain explicit and adds validation via `ValidateDataAnnotations`:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5214,7 +6768,7 @@ export const ValidatedBankApiSettingsSchema = z.object({
   // => .min(5).max(120): range constraint — [F#: [<Range(5, 120)>]; catches 0 or negative values]
 });
 
-export type ValidatedBankApiSettings = z.infer<typeof ValidatedBankApiSettingsSchema>;
+export type ValidatedBankApiSettings = z.infer;
 // => z.infer: derives the TypeScript type from the schema — no manual interface duplication
 
 export function configureAndValidateOptions(): ValidatedBankApiSettings {
@@ -5245,9 +6799,78 @@ export function configureAndValidateOptions(): ValidatedBankApiSettings {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Composition/Config.hs ───────────
+-- Startup: typed settings record with smart-constructor validation
+-- [F#: [<CLIMutable>] type with [<Required>][<MinLength>][<Url>][<Range>] — Haskell uses an Either smart constructor]
+module Composition.Config
+  ( ValidatedBankApiSettings (..)
+  , configureAndValidateOptions
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import System.Environment (lookupEnv)
+import Text.Read (readMaybe)
+import Network.URI (parseAbsoluteURI)
+-- => network: URI parsing — equivalent to z.string().url() / [<Url>]
+import Control.Exception (throwIO, Exception)
+
+-- Validated settings type — constructor is exported but consumers prefer the smart constructor
+data ValidatedBankApiSettings = ValidatedBankApiSettings
+  { vbApiKey         :: Text
+  , vbBaseUrl        :: Text
+  , vbTimeoutSeconds :: Int
+  } deriving (Eq, Show)
+
+newtype ConfigError = ConfigError [Text] deriving (Show)
+instance Exception ConfigError
+
+-- Smart-constructor validation — equivalent to data annotations + ValidateOnStart
+validate :: Maybe String -> Maybe String -> Maybe String -> Either [Text] ValidatedBankApiSettings
+validate mKey mUrl mTo =
+  let keyOk = case mKey of
+        Just k | length k >= 10 -> Right (T.pack k)
+        -- => length >= 10: detects placeholder "REPLACE_ME" — [F#: [<MinLength(10)>]]
+        Just _  -> Left "apiKey must be at least 10 characters"
+        Nothing -> Left "BankApi__ApiKey is not set"
+      urlOk = case mUrl of
+        Just u | Just _ <- parseAbsoluteURI u -> Right (T.pack u)
+        -- => parseAbsoluteURI: same as z.string().url() / [<Url>]
+        Just _  -> Left "baseUrl must be a valid HTTP(S) URI"
+        Nothing -> Left "BankApi__BaseUrl is not set"
+      toOk  = case mTo of
+        Just s | Just n <- readMaybe s :: Maybe Int, n >= 5, n <= 120 -> Right n
+        -- => 5..120 range: same as [<Range(5, 120)>] / .min(5).max(120)
+        Just _  -> Left "timeoutSeconds must be between 5 and 120"
+        Nothing -> Left "BankApi__TimeoutSeconds is not set"
+  in collect keyOk urlOk toOk
+  where
+    collect (Right k) (Right u) (Right t) = Right (ValidatedBankApiSettings k u t)
+    collect a b c = Left (lefts [a, b, c])
+    lefts xs = [e | Left e <- xs]
+
+configureAndValidateOptions :: IO ValidatedBankApiSettings
+-- => Called once from Main at startup — equivalent to ValidateDataAnnotations().ValidateOnStart()
+configureAndValidateOptions = do
+  k  <- lookupEnv "BankApi__ApiKey"
+  u  <- lookupEnv "BankApi__BaseUrl"
+  ts <- lookupEnv "BankApi__TimeoutSeconds"
+  case validate k u ts of
+    Right settings -> pure settings
+    Left errs      -> throwIO (ConfigError errs)
+    -- => throwIO: process terminates with a clear error — Kubernetes rolls back the failed pod
+    -- => [F#: ValidateOnStart terminates WebApplication.Build() — same fail-fast contract]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5361,7 +6984,7 @@ const ValidatedBankApiSettings = z.object({
   // => timeoutSeconds: integer between 5 and 120 — rejects 0 or negative values at startup
 });
 
-function validateSettings(config: unknown): asserts config is z.infer<typeof ValidatedBankApiSettings> {
+function validateSettings(config: unknown): asserts config is z.infer {
   // => asserts: TypeScript assertion function — narrows type after validation
   const result = ValidatedBankApiSettings.safeParse(config);
   if (!result.success) {
@@ -5390,6 +7013,41 @@ export function makeFromConfig(config: unknown): BankingPort {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Payments/Infrastructure/OptionsAwareAdapterFactory.hs ───────────
+-- Adapter factory: bridges validated settings to the bank API port
+-- [F#: makeFromOptions reads IOptions<T>.Value — Haskell consumes the validated record directly]
+module Payments.Infrastructure.OptionsAwareAdapterFactory (makeFromConfig) where
+
+import Network.HTTP.Client (Manager)
+import qualified Data.Text as T
+
+import Composition.Config (ValidatedBankApiSettings (..))
+import Payments.Application.Ports (BankingPort)
+import Payments.Infrastructure.BankApiAdapter (BankApiSettings (..), makeBankApiAdapter)
+
+makeFromConfig :: ValidatedBankApiSettings -> Manager -> BankingPort
+-- => Called by the composition root at startup — settings already validated by configureAndValidateOptions
+-- => [F#: let makeFromOptions (options: IOptions<ValidatedBankApiSettings>) (factory: IHttpClientFactory)]
+makeFromConfig validated mgr =
+  let settings = BankApiSettings
+        { apiKey      = vbApiKey validated
+        -- => apiKey: validated non-null, minimum 10 characters by Composition.Config
+        , baseUrl     = vbBaseUrl validated
+        -- => baseUrl: validated as a well-formed absolute URI
+        , timeoutSecs = vbTimeoutSeconds validated
+        -- => timeoutSecs: validated as 5 ≤ x ≤ 120
+        }
+  in makeBankApiAdapter settings mgr
+  -- => Returns BankingPort — composition root wires it to the application service
+  -- => [F#: make settings factory — identical responsibility, different type plumbing]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: `ValidateOnStart` fails the process at startup — the Kubernetes Deployment rolls back the failed pod and keeps the previous replica running. This is the desired behaviour (fast fail over silent misconfiguration), but it means a misconfigured Secret causes a `CrashLoopBackOff` that requires a ConfigMap/Secret fix and a pod restart to recover. Hot-reload of `IOptions` (via `IOptionsMonitor<T>`) allows configuration changes without restart but bypasses `ValidateOnStart` — validate manually inside the reload callback if hot-reload is enabled.
@@ -5406,7 +7064,7 @@ The outbox relay worker from Guide 19 is itself a background job. When the platf
 
 An `IHostedService` with inline business logic skips the port entirely:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5547,6 +7205,52 @@ export function startStaleEscalatorAntiPattern(pool: Pool): NodeJS.Timeout {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/StaleWorkerAntiPattern.hs ─────────── (ANTI-PATTERN)
+-- Standard library: inline background job using postgresql-simple — no port abstraction
+-- [F#: IHostedService with Npgsql/Dapper inline — Haskell uses forever + threadDelay with the driver]
+module Purchasing.Infrastructure.StaleWorkerAntiPattern (startStaleEscalatorAntiPattern) where
+
+import Control.Concurrent (threadDelay)
+import Control.Concurrent.Async (Async, async)
+import Control.Monad (forever)
+import Data.Pool (Pool, withResource)
+import Database.PostgreSQL.Simple (Connection, query_, execute, Only (..))
+-- => postgresql-simple: imported directly into the worker — ties this module to PostgreSQL
+-- => ANTI-PATTERN: no port boundary; swapping the database forces a code change here
+
+startStaleEscalatorAntiPattern :: Pool Connection -> IO (Async ())
+-- => Pool parameter signals no port abstraction — DB technology hardwired
+-- => [F#: type StaleApprovalEscalatorWorker(connStr: string) — same anti-pattern]
+startStaleEscalatorAntiPattern pool = async $ forever $ do
+  withResource pool $ \conn -> do
+    -- => Borrow a Connection — same role as F# `use conn = new NpgsqlConnection(...)`
+    staleOrders <- query_ conn
+      "SELECT po_id FROM purchasing.purchase_orders \
+      \ WHERE status = 'AwaitingApproval' \
+      \ AND created_at < NOW() - INTERVAL '5 days'"
+      :: IO [Only String]
+    -- => SQL string: "5 days" business rule embedded raw — not configurable, not testable
+    -- => PROBLEM: cannot test "5 days" threshold without a real PostgreSQL instance
+    mapM_ (escalate conn) staleOrders
+  threadDelay 60_000_000
+  -- => 60s poll: hardcoded — equivalent to F# Task.Delay(60_000) / TS setInterval 60_000
+  where
+    escalate conn (Only poIdStr) = do
+      _ <- execute conn
+             "UPDATE purchasing.purchase_orders SET status = 'Escalated' WHERE po_id = ?"
+             (Only poIdStr)
+      -- => Direct UPDATE — no application service, no domain event published
+      -- => PROBLEM: downstream consumers never learn about the escalation
+      putStrLn ("Event: StaleApprovalEscalated " <> poIdStr)
+      -- => putStrLn: not a port — no test can assert on it or replace it
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: business logic ("5 days") inside the hosted service cannot be tested without a real database. No domain event is published when a PO is escalated — downstream consumers (approval-router, finance team) miss the transition. No port means swapping the database requires changing the hosted service.
@@ -5555,7 +7259,7 @@ export function startStaleEscalatorAntiPattern(pool: Pool): NodeJS.Timeout {
 
 The hexagonal approach defines a background job port and wires the hosted service to call the application service through it:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5705,7 +7409,7 @@ type PurchaseOrder = {
 };
 type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
 interface EventPublisher {
-  publish(e: object): Promise<Result<void, string>>;
+  publish(e: object): Promise;
 }
 
 // Clock port type — zero-argument function returning current date
@@ -5714,16 +7418,16 @@ export type Clock = () => Date;
 // => Frozen in tests: deterministic regardless of system clock
 
 export async function escalateStaleApprovals(
-  findStale: (cutoff: Date) => Promise<Result<readonly PurchaseOrder[], string>>,
+  findStale: (cutoff: Date) => Promise,
   // => Read port: find POs in AwaitingApproval state opened before the cutoff
   // => [F#: (findStale: DateTimeOffset -> Async<Result<PurchaseOrder list, string>>)]
-  escalatePO: (po: PurchaseOrder) => Promise<Result<void, string>>,
+  escalatePO: (po: PurchaseOrder) => Promise,
   // => Write port: escalate a single PO — adapter issues the UPDATE
   pub: EventPublisher,
   // => Event publisher: publish PurchaseOrderApprovalEscalated for each escalated PO
   clock: Clock,
   // => Clock port: returns current date — frozen in tests
-): Promise<Result<readonly PurchaseOrder[], string>> {
+): Promise {
   const cutoff = new Date(clock().getTime() - 5 * 24 * 60 * 60 * 1000);
   // => Subtract 5 days from the injected clock — testable without Date.now() dependency
   // => [F#: (clock ()).AddDays(-5.0) — same cutoff calculation, different API]
@@ -5763,9 +7467,74 @@ export async function escalateStaleApprovals(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Application/EscalateStaleApprovals.hs ───────────
+-- Background job port and application service: escalateStaleApprovals
+-- [F#: type EscalateStaleApprovalsJob = DateTimeOffset -> Async<Result<...>> — Haskell uses function type]
+module Purchasing.Application.EscalateStaleApprovals
+  ( Clock, escalateStaleApprovals ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, addUTCTime, nominalDay)
+import Control.Concurrent.Async (mapConcurrently_)
+
+import Purchasing.Domain (PurchaseOrder (..), PurchaseOrderId)
+import Purchasing.Application.Ports (EventPublisher (..), DomainEvent (..))
+
+-- Clock port: zero-argument IO returning current UTC time
+type Clock = IO UTCTime
+-- => [F#: type Clock = unit -> DateTimeOffset — same functional clock port pattern]
+-- => Frozen in tests: deterministic regardless of system clock
+
+escalateStaleApprovals
+  :: (UTCTime -> IO (Either Text [PurchaseOrder]))
+  -- => Read port: find POs in AwaitingApproval state opened before the cutoff
+  -- => [F#: (findStale: DateTimeOffset -> Async<Result<PurchaseOrder list, string>>)]
+  -> (PurchaseOrder -> IO (Either Text ()))
+  -- => Write port: escalate a single PO — adapter issues the UPDATE
+  -> EventPublisher
+  -- => Event publisher: publish PurchaseOrderApprovalEscalated for each escalated PO
+  -> Clock
+  -- => Clock port: returns current UTC time — frozen in tests
+  -> IO (Either Text [PurchaseOrder])
+escalateStaleApprovals findStale escalatePO pub clock = do
+  now <- clock
+  -- => Read current time via clock port — testable without getCurrentTime dependency
+  let cutoff = addUTCTime (negate (5 * nominalDay)) now
+  -- => Subtract 5 days — [F#: (clock ()).AddDays(-5.0); TS clock().getTime() - 5*86400000]
+  staleResult <- findStale cutoff
+  case staleResult of
+    Left e -> pure (Left e)
+    -- => Read failure: propagate the error — [F#: | Error e -> return Error e]
+    Right stalePOs -> do
+      mapConcurrently_ escalateOne stalePOs
+      -- => mapConcurrently_: escalate POs concurrently — [F#: Async.Parallel]
+      pure (Right stalePOs)
+      -- => Return the escalated list — caller (worker) logs the count
+  where
+    escalateOne po = do
+      r <- escalatePO po
+      case r of
+        Right () ->
+          -- => UPDATE committed: publish the escalation event
+          () <$ publish pub
+                  (PurchaseOrderApprovalEscalated (poId po) (poApprovalLevel po))
+          -- => Publish event — approval-router re-routes to next-level manager
+          -- => PurchaseOrderApprovalEscalated: tutorial-specific extension; not in the base spec
+        Left e ->
+          putStrLn $ "Failed to escalate PO " <> show (poId po) <> ": " <> T.unpack e
+          -- => Log and continue — partial failure acceptable for a batch job
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5884,13 +7653,13 @@ import { escalateStaleApprovals, type Clock } from "../application/EscalateStale
 type PurchaseOrder = { id: string; approvalLevel: string };
 type Result<T, E> = { _tag: "Right"; right: T } | { _tag: "Left"; left: E };
 interface EventPublisher {
-  publish(e: object): Promise<Result<void, string>>;
+  publish(e: object): Promise;
 }
 
 export function startStaleApprovalEscalator(
-  findStale: Parameters<typeof escalateStaleApprovals>[0],
+  findStale: Parameters[0],
   // => Read port: queries stale POs from the database adapter
-  escalatePO: Parameters<typeof escalateStaleApprovals>[1],
+  escalatePO: Parameters[1],
   // => Write port: issues the UPDATE for each stale PO
   pub: EventPublisher,
   // => Event publisher: publishes PurchaseOrderApprovalEscalated events
@@ -5921,11 +7690,68 @@ export function startStaleApprovalEscalator(
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: src/Purchasing/Infrastructure/StaleApprovalEscalatorWorker.hs ───────────
+-- Background job worker: calls the application service on a schedule
+-- [F#: IHostedService — Haskell uses async + forever loop with threadDelay]
+module Purchasing.Infrastructure.StaleApprovalEscalatorWorker
+  ( startStaleApprovalEscalator ) where
+
+import Control.Concurrent (threadDelay)
+import Control.Concurrent.Async (Async, async)
+import Control.Concurrent.STM (TVar, readTVarIO)
+import Control.Monad (forever, unless)
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime)
+
+import Purchasing.Domain (PurchaseOrder)
+import Purchasing.Application.Ports (EventPublisher)
+import Purchasing.Application.EscalateStaleApprovals
+  ( Clock, escalateStaleApprovals )
+
+startStaleApprovalEscalator
+  :: (UTCTime -> IO (Either Text [PurchaseOrder]))
+  -- => Read port: queries stale POs from the database adapter
+  -> (PurchaseOrder -> IO (Either Text ()))
+  -- => Write port: issues the UPDATE for each stale PO
+  -> EventPublisher
+  -- => Event publisher: publishes PurchaseOrderApprovalEscalated events
+  -> Clock
+  -- => Clock port: returns current UTC time — frozen in tests
+  -> TVar Bool
+  -- => stopSignal: shared flag — caller flips to True to initiate graceful shutdown
+  -- => [F#: CancellationToken — Haskell uses STM TVar for cooperative cancellation]
+  -> IO (Async ())
+-- => Returns Async () — caller may cancel it; equivalent to clearInterval / close! stop-ch
+startStaleApprovalEscalator findStale escalatePO pub clock stopSignal = async $ forever $ do
+  stopped <- readTVarIO stopSignal
+  unless stopped $ do
+    -- => Skip the cycle when shutdown requested — [F#: while not ct.IsCancellationRequested]
+    result <- escalateStaleApprovals findStale escalatePO pub clock
+    -- => Call the application service with all four ports — hexagonal isolation preserved
+    case result of
+      Right escalated ->
+        putStrLn $ "Escalated " <> show (length escalated) <> " stale purchase orders"
+        -- => In production, use a structured logger (katip) — [F#: ILogger<T>]
+      Left err ->
+        putStrLn $ "escalateStaleApprovals failed: " <> T.unpack err
+        -- => Log the error and continue — the next iteration retries
+    threadDelay 60_000_000
+    -- => 60 seconds: configurable via config adapter in production
+    -- => [F#: Task.Delay(60_000); TS setInterval 60_000]
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The unit test for the application service uses in-memory adapters — no Docker, no hosted service lifecycle:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6167,6 +7993,89 @@ test("escalates POs awaiting approval for more than 5 days", async () => {
 ```
 
 {{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: test/Purchasing/EscalateStaleApprovalsSpec.hs ───────────
+-- Unit test: escalateStaleApprovals using in-memory stubs and a frozen clock
+-- [F#: xUnit [<Fact>] — Haskell uses hspec; no IHostedService lifecycle, no Docker]
+module Test.Purchasing.EscalateStaleApprovalsSpec (spec) where
+
+import Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
+import Data.IORef (newIORef, readIORef, modifyIORef')
+import Data.Time (UTCTime, fromGregorian, UTCTime (..), secondsToDiffTime, addUTCTime)
+import qualified Data.UUID.V4 as UUIDv4
+
+import Purchasing.Domain
+  ( PurchaseOrder (..), Status (..), ApprovalLevel (..), Money (..) )
+import Purchasing.Application.Ports
+  ( EventPublisher (..), DomainEvent (..) )
+import Purchasing.Application.EscalateStaleApprovals (escalateStaleApprovals)
+
+spec :: Spec
+spec = describe "escalateStaleApprovals" $ do
+  it "escalates POs awaiting approval for more than 5 days" $ do
+    -- Arrange: frozen clock + stale PO aggregate
+    let frozenNow = UTCTime (fromGregorian 2026 5 17) (secondsToDiffTime 0)
+    -- => Frozen clock: cutoff becomes 2026-05-12 — deterministic regardless of test run date
+    -- => [F#: System.DateTimeOffset(2026, 5, 17, 0, 0, 0, TimeSpan.Zero); TS new Date("2026-05-17Z")]
+
+    poUUID       <- UUIDv4.nextRandom
+    supplierUUID <- UUIDv4.nextRandom
+    let stalePO = PurchaseOrder
+          { poId             = poUUID
+          , poSupplierId     = supplierUUID
+          , poTotalAmount    = Money 8000 "USD"
+          -- => 8000 USD: above L2 threshold — same scenario as F# / TS / Clojure tests
+          , poStatus         = AwaitingApproval
+          -- => AwaitingApproval: the only status that triggers escalation
+          , poApprovalLevel  = L2
+          -- => L2: carried into PurchaseOrderApprovalEscalated event
+          , poCreatedAt      = addUTCTime (negate (6 * 86400)) frozenNow
+          -- => 6 days before frozenNow — beyond the 5-day escalation threshold
+          }
+
+    escalatedRef <- newIORef ([] :: [PurchaseOrder])
+    -- => IORef list: captures POs passed to the write port — [F#: ref []; TS array push]
+    capturedRef  <- newIORef ([] :: [DomainEvent])
+
+    let findStale _cutoff = pure (Right [stalePO])
+        -- => Stub: ignores cutoff, returns the pre-built stalePO list
+        escalatePO po = do
+          modifyIORef' escalatedRef (po :)
+          -- => Capture the PO for assertion
+          pure (Right ())
+        pubStub = EventPublisher
+          { publish = \event -> do
+              modifyIORef' capturedRef (event :)
+              -- => Capture event — [F#: InMemoryEventPublisher]
+              pure (Right ())
+          }
+        clockStub = pure frozenNow
+        -- => Zero-argument IO returning frozenNow — [F#: fun () -> frozenNow]
+
+    -- Act
+    result <- escalateStaleApprovals findStale escalatePO pubStub clockStub
+    -- => Call the application service with all four stubs — pure function test
+
+    -- Assert
+    result `shouldSatisfy` \r -> case r of
+      Right [po] -> poId po == poId stalePO
+      _ -> False
+    -- => Right [stalePO]: service returned success with the escalated PO
+
+    escalated <- readIORef escalatedRef
+    length escalated `shouldBe` 1
+    -- => escalatePO stub was called exactly once — [F#: Assert.Equal(1, (!escalatedPOs).Length)]
+
+    captured <- readIORef capturedRef
+    length captured `shouldBe` 1
+    -- => One PurchaseOrderApprovalEscalated event captured
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the port-based background job adds an `EscalateStaleApprovalsJob` type alias, a `PurchasingService.escalateStaleApprovals` application service, and a hosted service that delegates to it — three files instead of one. For simple cleanup jobs that touch a single table with no domain events, the overhead may not be worth it. Apply the full hexagonal pattern when the job has testable business rules (the five-day threshold), produces domain events, or must be testable without Docker.

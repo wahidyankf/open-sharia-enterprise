@@ -38,6 +38,7 @@ Modern AI tools understand natural language and codebases to generate code, expl
 - **Claude Code** - Anthropic's AI-powered coding assistant with deep codebase understanding
 - **Hermes Agent** - Nous Research's self-improving open-source AI agent with built-in learning loop
 - **OpenClaw** - Free, open-source, local-first AI agent platform with tool-chaining and JSON5 configuration
+- **Pi Coding Agent** - Mario Zechner / Earendil Inc.'s minimal terminal coding harness with multi-provider LLM support and a TypeScript extension model (pi.dev)
 - **GitHub Copilot** - AI pair programmer suggesting code completions
 - **Cursor** - AI-first code editor with context-aware assistance
 
@@ -155,6 +156,19 @@ Free, open-source, local-first AI agent platform by Peter Steinberger:
 
 **Coverage**: 80 heavily annotated examples covering 95% of production use cases
 
+### Pi Coding Agent
+
+Minimal, extensible terminal coding harness by Mario Zechner / Earendil Inc. (pi.dev):
+
+- Installation, CLI commands, provider configuration
+- 15+ LLM providers (Anthropic, OpenAI, Google, Azure, Bedrock, Mistral, Groq, Cerebras, xAI, Hugging Face, OpenRouter, Ollama, and more)
+- Four operating modes: interactive TUI, print/JSON, RPC, SDK
+- TypeScript extension model (sub-agents, plan modes, tools)
+- Tree-structured session history; share via GitHub gist
+- Embedding via SDK and production patterns
+
+**Coverage**: 80 heavily annotated examples covering 95% of production use cases
+
 ### Coming Soon
 
 Additional automation tools planned for this section:
@@ -187,6 +201,7 @@ Jump directly to specific tools based on your needs:
 - Need AI assistance for coding? → **Claude Code**
 - Want a self-improving autonomous agent? → **Hermes Agent**
 - Need a local-first AI agent platform? → **OpenClaw**
+- Want a minimal, extensible coding harness? → **Pi Coding Agent**
 - Automating deployments? → **GitHub Actions** (coming soon)
 - Managing monorepos? → **Nx** (coming soon)
 
@@ -240,6 +255,7 @@ Ready to start automating? Choose your first tool:
 - **New to AI coding assistants?** → [Claude Code](/en/learn/software-engineering/automation-tools/claude-code)
 - **Want a self-improving AI agent?** → [Hermes Agent](/en/learn/software-engineering/automation-tools/hermes-agent)
 - **Need a local-first AI agent platform?** → [OpenClaw](/en/learn/software-engineering/automation-tools/openclaw)
+- **Want a minimal, extensible coding harness?** → [Pi Coding Agent](/en/learn/software-engineering/automation-tools/pi-coding-agent)
 - **Need to automate deployments?** → Coming soon (GitHub Actions)
 - **Managing complex builds?** → Coming soon (Nx)
 

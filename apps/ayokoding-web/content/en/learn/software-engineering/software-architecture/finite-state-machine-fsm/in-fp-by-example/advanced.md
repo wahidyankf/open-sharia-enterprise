@@ -3,12 +3,15 @@ title: "Advanced"
 date: 2026-05-17T00:00:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 51-75: Supplier lifecycle, Payment state machine, hierarchical states, parallel regions, history states, FSM persistence, event sourcing, and statecharts in F# (75-95% coverage)"
+description: "Examples 51-75: Supplier lifecycle, Payment state machine, hierarchical states, parallel regions, history states, FSM persistence, event sourcing, and statecharts in F# (canonical), Clojure, TypeScript, and Haskell (75-95% coverage)"
 tags:
   [
     "fsm",
     "finite-state-machine",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "state-machines",
     "supplier",
@@ -20,7 +23,7 @@ tags:
   ]
 ---
 
-This advanced section adds the `Supplier` lifecycle and `Payment` state machine to the Procure-to-Pay domain, then covers the patterns that turn flat FSMs into statecharts: hierarchical states, parallel regions, history states, FSM persistence, event sourcing, and actor-model integration. Examples are shown using discriminated unions, pure transition functions, and immutable records — canonical patterns for any functional language. F# is the primary language; Clojure and TypeScript equivalents appear in the tabbed examples. The `MurabahaContract` machine appears as an optional Sharia-finance extension.
+This advanced section adds the `Supplier` lifecycle and `Payment` state machine to the Procure-to-Pay domain, then covers the patterns that turn flat FSMs into statecharts: hierarchical states, parallel regions, history states, FSM persistence, event sourcing, and actor-model integration. Examples are shown using discriminated unions / ADTs, pure transition functions, and immutable records — canonical patterns for any functional language. F# is the primary language; Clojure, TypeScript, and Haskell equivalents appear in the tabbed examples. The `MurabahaContract` machine appears as an optional Sharia-finance extension.
 
 ## Supplier Lifecycle FSM (Examples 51–57)
 
@@ -50,7 +53,7 @@ stateDiagram-v2
     class Blacklisted blacklisted
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -207,11 +210,11 @@ type SupplierEvent =
   | "Blacklist"; // => Severe breach; permanent exclusion
 
 type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
-const Ok = <T>(v: T): Result<T, never> => ({ ok: true, value: v });
-const Err = <E>(e: E): Result<never, E> => ({ ok: false, error: e });
-const resultBind = <T, U, E>(r: Result<T, E>, f: (v: T) => Result<U, E>): Result<U, E> => (r.ok ? f(r.value) : r);
+const Ok = <T>(v: T): Result => ({ ok: true, value: v });
+const Err = <E>(e: E): Result => ({ ok: false, error: e });
+const resultBind = <T, U, E>(r: Result, f: (v: T) => Result): Result => (r.ok ? f(r.value) : r);
 
-type Supplier = Readonly<{ id: string; name: string; state: SupplierState }>;
+type Supplier = Readonly;
 
 // Transition table: [State:Event] -> SupplierState
 const supplierTransitions = new Map<string, SupplierState>([
@@ -224,7 +227,7 @@ const supplierTransitions = new Map<string, SupplierState>([
 ]);
 // => Blacklisted is terminal — no outgoing transitions listed
 
-const transitionSupplier = (sup: Supplier, event: SupplierEvent): Result<Supplier, string> => {
+const transitionSupplier = (sup: Supplier, event: SupplierEvent): Result => {
   const next = supplierTransitions.get(`${sup.state}:${event}`);
   if (!next) return Err(`${sup.state} --${event}--> (forbidden)`);
   return Ok({ ...sup, state: next });
@@ -243,6 +246,90 @@ const r3 = transitionSupplier(sup, "Approve");
 console.log(r1.ok ? r1.value.state : r1.error); // => Suspended
 console.log(r2.ok ? r2.value.state : r2.error); // => Approved
 console.log(r3.ok ? r3.value.state : r3.error); // => Approved --Approve--> (forbidden)
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierFsm.hs ───────────────────────────────────────────────────
+-- [F#: discriminated union SupplierState — compiler-enforced exhaustiveness;
+--  Haskell uses an ADT with deriving stock for Show/Eq/Ord — same closed set]
+{-# LANGUAGE DerivingStrategies #-}
+module SupplierFsm where
+
+import           Data.Map.Strict (Map)   -- => Strict map for the transition table
+import qualified Data.Map.Strict as Map  -- => Qualified import keeps the API clear
+
+-- Supplier state ADT: four constructors, one terminal (Blacklisted).
+-- => Compiler rejects any value outside this set, like F#'s DU.
+data SupplierState
+  = Pending      -- => Application received; vetting in progress
+  | Approved     -- => Cleared for new POs; appears in supplier selection
+  | Suspended    -- => Temporarily blocked; existing POs continue, no new POs
+  | Blacklisted  -- => Permanently excluded — terminal state
+  deriving stock (Show, Eq, Ord)  -- => Ord required for use as Map key
+
+-- Supplier event ADT: exhaustive alphabet of supplier-affecting events.
+data SupplierEvent
+  = Approve     -- => Vetting passed; supplier cleared for purchasing
+  | Suspend     -- => Compliance issue detected; temporary hold
+  | Reinstate   -- => Issue resolved; supplier restored to Approved
+  | Blacklist   -- => Severe breach; permanent exclusion
+  deriving stock (Show, Eq, Ord)
+
+-- Supplier record — immutable; identity + current state.
+data Supplier = Supplier
+  { supId    :: String         -- => Format: "sup_<id>"
+  , supName  :: String         -- => Supplier legal name
+  , supState :: SupplierState  -- => Current FSM state
+  } deriving stock (Show, Eq)
+
+-- Transition table keyed on (state, event) — same intent as F# Map.ofList.
+-- => Map.fromList builds an immutable lookup at module load.
+supplierTransitions :: Map (SupplierState, SupplierEvent) SupplierState
+supplierTransitions = Map.fromList
+  [ ((Pending,   Approve),   Approved)     -- => Vetting passed -> Approved
+  , ((Pending,   Blacklist), Blacklisted)  -- => Immediate exclusion from Pending
+  , ((Approved,  Suspend),   Suspended)    -- => Compliance issue -> Suspended
+  , ((Approved,  Blacklist), Blacklisted)  -- => Severe breach from Approved
+  , ((Suspended, Reinstate), Approved)     -- => Issue resolved -> back to Approved
+  , ((Suspended, Blacklist), Blacklisted)  -- => Escalation from Suspended
+  -- => Blacklisted: terminal — no outgoing transitions listed
+  ]
+
+-- Pure transition function: lookup table, return Either (Haskell's Result).
+-- [F#: Result<Supplier, string>; Haskell: Either String Supplier — same shape]
+transitionSupplier :: Supplier -> SupplierEvent -> Either String Supplier
+transitionSupplier sup event =
+  case Map.lookup (supState sup, event) supplierTransitions of
+    Just next -> Right sup { supState = next }
+    -- => Valid transition: return supplier with updated state
+    Nothing   -> Left $ show (supState sup) <> " --" <> show event <> "--> (forbidden)"
+    -- => (state, event) not in table — invalid for this supplier
+
+sup :: Supplier
+sup = Supplier { supId = "sup_001", supName = "Acme Supplies Ltd", supState = Approved }
+-- => Start in Approved state
+
+r1, r3 :: Either String Supplier
+r1 = transitionSupplier sup Suspend
+-- => Right (Supplier { supState = Suspended })
+
+r2 :: Either String Supplier
+r2 = r1 >>= \s -> transitionSupplier s Reinstate
+-- => Either's monadic bind chains transitions just like F# Result.bind
+
+r3 = transitionSupplier sup Approve
+-- => Left "Approved --Approve--> (forbidden)" (already Approved)
+
+-- main prints all three for parity with the F# session output.
+main :: IO ()
+main = do
+  print r1   -- => Right (Supplier { supState = Suspended })
+  print r2   -- => Right (Supplier { supState = Approved })
+  print r3   -- => Left "Approved --Approve--> (forbidden)"
 ```
 
 {{< /tab >}}
@@ -282,7 +369,7 @@ stateDiagram-v2
     class Blacklisted,Blocked,Rejected blocked
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -441,6 +528,70 @@ console.log(bl.ok ? `Affected POs: ${bl.value.affectedPOIds.length}` : bl.error)
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierFsm.hs ───────────────────────────────────────────────────
+-- [F#: pure predicate supplierEligibleForPO + cascade record BlacklistResult;
+--  Haskell uses pure boolean functions and a record return type — same shape]
+module SupplierFsm where
+
+-- Guard: can a supplier receive a new PO?
+-- => Pure predicate; depends only on the current state.
+supplierEligibleForPO :: SupplierState -> Bool
+supplierEligibleForPO state = state == Approved
+-- => Only Approved; Pending are unvetted, Suspended cannot receive new POs
+
+-- Guard: does blacklisting cross the edge INTO Blacklisted?
+-- => true only on the transition edge into Blacklisted (idempotency guard)
+blacklistingForcesDispute :: SupplierState -> SupplierState -> Bool
+blacklistingForcesDispute oldState newState =
+  newState == Blacklisted && oldState /= Blacklisted
+-- => Prevents spurious cascade if supplier was already blacklisted
+
+-- Cascade carrier: blacklisted supplier + PO ids the caller must force-dispute.
+data BlacklistResult = BlacklistResult
+  { brSupplier      :: Supplier   -- => Updated supplier in Blacklisted state
+  , brAffectedPOIds :: [String]   -- => PO ids to be force-disputed by caller
+  } deriving stock (Show, Eq)
+
+-- Pure blacklist function: returns Either carrying the cascade information.
+-- => Aggregate-boundary respecting: caller transitions each PO separately.
+blacklistSupplier :: Supplier -> [String] -> Either String BlacklistResult
+blacklistSupplier sup openPOIds
+  | supState sup == Blacklisted =
+      Left $ "Supplier " <> supId sup <> " is already blacklisted"
+      -- => Idempotent: no-op if already blacklisted
+  | otherwise =
+      case transitionSupplier sup Blacklist of
+        Left msg      -> Left msg
+        -- => Transition failed — propagate error (rare given guard above)
+        Right updated ->
+          let affected =
+                if blacklistingForcesDispute (supState sup) (supState updated)
+                  then openPOIds
+                  else []
+          -- => If crossing INTO Blacklisted, all open POs are affected
+          in Right BlacklistResult { brSupplier = updated, brAffectedPOIds = affected }
+
+approvedSup :: Supplier
+approvedSup = Supplier { supId = "sup_002", supName = "Beta Corp", supState = Approved }
+
+bl :: Either String BlacklistResult
+bl = blacklistSupplier approvedSup ["po_101", "po_102", "po_103"]
+-- => Right (BlacklistResult { brSupplier = ... Blacklisted, brAffectedPOIds = 3 ids })
+
+main :: IO ()
+main = do
+  putStrLn $ "Eligible (Approved):    " <> show (supplierEligibleForPO Approved)    -- => True
+  putStrLn $ "Eligible (Suspended):   " <> show (supplierEligibleForPO Suspended)   -- => False
+  putStrLn $ "Eligible (Pending):     " <> show (supplierEligibleForPO Pending)     -- => False
+  print bl
+  -- => Right (BlacklistResult { brAffectedPOIds = ["po_101","po_102","po_103"] })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Cross-machine effects are encoded as explicit data returned from a pure function — the caller decides when and how to apply the cascading PO state changes.
@@ -453,7 +604,7 @@ console.log(bl.ok ? `Affected POs: ${bl.value.affectedPOIds.length}` : bl.error)
 
 Supplier approval requires a minimum risk score and complete documentation. A multi-condition guard on the `Approve` transition returns all blocking reasons, not just the first.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -640,6 +791,86 @@ console.log(r2.ok ? r2.value.state : r2.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierFsm.hs ───────────────────────────────────────────────────
+-- [F#: SupplierApplication record + canApproveSupplier with yield-list;
+--  Haskell uses a record + a list-builder via Data.Maybe.catMaybes — same intent]
+module SupplierFsm where
+
+import Data.List   (intercalate)  -- => For joining error reasons with "; "
+import Data.Maybe  (catMaybes)    -- => Drops Nothing, keeps Just reasons
+import Text.Printf (printf)       -- => Fixed-precision risk-score formatting
+
+-- Supplier application: vetting data evaluated by the guard.
+data SupplierApplication = SupplierApplication
+  { saSupplierId   :: String   -- => Identifier of the supplier under review
+  , saRiskScore    :: Double   -- => 0.0 (high risk) to 1.0 (low risk)
+  , saHasDocuments :: Bool     -- => Required compliance documents submitted?
+  } deriving stock (Show, Eq)
+
+-- Thresholds as a record — swappable for tests without touching guard logic.
+data ApprovalThresholds = ApprovalThresholds
+  { atMinRiskScore     :: Double   -- => Below this: too risky
+  , atRequireDocuments :: Bool     -- => Documents mandatory under policy?
+  } deriving stock (Show, Eq)
+
+defaultThresholds :: ApprovalThresholds
+defaultThresholds = ApprovalThresholds { atMinRiskScore = 0.6, atRequireDocuments = True }
+
+-- Guard: accumulate ALL blocking reasons in one pass — no short-circuit.
+-- => Same fail-all pattern as F# list comprehension with yield.
+canApproveSupplier :: SupplierApplication -> ApprovalThresholds -> [String]
+canApproveSupplier app th = catMaybes
+  [ if saRiskScore app < atMinRiskScore th
+      then Just (printf "Risk score %.2f below minimum %.2f"
+                        (saRiskScore app) (atMinRiskScore th))
+      else Nothing
+    -- => Risk too high; supplier not ready for approval
+  , if atRequireDocuments th && not (saHasDocuments app)
+      then Just "Required compliance documents not submitted"
+      else Nothing
+    -- => Missing documents; cannot approve without them
+  ]
+-- => Empty list = guard passes; non-empty = blocked with all reasons listed
+
+-- Guarded approve: FSM state check first, then business guard.
+approveSupplier
+  :: Supplier
+  -> SupplierApplication
+  -> ApprovalThresholds
+  -> Either String Supplier
+approveSupplier sup app th
+  | supState sup /= Pending =
+      Left $ "Supplier " <> supId sup <> " is not in Pending state"
+      -- => FSM guard: approve only valid from Pending
+  | not (null errors) =
+      Left $ "Approval blocked: " <> intercalate "; " errors
+      -- => Business guard: concatenate all blocking reasons for actionable feedback
+  | otherwise =
+      Right sup { supState = Approved }
+      -- => All checks passed — advance to Approved
+  where
+    errors = canApproveSupplier app th
+
+pendingSup :: Supplier
+pendingSup = Supplier { supId = "sup_003", supName = "Gamma Ltd", supState = Pending }
+
+lowScoreApp, goodApp :: SupplierApplication
+lowScoreApp = SupplierApplication { saSupplierId = "sup_003", saRiskScore = 0.4,  saHasDocuments = False }
+goodApp     = SupplierApplication { saSupplierId = "sup_003", saRiskScore = 0.75, saHasDocuments = True  }
+
+main :: IO ()
+main = do
+  print (approveSupplier pendingSup lowScoreApp defaultThresholds)
+  -- => Left "Approval blocked: Risk score 0.40 below minimum 0.60; Required compliance documents not submitted"
+  print (approveSupplier pendingSup goodApp defaultThresholds)
+  -- => Right (Supplier { supId = "sup_003", supState = Approved })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Accumulating all guard failures in a list gives the caller a complete picture of why approval was blocked, enabling actionable feedback rather than a single opaque error.
@@ -652,7 +883,7 @@ console.log(r2.ok ? r2.value.state : r2.error);
 
 Hierarchical states nest states inside a parent state. `Approved` has two sub-states — `ActiveContract` and `ContractExpiring` — that do not affect the top-level FSM but drive notification logic.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -848,6 +1079,85 @@ console.log(renewed.ok ? renewed.value.subState : renewed.error); // => ActiveCo
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierFsm.hs ───────────────────────────────────────────────────
+-- [F#: ApprovedSubState DU + ExtendedSupplier with option<ApprovedSubState>;
+--  Haskell uses ADT + Maybe field — same Some/None semantics as F# option]
+module SupplierFsm where
+
+-- Sub-state ADT: only meaningful when the parent is Approved.
+-- => A separate ADT keeps the top-level SupplierState uncluttered.
+data ApprovedSubState
+  = ActiveContract     -- => Contract valid; no action needed
+  | ContractExpiring   -- => Expires within 30 days; renewal reminder needed
+  deriving stock (Show, Eq)
+
+-- Extended supplier: top-level state + optional sub-state.
+-- => extSubState is Nothing when extState is not Approved.
+data ExtendedSupplier = ExtendedSupplier
+  { extId       :: String
+  , extState    :: SupplierState
+  , extSubState :: Maybe ApprovedSubState   -- => Just only when extState = Approved
+  } deriving stock (Show, Eq)
+
+-- Smart constructor: enforces the sub-state/state invariant at creation time.
+-- => Mirrors the F# createExtSupplier function — single source of truth.
+createExtSupplier :: String -> SupplierState -> ExtendedSupplier
+createExtSupplier i st = ExtendedSupplier
+  { extId       = i
+  , extState    = st
+  , extSubState = case st of
+      Approved -> Just ActiveContract   -- => Default sub-state on approval
+      _        -> Nothing                -- => No sub-state outside Approved
+  }
+
+-- Enter ContractExpiring: only valid when top-level Approved + ActiveContract.
+markContractExpiring :: ExtendedSupplier -> Either String ExtendedSupplier
+markContractExpiring sup =
+  case (extState sup, extSubState sup) of
+    (Approved, Just ActiveContract) ->
+      Right sup { extSubState = Just ContractExpiring }
+      -- => Valid: active contract transitions to expiring
+    (Approved, Just ContractExpiring) ->
+      Left "Contract already marked as expiring"
+      -- => Idempotent guard: already in ContractExpiring
+    (other, _) ->
+      Left $ "Sub-state only applies to Approved suppliers; current state: " <> show other
+      -- => Top-level not Approved — sub-state has no meaning
+
+-- Renew contract: reset from ContractExpiring back to ActiveContract.
+renewContract :: ExtendedSupplier -> Either String ExtendedSupplier
+renewContract sup =
+  case (extState sup, extSubState sup) of
+    (Approved, Just ContractExpiring) ->
+      Right sup { extSubState = Just ActiveContract }
+      -- => Renewal resets the sub-state to active
+    (Approved, Just ActiveContract) ->
+      Left "Contract is not expiring; nothing to renew"
+    (other, _) ->
+      Left $ "Cannot renew contract for supplier in state " <> show other
+
+extSup :: ExtendedSupplier
+extSup = createExtSupplier "sup_004" Approved
+-- => ExtendedSupplier { extState = Approved, extSubState = Just ActiveContract }
+
+expiringE, renewedE :: Either String ExtendedSupplier
+expiringE = markContractExpiring extSup
+-- => Right (ExtendedSupplier { extSubState = Just ContractExpiring })
+
+renewedE = expiringE >>= renewContract
+-- => Right (ExtendedSupplier { extSubState = Just ActiveContract })
+
+main :: IO ()
+main = do
+  print expiringE   -- => Right (ExtendedSupplier { extSubState = Just ContractExpiring })
+  print renewedE    -- => Right (ExtendedSupplier { extSubState = Just ActiveContract })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Hierarchical sub-states are modelled as separate DUs held in `option` fields on the parent record — the top-level FSM remains unchanged while sub-states handle local concerns.
@@ -860,7 +1170,7 @@ console.log(renewed.ok ? renewed.value.subState : renewed.error); // => ActiveCo
 
 History states remember the last active sub-state so that when a suspended supplier is reinstated, it resumes where it left off rather than defaulting to the initial sub-state.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1037,6 +1347,75 @@ console.log(reinstated.ok ? reinstated.value.subState : reinstated.error); // =>
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierFsm.hs ───────────────────────────────────────────────────
+-- [F#: HistorySupplier with HistorySubState option; Haskell uses Maybe-typed
+--  history field — Nothing means no saved sub-state (post-reinstate or never)]
+module SupplierFsm where
+
+import Data.Maybe (fromMaybe)  -- => Optional default when history is Nothing
+
+-- Supplier with history: remembers sub-state across suspension cycles.
+data HistorySupplier = HistorySupplier
+  { hsId          :: String
+  , hsState       :: SupplierState
+  , hsSubState    :: Maybe ApprovedSubState   -- => Current sub-state
+  , hsHistorySub  :: Maybe ApprovedSubState   -- => Saved sub-state before suspension
+  } deriving stock (Show, Eq)
+
+-- Suspend with history: copy current sub-state into history before clearing.
+-- => Only Approved suppliers can be suspended; others rejected.
+suspendWithHistory :: HistorySupplier -> Either String HistorySupplier
+suspendWithHistory sup = case hsState sup of
+  Approved -> Right sup
+    { hsState      = Suspended
+    , hsHistorySub = hsSubState sup   -- => Save current sub-state as history
+    , hsSubState   = Nothing          -- => No sub-state while Suspended
+    }
+  other -> Left $ "Cannot suspend from state " <> show other
+  -- => Only Approved suppliers can be suspended
+
+-- Reinstate with history: restore saved sub-state (or default ActiveContract).
+reinstateWithHistory :: HistorySupplier -> Either String HistorySupplier
+reinstateWithHistory sup = case hsState sup of
+  Suspended ->
+    let restoredSub = fromMaybe ActiveContract (hsHistorySub sup)
+    -- => Restore history, or ActiveContract if history is Nothing
+    in Right sup
+         { hsState      = Approved
+         , hsSubState   = Just restoredSub  -- => Sub-state restored from history
+         , hsHistorySub = Nothing            -- => Clear history after single use
+         }
+  other -> Left $ "Cannot reinstate from state " <> show other
+  -- => Only Suspended suppliers can be reinstated
+
+-- Simulate: Approved+ContractExpiring -> suspend -> reinstate, expiring restored.
+initialHS :: HistorySupplier
+initialHS = HistorySupplier
+  { hsId         = "sup_005"
+  , hsState      = Approved
+  , hsSubState   = Just ContractExpiring
+  , hsHistorySub = Nothing
+  }
+-- => Contract was expiring before suspension
+
+suspendedHS, reinstatedHS :: Either String HistorySupplier
+suspendedHS  = suspendWithHistory initialHS
+-- => Right (HistorySupplier { hsState = Suspended, hsHistorySub = Just ContractExpiring })
+
+reinstatedHS = suspendedHS >>= reinstateWithHistory
+-- => Right (HistorySupplier { hsState = Approved, hsSubState = Just ContractExpiring })
+
+main :: IO ()
+main = do
+  print suspendedHS    -- => Right ... Suspended, hsHistorySub = Just ContractExpiring
+  print reinstatedHS   -- => Right ... Approved, hsSubState = Just ContractExpiring
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: History state is just a field on the record — `HistorySubState` is saved on suspension and restored on reinstatement, requiring no special FSM infrastructure.
@@ -1049,7 +1428,7 @@ console.log(reinstated.ok ? reinstated.value.subState : reinstated.error); // =>
 
 This example demonstrates that the data-driven FSM pattern — a map from `[state, event]` to next-state — is portable across languages. The same structure works in Python, TypeScript, Go, F#, and Clojure with only syntax differences.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1219,6 +1598,59 @@ console.log(runGenericMachine(supplierMachine, "Blacklisted", "Approve"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierFsm.hs ───────────────────────────────────────────────────
+-- [F#: string-keyed Map<string * string, string> for portability;
+--  Haskell uses Data.Map.Strict with the same tuple key — pure data-driven FSM]
+module SupplierFsm where
+
+import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map  -- => Qualified import keeps Map.lookup readable
+
+-- String-keyed transition table — mirrors Python's dict-based pattern.
+-- => Strings here demonstrate the language-agnostic structure; ADTs are
+--    preferred when possible (see Example 51).
+pythonStyleTransitions :: Map (String, String) String
+pythonStyleTransitions = Map.fromList
+  [ (("Pending",   "approve"),   "Approved")     -- => Python equivalent: (PENDING,"approve")->APPROVED
+  , (("Pending",   "blacklist"), "Blacklisted")  -- => Same Map pattern across all languages
+  , (("Approved",  "suspend"),   "Suspended")
+  , (("Approved",  "blacklist"), "Blacklisted")
+  , (("Suspended", "reinstate"), "Approved")
+  , (("Suspended", "blacklist"), "Blacklisted")
+  ]
+-- => Blacklisted is terminal — no outgoing entries
+
+-- Generic string transition: Either propagates "no transition" errors.
+stringTransition :: String -> String -> Either String String
+stringTransition state event =
+  case Map.lookup (state, event) pythonStyleTransitions of
+    Just next -> Right next
+    -- => Transition found in the table
+    Nothing   -> Left $ "No transition: " <> state <> " + " <> event
+    -- => Invalid (state, event) pair
+
+-- Replay a string-keyed event log via foldM over Either.
+-- [F#: recursive go function — Haskell uses foldl' threading Either]
+replayStringEvents :: [String] -> Either String String
+replayStringEvents = foldl step (Right "Pending")
+  where
+    step (Left err) _      = Left err  -- => Short-circuit once an error occurs
+    step (Right st) event  = stringTransition st event
+                             -- => Thread current state through each transition
+
+main :: IO ()
+main = do
+  print (replayStringEvents ["approve", "suspend", "reinstate"])
+  -- => Right "Approved"
+  print (replayStringEvents ["approve", "approve"])
+  -- => Left "No transition: Approved + approve"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The data-driven Map FSM pattern is language-agnostic — the same transition table structure works in Python, TypeScript, Go, or F# with only syntax differences.
@@ -1231,7 +1663,7 @@ console.log(runGenericMachine(supplierMachine, "Blacklisted", "Approve"));
 
 Blacklisting a supplier must atomically flag all its open POs as Disputed. This example shows how a pure function computes the cascade, and how the caller applies each PO transition via the PO FSM.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1397,6 +1829,77 @@ if (cascade.ok) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierFsm.hs ───────────────────────────────────────────────────
+-- [F#: pure cascade producing CascadeResult; Haskell uses a record with a
+--  list of (POId, target PoState) pairs and domain-event strings]
+module SupplierFsm where
+
+-- POState carried in cascade calculations (defined in the PO FSM module).
+data POState = Draft | Issued | Acknowledged | Received | Invoiced | Disputed
+  deriving stock (Show, Eq)
+
+-- Cascade input: a PO opened by some supplier with a current FSM state.
+data OpenPO = OpenPO
+  { opPOId       :: String
+  , opSupplierId :: String
+  , opState      :: POState
+  } deriving stock (Show, Eq)
+
+-- Cascade result: blacklisted supplier + the PO transitions caller must apply.
+data CascadeResult = CascadeResult
+  { crUpdatedSupplier :: Supplier
+  , crPOTransitions   :: [(String, POState)]   -- => (POId, target state)
+  , crDomainEvents    :: [String]              -- => Audit/event-bus messages
+  } deriving stock (Show, Eq)
+
+-- Pure cascade function: no I/O; returns the complete change set as data.
+-- => Aggregate-boundary respecting; application layer applies the transitions.
+computeBlacklistCascade :: Supplier -> [OpenPO] -> Either String CascadeResult
+computeBlacklistCascade sup openPOs
+  | supState sup == Blacklisted = Left "Supplier is already blacklisted"
+    -- => Idempotent: skip if already blacklisted
+  | otherwise = case transitionSupplier sup Blacklist of
+      Left msg      -> Left msg
+      Right updated ->
+        let affected   = filter (\po -> opSupplierId po == supId sup) openPOs
+            -- => Keep only POs belonging to this blacklisted supplier
+            transitions = map (\po -> (opPOId po, Disputed)) affected
+            -- => Each affected PO -> Disputed state
+            events      = ("SupplierBlacklisted:" <> supId sup)
+                        : map (\(pid, _) -> "POForceDisputed:" <> pid) transitions
+            -- => One audit event per state change for the application's event bus
+        in Right CascadeResult
+             { crUpdatedSupplier = updated
+             , crPOTransitions   = transitions
+             , crDomainEvents    = events
+             }
+
+supC :: Supplier
+supC = Supplier { supId = "sup_006", supName = "Delta Ltd", supState = Approved }
+
+openPOsC :: [OpenPO]
+openPOsC =
+  [ OpenPO { opPOId = "po_201", opSupplierId = "sup_006", opState = Issued }
+  , OpenPO { opPOId = "po_202", opSupplierId = "sup_006", opState = Acknowledged }
+  , OpenPO { opPOId = "po_301", opSupplierId = "sup_007", opState = Issued }
+  -- => po_301 belongs to sup_007 — should not be affected by the cascade
+  ]
+
+cascade :: Either String CascadeResult
+cascade = computeBlacklistCascade supC openPOsC
+-- => Right (CascadeResult { crPOTransitions = [("po_201",Disputed),("po_202",Disputed)] })
+
+main :: IO ()
+main = do
+  print cascade
+  -- => Right (CascadeResult { crUpdatedSupplier = ... Blacklisted, 2 transitions })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Computing the cascade as data (`CascadeResult`) gives the application layer a complete change set to apply transactionally — no hidden mutations inside the FSM functions.
@@ -1434,7 +1937,7 @@ stateDiagram-v2
     class Cancelled terminal
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1639,6 +2142,87 @@ console.log(result.ok ? `state: ${result.value.state}, retries: ${result.value.r
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: PaymentState DU + retry counter; Haskell mirrors with an ADT and a
+--  Payment record carrying paymentRetryCount — same shape as F# Payment]
+module PaymentFsm where
+
+import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map  -- => Qualified import keeps Map.lookup readable
+
+-- Payment state ADT: six states, two terminal (Settled and Cancelled).
+data PaymentState
+  = PayPending     -- => Payment created; awaiting authorisation
+  | Authorised     -- => Bank authorised the amount; ready for processing
+  | Processing     -- => Being processed by payment gateway
+  | Settled        -- => Money transferred — terminal state
+  | PayFailed      -- => Gateway failure; retry allowed up to limit
+  | Cancelled      -- => Abandoned before settlement — terminal state
+  deriving stock (Show, Eq, Ord)
+
+-- Payment event ADT: exhaustive event alphabet for payments.
+data PaymentEvent
+  = Authorise   -- => Bank authorises the amount
+  | Process     -- => Submit to payment gateway
+  | Settle      -- => Gateway confirms successful transfer
+  | Fail        -- => Gateway reports failure
+  | Retry       -- => Retry processing after failure
+  | Cancel      -- => Cancel before settlement
+  deriving stock (Show, Eq, Ord)
+
+-- Payment record with a retry counter for the retry-limit guard.
+data Payment = Payment
+  { payId         :: String         -- => Unique payment id (e.g., "pay_001")
+  , payAmount     :: Rational       -- => Use Rational/Decimal for exact money
+  , payState      :: PaymentState   -- => Current FSM state
+  , payRetryCount :: Int            -- => Times Retry has been applied
+  } deriving stock (Show, Eq)
+
+-- Transition table: every valid (state, event) pair to next-state.
+paymentTransitions :: Map (PaymentState, PaymentEvent) PaymentState
+paymentTransitions = Map.fromList
+  [ ((PayPending,  Authorise), Authorised)  -- => Authorisation received
+  , ((Authorised,  Process),   Processing)  -- => Submitted to gateway
+  , ((Processing,  Settle),    Settled)     -- => Success — terminal
+  , ((Processing,  Fail),      PayFailed)   -- => Gateway failure
+  , ((PayFailed,   Retry),     Processing)  -- => Re-submit to gateway
+  , ((PayPending,  Cancel),    Cancelled)   -- => Cancelled before auth
+  , ((Authorised,  Cancel),    Cancelled)   -- => Cancelled after auth, before process
+  ]
+
+-- Pure transition function: increments retry counter on Retry events.
+transitionPayment :: Payment -> PaymentEvent -> Either String Payment
+transitionPayment payment event =
+  case Map.lookup (payState payment, event) paymentTransitions of
+    Nothing   -> Left $ "No transition: " <> show (payState payment) <> " + " <> show event
+    Just next ->
+      let retries = if event == Retry
+                       then payRetryCount payment + 1
+                       else payRetryCount payment
+          -- => Increment retry counter only on Retry event
+      in Right payment { payState = next, payRetryCount = retries }
+
+pay :: Payment
+pay = Payment { payId = "pay_001", payAmount = 5000, payState = PayPending, payRetryCount = 0 }
+
+-- Chain transitions via Either's monadic bind — same Result.bind semantics as F#.
+resultChain :: Payment -> Either String Payment
+resultChain p =
+  transitionPayment p Authorise
+    >>= \p1 -> transitionPayment p1 Process
+    >>= \p2 -> transitionPayment p2 Fail
+    >>= \p3 -> transitionPayment p3 Retry
+
+main :: IO ()
+main = print (resultChain pay)
+-- => Right (Payment { payState = Processing, payRetryCount = 1 })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The retry counter is a field on the record, incremented atomically with the state transition — the guard in Example 59 can read it to enforce the retry limit.
@@ -1651,7 +2235,7 @@ console.log(result.ok ? `state: ${result.value.state}, retries: ${result.value.r
 
 A maximum retry count prevents indefinite retries. The guard reads `RetryCount` from the record and rejects the `Retry` event when the limit is reached.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1770,7 +2354,7 @@ const canRetry = (payment: Payment): boolean => payment.state === "Failed" && pa
 // => Must be in Failed state AND below the retry limit
 
 // Guarded retry transition: checks limit before applying the Retry event.
-const guardedRetry = (payment: Payment): Result<Payment, string> => {
+const guardedRetry = (payment: Payment): Result => {
   if (!canRetry(payment))
     return payment.state !== "Failed"
       ? Err(`Cannot retry payment in state ${payment.state}; must be Failed`)
@@ -1801,6 +2385,57 @@ console.log(retry2.ok ? "" : retry2.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: canRetry predicate + guarded retry; Haskell uses pure Bool predicate
+--  and an Either-returning guarded retry — identical separation of concerns]
+module PaymentFsm where
+
+-- Maximum retries before escalation to operations.
+maxRetries :: Int
+maxRetries = 3  -- => After 3 failed retries, escalate to operations
+
+-- Guard: can this payment be retried?
+-- => Pure predicate; reads only fields on the Payment record.
+canRetry :: Payment -> Bool
+canRetry payment =
+  payState payment == PayFailed && payRetryCount payment < maxRetries
+-- => Must be in PayFailed state AND below the retry limit
+
+-- Guarded retry: combines FSM validity with business count check.
+retryPayment :: Payment -> Either String Payment
+retryPayment payment
+  | canRetry payment        = transitionPayment payment Retry
+    -- => Guard passed — delegate to the standard transition function
+  | payState payment == PayFailed =
+      Left $ "Retry limit reached ("
+          <> show (payRetryCount payment) <> "/" <> show maxRetries
+          <> "); escalate to ops"
+      -- => In PayFailed state but the limit is exhausted
+  | otherwise =
+      Left $ "Cannot retry payment in state " <> show (payState payment)
+      -- => Not in PayFailed state — retry is semantically invalid
+
+-- Exhausted retries: count already equals the maximum.
+exhausted :: Payment
+exhausted = Payment { payId = "pay_002", payAmount = 1200, payState = PayFailed, payRetryCount = 3 }
+
+-- Retryable: failure with one prior retry — still under the limit.
+retryable :: Payment
+retryable = Payment { payId = "pay_003", payAmount = 800, payState = PayFailed, payRetryCount = 1 }
+
+main :: IO ()
+main = do
+  print (retryPayment exhausted)
+  -- => Left "Retry limit reached (3/3); escalate to ops"
+  print (retryPayment retryable)
+  -- => Right (Payment { payState = Processing, payRetryCount = 2 })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `canRetry` encapsulates both the FSM state check and the business counter check — callers use a single guard that enforces both dimensions simultaneously.
@@ -1813,7 +2448,7 @@ console.log(retry2.ok ? "" : retry2.error);
 
 In a statechart, parallel regions run concurrently. In F# this is modelled as a record with two state fields — one for the Payment FSM and one for the Notification FSM — updated by a combined transition function.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1997,6 +2632,67 @@ console.log(
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: PaymentWithNotification record holding two parallel FSM regions;
+--  Haskell uses a record with two fields and a pure combined-transition fn]
+module PaymentFsm where
+
+-- Notification state ADT: runs in parallel with the Payment FSM.
+data NotificationState
+  = Unsent        -- => No notification dispatched yet
+  | Sent          -- => Notification dispatched to customer
+  | Acknowledged  -- => Customer opened/acknowledged the notification
+  deriving stock (Show, Eq)
+
+-- Combined parallel state: two orthogonal FSMs composed into one record.
+data PaymentWithNotification = PaymentWithNotification
+  { pwnPayment      :: Payment              -- => Payment FSM state
+  , pwnNotification :: NotificationState    -- => Notification FSM state
+  } deriving stock (Show, Eq)
+
+-- Parallel transition: advances both regions atomically from one event.
+transitionParallel
+  :: PaymentWithNotification
+  -> PaymentEvent
+  -> Either String PaymentWithNotification
+transitionParallel combined event =
+  case transitionPayment (pwnPayment combined) event of
+    Left msg            -> Left msg
+    -- => Payment FSM rejected the event — propagate the error
+    Right updatedPayment ->
+      let updatedNotification = case event of
+            Authorise -> Sent  -- => Notify customer on authorisation
+            Fail      -> Sent  -- => Notify customer of failure
+            Settle    -> Sent  -- => Notify customer of settlement
+            _         -> pwnNotification combined
+            -- => All other events leave notification state unchanged
+      in Right PaymentWithNotification
+           { pwnPayment      = updatedPayment
+           , pwnNotification = updatedNotification
+           }
+-- => Both regions updated in one return value — no mutable state anywhere
+
+initialPN :: PaymentWithNotification
+initialPN = PaymentWithNotification
+  { pwnPayment      = Payment { payId = "pay_004", payAmount = 3000, payState = PayPending, payRetryCount = 0 }
+  , pwnNotification = Unsent
+  }
+-- => Both regions start in their initial states
+
+afterAuth :: Either String PaymentWithNotification
+afterAuth = transitionParallel initialPN Authorise
+-- => Payment: PayPending -> Authorised; Notification: Unsent -> Sent
+
+main :: IO ()
+main = print afterAuth
+-- => Right (PaymentWithNotification { pwnPayment = ... Authorised, pwnNotification = Sent })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Parallel regions are modelled as separate fields on a combined record — the combined transition function advances both regions atomically without any concurrency primitives.
@@ -2009,7 +2705,7 @@ console.log(
 
 FSM state must survive process restarts. This example shows how to serialise a `Payment` record to a JSON-compatible representation and reconstruct it, using F# discriminated union string conversion.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2147,7 +2843,7 @@ const serializePayment = (payment: Payment): string =>
 // => satisfies ensures the object matches SerializedPayment at compile time
 
 // Deserialise with validation — unknown JSON may be invalid.
-const deserializePayment = (json: string): Result<Payment, string> => {
+const deserializePayment = (json: string): Result => {
   let parsed: unknown;
   try {
     parsed = JSON.parse(json);
@@ -2181,6 +2877,77 @@ console.log(invalid.ok ? "" : invalid.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: PaymentSnapshot record with state-as-string + matching deserialiser;
+--  Haskell uses Show-derived names + a parser returning Either for safety]
+module PaymentFsm where
+
+-- Snapshot: flat JSON-friendly representation of Payment.
+-- => ADT cases are stored as their constructor names for schema resilience.
+data PaymentSnapshot = PaymentSnapshot
+  { snapId         :: String
+  , snapAmount     :: Rational
+  , snapState      :: String   -- => ADT constructor name; e.g. "Processing"
+  , snapRetryCount :: Int      -- => Counter persisted alongside state
+  } deriving stock (Show, Eq)
+
+-- Serialise: Payment -> snapshot via Show on the state constructor.
+-- => show PayPending => "PayPending"; round-tripped by parsePaymentState below.
+toSnapshot :: Payment -> PaymentSnapshot
+toSnapshot p = PaymentSnapshot
+  { snapId         = payId p
+  , snapAmount     = payAmount p
+  , snapState      = show (payState p)   -- => Show derives the constructor name
+  , snapRetryCount = payRetryCount p
+  }
+
+-- Deserialise the state string back to PaymentState.
+-- => Explicit case handles unknown strings — graceful schema evolution.
+parsePaymentState :: String -> Either String PaymentState
+parsePaymentState s = case s of
+  "PayPending" -> Right PayPending
+  "Authorised" -> Right Authorised
+  "Processing" -> Right Processing
+  "Settled"    -> Right Settled
+  "PayFailed"  -> Right PayFailed
+  "Cancelled"  -> Right Cancelled
+  other        -> Left $ "Unknown PaymentState: " <> other
+  -- => Unknown future-version strings surface as typed errors, not exceptions
+
+-- Reconstruct Payment from snapshot — Either propagates parse errors.
+fromSnapshot :: PaymentSnapshot -> Either String Payment
+fromSnapshot snap = do
+  st <- parsePaymentState (snapState snap)
+  -- => Bind on Either short-circuits if the state name is unknown
+  Right Payment
+    { payId         = snapId snap
+    , payAmount     = snapAmount snap
+    , payState      = st
+    , payRetryCount = snapRetryCount snap
+    }
+
+paymentP61 :: Payment
+paymentP61 = Payment { payId = "pay_005", payAmount = 2500, payState = Processing, payRetryCount = 2 }
+
+snapshot :: PaymentSnapshot
+snapshot = toSnapshot paymentP61
+-- => PaymentSnapshot { snapState = "Processing", snapRetryCount = 2 }
+
+restored :: Either String Payment
+restored = fromSnapshot snapshot
+-- => Right (Payment { payState = Processing, payRetryCount = 2 })
+
+main :: IO ()
+main = do
+  putStrLn $ "Snapshot: " <> show snapshot
+  putStrLn $ "Restored: " <> show restored
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Serialising DU cases as strings with an explicit `match` deserialiser handles unknown future states gracefully and keeps the persistence layer decoupled from the DU definition.
@@ -2193,7 +2960,7 @@ console.log(invalid.ok ? "" : invalid.error);
 
 The event-sourced approach stores events rather than state. This example rebuilds a `Payment`'s current state by folding over its event log, mirroring the `replayEvents` function from the beginner level but applied to the Payment FSM.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2351,6 +3118,70 @@ console.log(partial.ok ? partial.value.state : partial.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: replayPaymentEvents recursive fold over stored events;
+--  Haskell uses foldl' on Either — same short-circuit semantics, no recursion]
+module PaymentFsm where
+
+import Data.List (foldl')   -- => Strict left-fold avoids thunk accumulation
+
+-- Stored event: one entry per applied event for the payment.
+data PaymentEventRecord = PaymentEventRecord
+  { perEventId    :: String        -- => Unique event id (UUID)
+  , perPaymentId  :: String        -- => Which payment this event belongs to
+  , perEvent      :: PaymentEvent  -- => The transition event applied
+  , perOccurredAt :: Integer       -- => Unix timestamp (milliseconds)
+  } deriving stock (Show, Eq)
+
+-- Replay: fold stored events onto an initial Payment record.
+-- => Either short-circuits on the first invalid event in the log.
+replayPaymentEvents
+  :: String
+  -> Rational
+  -> [PaymentEventRecord]
+  -> Either String Payment
+replayPaymentEvents paymentId initialAmount events =
+  foldl' step (Right initial) events
+  where
+    initial = Payment
+      { payId         = paymentId
+      , payAmount     = initialAmount
+      , payState      = PayPending   -- => Always start from PayPending in event-sourced rebuild
+      , payRetryCount = 0
+      }
+    step (Left err) _      = Left err
+    -- => Already errored — short-circuit remaining events
+    step (Right cur) rec   =
+      case transitionPayment cur (perEvent rec) of
+        Right next -> Right next
+        -- => Valid event — advance to the next state
+        Left msg   -> Left $ "Event " <> perEventId rec <> ": " <> msg
+        -- => Invalid event in log — surface event id for debugging
+
+eventLog :: [PaymentEventRecord]
+eventLog =
+  [ PaymentEventRecord "evt_001" "pay_006" Authorise 1000
+  , PaymentEventRecord "evt_002" "pay_006" Process   2000
+  , PaymentEventRecord "evt_003" "pay_006" Fail      3000
+  , PaymentEventRecord "evt_004" "pay_006" Retry     4000
+  , PaymentEventRecord "evt_005" "pay_006" Settle    5000
+  ]
+-- => Lifecycle: PayPending -> Authorised -> Processing -> PayFailed -> Processing -> Settled
+
+finalState :: Either String Payment
+finalState = replayPaymentEvents "pay_006" 7500 eventLog
+-- => Right (Payment { payState = Settled, payRetryCount = 1 })
+
+main :: IO ()
+main = print finalState
+-- => Right (Payment { payState = Settled, payRetryCount = 1 })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `List.fold` over stored events reconstructs the current state deterministically — the same event log always produces the same state, enabling time-travel debugging and audit replay.
@@ -2363,7 +3194,7 @@ console.log(partial.ok ? partial.value.state : partial.error);
 
 This example composes hierarchical sub-states, parallel notification tracking, and history into a single `FullPayment` record, demonstrating how the independent concepts compose without conflict.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2561,6 +3392,74 @@ console.log(
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: FullPayment composing hierarchical + parallel + history; Haskell
+--  composes the dimensions as orthogonal fields on a single record]
+module PaymentFsm where
+
+-- Processing sub-states: only meaningful when Payment is in Processing.
+data ProcessingSubState
+  = AwaitingGateway    -- => Request sent; waiting for gateway response
+  | GatewayResponded   -- => Response received; finalising
+  deriving stock (Show, Eq)
+
+-- Full statechart: main FSM + parallel notification + hierarchical sub-state + history.
+data FullPayment = FullPayment
+  { fpId              :: String
+  , fpAmount          :: Rational
+  , fpState           :: PaymentState
+  , fpRetryCount      :: Int
+  , fpSubState        :: Maybe ProcessingSubState  -- => Just only when Processing
+  , fpHistorySubState :: Maybe ProcessingSubState  -- => Saved on exit from Processing
+  , fpNotification    :: NotificationState         -- => Parallel notification region
+  } deriving stock (Show, Eq)
+
+-- Enter Processing from Authorised: set initial sub-state and notify customer.
+enterProcessing :: FullPayment -> Either String FullPayment
+enterProcessing fp = case fpState fp of
+  Authorised -> Right fp
+    { fpState        = Processing
+    , fpSubState     = Just AwaitingGateway   -- => Hierarchical: enter sub-state
+    , fpNotification = Sent                   -- => Parallel: notify on processing start
+    }
+  other -> Left $ "Cannot enter Processing from " <> show other
+
+-- Settle from Processing: save history, clear sub-state, advance notification.
+settlePayment :: FullPayment -> Either String FullPayment
+settlePayment fp = case fpState fp of
+  Processing -> Right fp
+    { fpState           = Settled
+    , fpHistorySubState = fpSubState fp        -- => Save sub-state to history on exit
+    , fpSubState        = Nothing              -- => No active sub-state when Settled
+    , fpNotification    = Sent                 -- => Parallel: notify on settlement
+    }
+  other -> Left $ "Cannot settle payment in state " <> show other
+
+initialFP :: FullPayment
+initialFP = FullPayment
+  { fpId              = "pay_007"
+  , fpAmount          = 4000
+  , fpState           = Authorised
+  , fpRetryCount      = 0
+  , fpSubState        = Nothing
+  , fpHistorySubState = Nothing
+  , fpNotification    = Unsent
+  }
+
+settled :: Either String FullPayment
+settled = enterProcessing initialFP >>= settlePayment
+-- => Right (FullPayment { fpState = Settled, fpHistorySubState = Just AwaitingGateway })
+
+main :: IO ()
+main = print settled
+-- => Right (FullPayment { fpState = Settled, fpSubState = Nothing, fpHistorySubState = Just AwaitingGateway, fpNotification = Sent })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Hierarchical sub-states, parallel regions, and history states compose naturally as orthogonal record fields — the combined record is still an immutable value with a single transition function.
@@ -2573,7 +3472,7 @@ console.log(
 
 This example verifies that all four machines — `PurchaseOrder`, `Invoice`, `Supplier`, and `Payment` — can process their full happy-path event sequences correctly.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2700,19 +3599,11 @@ printfn "Payment final state:  %A" payResult  // => Ok Settled
 // [F#: P2P coverage validator across all four machines; Clojure: coverage map]
 // TypeScript: pure coverage check — validates all machines are in consistent states.
 
-type P2PSystemState = Readonly<{
-  poState: string;
-  invoiceState: string | null;
-  supplierState: SupplierState;
-  paymentState: PaymentState | null;
-}>;
+type P2PSystemState = Readonly;
 // => Snapshot of all four P2P aggregate states at a single point in time
 
 // Business invariants across machines — pure boolean checks.
-const p2pInvariantChecks: ReadonlyArray<{
-  name: string;
-  check: (state: P2PSystemState) => boolean;
-}> = [
+const p2pInvariantChecks: ReadonlyArray = [
   {
     name: "Supplier must be Approved when PO is not Cancelled",
     check: (s) => s.poState === "Cancelled" || s.supplierState === "Approved",
@@ -2757,6 +3648,56 @@ checkP2PInvariants(invalidState).forEach((v) => console.log(v));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: IntegrationCheck.hs ─────────────────────────────────────────────
+-- [F#: generic foldEvents with type parameters 'S 'E; Haskell uses a polymorphic
+--  foldEvents :: (s -> e -> Either String s) -> s -> [e] -> Either String s]
+module IntegrationCheck where
+
+import           Data.List       (foldl')   -- => Strict left-fold for short-circuit Either
+import qualified Data.Map.Strict as Map     -- => Lookup table access
+
+-- Generic fold-events: works for any FSM whose transition function has the
+-- (state, event) -> Either String state shape.
+foldEvents :: (s -> e -> Either String s) -> s -> [e] -> Either String s
+foldEvents transition initial = foldl' step (Right initial)
+  where
+    step (Left err) _  = Left err           -- => Short-circuit on first error
+    step (Right s)  e  = transition s e     -- => Apply the transition, propagate result
+
+-- Supplier happy path: lift the table lookup into a Result-shaped function.
+supplierFn :: SupplierState -> SupplierEvent -> Either String SupplierState
+supplierFn s e = case Map.lookup (s, e) supplierTransitions of
+  Just next -> Right next
+  Nothing   -> Left $ "No transition: " <> show s <> " + " <> show e
+-- => Same shape as transitionPayment so foldEvents can drive it
+
+-- Payment happy path: project the final Payment record down to its state.
+paymentStateFn :: PaymentState -> PaymentEvent -> Either String PaymentState
+paymentStateFn s e =
+  let seed = Payment { payId = "", payAmount = 0, payState = s, payRetryCount = 0 }
+  -- => Stub payment used to drive the transition table on raw states
+  in fmap payState (transitionPayment seed e)
+  -- => fmap projects the resulting Payment to its PaymentState
+
+supResult :: Either String SupplierState
+supResult = foldEvents supplierFn Pending [Approve, Suspend, Reinstate]
+-- => Right Approved
+
+payResult :: Either String PaymentState
+payResult = foldEvents paymentStateFn PayPending [Authorise, Process, Settle]
+-- => Right Settled
+
+main :: IO ()
+main = do
+  putStrLn $ "Supplier final state: " <> show supResult   -- => Right Approved
+  putStrLn $ "Payment  final state: " <> show payResult   -- => Right Settled
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A generic `foldEvents` function tests any FSM's happy path by lifting the specific transition function into a consistent fold interface.
@@ -2795,7 +3736,7 @@ stateDiagram-v2
     class OfferRejected terminal
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3003,6 +3944,77 @@ console.log(funded.ok ? funded.value.state : funded.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: MurabahFsm.hs ───────────────────────────────────────────────────
+-- [F#: MurabahaState/MurabahaEvent discriminated unions + transition table;
+--  Haskell uses two ADTs and a Data.Map.Strict lookup with foldl' for replay]
+module MurabahFsm where
+
+import           Data.List       (foldl')   -- => Strict left-fold for Either short-circuit
+import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+
+-- MurabahaContract state ADT: offer -> acceptance -> repayment lifecycle.
+data MurabahaState
+  = OfferPending   -- => Bank presented offer; customer decision pending
+  | OfferAccepted  -- => Customer accepted; contract activation pending
+  | OfferRejected  -- => Customer rejected — terminal state
+  | Active         -- => Contract active; first payment not yet made
+  | Repaying       -- => Customer is making instalment payments
+  | Defaulted      -- => Customer missed a payment; remediation required
+  | Settled        -- => Full repayment complete — terminal state
+  deriving stock (Show, Eq, Ord)
+
+-- MurabahaContract event ADT: exhaustive alphabet for the lifecycle.
+data MurabahaEvent
+  = Accept         -- => Customer accepts the cost+profit offer
+  | Reject         -- => Customer rejects the offer
+  | Activate       -- => Bank activates the contract after acceptance
+  | FirstPayment   -- => Customer makes the first instalment
+  | FullRepayment  -- => Customer completes all instalments
+  | MissPayment    -- => Customer misses a scheduled payment
+  | Remediate      -- => Customer catches up on missed payments
+  deriving stock (Show, Eq, Ord)
+
+-- Transition table for the MurabahaContract FSM.
+-- => Sharia-finance rules are encoded as data, not as special-case branching.
+murabahaTransitions :: Map (MurabahaState, MurabahaEvent) MurabahaState
+murabahaTransitions = Map.fromList
+  [ ((OfferPending,  Accept),        OfferAccepted)  -- => Customer accepts
+  , ((OfferPending,  Reject),        OfferRejected)  -- => Customer rejects — terminal
+  , ((OfferAccepted, Activate),      Active)         -- => Bank activates contract
+  , ((Active,        FirstPayment),  Repaying)       -- => Repayment started
+  , ((Repaying,      FullRepayment), Settled)        -- => All paid — terminal
+  , ((Repaying,      MissPayment),   Defaulted)      -- => Missed payment
+  , ((Defaulted,     Remediate),     Repaying)       -- => Caught up — resume repaying
+  -- => OfferRejected and Settled are terminal — no outgoing entries
+  ]
+
+-- Pure transition function: lookup, return Either with descriptive error.
+transitionMurabaha :: MurabahaState -> MurabahaEvent -> Either String MurabahaState
+transitionMurabaha state event = case Map.lookup (state, event) murabahaTransitions of
+  Just next -> Right next
+  Nothing   -> Left $ "Invalid transition: " <> show state <> " + " <> show event
+
+-- Happy path: OfferPending -> OfferAccepted -> Active -> Repaying -> Settled
+happyPath :: [MurabahaEvent]
+happyPath = [Accept, Activate, FirstPayment, FullRepayment]
+
+result :: Either String MurabahaState
+result = foldl' step (Right OfferPending) happyPath
+  where
+    step (Left err) _ = Left err          -- => Short-circuit on first error
+    step (Right s)  e = transitionMurabaha s e
+    -- => foldl' threads state through each event; Either propagates errors
+
+main :: IO ()
+main = print result   -- => Right Settled
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The MurabahaContract FSM uses the same DU + Map + pure-transition pattern as every other machine in this tutorial — Sharia-finance rules are encoded as data, not special-case logic.
@@ -3015,7 +4027,7 @@ console.log(funded.ok ? funded.value.state : funded.error);
 
 A Murabaha repayment schedule has N instalments. The FSM stays in `Repaying` until all N payments are made. Rather than adding N states, a counter field drives a guard that decides when to allow `FullRepayment`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3186,10 +4198,7 @@ const murabahaWithPayments = new Map<string, MurabahaState>([
 ]);
 
 // Transition with installment counter — increment on MakePayment.
-const transitionMurabahaWithPayments = (
-  contract: MurabahaContract,
-  event: MurabahaPayEvent,
-): Result<MurabahaContract, string> => {
+const transitionMurabahaWithPayments = (contract: MurabahaContract, event: MurabahaPayEvent): Result => {
   const next = murabahaWithPayments.get(`${contract.state}:${event}`);
   if (!next) return Err(`No transition: ${contract.state} + ${event}`);
   const installmentsPaid = event === "MakePayment" ? contract.installmentsPaid + 1 : contract.installmentsPaid;
@@ -3207,9 +4216,10 @@ const repayingContract: MurabahaContract = {
   totalInstallments: 12,
 };
 
-const after3Payments = (["MakePayment", "MakePayment", "MakePayment"] as MurabahaPayEvent[]).reduce<
-  Result<MurabahaContract, string>
->((acc, ev) => resultBind(acc, (c) => transitionMurabahaWithPayments(c, ev)), Ok(repayingContract));
+const after3Payments = (["MakePayment", "MakePayment", "MakePayment"] as MurabahaPayEvent[]).reduce<Result>(
+  (acc, ev) => resultBind(acc, (c) => transitionMurabahaWithPayments(c, ev)),
+  Ok(repayingContract),
+);
 
 console.log(
   after3Payments.ok
@@ -3217,6 +4227,75 @@ console.log(
     : after3Payments.error,
 );
 // => state: Repaying, paid: 3/12
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: MurabahFsm.hs ───────────────────────────────────────────────────
+-- [F#: MurabahaContract with PaidInstalments counter driving a self-loop;
+--  Haskell uses a record with mcPaidInstalments :: Int — same pattern]
+module MurabahFsm where
+
+-- Murabaha contract record with instalment tracking.
+data MurabahaContract = MurabahaContract
+  { mcId               :: String
+  , mcState            :: MurabahaState
+  , mcTotalInstalments :: Int        -- => Total number of scheduled instalments
+  , mcPaidInstalments  :: Int        -- => Number of instalments paid so far
+  , mcProfitMargin     :: Rational   -- => Fixed profit fraction set at offer time
+  } deriving stock (Show, Eq)
+
+-- Guard: can the customer make a FullRepayment?
+-- => True only when all instalments have been paid — pure record predicate.
+canFullyRepay :: MurabahaContract -> Bool
+canFullyRepay c = mcPaidInstalments c >= mcTotalInstalments c
+-- => >= handles the edge case of over-payment without erroring
+
+-- Self-loop on Repaying: increment the paid counter, state unchanged.
+makeInstalment :: MurabahaContract -> Either String MurabahaContract
+makeInstalment contract = case mcState contract of
+  Repaying -> Right contract
+    { mcPaidInstalments = mcPaidInstalments contract + 1 }
+    -- => Self-loop: Repaying -> Repaying with the counter updated
+  other -> Left $ "Cannot make instalment in state " <> show other
+  -- => Not in Repaying — instalment has no semantic meaning
+
+-- Guarded full-repayment: guard checks counter before firing the FSM event.
+completeRepayment :: MurabahaContract -> Either String MurabahaContract
+completeRepayment contract
+  | not (canFullyRepay contract) =
+      let remaining = mcTotalInstalments contract - mcPaidInstalments contract
+      in Left $ show remaining <> " instalments still outstanding"
+      -- => Guard failed — surface the remaining count for actionable feedback
+  | otherwise = case transitionMurabaha (mcState contract) FullRepayment of
+      Right next -> Right contract { mcState = next }
+      -- => Guard passed; FSM advances to Settled
+      Left msg   -> Left msg
+      -- => Transition rejected (shouldn't happen given guard above)
+
+-- Test: 3-instalment contract — make three payments then complete.
+contract66 :: MurabahaContract
+contract66 = MurabahaContract
+  { mcId               = "mur_001"
+  , mcState            = Repaying
+  , mcTotalInstalments = 3
+  , mcPaidInstalments  = 0
+  , mcProfitMargin     = 8 / 100
+  }
+
+settled66 :: Either String MurabahaContract
+settled66 =
+  makeInstalment contract66
+    >>= makeInstalment        -- => Paid = 2
+    >>= makeInstalment        -- => Paid = 3
+    >>= completeRepayment     -- => Guard passes; transitions to Settled
+
+main :: IO ()
+main = print settled66
+-- => Right (MurabahaContract { mcState = Settled, mcPaidInstalments = 3 })
 ```
 
 {{< /tab >}}
@@ -3233,7 +4312,7 @@ console.log(
 
 A Murabaha purchase often originates from a `PurchaseOrder`. When the contract is activated, the linked PO should also be issued. This example computes the two-machine change set as a pure function.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3416,6 +4495,98 @@ console.log(
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: MurabahFsm.hs ───────────────────────────────────────────────────
+-- [F#: MurabahaPOLink record bundling Murabaha contract + PO; Haskell uses a
+--  record with both aggregates and a pure two-step coordinator returning Either]
+module MurabahFsm where
+
+import qualified Data.Map.Strict as Map  -- => For PO transition table lookups
+
+-- Reuse the PO ADTs from earlier examples — repeated here for self-containment.
+data POState = Draft | AwaitingApproval | POApproved | Issued | Acknowledged | POClosed
+  deriving stock (Show, Eq, Ord)
+
+data POEvent = Submit | ApprovePO | IssuePO | AcknowledgePO | ClosePO
+  deriving stock (Show, Eq, Ord)
+
+data PurchaseOrder = PurchaseOrder
+  { poId    :: String
+  , poState :: POState
+  } deriving stock (Show, Eq)
+
+-- PO transition table (only the entries this example exercises).
+poTransitions :: Map.Map (POState, POEvent) POState
+poTransitions = Map.fromList
+  [ ((Draft,            Submit),        AwaitingApproval)
+  , ((AwaitingApproval, ApprovePO),     POApproved)
+  , ((POApproved,       IssuePO),       Issued)
+  , ((Issued,           AcknowledgePO), Acknowledged)
+  , ((Acknowledged,     ClosePO),       POClosed)
+  ]
+
+tableTransitionPO :: POState -> POEvent -> Either String POState
+tableTransitionPO s e = case Map.lookup (s, e) poTransitions of
+  Just next -> Right next
+  Nothing   -> Left $ "No transition: " <> show s <> " + " <> show e
+
+-- Link record: connects a MurabahaContract to its originating PurchaseOrder.
+data MurabahaPOLink = MurabahaPOLink
+  { mplContract :: MurabahaContract
+  , mplLinkedPO :: PurchaseOrder
+  } deriving stock (Show, Eq)
+
+-- Activate contract AND issue linked PO in one pure step.
+-- => Returns the full change set; caller applies atomically (single DB txn).
+activateContractAndIssuePO :: MurabahaPOLink -> Either String MurabahaPOLink
+activateContractAndIssuePO link =
+  -- => Step 1: contract transitions OfferAccepted -> Active via Activate
+  case transitionMurabaha (mcState (mplContract link)) Activate of
+    Left msg -> Left $ "Contract activation failed: " <> msg
+    Right activeState ->
+      let updatedContract = (mplContract link) { mcState = activeState }
+      -- => Contract Active; preserve all other fields
+      in case tableTransitionPO (poState (mplLinkedPO link)) IssuePO of
+           Left msg -> Left $ "PO issuance failed: " <> msg
+           -- => PO not in POApproved — cannot issue without prior approval
+           Right issuedState ->
+             let updatedPO = (mplLinkedPO link) { poState = issuedState }
+             in Right MurabahaPOLink
+                  { mplContract = updatedContract
+                  , mplLinkedPO = updatedPO
+                  }
+             -- => Both aggregates advanced in one return value
+
+contractInAccepted :: MurabahaContract
+contractInAccepted = MurabahaContract
+  { mcId               = "mur_002"
+  , mcState            = OfferAccepted
+  , mcTotalInstalments = 12
+  , mcPaidInstalments  = 0
+  , mcProfitMargin     = 7 / 100
+  }
+
+poInApproved :: PurchaseOrder
+poInApproved = PurchaseOrder { poId = "PO-100", poState = POApproved }
+
+link67 :: MurabahaPOLink
+link67 = MurabahaPOLink { mplContract = contractInAccepted, mplLinkedPO = poInApproved }
+
+linkBadPO :: MurabahaPOLink
+linkBadPO = link67 { mplLinkedPO = PurchaseOrder { poId = "PO-101", poState = Draft } }
+
+main :: IO ()
+main = do
+  print (activateContractAndIssuePO link67)
+  -- => Right (MurabahaPOLink { mplContract = ... Active, mplLinkedPO = ... Issued })
+  print (activateContractAndIssuePO linkBadPO)
+  -- => Left "PO issuance failed: No transition: Draft + IssuePO"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Cross-machine coordination is a pure function that computes the complete change set — the caller applies both changes within a single database transaction.
@@ -3430,7 +4601,7 @@ console.log(
 
 In the actor model each FSM instance is an actor that processes messages sequentially. In F# this is modelled with a `MailboxProcessor`, which provides a sequential message queue without explicit locking.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3640,6 +4811,78 @@ console.log("Final actor state:", paymentActor.getState());
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentActor.hs ─────────────────────────────────────────────────
+-- [F#: MailboxProcessor wraps an actor loop; Haskell uses Control.Concurrent.MVar
+--  + a forkIO loop — same sequential-message-processing semantics]
+{-# LANGUAGE LambdaCase #-}
+module PaymentActor where
+
+import Control.Concurrent      (forkIO)
+import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, takeMVar)
+import Control.Monad           (forever)
+
+-- Actor message: carries either an event with reply MVar, or a state query.
+data PaymentActorMsg
+  = Apply PaymentEvent (MVar (Either String Payment))
+    -- => Apply an event; reply with new state or error via MVar
+  | GetState (MVar Payment)
+    -- => Query current state without changing it
+
+-- Actor handle: holds the mailbox the producers push messages onto.
+newtype PaymentActor = PaymentActor { actorMailbox :: MVar PaymentActorMsg }
+
+-- Create an actor: forks a thread that loops over messages sequentially.
+-- => No race conditions — the actor is the only writer of its state.
+createPaymentActor :: Payment -> IO PaymentActor
+createPaymentActor initial = do
+  mailbox <- newEmptyMVar  -- => Single-slot mailbox; senders block until empty
+  stateRef <- newEmptyMVar
+  putMVar stateRef initial
+  -- => stateRef holds current state; actor loop reads & writes it
+  _ <- forkIO $ forever $ do
+    msg <- takeMVar mailbox  -- => Suspend until next message arrives
+    case msg of
+      Apply event reply -> do
+        current <- takeMVar stateRef
+        -- => Pure FSM transition — no shared mutable references here
+        case transitionPayment current event of
+          Right next -> do
+            putMVar stateRef next       -- => Commit new state
+            putMVar reply  (Right next) -- => Reply with success
+          Left  err  -> do
+            putMVar stateRef current    -- => Keep state unchanged on error
+            putMVar reply  (Left err)   -- => Reply with error
+      GetState reply -> do
+        current <- takeMVar stateRef
+        putMVar stateRef current        -- => Re-publish unchanged state
+        putMVar reply  current          -- => Reply with current state
+  pure PaymentActor { actorMailbox = mailbox }
+
+-- Synchronous request/reply against the actor — analogous to PostAndReply.
+applyEvent :: PaymentActor -> PaymentEvent -> IO (Either String Payment)
+applyEvent actor event = do
+  reply <- newEmptyMVar
+  putMVar (actorMailbox actor) (Apply event reply)
+  takeMVar reply
+  -- => Block until the actor processes this message and replies
+
+main :: IO ()
+main = do
+  actor <- createPaymentActor
+    Payment { payId = "pay_008", payAmount = 6000, payState = PayPending, payRetryCount = 0 }
+  r1 <- applyEvent actor Authorise
+  -- => Right (Payment { payState = Authorised })
+  r2 <- applyEvent actor Process
+  -- => Right (Payment { payState = Processing })
+  putStrLn $ "After Authorise: " <> show r1
+  putStrLn $ "After Process:   " <> show r2
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `MailboxProcessor` wraps a pure FSM function in a sequential actor — messages are processed one at a time, eliminating race conditions without explicit locking.
@@ -3652,7 +4895,7 @@ console.log("Final actor state:", paymentActor.getState());
 
 Optimistic concurrency uses a version number to detect concurrent modifications. Before applying a transition, the caller asserts the expected version matches the stored version.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3775,15 +5018,11 @@ printfn "%A" conflict // => Error "Version conflict: expected 0, found 1"
 // [F#: versioned payment record; Clojure: :version key in map]
 // TypeScript: optimistic concurrency — version check prevents lost updates.
 
-type VersionedPayment = Payment & Readonly<{ version: number }>;
+type VersionedPayment = Payment & Readonly;
 // => Version increments on every successful transition
 
 // Optimistic update: transition only if client version matches server version.
-const transitionWithVersion = (
-  current: VersionedPayment,
-  event: PaymentEvent,
-  expectedVersion: number,
-): Result<VersionedPayment, string> => {
+const transitionWithVersion = (current: VersionedPayment, event: PaymentEvent, expectedVersion: number): Result => {
   if (current.version !== expectedVersion)
     return Err(`Version conflict: expected ${expectedVersion}, got ${current.version}. Reload and retry.`);
   // => Client has stale data — reject the update
@@ -3820,6 +5059,74 @@ console.log(staleUpdate.ok ? staleUpdate.value.state : staleUpdate.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: VersionedPayment record with int64 Version; Haskell uses Int64 + a guard
+--  on the supplied expected version before applying the FSM transition]
+module PaymentFsm where
+
+import           Data.Int        (Int64)
+import qualified Data.Map.Strict as Map
+
+-- Versioned payment: monotonically-increasing version counter detects conflicts.
+data VersionedPayment = VersionedPayment
+  { vpId         :: String
+  , vpAmount     :: Rational
+  , vpState      :: PaymentState
+  , vpRetryCount :: Int
+  , vpVersion    :: Int64        -- => Increments on every successful transition
+  } deriving stock (Show, Eq)
+
+-- Versioned transition: caller supplies the expected current version.
+-- => Detects concurrent modification without database row locks.
+transitionVersioned
+  :: VersionedPayment
+  -> PaymentEvent
+  -> Int64
+  -> Either String VersionedPayment
+transitionVersioned payment event expectedVersion
+  | vpVersion payment /= expectedVersion =
+      Left $ "Version conflict: expected " <> show expectedVersion
+          <> ", found " <> show (vpVersion payment)
+      -- => Another writer modified this payment since we read it
+  | otherwise = case Map.lookup (vpState payment, event) paymentTransitions of
+      Nothing   -> Left $ "No transition: " <> show (vpState payment) <> " + " <> show event
+      Just next ->
+        let retries = if event == Retry then vpRetryCount payment + 1 else vpRetryCount payment
+        in Right payment
+             { vpState      = next
+             , vpRetryCount = retries
+             , vpVersion    = vpVersion payment + 1
+             }
+        -- => Version increments atomically with the state change
+
+vp :: VersionedPayment
+vp = VersionedPayment
+  { vpId         = "pay_009"
+  , vpAmount     = 3500
+  , vpState      = PayPending
+  , vpRetryCount = 0
+  , vpVersion    = 1
+  }
+-- => Version 1 is the current persisted version
+
+okV, conflictV :: Either String VersionedPayment
+okV       = transitionVersioned vp Authorise 1
+-- => Right (VersionedPayment { vpState = Authorised, vpVersion = 2 })
+
+conflictV = transitionVersioned vp Authorise 0
+-- => Left "Version conflict: expected 0, found 1"
+
+main :: IO ()
+main = do
+  print okV         -- => Right (VersionedPayment { vpState = Authorised, vpVersion = 2 })
+  print conflictV   -- => Left "Version conflict: expected 0, found 1"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A `Version` field on the record, incremented per transition, makes concurrent modification detectable at the application layer without database locks.
@@ -3832,7 +5139,7 @@ console.log(staleUpdate.ok ? staleUpdate.value.state : staleUpdate.error);
 
 A saga coordinates multiple FSMs across a business transaction. The `P2PSaga` tracks the state of all three machines and advances them in sequence: PO must be Issued before Invoice can be Approved, which must come before Payment can settle.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4043,6 +5350,74 @@ sagaResult.ok
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SagaFsm.hs ──────────────────────────────────────────────────────
+-- [F#: P2PSaga record + Result.bind pipeline; Haskell uses a record + Either's
+--  monadic bind to chain saga steps with short-circuit semantics]
+module SagaFsm where
+
+-- Saga state: one field per participating machine.
+data P2PSaga = P2PSaga
+  { sagaId           :: String
+  , sagaPOState      :: POState        -- => PurchaseOrder FSM state
+  , sagaInvoiceState :: String         -- => Invoice FSM state (string for brevity)
+  , sagaPaymentState :: PaymentState   -- => Payment FSM state
+  } deriving stock (Show, Eq)
+
+-- Step result alias: a saga step either advances the saga or returns an error.
+type SagaStep = Either String P2PSaga
+
+-- Step 1: PO must transition to Issued before invoice approval is allowed.
+sagaIssuePO :: P2PSaga -> SagaStep
+sagaIssuePO saga = case tableTransitionPO (sagaPOState saga) IssuePO of
+  Right next -> Right saga { sagaPOState = next }
+  -- => PO transitions POApproved -> Issued
+  Left  msg  -> Left $ "Saga PO issue failed: " <> msg
+  -- => PO not in POApproved — cannot issue before approval
+
+-- Step 2: invoice approval; only valid once the PO is Issued.
+sagaApproveInvoice :: P2PSaga -> SagaStep
+sagaApproveInvoice saga
+  | sagaPOState saga /= Issued =
+      Left "Invoice cannot be approved before PO is Issued"
+      -- => Cross-machine dependency enforced at the saga level
+  | otherwise = Right saga { sagaInvoiceState = "Approved" }
+  -- => Invoice advances to Approved (string-encoded state for brevity)
+
+-- Step 3: settle payment; only after invoice is Approved.
+-- => Returns the updated saga AND the updated Payment record together.
+sagaSettlePayment :: P2PSaga -> Payment -> Either String (P2PSaga, Payment)
+sagaSettlePayment saga payment
+  | sagaInvoiceState saga /= "Approved" =
+      Left "Payment cannot settle before Invoice is Approved"
+      -- => Invoice approval gates payment settlement
+  | otherwise = case transitionPayment payment Settle of
+      Right settled ->
+        Right (saga { sagaPaymentState = payState settled }, settled)
+        -- => Both saga and payment returned together — caller commits atomically
+      Left msg -> Left $ "Payment settle failed: " <> msg
+
+saga70 :: P2PSaga
+saga70 = P2PSaga
+  { sagaId           = "saga_001"
+  , sagaPOState      = POApproved
+  , sagaInvoiceState = "Received"
+  , sagaPaymentState = Processing
+  }
+
+resultSaga :: SagaStep
+resultSaga = sagaIssuePO saga70 >>= sagaApproveInvoice
+-- => Right (P2PSaga { sagaPOState = Issued, sagaInvoiceState = "Approved" })
+
+main :: IO ()
+main = print resultSaga
+-- => Right (P2PSaga { sagaPOState = Issued, sagaInvoiceState = "Approved", sagaPaymentState = Processing })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A saga is a record of participating machine states advanced through a `Result.bind` pipeline — each step is a guard-checked transition that short-circuits on the first failure.
@@ -4055,7 +5430,7 @@ sagaResult.ok
 
 A snapshot captures the entire FSM state at a point in time, enabling a process to resume from that snapshot rather than replaying all events from the beginning.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4238,6 +5613,76 @@ console.log(resumed.ok ? resumed.value.state : resumed.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PaymentFsm.hs ───────────────────────────────────────────────────
+-- [F#: PaymentSnapshot2 record + Guid; Haskell uses a record + a caller-supplied
+--  snapshot id to keep takeSnapshot pure — no random IO inside the function]
+module PaymentFsm where
+
+import Data.Int (Int64)
+
+-- Snapshot: point-in-time capture of payment FSM state.
+data PaymentSnapshot2 = PaymentSnapshot2
+  { snap2Id         :: String   -- => Unique snapshot identifier (caller-provided UUID)
+  , snap2PaymentId  :: String
+  , snap2State      :: String   -- => ADT constructor name — survives schema evolution
+  , snap2RetryCount :: Int
+  , snap2Version    :: Int64
+  , snap2At         :: Int64    -- => Unix timestamp (ms) when snapshot was taken
+  } deriving stock (Show, Eq)
+
+-- Take a snapshot — pure function; caller supplies fresh id and timestamp.
+-- => Keeping the function pure makes it trivially testable.
+takeSnapshot :: VersionedPayment -> String -> Int64 -> PaymentSnapshot2
+takeSnapshot payment snapshotId now = PaymentSnapshot2
+  { snap2Id         = snapshotId
+  , snap2PaymentId  = vpId payment
+  , snap2State      = show (vpState payment)   -- => "Processing" via derived Show
+  , snap2RetryCount = vpRetryCount payment
+  , snap2Version    = vpVersion payment
+  , snap2At         = now
+  }
+
+-- Restore a VersionedPayment from a snapshot. Unknown strings surface as Left.
+restoreFromSnapshot :: PaymentSnapshot2 -> Either String VersionedPayment
+restoreFromSnapshot snap = do
+  -- => parsePaymentState handles "PayPending"/"Authorised"/... and rejects others
+  st <- parsePaymentState (snap2State snap)
+  Right VersionedPayment
+    { vpId         = snap2PaymentId snap
+    , vpAmount     = 0   -- => Amount not stored in snapshot; restored separately
+    , vpState      = st
+    , vpRetryCount = snap2RetryCount snap
+    , vpVersion    = snap2Version snap
+    }
+
+vp2 :: VersionedPayment
+vp2 = VersionedPayment
+  { vpId         = "pay_010"
+  , vpAmount     = 9000
+  , vpState      = Processing
+  , vpRetryCount = 2
+  , vpVersion    = 5
+  }
+
+snap71 :: PaymentSnapshot2
+snap71 = takeSnapshot vp2 "snap-uuid-001" 1716000000000
+-- => PaymentSnapshot2 { snap2State = "Processing", snap2Version = 5 }
+
+restored71 :: Either String VersionedPayment
+restored71 = restoreFromSnapshot snap71
+-- => Right (VersionedPayment { vpState = Processing, vpVersion = 5 })
+
+main :: IO ()
+main = do
+  putStrLn $ "Snapshot state: " <> snap2State snap71      -- => Processing
+  putStrLn $ "Restored:       " <> show restored71
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A snapshot is an immutable record of FSM state at a moment in time — `takeSnapshot` and `restoreFromSnapshot` are pure functions that decouple persistence format from the DU definition.
@@ -4250,7 +5695,7 @@ console.log(resumed.ok ? resumed.value.state : resumed.error);
 
 Generating a Mermaid diagram from the transition table ensures the visualisation always reflects the current code — no manually maintained diagram to drift out of sync.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4392,11 +5837,7 @@ printfn "%s" supplierMermaid
 // TypeScript: generate Mermaid state diagram directly from transition table.
 
 // Generate Mermaid stateDiagram-v2 from a transition map.
-const generateMermaidDiagram = (
-  machineName: string,
-  table: Map<string, string>,
-  terminalStates: readonly string[],
-): string => {
+const generateMermaidDiagram = (machineName: string, table: Map, terminalStates: readonly string[]): string => {
   const lines: string[] = ["stateDiagram-v2", `    title ${machineName}`];
   lines.push(`    [*] --> ${getInitialState(table)}`);
   // => Start arrow points to the first state that appears as a source
@@ -4413,7 +5854,7 @@ const generateMermaidDiagram = (
   return lines.join("\n");
 };
 
-const getInitialState = (table: Map<string, string>): string => {
+const getInitialState = (table: Map): string => {
   // => Find the state that only appears as source, never as target
   const targets = new Set(table.values());
   for (const key of table.keys()) {
@@ -4442,6 +5883,56 @@ console.log(paymentDiagram);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Visualisation.hs ────────────────────────────────────────────────
+-- [F#: generateMermaid traverses Map<('S * 'E), 'S>; Haskell uses Map.toList
+--  + Data.List.intercalate over the same key/value triples]
+module Visualisation where
+
+import           Data.List       (intercalate)   -- => Join transition lines with "\n"
+import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+
+-- Generate a Mermaid stateDiagram-v2 from any transition table.
+-- => Polymorphic over the state and event types; works for any FSM in the tutorial.
+generateMermaid :: (Show s, Show e) => String -> Map (s, e) s -> String
+generateMermaid title table =
+  header <> "\n" <> body
+  where
+    header = "---\ntitle: " <> title <> "\n---\nstateDiagram-v2"
+    -- => Mermaid frontmatter + diagram-type declaration
+    body   = intercalate "\n"
+           $ map mkLine (Map.toList table)
+    -- => One transition line per table entry
+    mkLine ((fromS, ev), toS) =
+      "    " <> show fromS <> " --> " <> show toS <> ": " <> show ev
+    -- => Mermaid arrow syntax: From --> To : Label
+
+paymentMermaid :: String
+paymentMermaid = generateMermaid "Payment FSM" paymentTransitions
+-- => Same Mermaid stateDiagram-v2 output as the F# version
+
+supplierMermaid :: String
+supplierMermaid = generateMermaid "Supplier FSM" supplierTransitions
+
+main :: IO ()
+main = do
+  putStrLn paymentMermaid
+  -- => ---
+  -- => title: Payment FSM
+  -- => ---
+  -- => stateDiagram-v2
+  -- =>     PayPending --> Authorised: Authorise
+  -- =>     ... (one line per transition)
+  putStrLn supplierMermaid
+  -- =>     Pending --> Approved: Approve
+  -- =>     ... (one line per transition)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Map.toList |> List.map` over the transition table generates a Mermaid diagram that is always derived from the authoritative code, never a separately maintained artifact.
@@ -4454,7 +5945,7 @@ console.log(paymentDiagram);
 
 The FSM state determines the HTTP response code returned by the API. Rather than checking state strings in handlers, a pure function maps `(State, Operation)` to `(Status, message)`, keeping the mapping in one place.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4570,14 +6061,11 @@ cases |> List.iter (fun ((state, op), (expectedCode, _)) ->
 // [F#: HTTP response from FSM result; Clojure: result-to-response mapping]
 // TypeScript: pure FSM result to HTTP response mapping.
 
-type HTTPResponse = Readonly<{
-  statusCode: number;
-  body: Record<string, unknown>;
-}>;
+type HTTPResponse = Readonly;
 // => Minimal HTTP response type for FSM-driven endpoints
 
 // Map FSM transition result to HTTP response.
-const fsmResultToResponse = (result: Result<Payment, string>, event: PaymentEvent): HTTPResponse => {
+const fsmResultToResponse = (result: Result, event: PaymentEvent): HTTPResponse => {
   if (result.ok) {
     return {
       statusCode: 200,
@@ -4622,6 +6110,59 @@ console.log("Invalid:", invalidRequest.statusCode); // => 422
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApiCodes.hs ─────────────────────────────────────────────────────
+-- [F#: paymentStatusCode uses match on (state, operation) tuple; Haskell uses
+--  pattern matching on the same pair — exhaustive checking by default]
+module ApiCodes where
+
+-- HTTP status code mapping: (PaymentState, operation string) -> (Int, String)
+-- => Pure function — same inputs always produce the same outputs.
+paymentStatusCode :: PaymentState -> String -> (Int, String)
+paymentStatusCode state operation = case (state, operation) of
+  (PayPending,  "view")  -> (200, "Payment pending authorisation")
+  (PayPending,  "pay")   -> (409, "Payment not yet authorised")
+    -- => 409 Conflict: action not valid for the current state
+  (Authorised,  "view")  -> (200, "Payment authorised")
+  (Authorised,  "pay")   -> (409, "Payment not yet processed")
+  (Processing,  "view")  -> (200, "Payment processing")
+  (Processing,  "pay")   -> (409, "Payment already in processing")
+  (PayFailed,   "view")  -> (200, "Payment failed")
+  (PayFailed,   "retry") -> (200, "Retry accepted")
+  (PayFailed,   "pay")   -> (409, "Payment failed; retry or cancel")
+  (Settled,     "view")  -> (200, "Payment settled")
+  (Settled,     "pay")   -> (409, "Payment already settled")
+  (Cancelled,   "view")  -> (200, "Payment cancelled")
+  (Cancelled,   "pay")   -> (410, "Payment cancelled; cannot process")
+    -- => 410 Gone: resource permanently removed from the lifecycle
+  (_, _)                 -> (422, "Operation '" <> operation
+                                  <> "' not supported in state " <> show state)
+    -- => 422 Unprocessable Entity: unrecognised (state, operation) combination
+
+cases :: [(PaymentState, String)]
+cases =
+  [ (PayPending, "pay")     -- => Should return (409, "Payment not yet authorised")
+  , (PayFailed,  "retry")   -- => Should return (200, "Retry accepted")
+  , (Settled,    "pay")     -- => Should return (409, "Payment already settled")
+  , (Cancelled,  "pay")     -- => Should return (410, "Payment cancelled; cannot process")
+  ]
+
+main :: IO ()
+main = mapM_ printCase cases
+  where
+    printCase (st, op) =
+      let (code, msg) = paymentStatusCode st op
+      in putStrLn $ show st <> " + " <> op <> " -> " <> show code <> ": " <> msg
+-- => PayPending + pay -> 409: Payment not yet authorised
+-- => PayFailed  + retry -> 200: Retry accepted
+-- => Settled    + pay -> 409: Payment already settled
+-- => Cancelled  + pay -> 410: Payment cancelled; cannot process
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A pure `(State, Operation) -> (StatusCode, Message)` function centralises all HTTP mapping in one exhaustive `match` — API handlers read state and delegate code selection without conditional logic.
@@ -4634,7 +6175,7 @@ console.log("Invalid:", invalidRequest.statusCode); // => 422
 
 An integration test verifies that the four machines — PO, Invoice, Supplier, and Payment — interoperate correctly through a full P2P procurement scenario.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4770,17 +6311,7 @@ assertOk "Payment final state"  (Ok Settled)  (pay1 |> Result.map (fun p -> p.St
 // [F#: property-based test across all machines; Clojure: generative testing]
 // TypeScript: table-driven integration test across all four P2P FSMs.
 
-type P2PScenario = Readonly<{
-  name: string;
-  poEvents: readonly string[];
-  invoiceEvents: readonly string[];
-  supplierEvents: readonly SupplierEvent[];
-  paymentEvents: readonly PaymentEvent[];
-  expectedPOState: string;
-  expectedInvoiceState: string;
-  expectedSupplierState: SupplierState;
-  expectedPaymentState: PaymentState;
-}>;
+type P2PScenario = Readonly;
 
 const p2pScenarios: readonly P2PScenario[] = [
   {
@@ -4824,6 +6355,64 @@ p2pScenarios.forEach((scenario) => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: IntegrationTest.hs ──────────────────────────────────────────────
+-- [F#: Result.bind pipeline + assertOk helper; Haskell uses foldl' on Either
+--  plus a tiny equality-based assertion helper — pure, no test framework needed]
+module IntegrationTest where
+
+import Data.List (foldl')
+
+-- Step 1: drive a PO through Draft -> AwaitingApproval -> Approved -> Issued.
+po1 :: Either String POState
+po1 = foldl' step (Right Draft) [Submit, ApprovePO, IssuePO]
+  where
+    step (Left err) _ = Left err
+    step (Right s)  e = tableTransitionPO s e
+-- => Right Issued
+
+-- Step 2: approve a Pending supplier.
+sup0, sup1 :: Supplier
+sup0 = Supplier { supId = "sup_INTEG", supName = "Integration Supplier", supState = Pending }
+sup1 = case transitionSupplier sup0 Approve of
+  Right s -> s
+  Left  _ -> sup0
+-- => Supplier { supState = Approved }
+
+-- Step 3: drive a Payment through Pending -> Authorised -> Processing -> Settled.
+pay0 :: Payment
+pay0 = Payment { payId = "pay_INTEG", payAmount = 10000, payState = PayPending, payRetryCount = 0 }
+
+pay1 :: Either String Payment
+pay1 = foldl' step (Right pay0) [Authorise, Process, Settle]
+  where
+    step (Left err) _ = Left err
+    step (Right p)  e = transitionPayment p e
+-- => Right (Payment { payState = Settled })
+
+-- Step 4: assertion helper — structural equality between expected and actual.
+-- => Returns a PASS/FAIL line per assertion; no external test framework needed.
+assertOk :: (Show a, Eq a) => String -> a -> Either String a -> String
+assertOk label expected actual = case actual of
+  Right v | v == expected -> "PASS: " <> label <> " -> " <> show v
+  Right v                  -> "FAIL: " <> label <> " expected " <> show expected
+                                          <> " got " <> show v
+  Left  err                -> "FAIL: " <> label <> " errored: " <> err
+
+main :: IO ()
+main = do
+  putStrLn $ assertOk "PO final state"       Issued    po1
+  -- => PASS: PO final state -> Issued
+  putStrLn $ assertOk "Supplier final state" Approved  (Right (supState sup1))
+  -- => PASS: Supplier final state -> Approved
+  putStrLn $ assertOk "Payment final state"  Settled   (fmap payState pay1)
+  -- => PASS: Payment final state -> Settled
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Integration tests across multiple FSMs are just compositions of pure function calls — no test framework, no mocking, no HTTP requests needed to verify the full P2P scenario.
@@ -4836,7 +6425,7 @@ p2pScenarios.forEach((scenario) => {
 
 This final example presents the complete statechart for the P2P domain — all four machines with their states, events, and inter-machine dependencies — as a Mermaid diagram generated from code.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5032,6 +6621,59 @@ p2pSystemSpec.forEach((m) => {
 // => States (8): Draft, AwaitingApproval, ...
 // => Terminal: Closed, Cancelled
 // => ... (one block per machine)
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: StatechartSummary.hs ────────────────────────────────────────────
+-- [F#: generateMermaid + per-machine summaries; Haskell reuses the polymorphic
+--  generateMermaid from Example 72 and computes counts/terminals with Data.Set]
+module StatechartSummary where
+
+import qualified Data.Map.Strict as Map
+import qualified Data.Set        as Set
+
+-- All four machines indexed by name — the catalogue iterated over below.
+-- => Each entry pairs the machine label with its transition table.
+allMachineCounts :: [(String, Int)]
+allMachineCounts =
+  [ ("PurchaseOrder", Map.size poTransitions)
+  , ("Supplier",      Map.size supplierTransitions)
+  , ("Payment",       Map.size paymentTransitions)
+  , ("Murabaha",      Map.size murabahaTransitions)
+  ]
+-- => Map.size is O(1) — total count of valid (state, event) entries
+
+totalTransitions :: Int
+totalTransitions = sum (map snd allMachineCounts)
+-- => Total valid transitions across all four FSMs in the P2P platform
+
+-- Terminal-state check: a reachable state that has no outgoing transitions.
+-- => Polymorphic; works for any transition table whose keys are (state, event).
+hasTerminalState :: Ord s => Map.Map (s, e) s -> Bool
+hasTerminalState table =
+  let reachable = Set.fromList (Map.elems table)
+      -- => All states that appear as transition destinations
+      outbound  = Set.fromList (map fst (Map.keys table))
+      -- => All states that have at least one outgoing transition
+  in not (Set.null (Set.difference reachable outbound))
+  -- => True if any reachable state has no outgoing entries
+
+main :: IO ()
+main = do
+  putStrLn "=== P2P Statechart Summary ==="
+  putStrLn $ "Total valid transitions: " <> show totalTransitions
+  -- => Exact total depends on the tables built across this tutorial
+  mapM_ (\(name, n) -> putStrLn $ name <> ": " <> show n <> " transitions") allMachineCounts
+  -- => PurchaseOrder: 5 transitions ; Supplier: 6 ; Payment: 7 ; Murabaha: 7
+  putStrLn $ "PurchaseOrder has terminal: " <> show (hasTerminalState poTransitions)
+  putStrLn $ "Supplier has terminal:      " <> show (hasTerminalState supplierTransitions)
+  putStrLn $ "Payment has terminal:       " <> show (hasTerminalState paymentTransitions)
+  putStrLn $ "Murabaha has terminal:      " <> show (hasTerminalState murabahaTransitions)
+  -- => All four machines report True — each has at least one terminal state
 ```
 
 {{< /tab >}}

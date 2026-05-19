@@ -3,11 +3,14 @@ title: "Advanced"
 date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000005
-description: "Examples 56-80: Serialization, cross-context ACL, factory functions, repository as function-type alias, GoodsReceiptNote, Invoice three-way matching, and testing strategies in F# DDD for a Procure-to-Pay platform"
+description: "Examples 56-80: Serialization, cross-context ACL, factory functions, repository as function-type alias, GoodsReceiptNote, Invoice three-way matching, and testing strategies for a Procure-to-Pay platform, in F# (canonical), Clojure, TypeScript, and Haskell"
 tags:
   [
     "ddd",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "cqrs",
     "event-sourcing",
@@ -60,7 +63,7 @@ graph LR
     style DTO_Out fill:#DE8F05,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -319,6 +322,104 @@ console.log("Restored id:", restored?.id);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Serialization.hs ─────────────────────────────────────
+-- JSON serialization through the DTO boundary.
+-- [F#: JsonSerializer over DTO records; Haskell uses aeson over DTO records]
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Serialization where
+
+import           Data.Aeson    (FromJSON, ToJSON, decode, encode)
+import qualified Data.ByteString.Lazy.Char8 as BL
+import           Data.Text     (Text)
+import qualified Data.Text     as T
+import           GHC.Generics  (Generic)
+
+-- DTOs — the only types that touch the serializer
+data PoLineDto = PoLineDto
+  { skuCode   :: Text
+  , quantity  :: Int
+  , unitPrice :: Double
+  } deriving (Show, Generic)
+instance ToJSON   PoLineDto
+instance FromJSON PoLineDto
+-- => DTO line: flat structure matching the JSON array element shape
+
+data CreatePODto = CreatePODto
+  { requisitionId :: Text
+  , supplierId    :: Text
+  , lines         :: [PoLineDto]
+  } deriving (Show, Generic)
+instance ToJSON   CreatePODto
+instance FromJSON CreatePODto
+-- => DTO input: flat structure matching JSON request body
+
+-- DTO response type
+data PoResponseDto = PoResponseDto
+  { responseId    :: Text
+  , responseTotal :: Double
+  , responseStatus :: Text
+  } deriving (Show, Generic)
+instance ToJSON   PoResponseDto
+instance FromJSON PoResponseDto
+
+-- Domain types — isolated from serialization
+data PoLine = PoLine { plSku :: Text, plQty :: Int, plPrice :: Double } deriving (Show)
+data PurchaseOrderDomain = PurchaseOrderDomain
+  { pdRequisitionId :: Text
+  , pdSupplierId    :: Text
+  , pdLines         :: [PoLine]
+  , pdTotal         :: Double
+  } deriving (Show)
+-- => Domain: domain-appropriate field names; no JSON instances
+
+-- Translation: DTO -> domain (validates DTO fields)
+fromDto :: CreatePODto -> Either Text PurchaseOrderDomain
+fromDto dto
+  | T.null (T.strip (requisitionId dto)) = Left "RequisitionId required"
+  -- => Guard: blank RequisitionId is invalid
+  | null (lines dto)                     = Left "At least one line is required"
+  -- => Guard: blank PO has no business meaning
+  | any (\l -> quantity l <= 0) (lines dto) = Left "All quantities must be > 0"
+  -- => Guard: non-positive quantities violate the domain invariant
+  | otherwise =
+      let domainLines = [PoLine (skuCode l) (quantity l) (unitPrice l) | l <- lines dto]
+          -- => Convert DTO lines to domain PoLine records
+          total       = sum [fromIntegral (plQty l) * plPrice l | l <- domainLines]
+          -- => Compute total from validated lines
+      in Right (PurchaseOrderDomain (requisitionId dto) (supplierId dto) domainLines total)
+
+-- Translation: domain -> response DTO (infallible)
+toDto :: PurchaseOrderDomain -> Text -> PoResponseDto
+toDto domain poId = PoResponseDto poId (pdTotal domain) "Draft"
+-- => Infallible: domain PO is valid by construction
+
+-- Serialization at the boundary
+runDemo :: IO ()
+runDemo = do
+  let jsonInput = BL.pack
+        "{\"requisitionId\":\"req_f4c2\",\"supplierId\":\"sup_acme\",\"lines\":[{\"skuCode\":\"ELE-0099\",\"quantity\":3,\"unitPrice\":899.99}]}"
+      -- => Input JSON from the HTTP request body
+  case decode jsonInput :: Maybe CreatePODto of
+    Nothing  -> putStrLn "Failed to decode JSON"
+    Just dto -> case fromDto dto of
+      Right domain -> do
+        let response     = toDto domain "po_e3d1f8a0"
+            -- => Convert domain to response DTO — infallible
+            responseJson = encode response
+            -- => Serialize the response DTO to JSON
+        putStrLn ("Domain total: " <> show (pdTotal domain))
+        -- => Output: Domain total: 2699.97
+        putStrLn ("Response: " <> BL.unpack responseJson)
+        -- => Output: Response: {"responseId":"po_e3d1f8a0",...}
+      Left e -> putStrLn ("Validation error: " <> T.unpack e)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The DTO boundary is the sole translation point between JSON and domain types — domain logic never sees raw JSON, and serialization code never sees domain types.
@@ -331,7 +432,7 @@ console.log("Restored id:", restored?.id);
 
 `DateTimeOffset` is the correct type for all procurement timestamps — it carries the UTC offset, enabling correct comparison across time zones. The procurement platform records `SubmittedAt`, `ApprovedAt`, `IssuedAt`, and `ExpectedDelivery` as `DateTimeOffset` values, never as raw `DateTime`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -538,6 +639,71 @@ console.log("SLA breached (5 day SLA)?", isSLABreached(po, 5));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Clock.hs ─────────────────────────────────────────────
+-- UTCTime: the correct type for all procurement timestamps.
+-- [F#: System.DateTimeOffset injected via Clock; Haskell uses Data.Time.UTCTime + IO Clock]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Clock where
+
+import           Data.Time (UTCTime, getCurrentTime, addUTCTime,
+                            secondsToNominalDiffTime, NominalDiffTime)
+
+-- Clock port: an IO action returning the current UTCTime; injectable for tests
+type Clock = IO UTCTime
+-- => Equivalent to F# Clock = unit -> DateTimeOffset
+
+-- Fixed-time clock for tests — always returns the same instant
+fixedClock :: UTCTime -> Clock
+fixedClock t = pure t
+-- => Returns a closure that always yields t — deterministic in tests
+
+-- Real clock — returns actual UTC now
+realClock :: Clock
+realClock = getCurrentTime
+-- => Production clock
+
+-- Domain record with timeline fields
+data PurchaseOrderTimeline = PurchaseOrderTimeline
+  { potSubmittedAt      :: UTCTime          -- => drives L1/L2/L3 SLA tracking
+  , potApprovedAt       :: Maybe UTCTime    -- => Nothing until approval
+  , potIssuedAt         :: Maybe UTCTime    -- => Nothing until issuance
+  , potExpectedDelivery :: Maybe UTCTime    -- => supplier-provided
+  } deriving (Show)
+
+-- Pure domain function: is the approval SLA breached?
+isApprovalOverdue :: UTCTime -> Int -> PurchaseOrderTimeline -> Bool
+isApprovalOverdue now slaDays timeline = case potApprovedAt timeline of
+  Just _  -> False
+  -- => Already approved — SLA is not breached
+  Nothing ->
+    let deadline = addUTCTime (secondsToNominalDiffTime (fromIntegral (slaDays * 86400)))
+                              (potSubmittedAt timeline)
+        -- => deadline = submittedAt + slaDays (converted to seconds)
+    in now > deadline
+    -- => now past the deadline -> SLA breached
+
+-- Test with fixed clock
+runDemo :: IO ()
+runDemo = do
+  let fixedNow      = read "2026-06-15 10:00:00 UTC" :: UTCTime
+      -- => fixedNow: 2026-06-15T10:00:00Z — deterministic
+      submittedTime = read "2026-06-10 09:00:00 UTC" :: UTCTime
+      -- => Submitted 5 days before fixedNow
+      timeline = PurchaseOrderTimeline submittedTime Nothing Nothing Nothing
+      -- => Not yet approved — SLA check applies
+      overdue  = isApprovalOverdue fixedNow 3 timeline
+      -- => deadline = 2026-06-10 + 3 days = 2026-06-13; now > deadline -> True
+  putStrLn ("Approval overdue: " <> show overdue)
+  -- => Output: Approval overdue: True
+  putStrLn ("Submitted: " <> show (potSubmittedAt timeline))
+  -- => Output: Submitted: 2026-06-10 09:00:00 UTC
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Injecting a `Clock` function makes time-dependent domain rules (SLA checks, deadline calculations) testable with fixed timestamps — no `DateTime.Now` calls buried in domain logic.
@@ -550,7 +716,7 @@ console.log("SLA breached (5 day SLA)?", isSLABreached(po, 5));
 
 The `receiving` bounded context introduces the `GoodsReceiptNote` (GRN) aggregate. A GRN records the physical receipt of goods against a `PurchaseOrder`. The GRN drives the three-way matching process in the invoicing context.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -821,6 +987,96 @@ console.log("Short delivery lines:", shortDeliveryLines(grn).length);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Receiving/Grn.hs ─────────────────────────────────────────────────
+-- GoodsReceiptNote: aggregate root of the receiving context.
+-- [F#: Result<Grn * Event, string>; Haskell uses Either Text (Grn, Event)]
+{-# LANGUAGE OverloadedStrings #-}
+module Receiving.Grn where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+newtype SupplierId      = SupplierId      Text deriving (Eq, Show)
+
+-- GRN line: records what was actually received for one PO line
+data GrnLine = GrnLine
+  { glPoLineNumber    :: Int
+  , glOrderedQty      :: Int
+  , glReceivedQty     :: Int
+  , glSkuCode         :: Text
+  , glHasQualityIssue :: Bool
+  } deriving (Show)
+
+-- GRN status — closed sum type
+data GrnStatus = Open | Verified | Disputed deriving (Eq, Show)
+
+-- The GRN aggregate root
+data GoodsReceiptNote = GoodsReceiptNote
+  { grnNoteId      :: Text                -- => "grn_<short-uuid>"
+  , grnNotePoId    :: PurchaseOrderId
+  , grnNoteSupplier :: SupplierId
+  , grnNoteReceivedAt :: UTCTime
+  , grnNoteLines   :: [GrnLine]
+  , grnNoteStatus  :: GrnStatus
+  } deriving (Show)
+
+-- Domain event emitted when goods are received
+data GoodsReceivedEvent = GoodsReceivedEvent
+  { greGrnId           :: Text
+  , grePoId            :: PurchaseOrderId
+  , greReceivedAt      :: UTCTime
+  , greHasDiscrepancy  :: Bool
+  } deriving (Show)
+
+-- Create a GRN from a goods receipt
+receiveGoods
+  :: PurchaseOrderId -> SupplierId -> [GrnLine]
+  -> IO (Either Text (GoodsReceiptNote, GoodsReceivedEvent))
+receiveGoods poId sid [] = pure (Left "Cannot create a GRN with no lines")
+-- => Guard: an empty receipt has no business meaning
+receiveGoods poId sid lines_ = do
+  now <- getCurrentTime
+  -- => Real impl injects a clock; using getCurrentTime here for brevity
+  let PurchaseOrderId raw = poId
+      hasDiscrepancy =
+        any (\l -> glReceivedQty l /= glOrderedQty l || glHasQualityIssue l) lines_
+      -- => Any line that mismatches or has a quality issue triggers discrepancy
+      status   = if hasDiscrepancy then Disputed else Open
+      -- => Disputed GRNs block invoice matching
+      grnId    = "grn_" <> T.take 8 raw
+      -- => Deterministic id derived from PO (production uses UUID)
+      grn      = GoodsReceiptNote grnId poId sid now lines_ status
+      event    = GoodsReceivedEvent grnId poId now hasDiscrepancy
+      -- => Event carries discrepancy flag for invoicing
+  pure (Right (grn, event))
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  let lines_ =
+        [ GrnLine 1 3  3  "ELE-0099" False
+          -- => Three laptops ordered, three received, no quality issues
+        , GrnLine 2 10 10 "OFF-0042" False
+          -- => Ten boxes ordered, ten received, no quality issues
+        ]
+  result <- receiveGoods (PurchaseOrderId "po_e3d1") (SupplierId "sup_acme") lines_
+  -- => No discrepancy — GRN status = Open
+  case result of
+    Right (grn, event) ->
+      putStrLn ("GRN: " <> T.unpack (grnNoteId grn)
+              <> " status=" <> show (grnNoteStatus grn)
+              <> " discrepancy=" <> show (greHasDiscrepancy event))
+      -- => Output: GRN: grn_po_e3d1 status=Open discrepancy=False
+    Left e -> putStrLn ("Error: " <> T.unpack e)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `GoodsReceiptNote` aggregate captures the "what was actually received" fact that drives the three-way matching process — it is distinct from the PO (what was ordered) and the invoice (what was billed).
@@ -856,7 +1112,7 @@ graph LR
     style ERR fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1037,8 +1293,8 @@ printfn "Over-invoice: %A" overMatchResult
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type InvoiceId = string & { readonly __brand: "InvoiceId" };
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
@@ -1075,7 +1331,7 @@ interface MatchedInvoice {
 // Three-way match tolerance (5% by default)
 const TOLERANCE = 0.05;
 
-function validateThreeWayMatch(po: POSummary, grn: GRNSummary, inv: Invoice): Result<MatchedInvoice, string> {
+function validateThreeWayMatch(po: POSummary, grn: GRNSummary, inv: Invoice): Result {
   if (grn.purchaseOrderId !== po.id) return errR(`GRN ${grn.id} does not reference PO ${po.id}`);
   // => GRN must reference the same PO as the invoice
   if (inv.purchaseOrderId !== po.id) return errR(`Invoice ${inv.id} does not reference PO ${po.id}`);
@@ -1117,6 +1373,78 @@ if (result.ok) console.log("Three-way match:", result.value.matchedAt.slice(0, 1
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Invoicing/ThreeWayMatch.hs ───────────────────────────────────────
+-- Invoice aggregate — three-way matching as a pure function.
+-- [F#: private Tolerance with smart constructor; Haskell hides constructor via export list]
+{-# LANGUAGE OverloadedStrings #-}
+module Invoicing.ThreeWayMatch
+  ( Tolerance, defaultTolerance, mkTolerance, toleranceValue
+  , threeWayMatch
+  ) where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+
+-- Tolerance: validated percentage between 0 and 10%; raw constructor hidden
+newtype Tolerance = Tolerance Rational deriving (Eq, Show)
+
+defaultTolerance :: Tolerance
+defaultTolerance = Tolerance 0.02   -- => 2% standard accounts payable tolerance
+
+mkTolerance :: Rational -> Either Text Tolerance
+mkTolerance pct
+  | pct < 0 || pct > 0.10 =
+      Left ("Tolerance must be 0-10%, got " <> T.pack (show (fromRational (pct * 100) :: Double)) <> "%")
+  | otherwise             = Right (Tolerance pct)
+-- => Smart constructor enforces the invariant once at the boundary
+
+toleranceValue :: Tolerance -> Rational
+toleranceValue (Tolerance t) = t
+
+-- Three-way match: invoiceAmount ≈ Σ (receivedQty × poUnitPrice), within tolerance.
+threeWayMatch
+  :: Rational           -- ^ invoiceAmount
+  -> [(Int, Rational)]  -- ^ (receivedQty, poUnitPrice) per line
+  -> Tolerance
+  -> Either Text Rational
+threeWayMatch invoiceAmount grnLines tolerance =
+  let calculated = sum [toRational q * p | (q, p) <- grnLines]
+      -- => Sum GRN quantities × PO unit prices — what the invoice SHOULD say
+      diff       = abs (invoiceAmount - calculated)
+      -- => Absolute difference between invoice and calculated
+      maxAllowed = calculated * toleranceValue tolerance
+      -- => Maximum allowed discrepancy = calculated × tolerance percentage
+  in if diff <= maxAllowed
+       then Right calculated
+       -- => Within tolerance — match succeeds; return canonical amount
+       else Left (T.pack ("Invoice " <> show (fromRational invoiceAmount :: Double)
+                       <> " differs from calculated " <> show (fromRational calculated :: Double)
+                       <> " by " <> show (fromRational diff :: Double)
+                       <> " (max allowed: " <> show (fromRational maxAllowed :: Double) <> ")"))
+       -- => Outside tolerance — error with full details
+
+-- Test three-way match
+runDemo :: IO ()
+runDemo = do
+  let grnLines = [(3, 899.99)]  -- => 3 laptops received; PO unit price 899.99
+      invoiceAmount = 2699.97   -- => Supplier invoiced 2699.97 — matches 3 × 899.99
+      matchResult = threeWayMatch invoiceAmount grnLines defaultTolerance
+      -- => calculated = 3 × 899.99 = 2699.97; diff = 0; 0 <= 53.9994 (2%) — Right 2699.97
+  putStrLn ("Match result: " <> show matchResult)
+  -- => Output: Match result: Right (2699.97 :: Rational)
+
+  let overInvoice    = 2900       -- => 200.03 over (7.4% over) — outside tolerance
+      overResult     = threeWayMatch overInvoice grnLines defaultTolerance
+      -- => diff=200.03; maxAllowed=53.9994; 200.03 > 53.9994 — Left "Invoice ..."
+  putStrLn ("Over-invoice: " <> show overResult)
+  -- => Output: Over-invoice: Left "Invoice 2900.0 differs from calculated 2699.97 ..."
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Three-way matching implemented as a pure function over GRN quantities and PO unit prices is independently testable and produces a named error when the invoice is outside tolerance.
@@ -1148,7 +1476,7 @@ graph TD
     style B2 fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1436,6 +1764,97 @@ console.log("History:", replayed?.history.join("; "));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Persistence.hs ────────────────────────────────────────
+-- Two persistence strategies: snapshot repository vs event-sourced store.
+-- [F#: DU PoEvent + List.fold; Haskell uses sum type + foldl']
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Persistence where
+
+import           Data.Foldable (foldl')
+import           Data.Text     (Text)
+import qualified Data.Text     as T
+import           Data.Time     (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+
+-- ── TRADITIONAL REPOSITORY ─────────────────────────────────────────────────
+-- Stores the current snapshot — fast reads, no built-in history
+data PoSnapshot = PoSnapshot
+  { snapId        :: PurchaseOrderId
+  , snapStatus    :: Text
+  , snapTotal     :: Rational
+  , snapUpdatedAt :: UTCTime
+  } deriving (Show)
+
+data PoRepository = PoRepository
+  { repoLoad :: PurchaseOrderId -> IO (Maybe PoSnapshot)  -- => O(1) lookup
+  , repoSave :: PoSnapshot -> IO ()                       -- => overwrite snapshot
+  }
+
+-- ── EVENT STORE ────────────────────────────────────────────────────────────
+-- Stores the sequence of events — full history, requires projection for reads
+data PoEvent
+  = DraftCreated      PurchaseOrderId Rational
+  -- => Initial event — PO comes into existence
+  | ApprovalRequested PurchaseOrderId
+  -- => Status moves to AwaitingApproval
+  | PurchaseOrderApproved      PurchaseOrderId UTCTime
+  -- => Status moves to Approved
+  | PurchaseOrderIssuedEv      PurchaseOrderId UTCTime
+  -- => Status moves to Issued
+  | PurchaseOrderCancelledEv   PurchaseOrderId Text
+  -- => Off-ramp from any pre-Paid state
+  deriving (Show)
+
+data PoEventStore = PoEventStore
+  { storeAppend :: PurchaseOrderId -> [PoEvent] -> IO ()
+  , storeLoad   :: PurchaseOrderId -> IO [PoEvent]
+  }
+
+-- Projection: fold the event stream to get current state
+projectSnapshot :: UTCTime -> [PoEvent] -> Maybe PoSnapshot
+projectSnapshot now = foldl' folder Nothing
+  where
+    folder acc event = case event of
+      DraftCreated poId total ->
+        Just (PoSnapshot poId "Draft" total now)
+      -- => First event: creates the initial snapshot
+      ApprovalRequested _ ->
+        fmap (\s -> s { snapStatus = "AwaitingApproval" }) acc
+      -- => Status update via record-update syntax
+      PurchaseOrderApproved _ ts ->
+        fmap (\s -> s { snapStatus = "Approved", snapUpdatedAt = ts }) acc
+      PurchaseOrderIssuedEv _ ts ->
+        fmap (\s -> s { snapStatus = "Issued",   snapUpdatedAt = ts }) acc
+      PurchaseOrderCancelledEv _ _ ->
+        fmap (\s -> s { snapStatus = "Cancelled" }) acc
+-- => foldl' is strict — avoids thunk buildup over long event streams
+
+-- Test the projection
+runDemo :: IO ()
+runDemo = do
+  now <- getCurrentTime
+  let events =
+        [ DraftCreated      (PurchaseOrderId "po_e3d1") 2699.97
+          -- => Event 1: PO created with $2,699.97 total; initial Status = "Draft"
+        , ApprovalRequested (PurchaseOrderId "po_e3d1")
+          -- => Event 2: approval submitted; Status -> "AwaitingApproval"
+        , PurchaseOrderApproved (PurchaseOrderId "po_e3d1") now
+          -- => Event 3: approver signed off; Status -> "Approved"
+        ]
+      snapshot = projectSnapshot now events
+  case snapshot of
+    Just s  -> putStrLn ("Current state: " <> T.unpack (snapStatus s)
+                       <> " total=" <> show (fromRational (snapTotal s) :: Double))
+               -- => Output: Current state: Approved total=2699.97
+    Nothing -> putStrLn "No events"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Event stores provide a complete audit trail by design — every state the PO was ever in is recoverable by replaying the event stream; traditional repositories provide faster current-state reads at the cost of losing history.
@@ -1448,7 +1867,7 @@ console.log("History:", replayed?.history.join("; "));
 
 Each bounded context in the procurement platform exposes a public API through a module signature. The signature defines what is visible to other contexts; the implementation hides internal types. This is the F# module system as a bounded context boundary.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1599,7 +2018,7 @@ namespace PurchasingContext {
   // Types that cross the boundary are plain primitives — no branded types
   export interface SubmitRequisitionCommand {
     readonly requestedBy: string;
-    readonly lines: ReadonlyArray<{ skuCode: string; qty: number; unitPrice: number }>;
+    readonly lines: ReadonlyArray;
   }
 
   export interface RequisitionSubmittedEvent {
@@ -1614,11 +2033,11 @@ namespace PurchasingContext {
 
   // Result type
   type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-  const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-  const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+  const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+  const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
   // Public workflow — hides internal branded types
-  export function submitRequisition(cmd: SubmitRequisitionCommand): Result<RequisitionSubmittedEvent, string> {
+  export function submitRequisition(cmd: SubmitRequisitionCommand): Result {
     if (!cmd.requestedBy.trim()) return errR("requestedBy is required");
     if (cmd.lines.length === 0) return errR("at least one line required");
     const total = cmd.lines.reduce((s, l) => s + l.qty * l.unitPrice, 0);
@@ -1643,6 +2062,76 @@ const cmd: PurchasingContext.SubmitRequisitionCommand = {
 const result = PurchasingContext.submitRequisition(cmd);
 if (result.ok) console.log("Event:", result.value.type, "level:", result.value.approvalLevel);
 // => Output: Event: RequisitionSubmitted level: L2
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing.hs ────────────────────────────────────────────────────
+-- Bounded context as a module with an explicit export list.
+-- [F#: module visibility hides internal types; Haskell uses module export lists identically]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing
+  ( PurchaseOrderId (..)
+  , PurchaseOrderIssuedPublic (..)
+  , getIssuedPOPublic
+  -- => InternalPoState is NOT exported; consumers cannot reference it
+  ) where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+
+-- Public event — the "published language" of the purchasing context
+data PurchaseOrderIssuedPublic = PurchaseOrderIssuedPublic
+  { poipPoId        :: PurchaseOrderId
+  , poipSupplierId  :: Text
+  , poipIssuedAt    :: UTCTime
+  , poipTotalAmount :: Rational
+  } deriving (Show)
+
+-- Internal type — NOT exported (no module export); invisible outside Purchasing
+data InternalPoState = InternalPoState
+  { ipsId            :: PurchaseOrderId
+  , ipsLines         :: [(Text, Int, Rational)]
+  , ipsApprovalChain :: [Text]
+  } deriving (Show)
+-- => InternalPoState is intentionally not in the export list
+
+-- Public function — the only way to query a PO's issue status
+getIssuedPOPublic :: PurchaseOrderId -> IO (Maybe PurchaseOrderIssuedPublic)
+getIssuedPOPublic poId@(PurchaseOrderId raw) = do
+  now <- getCurrentTime
+  if raw == "po_e3d1"
+    then pure (Just (PurchaseOrderIssuedPublic poId "sup_acme" now 2699.97))
+    -- => Simplified stub — real impl queries the database
+    else pure Nothing
+-- => Returns the published type — never InternalPoState
+
+-- ── file: Receiving.hs ─────────────────────────────────────────────────────
+-- Receiving context consumes Purchasing only via the public exports.
+-- import qualified Purchasing as P would expose only the listed names — InternalPoState is not importable.
+
+openGrnExpectation :: PurchaseOrderIssuedPublic -> Text
+openGrnExpectation ev =
+  "GRN expectation opened for PO " <> T.pack (show (poipPoId ev))
+    <> " from supplier " <> poipSupplierId ev
+    <> " (total: " <> T.pack (show (fromRational (poipTotalAmount ev) :: Double)) <> ")"
+-- => Uses only the published type — cannot reference InternalPoState
+
+-- Test the context boundary
+runDemo :: IO ()
+runDemo = do
+  issuedEvent <- getIssuedPOPublic (PurchaseOrderId "po_e3d1")
+  -- => Returns the public event — not the internal state
+  case issuedEvent of
+    Just ev -> putStrLn (T.unpack (openGrnExpectation ev))
+               -- => Output: GRN expectation opened for PO PurchaseOrderId "po_e3d1" from supplier sup_acme (total: 2699.97)
+    Nothing -> putStrLn "PO not found"
 ```
 
 {{< /tab >}}
@@ -1673,7 +2162,7 @@ graph LR
     style I fill:#0173B2,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1900,6 +2389,85 @@ console.log("Translated:", translated?.supplierId, translated?.approvalStatus);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Invoicing/Acl.hs ─────────────────────────────────────────────────
+-- ACL: pure translation function between two bounded context models.
+-- [F#: translateGrnToSummary; Haskell uses the same shape — pure function]
+{-# LANGUAGE OverloadedStrings #-}
+module Invoicing.Acl where
+
+import           Data.List  (find)
+import           Data.Text  (Text)
+import qualified Data.Text  as T
+import           Data.Time  (UTCTime, getCurrentTime)
+
+-- ── RECEIVING CONTEXT TYPES ────────────────────────────────────────────────
+data GrnStatus = Open | Verified | Disputed deriving (Eq, Show)
+-- => Receiving's internal status — closed sum type
+
+data GoodsReceiptNote = GoodsReceiptNote
+  { grnId            :: Text
+  , grnPoId          :: Text
+  , grnReceivedQty   :: Int
+  , grnStatus        :: GrnStatus
+  , grnReceivedAt    :: UTCTime
+  } deriving (Show)
+-- => Receiving's internal type — not exported to invoicing
+
+-- ── INVOICING CONTEXT TYPES ────────────────────────────────────────────────
+data GrnSummary = GrnSummary
+  { gsGrnId          :: Text
+  , gsPoId           :: Text
+  , gsReceivedQty    :: Int
+  , gsIsValid        :: Bool
+  -- => True if GRN is Verified — invoicing only cares about validity
+  } deriving (Show)
+-- => Invoicing's view of a GRN — no dependency on GrnStatus
+
+-- ── THE ACL — TRANSLATION FUNCTION ─────────────────────────────────────────
+translateGrnToSummary :: GoodsReceiptNote -> GrnSummary
+translateGrnToSummary grn = GrnSummary
+  { gsGrnId       = grnId grn
+  , gsPoId        = grnPoId grn
+  , gsReceivedQty = grnReceivedQty grn
+  , gsIsValid     = grnStatus grn == Verified
+  -- => Translate GrnStatus to Bool — invoicing doesn't care which non-Verified state
+  }
+
+-- ACL port type — invoicing's dependency on receiving
+type FindValidGrn = Text -> IO (Maybe GrnSummary)
+-- => purchaseOrderId -> IO (Maybe GrnSummary)
+
+-- Simulated ACL adapter — in production, queries receiving's database
+findValidGrnAdapter :: [GoodsReceiptNote] -> FindValidGrn
+findValidGrnAdapter grns poId = do
+  let found = find (\g -> grnPoId g == poId && grnStatus g == Verified) grns
+      -- => Find a Verified GRN for the given PO ID
+  pure (fmap translateGrnToSummary found)
+  -- => Translate to GrnSummary if found; Nothing if no verified GRN exists
+
+-- Test the ACL
+runDemo :: IO ()
+runDemo = do
+  now <- getCurrentTime
+  let grns =
+        [ GoodsReceiptNote "grn_abc" "po_e3d1" 3 Verified now
+          -- => Verified GRN for po_e3d1 — eligible for invoice matching
+        ]
+      findGrn = findValidGrnAdapter grns
+  result <- findGrn "po_e3d1"
+  -- => Finds the Verified GRN — translates to GrnSummary
+  case result of
+    Just s  -> putStrLn ("GRN valid: qty=" <> show (gsReceivedQty s)
+                       <> " poId=" <> T.unpack (gsPoId s))
+               -- => Output: GRN valid: qty=3 poId=po_e3d1
+    Nothing -> putStrLn "No valid GRN found"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: An ACL translation function keeps the invoicing context decoupled from the receiving context's internal model — invoicing depends only on `GrnSummary`, not on `GoodsReceiptNote` or `GrnStatus`.
@@ -1912,7 +2480,7 @@ console.log("Translated:", translated?.supplierId, translated?.approvalStatus);
 
 The "published language" is the set of domain events that cross bounded context boundaries. These events are contracts — once published, their shape must not change without a versioning strategy. The procurement platform's published language is a discriminated union of cross-context events.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2198,6 +2766,97 @@ console.log(processPublishedEvent(evt));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/PublishedLanguage.hs ─────────────────────────────────
+-- Published language: the public domain event contract between bounded contexts.
+-- [F#: DU of anonymous record payloads per case; Haskell uses ADT with record payloads]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.PublishedLanguage where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Data.Time (UTCTime, getCurrentTime)
+
+-- The published language ADT — events that cross context boundaries
+data ProcurementPublishedEvent
+  = PurchaseOrderIssuedV1
+      { poIssuedId      :: Text
+      , poIssuedSupplier :: Text
+      , poIssuedAt      :: UTCTime
+      , poIssuedTotal   :: Rational
+      }
+  -- => Consumed by receiving (opens GRN) and supplier-notifier (EDI)
+  | RequisitionApprovedV1
+      { reqApprovedId   :: Text
+      , reqApprovedBy   :: Text
+      , reqApprovedAt   :: UTCTime
+      }
+  -- => Consumed by purchasing (auto-creates PO Draft)
+  | PurchaseOrderCancelledV1
+      { poCancelledId   :: Text
+      , poCancelledReason :: Text
+      , poCancelledAt   :: UTCTime
+      }
+  -- => Consumed by supplier-notifier and accounting
+  | GoodsReceivedV1
+      { grGrnId         :: Text
+      , grPoId          :: Text
+      , grHasDiscrepancy :: Bool
+      , grReceivedAt    :: UTCTime
+      }
+  -- => Consumed by invoicing (enable/block matching) and purchasing
+  | InvoiceMatchedV1
+      { imInvoiceId     :: Text
+      , imPoId          :: Text
+      , imMatchedAmount :: Rational
+      , imMatchedAt     :: UTCTime
+      }
+  -- => Consumed by payments (schedules payment run)
+  deriving (Show)
+
+-- A subscriber that reacts to cross-context events
+handlePublishedEvent :: ProcurementPublishedEvent -> Text
+handlePublishedEvent event = case event of
+  PurchaseOrderIssuedV1 { poIssuedId = poId, poIssuedSupplier = sup } ->
+    "[receiving] Open GRN expectation for PO " <> poId <> " (supplier: " <> sup <> ")"
+  -- => Receiving context opens a GRN expectation on PO issuance
+  GoodsReceivedV1 { grGrnId = gid, grHasDiscrepancy = disc }
+    | disc      -> "[invoicing] Block matching for GRN "  <> gid <> " - discrepancy detected"
+    -- => Discrepancy flag blocks invoice matching until dispute is resolved
+    | otherwise -> "[invoicing] Enable matching for GRN " <> gid
+  InvoiceMatchedV1 { imInvoiceId = iid, imMatchedAmount = amt } ->
+    "[payments] Schedule payment for invoice " <> iid
+      <> " amount=" <> T.pack (show (fromRational amt :: Double))
+  -- => Payments schedules a payment run on successful invoice matching
+  RequisitionApprovedV1 { reqApprovedId = rid } ->
+    "[purchasing] Auto-create PO Draft for requisition " <> rid
+  -- => Purchasing auto-converts approved requisition to PO Draft
+  PurchaseOrderCancelledV1 { poCancelledReason = r } ->
+    "[supplier-notifier] Notify supplier of cancellation: " <> r
+  -- => Supplier-notifier sends EDI/email on PO cancellation
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  now <- getCurrentTime
+  let events =
+        [ PurchaseOrderIssuedV1 "po_e3d1" "sup_acme" now 2699.97
+          -- => First event: PO po_e3d1 issued to sup_acme for $2,699.97
+        , GoodsReceivedV1 "grn_abc" "po_e3d1" False now
+          -- => Second event: goods received without discrepancy
+        , InvoiceMatchedV1 "inv_xyz" "po_e3d1" 2699.97 now
+          -- => Third event: invoice matched — payment scheduled
+        ]
+  mapM_ (putStrLn . T.unpack . handlePublishedEvent) events
+  -- => Output: [receiving] Open GRN expectation for PO po_e3d1 (supplier: sup_acme)
+  -- => Output: [invoicing] Enable matching for GRN grn_abc
+  -- => Output: [payments] Schedule payment for invoice inv_xyz amount=2699.97
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The published language DU is the formal contract between bounded contexts — every cross-context event is named, versioned, and carries exactly what consumers need without exposing internal context structure.
@@ -2212,7 +2871,7 @@ console.log(processPublishedEvent(evt));
 
 A factory function encapsulates the logic for creating a new `PurchaseOrder` from a validated command. It generates the ID, assigns initial state, and produces the creation event — all in one place.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2399,8 +3058,8 @@ printfn "Event: %A at %O" event.PurchaseOrderId event.CreatedAt
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 type SupplierId = string & { readonly __brand: "SupplierId" };
@@ -2424,10 +3083,7 @@ interface PurchaseOrder {
 // => PurchaseOrder always starts in Draft — factory enforces this
 
 // Factory function — validates and constructs
-function createPurchaseOrder(
-  supplierId: string,
-  lines: ReadonlyArray<{ skuCode: string; qty: number; unitPrice: number }>,
-): Result<PurchaseOrder, string> {
+function createPurchaseOrder(supplierId: string, lines: ReadonlyArray): Result {
   if (!supplierId.startsWith("sup_")) return errR(`Invalid SupplierId: '${supplierId}'`);
   // => Guard 1: supplier ID must have the domain prefix
   if (lines.length === 0) return errR("PO must have at least one line");
@@ -2454,6 +3110,102 @@ function createPurchaseOrder(
 const result = createPurchaseOrder("sup_001", [{ skuCode: "ELE-0099", qty: 3, unitPrice: 899.99 }]);
 if (result.ok) console.log("Created PO:", result.value.id, "lines:", result.value.lines.length);
 // => Output: Created PO: po_... lines: 1
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Factory.hs ────────────────────────────────────────────
+-- Factory function: encapsulates PO creation — id, initial state, first event.
+-- [F#: tuple return DraftPO * POCreatedEvent; Haskell uses a tuple identically]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Factory where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+newtype SupplierId      = SupplierId      Text deriving (Eq, Show)
+
+-- The inputs the factory needs
+data CreatePOInputs = CreatePOInputs
+  { ciRequisitionId :: Text
+  , ciSupplierId    :: SupplierId
+  , ciLines         :: [(Text, Int, Rational)]   -- => (sku, qty, unitPrice)
+  } deriving (Show)
+
+-- The outputs the factory produces
+data DraftPO = DraftPO
+  { dpId            :: PurchaseOrderId
+  , dpRequisitionId :: Text
+  , dpSupplierId    :: SupplierId
+  , dpLines         :: [(Text, Int, Rational)]
+  , dpTotal         :: Rational
+  , dpCreatedAt     :: UTCTime
+  } deriving (Show)
+
+data POCreatedEvent = POCreatedEvent
+  { pceId           :: PurchaseOrderId
+  , pceRequisitionId :: Text
+  , pceSupplierId   :: SupplierId
+  , pceTotalAmount  :: Rational
+  , pceCreatedAt    :: UTCTime
+  } deriving (Show)
+
+-- Ports injected for deterministic testing
+type GenerateId = IO Text
+-- => Produces a unique id segment
+type Clock      = IO UTCTime
+-- => Produces the current time
+
+-- The factory function
+createPurchaseOrder :: GenerateId -> Clock -> CreatePOInputs -> IO (DraftPO, POCreatedEvent)
+createPurchaseOrder generateId clock inputs = do
+  idSeg <- generateId
+  -- => Inject the id segment — deterministic in tests with a fixed stub
+  now   <- clock
+  -- => Inject the clock — deterministic in tests
+  let pid    = PurchaseOrderId ("po_" <> idSeg)
+      total  = sum [toRational q * p | (_, q, p) <- ciLines inputs]
+      -- => Compute total from the validated lines
+      draftPO = DraftPO
+        { dpId            = pid
+        , dpRequisitionId = ciRequisitionId inputs
+        , dpSupplierId    = ciSupplierId inputs
+        , dpLines         = ciLines inputs
+        , dpTotal         = total
+        , dpCreatedAt     = now
+        }
+      event = POCreatedEvent
+        { pceId            = pid
+        , pceRequisitionId = ciRequisitionId inputs
+        , pceSupplierId    = ciSupplierId inputs
+        , pceTotalAmount   = total
+        , pceCreatedAt     = now
+        }
+  pure (draftPO, event)
+  -- => Return both the aggregate state and the emitted event
+
+-- Test with fixed ID generator and clock
+runDemo :: IO ()
+runDemo = do
+  now <- getCurrentTime
+  let fixedId    = pure "e3d1f8a0"            -- => Deterministic id segment
+      fixedClock = pure now                    -- => Deterministic timestamp
+      inputs     = CreatePOInputs
+                    { ciRequisitionId = "req_f4c2"
+                    , ciSupplierId    = SupplierId "sup_acme"
+                    , ciLines         = [("ELE-0099", 3, 899.99), ("OFF-0042", 10, 8.50)]
+                    }
+  (draft, event) <- createPurchaseOrder fixedId fixedClock inputs
+  -- => Creates DraftPO with id="po_e3d1f8a0" and POCreatedEvent with same data
+  putStrLn ("Draft: " <> show (dpId draft) <> " total=" <> show (fromRational (dpTotal draft) :: Double))
+  -- => Output: Draft: PurchaseOrderId "po_e3d1f8a0" total=2784.97
+  putStrLn ("Event: " <> show (pceId event) <> " at " <> show (pceCreatedAt event))
+  -- => Output: Event: PurchaseOrderId "po_e3d1f8a0" at ...
 ```
 
 {{< /tab >}}
@@ -2488,7 +3240,7 @@ graph TD
     style WF fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2688,16 +3440,16 @@ interface PurchaseOrder {
 
 // Repository as a type alias — the port definition
 type PORepository = {
-  readonly findById: (id: PurchaseOrderId) => Promise<PurchaseOrder | null>;
-  readonly findBySupplier: (supplierId: SupplierId) => Promise<readonly PurchaseOrder[]>;
-  readonly save: (po: PurchaseOrder) => Promise<void>;
-  readonly delete: (id: PurchaseOrderId) => Promise<boolean>;
+  readonly findById: (id: PurchaseOrderId) => Promise;
+  readonly findBySupplier: (supplierId: SupplierId) => Promise;
+  readonly save: (po: PurchaseOrder) => Promise;
+  readonly delete: (id: PurchaseOrderId) => Promise;
 };
 // => [F#: type PORepository = { findById : ...; save : ...; } — record of function types]
 // => The type is the contract; implementations are swapped at the composition root
 
 // The workflow accepts the repository as a dependency — not a concrete class
-async function approveWorkflow(repo: PORepository, id: PurchaseOrderId, approver: string): Promise<string> {
+async function approveWorkflow(repo: PORepository, id: PurchaseOrderId, approver: string): Promise {
   const po = await repo.findById(id);
   // => Port call — resolves through the injected implementation
   if (!po) return `PO ${id} not found`;
@@ -2738,6 +3490,92 @@ console.log(result);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/Repository.hs ─────────────────────────────────────────
+-- Repository as function-type aliases — the purest form of the port pattern.
+-- [F#: LoadPO etc. as type aliases; Haskell uses type synonyms identically]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.Repository where
+
+import           Data.IORef        (IORef, newIORef, readIORef, atomicModifyIORef')
+import qualified Data.Map.Strict   as Map
+import           Data.Map.Strict   (Map)
+import           Data.Text         (Text)
+import qualified Data.Text         as T
+import           Data.Time         (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Ord, Show)
+newtype SupplierId      = SupplierId      Text deriving (Eq, Ord, Show)
+
+-- Data record stored in the repository
+data PoData = PoData
+  { pdId         :: PurchaseOrderId
+  , pdStatus     :: Text
+  , pdTotal      :: Rational
+  , pdUpdatedAt  :: UTCTime
+  } deriving (Show)
+
+-- Function-type aliases — each is a port
+type LoadPO            = PurchaseOrderId -> IO (Maybe PoData)
+-- => Load a PO by ID; Nothing if not found
+type SavePO            = PoData -> IO ()
+-- => Insert or update a PO
+type DeletePO          = PurchaseOrderId -> IO ()
+-- => Soft-delete a PO (rarely used)
+type ListPOsBySupplier = SupplierId -> IO [PoData]
+-- => Query all POs for a given supplier
+
+-- Workflow uses port aliases — adapter-agnostic
+approvePOWorkflow :: LoadPO -> SavePO -> PurchaseOrderId -> IO (Either Text PoData)
+approvePOWorkflow load save poId = do
+  opt <- load poId
+  -- => Use the LoadPO port — any adapter works here
+  case opt of
+    Nothing -> let PurchaseOrderId raw = poId
+               in pure (Left ("PO " <> raw <> " not found"))
+    Just po
+      | pdStatus po /= "AwaitingApproval" ->
+          pure (Left ("Cannot approve PO in status '" <> pdStatus po <> "'"))
+      -- => Business rule: only AwaitingApproval POs can be approved
+      | otherwise -> do
+          now <- getCurrentTime
+          let approved = po { pdStatus = "Approved", pdUpdatedAt = now }
+          -- => Pure state transition — record-update syntax
+          save approved
+          -- => Use the SavePO port — any adapter works here
+          pure (Right approved)
+
+-- In-memory adapter — for tests
+mkInMemoryRepo :: IO (LoadPO, SavePO)
+mkInMemoryRepo = do
+  store <- newIORef (Map.empty :: Map PurchaseOrderId PoData)
+  let load poId = Map.lookup poId <$> readIORef store
+      -- => Looks up the IORef-held Map
+      save po   = atomicModifyIORef' store (\m -> (Map.insert (pdId po) po m, ()))
+      -- => Upsert into the Map atomically
+  pure (load, save)
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  (load, save) <- mkInMemoryRepo
+  now <- getCurrentTime
+  let testPO = PoData (PurchaseOrderId "po_e3d1") "AwaitingApproval" 2699.97 now
+  -- => Seed: "po_e3d1" in the in-memory store
+  save testPO
+  result <- approvePOWorkflow load save (PurchaseOrderId "po_e3d1")
+  -- => load finds testPO; status = AwaitingApproval -> Approved; save updates store
+  case result of
+    Right po -> let PurchaseOrderId raw = pdId po
+                in putStrLn ("Approved: " <> T.unpack raw <> " status=" <> T.unpack (pdStatus po))
+                -- => Output: Approved: po_e3d1 status=Approved
+    Left  e  -> putStrLn ("Error: " <> T.unpack e)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Function-type aliases are the simplest possible port definition — no interface, no abstract class, no mock framework — just a type alias that any function matching the signature can satisfy.
@@ -2750,7 +3588,7 @@ console.log(result);
 
 Dependency rejection means the workflow function takes all required dependencies as explicit parameters and fails to compile if any are missing. There are no optional dependencies, no service locators, no ambient globals.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2914,8 +3752,8 @@ printfn "Result: %A" result
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 
@@ -2932,18 +3770,18 @@ interface PurchaseOrder {
 
 // ── RIGHT: required dependencies — must all be provided ───────────────────────
 interface IssuePODeps {
-  readonly findPO: (id: PurchaseOrderId) => Promise<PurchaseOrder | null>;
+  readonly findPO: (id: PurchaseOrderId) => Promise;
   // => Required — workflow cannot run without a PO lookup
-  readonly savePO: (po: PurchaseOrder & { status: "Issued" }) => Promise<void>;
+  readonly savePO: (po: PurchaseOrder & { status: "Issued" }) => Promise;
   // => Required — workflow must persist the state transition
-  readonly notifySupplier: (poId: PurchaseOrderId) => Promise<void>;
+  readonly notifySupplier: (poId: PurchaseOrderId) => Promise;
   // => Required — notification is part of the workflow contract, not optional
   readonly getCurrentTime: () => string;
   // => Required — injected for deterministic testing; never Date.now() inside workflow
 }
 // => All dependencies are required — TypeScript enforces this at construction time
 
-type IssuePOWorkflow = (deps: IssuePODeps, id: PurchaseOrderId) => Promise<Result<string, string>>;
+type IssuePOWorkflow = (deps: IssuePODeps, id: PurchaseOrderId) => Promise;
 
 const issuePO: IssuePOWorkflow = async (deps, id) => {
   const po = await deps.findPO(id);
@@ -2957,6 +3795,82 @@ const issuePO: IssuePOWorkflow = async (deps, id) => {
 
 console.log("Dependency rejection enforced — no optional service parameters");
 // => Output: Dependency rejection enforced — no optional service parameters
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/IssueWorkflow.hs ──────────────────────────────────────
+-- Dependency rejection: all dependencies are explicit function parameters.
+-- [F#: missing arg is a compile error; Haskell enforces it identically via the type system]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.IssueWorkflow where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Data.Time (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+newtype SupplierId      = SupplierId      Text deriving (Eq, Show)
+
+-- Port types — all required for the issue workflow
+type LoadApprovedPO      = PurchaseOrderId -> IO (Maybe (SupplierId, Rational))
+type CheckSupplierStatus = SupplierId      -> IO Bool
+type SaveIssuedPO        = PurchaseOrderId -> UTCTime -> IO ()
+type PublishPoIssued     = PurchaseOrderId -> SupplierId -> Rational -> IO ()
+type SendNotification    = SupplierId      -> Text -> IO ()
+-- => Five explicit port types — every dependency is named and typed
+
+-- The workflow: ALL dependencies are required — no defaults, no Maybes
+issueWorkflowComplete
+  :: LoadApprovedPO -> CheckSupplierStatus -> SaveIssuedPO
+  -> PublishPoIssued -> SendNotification
+  -> PurchaseOrderId -> IO (Either Text ())
+-- => Five dependencies + one runtime input; partial application yields a function,
+-- => but the workflow only runs when ALL five are provided — compile-time enforcement.
+issueWorkflowComplete load check save publish notify poId = do
+  opt <- load poId
+  -- => Step 1: load PO — Nothing if not found or not Approved
+  case opt of
+    Nothing -> pure (Left "PO not found or not in Approved state")
+    -- => Short-circuit without triggering further IO
+    Just (sid@(SupplierId rawSid), total) -> do
+      eligible <- check sid
+      -- => Step 2: verify supplier is still Approved
+      if not eligible
+        then pure (Left ("Supplier " <> rawSid <> " is no longer eligible"))
+        -- => Supplier ineligibility blocks issuance — no save or publish
+        else do
+          now <- getCurrentTime
+          -- => Capture issuance timestamp — same value used downstream
+          save poId now
+          -- => Step 3: persist the Issued state
+          publish poId sid total
+          -- => Step 4: publish PurchaseOrderIssued event
+          let PurchaseOrderId rawPoId = poId
+          notify sid ("PO " <> rawPoId <> " has been issued to you")
+          -- => Step 5: send supplier notification (EDI or email)
+          pure (Right ())
+          -- => All steps succeeded
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  let stubLoad _      = pure (Just (SupplierId "sup_acme", 2699.97))
+      -- => Returns fixed PO data — simulates Approved state
+      stubCheck _     = pure True
+      -- => Always eligible — simulates an Approved supplier
+      stubSave _ _    = pure ()
+      stubPublish _ _ _ = pure ()
+      stubNotify _ msg  = putStrLn ("[notify] " <> T.unpack msg)
+      -- => Prints instead of sending EDI/email
+  result <- issueWorkflowComplete stubLoad stubCheck stubSave stubPublish stubNotify
+                                  (PurchaseOrderId "po_e3d1")
+  putStrLn ("Result: " <> show result)
+  -- => Output: [notify] PO po_e3d1 has been issued to you
+  -- => Output: Result: Right ()
 ```
 
 {{< /tab >}}
@@ -2995,7 +3909,7 @@ graph TD
     style INV fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3200,6 +4114,76 @@ console.log("Expecting delivery after event:", updated.expectingDelivery);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Consistency.hs ───────────────────────────────────────
+-- Eventual vs strong consistency for cross-context updates.
+-- [F#: Async<unit> for cross-context delay; Haskell uses IO + IORef per context]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Consistency where
+
+import           Control.Concurrent (threadDelay)
+import           Data.IORef         (IORef, newIORef, modifyIORef, readIORef)
+import           Data.Text          (Text)
+import qualified Data.Text          as T
+import           Data.Time          (UTCTime, getCurrentTime)
+
+-- ── STRONG CONSISTENCY (within one context) ──────────────────────────────
+-- Both PO state and outbox event saved together — simulated as a single atomic update.
+data PoRecord = PoRecord { prId :: Text, prStatus :: Text } deriving (Show)
+data PoEvent  = PoEvent  { peKind :: Text, pePoId :: Text } deriving (Show)
+
+-- An atomic save: returns a confirmation string after updating both.
+savePoAndEventInTransaction :: IORef ([PoRecord], [PoEvent]) -> PoRecord -> PoEvent -> IO Text
+savePoAndEventInTransaction store po event = do
+  -- => modifyIORef applies the function atomically (for single-threaded IO);
+  -- => in production this wraps a Postgres transaction
+  modifyIORef store (\(pos, evs) -> (po : pos, event : evs))
+  -- => Both updates happen together — no partial state
+  pure ("Saved (atomic): PO status=" <> prStatus po <> " event=" <> peKind event)
+
+-- ── EVENTUAL CONSISTENCY (across contexts) ───────────────────────────────
+-- GoodsReceived is published by receiving; invoicing handles it asynchronously.
+data GoodsReceivedEvent = GoodsReceivedEvent
+  { greGrnId      :: Text
+  , grePoId       :: Text
+  , greReceivedAt :: UTCTime
+  } deriving (Show)
+
+-- Invoicing's event consumer — runs after the event is delivered
+handleGoodsReceived :: GoodsReceivedEvent -> IO ()
+handleGoodsReceived event = do
+  putStrLn ("[invoicing] Received GoodsReceived for PO " <> T.unpack (grePoId event)
+            <> " - enabling invoice matching")
+  -- => Invoicing updates its own projection — eventually consistent with receiving
+  threadDelay 0
+  -- => Simulate async processing delay (network, queue lag)
+  putStrLn ("[invoicing] Match eligibility updated for GRN " <> T.unpack (greGrnId event))
+  -- => Invoicing is now consistent — the window has closed
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  -- Strong consistency: PO + event saved together
+  store <- newIORef ([], [])
+  txResult <- savePoAndEventInTransaction
+                store
+                (PoRecord "po_e3d1" "Issued")
+                (PoEvent  "PurchaseOrderIssued" "po_e3d1")
+  putStrLn (T.unpack txResult)
+  -- => Output: Saved (atomic): PO status=Issued event=PurchaseOrderIssued
+
+  -- Eventual consistency: event published, then consumed by another context
+  now <- getCurrentTime
+  let grnEvent = GoodsReceivedEvent "grn_abc" "po_e3d1" now
+  handleGoodsReceived grnEvent
+  -- => Output: [invoicing] Received GoodsReceived for PO po_e3d1 - enabling invoice matching
+  -- => Output: [invoicing] Match eligibility updated for GRN grn_abc
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Strong consistency within a bounded context (same database transaction) and eventual consistency across contexts (domain events) is the standard consistency model for microservices-style procurement platforms.
@@ -3234,7 +4218,7 @@ graph LR
     style FAIL fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3452,6 +4436,67 @@ console.log(`Property 2 (monotone): ${r2.passed}/${r2.passed + r2.failed} passed
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/PropertyTest.hs ──────────────────────────────────────
+-- Property-based testing with QuickCheck — verifies invariants for all inputs.
+-- [F#: FsCheck; Haskell uses Test.QuickCheck — same generator-driven approach]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.PropertyTest where
+
+import           Test.QuickCheck (quickCheck, (==>), Property)
+
+-- The pure domain function under test
+data ApprovalLevel = L1 | L2 | L3 deriving (Eq, Ord, Show)
+
+deriveApprovalLevel :: Rational -> ApprovalLevel
+deriveApprovalLevel total
+  | total <= 1000  = L1   -- => Total <= $1,000 -> L1
+  | total <= 10000 = L2   -- => Total <= $10,000 -> L2
+  | otherwise      = L3   -- => Total > $10,000 -> L3
+
+-- Property 1: result is always a valid ApprovalLevel
+-- (Trivially true because the type is closed — QuickCheck still exercises the function.)
+prop_alwaysReturnsValidLevel :: Rational -> Bool
+prop_alwaysReturnsValidLevel total =
+  let level = deriveApprovalLevel (abs total)
+      -- => Use abs to keep input non-negative — domain invariant
+  in level == L1 || level == L2 || level == L3
+-- => GHC's exhaustive ADT guarantees this holds; QuickCheck samples it for documentation
+
+-- Property 2: boundary values are correct (example-based via QuickCheck)
+prop_boundaryCorrect :: Bool
+prop_boundaryCorrect =
+       deriveApprovalLevel 1000        == L1   -- => Exactly $1,000 -> L1
+    && deriveApprovalLevel 1000.01     == L2   -- => Just over $1,000 -> L2
+    && deriveApprovalLevel 10000       == L2   -- => Exactly $10,000 -> L2
+    && deriveApprovalLevel 10000.01    == L3   -- => Just over $10,000 -> L3
+-- => Boundary checks are the most common source of approval bugs
+
+-- Property 3: monotonicity — higher total never yields lower level
+prop_monotonic :: Rational -> Rational -> Property
+prop_monotonic t1 t2 =
+  -- ==> is QuickCheck's implication operator; precondition must hold to test
+  (abs t1 <= abs t2) ==>
+    deriveApprovalLevel (abs t1) <= deriveApprovalLevel (abs t2)
+-- => If total1 <= total2, level(total1) <= level(total2) — Ord on ApprovalLevel
+
+-- Manual property verification (run by `quickCheck` in a test runner)
+runDemo :: IO ()
+runDemo = do
+  putStrLn "Checking prop_alwaysReturnsValidLevel..."
+  quickCheck prop_alwaysReturnsValidLevel
+  -- => Output: +++ OK, passed 100 tests.
+  putStrLn ("Boundaries correct: " <> show prop_boundaryCorrect)
+  -- => Output: Boundaries correct: True
+  putStrLn "Checking prop_monotonic..."
+  quickCheck prop_monotonic
+  -- => Output: +++ OK, passed 100 tests.
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Property-based tests verify invariants across a large, random input space — they find boundary bugs that example-based tests miss, especially for financial threshold calculations.
@@ -3464,7 +4509,7 @@ console.log(`Property 2 (monotone): ${r2.passed}/${r2.passed + r2.failed} passed
 
 Some procurement invariants are enforced at compile time (via the type system) and some at runtime (via `Result`). This example contrasts the two approaches and explains when each is appropriate.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3660,6 +4705,79 @@ console.log("fromJson3:", "error" in fromJson3 ? fromJson3.error : fromJson3);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Invariants.hs ────────────────────────────────────────
+-- Compile-time vs runtime invariant enforcement — complementary tools.
+-- [F#: private DU + smart constructor; Haskell hides newtype constructor via module exports]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Invariants
+  ( SkuCode  -- export type, not constructor
+  , mkSku
+  , skuValue
+  , computeLineTotal
+  , checkBudget
+  ) where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Text.Regex.TDFA ((=~))
+
+-- ── COMPILE-TIME: SkuCode format ──────────────────────────────────────────
+-- Newtype with hidden constructor — only mkSku can produce a SkuCode.
+newtype SkuCode = SkuCode Text deriving (Eq, Show)
+-- => Functions accepting SkuCode know it is valid — no re-validation needed
+
+mkSku :: Text -> Either Text SkuCode
+mkSku s
+  | T.unpack s =~ ("^[A-Z]{3}-[0-9]{4,8}$" :: String) = Right (SkuCode s)
+  -- => Validation happens once at the boundary; tests rely on regex match
+  | otherwise = Left ("Invalid SKU: " <> s)
+
+skuValue :: SkuCode -> Text
+skuValue (SkuCode s) = s
+
+-- Functions accepting SkuCode need no defensive validation
+computeLineTotal :: SkuCode -> Int -> Rational -> Text
+computeLineTotal sku qty price =
+  skuValue sku <> " x " <> T.pack (show qty) <> " @ "
+    <> T.pack (show (fromRational price :: Double))
+    <> " = " <> T.pack (show (fromRational (toRational qty * price) :: Double))
+-- => sku is guaranteed valid by the type — no if/regex here
+
+-- ── RUNTIME: Budget check ─────────────────────────────────────────────────
+-- Depends on runtime data (department budget loaded from DB).
+checkBudget :: Rational -> Rational -> Either Text ()
+checkBudget required available
+  | required > available =
+      Left (T.pack ("Required " <> show (fromRational required :: Double)
+                 <> " exceeds available budget " <> show (fromRational available :: Double)))
+  -- => Result propagates the runtime failure — types cannot help here
+  | otherwise = Right ()
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  -- Compile-time: validate SKU once; computeLineTotal trusts the result
+  case mkSku "ELE-0099" of
+    Right sku -> putStrLn (T.unpack (computeLineTotal sku 3 899.99))
+                 -- => Output: ELE-0099 x 3 @ 899.99 = 2699.97
+    Left  e   -> putStrLn ("SKU error: " <> T.unpack e)
+
+  -- Runtime: budget check depends on data available only at request time
+  let budgetOk   = checkBudget 2699.97 5000
+      -- => 2699.97 <= 5000 — Right ()
+      budgetFail = checkBudget 2699.97 1000
+      -- => 2699.97 > 1000 — Left "..."
+  putStrLn ("Budget check: " <> show budgetOk)
+  -- => Output: Budget check: Right ()
+  putStrLn ("Budget fail: "  <> show budgetFail)
+  -- => Output: Budget fail: Left "Required 2699.97 exceeds available budget 1000.0"
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Compile-time invariants (type-system enforced) and runtime invariants (Result-based) are complementary — use the type system for structure and format constraints, use Result for constraints that depend on runtime data.
@@ -3672,7 +4790,7 @@ console.log("fromJson3:", "error" in fromJson3 ? fromJson3.error : fromJson3);
 
 The pure core of a procurement workflow is testable without mocks — supply real function values (stubs) as the injected dependencies. This avoids mock framework overhead and keeps tests readable.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3865,7 +4983,7 @@ interface RepoFake {
 }
 function makeTestRepo(fake: RepoFake) {
   return {
-    save: async (po: Record<string, unknown>) => {
+    save: async (po: Record) => {
       fake.events.push(`saved:${po.id}`);
     },
     findById: async () => null,
@@ -3885,6 +5003,89 @@ test("save writes to fake", fake.events.includes("saved:po_001"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing/WorkflowTest.hs ───────────────────────────────────────
+-- Testing without mocks: supply stub functions that match the port types.
+-- [F#: function-type aliases as ports; Haskell uses the same — function types are first-class]
+{-# LANGUAGE OverloadedStrings #-}
+module Purchasing.WorkflowTest where
+
+import           Control.Monad     (when)
+import           Data.IORef        (IORef, newIORef, modifyIORef, readIORef)
+import           Data.Text         (Text)
+import qualified Data.Text         as T
+import           Data.Time         (UTCTime, getCurrentTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+newtype SupplierId      = SupplierId      Text deriving (Eq, Show)
+
+-- Port types (function-type aliases)
+type LoadApprovedPO  = PurchaseOrderId -> IO (Maybe (SupplierId, Rational))
+-- => Returns Just (supplierId, total) if PO is Approved; Nothing otherwise
+type SaveIssuedPO    = PurchaseOrderId -> UTCTime -> IO ()
+-- => Persists the Issued state with the issuance timestamp
+type PublishPoIssued = PurchaseOrderId -> SupplierId -> Rational -> IO ()
+-- => Publishes the PurchaseOrderIssued event to the event bus
+
+-- The workflow under test
+issuePOWorkflow :: LoadApprovedPO -> SaveIssuedPO -> PublishPoIssued
+                -> PurchaseOrderId -> IO (Either Text ())
+issuePOWorkflow load save publish poId = do
+  opt <- load poId
+  -- => Step 1: load — returns Nothing if PO not found or not Approved
+  case opt of
+    Nothing -> pure (Left "PO not found")
+    -- => Short-circuit: no further IO performed
+    Just (supplierId, total) -> do
+      -- => PO found in Approved state with supplierId and total
+      now <- getCurrentTime
+      -- => Capture issuance timestamp — same value for save and publish
+      save poId now
+      -- => Step 2: persist Issued state
+      publish poId supplierId total
+      -- => Step 3: publish event to event bus
+      pure (Right ())
+      -- => All steps succeeded
+
+-- ── TEST CASE 1: Happy path ────────────────────────────────────────────────
+runHappyPath :: IO ()
+runHappyPath = do
+  calls <- newIORef ([] :: [Text])
+  -- => IORef accumulates side-effect records for assertion
+  let happyLoad _      = pure (Just (SupplierId "sup_acme", 2699.97))
+      -- => Always returns the PO — simulates Approved state
+      happySave _ _    = modifyIORef calls ("saved" :)
+      -- => Records that save was called
+      happyPublish _ (SupplierId sid) amt =
+        modifyIORef calls (("published:" <> sid <> ":" <> T.pack (show (fromRational amt :: Double))) :)
+      -- => Records the publish call with supplier and amount
+  result <- issuePOWorkflow happyLoad happySave happyPublish (PurchaseOrderId "po_e3d1")
+  putStrLn ("Happy result: " <> show result)
+  -- => Output: Happy result: Right ()
+  recorded <- readIORef calls
+  putStrLn ("Calls: " <> show (reverse recorded))
+  -- => Output: Calls: ["saved","published:sup_acme:2699.97"]
+
+-- ── TEST CASE 2: PO not found ──────────────────────────────────────────────
+runMissingPo :: IO ()
+runMissingPo = do
+  let missingLoad _ = pure Nothing
+      -- => Simulates PO not found
+      noopSave _ _    = pure ()
+      noopPublish _ _ _ = pure ()
+  result <- issuePOWorkflow missingLoad noopSave noopPublish (PurchaseOrderId "po_missing")
+  -- => load returns Nothing — workflow returns Left "PO not found"
+  putStrLn ("Missing result: " <> show result)
+  -- => Output: Missing result: Left "PO not found"
+
+runDemo :: IO ()
+runDemo = runHappyPath >> runMissingPo
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Stub functions that match port type aliases are sufficient for testing procurement workflows — no mock framework is needed when dependencies are plain function parameters.
@@ -3897,7 +5098,7 @@ test("save writes to fake", fake.events.includes("saved:po_001"));
 
 The procurement domain evolves when the business adds a `preferredCurrency` field to the `Supplier` aggregate. This example shows how to evolve a domain type without breaking existing code.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4091,6 +5292,82 @@ console.log("FX required (USD/JPY)?", poWithFX.fxConversionRequired);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Supplier/Evolution.hs ────────────────────────────────────────────
+-- Evolution: adding a field to the Supplier aggregate.
+-- [F#: option field with record-update syntax; Haskell uses Maybe with record update]
+{-# LANGUAGE OverloadedStrings #-}
+module Supplier.Evolution where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+
+newtype SupplierId = SupplierId Text deriving (Eq, Show)
+
+-- ── VERSION 1: Original Supplier ──────────────────────────────────────────
+data SupplierV1 = SupplierV1
+  { svId     :: SupplierId
+  , svName   :: Text
+  , svStatus :: Text
+  } deriving (Show)
+-- => Original aggregate — no currency preference
+
+-- ── VERSION 2: Add preferredCurrency :: Maybe Text ────────────────────────
+data SupplierV2 = SupplierV2
+  { sv2Id                :: SupplierId
+  , sv2Name              :: Text
+  , sv2Status            :: Text
+  , sv2PreferredCurrency :: Maybe Text
+  -- => New field — Maybe so existing records migrate with Nothing
+  } deriving (Show)
+
+-- Migration: upgrade a V1 to V2 with Nothing default
+migrateToV2 :: SupplierV1 -> SupplierV2
+migrateToV2 v1 = SupplierV2
+  { sv2Id                = svId v1
+  , sv2Name              = svName v1
+  , sv2Status            = svStatus v1
+  , sv2PreferredCurrency = Nothing
+  -- => All existing suppliers default to no preference (system default applies)
+  }
+
+-- New logic that uses the preference
+selectCurrency :: SupplierV2 -> Text -> Text
+selectCurrency supplier systemDefault =
+  case sv2PreferredCurrency supplier of
+    Just currency -> currency
+    -- => Supplier has a preference — use it for POs and invoices
+    Nothing       -> systemDefault
+    -- => Fall back to the system default (typically USD)
+
+-- Test the evolution
+runDemo :: IO ()
+runDemo = do
+  let existing = SupplierV1 (SupplierId "sup_acme") "Acme Supplies" "Approved"
+      -- => existing : SupplierV1 — created before the evolution
+      migrated = migrateToV2 existing
+      -- => migrated : SupplierV2 with PreferredCurrency = Nothing
+      newGlobal = SupplierV2
+        { sv2Id                = SupplierId "sup_global_01"
+        , sv2Name              = "Global Procurement Ltd"
+        , sv2Status            = "Approved"
+        , sv2PreferredCurrency = Just "EUR"
+        -- => New supplier with explicit EUR preference
+        }
+      currency1 = selectCurrency migrated  "USD"
+      -- => Nothing → falls back to "USD"
+      currency2 = selectCurrency newGlobal "USD"
+      -- => Just "EUR" → uses "EUR"
+  putStrLn ("Acme currency: "    <> T.unpack currency1)
+  -- => Output: Acme currency: USD
+  putStrLn ("Global currency: "  <> T.unpack currency2)
+  -- => Output: Global currency: EUR
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Adding an `option` field to a domain aggregate is the lowest-friction evolution strategy — existing records migrate with `None` defaults, and new records can provide the value.
@@ -4103,7 +5380,7 @@ console.log("FX required (USD/JPY)?", poWithFX.fxConversionRequired);
 
 The invoicing context needs a per-supplier tolerance override. Previously all suppliers used the default 2% tolerance; now VIP suppliers can have a custom tolerance configured in their profile.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4319,6 +5596,92 @@ console.log("Override tolerance (10%) exceeded:", matchInvoiceV2(1000, 1115, ove
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Invoicing/Tolerance.hs ───────────────────────────────────────────
+-- Evolution: per-supplier match tolerance override.
+-- [F#: private Tolerance DU with smart constructor; Haskell hides newtype constructor via exports]
+{-# LANGUAGE OverloadedStrings #-}
+module Invoicing.Tolerance
+  ( Tolerance, mkTolerance, defaultTolerance, toleranceValue
+  , SupplierMatchConfig (..)
+  , LoadSupplierConfig
+  , matchV2
+  ) where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+
+newtype SupplierId = SupplierId Text deriving (Eq, Show)
+
+-- Tolerance: newtype with smart constructor; raw constructor not exported
+newtype Tolerance = Tolerance Rational deriving (Eq, Show)
+
+mkTolerance :: Rational -> Either Text Tolerance
+mkTolerance pct
+  | pct < 0 || pct > 0.10 = Left "Tolerance must be 0..0.10"
+  | otherwise             = Right (Tolerance pct)
+
+defaultTolerance :: Tolerance
+defaultTolerance = Tolerance 0.02
+-- => 2% — system-wide default for three-way match
+
+toleranceValue :: Tolerance -> Rational
+toleranceValue (Tolerance t) = t
+
+-- New supplier configuration record
+data SupplierMatchConfig = SupplierMatchConfig
+  { smcSupplierId        :: SupplierId
+  , smcToleranceOverride :: Maybe Tolerance
+  -- => Nothing = use default; Just t = use this supplier's custom tolerance
+  } deriving (Show)
+
+-- Port type for loading the per-supplier configuration
+type LoadSupplierConfig = SupplierId -> IO (Maybe SupplierMatchConfig)
+
+-- Evolved match function — uses supplier-specific tolerance if present
+matchV2 :: LoadSupplierConfig -> SupplierId -> Rational -> Rational
+        -> IO (Either Text ())
+matchV2 loadConfig sid invoiceAmount calculated = do
+  configOpt <- loadConfig sid
+  -- => IO: lookup supplier-specific config (may be Nothing)
+  let tolerance = maybe defaultTolerance
+                        id
+                        (configOpt >>= smcToleranceOverride)
+      -- => >>= flattens Maybe(Maybe Tolerance); fallback to default if either Nothing
+      diff       = abs (invoiceAmount - calculated)
+      maxAllowed = calculated * toleranceValue tolerance
+  if diff <= maxAllowed
+    then pure (Right ())
+    -- => Within tolerance — match succeeds
+    else pure (Left (T.pack ("Invoice " <> show (fromRational invoiceAmount :: Double)
+                          <> " differs from calculated " <> show (fromRational calculated :: Double)
+                          <> " (tolerance: " <> show (fromRational (toleranceValue tolerance * 100) :: Double) <> "%)")))
+    -- => Outside tolerance — error with the effective tolerance
+
+-- Test with stub ports
+runDemo :: IO ()
+runDemo = do
+  let stubNoConfig _      = pure Nothing
+      -- => No supplier-specific config — uses default 2%
+      stubCustomConfig _  = pure (Just SupplierMatchConfig
+                                    { smcSupplierId        = SupplierId "sup_vip"
+                                    , smcToleranceOverride = either (const Nothing) Just (mkTolerance 0.05)
+                                    -- => VIP supplier has 5% override
+                                    })
+  r1 <- matchV2 stubNoConfig     (SupplierId "sup_acme") 2699.97 2699.97
+  -- => Exact match — within 2% — Right ()
+  r2 <- matchV2 stubCustomConfig (SupplierId "sup_vip")  2750    2699.97
+  -- => Diff = 50.03; maxAllowed = 2699.97 * 0.05 = 134.9985; 50.03 <= 134.9985 — Right ()
+  putStrLn ("Standard match: "  <> show r1)
+  -- => Output: Standard match: Right ()
+  putStrLn ("VIP match (5%): "  <> show r2)
+  -- => Output: VIP match (5%): Right ()
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Adding a per-supplier configuration lookup to an existing workflow is additive — the existing workflow logic is unchanged, and the new config loading is injected as a new function parameter with a safe default fallback.
@@ -4331,7 +5694,7 @@ console.log("Override tolerance (10%) exceeded:", matchInvoiceV2(1000, 1115, ove
 
 The `murabaha-finance` bounded context is an optional extension for Sharia-compliant procurement financing. A `MurabahaContract` represents a bank buying an asset and reselling it to the buyer at a markup. This context surfaces only in the advanced tier.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4560,6 +5923,104 @@ if (typeof contract !== "string") {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Murabaha/Contract.hs ─────────────────────────────────────────────
+-- MurabahaContract: optional Sharia-compliant procurement financing context.
+-- [F#: private DU MurabahaMarkup with smart constructor; Haskell hides constructor via module exports]
+{-# LANGUAGE OverloadedStrings #-}
+module Murabaha.Contract
+  ( MurabahaMarkup       -- export type, not constructor
+  , mkMarkup
+  , markupBps
+  , markupRate
+  , MurabahaState (..)
+  , MurabahaContract (..)
+  , createMurabahaContract
+  ) where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+
+-- Murabaha markup: validated basis points (100 bp = 1%); constructor hidden by exports.
+newtype MurabahaMarkup = MurabahaMarkup Int deriving (Eq, Show)
+-- => Invariant: 0 < bp <= 5000 (max 50%); enforced by mkMarkup
+
+-- Smart constructor — returns Left on invariant breach
+mkMarkup :: Int -> Either Text MurabahaMarkup
+mkMarkup bp
+  | bp <= 0 || bp > 5000 = Left ("Markup must be 1-5000 bp, got " <> T.pack (show bp))
+  | otherwise            = Right (MurabahaMarkup bp)
+
+markupBps :: MurabahaMarkup -> Int
+markupBps (MurabahaMarkup bp) = bp
+
+markupRate :: MurabahaMarkup -> Rational
+markupRate (MurabahaMarkup bp) = toRational bp / 10000
+-- => 200 bp -> 0.02 (2% markup rate)
+
+-- Contract lifecycle states — closed sum type
+data MurabahaState
+  = Quoted | AssetAcquired | Signed | InstallmentPending
+  | InstallmentPaid | Settled | Defaulted
+  deriving (Eq, Show)
+
+-- The MurabahaContract aggregate
+data MurabahaContract = MurabahaContract
+  { mcId             :: Text              -- => "mur_<short-uuid>"
+  , mcPoId           :: PurchaseOrderId
+  , mcAssetCost      :: Rational
+  , mcMarkup         :: MurabahaMarkup
+  , mcTotalRepayable :: Rational          -- => assetCost * (1 + rate)
+  , mcState          :: MurabahaState
+  , mcInstallments   :: Int
+  } deriving (Show)
+
+-- Factory: create a contract from a PO + markup + installment plan
+createMurabahaContract :: PurchaseOrderId -> Rational -> Int -> Int
+                      -> Either Text MurabahaContract
+createMurabahaContract poId assetCost markupBp installments
+  | assetCost   <= 0 = Left "Asset cost must be > 0"
+  -- => Guard: asset must have positive value
+  | installments <= 0 = Left "Installments must be > 0"
+  -- => Guard: at least one installment
+  | otherwise = do
+      markup <- mkMarkup markupBp
+      -- => Validate markup via smart constructor (Either monad chains errors)
+      let total = assetCost * (1 + markupRate markup)
+          -- => Total repayable = asset cost + markup
+          contractId = "mur_" <> T.take 8 (let PurchaseOrderId p = poId in p)
+          -- => Deterministic id derived from PO (production uses UUID v7)
+      pure MurabahaContract
+        { mcId             = contractId
+        , mcPoId           = poId
+        , mcAssetCost      = assetCost
+        , mcMarkup         = markup
+        , mcTotalRepayable = total
+        , mcState          = Quoted
+        , mcInstallments   = installments
+        }
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  let result = createMurabahaContract (PurchaseOrderId "po_e3d1") 2699.97 200 12
+      -- => 200 bp = 2% markup; 12 monthly installments
+      -- => total = 2699.97 * 1.02 = 2753.9694
+  case result of
+    Right c  -> putStrLn ("Contract: " <> T.unpack (mcId c)
+                      <> " markup=" <> show (markupBps (mcMarkup c)) <> " bp"
+                      <> " total=" <> show (fromRational (mcTotalRepayable c) :: Double)
+                      <> " installments=" <> show (mcInstallments c))
+                -- => Output: Contract: mur_po_e3d1 markup=200 bp total=2753.9694 installments=12
+    Left  e  -> putStrLn ("Error: " <> T.unpack e)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The `murabaha-finance` context is self-contained and optional — it links to the purchasing context via `PurchaseOrderId` only, keeping the Sharia financing logic fully decoupled from the core P2P flow.
@@ -4628,7 +6089,7 @@ graph TD
     style MF fill:#808080,stroke:#000,color:#fff
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4794,7 +6255,7 @@ namespace PaymentsContext {
 }
 
 // Integration map: which contexts subscribe to which events
-const integrationMap: Record<string, string[]> = {
+const integrationMap: Record = {
   "PurchasingContext.RequisitionSubmitted": ["ApprovalContext", "NotificationContext"],
   "PurchasingContext.PurchaseOrderIssued": ["ReceivingContext", "InvoicingContext"],
   "ReceivingContext.GoodsReceived": ["InvoicingContext"],
@@ -4806,6 +6267,76 @@ Object.entries(integrationMap).forEach(([event, subscribers]) => {
   console.log(`${event} -> [${subscribers.join(", ")}]`);
 });
 // => Output shows all cross-context event subscriptions
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Topology.hs ──────────────────────────────────────────
+-- Integration topology: which context publishes which events to whom.
+-- [F#: EventRoute record with DU ContextName; Haskell uses ADT + record list]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Topology where
+
+import           Data.List (intercalate)
+import           Data.Text (Text)
+import qualified Data.Text as T
+
+-- Six bounded contexts in the procurement platform
+data ContextName
+  = Purchasing | Supplier | Receiving | Invoicing | Payments | MurabahaFinance
+  deriving (Eq, Show)
+
+-- Single row in the event routing table
+data EventRoute = EventRoute
+  { erEvent     :: Text
+  , erPublisher :: ContextName
+  , erConsumers :: [ContextName]
+  } deriving (Show)
+
+-- The complete published-language topology
+eventTopology :: [EventRoute]
+eventTopology =
+  [ EventRoute "PurchaseOrderIssued"             Purchasing      [Receiving, Supplier]
+    -- => Receiving opens GRN expectation; Supplier receives EDI notification
+  , EventRoute "PurchaseOrderAcknowledged"       Purchasing      [Receiving]
+    -- => Receiving opens the delivery window
+  , EventRoute "PurchaseOrderCancelled"          Purchasing      [Supplier]
+    -- => Supplier receives cancellation notification
+  , EventRoute "RequisitionApproved"             Purchasing      [Purchasing]
+    -- => Purchasing auto-creates a PO Draft from the approved requisition
+  , EventRoute "SupplierApproved"                Supplier        [Purchasing]
+    -- => Purchasing adds supplier to the eligible-for-PO list
+  , EventRoute "SupplierSuspended"               Supplier        [Purchasing]
+    -- => Purchasing blocks new POs for this supplier
+  , EventRoute "GoodsReceived"                   Receiving       [Invoicing, Purchasing]
+    -- => Invoicing enables matching; Purchasing updates PO to PartiallyReceived or Received
+  , EventRoute "GoodsReceiptDiscrepancyDetected" Receiving       [Invoicing, Supplier]
+    -- => Invoicing blocks matching; Supplier receives discrepancy notification
+  , EventRoute "InvoiceMatched"                  Invoicing       [Payments]
+    -- => Payments schedules a payment run
+  , EventRoute "InvoiceDisputed"                 Invoicing       [Supplier]
+    -- => Supplier receives dispute notification
+  , EventRoute "PaymentDisbursed"                Payments        [Purchasing, Supplier]
+    -- => Purchasing marks PO as Paid; Supplier receives remittance advice
+  , EventRoute "MurabahaContractSigned"          MurabahaFinance [Purchasing]
+    -- => Purchasing links the murabaha contract to the PO (optional context)
+  ]
+
+-- Print the integration map
+runDemo :: IO ()
+runDemo = do
+  putStrLn "=== Procurement Platform Event Topology ==="
+  mapM_ printRoute eventTopology
+  where
+    printRoute r =
+      let consumers = intercalate ", " (map show (erConsumers r))
+      in putStrLn ("  " <> T.unpack (erEvent r) <> ": " <> show (erPublisher r)
+                   <> " -> [" <> consumers <> "]")
+  -- => Output: PurchaseOrderIssued: Purchasing -> [Receiving, Supplier]
+  -- => Output: ... (one line per event)
 ```
 
 {{< /tab >}}
@@ -4834,7 +6365,7 @@ stateDiagram-v2
     Completed --> [*]
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4995,8 +6526,8 @@ printfn "After response: %A" nextState
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 
@@ -5010,21 +6541,14 @@ type ApprovalSagaState =
   | { readonly step: "Failed"; readonly purchaseOrderId: PurchaseOrderId; readonly reason: string };
 
 // Saga command handlers — each advances the saga by one step
-function handleManagerApproval(
-  state: Extract<ApprovalSagaState, { step: "AwaitingManagerApproval" }>,
-  managerId: string,
-  approved: boolean,
-): ApprovalSagaState {
+function handleManagerApproval(state: Extract, managerId: string, approved: boolean): ApprovalSagaState {
   if (!approved) return { step: "Failed", purchaseOrderId: state.purchaseOrderId, reason: "Manager rejected" };
   // => Rejection terminates the saga
   return { step: "ManagerApproved", purchaseOrderId: state.purchaseOrderId, managerId };
   // => Advance to next step
 }
 
-function handleCFOApproval(
-  state: Extract<ApprovalSagaState, { step: "AwaitingCFOApproval" }>,
-  cfoId: string,
-): ApprovalSagaState {
+function handleCFOApproval(state: Extract, cfoId: string): ApprovalSagaState {
   return { step: "CFOApproved", purchaseOrderId: state.purchaseOrderId, cfoId };
   // => Final approval step — CFO always approves in this saga
 }
@@ -5051,6 +6575,81 @@ console.log("After CFO:", afterCFO.step);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/ApprovalSaga.hs ──────────────────────────────────────
+-- Saga: long-running workflow modelled as a durable state machine.
+-- [F#: DU with payloads on each state; Haskell uses ADT with record-style payloads]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.ApprovalSaga where
+
+import           Data.Text  (Text)
+import qualified Data.Text  as T
+import           Data.Time  (UTCTime)
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+newtype ApproverId      = ApproverId      Text deriving (Eq, Show)
+
+-- Saga states — the saga's own lifecycle as a closed sum type
+data ApprovalSagaState
+  = WaitingForApprover PurchaseOrderId ApproverId UTCTime
+  -- => Saga routed the approval request; field 3 is the SLA deadline
+  | ApprovalReceived   PurchaseOrderId ApproverId UTCTime
+  -- => Approver responded; PO will transition to Approved next
+  | Escalated          PurchaseOrderId ApproverId ApproverId
+  -- => SLA breach — escalated from field 2 to field 3
+  | Completed          PurchaseOrderId Text
+  -- => Saga completed — outcome text records reason
+  deriving (Show)
+
+-- Saga event: approver responded
+data ApproverResponded = ApproverResponded
+  { arPoId        :: PurchaseOrderId
+  , arApproverId  :: ApproverId
+  , arDecision    :: Text       -- => "Approved" | "Rejected"
+  , arRespondedAt :: UTCTime
+  } deriving (Show)
+
+-- Saga step: pure transition — current state + event -> next state
+handleApproverResponse :: ApprovalSagaState -> ApproverResponded -> ApprovalSagaState
+handleApproverResponse st response = case st of
+  WaitingForApprover poId expectedApprover _deadline
+    | expectedApprover == arApproverId response ->
+        -- => Response from the expected approver — advance the saga
+        if arDecision response == "Approved"
+          then ApprovalReceived poId expectedApprover (arRespondedAt response)
+          else let ApproverId aid = expectedApprover
+               in Completed poId ("Rejected by " <> aid)
+  _ -> st
+  -- => Unexpected approver or wrong state — idempotent no-op (duplicate message)
+
+-- Test
+runDemo :: UTCTime -> IO ()
+runDemo nowPlus2 = do
+  -- nowPlus2 is supplied by caller to keep this function deterministic
+  let initialDeadline = nowPlus2  -- => placeholder for now+5d in real code
+      initialState    = WaitingForApprover (PurchaseOrderId "po_e3d1")
+                                           (ApproverId "emp_mgr_007")
+                                           initialDeadline
+      -- => Saga started: waiting for emp_mgr_007
+      response        = ApproverResponded
+                          { arPoId        = PurchaseOrderId "po_e3d1"
+                          , arApproverId  = ApproverId "emp_mgr_007"
+                          , arDecision    = "Approved"
+                          , arRespondedAt = nowPlus2
+                          }
+      -- => Approver responded within the SLA window
+      nextState       = handleApproverResponse initialState response
+      -- => Pure transition — no IO, fully testable
+  putStrLn ("Initial: " <> show initialState)
+  -- => Output: Initial: WaitingForApprover (PurchaseOrderId "po_e3d1") (ApproverId "emp_mgr_007") ...
+  putStrLn ("After response: " <> show nextState)
+  -- => Output: After response: ApprovalReceived (PurchaseOrderId "po_e3d1") (ApproverId "emp_mgr_007") ...
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A saga's state machine, modelled as a discriminated union with typed state transitions, makes the long-running workflow's current position explicit and resumable after service restarts.
@@ -5063,7 +6662,7 @@ console.log("After CFO:", afterCFO.step);
 
 Domain workflows written in one language may be consumed from hosts written in another. On the .NET platform, F# uses `Async<T>` while C# callers expect `Task<T>` — converting between the two is a thin boundary concern at the composition root. Clojure and TypeScript face the same challenge when crossing library or service boundaries: the domain layer stays idiomatic; the shim translates at the edge.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5168,18 +6767,18 @@ printfn "Task result: %s" result
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type PurchaseOrderId = string & { readonly __brand: "PurchaseOrderId" };
 
 // ── Domain layer: returns Result<T,E> ─────────────────────────────────────────
-function validatePOTotal(total: number): Result<number, string> {
+function validatePOTotal(total: number): Result {
   return total > 0 ? okR(total) : errR(`Total must be > 0, got ${total}`);
 }
 
 // ── Application service: wraps domain Result in a Promise for async consumers ─
-async function getApprovalLevel(total: number): Promise<string> {
+async function getApprovalLevel(total: number): Promise {
   const result = validatePOTotal(total);
   if (!result.ok) throw new Error(result.error);
   // => Converts domain Result.error to thrown exception — for async/await callers
@@ -5189,7 +6788,7 @@ async function getApprovalLevel(total: number): Promise<string> {
 }
 
 // ── REST handler: consumes the async API ──────────────────────────────────────
-async function handleGetApprovalLevel(totalParam: string): Promise<{ status: number; body: unknown }> {
+async function handleGetApprovalLevel(totalParam: string): Promise {
   const total = parseFloat(totalParam);
   if (isNaN(total)) return { status: 400, body: { error: "Invalid total parameter" } };
   try {
@@ -5209,6 +6808,58 @@ console.log("Good response:", goodResponse.status, JSON.stringify(goodResponse.b
 const badResponse = await handleGetApprovalLevel("-100");
 console.log("Bad response:", badResponse.status, JSON.stringify(badResponse.body));
 // => Output: Bad response: 422 {"error":"Total must be > 0, got -100"}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Interop.hs ───────────────────────────────────────────
+-- Exposing an IO-based workflow via Control.Concurrent.Async.
+-- [F#: Async.StartAsTask converts to Task<T>; Haskell uses async :: IO a -> IO (Async a)]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Interop where
+
+import           Control.Concurrent.Async (Async, async, wait)
+import           Control.Exception        (throwIO, Exception)
+import           Data.Text                (Text)
+import qualified Data.Text                as T
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+
+-- Custom exception for workflow errors at the interop boundary
+data WorkflowError = WorkflowError Text deriving (Show)
+instance Exception WorkflowError
+
+-- The Haskell domain workflow returns IO (Either Text Text) — Result equivalent
+issueWorkflow :: PurchaseOrderId -> IO (Either Text Text)
+issueWorkflow (PurchaseOrderId rawId) = do
+  -- => All domain logic is here — pure-ish IO returning Either
+  pure (Right ("PO " <> rawId <> " issued successfully"))
+  -- => Return Right with a success message
+
+-- Boundary shim: convert Either Text Text into a Async Text for foreign callers.
+-- Mirrors the F# Async.StartAsTask conversion at the interop boundary.
+issueWorkflowAsync :: Text -> IO (Async Text)
+issueWorkflowAsync rawPoId = async $ do
+  -- => async spawns a thread and returns an Async handle the caller may await
+  result <- issueWorkflow (PurchaseOrderId rawPoId)
+  case result of
+    Right message -> pure message
+    -- => Success: return the message
+    Left err      -> throwIO (WorkflowError err)
+    -- => Error: raise an exception so foreign exception handling can react
+
+-- Test the Async-returning shim
+runDemo :: IO ()
+runDemo = do
+  task <- issueWorkflowAsync "po_e3d1"
+  -- => issueWorkflowAsync returns an Async Text handle
+  result <- wait task
+  -- => wait blocks until the Async completes — analogous to task.Result in C#
+  putStrLn ("Task result: " <> T.unpack result)
+  -- => Output: Task result: PO po_e3d1 issued successfully
 ```
 
 {{< /tab >}}
@@ -5239,7 +6890,7 @@ graph LR
     style Q fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5413,7 +7064,7 @@ interface POWriteModel {
   readonly id: PurchaseOrderId;
   readonly supplierId: SupplierId;
   readonly status: "Draft" | "Approved" | "Issued" | "Cancelled";
-  readonly lines: ReadonlyArray<{ sku: string; qty: number; unitPrice: number }>;
+  readonly lines: ReadonlyArray;
   readonly total: number;
   readonly version: number; // optimistic concurrency control
 }
@@ -5436,7 +7087,7 @@ interface POListItem {
 // => Read model is denormalised and pre-formatted — no domain logic needed at query time
 
 interface PODetail extends POListItem {
-  lines: Array<{ sku: string; qty: number; unitPrice: string; lineTotal: string }>;
+  lines: Array;
   // => Pre-formatted for display — no calculation in the UI layer
 }
 
@@ -5469,6 +7120,86 @@ console.log("Read model:", readItem.totalDisplay, readItem.status);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/Cqrs.hs ──────────────────────────────────────────────
+-- CQRS: write model (aggregate) and read model (projection) are separate.
+-- [F#: record types for both models; Haskell uses records with selectors]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.Cqrs where
+
+import           Data.Text (Text)
+import qualified Data.Text as T
+
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+newtype SupplierId      = SupplierId      Text deriving (Eq, Show)
+
+-- ── WRITE MODEL ───────────────────────────────────────────────────────────
+-- The PO aggregate — normalised, consistent, authoritative
+data PoWriteModel = PoWriteModel
+  { wmId         :: PurchaseOrderId
+  , wmSupplierId :: SupplierId
+  , wmStatus     :: Text
+  , wmTotal      :: Rational
+  } deriving (Show)
+-- => Write model: updated on every command — single source of truth
+
+-- ── READ MODEL ────────────────────────────────────────────────────────────
+-- The dashboard projection — denormalised, fast to query
+data PoDashboardEntry = PoDashboardEntry
+  { dePoId         :: Text     -- => Display-ready string id
+  , deSupplierName :: Text     -- => Denormalised supplier name (avoids join)
+  , deStatus       :: Text     -- => Pre-projected status string
+  , deTotal        :: Rational -- => Cached total
+  , deIsOverdue    :: Bool     -- => Pre-computed overdue flag
+  } deriving (Show)
+-- => Read model: shaped for UI, not for domain consistency
+
+-- Event that updates the read model
+data PoStatusChanged = PoStatusChanged
+  { pscPoId         :: PurchaseOrderId
+  , pscNewStatus    :: Text
+  , pscSupplierName :: Text
+  , pscTotal        :: Rational
+  } deriving (Show)
+
+-- Projection: apply the event to the existing entry (Nothing on first sight)
+applyStatusChange :: Maybe PoDashboardEntry -> PoStatusChanged -> PoDashboardEntry
+applyStatusChange existing event =
+  let PurchaseOrderId raw = pscPoId event
+  in case existing of
+       Nothing ->
+         -- => First event for this PO — build a fresh entry
+         PoDashboardEntry
+           { dePoId         = raw
+           , deSupplierName = pscSupplierName event
+           , deStatus       = pscNewStatus event
+           , deTotal        = pscTotal event
+           , deIsOverdue    = False
+           }
+       Just entry ->
+         -- => Existing entry — only status changes (record-update syntax)
+         entry { deStatus = pscNewStatus event }
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  let event1 = PoStatusChanged (PurchaseOrderId "po_e3d1") "Draft"    "Acme Supplies" 2699.97
+      -- => PO enters the dashboard as Draft
+      event2 = PoStatusChanged (PurchaseOrderId "po_e3d1") "Approved" "Acme Supplies" 2699.97
+      -- => PO transitions to Approved
+      entry1 = applyStatusChange Nothing      event1
+      entry2 = applyStatusChange (Just entry1) event2
+  putStrLn ("After Draft: "    <> T.unpack (dePoId entry1) <> " " <> T.unpack (deStatus entry1)
+            <> " " <> show (fromRational (deTotal entry1) :: Double))
+  -- => Output: After Draft: po_e3d1 Draft 2699.97
+  putStrLn ("After Approved: " <> T.unpack (dePoId entry2) <> " " <> T.unpack (deStatus entry2))
+  -- => Output: After Approved: po_e3d1 Approved
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: CQRS separates the write model (consistent aggregate for commands) from the read model (denormalised projection for queries) — each is optimised for its purpose without compromise.
@@ -5481,7 +7212,7 @@ console.log("Read model:", readItem.totalDisplay, readItem.status);
 
 The payment workflow triggers when an invoice is matched. It creates a `Payment` aggregate, schedules the disbursement with the bank, and emits `PaymentDisbursed` which closes the PO lifecycle.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5686,8 +7417,8 @@ printfn "Payment for invoice: %A" payment.InvoiceId
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 type InvoiceId = string & { readonly __brand: "InvoiceId" };
 
@@ -5713,7 +7444,7 @@ interface ScheduledPayment {
 }
 
 // Pipeline steps
-function validateInvoice(raw: RawInvoice): Result<ValidatedInvoice, string> {
+function validateInvoice(raw: RawInvoice): Result {
   if (!raw.invoiceNumber.startsWith("inv_")) return errR(`Invalid invoice number: ${raw.invoiceNumber}`);
   if (raw.amount <= 0) return errR(`Invoice amount must be > 0`);
   if (!raw.supplierId.startsWith("sup_")) return errR(`Invalid supplierId: ${raw.supplierId}`);
@@ -5725,7 +7456,7 @@ function validateInvoice(raw: RawInvoice): Result<ValidatedInvoice, string> {
   });
 }
 
-function matchThreeWay(invoice: ValidatedInvoice, poTotal: number): Result<MatchedInvoice, string> {
+function matchThreeWay(invoice: ValidatedInvoice, poTotal: number): Result {
   const variance = Math.abs(invoice.amount - poTotal) / poTotal;
   if (variance > 0.05) return errR(`Invoice ${invoice.amount} vs PO ${poTotal} exceeds 5% tolerance`);
   return okR({ ...invoice, matchedAt: new Date().toISOString() });
@@ -5737,11 +7468,7 @@ function schedulePayment(matched: MatchedInvoice, paymentTermDays: number): Sche
 }
 
 // Full pipeline
-function processInvoicePayment(
-  raw: RawInvoice,
-  poTotal: number,
-  paymentTermDays: number,
-): Result<ScheduledPayment, string> {
+function processInvoicePayment(raw: RawInvoice, poTotal: number, paymentTermDays: number): Result {
   const validated = validateInvoice(raw);
   if (!validated.ok) return validated;
   const matched = matchThreeWay(validated.value, poTotal);
@@ -5754,6 +7481,94 @@ const result = processInvoicePayment(raw, 2699.97, 30);
 
 if (result.ok) console.log("Payment scheduled:", result.value.invoiceId, "on", result.value.scheduledFor);
 // => Output: Payment scheduled: inv_001 on 2026-...
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/PaymentWorkflow.hs ───────────────────────────────────
+-- Payment workflow: from InvoiceMatched event to PaymentDisbursed.
+-- [F#: Async<Payment> computation expression; Haskell uses IO + Either for failures]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.PaymentWorkflow where
+
+import           Data.Text         (Text)
+import qualified Data.Text         as T
+import           Data.Time         (UTCTime, getCurrentTime)
+
+-- Trigger event from the invoicing context
+data InvoiceMatchedEvent = InvoiceMatchedEvent
+  { imeInvoiceId     :: Text       -- => Identifies the matched invoice
+  , imePoId          :: Text       -- => Links payment back to originating PO
+  , imeMatchedAmount :: Rational   -- => Approved payment amount
+  , imeSupplierId    :: Text       -- => Bank beneficiary identifier
+  } deriving (Show)
+
+-- Payment lifecycle state — closed sum type
+data PaymentState = Scheduled | Disbursed | PaymentFailed | Reversed
+  deriving (Eq, Show)
+-- => Scheduled: queued; Disbursed: bank confirmed; Failed/Reversed: error states
+
+-- Payment aggregate root
+data Payment = Payment
+  { payId          :: Text         -- => "pay_<short-uuid>"
+  , payInvoiceId   :: Text         -- => Links to matched invoice
+  , payAmount      :: Rational     -- => Disbursement amount
+  , paySupplierId  :: Text         -- => Bank beneficiary
+  , payState       :: PaymentState -- => Starts Scheduled
+  , payScheduledAt :: UTCTime      -- => Scheduling timestamp
+  , payDisbursedAt :: Maybe UTCTime  -- => Nothing until bank confirms
+  } deriving (Show)
+
+-- Domain event emitted on successful disbursement
+data PaymentDisbursedEvent = PaymentDisbursedEvent
+  { pdePaymentId :: Text
+  , pdePoId      :: Text       -- => Tells purchasing to mark PO as Paid
+  , pdeAmount    :: Rational
+  , pdeAt        :: UTCTime
+  } deriving (Show)
+
+-- Port: persists the scheduled payment and queues the bank job
+type SchedulePayment = Payment -> IO ()
+
+-- Workflow: handle the InvoiceMatched event
+handleInvoiceMatched :: SchedulePayment -> InvoiceMatchedEvent -> IO Payment
+handleInvoiceMatched schedule event = do
+  now <- getCurrentTime
+  -- => Single timestamp used for scheduling
+  let payment = Payment
+        { payId          = "pay_" <> T.take 8 (imeInvoiceId event)
+        -- => Deterministic id derived from invoice id (simplified)
+        , payInvoiceId   = imeInvoiceId event
+        , payAmount      = imeMatchedAmount event
+        , paySupplierId  = imeSupplierId event
+        , payState       = Scheduled
+        , payScheduledAt = now
+        , payDisbursedAt = Nothing
+        }
+  schedule payment
+  -- => IO: persist and queue the disbursement job
+  pure payment
+
+-- Test
+runDemo :: IO ()
+runDemo = do
+  let stubSchedule p = putStrLn ("[payments] Scheduled: " <> T.unpack (payId p)
+                              <> " amount=" <> show (fromRational (payAmount p) :: Double))
+      matchEvent = InvoiceMatchedEvent
+        { imeInvoiceId     = "inv_xyz"
+        , imePoId          = "po_e3d1"
+        , imeMatchedAmount = 2699.97
+        , imeSupplierId    = "sup_acme"
+        }
+  payment <- handleInvoiceMatched stubSchedule matchEvent
+  -- => Output (from stub): [payments] Scheduled: pay_inv_xyz amount=2699.97
+  putStrLn ("Payment state: " <> show (payState payment))
+  -- => Output: Payment state: Scheduled
+  putStrLn ("Payment for invoice: " <> T.unpack (payInvoiceId payment))
+  -- => Output: Payment for invoice: inv_xyz
 ```
 
 {{< /tab >}}
@@ -5784,7 +7599,7 @@ stateDiagram-v2
     Issued --> [*]
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5969,7 +7784,7 @@ function describeStatusV2(s: POStatusV2): string {
 
 // Evolution of transitions — Issued can now transition to Disputed
 function canTransition(from: POStatusV2, to: POStatusV2): boolean {
-  const allowed: Partial<Record<POStatusV2, POStatusV2[]>> = {
+  const allowed: Partial = {
     Draft: ["Approved", "Cancelled"],
     Approved: ["Issued", "Cancelled"],
     Issued: ["Disputed", "Cancelled"], // NEW: Issued -> Disputed
@@ -5988,6 +7803,67 @@ console.log("Dispute description:", describeStatusV2("Disputed"));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/PoEvolution.hs ───────────────────────────────────────
+-- Adding a new state to the PO ADT — GHC warns about non-exhaustive patterns.
+-- [F#: FS0025 incomplete match; Haskell uses -Wincomplete-patterns to surface gaps]
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+module Procurement.PoEvolution where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- ── BEFORE: Original state ADT ─────────────────────────────────────────────
+data PoStatusBefore
+  = DraftB | AwaitingApprovalB | ApprovedB | IssuedB | CancelledB
+  deriving (Eq, Show)
+-- => Five constructors — all case expressions cover five cases
+
+-- ── AFTER: New OnHold state added with payload ─────────────────────────────
+data PoStatusAfter
+  = Draft | AwaitingApproval | Approved | Issued | Cancelled
+  | OnHold Text
+  -- => New constructor carries a mandatory reason
+  deriving (Eq, Show)
+
+-- Every case expression on PoStatusAfter must now handle OnHold.
+-- GHC's -Wincomplete-patterns warns on any unupdated match.
+describeStatus :: PoStatusAfter -> Text
+describeStatus s = case s of
+  Draft            -> "Draft: being built"
+  AwaitingApproval -> "Awaiting manager approval"
+  Approved         -> "Approved: ready for issuance"
+  Issued           -> "Issued: sent to supplier"
+  Cancelled        -> "Cancelled"
+  OnHold reason    -> "On hold: " <> reason
+  -- => New arm added — GHC verifies all six constructors are covered
+
+canIssue :: PoStatusAfter -> Bool
+canIssue Approved   = True
+-- => Only Approved POs can be issued
+canIssue OnHold {}  = False
+-- => OnHold _ pattern matches the new constructor regardless of reason
+canIssue _          = False
+-- => Catch-all for remaining constructors (Draft/AwaitingApproval/Issued/Cancelled)
+
+-- Test the new state
+runDemo :: IO ()
+runDemo = do
+  let statuses = [Draft, AwaitingApproval, Approved, Issued, Cancelled, OnHold "Budget freeze Q2"]
+  -- => All six states including the new OnHold case
+  mapM_ (\s -> putStrLn (T.unpack (describeStatus s) <> " | canIssue=" <> show (canIssue s))) statuses
+  -- => Output: Draft: being built | canIssue=False
+  -- => Output: Awaiting manager approval | canIssue=False
+  -- => Output: Approved: ready for issuance | canIssue=True
+  -- => Output: Issued: sent to supplier | canIssue=False
+  -- => Output: Cancelled | canIssue=False
+  -- => Output: On hold: Budget freeze Q2 | canIssue=False
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Adding a new state to a discriminated union makes the compiler issue FS0025 warnings on every unupdated match expression — the compiler produces a complete list of code paths that must handle the new state.
@@ -6000,7 +7876,7 @@ console.log("Dispute description:", describeStatusV2("Disputed"));
 
 This final example sketches the full procurement platform system as a composition of the concepts from all 80 examples — types, workflows, events, repositories, ACLs, and the functional core / imperative shell boundary.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -6262,8 +8138,8 @@ publishedEvents |> Seq.iter (printfn "  %A")
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // ── All domain types (abbreviated) ────────────────────────────────────────────
 type RequisitionId = string & { readonly __brand: "RequisitionId" };
@@ -6273,28 +8149,25 @@ type InvoiceId = string & { readonly __brand: "InvoiceId" };
 const mkId = <T>(prefix: string): T => `${prefix}_${Math.random().toString(36).slice(2, 8)}` as T;
 
 // ── Purchasing context ────────────────────────────────────────────────────────
-function submitRequisition(
-  requestedBy: string,
-  total: number,
-): Result<{ requisitionId: RequisitionId; level: string }, string> {
+function submitRequisition(requestedBy: string, total: number): Result {
   if (!requestedBy) return errR("requestedBy required");
   const level = total <= 1000 ? "L1" : total <= 10000 ? "L2" : "L3";
   return okR({ requisitionId: mkId<RequisitionId>("req"), level });
 }
 
-function issuePO(requisitionId: RequisitionId): Result<PurchaseOrderId, string> {
+function issuePO(requisitionId: RequisitionId): Result {
   return okR(mkId<PurchaseOrderId>("po"));
   // => Simplified: creates PO from approved requisition
 }
 
 // ── Receiving context ─────────────────────────────────────────────────────────
-function receiveGoods(poId: PurchaseOrderId, receivedTotal: number): Result<GRNId, string> {
+function receiveGoods(poId: PurchaseOrderId, receivedTotal: number): Result {
   if (receivedTotal <= 0) return errR("Received total must be > 0");
   return okR(mkId<GRNId>("grn"));
 }
 
 // ── Invoicing context ─────────────────────────────────────────────────────────
-function matchAndApproveInvoice(poTotal: number, invoiceTotal: number): Result<InvoiceId, string> {
+function matchAndApproveInvoice(poTotal: number, invoiceTotal: number): Result {
   const variance = Math.abs(invoiceTotal - poTotal) / poTotal;
   if (variance > 0.05) return errR(`Variance ${(variance * 100).toFixed(1)}% exceeds 5% tolerance`);
   return okR(mkId<InvoiceId>("inv"));
@@ -6334,6 +8207,119 @@ console.log(outcome);
 // =>   GRN grn_... created
 // =>   Invoice inv_... approved — three-way match passed
 // =>   Pipeline complete — Invoice inv_... ready for payment
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Procurement/SystemSketch.hs ──────────────────────────────────────
+-- End-to-end sketch: procurement platform composed from all 80 examples.
+-- [F#: typed wrappers, DU events, async; Haskell uses newtypes, sum types, IO]
+{-# LANGUAGE OverloadedStrings #-}
+module Procurement.SystemSketch where
+
+import           Data.IORef        (IORef, newIORef, modifyIORef, readIORef)
+import           Data.Text         (Text)
+import qualified Data.Text         as T
+import           Data.Time         (UTCTime, getCurrentTime)
+
+-- ── TYPES (newtype wrappers — ubiquitous language) ─────────────────────────
+newtype RequisitionId   = RequisitionId   Text deriving (Eq, Show)
+-- => Single-constructor newtype: zero runtime cost, full compile-time safety
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Eq, Show)
+-- => Distinct type from RequisitionId — cannot be swapped at call sites
+newtype SupplierId      = SupplierId      Text deriving (Eq, Show)
+-- => Type-system enforced identity boundary across the platform
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Eq, Show)
+-- => Sum type ADT — exhaustive pattern matching guaranteed by GHC
+
+-- ── DOMAIN EVENTS (cross-context published language) ───────────────────────
+data ProcurementEvent
+  = RequisitionApproved   Text UTCTime
+  -- => Approver confirmed; purchasing auto-creates a PO
+  | PurchaseOrderIssued   Text Text Rational
+  -- => PO sent to supplier; receiving opens a GRN expectation
+  | GoodsReceived         Text Text Bool
+  -- => Physical receipt confirmed; invoicing enables/blocks matching
+  | InvoiceMatched        Text Text Rational
+  -- => Three-way match passed; payments schedules disbursement
+  deriving (Show)
+-- => Published language: complete set of cross-context events
+
+-- ── PORTS (function-type aliases) ──────────────────────────────────────────
+type LoadRequisition  = RequisitionId   -> IO (Maybe (Text, Rational))
+-- => Returns (requestedBy, total) or Nothing if not found
+type SavePO           = PurchaseOrderId -> Text -> Rational -> IO ()
+-- => Persists the Draft PO with its supplier ID and total
+type PublishEvent     = ProcurementEvent -> IO ()
+-- => Publishes to the event bus (Kafka or outbox table)
+
+-- ── PURE CORE (decisions and transitions) ──────────────────────────────────
+deriveLevel :: Rational -> ApprovalLevel
+deriveLevel total
+  | total <= 1000  = L1
+  | total <= 10000 = L2
+  | otherwise      = L3
+-- => Pure: no IO — approval level from total
+
+buildPOId :: Text -> PurchaseOrderId
+buildPOId reqId = PurchaseOrderId ("po_" <> T.take 8 reqId)
+-- => Pure: deterministic in tests when reqId is fixed
+
+-- ── WORKFLOW (imperative shell orchestrating pure core + IO) ───────────────
+approveCycle :: LoadRequisition -> SavePO -> PublishEvent
+             -> RequisitionId -> SupplierId
+             -> IO (Either Text PurchaseOrderId)
+approveCycle loadReq savePO publishEv reqId@(RequisitionId rawReq) (SupplierId rawSup) = do
+  reqOpt <- loadReq reqId
+  -- => IO: load the requisition from the repository port
+  case reqOpt of
+    Nothing -> pure (Left ("Requisition not found: " <> rawReq))
+    -- => Short-circuit: no further IO or domain logic
+    Just (_requestedBy, total) -> do
+      -- => Destructure: total drives the pure-core decisions
+      let !level = deriveLevel total
+          -- => Pure: approval tier; bang-pattern forces evaluation
+          poId@(PurchaseOrderId rawPo) = buildPOId rawReq
+          -- => Pure: derive PO id; deterministic
+      savePO poId rawSup total
+      -- => IO: persist the Draft PO — effect at the edge
+      now <- getCurrentTime
+      -- => Single timestamp shared across both published events
+      publishEv (RequisitionApproved rawReq now)
+      -- => IO: publish RequisitionApproved
+      publishEv (PurchaseOrderIssued rawPo rawSup total)
+      -- => IO: publish PurchaseOrderIssued
+      _ <- pure level  -- avoid unused-binding warning; level travels with PO in real code
+      pure (Right poId)
+      -- => Return the new PO ID to the caller
+
+-- ── TEST (all stubs, pure logic verified independently) ─────────────────────
+runDemo :: IO ()
+runDemo = do
+  events <- newIORef ([] :: [ProcurementEvent])
+  -- => IORef accumulates events for post-run assertion
+  let stubLoad _      = pure (Just ("emp_00456", 2699.97))
+      -- => Stub load: returns a fixed requisition
+      stubSave _ _ _  = pure ()
+      -- => Stub save: no-op
+      stubPublish ev  = modifyIORef events (ev :)
+      -- => Stub publish: prepends event for assertion
+  result <- approveCycle stubLoad stubSave stubPublish
+                         (RequisitionId "req_f4c2") (SupplierId "sup_acme")
+  case result of
+    Right (PurchaseOrderId p) -> putStrLn ("PO created: " <> T.unpack p)
+    -- => Output: PO created: po_req_f4c2
+    Left e                    -> putStrLn ("Error: " <> T.unpack e)
+  collected <- readIORef events
+  putStrLn ("Events published: " <> show (length collected))
+  -- => Output: Events published: 2
+  mapM_ (putStrLn . ("  " <>) . show) (reverse collected)
+  -- => Output:   RequisitionApproved "req_f4c2" ...
+  -- => Output:   PurchaseOrderIssued "po_req_f4c2" "sup_acme" (2699.97 :: Rational)
 ```
 
 {{< /tab >}}

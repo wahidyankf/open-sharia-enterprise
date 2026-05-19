@@ -3,11 +3,14 @@ title: "Beginner"
 date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 1-25: Types as the design — ubiquitous language, bounded contexts, record and union types, smart constructors, and purchasing-context value types in F# for a Procure-to-Pay platform"
+description: "Examples 1-25: Types as the design — ubiquitous language, bounded contexts, record and union types, smart constructors, and purchasing-context value types for a Procure-to-Pay platform, in F# (canonical), Clojure, TypeScript, and Haskell"
 tags:
   [
     "ddd",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "domain-modeling",
     "types",
@@ -20,7 +23,7 @@ tags:
   ]
 ---
 
-This beginner-level section introduces DDD through type-system design, using the `purchasing` bounded context of a Procure-to-Pay procurement platform. The central thesis — **encode business rules in the type system so illegal states are unrepresentable** — is established through 25 progressive examples built around `PurchaseRequisition`, `Money`, `SkuCode`, `Quantity`, and `RequisitionId`. Examples are shown in F# (canonical), with Clojure and TypeScript equivalents throughout.
+This beginner-level section introduces DDD through type-system design, using the `purchasing` bounded context of a Procure-to-Pay procurement platform. The central thesis — **encode business rules in the type system so illegal states are unrepresentable** — is established through 25 progressive examples built around `PurchaseRequisition`, `Money`, `SkuCode`, `Quantity`, and `RequisitionId`. Examples are shown in F# (canonical), with Clojure, TypeScript, and Haskell equivalents throughout.
 
 ## Types as the Design (Examples 1–10)
 
@@ -28,7 +31,7 @@ This beginner-level section introduces DDD through type-system design, using the
 
 Ubiquitous language means every term the business uses has an exact counterpart in the code. In F# the cheapest way to honour this is a type alias: `type RequisitionId = string` makes the intent explicit without adding runtime cost. The type alias lives in the same module as the rest of the domain model and is visible to both developers and procurement domain experts reading the code.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -150,6 +153,54 @@ console.log("Branded types defined — zero runtime cost, maximum documentation 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchasingDomain.hs ─────────────────────────────────────────────
+-- Type aliases map procurement vocabulary directly to Haskell identifiers.
+-- For zero-cost documentation, use 'type'; for nominal safety, use 'newtype'.
+-- [F#: type alias (type RequisitionId = string) — compile-time name only]
+-- [Clojure: namespaced keywords :purchasing/requisition-id — runtime vocabulary]
+-- [TypeScript: branded type for nominal safety; this Haskell tab shows both forms]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module PurchasingDomain where
+
+import Data.Text (Text)
+-- => Text is the canonical string type for procurement vocabulary.
+
+-- "A requisition is identified by a RequisitionId, not a raw Text"
+type RequisitionId = Text
+-- => RequisitionId is an alias for Text; no runtime cost, pure documentation.
+
+type PurchaseOrderId = Text
+-- => Distinct alias name — prevents accidentally mixing the meanings in signatures.
+
+type SupplierId = Text
+-- => Every important noun in the domain gets its own alias.
+
+type SkuCode = Text
+-- => Raw (Text -> Text -> Text) becomes (RequisitionId -> SupplierId -> SkuCode).
+-- => Self-documenting signature for domain experts and developers.
+
+-- Usage in a workflow function signature — pure documentation value
+type GetRequisitionById = RequisitionId -> Maybe Text
+-- => Reads "given a RequisitionId, produce an optional Text".
+-- => Domain experts can read this as "look up a requisition by its id".
+
+-- Example function with the documented type alias.
+getRequisitionById :: GetRequisitionById
+getRequisitionById _ = Just "stub"
+-- => Returns Just for the example; production code does a real lookup.
+
+main :: IO ()
+main = putStrLn "Type aliases defined - zero runtime cost, maximum documentation value"
+-- => Output: Type aliases defined - zero runtime cost, maximum documentation value
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Type aliases convert the ubiquitous language of procurement into domain-named identifiers at zero runtime cost and maximum readability. In F# these are `type` aliases; Clojure uses spec keywords; TypeScript uses type aliases — all achieving the same readable domain vocabulary.
@@ -179,7 +230,7 @@ graph TD
     style PI fill:#DE8F05,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -357,6 +408,67 @@ console.log("Event created:", submitted.type);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementEvents.hs ────────────────────────────────────────────
+-- Domain events are immutable facts — something that happened in the domain.
+-- Past-tense naming is a DDD convention — events record completed action.
+-- [F#: discriminated union with payload records — exhaustive match]
+-- [Clojure: maps with :event/type keyword — open dispatch via defmulti]
+-- [TypeScript: tagged union literal types — closed exhaustive switch]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module ProcurementEvents where
+
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+-- Payload record for the RequisitionSubmitted event.
+data RequisitionSubmittedPayload = RequisitionSubmittedPayload
+  { rsRequisitionId :: Text
+  -- => Identifier of the submitted requisition.
+  , rsRequestedBy   :: Text
+  -- => Who submitted — approval router needs this for routing logic.
+  , rsTotalAmount   :: Double
+  -- => Sum of all line items — determines approval level (L1/L2/L3).
+  , rsSubmittedAt   :: UTCTime
+  -- => Timestamp — used for SLA tracking and audit trail.
+  } deriving (Show)
+-- => Record with four required fields.
+
+-- The top-level event sum type — each constructor IS a different event.
+data ProcurementEvent
+  = RequisitionSubmitted RequisitionSubmittedPayload
+  -- => Fired when an employee submits a purchase requisition.
+  | RequisitionApproved Text UTCTime
+  -- => Fired when a manager approves the requisition. (Text = requisitionId.)
+  | PurchaseOrderIssued Text Text
+  -- => Fired when an approved PO is formally sent to the supplier.
+  --   (Text * Text = purchaseOrderId, supplierId.)
+  deriving (Show)
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  let submitted = RequisitionSubmitted RequisitionSubmittedPayload
+        { rsRequisitionId = "req_f4c2a1b7"
+        -- => Canonical format: "req_" prefix + identifier segment.
+        , rsRequestedBy   = "emp_00123"
+        -- => Employee identifier — drives approval routing.
+        , rsTotalAmount   = 2500.00
+        -- => 2500 USD — falls in L2 approval bracket (<= $10k).
+        , rsSubmittedAt   = now
+        -- => Wall-clock timestamp captured at submission time.
+        }
+      -- => submitted :: ProcurementEvent = RequisitionSubmitted (RequisitionSubmittedPayload ...).
+  putStrLn ("Event created: " <> show submitted)
+  -- => Output: Event created: RequisitionSubmitted (RequisitionSubmittedPayload { ... })
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Past-tense named discriminated union cases model domain events as immutable facts, with payloads carrying everything downstream consumers need.
@@ -385,7 +497,7 @@ graph TD
     style I fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -556,6 +668,74 @@ console.log("Requisition:", req.id, "status:", req.status);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Purchasing.hs ───────────────────────────────────────────────────
+-- Each bounded context gets its own Haskell module.
+-- Module boundaries are first-class: types defined in one module are isolated.
+-- [F#: module Purchasing = ... — compile-time boundary]
+-- [Clojure: (ns purchasing.domain) — runtime boundary]
+-- [TypeScript: namespace Purchasing { ... } — compile-time boundary]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module Purchasing where
+-- => Everything below belongs to the purchasing bounded context.
+
+import Data.Text (Text)
+
+newtype RequisitionId = RequisitionId Text deriving (Show, Eq)
+-- => RequisitionId is a purchasing-context concept.
+-- => Supplier context has no use for this type.
+
+data RequisitionStatus
+  = Draft
+  | Submitted
+  | ManagerReview
+  | Approved
+  | Rejected
+  | ConvertedToPO
+  deriving (Show, Eq)
+-- => Full lifecycle of a purchase requisition within the purchasing context.
+
+data PurchaseRequisition = PurchaseRequisition
+  { prId          :: RequisitionId
+  -- => Identity of the requisition — required, drives all lookups.
+  , prRequestedBy :: Text
+  -- => Employee identifier — drives approval routing rules.
+  , prStatus      :: RequisitionStatus
+  -- => Current lifecycle state — only FSM-allowed transitions are valid.
+  , prLines       :: [Text]
+  -- => Line items (simplified for this example).
+  } deriving (Show)
+
+-- A separate module (in its own file) would hold the supplier context:
+--
+--   module Supplier where
+--     newtype SupplierId = SupplierId Text deriving (Show, Eq)
+--     data SupplierStatus = Pending | Approved | Suspended | Blacklisted
+--       deriving (Show, Eq)
+--
+-- => SupplierId is NOT the same type as Purchasing.RequisitionId.
+-- => Cross-context references travel via domain events, not direct imports.
+
+main :: IO ()
+main = do
+  let req = PurchaseRequisition
+        { prId          = RequisitionId "req_abc123"
+        -- => Fully qualified type — unambiguous which context this belongs to.
+        , prRequestedBy = "emp_00456"
+        , prStatus      = Draft
+        -- => Starts in Draft — cannot submit until at least one line is added.
+        , prLines       = []
+        }
+  putStrLn ("Requisition: " <> show req)
+  -- => Output: Requisition: PurchaseRequisition { prId = RequisitionId "req_abc123", ... }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modules (namespaces) are the zero-cost mechanical translation of bounded contexts — they enforce the boundary between purchasing, supplier, receiving, and invoicing without any framework overhead. F# uses named modules; Clojure uses namespaces; TypeScript uses ES modules — all provide the same context isolation at zero runtime cost.
@@ -568,7 +748,7 @@ console.log("Requisition:", req.id, "status:", req.status);
 
 A record type is an AND type: a `PurchaseRequisitionLine` has a `SkuCode` AND a `Quantity` AND a `UnitPrice`. All fields are required and immutable by default. Records are the primary building block for aggregates and value objects in functional DDD.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -710,6 +890,63 @@ console.log(`Line total: ${lineTotal.toFixed(2)}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseRequisitionLine.hs ──────────────────────────────────────
+-- Records (data types with record syntax) model AND relationships.
+-- All fields are required; record update syntax produces a new value.
+-- [F#: record type with required fields — compile-time structural guarantee]
+-- [Clojure: map with s/keys spec — runtime check enforces required keys]
+-- [TypeScript: readonly interface — compile-time required fields]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module PurchaseRequisitionLineExample where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Printf (printf)
+
+-- A line item on a purchase requisition.
+data PurchaseRequisitionLine = PurchaseRequisitionLine
+  { skuCode   :: Text
+  -- => Stock-Keeping Unit — identifies exactly what is being requested.
+  , quantity  :: Int
+  -- => How many units are requested — must be > 0 (enforced by smart constructor later).
+  , unitPrice :: Double
+  -- => Price per unit in the configured currency — used to compute line total.
+  } deriving (Show)
+-- => Record syntax generates accessor functions: skuCode, quantity, unitPrice.
+
+main :: IO ()
+main = do
+  -- Record creation — all fields required by GHC.
+  let line1 = PurchaseRequisitionLine
+        { skuCode   = "OFF-0042"
+        , quantity  = 10
+        , unitPrice = 4.99
+        }
+      -- => line1 :: PurchaseRequisitionLine.
+
+      -- Record update syntax produces a NEW value — line1 is unchanged.
+      correctedLine = line1 { quantity = 12 }
+      -- => correctedLine :: PurchaseRequisitionLine = line1 with quantity = 12.
+      -- => Immutability: correction produces a new value, never mutates in place.
+
+      lineTotal :: Double
+      lineTotal = fromIntegral (quantity correctedLine) * unitPrice correctedLine
+      -- => 12 * 4.99 = 59.88
+  putStrLn ("Line: " <> show line1)
+  -- => Output: Line: PurchaseRequisitionLine { skuCode = "OFF-0042", quantity = 10, ... }
+  putStrLn ("Corrected: " <> show correctedLine)
+  -- => Output: Corrected: PurchaseRequisitionLine { skuCode = "OFF-0042", quantity = 12, ... }
+  printf "Line total: %.2f\n" lineTotal
+  -- => Output: Line total: 59.88
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Records model AND-types — all fields required, all immutable, with `with`-expressions providing safe "update" that creates a new value rather than mutating the existing one.
@@ -722,7 +959,7 @@ console.log(`Line total: ${lineTotal.toFixed(2)}`);
 
 A discriminated union (DU) is an OR type: an `ApprovalLevel` is either `L1` OR `L2` OR `L3`. Exactly one case applies at any given time. DUs are the F# mechanism for making mutually exclusive states explicit and compiler-checked.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -896,6 +1133,62 @@ console.log(describeLevel(level3));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovalLevel.hs ────────────────────────────────────────────────
+-- Sum types model OR relationships — exactly one constructor is active.
+-- In DDD, sum types represent states and variants without boolean-flag confusion.
+-- [F#: discriminated union ApprovalLevel = L1 | L2 | L3 — exhaustive match]
+-- [Clojure: keyword + defmulti — open dispatch, same domain rule]
+-- [TypeScript: literal union "L1" | "L2" | "L3" — exhaustive switch]
+
+module ApprovalLevel where
+
+-- Approval level derived from the total value of a purchase order
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+-- => L1: Requisitions up to $1,000 — approved by direct manager.
+-- => L2: Requisitions $1,001-$10,000 — approved by department head.
+-- => L3: Requisitions above $10,000 — approved by CFO / finance committee.
+-- => Exactly one of these is active — never "L1 and L2 simultaneously".
+
+-- Pure derivation: a Double total to an ApprovalLevel.
+deriveApprovalLevel :: Double -> ApprovalLevel
+deriveApprovalLevel total
+  | total <= 1000     = L1
+  -- => Under $1,000 — direct manager approval sufficient.
+  | total <= 10000    = L2
+  -- => $1,001-$10,000 — department head must approve.
+  | otherwise         = L3
+  -- => Over $10,000 — CFO-level approval required.
+
+-- Consuming the sum type — pattern match is exhaustive.
+describeLevel :: ApprovalLevel -> String
+describeLevel L1 = "Direct manager approval (<= $1,000)"
+-- => L1 branch: single manager can approve.
+describeLevel L2 = "Department head approval ($1,001-$10,000)"
+-- => L2 branch: escalated to department leadership.
+describeLevel L3 = "CFO approval (> $10,000)"
+-- => L3 branch: finance committee must sign off.
+
+main :: IO ()
+main = do
+  let level1 = deriveApprovalLevel 500
+      -- => 500 <= 1000 — level1 :: ApprovalLevel = L1.
+      level2 = deriveApprovalLevel 5000
+      -- => 5000 > 1000 and <= 10000 — level2 :: ApprovalLevel = L2.
+      level3 = deriveApprovalLevel 50000
+      -- => 50000 > 10000 — level3 :: ApprovalLevel = L3.
+  putStrLn (describeLevel level1)
+  -- => Output: Direct manager approval (<= $1,000)
+  putStrLn (describeLevel level2)
+  -- => Output: Department head approval ($1,001-$10,000)
+  putStrLn (describeLevel level3)
+  -- => Output: CFO approval (> $10,000)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Discriminated unions make mutually exclusive states explicit and exhaustively checkable — the compiler ensures you handle every case, eliminating silent bugs from unhandled states.
@@ -908,7 +1201,7 @@ console.log(describeLevel(level3));
 
 A business workflow is modelled as a plain function type. The type signature is the contract: it names what goes in, what comes out, and what errors are possible. In the procurement platform, `SubmitRequisition` takes an unvalidated input and produces either a list of domain events or a procurement error.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1049,8 +1342,8 @@ printfn "Workflow type defined — signature is the domain contract"
 
 // Result<T,E> modelled as a discriminated union — mirrors F# built-in Result
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okResult = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errResult = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okResult = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errResult = <T, E>(e: E): Result => ({ ok: false, error: e });
 // => [F#: built-in Ok/Error constructors; TS: hand-rolled for clarity without extra deps]
 
 // Branded ID
@@ -1061,7 +1354,7 @@ const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
 interface UnvalidatedRequisition {
   readonly requestedBy: string;
   // => Raw employee ID string from the HTTP request body
-  readonly lines: ReadonlyArray<readonly [string, number, number]>;
+  readonly lines: ReadonlyArray;
   // => Raw array of [skuCode, quantity, unitPrice] tuples — not yet validated
 }
 // => UnvalidatedRequisition : DTO-shaped interface — may contain invalid data
@@ -1084,7 +1377,7 @@ interface RequisitionSubmittedPayload {
 type ProcurementEvent = { readonly type: "RequisitionSubmitted"; readonly payload: RequisitionSubmittedPayload };
 
 // The workflow function type — the entire contract in one line
-type SubmitRequisition = (req: UnvalidatedRequisition) => Result<ProcurementEvent[], SubmissionError>;
+type SubmitRequisition = (req: UnvalidatedRequisition) => Result;
 // => Input:  UnvalidatedRequisition — the raw command from outside
 // => Output: Result — either success with a list of events, or a named failure
 // => Result forces callers to handle both branches explicitly
@@ -1112,6 +1405,90 @@ const submitRequisition: SubmitRequisition = (req) => {
 
 console.log("Workflow type defined — signature is the domain contract");
 // => Output: Workflow type defined — signature is the domain contract
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: SubmitWorkflow.hs ───────────────────────────────────────────────
+-- Workflows are function types — the signature IS the contract.
+-- No classes, no interfaces — just type aliases for functions.
+-- [F#: type alias SubmitRequisition = UnvalidatedRequisition -> Result<...>]
+-- [Clojure: defn with spec/fdef contract — runtime-checked, data-in/data-out]
+-- [TypeScript: type SubmitRequisition = (req) => Result<RequisitionEvent[], ...>]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module SubmitWorkflow where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Time (UTCTime, getCurrentTime)
+
+-- The unvalidated input coming from the HTTP layer or CLI
+data UnvalidatedRequisition = UnvalidatedRequisition
+  { uRequestedBy :: Text
+  -- => Raw employee ID string from the HTTP request body.
+  , uLines       :: [(Text, Int, Double)]
+  -- => Raw list of (skuCode, quantity, unitPrice) tuples — not yet validated.
+  } deriving (Show)
+
+-- Possible errors the submission workflow can produce
+data SubmissionError
+  = NoLinesProvided
+  -- => A requisition with zero lines cannot be submitted.
+  | InvalidSkuCode Text
+  -- => A line item references a malformed SKU.
+  | NegativeQuantity Text Int
+  -- => A quantity <= 0 violates the purchasing invariant.
+  | RequestedByRequired
+  -- => Employee identifier is blank — cannot route approval without it.
+  deriving (Show, Eq)
+
+-- Domain event produced on success
+data RequisitionEvent
+  = RequisitionSubmitted
+      { eRequisitionId :: Text
+      , eRequestedBy   :: Text
+      , eTotalAmount   :: Double
+      , eSubmittedAt   :: UTCTime
+      }
+  deriving (Show)
+
+-- The workflow type alias — the entire contract in one line.
+type SubmitRequisition =
+  UnvalidatedRequisition -> IO (Either SubmissionError [RequisitionEvent])
+-- => Input:  UnvalidatedRequisition — raw command from outside.
+-- => Output: IO (Either SubmissionError [RequisitionEvent]) — IO for timestamp,
+--           Either forces callers to handle success and failure explicitly.
+
+-- A simplified implementation matching the signature.
+submitRequisition :: SubmitRequisition
+submitRequisition req
+  | T.null (T.strip (uRequestedBy req)) = pure (Left RequestedByRequired)
+  -- => Guard 1: cannot route approval without an employee ID.
+  | null (uLines req)                   = pure (Left NoLinesProvided)
+  -- => Guard 2: a blank requisition has no business meaning.
+  | otherwise = do
+      now <- getCurrentTime
+      -- => IO action captures the submission timestamp.
+      let total = sum [fromIntegral q * p | (_, q, p) <- uLines req]
+          -- => Sum quantity * unit price across all raw line tuples.
+          event = RequisitionSubmitted
+            { eRequisitionId = "req_" <> "00000001"
+            -- => Short generated id for the example.
+            , eRequestedBy   = uRequestedBy req
+            , eTotalAmount   = total
+            , eSubmittedAt   = now
+            }
+      pure (Right [event])
+      -- => Single event in the list — more possible in richer workflows.
+
+main :: IO ()
+main = putStrLn "Workflow type defined - signature is the domain contract"
+-- => Output: Workflow type defined - signature is the domain contract
 ```
 
 {{< /tab >}}
@@ -1151,7 +1528,7 @@ graph LR
     style note1 fill:#CA9161,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1297,6 +1674,54 @@ console.log("Branded types prevent ID confusion at compile time");
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DomainIds.hs ────────────────────────────────────────────────────
+-- newtype wrappers provide nominal typing at zero runtime cost.
+-- The compiler treats each wrapped type as distinct despite the shared representation.
+-- [F#: single-case DU (type RequisitionId = RequisitionId of string) — nominal type]
+-- [Clojure: spec predicates (s/def :purchasing/requisition-id ...) — runtime check]
+-- [TypeScript: branded types (string & { __brand: "RequisitionId" }) — compile-time]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module DomainIds where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Wrapper types — each is a distinct type despite the shared Text representation.
+newtype RequisitionId   = RequisitionId Text   deriving (Show, Eq)
+-- => "RequisitionId" — newtype enforces nominal typing at compile time.
+newtype PurchaseOrderId = PurchaseOrderId Text deriving (Show, Eq)
+-- => Distinct from RequisitionId — cannot be accidentally substituted.
+newtype SupplierId      = SupplierId Text      deriving (Show, Eq)
+-- => Same pattern for every domain identifier in the procurement platform.
+
+-- A function that takes a RequisitionId cannot accidentally receive a PurchaseOrderId.
+routeApproval :: RequisitionId -> Text -> IO ()
+routeApproval (RequisitionId rid) approverEmail =
+  -- => Pattern match unwraps the newtype inline — only this argument shape compiles.
+  putStrLn ("Routing requisition " <> T.unpack rid <> " to approver " <> T.unpack approverEmail)
+
+main :: IO ()
+main = do
+  let reqId = RequisitionId "req_f4c2a1b7"
+      -- => reqId :: RequisitionId — distinct from PurchaseOrderId.
+      poId  = PurchaseOrderId "po_e3d1f8a0"
+      -- => poId :: PurchaseOrderId — different type, same underlying Text.
+  routeApproval reqId "manager@procurement.example.com"
+  -- => Output: Routing requisition req_f4c2a1b7 to approver manager@procurement.example.com
+
+  -- routeApproval poId "..."  -- compile error: expected RequisitionId, got PurchaseOrderId
+  -- => GHC rejects this at compile time — zero runtime cost for the protection.
+  putStrLn "Type wrappers prevent ID confusion at compile time"
+  -- => Output: Type wrappers prevent ID confusion at compile time
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Single-case discriminated unions create nominally distinct types from primitives, so the compiler prevents the common bug of confusing two IDs that happen to share the same string representation.
@@ -1309,7 +1734,7 @@ console.log("Branded types prevent ID confusion at compile time");
 
 A smart constructor validates its input and returns `Result<'T, 'Error>` rather than throwing an exception. This keeps validation in the type system and forces callers to handle the failure case. Smart constructors are the primary integrity mechanism for value objects in the procurement domain.
 
-```mermaid
+````mermaid
 graph LR
     Raw["raw: string\n(untrusted input)"]
     Check1{"IsNullOrWhiteSpace?"}
@@ -1329,7 +1754,7 @@ graph LR
     style Err2 fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1377,7 +1802,7 @@ match result1 with
 | Ok id   -> printfn "Valid: %s" (RequisitionId.value id)
 | Error e -> printfn "Invalid: %s" e
 // => Output: Valid: req_f4c2a1b7
-```
+````
 
 {{< /tab >}}
 
@@ -1451,14 +1876,14 @@ match result1 with
 
 // Result type — explicit success/failure without exceptions
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // Branded type — private by convention (factory is the only entry point)
 type RequisitionId = string & { readonly __brand: "RequisitionId" };
 
 // Smart constructor: validates raw string and returns Result<RequisitionId, string>
-function createRequisitionId(raw: string): Result<RequisitionId, string> {
+function createRequisitionId(raw: string): Result {
   // => raw : string — untrusted input from HTTP body, DTO, config file
   if (!raw || raw.trim() === "") {
     return errR("RequisitionId cannot be blank");
@@ -1499,6 +1924,72 @@ if (!result2.ok) console.log("Invalid:", result2.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: RequisitionId.hs ────────────────────────────────────────────────
+-- Smart constructor validates the invariant and returns Either, not throws.
+-- Either Text RequisitionId is the explicit success/failure contract.
+-- [F#: private RequisitionId of string with module returning Result<RequisitionId, string>]
+-- [Clojure: create-requisition-id returning {:ok ...} or {:error ...}]
+-- [TypeScript: createRequisitionId returning Result<RequisitionId, string>]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module RequisitionId
+  ( RequisitionId
+  -- => Type exported; constructor hidden so smart constructor is the only entry.
+  , createRequisitionId
+  , requisitionIdValue
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+newtype RequisitionId = RequisitionId Text deriving (Show, Eq)
+-- => Single-case wrapper; only this module can pattern match the constructor.
+
+-- Smart constructor: validates the format invariant and returns Either.
+createRequisitionId :: Text -> Either Text RequisitionId
+createRequisitionId raw
+  | T.null (T.strip raw) =
+      Left "RequisitionId cannot be blank"
+      -- => Guard 1: empty/whitespace IDs are not valid in this domain.
+  | not (T.isPrefixOf "req_" raw) =
+      Left ("RequisitionId '" <> raw <> "' must start with 'req_'")
+      -- => Guard 2: canonical format requires the "req_" prefix.
+  | otherwise = Right (RequisitionId raw)
+  -- => Validation passed — wrap in the hidden constructor.
+
+-- Accessor: safely unwrap the Text when persistence requires it.
+requisitionIdValue :: RequisitionId -> Text
+requisitionIdValue (RequisitionId i) = i
+-- => Pattern match works here because we are inside the defining module.
+
+-- Usage example (typically in a Main module)
+main :: IO ()
+main = do
+  let result1 = createRequisitionId "req_f4c2a1b7"
+      -- => result1 :: Either Text RequisitionId = Right (RequisitionId "req_f4c2a1b7").
+      result2 = createRequisitionId ""
+      -- => result2 :: Either Text RequisitionId = Left "RequisitionId cannot be blank".
+      result3 = createRequisitionId "12345"
+      -- => result3 :: Either Text RequisitionId = Left "RequisitionId '12345' must ...".
+  case result1 of
+    Right rid -> putStrLn ("Valid: " <> T.unpack (requisitionIdValue rid))
+    -- => Output: Valid: req_f4c2a1b7
+    Left err  -> putStrLn ("Invalid: " <> T.unpack err)
+  case result2 of
+    Right _   -> putStrLn "Should not reach here"
+    Left err  -> putStrLn ("Invalid: " <> T.unpack err)
+    -- => Output: Invalid: RequisitionId cannot be blank
+  case result3 of
+    Right _   -> putStrLn "Should not reach here"
+    Left err  -> putStrLn ("Invalid: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Smart constructors with `Result` return types make validation mandatory — the compiler requires every call site to handle the failure case, preventing invalid domain objects from ever existing.
@@ -1511,7 +2002,7 @@ if (!result2.ok) console.log("Invalid:", result2.error);
 
 Pattern matching is the primary tool for consuming discriminated union values. It forces you to decide what happens in every case. Combined with the exhaustive match checking of the F# compiler, it eliminates entire classes of "forgot to handle this case" bugs.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1702,6 +2193,63 @@ console.log(describeStatus(s3));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: RequisitionStatus.hs ────────────────────────────────────────────
+-- Pattern matching on a sum type — GHC verifies exhaustiveness with -Wall.
+-- [F#: discriminated union with exhaustive match — FS0025 compile warning]
+-- [Clojure: defmulti/defmethod — open dispatch; no compile-time check]
+-- [TypeScript: exhaustive switch with assertNever for narrow-to-never]
+
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+
+module RequisitionStatus where
+
+data RequisitionStatus
+  = Draft
+  | Submitted
+  | ManagerReview
+  | Approved
+  | Rejected
+  | ConvertedToPO
+  deriving (Show, Eq, Bounded, Enum)
+-- => Six mutually exclusive states in the PurchaseRequisition lifecycle.
+
+-- A function that handles all requisition statuses.
+-- Each pattern arm covers one constructor; GHC warns if any are missing.
+describeStatus :: RequisitionStatus -> String
+describeStatus Draft         = "Draft: employee is building the line items"
+-- => Initial state — requisition not yet submitted.
+describeStatus Submitted     = "Submitted: awaiting approval routing"
+-- => Employee has submitted — awaiting manager routing.
+describeStatus ManagerReview = "Under review by approving manager"
+-- => Routed to the appropriate approver based on amount.
+describeStatus Approved      = "Approved: ready for PO creation"
+-- => Manager has approved — can be converted to a PO.
+describeStatus Rejected      = "Rejected: employee notified"
+-- => Manager rejected — employee notified via email.
+describeStatus ConvertedToPO = "Converted to Purchase Order"
+-- => Successfully converted — downstream PO lifecycle begins.
+
+main :: IO ()
+main = do
+  let s1 = Draft
+      s2 = ManagerReview
+      s3 = Approved
+  putStrLn (describeStatus s1)
+  -- => Matches Draft case.
+  -- => Output: Draft: employee is building the line items
+  putStrLn (describeStatus s2)
+  -- => Output: Under review by approving manager
+  putStrLn (describeStatus s3)
+  -- => Output: Approved: ready for PO creation
+  -- => Adding a new constructor (e.g. OnHold) immediately surfaces every
+  --   pattern match in the codebase via -Wincomplete-patterns.
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Pattern matching on discriminated unions is exhaustive by default — adding a new state to the type immediately surfaces every match expression that must handle it.
@@ -1714,7 +2262,7 @@ console.log(describeStatus(s3));
 
 The F# compiler issues a warning — treated as an error in strict builds — when a match expression does not cover all cases of a discriminated union. This example shows how to see the warning, how to fix it, and why it is one of the most valuable correctness tools in functional DDD.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1887,6 +2435,68 @@ results.forEach(([s, r]) => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseOrderStatus.hs ──────────────────────────────────────────
+-- Exhaustive pattern matching — GHC warns on incomplete matches with
+-- -Wincomplete-patterns; treat as error with -Werror for production builds.
+-- [F#: FS0025 compile warning for missing DU cases — Haskell equivalent below]
+-- [Clojure: :else clause catches unhandled variants at runtime]
+-- [TypeScript: assertNever exhaustiveness via never type]
+
+{-# OPTIONS_GHC -Wincomplete-patterns -Werror=incomplete-patterns #-}
+-- => GHC pragma turns missing-case warnings into compile errors.
+
+module PurchaseOrderStatus where
+
+data PurchaseOrderStatus
+  = Draft
+  | AwaitingApproval
+  | Approved
+  | Issued
+  | Cancelled
+  deriving (Show, Eq, Bounded, Enum)
+-- => Five PurchaseOrder states (simplified subset of the full state machine).
+-- => Bounded/Enum enable enumeration of all constructors for testing.
+
+-- INCOMPLETE match — GHC compile error (with -Werror=incomplete-patterns):
+-- approvalRequired :: PurchaseOrderStatus -> Bool
+-- approvalRequired Draft            = False
+-- approvalRequired AwaitingApproval = True
+-- approvalRequired Approved         = False
+-- => MISSING: Issued, Cancelled — GHC errors here.
+
+-- COMPLETE match — all cases handled
+approvalRequired :: PurchaseOrderStatus -> Bool
+approvalRequired Draft            = False
+-- => Draft POs have not yet been submitted for approval.
+approvalRequired AwaitingApproval = True
+-- => This is exactly the state requiring approval action.
+approvalRequired Approved         = False
+-- => Already approved — approval is no longer required.
+approvalRequired Issued           = False
+-- => Issued to supplier — past the approval gate.
+approvalRequired Cancelled        = False
+-- => Cancelled — approval is moot; the PO is no longer active.
+-- => All five constructors covered — GHC is satisfied.
+
+-- Test: enumerate every constructor and apply approvalRequired.
+main :: IO ()
+main = do
+  let statuses = [minBound .. maxBound] :: [PurchaseOrderStatus]
+      -- => Bounded/Enum let us enumerate every constructor — useful in tests.
+      results = map (\s -> (s, approvalRequired s)) statuses
+  mapM_ (\(s, r) -> putStrLn (show s <> " -> approvalRequired: " <> show r)) results
+  -- => Output: Draft -> approvalRequired: False
+  -- => Output: AwaitingApproval -> approvalRequired: True
+  -- => Output: Approved -> approvalRequired: False
+  -- => Output: Issued -> approvalRequired: False
+  -- => Output: Cancelled -> approvalRequired: False
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Exhaustive pattern matching is a compile-time correctness guarantee — it ensures every state of a union type is handled, preventing silent bugs from newly added cases. F# enforces this through compiler warnings on incomplete `match` expressions; Clojure relies on spec conformance; TypeScript enforces it via discriminated union narrowing with a never-check fallthrough.
@@ -1901,7 +2511,7 @@ results.forEach(([s, r]) => {
 
 `Option<'T>` models the presence or absence of a value without using null. In F#, null is not a valid value for most types. `Option` is the explicit, type-safe alternative that forces callers to handle the "not present" case — something nullable references never enforce.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2092,6 +2702,81 @@ console.log(formatAddress(simpleAddress));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SupplierAddress.hs ──────────────────────────────────────────────
+-- Maybe replaces null — the compiler requires handling both Just and Nothing.
+-- In the procurement domain, optional fields are common: secondary address lines,
+-- notes, preferred supplier hints.
+-- [F#: Option<'T> with Some/None — compiler-forced handling]
+-- [Clojure: absent map key returns nil; when-let handles the case explicitly]
+-- [TypeScript: T | undefined; conditional check narrows the type]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module SupplierAddress where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- An address record with an optional secondary line.
+data SupplierAddress = SupplierAddress
+  { street        :: Text
+  -- => Required: every supplier address must have a street.
+  , city          :: Text
+  -- => Required: city is always known.
+  , postalCode    :: Text
+  -- => Required: needed for logistics and tax calculations.
+  , secondaryLine :: Maybe Text
+  -- => Optional: not all addresses have suite/floor info.
+  -- => Maybe Text = Just "Suite 400" or Nothing — never null.
+  } deriving (Show)
+
+-- Address with secondary line present
+addressWithSuite :: SupplierAddress
+addressWithSuite = SupplierAddress
+  { street        = "Jl. Sudirman No. 1"
+  , city          = "Jakarta"
+  , postalCode    = "10220"
+  , secondaryLine = Just "Lantai 12"
+  -- => Just wraps the value — explicitly present.
+  }
+
+-- Address without secondary line
+simpleAddress :: SupplierAddress
+simpleAddress = SupplierAddress
+  { street        = "Jl. Gatot Subroto 45"
+  , city          = "Jakarta"
+  , postalCode    = "12930"
+  , secondaryLine = Nothing
+  -- => Nothing — explicitly absent, not null, not empty string.
+  }
+
+-- Consuming the optional value with pattern matching
+formatAddress :: SupplierAddress -> Text
+formatAddress addr =
+  let line2 = case secondaryLine addr of
+        Just s  -> "\n" <> s
+        -- => Unwrap the Just; prepend newline for formatting.
+        Nothing -> ""
+        -- => Produce empty string — no NullPointerException possible.
+  in street addr <> line2 <> "\n" <> city addr <> " " <> postalCode addr
+-- => Formats the address with or without the secondary line.
+
+main :: IO ()
+main = do
+  putStrLn (T.unpack (formatAddress addressWithSuite))
+  -- => Output: Jl. Sudirman No. 1
+  -- =>         Lantai 12
+  -- =>         Jakarta 10220
+  putStrLn (T.unpack (formatAddress simpleAddress))
+  -- => Output: Jl. Gatot Subroto 45
+  -- =>         Jakarta 12930
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: `Option<'T>` makes optionality explicit in the type system — you must handle both `Some` and `None`, eliminating null-reference exceptions by construction.
@@ -2104,7 +2789,7 @@ console.log(formatAddress(simpleAddress));
 
 A constrained `SkuCode` type enforces format invariants at the boundary. The P2P spec mandates the pattern `^[A-Z]{3}-\d{4,8}$` — for example `OFF-0042` or `ELE-12345`. Once inside the type, the value is guaranteed to satisfy the pattern.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2257,8 +2942,8 @@ match badFormat with
 
 // Result type — explicit error handling without exceptions
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // Branded SkuCode type — private constructor by convention
 type SkuCode = string & { readonly __brand: "SkuCode" };
@@ -2268,7 +2953,7 @@ const skuPattern = /^[A-Z]{3}-\d{4,8}$/;
 // => Pattern: three uppercase letters, hyphen, 4-8 digits (e.g. OFF-0042)
 
 // Smart constructor: validates and brands the raw string
-function createSkuCode(raw: string): Result<SkuCode, string> {
+function createSkuCode(raw: string): Result {
   if (!raw || raw.trim() === "") {
     return errR("SkuCode must not be blank");
     // => Guard 1: blank or whitespace strings are not valid SKU codes
@@ -2304,6 +2989,78 @@ if (!badFormat.ok) console.log("Validation error:", badFormat.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: SkuCode.hs ──────────────────────────────────────────────────────
+-- SkuCode: a Text guaranteed to match ^[A-Z]{3}-[0-9]{4,8}$.
+-- Smart constructor enforces the pattern; data constructor hidden at module boundary.
+-- [F#: private SkuCode of string with module + Regex — only create produces values]
+-- [Clojure: create-sku-code with malli schema returning {:ok map} or {:error msg}]
+-- [TypeScript: createSkuCode returning Result<SkuCode, string> branded type]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module SkuCode
+  ( SkuCode
+  -- => Type exported; constructor hidden behind smart constructor.
+  , createSkuCode
+  , skuCodeValue
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Regex.TDFA ((=~))
+
+newtype SkuCode = SkuCode Text deriving (Show, Eq)
+-- => Single-case nominal wrapper; downstream code trusts the format.
+
+-- Pattern: three uppercase letters, hyphen, 4-8 digits.
+skuPattern :: String
+skuPattern = "^[A-Z]{3}-[0-9]{4,8}$"
+-- => Defined at module scope so the regex compiler can cache it.
+
+-- Smart constructor: validates and brands the raw Text.
+createSkuCode :: Text -> Either Text SkuCode
+createSkuCode raw
+  | T.null (T.strip raw) =
+      Left "SkuCode must not be blank"
+      -- => Guard 1: blank/whitespace strings are not valid SKU codes.
+  | not (T.unpack raw =~ skuPattern) =
+      Left ("SkuCode '" <> raw <> "' must match ^[A-Z]{3}-[0-9]{4,8}$ (e.g. OFF-0042)")
+      -- => Guard 2: pattern does not match — describe the expected format.
+  | otherwise = Right (SkuCode raw)
+  -- => Both guards passed; wrap in the private constructor.
+
+-- Accessor: extract the raw Text for persistence or EDI output.
+skuCodeValue :: SkuCode -> Text
+skuCodeValue (SkuCode s) = s
+-- => Pattern matches the private constructor — only this module can do so.
+
+-- Usage example
+main :: IO ()
+main = do
+  let validSku  = createSkuCode "OFF-0042"
+      -- => Matches the pattern — Right (SkuCode "OFF-0042").
+      badFormat = createSkuCode "off-0042"
+      -- => Lowercase letters — Left "SkuCode 'off-0042' must match ...".
+      tooShort  = createSkuCode "OF-42"
+      -- => Only 2 letters and 2 digits — Left "...".
+  case validSku of
+    Right sku -> putStrLn ("SKU: " <> T.unpack (skuCodeValue sku))
+    -- => Output: SKU: OFF-0042
+    Left err  -> putStrLn ("Error: " <> T.unpack err)
+  case badFormat of
+    Right _   -> putStrLn "Should not reach here"
+    Left err  -> putStrLn ("Validation error: " <> T.unpack err)
+    -- => Output: Validation error: SkuCode 'off-0042' must match ...
+  case tooShort of
+    Right _   -> putStrLn "Should not reach here"
+    Left err  -> putStrLn ("Too short: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Constrained string types wrap raw strings with validated invariants, so any value that exists is guaranteed valid — no defensive checks needed downstream in the procurement pipeline.
@@ -2316,7 +3073,7 @@ if (!badFormat.ok) console.log("Validation error:", badFormat.error);
 
 `Quantity` wraps an integer and a unit of measure, guaranteeing the integer is strictly positive and the unit is one of the allowed domain values. Domain invariant: a purchase line item must request at least one unit.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2477,8 +3234,8 @@ match invalidQty with
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // UnitOfMeasure as a closed literal union
 type UnitOfMeasure = "EACH" | "BOX" | "KG" | "LITRE" | "HOUR";
@@ -2491,7 +3248,7 @@ interface QuantityBrand {
 type Quantity = { readonly value: number; readonly unit: UnitOfMeasure } & QuantityBrand;
 
 // Smart constructor: validates value > 0 and unit is a valid member
-function createQuantity(value: number, unit: UnitOfMeasure): Result<Quantity, string> {
+function createQuantity(value: number, unit: UnitOfMeasure): Result {
   if (value <= 0) {
     return errR(`Quantity must be > 0, got ${value}`);
     // => Domain rule: you cannot requisition zero or negative units
@@ -2524,6 +3281,88 @@ if (!invalidQty.ok) console.log("Validation error:", invalidQty.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Quantity.hs ─────────────────────────────────────────────────────
+-- Quantity: a positive Int paired with a closed UnitOfMeasure.
+-- Smart constructor enforces value > 0; UnitOfMeasure sum type closes the unit set.
+-- [F#: private Quantity of int * UnitOfMeasure — smart constructor validates both]
+-- [Clojure: {:quantity/value n :quantity/unit kw} — runtime guards in create-quantity]
+-- [TypeScript: createQuantity returning Result<Quantity, string> branded interface]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module Quantity
+  ( Quantity
+  -- => Type exported; data constructor hidden behind the smart constructor.
+  , UnitOfMeasure(..)
+  -- => UnitOfMeasure constructors exported for downstream pattern matching.
+  , createQuantity
+  , quantityValue
+  , quantityUnit
+  , describeQuantity
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+-- Closed sum type for the unit of measure — pattern matching is exhaustive.
+data UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR deriving (Show, Eq)
+-- => EACH: individual items; BOX: boxes; KG: weight; LITRE: liquid; HOUR: time.
+
+data Quantity = Quantity
+  { qValue :: Int
+  , qUnit  :: UnitOfMeasure
+  } deriving (Show, Eq)
+-- => Constructor hidden; only createQuantity produces valid values.
+
+-- Smart constructor: validates value > 0.
+createQuantity :: Int -> UnitOfMeasure -> Either Text Quantity
+createQuantity value unit
+  | value <= 0 =
+      Left ("Quantity must be > 0, got " <> T.pack (show value))
+      -- => Domain rule: cannot requisition zero or negative units.
+  | otherwise  = Right Quantity { qValue = value, qUnit = unit }
+  -- => Invariant satisfied — Quantity is safe to use in any domain function.
+
+quantityValue :: Quantity -> Int
+quantityValue = qValue
+-- => Accessor for the integer component.
+
+quantityUnit :: Quantity -> UnitOfMeasure
+quantityUnit = qUnit
+-- => Accessor for the unit constructor.
+
+describeQuantity :: Quantity -> String
+describeQuantity q = show (qValue q) <> " " <> show (qUnit q)
+-- => Produces "12 BOX" or "3 EACH" — show uses the constructor names.
+
+-- Usage example
+main :: IO ()
+main = do
+  let laptopQty   = createQuantity 3  EACH
+      -- => 3 > 0 and EACH is a valid constructor — Right (Quantity ...).
+      paperBoxQty = createQuantity 20 BOX
+      -- => 20 > 0 and BOX is a valid constructor — Right (Quantity ...).
+      invalidQty  = createQuantity 0  KG
+      -- => 0 <= 0 — Left "Quantity must be > 0, got 0".
+  case laptopQty of
+    Right q -> putStrLn ("Laptop quantity: " <> describeQuantity q)
+    -- => Output: Laptop quantity: 3 EACH
+    Left e  -> putStrLn ("Error: " <> T.unpack e)
+  case paperBoxQty of
+    Right q -> putStrLn ("Paper quantity: " <> describeQuantity q)
+    -- => Output: Paper quantity: 20 BOX
+    Left e  -> putStrLn ("Error: " <> T.unpack e)
+  case invalidQty of
+    Right _ -> putStrLn "Should not reach here"
+    Left e  -> putStrLn ("Validation error: " <> T.unpack e)
+    -- => Output: Validation error: Quantity must be > 0, got 0
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Wrapping a primitive pair in a constrained value object prevents invalid quantities from ever entering procurement logic — a function accepting `Quantity` cannot accidentally receive zero or a negative count.
@@ -2536,7 +3375,7 @@ if (!invalidQty.ok) console.log("Validation error:", invalidQty.error);
 
 `Money` is a value object combining a non-negative decimal amount with an ISO 4217 currency code. It is one of the most important value objects in the procurement domain — every line item price, PO total, and invoice amount is expressed as `Money`.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -2706,8 +3545,8 @@ match unitPrice with
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // Branded Money interface — encapsulates both validated components
 interface MoneyBrand {
@@ -2719,7 +3558,7 @@ type Money = { readonly amount: number; readonly currency: string } & MoneyBrand
 const isoPattern = /^[A-Z]{3}$/;
 
 // Smart constructor: validates both components before branding
-function createMoney(amount: number, currency: string): Result<Money, string> {
+function createMoney(amount: number, currency: string): Result {
   if (amount < 0) {
     return errR(`Money amount must be >= 0, got ${amount}`);
     // => Negative money is not meaningful in the procurement domain
@@ -2738,7 +3577,7 @@ const moneyCurrency = (m: Money): string => m.currency;
 const formatMoney = (m: Money): string => `${m.currency} ${m.amount.toFixed(2)}`;
 // => "USD 2500.00" — currency first, amount to 2 decimal places
 
-function addMoney(m1: Money, m2: Money): Result<Money, string> {
+function addMoney(m1: Money, m2: Money): Result {
   if (moneyCurrency(m1) !== moneyCurrency(m2)) {
     return errR(`Cannot add ${moneyCurrency(m1)} and ${moneyCurrency(m2)} — currency mismatch`);
     // => Cross-currency addition requires an exchange rate — out of scope here
@@ -2761,6 +3600,103 @@ const badCurrency = createMoney(100, "dollars");
 
 if (unitPrice.ok) console.log("Unit price:", formatMoney(unitPrice.value));
 // => Output: Unit price: USD 499.99
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: Money.hs ────────────────────────────────────────────────────────
+-- Money: non-negative amount paired with a validated ISO 4217 currency code.
+-- Smart constructor enforces both invariants; data constructor hidden at boundary.
+-- [F#: private Money of decimal * string with module returning Result<Money, string>]
+-- [Clojure: create-money returning {:ok map} or {:error string} with malli schema]
+-- [TypeScript: createMoney returning Result<Money, string> branded type]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module Money
+  ( Money
+  -- => Type exported; data constructor hidden behind smart constructor.
+  , createMoney
+  , moneyAmount
+  , moneyCurrency
+  , addMoney
+  , formatMoney
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Printf (printf)
+import Text.Regex.TDFA ((=~))
+
+data Money = Money
+  { mAmount   :: Double
+  , mCurrency :: Text
+  } deriving (Show, Eq)
+-- => Constructor hidden by export list — only createMoney builds Money values.
+
+-- ISO 4217 pattern: exactly three uppercase letters.
+isoPattern :: String
+isoPattern = "^[A-Z]{3}$"
+-- => Three letters exactly — matches USD, IDR, EUR, GBP, etc.
+
+-- Smart constructor: validates both components before constructing.
+createMoney :: Double -> Text -> Either Text Money
+createMoney amount currency
+  | amount < 0 =
+      Left ("Money amount must be >= 0, got " <> T.pack (show amount))
+      -- => Negative money is not meaningful in procurement.
+  | not (T.unpack currency =~ isoPattern) =
+      Left ("Currency '" <> currency <> "' is not a valid ISO 4217 code")
+      -- => Currency must be three uppercase letters — not symbols or names.
+  | otherwise = Right Money { mAmount = amount, mCurrency = currency }
+  -- => Both invariants satisfied — valid Money value object.
+
+-- Accessors
+moneyAmount :: Money -> Double
+moneyAmount = mAmount
+-- => Function-style accessor; the record selector also works directly.
+
+moneyCurrency :: Money -> Text
+moneyCurrency = mCurrency
+
+-- Addition only makes sense when currencies match.
+addMoney :: Money -> Money -> Either Text Money
+addMoney m1 m2
+  | mCurrency m1 /= mCurrency m2 =
+      Left ("Cannot add " <> mCurrency m1 <> " and " <> mCurrency m2 <> " - currency mismatch")
+      -- => Cross-currency addition requires an exchange rate — out of scope here.
+  | otherwise =
+      Right Money { mAmount = mAmount m1 + mAmount m2, mCurrency = mCurrency m1 }
+      -- => Same currency — simply sum the amounts.
+
+-- Formats Money as "USD 2500.00" — currency first, two decimal places.
+formatMoney :: Money -> String
+formatMoney m = printf "%s %.2f" (T.unpack (mCurrency m)) (mAmount m)
+-- => printf handles the fixed-width formatting required for monetary display.
+
+-- Usage example (typically in a Main module)
+main :: IO ()
+main = do
+  let unitPrice   = createMoney 499.99 "USD"
+      -- => 499.99 >= 0 and "USD" matches [A-Z]{3} — Right (Money ...).
+      qty         = 5
+      badCurrency = createMoney 100 "dollars"
+      -- => "dollars" does not match [A-Z]{3} — Left "...".
+  case unitPrice of
+    Right m -> do
+      putStrLn ("Unit price: " <> formatMoney m)
+      -- => Output: Unit price: USD 499.99
+      case createMoney (fromIntegral qty * moneyAmount m) (moneyCurrency m) of
+        Right lineTotal -> putStrLn ("Line total: " <> formatMoney lineTotal)
+        -- => 5 * 499.99 = 2499.95 — Output: Line total: USD 2499.95
+        Left err        -> putStrLn ("Error: " <> T.unpack err)
+    Left err -> putStrLn ("Error: " <> T.unpack err)
+  case badCurrency of
+    Right _  -> putStrLn "Should not reach here"
+    Left err -> putStrLn ("Currency rejected: " <> T.unpack err)
 ```
 
 {{< /tab >}}
@@ -2789,7 +3725,7 @@ stateDiagram-v2
     Rejected --> [*]
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3009,6 +3945,76 @@ console.log("After submit:", submitted.status, submitted.requestedBy);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: RequisitionLifecycle.hs ─────────────────────────────────────────
+-- The full PurchaseRequisition lifecycle as a sum type with per-case fields.
+-- Each constructor carries only the data meaningful in that state.
+-- [F#: DU where each case has its own payload — accessing wrong-state field is compile error]
+-- [Clojure: map with :status keyword — multimethods dispatch on state]
+-- [TypeScript: tagged union; narrowing via discriminant]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module RequisitionLifecycle where
+
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype RequisitionId = RequisitionId Text deriving (Show, Eq)
+-- => Wrapped identifier used in most lifecycle states.
+
+-- Each constructor models a distinct lifecycle state, carrying its own payload.
+data PurchaseRequisition
+  = Draft { draftLines :: [Text] }
+  -- => Draft: just the line items being built — no submission metadata yet.
+  | Submitted { sId :: RequisitionId, sRequestedBy :: Text, sSubmittedAt :: UTCTime }
+  -- => Submitted: ID assigned, who submitted, when submitted.
+  | ManagerReview { mrId :: RequisitionId, mrApproverEmail :: Text }
+  -- => Under review: know which approver is responsible.
+  | Approved { apId :: RequisitionId, apApprovedAt :: UTCTime }
+  -- => Approved: timestamp captured for audit trail.
+  | Rejected { rjId :: RequisitionId, rjReason :: Text }
+  -- => Rejected: rejection reason mandatory — employee needs feedback.
+  | ConvertedToPO { cpId :: RequisitionId, cpPurchaseOrderId :: Text }
+  -- => Converted: linked to the resulting PO — bidirectional traceability.
+  deriving (Show)
+
+-- State transition: submit a Draft requisition.
+-- Pattern match in the parameter destructs Draft directly.
+submitRequisition :: PurchaseRequisition -> Text -> IO PurchaseRequisition
+submitRequisition (Draft _) requestedBy = do
+  now <- getCurrentTime
+  -- => IO captures the submission timestamp.
+  pure Submitted
+    { sId          = RequisitionId "req_abc12345"
+    -- => Generate ID at submission time (deterministic for the example).
+    , sRequestedBy = requestedBy
+    -- => Carry employee ID into the new state.
+    , sSubmittedAt = now
+    -- => Record the submission timestamp.
+    }
+-- => Calling submitRequisition with any non-Draft constructor produces a pattern
+--   match warning at compile time when -Wincomplete-patterns is enabled.
+submitRequisition req _ = pure req
+-- => Fallback for non-Draft states — keeps the function total.
+
+main :: IO ()
+main = do
+  let myReq = Draft { draftLines = ["OFF-0042", "ELE-1001"] }
+      -- => myReq :: PurchaseRequisition = Draft { draftLines = ["OFF-0042", "ELE-1001"] }
+      -- => Two line items on the draft requisition.
+  submitted <- submitRequisition myReq "emp_00456"
+  -- => Transitions Draft -> Submitted.
+  putStrLn ("Initial state: " <> show myReq)
+  -- => Output: Initial state: Draft { draftLines = ["OFF-0042","ELE-1001"] }
+  putStrLn ("After submit: " <> show submitted)
+  -- => Output: After submit: Submitted { sId = RequisitionId "req_abc12345", ... }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Modelling lifecycle states as a discriminated union where each case carries its own payload makes illegal states and premature data access impossible — you cannot access the `approverEmail` of a `Draft` requisition because `Draft` does not have that field.
@@ -3029,7 +4035,7 @@ stateDiagram-v2
     DraftRequisition --> [*] : cancelled
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3248,6 +4254,102 @@ console.log("Approved requisition:", approv.id, "at", approv.approvedAt);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: StateTransitions.hs ─────────────────────────────────────────────
+-- State transitions as typed functions — illegal transitions are compile errors.
+-- Each state is a distinct record type; transition functions accept one state, produce another.
+-- [F#: typed functions per state — compile-time guard against wrong input state]
+-- [Clojure: runtime :status guard — same semantics, runtime check]
+-- [TypeScript: separate interfaces; compile error if wrong state passed]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module StateTransitions where
+
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+newtype RequisitionId = RequisitionId Text deriving (Show, Eq)
+-- => Wrapped requisition identifier.
+
+-- Separate state types — each is a distinct record (no shared base class).
+data DraftRequisition = DraftRequisition
+  { dLines       :: [Text]
+  , dRequestedBy :: Text
+  } deriving (Show)
+-- => Draft state: only knows its lines and the submitter.
+
+data SubmittedRequisition = SubmittedRequisition
+  { sId          :: RequisitionId
+  , sRequestedBy :: Text
+  , sSubmittedAt :: UTCTime
+  , sLines       :: [Text]
+  } deriving (Show)
+-- => Submitted state: has an ID and a timestamp — assigned at submission.
+
+data ApprovedRequisition = ApprovedRequisition
+  { aId         :: RequisitionId
+  , aApprovedAt :: UTCTime
+  } deriving (Show)
+-- => Approved state: knows when approval happened.
+
+data RejectedRequisition = RejectedRequisition
+  { rId     :: RequisitionId
+  , rReason :: Text
+  } deriving (Show)
+-- => Rejected state: knows why it was rejected — mandatory feedback.
+
+-- Generate a short requisition id (production code would use UUID v4).
+genId :: Int -> RequisitionId
+genId n = RequisitionId ("req_" <> "00000000")
+-- => Deterministic for the example.
+
+-- Transition functions — each accepts exactly the right input state.
+submitReq :: DraftRequisition -> IO SubmittedRequisition
+submitReq draft = do
+  now <- getCurrentTime
+  -- => IO captures timestamp — kept in the imperative shell.
+  pure SubmittedRequisition
+    { sId          = genId 0
+    , sRequestedBy = dRequestedBy draft
+    -- => Carry the employee identifier forward.
+    , sSubmittedAt = now
+    , sLines       = dLines draft
+    -- => Carry the line items forward for the approval review.
+    }
+-- => submitReq : DraftRequisition -> IO SubmittedRequisition.
+-- => Cannot accidentally call submitReq on an ApprovedRequisition — type error.
+
+approveReq :: SubmittedRequisition -> IO ApprovedRequisition
+approveReq submitted = do
+  now <- getCurrentTime
+  pure ApprovedRequisition
+    { aId         = sId submitted
+    -- => Preserve the requisition identity through the approval transition.
+    , aApprovedAt = now
+    -- => Record the approval timestamp for the audit trail.
+    }
+-- => approveReq : SubmittedRequisition -> IO ApprovedRequisition.
+-- => Cannot approve a DraftRequisition — GHC blocks it at compile time.
+
+main :: IO ()
+main = do
+  let draft = DraftRequisition { dLines = ["OFF-0042"], dRequestedBy = "emp_00123" }
+      -- => draft :: DraftRequisition.
+  subm   <- submitReq draft
+  -- => subm :: SubmittedRequisition — submitReq transitions Draft -> Submitted.
+  approv <- approveReq subm
+  -- => approv :: ApprovedRequisition — approveReq transitions Submitted -> Approved.
+
+  -- approveReq draft  -- compile error: expected SubmittedRequisition, got DraftRequisition
+  putStrLn ("Approved requisition: " <> show approv)
+  -- => Output: Approved requisition: ApprovedRequisition { aId = ..., aApprovedAt = ... }
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Encoding state transitions as functions with typed inputs and outputs makes illegal transitions (Draft → Approved without going through Submitted) literal compile errors rather than runtime bugs caught only in testing.
@@ -3260,7 +4362,7 @@ console.log("Approved requisition:", approv.id, "at", approv.approvedAt);
 
 `UnitPrice` wraps a `decimal` and guarantees it is strictly positive. A zero-price item is likely a data entry error; a negative price is impossible in the procurement context. The wrapper makes this invariant permanent.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3409,14 +4511,14 @@ printfn "Line total: %A" lineTotal
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // Branded UnitPrice — positive number, enforced by smart constructor
 type UnitPrice = number & { readonly __brand: "UnitPrice" };
 
 // Smart constructor: validates value > 0
-function createUnitPrice(fieldName: string, value: number): Result<UnitPrice, string> {
+function createUnitPrice(fieldName: string, value: number): Result {
   if (value <= 0) {
     return errR(`${fieldName} must be > 0, got ${value}`);
     // => Zero and negative prices violate the procurement domain invariant
@@ -3457,6 +4559,79 @@ if (priceResult.ok) {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: UnitPrice.hs ────────────────────────────────────────────────────
+-- UnitPrice: a Double guaranteed to be strictly positive.
+-- Smart constructor enforces the invariant; data constructor is hidden at boundary.
+-- [F#: private UnitPrice of decimal with module returning Result<UnitPrice, string>]
+-- [Clojure: create-unit-price returning {:ok value} or {:error msg}]
+-- [TypeScript: createUnitPrice returning Result<UnitPrice, string> branded type]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module UnitPrice
+  ( UnitPrice
+  -- => Type exported but data constructor NOT exported — invariant preserved.
+  , createUnitPrice
+  , unitPriceValue
+  , computeLineTotal
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+
+newtype UnitPrice = UnitPrice Double deriving (Show, Eq)
+-- => Wraps a Double; nominal typing prevents passing arbitrary numbers.
+
+-- Smart constructor: validates value > 0.
+-- fieldName is included in error messages for diagnostic feedback.
+createUnitPrice :: Text -> Double -> Either Text UnitPrice
+createUnitPrice fieldName value
+  | value <= 0 = Left (fieldName <> " must be > 0, got " <> T.pack (show value))
+  -- => Zero and negative prices violate the procurement domain invariant.
+  | otherwise  = Right (UnitPrice value)
+  -- => Wraps the validated number — invariant lives in the type.
+
+-- Accessor: unwrap for arithmetic, persistence, or display.
+unitPriceValue :: UnitPrice -> Double
+unitPriceValue (UnitPrice v) = v
+-- => Pattern matches the private constructor — only this module can do so.
+
+-- Compute a line total using a validated price.
+computeLineTotal :: UnitPrice -> Int -> Double
+computeLineTotal price qty = unitPriceValue price * fromIntegral qty
+-- => Pure arithmetic — no defensive checks because UnitPrice is trusted.
+
+-- Usage (typically in a Main module that imports the above)
+main :: IO ()
+main = do
+  let priceResult = createUnitPrice "UnitPrice" 4.99
+      -- => 4.99 > 0 — Right (UnitPrice 4.99).
+      zeroResult  = createUnitPrice "UnitPrice" 0
+      -- => 0 <= 0 — Left "UnitPrice must be > 0, got 0.0".
+      negResult   = createUnitPrice "UnitPrice" (-10)
+      -- => -10 <= 0 — Left "UnitPrice must be > 0, got -10.0".
+  case priceResult of
+    Right price -> do
+      putStrLn ("Unit price: " <> show (unitPriceValue price))
+      -- => Output: Unit price: 4.99
+      let total = computeLineTotal price 10
+      -- => 4.99 * 10 = 49.9
+      putStrLn ("Line total: " <> show total)
+      -- => Output: Line total: 49.9
+    Left err -> putStrLn ("Error: " <> T.unpack err)
+  case zeroResult of
+    Right _  -> putStrLn "Should not reach here"
+    Left err -> putStrLn ("Zero rejected: " <> T.unpack err)
+  case negResult of
+    Right _  -> putStrLn "Should not reach here"
+    Left err -> putStrLn ("Negative rejected: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Wrapping decimal prices in constrained types prevents invalid values from ever entering procurement logic — a function that accepts `UnitPrice` cannot accidentally receive zero or a negative number.
@@ -3469,7 +4644,7 @@ if (priceResult.ok) {
 
 Compile-time dimensional analysis prevents mixing amounts in different units. F# provides this natively through units of measure — a type-level mechanism that makes a `Quantity<kg>` and a `Quantity<each>` incompatible at compile time. Clojure and TypeScript achieve similar protection through tagged wrappers or branded numeric types. In the procurement context, this means you cannot accidentally add a quantity in `KG` to a quantity in `EACH` without explicit conversion.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3623,26 +4798,26 @@ type Qty<TUnit extends string> = number & { readonly __unit: TUnit };
 type USD<TPerUnit extends string = ""> = number & { readonly __currency: "USD"; readonly __per: TPerUnit };
 
 // Helper casts — used only after dimensional check
-const qty = <T extends string>(n: number): Qty<T> => n as Qty<T>;
-const price = <T extends string>(n: number): USD<T> => n as USD<T>;
-const money = (n: number): USD<""> => n as USD<"">;
+const qty = <T extends string>(n: number): Qty => n as Qty;
+const price = <T extends string>(n: number): USD => n as USD;
+const money = (n: number): USD => n as USD;
 
 // Typed quantities
-const laptopCount: Qty<"each"> = qty<"each">(3);
+const laptopCount: Qty = qty<"each">(3);
 // => 3 individual laptops — brand encodes the unit dimension
-const paperBoxCount: Qty<"box"> = qty<"box">(20);
+const paperBoxCount: Qty = qty<"box">(20);
 // => 20 boxes of paper
-const steelWeight: Qty<"kg"> = qty<"kg">(150);
+const steelWeight: Qty = qty<"kg">(150);
 // => 150 kg of steel (unused in totals — illustrates the brand)
 
 // Typed prices
-const laptopUnitPrice: USD<"each"> = price<"each">(899.99);
+const laptopUnitPrice: USD = price<"each">(899.99);
 // => $899.99 per laptop — brand encodes "per each"
-const paperBoxPrice: USD<"box"> = price<"box">(8.5);
+const paperBoxPrice: USD = price<"box">(8.5);
 // => $8.50 per box
 
 // Unit-aware multiplication: Qty<T> x USD<T> = USD<""> — units cancel
-function lineTotal<TUnit extends string>(q: Qty<TUnit>, p: USD<TUnit>): USD<""> {
+function lineTotal<TUnit extends string>(q: Qty, p: USD): USD {
   return money(q * p);
   // => TypeScript enforces matching unit brands: Qty<"each"> x USD<"each"> is valid
   // => Qty<"each"> x USD<"box"> would be a compile error — different T
@@ -3668,6 +4843,89 @@ console.log(`Requisition total: ${requisitionTotal.toFixed(4)} USD`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: UnitsOfMeasure.hs ───────────────────────────────────────────────
+-- Compile-time unit tracking via phantom-typed newtypes.
+-- Each unit is a phantom type parameter — mixing units is a compile error.
+-- [F#: native [<Measure>] types — first-class compile-time dimensional analysis]
+-- [Clojure: {:value n :unit :each} maps with runtime unit guards]
+-- [TypeScript: Qty<TUnit> branded numeric type — closest direct analogue]
+
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE KindSignatures #-}
+
+module UnitsOfMeasure where
+
+import Data.Kind (Type)
+
+-- Phantom-typed quantity: the unit is a type parameter with no runtime presence.
+newtype Qty (unit :: Type) = Qty Double deriving (Show)
+-- => Qty Each and Qty Box are distinct types despite same runtime representation.
+
+-- Phantom-typed price-per-unit: brand carries the dimension that must cancel.
+newtype PricePerUnit (unit :: Type) = PricePerUnit Double deriving (Show)
+-- => PricePerUnit Each cannot be multiplied with Qty Box (compile error).
+
+-- Currency amount with no unit dimension after cancellation.
+newtype Usd = Usd Double deriving (Show)
+-- => Result of Qty * PricePerUnit — the unit has cancelled out.
+
+-- Empty data types serve as type-level tags for units.
+data Each
+-- => Discrete items — laptops, chairs, monitors.
+data Box
+-- => Packaged quantities — boxes of pens, reams of paper.
+data Kg
+-- => Weight-based goods.
+data Litre
+-- => Volume-based goods.
+
+-- Unit-safe multiplication: Qty u * PricePerUnit u = Usd (units cancel).
+lineTotal :: Qty u -> PricePerUnit u -> Usd
+lineTotal (Qty q) (PricePerUnit p) = Usd (q * p)
+-- => Type variable u must match on both arguments — compile error if not.
+-- => Mirrors F# decimal<usd/each> * int<each> = decimal<usd>.
+
+-- Adding currency amounts — both must be in Usd (no unit dimension left).
+addUsd :: Usd -> Usd -> Usd
+addUsd (Usd a) (Usd b) = Usd (a + b)
+-- => Same dimension on both sides — guaranteed safe to add.
+
+main :: IO ()
+main = do
+  let laptopCount   = Qty 3   :: Qty Each
+      -- => 3 individual laptops — phantom type Each captures the dimension.
+      paperBoxCount = Qty 20  :: Qty Box
+      -- => 20 boxes of paper.
+      _steelWeight  = Qty 150 :: Qty Kg
+      -- => Unused example showing a different unit dimension.
+
+      laptopPrice = PricePerUnit 899.99 :: PricePerUnit Each
+      -- => $899.99 per laptop.
+      paperPrice  = PricePerUnit 8.50   :: PricePerUnit Box
+      -- => $8.50 per box.
+
+      laptopTotal = lineTotal laptopCount laptopPrice
+      -- => Qty Each * PricePerUnit Each = Usd 2699.97.
+      paperTotal  = lineTotal paperBoxCount paperPrice
+      -- => Qty Box * PricePerUnit Box = Usd 170.0.
+
+      requisitionTotal = addUsd laptopTotal paperTotal
+      -- => Usd + Usd = Usd 2869.97.
+
+  -- lineTotal laptopCount paperPrice  -- compile error: Each /= Box
+  putStrLn ("Laptop total: " <> show laptopTotal)
+  -- => Output: Laptop total: Usd 2699.97
+  putStrLn ("Paper total: "  <> show paperTotal)
+  -- => Output: Paper total: Usd 170.0
+  putStrLn ("Requisition total: " <> show requisitionTotal)
+  -- => Output: Requisition total: Usd 2869.97
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Compile-time dimensional analysis prevents unit-mismatch bugs — mixing quantities in different units (KG vs EACH) or adding money to quantity becomes a compile error, not a runtime bug. F# achieves this natively with units of measure; Clojure and TypeScript use tagged wrappers to approximate the same protection at the domain boundary.
@@ -3680,7 +4938,7 @@ console.log(`Requisition total: ${requisitionTotal.toFixed(4)} USD`);
 
 An email address on a supplier or employee record is a constrained string with format requirements. Active patterns let you embed validation logic directly into pattern-matching syntax, making validation readable and composable.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -3821,8 +5079,8 @@ match badEmail with
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // Branded Email type — only lowercase-normalised valid emails
 type Email = string & { readonly __brand: "Email" };
@@ -3833,7 +5091,7 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // => Pre-compiled for performance — compiled once at module load
 
 // Smart constructor: validates and normalises the raw string
-function createEmail(raw: string): Result<Email, string> {
+function createEmail(raw: string): Result {
   if (!raw || !emailPattern.test(raw)) {
     return errR(`'${raw}' is not a valid email address`);
     // => Pattern did not match — return descriptive error
@@ -3866,6 +5124,77 @@ if (!badEmail.ok) console.log("Validation error:", badEmail.error);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: Email.hs ────────────────────────────────────────────────────────
+-- Email: a Text verified to match a minimal email format.
+-- A view pattern can mirror F#'s active pattern: validation is expressed in match.
+-- [F#: active patterns (|ValidEmail|InvalidEmail|) embedded in match syntax]
+-- [Clojure: valid-email-format? predicate + create-email returning {:ok ...}]
+-- [TypeScript: createEmail returning Result<Email, string> branded type]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module Email
+  ( Email
+  -- => Export the type but NOT the constructor — only createEmail constructs it.
+  , createEmail
+  , emailValue
+  ) where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Regex.TDFA ((=~))
+-- => POSIX regex match used by the validator below.
+
+newtype Email = Email Text deriving (Show, Eq)
+-- => Constructor hidden by module export list — smart constructor is the only entry.
+
+-- Minimal email regex: something @ something . something
+-- Full RFC 5322 compliance is complex; this covers 99% of real addresses.
+emailPattern :: String
+emailPattern = "^[^[:space:]@]+@[^[:space:]@]+\\.[^[:space:]@]+$"
+-- => Pre-defined regex string — compiled by Text.Regex.TDFA at match time.
+
+-- Smart constructor: validates and normalises the raw Text
+createEmail :: Text -> Either Text Email
+createEmail raw
+  | T.unpack raw =~ emailPattern = Right (Email (T.toLower raw))
+  -- => Pattern matched — normalise to lowercase for consistent storage.
+  -- => Mirrors F# s.ToLowerInvariant() inside the Ok branch.
+  | otherwise                    = Left ("'" <> raw <> "' is not a valid email address")
+  -- => Pattern did not match — return descriptive Left.
+
+-- Accessor: extract the Text for sending notifications
+emailValue :: Email -> Text
+emailValue (Email e) = e
+-- => Pattern-matches the private constructor — only this module can do so.
+
+-- Creating emails for procurement contacts (in a separate Main module typically)
+main :: IO ()
+main = do
+  let supplierEmail = createEmail "purchasing@acme-supplies.com"
+      -- => Matches the format — normalised to lowercase.
+      approverEmail = createEmail "manager.finance@company.com"
+      -- => Valid format — Right (Email "manager.finance@company.com").
+      badEmail      = createEmail "not-an-email"
+      -- => "not-an-email" has no @ — Left "'not-an-email' is not a valid email address".
+  case supplierEmail of
+    Right e -> putStrLn ("Supplier contact: " <> T.unpack (emailValue e))
+    -- => Output: Supplier contact: purchasing@acme-supplies.com
+    Left err -> putStrLn ("Error: " <> T.unpack err)
+  case badEmail of
+    Right _  -> putStrLn "Should not reach here"
+    Left err -> putStrLn ("Validation error: " <> T.unpack err)
+    -- => Output: Validation error: 'not-an-email' is not a valid email address
+  case approverEmail of
+    Right e -> putStrLn ("Approver: " <> T.unpack (emailValue e))
+    Left _  -> pure ()
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Active patterns embed validation logic into match expressions, making smart constructors readable as domain rules rather than imperative if/else chains.
@@ -3878,7 +5207,7 @@ if (!badEmail.ok) console.log("Validation error:", badEmail.error);
 
 Some domain concepts have multiple valid forms. A `ProductCode` in the procurement domain can be either a standard `SkuCode` (format `OFF-0042`) or a `ServiceCode` (format `SVC-YYYYMMDD-NNN` for contracted services). The union type captures both forms without collapsing them into a single string.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4024,8 +5353,8 @@ match cleaning with
 
 // Result type
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // Two branded subtypes — each with its own format invariant
 type SkuCode = string & { readonly __brand: "SkuCode" };
@@ -4044,13 +5373,13 @@ type ProductCode =
 const skuPattern = /^[A-Z]{3}-\d{4,8}$/;
 const servicePattern = /^SVC-\d{8}-\d{3}$/;
 
-function createSku(s: string): Result<ProductCode, string> {
+function createSku(s: string): Result {
   if (!skuPattern.test(s)) return errR(`Invalid SKU: ${s}`);
   return okR({ kind: "Sku", code: s as SkuCode });
   // => [F#: Ok (Sku (SkuCode s)) — wrapped in the union type]
 }
 
-function createService(s: string): Result<ProductCode, string> {
+function createService(s: string): Result {
   if (!servicePattern.test(s)) return errR(`Invalid ServiceCode: ${s}`);
   return okR({ kind: "Service", code: s as ServiceCode });
   // => [F#: Ok (Service (ServiceCode s))]
@@ -4081,6 +5410,80 @@ if (cleaning.ok) console.log(describeLineType(cleaning.value));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProductCode.hs ──────────────────────────────────────────────────
+-- ProductCode is a sum of SkuCode and ServiceCode — two valid forms of product identity.
+-- Using a sum type preserves the distinction rather than collapsing to one string.
+-- [F#: DU ProductCode = Sku of SkuCode | Service of ServiceCode — exhaustive match]
+-- [Clojure: {:kind :sku/:service :code ...} map with defmulti dispatch — open]
+-- [TypeScript: tagged union with discriminant kind field]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module ProductCode where
+
+import Data.Text (Text)
+import qualified Data.Text as T
+import Text.Regex.TDFA ((=~))
+-- => Text.Regex.TDFA provides POSIX regex matching for validation.
+
+-- Two formats, two newtypes
+newtype SkuCode     = SkuCode Text     deriving (Show, Eq)
+-- => Goods: format ^[A-Z]{3}-[0-9]{4,8}$ e.g. OFF-0042.
+newtype ServiceCode = ServiceCode Text deriving (Show, Eq)
+-- => Services: format SVC-YYYYMMDD-NNN e.g. SVC-20260601-003.
+
+-- The sum type — a ProductCode is one OR the other
+data ProductCode
+  = Sku SkuCode
+  -- => Physical goods with a stock-keeping unit identifier.
+  | Service ServiceCode
+  -- => Contracted services (consulting, maintenance, cleaning).
+  deriving (Show)
+
+-- Smart constructor for SKU codes
+createSku :: Text -> Either Text ProductCode
+createSku s
+  | T.unpack s =~ ("^[A-Z]{3}-[0-9]{4,8}$" :: String) = Right (Sku (SkuCode s))
+  -- => Regex match succeeds — wrap in ProductCode's Sku constructor.
+  | otherwise = Left ("Invalid SKU: " <> s)
+  -- => Pattern violation surfaced as a Left — no exceptions thrown.
+
+-- Smart constructor for service codes
+createService :: Text -> Either Text ProductCode
+createService s
+  | T.unpack s =~ ("^SVC-[0-9]{8}-[0-9]{3}$" :: String) = Right (Service (ServiceCode s))
+  -- => Wrap valid service code in ProductCode's Service constructor.
+  | otherwise = Left ("Invalid ServiceCode: " <> s)
+
+-- Exhaustive pattern match — GHC warns if a constructor is missed
+describeLineType :: ProductCode -> Text
+describeLineType (Sku (SkuCode s))         = "Physical goods: " <> s
+-- => Sku branch: standard goods with warehouse inventory.
+describeLineType (Service (ServiceCode s)) = "Contracted service: " <> s
+-- => Service branch: no inventory, billed by service agreement.
+
+-- Building product codes
+main :: IO ()
+main = do
+  let laptop   = createSku "ELE-0099"
+      -- => "ELE-0099" matches the SKU pattern — Right (Sku (SkuCode "ELE-0099")).
+      cleaning = createService "SVC-20260601-003"
+      -- => Matches the service pattern — Right (Service (ServiceCode ...)).
+  case laptop of
+    Right code -> putStrLn (T.unpack (describeLineType code))
+    -- => Output: Physical goods: ELE-0099
+    Left err   -> putStrLn ("Error: " <> T.unpack err)
+  case cleaning of
+    Right code -> putStrLn (T.unpack (describeLineType code))
+    -- => Output: Contracted service: SVC-20260601-003
+    Left err   -> putStrLn ("Error: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A union type for `ProductCode` preserves the semantic distinction between physical goods and contracted services, enabling different handling rules to be enforced at compile time rather than at runtime via string prefix checks.
@@ -4095,7 +5498,7 @@ if (cleaning.ok) console.log(describeLineType(cleaning.value));
 
 A `PurchaseRequisitionLine` composes the validated value objects from the previous examples into a single record. Every field is a domain type, not a primitive — the record itself becomes valid by construction if all its fields were validated.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4309,6 +5712,89 @@ console.log(`Line 2 total: ${lineTotal(line2).toFixed(4)}`);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseRequisitionLine.hs ──────────────────────────────────────
+-- PurchaseRequisitionLine: a record that composes validated value objects.
+-- Each field is a domain newtype/data — the record inherits all guarantees.
+-- [F#: record type with domain fields — valid by construction]
+-- [Clojure: map with namespaced keys + spec — runtime validation at boundaries]
+-- [TypeScript: readonly interface with branded fields — compile-time safety]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module PurchaseRequisitionLine where
+
+import Data.Text (Text)
+
+-- Simplified value objects (smart constructors covered earlier)
+newtype SkuCode = SkuCode Text deriving (Show, Eq)
+-- => Validated SKU value object — only constructed via the smart constructor.
+newtype UnitPrice = UnitPrice Double deriving (Show, Eq)
+-- => Validated positive price.
+
+data UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR deriving (Show, Eq)
+-- => Closed sum type for the unit.
+
+data Quantity = Quantity
+  { qValue :: Int
+  -- => Positive integer (enforced by Quantity smart constructor in Example 13).
+  , qUnit  :: UnitOfMeasure
+  -- => Validated unit constructor.
+  } deriving (Show, Eq)
+
+-- The composed line record — all fields are domain types
+data PurchaseRequisitionLine = PurchaseRequisitionLine
+  { lineNumber :: Int
+  -- => 1-based display ordering.
+  , lineSku    :: SkuCode
+  -- => Validated SKU — not a raw Text.
+  , lineQty    :: Quantity
+  -- => Validated quantity — value > 0, unit is a closed sum.
+  , linePrice  :: UnitPrice
+  -- => Validated price — > 0.
+  } deriving (Show)
+-- => All fields are domain types — if it exists, it is valid.
+
+-- Helper to compute the line total
+lineTotal :: PurchaseRequisitionLine -> Double
+lineTotal line =
+  let UnitPrice p = linePrice line
+      -- => Pattern match destructures the UnitPrice newtype.
+  in fromIntegral (qValue (lineQty line)) * p
+-- => Multiply quantity by unit price — both validated, no guards needed here.
+
+-- Constructing a line — all field values are validated types
+main :: IO ()
+main = do
+  let line1 = PurchaseRequisitionLine
+        { lineNumber = 1
+        -- => First line item on the requisition.
+        , lineSku    = SkuCode "OFF-0042"
+        -- => Wrapped in SkuCode — not a raw Text.
+        , lineQty    = Quantity { qValue = 10, qUnit = BOX }
+        -- => 10 boxes — qValue > 0, qUnit is a valid constructor.
+        , linePrice  = UnitPrice 8.50
+        -- => $8.50 per box — positive price.
+        }
+      line2 = PurchaseRequisitionLine
+        { lineNumber = 2
+        , lineSku    = SkuCode "ELE-0099"
+        -- => Electronics SKU.
+        , lineQty    = Quantity { qValue = 3, qUnit = EACH }
+        -- => 3 individual laptops.
+        , linePrice  = UnitPrice 899.99
+        -- => $899.99 per laptop.
+        }
+  putStrLn ("Line 1 total: " <> show (lineTotal line1))
+  -- => 10 * 8.50 = 85.0 — Output: Line 1 total: 85.0
+  putStrLn ("Line 2 total: " <> show (lineTotal line2))
+  -- => 3 * 899.99 = 2699.97 — Output: Line 2 total: 2699.97
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Composing validated value objects into a record creates a record that is valid by construction — no downstream function needs to re-validate individual fields because the types already guarantee their invariants.
@@ -4347,7 +5833,7 @@ graph TD
     style UP fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4619,6 +6105,121 @@ console.log("Status:", sampleReq.status);
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: PurchaseRequisitionAggregate.hs ─────────────────────────────────
+-- PurchaseRequisition: the aggregate root of the purchasing context.
+-- Groups identity, status, lines, and metadata into a single cohesive record.
+-- [F#: record type — compiler guarantees required fields are present]
+-- [Clojure: namespaced map with :purchasing/requisition spec — runtime check]
+-- [TypeScript: readonly interface with branded id field]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module PurchaseRequisitionAggregate where
+
+import Data.Text (Text)
+import Data.Time (UTCTime, getCurrentTime)
+
+-- Simplified domain types reused from earlier examples
+newtype RequisitionId = RequisitionId Text deriving (Show, Eq)
+-- => Single-case nominal wrapper — distinct from raw Text.
+data RequisitionStatus
+  = Draft | Submitted | ManagerReview | Approved | Rejected | ConvertedToPO
+  deriving (Show, Eq)
+-- => Six mutually exclusive lifecycle states.
+newtype SkuCode = SkuCode Text deriving (Show, Eq)
+newtype UnitPrice = UnitPrice Double deriving (Show, Eq)
+data UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR deriving (Show, Eq)
+
+data Quantity = Quantity
+  { qValue :: Int
+  , qUnit  :: UnitOfMeasure
+  } deriving (Show, Eq)
+-- => Simplified Quantity record (validation deferred to smart constructor elsewhere).
+
+data PurchaseRequisitionLine = PurchaseRequisitionLine
+  { lineNumber :: Int
+  -- => 1-based display ordering.
+  , lineSku    :: SkuCode
+  -- => Validated SKU value object.
+  , lineQty    :: Quantity
+  -- => Validated quantity value object.
+  , linePrice  :: UnitPrice
+  -- => Validated unit price.
+  } deriving (Show)
+
+-- The aggregate root record
+data PurchaseRequisition = PurchaseRequisition
+  { prId          :: RequisitionId
+  -- => Unique identity — drives lookups and event references.
+  , prRequestedBy :: Text
+  -- => Employee identifier — used for approval routing and audit trail.
+  , prStatus      :: RequisitionStatus
+  -- => Current lifecycle state — only legal transitions permitted.
+  , prLines       :: [PurchaseRequisitionLine]
+  -- => Line items — at least one required before submission.
+  , prCreatedAt   :: UTCTime
+  -- => Timestamp when first saved — for SLA tracking.
+  , prUpdatedAt   :: UTCTime
+  -- => Timestamp of last modification — for concurrency detection.
+  } deriving (Show)
+-- => PurchaseRequisition : aggregate root grouping identity, status, lines, metadata.
+
+-- Helper: compute the total value of the requisition
+requisitionTotal :: PurchaseRequisition -> Double
+requisitionTotal req = sum (map oneLine (prLines req))
+  where
+    -- => Local helper destructures the validated UnitPrice newtype.
+    oneLine l =
+      let UnitPrice p = linePrice l
+      in fromIntegral (qValue (lineQty l)) * p
+-- => Sum all line totals to get the requisition total.
+
+-- Build a sample requisition (timestamps would normally come from IO)
+sampleReq :: UTCTime -> PurchaseRequisition
+sampleReq now = PurchaseRequisition
+  { prId          = RequisitionId "req_f4c2a1b7"
+  , prRequestedBy = "emp_00456"
+  , prStatus      = Draft
+  -- => Starts in Draft — cannot submit until validated.
+  , prLines =
+      [ PurchaseRequisitionLine
+          { lineNumber = 1
+          , lineSku    = SkuCode "OFF-0042"
+          , lineQty    = Quantity { qValue = 10, qUnit = BOX }
+          , linePrice  = UnitPrice 8.50
+          }
+        -- => 10 boxes of office supplies at $8.50 each = $85.00
+      , PurchaseRequisitionLine
+          { lineNumber = 2
+          , lineSku    = SkuCode "ELE-0099"
+          , lineQty    = Quantity { qValue = 3, qUnit = EACH }
+          , linePrice  = UnitPrice 899.99
+          }
+        -- => 3 laptops at $899.99 each = $2,699.97
+      ]
+  , prCreatedAt   = now
+  , prUpdatedAt   = now
+  -- => Equal to created-at initially; updated on each state transition.
+  }
+
+main :: IO ()
+main = do
+  now <- getCurrentTime
+  -- => IO action captures the current UTCTime — kept in the imperative shell.
+  let req = sampleReq now
+  putStrLn ("Requisition " <> show (prId req))
+  -- => Output: Requisition RequisitionId "req_f4c2a1b7"
+  putStrLn ("Total: " <> show (requisitionTotal req))
+  -- => Output: Total: 2784.97
+  putStrLn ("Status: " <> show (prStatus req))
+  -- => Output: Status: Draft
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: The aggregate root record groups identity, status, line items, and metadata into a single cohesive type that the entire approval workflow passes through as a unit.
@@ -4631,7 +6232,7 @@ console.log("Status:", sampleReq.status);
 
 The `UnvalidatedRequisition` is the DTO that arrives from the HTTP layer. It uses only primitives — strings, ints, decimals — because JSON deserialisation produces raw values. The workflow's first step is to validate this DTO into the domain aggregate.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -4866,7 +6467,7 @@ interface ValidatedLine {
 
 // Parse a raw unit string to a UnitOfMeasure
 function parseUnit(raw: string): UnitOfMeasure | null {
-  const map: Record<string, UnitOfMeasure> = { EACH: "EACH", BOX: "BOX", KG: "KG", LITRE: "LITRE", HOUR: "HOUR" };
+  const map: Record = { EACH: "EACH", BOX: "BOX", KG: "KG", LITRE: "LITRE", HOUR: "HOUR" };
   return map[raw.toUpperCase()] ?? null;
   // => Returns null for unknown units — caller checks before using
 }
@@ -4907,6 +6508,116 @@ typeof validatedLine1 === "string"
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: DtoValidation.hs ─────────────────────────────────────────────────
+-- UnvalidatedRequisition: the DTO arriving from the HTTP layer.
+-- Uses only primitives — JSON deserialisation produces raw Text/Int/Double values.
+-- [F#: distinct record types for DTO and domain; type system prevents mixing]
+-- [Clojure: plain keys (raw) vs namespaced keys (validated) — key namespace IS the boundary]
+-- [TypeScript: separate UnvalidatedLine and ValidatedLine interfaces]
+
+{-# LANGUAGE OverloadedStrings #-}
+
+module DtoValidation where
+
+import Data.Text (Text)
+-- => Text replaces String for correctness and performance.
+import qualified Data.Text as T
+-- => Qualified for T.null, T.strip, T.toUpper, T.unpack.
+
+-- ── Unvalidated DTO ─────────────────────────────────────────────────────────
+data UnvalidatedLine = UnvalidatedLine
+  { uSkuCode   :: Text
+  -- => Raw string — may be empty, wrong format, or missing.
+  , uQuantity  :: Int
+  -- => Raw int — may be zero or negative.
+  , uUnitPrice :: Double
+  -- => Raw double — may be zero or negative.
+  , uUnit      :: Text
+  -- => Raw string for unit — may not match a known UnitOfMeasure.
+  } deriving (Show)
+-- => UnvalidatedLine : primitive-only DTO record — no domain guarantees.
+
+data UnvalidatedRequisition = UnvalidatedRequisition
+  { uRequestedBy :: Text
+  -- => Raw employee ID — may be empty.
+  , uLines       :: [UnvalidatedLine]
+  -- => List of unvalidated lines — may be empty or contain invalid items.
+  } deriving (Show)
+
+-- ── Validated domain types (distinct from DTO types) ────────────────────────
+newtype SkuCode = SkuCode Text deriving (Show, Eq)
+-- => Validated SKU — only constructed via the validator below.
+
+data UnitOfMeasure = EACH | BOX | KG | LITRE | HOUR deriving (Show, Eq)
+-- => Closed sum type for the unit; pattern matching is exhaustive.
+
+data ValidatedLine = ValidatedLine
+  { vLineNumber :: Int
+  , vSkuCode    :: SkuCode
+  -- => Wrapped in SkuCode — type-distinct from raw Text.
+  , vQty        :: Int
+  -- => Validated positive integer.
+  , vUnit       :: UnitOfMeasure
+  -- => Validated unit constructor.
+  , vUnitPrice  :: Double
+  -- => Validated positive number.
+  } deriving (Show)
+
+-- Parse a raw unit string to a UnitOfMeasure — Either captures failure.
+parseUnit :: Text -> Either Text UnitOfMeasure
+parseUnit raw = case T.toUpper raw of
+  "EACH"  -> Right EACH
+  "BOX"   -> Right BOX
+  "KG"    -> Right KG
+  "LITRE" -> Right LITRE
+  "HOUR"  -> Right HOUR
+  other   -> Left ("Unknown unit: '" <> other <> "' - expected EACH, BOX, KG, LITRE, or HOUR")
+  -- => Pattern match on the normalised string — rejects unknown units.
+
+-- Validate a single unvalidated line; short-circuits on the first error.
+validateLine :: Int -> UnvalidatedLine -> Either Text ValidatedLine
+validateLine n raw
+  | T.null (T.strip (uSkuCode raw))   = Left "SkuCode required"
+  -- => Guard 1: blank SKU code is a domain violation.
+  | uQuantity raw <= 0                = Left ("Quantity must be > 0, got " <> T.pack (show (uQuantity raw)))
+  -- => Guard 2: zero or negative quantity is invalid.
+  | uUnitPrice raw <= 0               = Left ("UnitPrice must be > 0, got " <> T.pack (show (uUnitPrice raw)))
+  -- => Guard 3: non-positive price is invalid.
+  | otherwise = do
+      unit <- parseUnit (uUnit raw)
+      -- => Bind in Either: short-circuits on Left, continues on Right.
+      Right ValidatedLine
+        { vLineNumber = n
+        , vSkuCode    = SkuCode (uSkuCode raw)
+        -- => Promote raw Text into the SkuCode newtype.
+        , vQty        = uQuantity raw
+        , vUnit       = unit
+        , vUnitPrice  = uUnitPrice raw
+        }
+
+-- Test with sample DTO input
+main :: IO ()
+main = do
+  let rawReq = UnvalidatedRequisition
+        { uRequestedBy = "emp_00456"
+        , uLines =
+            [ UnvalidatedLine { uSkuCode = "OFF-0042", uQuantity = 10, uUnitPrice = 8.50,   uUnit = "BOX" }
+            , UnvalidatedLine { uSkuCode = "ELE-0099", uQuantity = 3,  uUnitPrice = 899.99, uUnit = "EACH" }
+            ]
+        }
+      validated1 = validateLine 1 (head (uLines rawReq))
+      -- => All guards pass for the first line.
+  case validated1 of
+    Right line -> putStrLn ("Line 1 validated: " <> show (vSkuCode line))
+    -- => Output: Line 1 validated: SkuCode "OFF-0042"
+    Left err   -> putStrLn ("Error: " <> T.unpack err)
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: A separate DTO type for unvalidated input makes the boundary between "outside the domain" and "inside the domain" explicit — the type system prevents raw DTO fields from being used where validated domain types are expected.
@@ -4936,7 +6647,7 @@ graph LR
     style L3 fill:#CC78BC,stroke:#000,color:#000
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5175,6 +6886,86 @@ console.log("Routing:", describeApprovalRouting(level));
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ApprovalRouting.hs ──────────────────────────────────────────────
+-- Deriving ApprovalLevel from a requisition total is a pure domain rule.
+-- [F#: deriveApprovalLevel : decimal -> ApprovalLevel — pure, deterministic]
+-- [Clojure: derive-approval-level returns a keyword; defmulti dispatches]
+-- [TypeScript: deriveApprovalLevel returns "L1" | "L2" | "L3"; exhaustive switch]
+
+module ApprovalRouting where
+
+-- Sum type — closed set of approval levels; pattern matching is exhaustive.
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+-- => L1: direct manager (<= $1,000)
+-- => L2: department head ($1,001–$10,000)
+-- => L3: CFO / finance committee (> $10,000)
+
+-- Line record — only the fields needed for total calculation.
+data PurchaseRequisitionLine = PurchaseRequisitionLine
+  { lineNumber :: Int
+  -- => 1-based display ordering.
+  , unitPrice  :: Double
+  -- => Price per unit (validated upstream as > 0).
+  , qty        :: Int
+  -- => Quantity (validated upstream as > 0).
+  } deriving (Show)
+
+-- Pure line total: qty * unit price.
+lineTotal :: PurchaseRequisitionLine -> Double
+lineTotal l = fromIntegral (qty l) * unitPrice l
+-- => Pure function — same input always produces same output.
+
+-- Pure requisition total: sum of all line totals.
+requisitionTotal :: [PurchaseRequisitionLine] -> Double
+requisitionTotal = sum . map lineTotal
+-- => Point-free composition: map lineTotal then sum.
+-- => Identity element 0 (from sum) handles empty requisitions.
+
+-- Pure derivation: ApprovalLevel from total.
+deriveApprovalLevel :: Double -> ApprovalLevel
+deriveApprovalLevel total
+  | total <= 1000    = L1
+  -- => Under $1,000 — direct manager approval.
+  | total <= 10000   = L2
+  -- => $1,001–$10,000 — department head.
+  | otherwise        = L3
+  -- => Over $10,000 — CFO-level required.
+
+-- Pure description: routing rule per level — exhaustive pattern match.
+describeApprovalRouting :: ApprovalLevel -> String
+describeApprovalRouting L1 = "Route to direct manager - SLA: 2 business days"
+-- => L1 is the simplest approval path — fastest SLA.
+describeApprovalRouting L2 = "Route to department head - SLA: 5 business days"
+-- => L2 requires escalation — longer SLA for the more complex review.
+describeApprovalRouting L3 = "Route to CFO approval committee - SLA: 10 business days"
+-- => L3 is the most scrutinised — longest SLA, most stakeholders.
+
+-- Test with sample line items
+main :: IO ()
+main = do
+  let lines' =
+        [ PurchaseRequisitionLine { lineNumber = 1, unitPrice = 899.99, qty = 3 }
+        -- => 3 * $899.99 = $2,699.97
+        , PurchaseRequisitionLine { lineNumber = 2, unitPrice = 8.50,   qty = 20 }
+        -- => 20 * $8.50 = $170.00
+        ]
+      total = requisitionTotal lines'
+      -- => 2699.97 + 170.0 = 2869.97
+      level = deriveApprovalLevel total
+      -- => 2869.97 > 1000 and <= 10000 — L2
+  putStrLn ("Total: " <> show total)
+  -- => Output: Total: 2869.97
+  putStrLn ("Approval level: " <> show level)
+  -- => Output: Approval level: L2
+  putStrLn ("Routing: " <> describeApprovalRouting level)
+  -- => Output: Routing: Route to department head - SLA: 5 business days
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Key Takeaway**: Deriving `ApprovalLevel` as a pure function from the requisition total keeps the approval routing rule in the domain layer, independently testable and free of infrastructure dependencies.
@@ -5187,7 +6978,7 @@ console.log("Routing:", describeApprovalRouting(level));
 
 The complete `SubmitRequisition` workflow signature ties together all the types from this beginner section. The type alias is the domain contract — a self-documenting specification that makes the workflow's purpose, inputs, outputs, and failure modes visible without reading the implementation.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -5422,8 +7213,8 @@ match result with
 
 // Result type — mirrors F# built-in Result
 type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
-const okR = <T, E>(v: T): Result<T, E> => ({ ok: true, value: v });
-const errR = <T, E>(e: E): Result<T, E> => ({ ok: false, error: e });
+const okR = <T, E>(v: T): Result => ({ ok: true, value: v });
+const errR = <T, E>(e: E): Result => ({ ok: false, error: e });
 
 // ── Domain types (simplified for composition demonstration) ──────────────────
 type RequisitionId = string & { readonly __brand: "RequisitionId" };
@@ -5434,7 +7225,7 @@ const asRequisitionId = (s: string): RequisitionId => s as RequisitionId;
 interface UnvalidatedRequisition {
   readonly requestedBy: string;
   // => Raw employee ID — not validated
-  readonly rawLines: ReadonlyArray<readonly [string, number, number, string]>;
+  readonly rawLines: ReadonlyArray;
   // => Raw tuples: (skuCode, quantity, unitPrice, unit) — not validated
 }
 
@@ -5460,7 +7251,7 @@ type SubmissionError =
 // => Tagged union — each error carries the data needed for diagnostic messages
 
 // ── The workflow function type ────────────────────────────────────────────────
-type SubmitRequisition = (req: UnvalidatedRequisition) => Result<RequisitionEvent[], SubmissionError>;
+type SubmitRequisition = (req: UnvalidatedRequisition) => Result;
 // => Input:  UnvalidatedRequisition — raw command from outside
 // => Output: Result — success with domain events, or named failure
 // => Result forces callers to handle both branches explicitly
@@ -5506,6 +7297,155 @@ if (result.ok) {
 } else {
   console.log("Submission failed:", result.error.kind);
 }
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: SubmitRequisition.hs ────────────────────────────────────────────
+-- The complete submitRequisition workflow — ties all beginner Haskell types together.
+-- [F#: SubmitRequisition type alias = UnvalidatedRequisition -> Result<RequisitionEvent list, SubmissionError>]
+-- [Clojure: submit-requisition defn returning {:ok [event]} or {:error kw}]
+-- [TypeScript: function type SubmitRequisition = (req) => Result<RequisitionEvent[], SubmissionError>]
+
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric    #-}
+
+module SubmitRequisition where
+-- => Module groups all workflow types and the implementation together.
+
+import Data.Text (Text)
+-- => Text is preferred over String for performance and correctness.
+import qualified Data.Text as T
+-- => Qualified import for Text functions like T.null and T.strip.
+import Data.Time (UTCTime, getCurrentTime)
+-- => UTCTime captures the submission timestamp.
+
+-- ── Domain types (simplified for composition demonstration) ─────────────────
+newtype RequisitionId = RequisitionId Text deriving (Show, Eq)
+-- => newtype provides nominal typing at zero runtime cost — mirrors F# single-case DU.
+
+data ApprovalLevel = L1 | L2 | L3 deriving (Show, Eq)
+-- => Sum type with three nullary constructors — exhaustive pattern matching guaranteed.
+
+-- ── Unvalidated DTO arriving from the HTTP layer ────────────────────────────
+data UnvalidatedRequisition = UnvalidatedRequisition
+  { uRequestedBy :: Text
+  -- => Raw employee ID — not validated yet.
+  , uRawLines    :: [(Text, Int, Double, Text)]
+  -- => Raw tuples: (skuCode, quantity, unitPrice, unit) — not validated.
+  } deriving (Show)
+-- => UnvalidatedRequisition : DTO-shaped record — primitives only.
+
+-- ── Domain event payload ────────────────────────────────────────────────────
+data RequisitionSubmittedPayload = RequisitionSubmittedPayload
+  { rspRequisitionId :: RequisitionId
+  -- => Newly assigned identity.
+  , rspApprovalLevel :: ApprovalLevel
+  -- => L1/L2/L3 — drives the approval router.
+  , rspRequestedBy   :: Text
+  -- => Employee identifier for notification.
+  , rspTotalAmount   :: Double
+  -- => Requisition total for finance ledger event.
+  , rspSubmittedAt   :: UTCTime
+  -- => Submission timestamp for SLA tracking.
+  } deriving (Show)
+
+data RequisitionEvent
+  = RequisitionSubmitted RequisitionSubmittedPayload
+  deriving (Show)
+-- => Single-case sum here — easily extended with more events in later examples.
+
+-- ── Error sum type ──────────────────────────────────────────────────────────
+data SubmissionError
+  = RequestedByRequired
+  -- => Cannot route approval without an employee ID.
+  | NoLinesProvided
+  -- => A blank requisition has no business meaning.
+  | InvalidSkuCode Text
+  -- => Sku payload — line item references a malformed SKU.
+  | InvalidQuantity Text Int
+  -- => Sku + offending quantity — quantity must be > 0.
+  | InvalidUnitPrice Text Double
+  -- => Sku + offending price — price must be > 0.
+  | UnknownUnit Text
+  -- => Offending unit string — must match a known UnitOfMeasure constructor.
+  deriving (Show, Eq)
+-- => Each constructor carries exactly the data needed for diagnostic messages.
+
+-- ── The workflow type alias — the entire domain contract ────────────────────
+type SubmitRequisition =
+  UnvalidatedRequisition -> IO (Either SubmissionError [RequisitionEvent])
+-- => Input:  UnvalidatedRequisition — the raw command from outside.
+-- => Output: IO (Either SubmissionError [RequisitionEvent]) — IO for timestamp;
+--           Either forces callers to handle both success and failure branches.
+-- => Reads as: "given an unvalidated requisition, produce in IO either a list of
+--   domain events (success) or a named submission error (failure)".
+
+-- Pure helper: derive approval level from total
+deriveApprovalLevel :: Double -> ApprovalLevel
+deriveApprovalLevel total
+  | total <= 1000    = L1
+  -- => Under $1,000 — direct manager approval.
+  | total <= 10000   = L2
+  -- => $1,001–$10,000 — department head.
+  | otherwise        = L3
+  -- => Over $10,000 — CFO-level required.
+
+-- Pure helper: short requisition id string from a seed (kept deterministic here)
+shortId :: Int -> Text
+shortId n = "req_" <> T.pack (show n)
+-- => Deterministic for the example; production code uses UUID v4.
+
+-- A stub implementation matching the SubmitRequisition signature
+submitRequisition :: SubmitRequisition
+submitRequisition req
+  | T.null (T.strip (uRequestedBy req)) = pure (Left RequestedByRequired)
+  -- => Guard 1: employee ID required for approval routing.
+  | null (uRawLines req)                = pure (Left NoLinesProvided)
+  -- => Guard 2: at least one line item required.
+  | otherwise = do
+      now <- getCurrentTime
+      -- => IO action — captures submission timestamp inside the IO effect.
+      let total = sum [fromIntegral q * p | (_, q, p, _) <- uRawLines req]
+          -- => List comprehension: qty * price for each raw tuple, then sum.
+          level = deriveApprovalLevel total
+          -- => Pure domain rule — derives L1/L2/L3 from the total.
+          payload = RequisitionSubmittedPayload
+            { rspRequisitionId = RequisitionId (shortId (length (uRawLines req)))
+            , rspApprovalLevel = level
+            , rspRequestedBy   = uRequestedBy req
+            , rspTotalAmount   = total
+            , rspSubmittedAt   = now
+            }
+      pure (Right [RequisitionSubmitted payload])
+      -- => Right wraps success — single event in the list; more possible later.
+
+-- ── Test the complete workflow ───────────────────────────────────────────────
+main :: IO ()
+main = do
+  let testReq = UnvalidatedRequisition
+        { uRequestedBy = "emp_00456"
+        -- => Valid employee ID — satisfies Guard 1.
+        , uRawLines    = [ ("OFF-0042", 10, 8.50,   "BOX")
+                         -- => 10 * $8.50 = $85.00
+                         , ("ELE-0099",  3, 899.99, "EACH")
+                         ]
+                         -- => 3 * $899.99 = $2,699.97
+        }
+  result <- submitRequisition testReq
+  -- => Runs the IO action; returns Either SubmissionError [RequisitionEvent].
+  case result of
+    Right events -> do
+      putStrLn ("Submission successful — " <> show (length events) <> " event(s) produced")
+      -- => Output: Submission successful — 1 event(s) produced
+      mapM_ print events
+      -- => Output: RequisitionSubmitted RequisitionSubmittedPayload { rspApprovalLevel = L2, ... }
+    Left err ->
+      putStrLn ("Submission failed: " <> show err)
+      -- => Would output the specific error constructor if validation failed.
 ```
 
 {{< /tab >}}

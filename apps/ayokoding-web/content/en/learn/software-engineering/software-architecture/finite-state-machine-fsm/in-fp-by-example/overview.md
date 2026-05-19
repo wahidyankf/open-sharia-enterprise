@@ -3,7 +3,7 @@ title: "Overview"
 date: 2026-05-17T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Finite State Machines with Functional Programming through the Procure-to-Pay domain: PurchaseOrder, Invoice, Supplier, and Payment state machines with annotated F# (canonical), Clojure, and TypeScript examples using discriminated unions and pure transition functions"
+description: "Learn Finite State Machines with Functional Programming through the Procure-to-Pay domain: PurchaseOrder, Invoice, Supplier, and Payment state machines with annotated F# (canonical), Clojure, TypeScript, and Haskell examples using discriminated unions / ADTs and pure transition functions"
 tags:
   [
     "fsm",
@@ -16,14 +16,15 @@ tags:
     "state-management",
     "clojure",
     "typescript",
+    "haskell",
   ]
 ---
 
-**Want to master Finite State Machines through the lens of Functional Programming?** This by-example guide teaches FSM in three functional languages — F# (canonical), Clojure, and TypeScript — through annotated code and diagram examples organized by complexity level, using a shared Procure-to-Pay (P2P) domain so every example builds on the same problem. Each example presents all three languages as parallel tabs; F# carries the deepest annotations and the framing prose, while Clojure and TypeScript are first-class variants.
+**Want to master Finite State Machines through the lens of Functional Programming?** This by-example guide teaches FSM in four functional languages — F# (canonical), Clojure, TypeScript, and Haskell — through annotated code and diagram examples organized by complexity level, using a shared Procure-to-Pay (P2P) domain so every example builds on the same problem. Each example presents all four languages as parallel tabs; F# carries the deepest annotations and the framing prose, while Clojure, TypeScript, and Haskell are first-class variants.
 
 ## Why FP for FSMs?
 
-FSMs fit Functional Programming naturally. A state machine is a function `State -> Event -> State` — a pure transition function. All three languages in this tutorial express this naturally: F# uses discriminated unions and pattern matching; Clojure uses keyword enums and multimethods; TypeScript uses union types and `switch` exhaustiveness checks. The OOP approach uses a class per state with virtual dispatch; the FP approach collapses that into a single `transition` function with a `match` / `multimethod` / `switch` expression in whichever language you choose. The FP version is shorter, testable in isolation, and impossible to put in an invalid state when the state type is sealed.
+FSMs fit Functional Programming naturally. A state machine is a function `State -> Event -> State` — a pure transition function. All four languages in this tutorial express this naturally: F# uses discriminated unions and pattern matching; Clojure uses keyword enums and multimethods; TypeScript uses union types and `switch` exhaustiveness checks; Haskell uses sum-type ADTs and `case` expressions. The OOP approach uses a class per state with virtual dispatch; the FP approach collapses that into a single `transition` function with a `match` / `multimethod` / `switch` / `case` expression in whichever language you choose. The FP version is shorter, testable in isolation, and impossible to put in an invalid state when the state type is sealed.
 
 ## Domain Context
 

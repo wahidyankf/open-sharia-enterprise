@@ -13,19 +13,19 @@ tags: ["openclaw", "overview", "ai-agent", "local-first", "automation"]
 
 OpenClaw is a **free, open-source AI agent gateway** that runs entirely on your local hardware. It connects LLMs (Claude, GPT, DeepSeek, Gemini, local models via Ollama) to messaging platforms (WhatsApp, Telegram, Slack, Discord, Signal, and more) and enables AI to take real actions — file management, browser automation, shell commands, web scraping, scheduling, and more.
 
-**Key differentiator**: OpenClaw's design centers on **tool chaining** — configure which tools the agent has access to and it chains them reactively. A broad community library of 5,700+ skills in the ClawHub marketplace handles common workflows without significant upfront configuration.
+**Key differentiator**: OpenClaw's design centers on **tool chaining** — configure which tools the agent has access to and it chains them reactively. A broad community library of 13,000+ skills in the ClawHub marketplace handles common workflows without significant upfront configuration.
 
 ## Key Features
 
 ### Core Capabilities
 
 - **Local-first architecture**: Gateway runs on your machine, your data stays on your hardware
-- **Multi-channel messaging**: WhatsApp, Telegram, Slack, Discord, Signal, IRC, Matrix, Mattermost, BlueBubbles, Feishu, Google Chat, Nextcloud Talk, Microsoft Teams, Zalo
+- **Multi-channel messaging**: 23+ platforms including WhatsApp, Telegram, Slack, Discord, Signal, iMessage, IRC, Matrix, Mattermost, BlueBubbles, Feishu, Google Chat, Nextcloud Talk, Microsoft Teams, Zalo, LINE, WeChat, QQ, Twitch, Synology Chat, Tlon, Nostr, WebChat
 - **Built-in tools**: exec (shell), browser, web_search, web_fetch, read/write/edit, cron, canvas, media generation
 - **Skills system**: Markdown `SKILL.md` instruction files teaching the agent how to combine tools
 - **Lobster workflows**: Companion workflow engine for composable, typed automation pipelines
-- **Plugin ecosystem**: Extension packages registering tools, skills, channels, or model providers
-- **JSON5 configuration**: Single config file with comments, trailing commas, unquoted keys
+- **Plugin ecosystem**: Extension packages registering tools, skills, channels, or model providers (13,000+ packages on ClawHub)
+- **JSON5 configuration**: Single config file at `~/.openclaw/openclaw.json` with comments, trailing commas, unquoted keys
 - **A2UI Canvas**: Visual workspace with live rendering of agent actions
 
 ### Architecture Components
@@ -35,11 +35,11 @@ OpenClaw is a **free, open-source AI agent gateway** that runs entirely on your 
 - **Tools**: Built-in capabilities (exec, browser, web_search, web_fetch, read/write/edit, cron, canvas)
 - **Skills**: Markdown instruction files teaching agent how to combine tools for specific tasks
 - **Lobster**: Workflow engine for typed automation pipelines with approval gates
-- **Plugins**: Extension packages from ClawHub (5,700+ community packages)
+- **Plugins**: Extension packages from ClawHub (13,000+ community packages)
 
 ## Prerequisites
 
-- **Required**: Node.js 22.16+ or 24+ (recommended)
+- **Required**: Node.js 22.19+ or 24+ (recommended; minimum was raised from 22.16 in May 2026)
 - **Required**: Basic command-line proficiency
 - **Required**: Basic understanding of JSON/JSON5 syntax
 - **Helpful**: Familiarity with at least one LLM API and messaging platform bots
@@ -75,7 +75,7 @@ Learn OpenClaw through 80 self-contained, heavily annotated examples:
 
 OpenClaw's local-first architecture eliminates vendor lock-in and data privacy concerns that plague hosted AI agent platforms. Organizations handling sensitive data (healthcare, finance, legal) can deploy AI agents without sending conversations through third-party servers.
 
-The low setup overhead — a real reason OpenClaw spread to 214,000+ GitHub stars faster than Docker, Kubernetes, or React ever achieved — makes it the fastest path from "idea" to "working AI agent." The tool-chaining philosophy means broad capability out of the box without custom configuration for each workflow.
+The low setup overhead — a real reason OpenClaw spread to 373,000+ GitHub stars faster than Docker, Kubernetes, or React ever achieved (over 250k stars in roughly 60 days from launch) — makes it the fastest path from "idea" to "working AI agent." The tool-chaining philosophy means broad capability out of the box without custom configuration for each workflow.
 
 ## Related Tools
 

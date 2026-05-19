@@ -3,8 +3,8 @@ title: "Beginner"
 weight: 10000003
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Beginner Cases guides (Guides 1–6) — one context as one hexagon, reading the per-context layout, domain types, application service signatures, repository port, and Giraffe handler as primary adapter"
-tags: ["ddd", "hexagonal-architecture", "f#", "cases", "giraffe", "beginner"]
+description: "Beginner Cases guides (Guides 1–6) — one context as one hexagon, reading the per-context layout, domain types, application service signatures, repository port, and primary HTTP adapter, in F# (canonical), Clojure, TypeScript, and Haskell"
+tags: ["ddd", "hexagonal-architecture", "f#", "clojure", "typescript", "haskell", "cases", "giraffe", "beginner"]
 ---
 
 ## Guide 1 — One Context, One Hexagon
@@ -17,7 +17,7 @@ A bounded context is not just a namespace — it is an isolation unit. Every tim
 
 F# modules are the only tool the standard library gives you for grouping related declarations. A module is a namespace, not a boundary enforcer — nothing stops `Supplier.fs` from opening `Purchasing.fs` and reading its types directly. The standard library delivers cohesion, not isolation.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -82,6 +82,29 @@ export const scoreSupplier = (po: PurchaseOrder): void => {
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Domain/Supplier.hs ───────────────────────
+-- Standard library approach: modules group code but enforce no boundary
+-- [F#: module ProcurementPlatform.Domain.Supplier — namespace grouping; Haskell uses module declaration]
+module ProcurementPlatform.Domain.Supplier where
+-- => Haskell module declared — open export list means everything is exported
+import ProcurementPlatform.Domain.Purchasing (PurchaseOrder)
+-- => Direct import: Supplier can now use PurchaseOrder type from Purchasing
+-- => GHC permits this — no boundary enforcement at the language level
+-- => Any future change to PurchaseOrder breaks Supplier silently
+
+scoreSupplier :: PurchaseOrder -> ()
+-- => Takes a Purchasing type directly — boundary exists only in developer discipline
+-- [F#: () unit return type; Haskell uses () unit type too]
+scoreSupplier _po = ()
+-- => The domain boundary is a social contract, not a language invariant
+-- => Cabal/Stack project files list modules but enforce no cross-module access rules
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: modules permit cross-context imports with no enforcement. As the codebase grows, accidental coupling accumulates. The compiler cannot help you find boundary violations.
@@ -116,7 +139,7 @@ flowchart LR
 
 Each bounded context gets its own layers:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -227,6 +250,57 @@ export type UnitOfMeasure = "Each" | "Box" | "Kg" | "Litre" | "Hour";
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Domain/ValueObjects.hs ───────────────────────
+-- Per-context layout — purchasing context domain layer
+{-# LANGUAGE DerivingStrategies #-}
+-- => DerivingStrategies: lets us pick stock-derived Eq/Show explicitly
+module ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects
+  ( PurchaseOrderId (..)
+  -- => Re-export the constructor — production code would hide it (see Guide 3)
+  , ApprovalLevel (..)
+  , UnitOfMeasure (..)
+  ) where
+-- => Module path mirrors the directory: Contexts/Purchasing/Domain/
+-- => Only types belonging to purchasing live here
+-- => No imports from other context domain modules
+
+import Data.UUID (UUID)
+-- => UUID from the `uuid` package — used as the raw underlying identifier
+
+-- Strongly-typed PurchaseOrderId wrapper
+-- [F#: single-case DU PurchaseOrderId of Guid — compile-time distinct type; Haskell uses newtype]
+newtype PurchaseOrderId = PurchaseOrderId UUID
+  deriving stock (Eq, Show)
+-- => newtype: zero-cost wrapper distinct from UUID at the type level
+-- => Cannot pass a SupplierId where a PurchaseOrderId is expected — compiler rejects
+
+-- Approval level as an algebraic data type — pure domain enum
+-- [F#: discriminated union with compiler-enforced exhaustiveness; Haskell ADT enforces same]
+data ApprovalLevel
+  = L1  -- total <= $1,000
+  | L2  -- total <= $10,000
+  | L3  -- total > $10,000
+  deriving stock (Eq, Show)
+-- => Closed sum type: case-match is exhaustive — GHC -Wincomplete-patterns enforces it
+-- => Adding a new variant requires updating every case expression
+
+-- Unit of measure as a closed sum type
+data UnitOfMeasure
+  = Each
+  | Box
+  | Kg
+  | Litre
+  | Hour
+  deriving stock (Eq, Show)
+-- => Closed enum: pattern-matching is exhaustive at compile time
+-- => Adding a new unit requires updating all case sites
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: the per-context directory layout requires discipline during code review — the compiler cannot stop a developer from adding an `open` across contexts at the module level. A custom FSharpLint rule or a pre-commit grep can enforce the boundary mechanically. The payoff is that each context can evolve its domain model independently, and the integration test for one context never breaks when another context changes.
@@ -243,7 +317,7 @@ export type UnitOfMeasure = "Each" | "Box" | "Kg" | "Litre" | "Hour";
 
 The flat layout is a direct consequence of starting with a single-module approach. F# projects list every `.fs` file in the `.fsproj` in compilation order. A flat layout means all domain files sit in one `Domain/` directory and all handlers in one `Presentation/` directory. This is the zero-ceremony stdlib approach: it compiles, it works, and it is adequate for a small codebase.
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -331,6 +405,47 @@ export type RepositoryError =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Domain/Types.hs ───────────────────────
+-- Flat layout: shared cross-cutting types
+{-# LANGUAGE DerivingStrategies #-}
+module ProcurementPlatform.Domain.Types
+  ( AppEnv (..)
+  , RepositoryError (..)
+  ) where
+-- => Single module for all shared domain types
+-- => No context scoping — every module in the project can import this
+
+import Control.Exception (SomeException)
+-- => SomeException: stdlib type for wrapping arbitrary exceptions
+
+-- Deployment environment as a closed sum type
+-- [F#: discriminated union AppEnv — compiler-enforced exhaustive match; Haskell uses ADT]
+data AppEnv
+  = Dev      -- local development
+  | Staging  -- pre-production integration environment
+  | Prod     -- production; infrastructure selects connection strings by this value
+  deriving stock (Eq, Show)
+-- => Closed sum: case expression on AppEnv is exhaustive — -Wincomplete-patterns catches misses
+-- => No context scoping — every module can import this type
+
+-- Shared repository error representation
+-- [F#: RepositoryError DU — typed variants; Haskell uses ADT with constructor parameters]
+data RepositoryError
+  = NotFound
+  -- => Read-side: a missing resource is a valid domain outcome, not an exception
+  | ConnectionFailure SomeException
+  -- => Infrastructure failure: carry the exception for logging; callers return HTTP 500
+  deriving stock (Show)
+-- => Sum type: pattern-match is exhaustive
+-- => Single shared type works for small codebases
+-- => Will split into per-context error types as contexts gain feature plans
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: as each bounded context adds its own error variants, a single shared `RepositoryError` becomes a merge-conflict magnet and prevents per-context type evolution.
@@ -374,7 +489,7 @@ The single most common way a hexagonal architecture degrades into a layered mono
 
 F# record types carry no annotations by default. The standard library gives you a pure, framework-free type that the compiler serializes as a plain CLR class:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -469,7 +584,7 @@ export const PurchaseOrderId = (raw: string): PurchaseOrderId => raw as Purchase
 
 // Money: opaque type with private-construction idiom
 // [F#: private Money of amount * currency — constructor hidden; TS uses a readonly interface + factory]
-export type Money = Readonly<{ amount: number; currency: string }> & { readonly __brand: "Money" };
+export type Money = Readonly & { readonly __brand: "Money" };
 // => Branded readonly object: prevents passing a plain {amount, currency} where Money is expected
 // => Private construction enforced by the factory function below
 
@@ -478,7 +593,7 @@ export type Money = Readonly<{ amount: number; currency: string }> & { readonly 
 export type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: false; readonly error: E };
 // => Discriminated union on `ok` — callers must handle both branches before accessing value
 
-export const createMoney = (amount: number, currency: string): Result<Money, string> => {
+export const createMoney = (amount: number, currency: string): Result => {
   // => Returns Result — the caller cannot ignore the error branch
   // => No exception thrown — functional error handling throughout the domain
   if (amount < 0) return { ok: false, error: "Money amount cannot be negative" };
@@ -492,6 +607,60 @@ export const createMoney = (amount: number, currency: string): Result<Money, str
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Domain/ValueObjects.hs ───────────────────────
+-- Standard library: pure types, zero framework imports
+{-# LANGUAGE DerivingStrategies #-}
+module ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects
+  ( PurchaseOrderId (..)
+  , Money            -- export type only — hide the constructor
+  , createMoney      -- smart constructor is the only public way to build Money
+  , moneyAmount
+  , moneyCurrency
+  ) where
+-- => Module imports only base + Data.Text from the platform stdlib — no ORM, no serializer
+
+import Data.UUID (UUID)
+-- => UUID for identifier; could swap for ByteString if no UUID dependency desired
+import Data.Text (Text)
+import qualified Data.Text as T
+-- => Text from `text` package — qualified import keeps T.length / T.null calls clear
+
+-- Pure newtype — no ORM attribute, no serializer hint
+-- [F#: single-case DU PurchaseOrderId of Guid — opaque compile-time type; Haskell uses newtype]
+newtype PurchaseOrderId = PurchaseOrderId UUID
+  deriving stock (Eq, Show)
+-- => Zero-cost wrapper; compiles without persistent or aeson on the classpath
+-- => Can be used in unit tests with PurchaseOrderId <$> UUID.nextRandom
+
+-- Money: opaque type with smart constructor
+-- [F#: private Money of amount * currency — constructor hidden; Haskell hides constructor via export list]
+data Money = Money
+  { moneyAmount   :: !Rational  -- ^ exact-precision decimal amount
+  , moneyCurrency :: !Text      -- ^ ISO 4217 3-letter code
+  }
+  deriving stock (Eq, Show)
+-- => Strict fields (!) avoid lazy thunks accumulating in financial code
+-- => Constructor NOT exported — callers must go through createMoney
+
+-- Smart constructor: validates and returns Either
+-- [F#: Result<Money, string> — built-in; Haskell uses Either String Money — same idea]
+createMoney :: Rational -> Text -> Either Text Money
+-- => Returns Either — caller cannot ignore the Left case
+-- => No exceptions thrown — functional error handling throughout the domain
+createMoney amount currency
+  | amount < 0           = Left "Money amount cannot be negative"
+  -- => Negative amounts rejected at the type level — invariant holds
+  | T.length currency /= 3 = Left "Currency must be a 3-letter ISO code"
+  -- => ISO 4217 length enforced here — no infrastructure needed
+  | otherwise            = Right (Money amount currency)
+  -- => Right: the validated value — downstream functions receive only valid Money
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: when you need to persist a domain type, the ORM needs to know the column names. The stdlib gives you no mechanism for this — you have to decide where the ORM mapping lives.
@@ -500,7 +669,7 @@ export const createMoney = (amount: number, currency: string): Result<Money, str
 
 The hexagonal answer is: ORM mapping lives in the infrastructure layer, not the domain layer. The domain type is a plain F# record. The `NpgsqlPurchaseOrderRepository.fs` in `Infrastructure/` holds the mapping logic, keeping the domain module completely free of Npgsql:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -617,7 +786,7 @@ const rowToDomain = (row: PurchaseOrderRow): PurchaseOrder => ({
   // => "draft" string → domain status literal — infrastructure concern only
 });
 
-const domainToRow = (po: PurchaseOrder): Omit<PurchaseOrderRow, never> => ({
+const domainToRow = (po: PurchaseOrder): Omit => ({
   // => Inverse mapping: domain aggregate → DB insert parameters
   po_id: po.id,
   // => Branded type string value passed directly — pg driver sends it as TEXT
@@ -628,6 +797,69 @@ const domainToRow = (po: PurchaseOrder): Omit<PurchaseOrderRow, never> => ({
   status: po.status,
   // => Domain literal → string — pg stores as VARCHAR
 });
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Infrastructure/PostgresPurchaseOrderRepository.hs ───────────────────────
+-- Infrastructure layer: postgres-simple adapter holds all ORM concerns
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
+module ProcurementPlatform.Contexts.Purchasing.Infrastructure.PostgresPurchaseOrderRepository
+  ( PurchaseOrderRow (..)
+  , rowToDomain
+  , domainToRow
+  ) where
+-- => Infrastructure module — postgresql-simple import is confined here
+-- => Domain module never imports postgresql-simple
+
+import Database.PostgreSQL.Simple (Connection)
+-- => postgresql-simple driver — equivalent to Npgsql in F#, pg in TS
+-- => Domain/ValueObjects.hs never imports this
+import Data.UUID (UUID)
+import Data.Text (Text)
+import qualified Data.Text as T
+import ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects
+  ( PurchaseOrderId (..), Money, createMoney )
+-- => Import domain types for mapping — infrastructure depends on domain, not the reverse
+
+-- Row-level record matching the purchasing.purchase_orders table columns
+-- [F#: [<CLIMutable>] PurchaseOrderRow record — reflection-mapped; Haskell uses a plain record]
+data PurchaseOrderRow = PurchaseOrderRow
+  { rowPoId        :: !UUID    -- ^ snake_case po_id column — ORM concern only in infrastructure
+  , rowSupplierId  :: !UUID
+  , rowTotalAmount :: !Rational
+  , rowCurrency    :: !Text    -- ^ currency stored separately; reassembled into Money here
+  , rowStatus      :: !Text    -- ^ status as raw text from the DB column
+  }
+-- => PurchaseOrderRow: DB-facing record; the domain PurchaseOrder is the application-facing record
+-- => The mapping between the two is the adapter's sole responsibility
+
+-- Mapping function: DB row → domain aggregate fields
+-- [F#: maps PurchaseOrderRow → PurchaseOrder via record assembly; Haskell does the same]
+rowToDomain :: PurchaseOrderRow -> Either Text (PurchaseOrderId, Money)
+-- => Returns Either: createMoney can still fail if persisted data is corrupt
+rowToDomain PurchaseOrderRow {..} = do
+  -- => RecordWildCards: bind rowPoId, rowCurrency, etc. into scope
+  money <- createMoney rowTotalAmount rowCurrency
+  -- => Reconstruct Money via smart constructor; validation re-applied as safety net
+  pure (PurchaseOrderId rowPoId, money)
+  -- => Wrap raw UUID into branded PurchaseOrderId — domain invariant restored
+
+domainToRow :: PurchaseOrderId -> UUID -> Money -> Text -> PurchaseOrderRow
+-- => Inverse mapping: domain fields → DB-insert record
+domainToRow (PurchaseOrderId pid) supplier money status = PurchaseOrderRow
+  { rowPoId        = pid
+  , rowSupplierId  = supplier
+  , rowTotalAmount = 0  -- placeholder: production uses accessors moneyAmount/moneyCurrency
+  , rowCurrency    = T.pack ""
+  , rowStatus      = status
+  }
+-- => snake_case fields match Postgres column names — ORM concern stays in this module
+-- => money is destructured via accessors at the real call site (omitted here for brevity)
 ```
 
 {{< /tab >}}
@@ -650,7 +882,7 @@ Application services are the orchestration layer between the driving adapter (an
 
 F# function types naturally express this signature without any framework. The standard library gives you function composition and `Result` for error propagation:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -729,7 +961,7 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 
 // Output port type: a function that accepts an aggregate and returns a Result
 // [F#: save: PurchaseOrder -> Result<unit, string> — function parameter; TS uses a function type alias]
-type SavePort = (po: PurchaseOrder) => Result<void, string>;
+type SavePort = (po: PurchaseOrder) => Result;
 // => Port is a plain function type — no interface ceremony
 
 // Application service: takes port + aggregate, returns aggregate-or-error
@@ -737,7 +969,7 @@ type SavePort = (po: PurchaseOrder) => Result<void, string>;
 export const submitPurchaseOrder =
   (save: SavePort) =>
   // => 'save' is the injected output port — agnostic of implementation
-  (po: PurchaseOrder): Result<PurchaseOrder, string> => {
+  (po: PurchaseOrder): Result => {
     // => Aggregate received from the handler after invariant validation
     // => Signature is entirely in domain terms — no DTO type crosses this boundary
     const result = save(po);
@@ -751,6 +983,45 @@ export const submitPurchaseOrder =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Application/SubmitPurchaseOrder.hs ───────────────────────
+-- Standard library: application service as a plain function with domain types
+module ProcurementPlatform.Contexts.Purchasing.Application.SubmitPurchaseOrder
+  ( SavePort
+  , submitPurchaseOrder
+  ) where
+-- => Import only the domain module — no HTTP, no JSON, no ORM
+-- => Keeping the application layer free of framework imports preserves testability
+
+import Data.Text (Text)
+import ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects (PurchaseOrderId)
+-- => PurchaseOrder type alias stands in here for the full aggregate
+type PurchaseOrder = PurchaseOrderId
+-- => Local alias to keep the example self-contained; production imports the real record
+
+-- Output port: a function from aggregate to Either-wrapped unit
+-- [F#: save: PurchaseOrder -> Result<unit, string>; Haskell uses function alias the same way]
+type SavePort = PurchaseOrder -> Either Text ()
+-- => Port is a plain function type — no type-class ceremony required
+-- => Composable via partial application at the composition root
+
+-- Application service: takes port + aggregate, returns aggregate-or-error
+-- [F#: curried function; Haskell uses currying natively — same partial-application shape]
+submitPurchaseOrder :: SavePort -> PurchaseOrder -> Either Text PurchaseOrder
+-- => Signature is entirely in domain terms — no DTO type crosses this boundary
+-- => 'save' is the output port; its implementation lives in infrastructure
+submitPurchaseOrder save po =
+  case save po of
+    Left err -> Left err
+    -- => Propagate the error message from the port — caller pattern-matches on Left/Right
+    Right () -> Right po
+    -- => On success, return the same aggregate the caller passed in
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: plain strings as error types lose type information. In a real service you want a discriminated union for errors so callers can pattern-match on specific failure modes.
@@ -759,7 +1030,7 @@ export const submitPurchaseOrder =
 
 In the Giraffe stack the HTTP handler owns the DTO translation. The application service never touches `HttpContext`, `System.Text.Json`, or Giraffe types:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -904,9 +1175,7 @@ export type SubmitPurchaseOrderError =
 export const submitPurchaseOrder =
   (repo: PurchaseOrderRepository, pub: EventPublisher) =>
   // => repo and pub injected by the composition root via partial application
-  async (
-    po: PurchaseOrder,
-  ): Promise<{ ok: true; value: PurchaseOrder } | { ok: false; error: SubmitPurchaseOrderError }> => {
+  async (po: PurchaseOrder): Promise => {
     // => Validated aggregate — the handler called the smart constructor before reaching here
     // => Signature is entirely in domain and port types — no HTTP context, no DTO
     const saveResult = await repo.savePurchaseOrder(po);
@@ -937,6 +1206,79 @@ export const submitPurchaseOrder =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Application/SubmitPurchaseOrder.hs ───────────────────────
+-- Production application service
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
+module ProcurementPlatform.Contexts.Purchasing.Application.SubmitPurchaseOrder
+  ( SubmitPurchaseOrderError (..)
+  , submitPurchaseOrder
+  ) where
+-- => Only domain and port types imported — no HTTP, no JSON, no DB driver
+-- => This import boundary makes the application layer unit-testable without a web server
+
+import Control.Exception (SomeException)
+import Data.Text (Text)
+import ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects (PurchaseOrderId)
+import ProcurementPlatform.Contexts.Purchasing.Application.Ports
+  ( PurchaseOrderRepository (..), EventPublisher (..), RepositoryError (..) )
+-- => Port records expose savePurchaseOrder, publish — agnostic of implementation
+
+-- Local alias for the full aggregate to keep this snippet self-contained
+type PurchaseOrder = PurchaseOrderId
+
+-- Typed error union — each failure mode is explicit
+-- [F#: SubmitPurchaseOrderError DU — compiler-enforced exhaustive match; Haskell uses ADT]
+data SubmitPurchaseOrderError
+  = DuplicatePurchaseOrder PurchaseOrderId
+  -- => Carries the PurchaseOrderId that already exists — callers return HTTP 409
+  | InvalidPurchaseOrder Text
+  -- => Carries the validation message — callers return HTTP 400 with this text
+  | RepositoryFailure SomeException
+  -- => Wraps the infrastructure exception — callers return HTTP 500 and log it
+  deriving stock (Show)
+-- => Pattern-matched at the handler boundary, not inside the service
+-- => Adding a new variant requires updating all case sites — compiler enforces it
+
+-- Application service: takes ports + aggregate, returns IO (Either)
+-- [F#: Async<Result<_,_>> via async CE; Haskell uses IO (Either err val) — equivalent shape]
+submitPurchaseOrder
+  :: PurchaseOrderRepository
+  -- => repo: port injected by the composition root — postgres adapter in production
+  -> EventPublisher
+  -- => pub: event publisher port — injected the same way as the repository
+  -> PurchaseOrder
+  -- => Validated aggregate — handler called the smart constructor before reaching here
+  -> IO (Either SubmitPurchaseOrderError PurchaseOrder)
+  -- => IO for effects; Either carries the typed error or the saved aggregate
+submitPurchaseOrder repo pub po = do
+  saveResult <- savePurchaseOrder repo po
+  -- => Await the repository port — IO action sequenced in do-notation
+  case saveResult of
+    Left UniqueConstraintViolation ->
+      pure (Left (DuplicatePurchaseOrder po))
+      -- => Translate infrastructure error to application-layer error variant
+    Left (ConnectionFailure ex) ->
+      pure (Left (RepositoryFailure ex))
+      -- => Wrap the raw exception for the handler to log
+    Left NotFound ->
+      pure (Left (InvalidPurchaseOrder "Unexpected NotFound on save"))
+      -- => Defensive: NotFound from a save is a contract violation
+    Right () -> do
+      publishResult <- publish pub po
+      -- => Publish domain event after successful save — outbox adapter is atomic
+      case publishResult of
+        Left err -> pure (Left (InvalidPurchaseOrder err))
+        -- => Propagate publish failure to caller
+        Right () -> pure (Right po)
+        -- => Success: return the same aggregate — caller translates to HTTP 201
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: this clean signature forces you to write a mapping function in the handler layer. For thin CRUD endpoints the mapping is boilerplate. For endpoints where the domain aggregate has invariants the payoff is substantial — the application service is a pure function of domain types and can be tested with zero framework setup.
@@ -953,7 +1295,7 @@ Output ports define _what_ the application layer needs from the outside world wi
 
 F# function types are first-class. The standard library lets you express any port as a type alias with zero ceremony:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1021,16 +1363,52 @@ type Result<T, E> = { readonly ok: true; readonly value: T } | { readonly ok: fa
 
 // Repository port: find a PO by its ID
 // [F#: type FindPurchaseOrder = PurchaseOrderId -> Result<PurchaseOrder option, string> — function alias]
-export type FindPurchaseOrder = (id: PurchaseOrderId) => Result<PurchaseOrder | null, string>;
+export type FindPurchaseOrder = (id: PurchaseOrderId) => Result;
 // => Plain function type alias — no interface keyword, no abstract class
 // => null signals a missing PO — callers distinguish null from error
 // => Compose multiple ports as separate parameters to the service function
 
 // Repository port: persist a PO
 // [F#: type SavePurchaseOrder = PurchaseOrder -> Result<unit, string>]
-export type SavePurchaseOrder = (po: PurchaseOrder) => Result<void, string>;
+export type SavePurchaseOrder = (po: PurchaseOrder) => Result;
 // => void success — the application service trusts the adapter to persist atomically
 // => Error string is the stdlib approach; production version uses a tagged union (see Guide 4)
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Application/Ports.hs ───────────────────────
+-- Standard library: function type aliases as output ports
+module ProcurementPlatform.Contexts.Purchasing.Application.Ports
+  ( FindPurchaseOrder
+  , SavePurchaseOrder
+  ) where
+-- => Module contains only type aliases — no implementation, no I/O, no framework imports
+
+import Data.Text (Text)
+import ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects (PurchaseOrderId)
+-- => Only domain types imported — ports are defined in application-layer terms
+
+type PurchaseOrder = PurchaseOrderId
+-- => Local alias keeps the snippet self-contained
+
+-- Repository port: find a PO by its ID
+-- [F#: type FindPurchaseOrder = PurchaseOrderId -> Result<PurchaseOrder option, string>;
+--  Haskell uses type alias + Maybe for "PO option" and Either for the result]
+type FindPurchaseOrder = PurchaseOrderId -> Either Text (Maybe PurchaseOrder)
+-- => Plain type alias — no class, no record ceremony
+-- => Maybe PO: Nothing signals a missing PO; Left signals an error
+-- => Compose multiple ports as separate function parameters to the service
+
+-- Repository port: persist a PO
+-- [F#: type SavePurchaseOrder = PurchaseOrder -> Result<unit, string>;
+--  Haskell uses Either Text () for the same shape]
+type SavePurchaseOrder = PurchaseOrder -> Either Text ()
+-- => () success — the application service trusts the adapter to persist atomically
+-- => Error Text is the stdlib approach; production version uses a typed ADT (see Guide 4)
 ```
 
 {{< /tab >}}
@@ -1056,7 +1434,7 @@ flowchart LR
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
 ```
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1255,6 +1633,90 @@ export type Configuration = Readonly<{
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Application/Ports.hs ───────────────────────
+-- Production port definitions — application layer only
+{-# LANGUAGE DerivingStrategies #-}
+module ProcurementPlatform.Contexts.Purchasing.Application.Ports
+  ( RepositoryError (..)
+  , PurchaseOrderRepository (..)
+  , EventPublisher (..)
+  , DomainEvent (..)
+  , Clock
+  , Configuration (..)
+  ) where
+-- => Module contains only type / record-of-functions declarations — no implementation, no I/O
+
+import Control.Exception (SomeException)
+import Data.Text (Text)
+import Data.Time (UTCTime)
+import ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects (PurchaseOrderId)
+-- => Domain types are the only dependency — ports are defined in application-layer terms
+
+type PurchaseOrder = PurchaseOrderId
+-- => Local alias keeps the snippet self-contained
+
+-- Repository error as a typed ADT
+-- [F#: RepositoryError DU — compiler-enforced exhaustive match; Haskell uses ADT — same guarantee]
+data RepositoryError
+  = NotFound PurchaseOrderId
+  -- => Read-side: a missing PO is surfaced as NotFound — callers return HTTP 404
+  | UniqueConstraintViolation
+  -- => Write-side: DB raised a uniqueness constraint — callers return HTTP 409
+  | ConnectionFailure SomeException
+  -- => Infrastructure failure: carry the cause for logging; callers return HTTP 500
+  deriving stock (Show)
+-- => case-match at the call site is exhaustive — -Wincomplete-patterns enforces it
+
+-- Repository port as a record of functions — groups read and write together
+-- [F#: PurchaseOrderRepository record-of-functions; Haskell uses record with IO-returning functions]
+data PurchaseOrderRepository = PurchaseOrderRepository
+  { findPurchaseOrder :: PurchaseOrderId -> IO (Either RepositoryError (Maybe PurchaseOrder))
+  -- => IO because the postgres adapter performs I/O
+  -- => Maybe because a missing PO is not an error — it is a valid domain outcome
+  , savePurchaseOrder :: PurchaseOrder -> IO (Either RepositoryError ())
+  -- => () success — the application service trusts the adapter to persist atomically
+  -- => RepositoryError wraps DB exceptions at the adapter boundary (Guide 7)
+  }
+-- => Record-of-functions groups both operations so the service receives one parameter
+-- => The postgres adapter satisfies this record; the in-memory test stub also satisfies it
+
+-- Event publisher port — single publish operation
+-- [F#: EventPublisher record { Publish: DomainEvent -> Async<Result<unit, string>> }]
+data EventPublisher = EventPublisher
+  { publish :: PurchaseOrder -> IO (Either Text ())
+  -- => Outbox adapter is atomic with the DB commit in production
+  -- => In-memory stub satisfies this in tests; no mocking framework needed
+  }
+
+-- Domain event type — used by EventPublisher
+data DomainEvent
+  = PurchaseOrderSubmitted PurchaseOrderId
+  -- => Event type discriminator — consumers case-match on this constructor
+  deriving stock (Show)
+
+-- Clock port — swappable for deterministic tests
+-- [F#: type Clock = unit -> System.DateTimeOffset; Haskell uses IO UTCTime alias]
+type Clock = IO UTCTime
+-- => The real adapter is getCurrentTime; tests inject (pure fixedTime) — deterministic
+
+-- Configuration port — typed record, read once at startup
+-- [F#: Configuration record { DatabaseUrl: string; ApprovalThresholdL1: decimal; ... }]
+data Configuration = Configuration
+  { databaseUrl         :: !Text
+  -- => Postgres connection string — injected from environment variable at startup
+  , approvalThresholdL1 :: !Rational
+  -- => Dollar threshold for L1 approval (default 1000) — externalized for tuning
+  , approvalThresholdL2 :: !Rational
+  -- => Dollar threshold for L2 approval (default 10000)
+  }
+-- => Strict fields: configuration is read at startup; no laziness needed
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Trade-offs**: function type aliases are lightweight but single-method. When a port grows to five or six operations, grouping them in a record of functions keeps the application service parameter list manageable. A record-of-functions port is a natural next step when the function-alias approach feels like parameter explosion.
@@ -1271,7 +1733,7 @@ The HTTP handler is the primary (driving) adapter in the hexagonal architecture.
 
 F# functions compose naturally. Without Giraffe you would write an ASP.NET Core `RequestDelegate` directly — a `Func<HttpContext, Task>`. The standard library gives you the composition, but the ceremony is high:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1366,6 +1828,42 @@ export const healthHandler = (_req: IncomingMessage, res: ServerResponse): void 
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Presentation/Health.hs ───────────────────────
+-- Standard library: WAI Application without a framework combinator library
+-- [F#: RequestDelegate (ASP.NET Core); Haskell uses WAI's Application type — (Request -> respond -> IO ResponseReceived)]
+{-# LANGUAGE OverloadedStrings #-}
+module ProcurementPlatform.Presentation.Health (healthApp) where
+
+import Data.Aeson (encode, object, (.=))
+-- => aeson: stdlib-grade JSON serializer in the Haskell ecosystem
+import Network.HTTP.Types (status200)
+-- => HTTP status codes from http-types — no framework wrapper required
+import Network.Wai (Application, responseLBS)
+-- => WAI Application: Request -> (Response -> IO ResponseReceived) -> IO ResponseReceived
+-- => Equivalent to ASP.NET RequestDelegate or Node's RequestListener — base HTTP contract
+
+healthApp :: Application
+-- => Plain WAI Application — no Servant, no Scotty, no Yesod
+-- [F#: Func<HttpContext, Task>; Haskell uses Application — pure function returning IO action]
+healthApp _request respond =
+  -- => _request: WAI Request — ignored for a health endpoint
+  -- => respond: continuation provided by the WAI runtime; we call it with the response
+  respond $ responseLBS
+    status200
+    -- => HTTP 200 OK — typed constant, not a magic integer
+    [("Content-Type", "application/json")]
+    -- => Set Content-Type manually — no automatic negotiation
+    -- => Production frameworks (Servant, Scotty) wrap this; here we use raw WAI
+    (encode (object ["status" .= ("healthy" :: String)]))
+    -- => encode produces a Lazy ByteString; responseLBS expects exactly that
+    -- => Pure function builds the response value; respond writes it to the wire
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 **Limitation for production**: composition is verbose. Chaining middleware, routing, and authorization requires manual `next` threading. Giraffe's `HttpHandler` type (`HttpContext -> Task<HttpContext option>`) composes cleanly with `>=>` (fish operator).
@@ -1374,7 +1872,7 @@ export const healthHandler = (_req: IncomingMessage, res: ServerResponse): void 
 
 The health handler shows the minimal Giraffe adapter. A domain-backed handler for `POST /api/v1/purchase-orders` follows the same pattern but adds the translation steps:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1639,7 +2137,7 @@ interface SubmitPurchaseOrderRequest {
 
 // UnitOfMeasure string → domain literal mapping
 // [F#: parseUnit pattern match with catch-all; TS uses a lookup object — same O(1) semantics]
-const UNIT_MAP: Readonly<Record<string, string>> = {
+const UNIT_MAP: Readonly = {
   Each: "Each",
   // => Exact match: client must send "Each", not "each"
   Box: "Box",
@@ -1657,7 +2155,7 @@ const UNIT_MAP: Readonly<Record<string, string>> = {
 export const handleSubmit =
   (repo: PurchaseOrderRepository, pub: EventPublisher, clock: Clock) =>
   // => repo, pub, clock injected by the composition root via partial application
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: Request, res: Response): Promise => {
     // => async RequestHandler — mirrors F#'s task { ... } computation expression
     const dto = req.body as SubmitPurchaseOrderRequest;
     // => Express body-parser has already parsed JSON — req.body is the plain object
@@ -1716,11 +2214,122 @@ export const handleSubmit =
 
 {{< /tab >}}
 
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Contexts/Purchasing/Presentation/PurchasingHandlers.hs ───────────────────────
+-- Servant handler — primary (driving) adapter for purchase order submission
+-- [F#: Giraffe HttpHandler; Haskell uses Servant Handler — same adapter role, typed-route style]
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators #-}
+module ProcurementPlatform.Contexts.Purchasing.Presentation.PurchasingHandlers
+  ( SubmitPurchaseOrderRequest (..)
+  , handleSubmit
+  ) where
+-- => Presentation layer: imports domain, ports, and HTTP framework — allowed at this layer
+
+import Control.Monad.IO.Class (liftIO)
+import Data.Aeson (FromJSON, ToJSON)
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.UUID (UUID)
+import qualified Data.UUID.V4 as UUID
+import GHC.Generics (Generic)
+import Servant
+  ( ServerError (..), err400, err409, err500, throwError )
+-- => Servant types: HTTP errors and the Handler monad
+-- => Domain smart constructors and application service imported below
+import ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects
+  ( PurchaseOrderId (..), Money, createMoney )
+import ProcurementPlatform.Contexts.Purchasing.Application.Ports
+  ( PurchaseOrderRepository, EventPublisher, Clock )
+import ProcurementPlatform.Contexts.Purchasing.Application.SubmitPurchaseOrder
+  ( SubmitPurchaseOrderError (..), submitPurchaseOrder )
+-- => Four imports for domain + ports + service — no postgresql-simple, no aeson encoders here
+
+-- Request DTO — deserialized from JSON by Servant's body parser
+-- [F#: [<CLIMutable>] SubmitPurchaseOrderRequest record; Haskell derives FromJSON via Generic]
+data SubmitPurchaseOrderRequest = SubmitPurchaseOrderRequest
+  { reqSupplierId   :: !UUID    -- ^ raw UUID at the boundary; smart constructor wraps it
+  , reqTotalAmount  :: !Rational -- ^ smart constructor validates >= 0 and currency
+  , reqCurrency     :: !Text    -- ^ ISO 4217 code — smart constructor validates 3-letter format
+  , reqUnitOfMeasure :: !Text   -- ^ raw unit string; parseUnit maps to UnitOfMeasure ADT
+  }
+  deriving stock (Generic)
+  deriving anyclass (FromJSON, ToJSON)
+-- => Generic derivation: Aeson FromJSON parses JSON to this record automatically
+
+-- UnitOfMeasure string → ADT mapping
+-- [F#: parseUnit pattern-match with catch-all; Haskell uses case expression — same idea]
+parseUnit :: Text -> Either Text Text
+parseUnit s = case s of
+  "Each"  -> Right "Each"
+  -- => Exact match: client must send "Each", not "each"
+  "Box"   -> Right "Box"
+  "Kg"    -> Right "Kg"
+  "Litre" -> Right "Litre"
+  "Hour"  -> Right "Hour"
+  other   -> Left ("Unknown unit of measure: " <> other)
+  -- => Left carries the invalid string — handler returns 400 with this message
+
+-- Handler factory: returns a Servant Handler with ports partially applied
+-- [F#: handleSubmit curried over repo, pub, clock; Haskell uses the same pattern]
+handleSubmit
+  :: PurchaseOrderRepository
+  -- => repo: injected at composition root — postgres adapter in production
+  -> EventPublisher
+  -- => pub: outbox adapter in production — stub in tests
+  -> Clock
+  -- => clock: IO UTCTime — getCurrentTime in production; (pure fixed) in tests
+  -> SubmitPurchaseOrderRequest
+  -- => Parsed by Servant from the request body
+  -> Servant.Handler PurchaseOrderId
+  -- => Handler monad: IO with structured ServerError throws — Servant translates to HTTP
+handleSubmit repo pub clock dto = do
+  -- => Step 1: DTO → domain types via smart constructors
+  case createMoney (reqTotalAmount dto) (reqCurrency dto) of
+    Left err -> throwError (err400 { errBody = "Money: " <> longBS err })
+    -- => HTTP 400: domain validation failed — translate at the adapter boundary
+    Right _money -> do
+      -- => Smart constructor passed — Money value is valid
+      newId <- liftIO UUID.nextRandom
+      -- => New UUID; composition root could inject an IdGenerator port instead
+      _now <- liftIO clock
+      -- => clock(): port call — frozen to a fixed time in tests
+      let po = PurchaseOrderId newId
+      -- => Build the domain aggregate from validated value objects
+
+      -- Step 2: aggregate → application service → domain result
+      svcResult <- liftIO (submitPurchaseOrder repo pub po)
+      -- => liftIO escapes from IO into the Handler monad — Servant boundary
+      case svcResult of
+        Left (DuplicatePurchaseOrder _) ->
+          throwError err409 { errBody = "PurchaseOrder already exists" }
+          -- => HTTP 409: typed case branch, not string parsing
+        Left (InvalidPurchaseOrder msg) ->
+          throwError err400 { errBody = longBS msg }
+          -- => HTTP 400: validation failed in the application service
+        Left (RepositoryFailure ex) -> do
+          liftIO (putStrLn ("Repository failure: " <> show ex))
+          -- => Log the raw exception before discarding it from the response
+          throwError err500 { errBody = "Repository unavailable" }
+        Right saved ->
+          -- => Step 3: domain aggregate → response DTO → HTTP 201
+          pure saved
+          -- => Servant serializes the returned value as JSON automatically
+  where
+    longBS = id  -- placeholder coercion Text -> Lazy ByteString in real code
+```
+
+{{< /tab >}}
+
 {{< /tabs >}}
 
 The routing wires the handler to a URL in `Program.fs`:
 
-{{< tabs items="F#,Clojure,TypeScript" >}}
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
 
 {{< tab >}}
 
@@ -1847,6 +2456,71 @@ export function makeWebApp(
   // => Router returned as a pure value — no side effects at construction time
   // => [F#: HttpHandler is also a pure value; both are composed at the entry point]
 }
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- ── file: ProcurementPlatform/Composition/Program.hs ───────────────────────
+-- Servant API definition + composition root for the procurement web app
+-- [F#: Giraffe choose + route + routef; Haskell uses Servant typed-API definition]
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators #-}
+module ProcurementPlatform.Composition.Program (webApp) where
+
+import Data.Aeson (object, (.=))
+import Data.Proxy (Proxy (..))
+import Network.Wai (Application)
+import Servant
+  ( (:<|>) (..), (:>), Get, Post, JSON, ReqBody, Server, serve )
+-- => Servant: type-level routing — :> chains segments, :<|> alternates routes
+import ProcurementPlatform.Contexts.Purchasing.Application.Ports
+  ( PurchaseOrderRepository, EventPublisher, Clock )
+import ProcurementPlatform.Contexts.Purchasing.Presentation.PurchasingHandlers
+  ( SubmitPurchaseOrderRequest, handleSubmit )
+import ProcurementPlatform.Contexts.Purchasing.Domain.ValueObjects (PurchaseOrderId)
+-- => Three imports: ports, handler, and PurchaseOrderId for the response type
+
+-- API type: routes declared at the type level — Servant derives the dispatcher
+-- [F#: choose [ GET >=> route ... ; POST >=> route ... ]; Haskell uses :<|> at the type level]
+type API =
+       "api" :> "v1" :> "health" :> Get '[JSON] HealthResponse
+       -- => GET /api/v1/health — inline health check — no domain port needed
+  :<|> "api" :> "v1" :> "purchase-orders"
+              :> ReqBody '[JSON] SubmitPurchaseOrderRequest
+              :> Post '[JSON] PurchaseOrderId
+       -- => POST /api/v1/purchase-orders — submission handler with ports captured in closure
+
+-- Simple response value for the health endpoint
+data HealthResponse = HealthResponse
+-- => Constructor without fields; ToJSON instance would emit {"status":"healthy"}
+
+instance Show HealthResponse where show _ = "healthy"
+
+-- Server: pairs each route with the handler that serves it
+-- [F#: webApp returns HttpHandler; Haskell returns a Server API value]
+server :: PurchaseOrderRepository -> EventPublisher -> Clock -> Server API
+server repo pub clock =
+       healthHandler
+       -- => Inline lambda for the health endpoint — no domain port needed
+  :<|> handleSubmit repo pub clock
+       -- => handleSubmit partially applied: repo, pub, clock captured in closure
+       -- => [F#: PurchasingHandlers.handleSubmit repo pub clock]
+  where
+    healthHandler = pure HealthResponse
+    -- => Always returns the constant healthy response
+
+-- webApp: composition root wires all ports into a WAI Application
+-- [F#: webApp curried function returning HttpHandler; Haskell returns Application]
+webApp :: PurchaseOrderRepository -> EventPublisher -> Clock -> Application
+webApp repo pub clock =
+  serve (Proxy :: Proxy API) (server repo pub clock)
+  -- => serve: turns the typed API + Server into a runnable WAI Application
+  -- => Three ports injected here; no global state, no service locator
+  -- => Unmatched routes get Servant's default 404 — overridable via custom middleware
 ```
 
 {{< /tab >}}

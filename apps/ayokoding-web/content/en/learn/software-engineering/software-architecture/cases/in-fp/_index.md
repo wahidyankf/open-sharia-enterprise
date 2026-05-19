@@ -1,9 +1,9 @@
 ---
-title: "In FP — F# / Giraffe / Npgsql"
+title: "In FP — F# / Clojure / TypeScript / Haskell"
 weight: 10000001
 date: 2026-05-16T00:00:00+07:00
 draft: false
-description: "Functional-programming case combining C4, DDD, Hexagonal Architecture, and FSM for the procurement-platform-be Procure-to-Pay service on F# / Giraffe / Npgsql"
+description: "Functional-programming case combining C4, DDD, Hexagonal Architecture, and FSM for the procurement-platform-be Procure-to-Pay service, shown in F# (canonical), Clojure, TypeScript, and Haskell"
 tags:
   [
     "cases",
@@ -13,6 +13,9 @@ tags:
     "hexagonal-architecture",
     "finite-state-machine",
     "f#",
+    "clojure",
+    "typescript",
+    "haskell",
     "functional-programming",
     "giraffe",
     "npgsql",
