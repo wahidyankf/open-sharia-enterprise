@@ -354,6 +354,8 @@ Each function now has one reason to change: swap the data source without touchin
 
 ### Example 2: Single Responsibility Principle
 
+> **Paradigm Note**: SRP originated in OOP (Robert C. Martin, SOLID). In FP, every function naturally has one responsibility by virtue of being a function — Seemann ([SOLID: the next step is Functional](https://blog.ploeh.dk/2014/03/10/solid-the-next-step-is-functional/), 2014) notes that SRP "collapses to a function signature" in FP. The example below shows the FP form; the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-2-single-responsibility-principle) uses class-level cohesion.
+
 The Single Responsibility Principle (SRP) states that a module or function should have one and only one reason to change. In FP, SRP is expressed through focused modules and single-purpose functions: each module groups only the behavior that belongs together, and an unrelated change to one group never ripples into another. Violating SRP creates fragile code where an unrelated change breaks a seemingly unrelated feature.
 
 **Violating SRP — one module does too much:**
@@ -1289,6 +1291,8 @@ main = do
 
 ### Example 5: Model-View-Controller Basics
 
+> **Paradigm Note**: MVC originated with Smalltalk (Trygve Reenskaug, 1979) as an OOP pattern. The FP-native equivalent is the Elm Architecture / unidirectional data flow: `model -> update -> view` as pure functions. See the [OOP MVC framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-5-model-view-controller-basics) for class-based comparison.
+
 MVC separates a program into a Model (data and rules), a View (formatting output), and a Controller (coordinating input and response). In FP, each MVC component is a group of pure functions: the Controller receives input, asks the Model to process it, then passes results to the View for display.
 
 ```mermaid
@@ -1734,6 +1738,8 @@ main = do
 ---
 
 ### Example 6: Model Encapsulates Validation
+
+> **Paradigm Note**: In OOP, validation lives inside model methods. The FP-native form is "parse, don't validate" (Wlaschin, [Designing with types](https://fsharpforfunandprofit.com/series/designing-with-types/)): use smart constructors + ADTs so invalid states are unrepresentable at the type level. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-6-model-encapsulates-validation).
 
 The Model is responsible for enforcing its own invariants. A smart constructor — a function that validates inputs before producing a value — ensures that invalid data can never be constructed. The type system (or convention, depending on the language) enforces the rule, not runtime guards scattered across callers.
 
@@ -2294,6 +2300,8 @@ main = do
 
 ### Example 8: Constructor Injection vs. Method Injection
 
+> **Paradigm Note**: Constructors are an OOP class-lifecycle concept. The FP equivalent for "constructor injection" is partial application (passing dependencies first); for "method injection" it is passing the dependency as a function parameter at call site, or using a Reader monad. The example below shows the FP-native forms; for the OOP class-constructor framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-8-constructor-injection-vs-method-injection).
+
 There are two common styles of dependency injection: constructor injection (dependencies fixed when an object is built) and method injection (dependencies passed per-call). In F#, both patterns appear as partial application (fixing some arguments upfront) versus full parameter threading (passing on every call). In Clojure, the same split maps to closing over dependencies in a factory function versus threading the dependency as a final argument on every call.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
@@ -2492,6 +2500,8 @@ main = do
 ## Interface Segregation
 
 ### Example 9: Interface Segregation Principle
+
+> **Paradigm Note**: ISP guards against fat nominal interfaces in OOP. In FP, each function naturally takes only the type it needs — ISP "collapses to function type signatures" (Seemann, [SOLID: the next step is Functional](https://blog.ploeh.dk/2014/03/10/solid-the-next-step-is-functional/)). See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-9-interface-segregation-principle).
 
 The Interface Segregation Principle says that modules should not depend on operations they do not use. In FP, this is expressed naturally through focused record-of-functions types or segregated protocols: each consumer receives only the functions it actually needs, not a large monolithic record. Splitting a fat dependency record into smaller focused ones means no consumer is forced to provide stub implementations for capabilities it does not possess.
 
@@ -2854,6 +2864,8 @@ main = do
 ## Open/Closed Principle
 
 ### Example 10: Open for Extension, Closed for Modification
+
+> **Paradigm Note**: OCP was coined by Bertrand Meyer for OOP inheritance hierarchies. The FP equivalent uses typeclasses (Haskell), protocols (Clojure — see Rich Hickey's [Simple Made Easy](https://www.infoq.com/presentations/Simple-Made-Easy/)), or discriminated unions with exhaustive matching. Both axes of the Expression Problem are addressed differently in FP — see the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-10-open-for-extension-closed-for-modification).
 
 The Open/Closed Principle states that a function or module should be open for extension (new behaviors can be added) but closed for modification (existing code does not change when behavior is added). In FP, this is achieved through function parameters and sum types: you extend by passing a new function value or adding a new variant, not by editing existing logic. Each new strategy is a new value; the dispatch or consumer function is untouched.
 
@@ -4403,6 +4415,8 @@ main = do
 
 ### Example 16: Low Coupling Through Encapsulation
 
+> **Paradigm Note**: Encapsulation in OOP hides mutable state behind methods. In FP, low coupling comes from pure functions + module boundaries — there is no mutable state to hide. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-16-low-coupling-through-encapsulation).
+
 Reducing coupling means modules communicate through stable function interfaces, not through internal fields. In FP, encapsulation is achieved by giving each domain concept its own module with opaque types and smart accessor/mutator functions — callers depend on behavior, not representation.
 
 ```mermaid
@@ -5033,6 +5047,8 @@ main = do
 
 ### Example 18: Encapsulation with Private State
 
+> **Paradigm Note**: Hickey ([Simple Made Easy](https://www.infoq.com/presentations/Simple-Made-Easy/)) argues OOP objects "complect state, identity, and value". FP encapsulation hides _types_ and _constructors_ (smart constructors, abstract types, opaque modules), not mutable fields. The example below shows the FP-idiomatic form; for the OOP private-field framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-18-encapsulation-with-private-state).
+
 Encapsulation means controlling access to internal state so that external code cannot put the system into an inconsistent state. In FP, encapsulation is achieved through opaque types and smart constructors, combined with immutable records that derive computed values on demand rather than caching them in parallel mutable fields.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
@@ -5300,6 +5316,8 @@ main = do
 ## Composition Over Inheritance
 
 ### Example 19: Preferring Composition
+
+> **Paradigm Note**: "Composition over inheritance" is an intra-OOP debate. In FP there is no inheritance to compose against — function composition is the default and only mechanism. Seemann ([Design patterns across paradigms](https://blog.ploeh.dk/2012/05/25/Designpatternsacrossparadigms/)): "you can keep composing functions just as you keep composing classes". See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-19-preferring-composition).
 
 Composition over inheritance means building complex behavior by combining simple, focused functions or values rather than deep type hierarchies. In FP, sum types and record-of-functions composition replace inheritance hierarchies — each variant carries exactly the data it needs, and behaviors are assembled at the call site from small reusable functions.
 
@@ -5825,6 +5843,8 @@ main = do
 
 ### Example 21: Repository Pattern Basics
 
+> **Paradigm Note**: Repository is a DDD pattern (Eric Evans) framed around mutable object graphs. In FP the equivalent is a record of effectful functions or a typeclass — Wlaschin ([Domain Modeling Made Functional](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)) treats data access as an effect boundary. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-21-repository-pattern-basics).
+
 The Repository pattern abstracts the data access layer behind a collection-like interface. In FP, a repository is expressed as a record-of-functions (or map-of-functions) — `find`, `save`, `findAll` — that can be satisfied by either an in-memory implementation or a database driver. The business layer sees only the interface, never the implementation.
 
 ```mermaid
@@ -6102,6 +6122,8 @@ main = do
 ---
 
 ### Example 22: Repository with Query Methods
+
+> **Paradigm Note**: Same DDD origin as Example 21. FP form: query becomes an effectful function returning `Result<T,_>` / `Async<T>` / `Maybe<T>` — no mutable backing collection. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner#example-22-repository-with-query-methods).
 
 Real repositories go beyond simple CRUD. They expose domain-meaningful query functions that express business questions as named fields rather than raw queries embedded in business logic. Whether represented as a typed record-of-functions (F#, Haskell, TypeScript) or a plain map of keyword-to-function entries (Clojure), the business layer calls named operations and never sees storage details.
 

@@ -999,6 +999,8 @@ demo = do
 
 ### Example 32: Observer Pattern — Event Notification Without Coupling
 
+> **Paradigm Note**: GoF Observer. Norvig (1996) classifies it under "method combination" — absorbed by language features in dynamic/FP languages. The FP-native form is Functional Reactive Programming (FRP — Conal Elliott & Paul Hudak, 1997) or channels/streams. The example below shows the FRP-style form; for the OOP Observer-class framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-32-observer-pattern--event-notification-without-coupling).
+
 The Observer pattern defines a one-to-many dependency so that when one object changes state all dependents are notified automatically. In FP, "observers" are simply event-handler functions stored in a list; no interface or class required.
 
 ```mermaid
@@ -1854,6 +1856,8 @@ demo = do
 
 ### Example 35: Strategy Pattern — Swappable Algorithms
 
+> **Paradigm Note**: GoF Strategy. Norvig (1996) classifies it under "first-class functions" — invisible in languages with first-class functions. The FP form: a strategy IS a function value; pass it as a parameter. The example below shows the function-value form; for the OOP Strategy-interface framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-35-strategy-pattern--swappable-algorithms).
+
 The Strategy pattern defines a family of algorithms and makes them interchangeable. In FP, strategies are simply functions with the same signature — no interface, no class hierarchy. Higher-order functions accept the strategy as a parameter.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
@@ -2078,6 +2082,8 @@ demo = do
 ---
 
 ### Example 36: Factory Pattern — Centralized Object Creation
+
+> **Paradigm Note**: GoF Factory. Norvig (1996) classifies it under "first-class types" — absorbed by language features. FP form: smart constructors are functions returning constructed values; no Factory class is needed. The example below shows smart constructors; for the OOP Factory-class framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-36-factory-pattern--centralized-object-creation).
 
 The Factory pattern centralises object creation, hiding construction logic from callers. In FP, factories are smart constructor functions that return `Result` types, surfacing validation errors without exceptions.
 
@@ -2374,6 +2380,8 @@ demo = do
 ---
 
 ### Example 37: Builder Pattern — Constructing Complex Objects Step by Step
+
+> **Paradigm Note**: GoF Builder. Norvig (1996) classifies it under "multimethods" — simpler in dynamic languages. FP form: records with named fields + partial application + functional update (`{ rec with field = ... }`) replace step-by-step builder ceremony. The example below shows the FP form; for the OOP Builder-class framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-37-builder-pattern--constructing-complex-objects-step-by-step).
 
 The Builder pattern constructs complex objects step by step. In FP, the builder is a pipeline of update functions — each step returns an updated intermediate value, and the final `build` function validates and seals it.
 
@@ -3250,6 +3258,8 @@ demo = do
 
 ### Example 40: Facade Pattern — Simplified Interface to a Subsystem
 
+> **Paradigm Note**: GoF Facade. Norvig (1996) classifies it under "modules" — absorbed by language features. FP form: a module's public API is already a facade; expose only the high-level functions, hide the internals. The example below shows the module form; for the OOP Facade-class framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-40-facade-pattern--simplified-interface-to-a-subsystem).
+
 The Facade pattern provides a simplified interface to a complex subsystem. In FP, a facade is a module or record-of-functions that exposes a small, coherent API and delegates to multiple specialised internal functions.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
@@ -3544,6 +3554,8 @@ demo = do
 
 ### Example 41: Command Pattern — Encapsulate Actions as Objects
 
+> **Paradigm Note**: GoF Command. Norvig (1996) classifies it under "first-class functions" — invisible. FP form: a command IS a function value (or a closure capturing context), or an immutable data record describing the action. The example below shows the function/data form; for the OOP Command-object framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-41-command-pattern--encapsulate-actions-as-objects).
+
 The Command pattern encapsulates a request as an object, supporting undo/redo, queuing, and logging. In FP, commands are closed sum types (defunctionalisation); a pure interpreter function applies them against a state.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
@@ -3823,6 +3835,8 @@ demo = do
 ---
 
 ### Example 42: Mediator Pattern — Centralized Component Coordination
+
+> **Paradigm Note**: GoF Mediator. Norvig (1996) classifies it under "method combination" — absorbed. FP form: an event bus is a function `event -> list of effects`, or a pure orchestrator threading messages between pure components. The example below shows the FP form; for the OOP Mediator-class framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-42-mediator-pattern--centralized-component-coordination).
 
 The Mediator pattern centralises communication between components, reducing direct coupling. In FP, the mediator is a dispatch function: components send typed requests to the mediator, which routes them to the correct handler.
 
@@ -4117,6 +4131,8 @@ demo = do
 ---
 
 ### Example 43: State Pattern — Objects That Change Behavior Based on State
+
+> **Paradigm Note**: GoF State. Norvig (1996) classifies it under "first-class types" — absorbed. FP form: an algebraic data type (ADT) for the states + a pure transition function `(state, event) -> state`. No class hierarchy needed. The example below shows the ADT form; for the OOP State-class framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-43-state-pattern--objects-that-change-behavior-based-on-state).
 
 The State pattern allows an object to alter its behaviour when its internal state changes. A common functional realisation models the machine as a closed sum of valid states with a pure transition function that dispatches on state × event pairs — either as exhaustive pattern matching over sum types, or as a data-table map of `{[state event] → new-state}` entries with a lookup function.
 
@@ -5001,6 +5017,8 @@ demo = do
 ---
 
 ### Example 46: Aggregate Roots — Consistency Boundaries in DDD
+
+> **Paradigm Note**: Aggregate Root in OOP DDD is a mutable object enforcing invariants. In FP it becomes "a type + a pure transition function" (Wlaschin, [Domain Modeling Made Functional](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)) — the consistency-boundary concept transfers, but the implementation is an immutable record updated via pure functions returning new state. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-46-aggregate-roots--consistency-boundaries-in-ddd).
 
 An Aggregate Root is the entry point to a cluster of related objects. All modifications to the cluster go through the root, which enforces invariants. In FP an aggregate is a value-typed bundle (record/map) whose command surface is a set of pure functions returning a `Result`; the module or namespace boundary is what guards the cluster from direct mutation.
 
@@ -6880,6 +6898,8 @@ demo = do
 
 ### Example 52: Repository Pattern — Abstracting Data Access
 
+> **Paradigm Note**: See Examples 21–22 paradigm notes. Full repository pattern (Evans DDD) aggregates query + command + unit-of-work concerns; FP encodes the contract as a record-of-functions or typeclass, and replaces unit-of-work with a transaction monad or effect context. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-52-repository-pattern--abstracting-data-access).
+
 The Repository pattern abstracts data access behind a clean interface, keeping domain logic free of persistence concerns. In FP, the repository is a record-of-functions or protocol whose implementations are swapped at startup, providing idiomatic polymorphism over the same data access contract.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
@@ -7203,6 +7223,8 @@ demo = do
 
 ### Example 53: Unit of Work Pattern — Grouping Operations into Atomic Transactions
 
+> **Paradigm Note**: Unit of Work (Fowler PEAA) tracks mutable object changes for transactional commit. FP form: a transaction monad / `STM` / effect context accumulates pending operations and commits atomically — without tracking mutated identities. The example below shows the FP form; for the OOP UoW-tracking framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-53-unit-of-work-pattern--grouping-operations-into-atomic-transactions).
+
 The Unit of Work pattern tracks changes and commits them as a single atomic transaction. In FP, this is modelled as a deferred-intent pipeline: operations accumulate as values in a list or vector; a final `commit` folds over them, applying each in order and short-circuiting on the first failure.
 
 {{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
@@ -7516,6 +7538,8 @@ demo = do
 ---
 
 ### Example 54: Specification Pattern — Composable Business Rules
+
+> **Paradigm Note**: Specification (Evans) wraps predicates in `ISpecification` classes with `IsSatisfiedBy` and combinator methods. In FP a specification IS a predicate `'a -> bool`, composed with `&&` / `||` / function combinators directly — the pattern dissolves into ordinary function composition. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate#example-54-specification-pattern--composable-business-rules).
 
 The Specification pattern encapsulates a business rule as a predicate and supports composing rules with `and`, `or`, and `not`. In FP, specifications are predicate functions composed with higher-order combinators — any function of type `('a -> bool)` qualifies as a specification, and the combinator layer builds complex policies from atomic rules.
 

@@ -3,7 +3,7 @@ title: "Overview"
 weight: 10000000
 date: 2026-05-17T00:00:00+07:00
 draft: false
-description: "FP variant — learn software architecture through 85 heavily annotated examples in F# (canonical), Clojure, TypeScript, and Haskell, covering 95% of essential concepts (ideal for experienced developers)"
+description: "FP variant — learn software architecture through 93 heavily annotated examples (85 canonical + 5 FP-native extras + 3 OOP-native stubs for parity) in F# (canonical), Clojure, TypeScript, and Haskell, covering 95% of essential concepts (ideal for experienced developers)"
 tags:
   [
     "software-architecture",
@@ -32,6 +32,17 @@ The examples in this section cover patterns, principles, architectural styles, t
 ## How to Use This Section
 
 Each example is self-contained and annotated to explain not just what the code does, but why each architectural decision was made. The F# tab runs under `dotnet fsi`; the Clojure tab runs as a standalone namespace; the TypeScript tab runs under `ts-node` or `deno`; the Haskell tab runs under `runghc` or `cabal run`. Start at the level that matches your current understanding and progress through the examples in order. Each FP example shares the same number as its OOP counterpart in the [in-oop-by-example](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example) sibling tutorial, enabling cross-paradigm comparison.
+
+## Paradigm-Fit Legend
+
+Not every architectural pattern fits every paradigm equally. Many examples carry a **Paradigm Note** banner explaining whether the pattern is FP-native, OOP-native, or paradigm-neutral. The classification follows authoritative sources:
+
+- **NEUTRAL** — paradigm-agnostic concept (microservices, distributed tracing, hexagonal architecture). Both tracks teach legitimately.
+- **OOP-NATIVE** — pattern emerged from OOP and is absorbed by FP language features. Norvig (1996, [Design Patterns in Dynamic Languages](https://norvig.com/design-patterns/)) classified 16 of 23 GoF patterns this way. Examples in the FP track show the _native FP idiom_ (HOF, ADT, fold, FRP) rather than reproducing the OOP shape.
+- **OOP-NATIVE-BUT-TRANSFERABLE** — OOP roots but the concept transfers cleanly (SOLID, DDD aggregates, Repository). The paradigm note explains the FP encoding.
+- **FP-NATIVE** — pattern emerged from or expresses most naturally in FP (Railway-Oriented Programming, Free Monads, Reader/State monads, Event Sourcing fold, FRP, Kleisli composition). Examples 86–90 are FP-native extras; the OOP track carries stubs pointing here.
+
+Authority basis: Norvig 1996; Seemann ([Design patterns across paradigms](https://blog.ploeh.dk/2012/05/25/Designpatternsacrossparadigms/), 2012; [SOLID: the next step is Functional](https://blog.ploeh.dk/2014/03/10/solid-the-next-step-is-functional/), 2014); Wlaschin ([Domain Modeling Made Functional](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)); Hickey ([Simple Made Easy](https://www.infoq.com/presentations/Simple-Made-Easy/)); Evans (_Domain-Driven Design_); Fowler ([PEAA](https://martinfowler.com/eaaCatalog/)).
 
 ## Structure of Each Example
 
@@ -138,3 +149,21 @@ Every example follows a consistent five-part format:
 - [Example 83: Anti-Corruption Layer](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-83-anti-corruption-layer)
 - [Example 84: Ports and Adapters (Hexagonal Architecture)](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-84-ports-and-adapters-hexagonal-architecture)
 - [Example 85: Reactive Architecture with Backpressure](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-85-reactive-architecture-with-backpressure)
+
+### FP-Native Extras (Examples 86–90)
+
+Patterns that have no natural OOP counterpart — they exist in FP because the paradigm makes them ergonomic.
+
+- [Example 86: Railway-Oriented Programming (Result/Either Chains)](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-86-railway-oriented-programming-resulteither-chains)
+- [Example 87: Free Monads / Tagless Final (Embedded DSLs)](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-87-free-monads--tagless-final-embedded-dsls)
+- [Example 88: Reader Monad for Dependency Injection](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-88-reader-monad-for-dependency-injection)
+- [Example 89: Kleisli Composition for Effectful Pipelines](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-89-kleisli-composition-for-effectful-pipelines)
+- [Example 90: State Monad for Pure Stateful Computation](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-90-state-monad-for-pure-stateful-computation)
+
+### OOP-Native Stubs (Examples 91–93)
+
+Numbering parity with the OOP track; full treatment lives there.
+
+- [Example 91: Active Record (OOP-Native)](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-91-active-record-oop-native)
+- [Example 92: GRASP Responsibility Assignment (OOP-Native)](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-92-grasp-responsibility-assignment-oop-native)
+- [Example 93: Singleton with FP Counterexample](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-93-singleton-with-fp-counterexample)

@@ -7282,6 +7282,8 @@ console.log(orderService.placeOrder(1, 11)); // => 'Headphones' is out of stock
 
 ### Example 24: Service Layer with Error Handling
 
+> **Paradigm Note**: The natural form of this pattern is Wlaschin's [Railway-Oriented Programming](https://fsharpforfunandprofit.com/posts/recipe-part2/) — chaining steps via the `Either`/`Result` monad. The OOP encoding below uses sentinel results or domain errors, which approximates the FP construct; exceptions are out-of-band and lose the value-track property. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/beginner#example-24-service-layer-with-error-handling).
+
 A mature service layer handles errors explicitly, returning structured results rather than leaking exceptions to the presentation layer. This makes error handling consistent across all callers (web controller, CLI, background job).
 
 {{< tabs items="Java,Kotlin,C#,TypeScript" >}}
@@ -7846,6 +7848,8 @@ console.log(response);
 ---
 
 ### Example 26: DTO Validation
+
+> **Paradigm Note**: The FP-native form is "parse, don't validate" (Wlaschin, [Designing with types](https://fsharpforfunandprofit.com/series/designing-with-types/)): use smart constructors + ADTs so invalid states are unrepresentable. The OOP encoding validates at runtime in methods, which carries different guarantees. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/beginner#example-26-dto-validation).
 
 DTOs are also the right place to validate external input before it enters the domain layer. Centralizing validation in the DTO prevents invalid data from reaching business logic.
 

@@ -30,6 +30,7 @@ weight: 102
   - [Tools](/en/learn/software-engineering/automation-testing/tools)
 - [Automation Tools](/en/learn/software-engineering/automation-tools)
   - [OpenClaw](/en/learn/software-engineering/automation-tools/openclaw)
+  - [Pi Coding Agent](/en/learn/software-engineering/automation-tools/pi-coding-agent)
   - [Hermes Agent](/en/learn/software-engineering/automation-tools/hermes-agent)
   - [Overview](/en/learn/software-engineering/automation-tools/overview)
   - [Claude Code](/en/learn/software-engineering/automation-tools/claude-code)

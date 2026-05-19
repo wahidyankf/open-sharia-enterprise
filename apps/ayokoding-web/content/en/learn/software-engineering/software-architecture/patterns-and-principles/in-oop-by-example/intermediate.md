@@ -6294,6 +6294,8 @@ console.log(new JsonExporter().export());
 
 ### Example 45: Value Objects — Immutable Domain Concepts Without Identity
 
+> **Paradigm Note**: Immutable, equality-by-value types are the _default_ in FP — every record in F#/Haskell/Clojure is a value object without ceremony. Wlaschin ([Domain Modeling Made Functional](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)): value objects are the natural unit. In OOP they require deliberate `equals`/`hashCode`/`final` discipline. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/intermediate#example-45-value-objects--immutable-domain-concepts-without-identity).
+
 Value Objects represent domain concepts that are defined entirely by their attributes — two value objects with the same attributes are considered equal. They have no identity (no ID), are immutable, and encapsulate domain validation and behavior around the concept they represent.
 
 ```mermaid
@@ -7765,6 +7767,8 @@ console.log(backToLegacy.price_cents); // => 2999 (round-trip preserved)
 ## CQRS and Advanced Patterns
 
 ### Example 49: CQRS Pattern — Separate Read and Write Models
+
+> **Paradigm Note**: CQRS maps naturally to FP — write side = command (effectful), read side = pure projection over immutable data (Fowler, [CQRS](https://martinfowler.com/bliki/CQRS.html)). OOP CQRS often retains mutable aggregate framing on the write side. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/intermediate#example-49-cqrs-pattern--separate-read-and-write-models).
 
 Command Query Responsibility Segregation (CQRS) separates the model used to update information (Commands) from the model used to read information (Queries). The write model enforces business rules; the read model is optimized for query performance. They can evolve independently.
 
@@ -10331,6 +10335,8 @@ console.log(results.map((p) => p.name)); // => ["Cable"] — only affordable, in
 ---
 
 ### Example 55: CQRS with Event Sourcing — State as a Sequence of Events
+
+> **Paradigm Note**: "Aggregate state = `foldl apply init events`" is FP-native by construction (Greg Young; Haskell ES community). OOP encodes the same fold semantics as a mutable rehydration loop on aggregate objects. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/intermediate#example-55-cqrs-with-event-sourcing--state-as-a-sequence-of-events).
 
 Event Sourcing stores the history of all state-changing events rather than the current state. The current state is derived by replaying events from the beginning. Combined with CQRS, the write side appends events to an event store; the read side builds projections by processing those events.
 

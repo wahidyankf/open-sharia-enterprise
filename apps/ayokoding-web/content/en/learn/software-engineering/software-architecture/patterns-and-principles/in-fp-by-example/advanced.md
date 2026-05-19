@@ -4859,6 +4859,8 @@ copy-paste shared types.
 
 ### Example 74: Specification Pattern
 
+> **Paradigm Note**: Same as Example 54. Specification (Evans) wraps predicates in classes; in FP these ARE function combinators — the dedicated pattern adds no value beyond standard FP composition. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced#example-74-specification-pattern).
+
 The specification pattern encapsulates a business rule as a composable predicate. In F#, a
 specification is simply `'a -> bool` — functions compose with `&&`, `||`, and `not`. In Clojure,
 specifications are plain predicate functions composed with `every-pred` and `some-fn`.
@@ -5127,6 +5129,8 @@ Clojure is far more lightweight than the OOP version — a new rule is a new fun
 ---
 
 ### Example 75: Chain of Responsibility
+
+> **Paradigm Note**: GoF Chain of Responsibility. Norvig (1996) classifies it under "first-class types" — absorbed. FP form: `foldl` over a list of handler functions, or Kleisli composition (`>=>`) for effectful chains. The example below shows the FP form; for the OOP CoR-handler-class framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced#example-75-chain-of-responsibility).
 
 The chain of responsibility passes a request through a sequence of handlers. In F#, middleware
 is modelled as `Request -> Result<Response, Response>` — `Ok` continues the chain, `Error` short-
@@ -5458,6 +5462,8 @@ early-termination semantics explicit — a rejected request never reaches the bu
 ---
 
 ### Example 76: Visitor Pattern in Architecture
+
+> **Paradigm Note**: GoF Visitor. Norvig (1996) classifies it under "first-class functions" — invisible. Visitor is "design pattern as missing language feature" — it exists in OOP to compensate for the absence of pattern matching. The FP form is exactly pattern matching (or catamorphism / `fold`) over an ADT. The example below shows the FP form; for the OOP Visitor-double-dispatch framing see the [sibling tutorial](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced#example-76-visitor-pattern-in-architecture).
 
 The visitor pattern separates algorithms from the objects they operate on. In F#, this is natural
 pattern matching — a discriminated union type represents the object hierarchy, and each "visitor
@@ -8922,3 +8928,790 @@ additional framework dependencies.
 inevitably crash under load. Making backpressure explicit — a bounded inbox with a non-blocking
 offer returning a typed rejection — gives producers a clear signal to slow down or shed load, rather
 than an exception that might be swallowed.
+
+---
+
+## FP-Native Extras (Examples 86–90)
+
+The following examples extend the canonical 85 with patterns that have no natural OOP-side counterpart — they exist in FP because the paradigm makes them ergonomic. Each has only a brief stub in the [OOP track](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced) pointing back here.
+
+### Example 86: Railway-Oriented Programming (Result/Either Chains)
+
+> **Paradigm Note**: Railway-Oriented Programming (Wlaschin, [Recipe for a Functional App, part 2](https://fsharpforfunandprofit.com/posts/recipe-part2/)) is the FP-native form of "Example 24: Service Layer with Error Handling". The pipeline routes successful values along the success track and short-circuits errors onto a parallel error track — without exceptions.
+
+ROP composes effectful steps that may fail into a single pipeline. Each step takes a value and returns `Result<'success, 'error>`; `bind` (or `>>=`) chains them so the first failure short-circuits the rest. There are no exceptions, no nested `if/else`, no special return codes — failure is a value.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Input] --> B[validate]
+  B -->|Ok| C[normalize]
+  B -.->|Error| Z[Error track]
+  C -->|Ok| D[persist]
+  C -.->|Error| Z
+  D -->|Ok| E[Success]
+  D -.->|Error| Z
+  classDef ok fill:#029E73,color:#fff
+  classDef err fill:#DE8F05,color:#fff
+  class A,B,C,D,E ok
+  class Z err
+```
+
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
+
+{{< tab >}}
+
+```fsharp
+// => Result<'T,'E> is built-in in F# — Ok/Error variants form the two tracks
+type Email = Email of string
+// => smart-constructor pattern hides the string behind a single-case DU
+
+let validate (raw: string) : Result<string, string> =
+    // => first track step: empty rejection
+    if System.String.IsNullOrWhiteSpace raw then Error "empty"
+    elif not (raw.Contains "@") then Error "missing @"
+    else Ok raw
+
+let normalize (raw: string) : Result<string, string> =
+    // => pure step: lowercase + trim. Never fails here but signature stays uniform
+    Ok (raw.Trim().ToLowerInvariant())
+
+let persist (raw: string) : Result<Email, string> =
+    // => simulated effect; returns Email or error
+    if raw.Length > 254 then Error "too long" else Ok (Email raw)
+
+// => Result.bind threads success values; first Error short-circuits the chain
+let register (raw: string) : Result<Email, string> =
+    raw
+    |> validate
+    |> Result.bind normalize
+    |> Result.bind persist
+    // => no try/catch, no exceptions — error is just another value
+
+printfn "%A" (register "  Alice@Example.COM  ")
+// => Output: Ok (Email "alice@example.com")
+printfn "%A" (register "")
+// => Output: Error "empty"
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```clojure
+;; => Clojure has no built-in Result; encode as a {:tag :ok :v _} / {:tag :err :e _} map
+(defn ok [v] {:tag :ok :v v})
+(defn err [e] {:tag :err :e e})
+
+(defn bind [r f]
+  ;; => bind is the bind operator: apply f only on :ok, propagate :err unchanged
+  (if (= :ok (:tag r)) (f (:v r)) r))
+
+(defn validate [raw]
+  (cond (clojure.string/blank? raw) (err "empty")
+        (not (clojure.string/includes? raw "@")) (err "missing @")
+        :else (ok raw)))
+
+(defn normalize [raw]
+  ;; => pure step; trim + lowercase
+  (ok (clojure.string/lower-case (clojure.string/trim raw))))
+
+(defn persist [raw]
+  (if (> (count raw) 254) (err "too long") (ok {:email raw})))
+
+(defn register [raw]
+  ;; => threading macro fits the chain; bind unwraps :ok and short-circuits :err
+  (-> (validate raw) (bind normalize) (bind persist)))
+
+(println (register "  Alice@Example.COM  "))
+;; => {:tag :ok :v {:email "alice@example.com"}}
+(println (register ""))
+;; => {:tag :err :e "empty"}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS has no native Result; small union encodes Ok/Err discriminated by `kind`
+type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
+const ok = <T>(value: T): Result<T, never> => ({ kind: "ok", value });
+const err = <E>(error: E): Result<never, E> => ({ kind: "err", error });
+
+// => bind: monadic bind for the Result type. Short-circuits on err.
+const bind = <T, U, E>(r: Result<T, E>, f: (t: T) => Result<U, E>): Result<U, E> => (r.kind === "ok" ? f(r.value) : r);
+
+const validate = (raw: string): Result<string, string> =>
+  raw.trim() === "" ? err("empty") : !raw.includes("@") ? err("missing @") : ok(raw);
+
+const normalize = (raw: string): Result<string, string> => ok(raw.trim().toLowerCase()); // => pure step
+
+const persist = (raw: string): Result<{ email: string }, string> =>
+  raw.length > 254 ? err("too long") : ok({ email: raw });
+
+// => pipeline reads top-to-bottom; each bind takes the previous result
+const register = (raw: string): Result<{ email: string }, string> => bind(bind(validate(raw), normalize), persist);
+
+console.log(register("  Alice@Example.COM  "));
+// => { kind: 'ok', value: { email: 'alice@example.com' } }
+console.log(register(""));
+// => { kind: 'err', error: 'empty' }
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- => Either e a IS the Result type in Haskell — Left = error, Right = success
+-- => >>= (bind) on Either short-circuits on Left
+
+newtype Email = Email String deriving Show
+
+validate :: String -> Either String String
+validate s
+  | null (filter (/= ' ') s) = Left "empty"      -- => empty after stripping
+  | '@' `notElem` s          = Left "missing @"  -- => structural check
+  | otherwise                = Right s
+
+normalize :: String -> Either String String
+normalize s = Right (map toLower (trim s))       -- => pure step
+  where
+    toLower c = if c >= 'A' && c <= 'Z' then toEnum (fromEnum c + 32) else c
+    trim = dropWhile (==' ') . reverse . dropWhile (==' ') . reverse
+
+persist :: String -> Either String Email
+persist s = if length s > 254 then Left "too long" else Right (Email s)
+
+-- => `do` notation desugars to >>=; reads imperatively but is pure
+register :: String -> Either String Email
+register raw = do
+  v <- validate raw
+  n <- normalize v
+  persist n
+
+main :: IO ()
+main = do
+  print (register "  Alice@Example.COM  ")
+  -- => Right (Email "alice@example.com")
+  print (register "")
+  -- => Left "empty"
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**Key Takeaway:** Errors as values + monadic `bind` collapse `try/catch` ceremony into a flat pipeline where every step's failure mode is visible in its type signature.
+
+**Why It Matters:** Production services running ROP-style code have a single error track — every failure mode is enumerated in the `Result` type and exhaustively matched at the boundary. Exceptions cannot leak across layers, and reviewers can verify error handling by reading types alone. This is the form Wlaschin recommends for the entire validation/normalization/persistence path of an HTTP request handler in F#.
+
+---
+
+### Example 87: Free Monads / Tagless Final (Embedded DSLs)
+
+> **Paradigm Note**: The FP-native form of "Example 80: Interpreter Pattern". Norvig (1996) classifies Interpreter under "Macros" — language-level, not pattern-level. Free monads (Swierstra, [Data Types à la Carte](https://www.cs.ru.nl/~W.Swierstra/Publications/DataTypesALaCarte.pdf), 2008) and tagless final (Carette, Kiselyov, Shan, 2009) are the FP idioms.
+
+A free monad represents a program as a _data structure_ — a tree of operations — separate from the interpreter that runs it. Multiple interpreters (production, test, dry-run, audit-log) consume the same program. Tagless final encodes the same idea with type classes / records of operations instead of a constructor tree.
+
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
+
+{{< tab >}}
+
+```fsharp
+// => Tagless-final style is more idiomatic in F# than free monads (F# lacks higher-kinded types)
+// => "Algebra" record holds the operations; programs are functions over the algebra
+type ConfigAlg<'a> = {
+    Get: string -> 'a option         // => fetch by key
+    Set: string -> string -> unit    // => store
+}
+
+// => Program is a function of the algebra; it never knows which interpreter runs it
+let program (alg: ConfigAlg<string>) : string option =
+    alg.Set "env" "prod"
+    alg.Get "env"
+
+// => Production interpreter: backed by a mutable map
+let prodAlg () : ConfigAlg<string> =
+    let store = System.Collections.Generic.Dictionary<string,string>()
+    { Get = fun k -> if store.ContainsKey k then Some store.[k] else None
+      Set = fun k v -> store.[k] <- v }
+
+// => Test interpreter: records calls without side effects
+let testAlg () : ConfigAlg<string> * (unit -> string list) =
+    let log = System.Collections.Generic.List<string>()
+    let store = System.Collections.Generic.Dictionary<string,string>()
+    { Get = fun k -> log.Add (sprintf "Get %s" k); if store.ContainsKey k then Some store.[k] else None
+      Set = fun k v -> log.Add (sprintf "Set %s=%s" k v); store.[k] <- v },
+    (fun () -> List.ofSeq log)
+
+let result = program (prodAlg ())
+// => Output: Some "prod"
+let testInterp, getLog = testAlg ()
+let _ = program testInterp
+printfn "%A" (getLog ())
+// => Output: ["Set env=prod"; "Get env"]
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```clojure
+;; => Clojure: tagless-final via a protocol or plain map-of-functions
+(defprotocol ConfigAlg
+  (cget [this k])
+  (cset [this k v]))
+
+;; => program is a function of the algebra
+(defn program [alg]
+  (cset alg "env" "prod")
+  (cget alg "env"))
+
+;; => Production interpreter: backed by an atom
+(defn prod-alg []
+  (let [store (atom {})]
+    (reify ConfigAlg
+      (cget [_ k] (get @store k))
+      (cset [_ k v] (swap! store assoc k v)))))
+
+;; => Test interpreter: also returns the call log
+(defn test-alg []
+  (let [store (atom {}) log (atom [])]
+    [(reify ConfigAlg
+       (cget [_ k] (swap! log conj [:get k]) (get @store k))
+       (cset [_ k v] (swap! log conj [:set k v]) (swap! store assoc k v)))
+     #(deref log)]))
+
+(println (program (prod-alg)))
+;; => "prod"
+(let [[alg get-log] (test-alg)]
+  (program alg)
+  (println (get-log)))
+;; => [[:set "env" "prod"] [:get "env"]]
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS: tagless-final via an interface; programs are generic over the algebra
+interface ConfigAlg {
+  get(k: string): string | undefined;
+  set(k: string, v: string): void;
+}
+
+// => program: never references a concrete implementation
+const program = (alg: ConfigAlg): string | undefined => {
+  alg.set("env", "prod");
+  return alg.get("env");
+};
+
+// => Production interpreter: mutable Map under the hood
+const prodAlg = (): ConfigAlg => {
+  const store = new Map<string, string>();
+  return {
+    get: (k) => store.get(k),
+    set: (k, v) => {
+      store.set(k, v);
+    },
+  };
+};
+
+// => Test interpreter: also exposes a log
+const testAlg = (): { alg: ConfigAlg; log: () => string[] } => {
+  const store = new Map<string, string>();
+  const log: string[] = [];
+  return {
+    alg: {
+      get: (k) => {
+        log.push(`get ${k}`);
+        return store.get(k);
+      },
+      set: (k, v) => {
+        log.push(`set ${k}=${v}`);
+        store.set(k, v);
+      },
+    },
+    log: () => log,
+  };
+};
+
+console.log(program(prodAlg()));
+// => "prod"
+const t = testAlg();
+program(t.alg);
+console.log(t.log());
+// => ["set env=prod", "get env"]
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- => Haskell tagless-final: program is polymorphic over the algebra typeclass
+{-# LANGUAGE FlexibleContexts #-}
+import Data.IORef
+import qualified Data.Map.Strict as M
+
+class Monad m => ConfigAlg m where
+  cget :: String -> m (Maybe String)
+  cset :: String -> String -> m ()
+
+-- => program: any monad with a ConfigAlg instance can run it
+program :: ConfigAlg m => m (Maybe String)
+program = do
+  cset "env" "prod"
+  cget "env"
+
+-- => Production interpreter: IO + IORef Map
+newtype ProdM a = ProdM { runProd :: IORef (M.Map String String) -> IO a }
+instance Functor ProdM where fmap f (ProdM g) = ProdM (\r -> fmap f (g r))
+instance Applicative ProdM where
+  pure a = ProdM (\_ -> pure a)
+  ProdM f <*> ProdM x = ProdM (\r -> f r <*> x r)
+instance Monad ProdM where
+  ProdM g >>= k = ProdM (\r -> g r >>= \a -> runProd (k a) r)
+instance ConfigAlg ProdM where
+  cget k = ProdM (\r -> M.lookup k <$> readIORef r)
+  cset k v = ProdM (\r -> modifyIORef r (M.insert k v))
+
+main :: IO ()
+main = do
+  ref <- newIORef M.empty
+  res <- runProd program ref
+  print res
+  -- => Just "prod"
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**Key Takeaway:** Separate the description of a program (a value) from its execution (the interpreter). The same program runs under production, test, audit-log, and dry-run interpreters with zero code change.
+
+**Why It Matters:** Tagless final is the architectural backbone of high-assurance Haskell services and many Scala/ZIO codebases. Replacing the production interpreter with a recording interpreter makes every effect a unit-testable value — no mocking framework, no integration harness. Effects become explicit at the type level.
+
+---
+
+### Example 88: Reader Monad for Dependency Injection
+
+> **Paradigm Note**: The FP-native form of "Example 7: Manual Dependency Injection" + "Example 8: Constructor Injection vs Method Injection". Instead of passing dependencies through every function or using a container, the Reader monad threads an environment implicitly.
+
+The Reader monad represents "a computation that reads from an environment". `ask` retrieves the environment; `local` shadows it temporarily; `runReader` executes the program with a concrete environment. Dependencies are _one parameter at the boundary_, not many parameters scattered through every call site.
+
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
+
+{{< tab >}}
+
+```fsharp
+// => F# stdlib has no Reader; encode as a one-arg function type
+type Reader<'env, 'a> = 'env -> 'a
+
+let ask : Reader<'env, 'env> = id              // => returns the env unchanged
+let bind (m: Reader<'e, 'a>) (f: 'a -> Reader<'e, 'b>) : Reader<'e, 'b> =
+    fun env -> f (m env) env                   // => threads env into both m and f
+
+type Env = { Db: string; Logger: string -> unit }
+
+// => use bind to chain operations that read from Env without passing it explicitly
+let fetchUser (id: int) : Reader<Env, string> =
+    bind ask (fun env ->
+        env.Logger (sprintf "fetching %d from %s" id env.Db)
+        fun _ -> sprintf "user-%d" id)
+
+let prodEnv = { Db = "postgres://prod"; Logger = printfn "[LOG] %s" }
+let result = fetchUser 42 prodEnv
+// => [LOG] fetching 42 from postgres://prod
+// => result = "user-42"
+printfn "%s" result
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```clojure
+;; => Clojure: dynamic vars are the idiomatic Reader; binding macro scopes a value
+(def ^:dynamic *env* nil)
+
+(defn fetch-user [id]
+  ;; => *env* available without parameter threading; binding scopes it
+  (let [{:keys [db log!]} *env*]
+    (log! (str "fetching " id " from " db))
+    (str "user-" id)))
+
+(binding [*env* {:db "postgres://prod"
+                 :log! #(println "[LOG]" %)}]
+  (println (fetch-user 42)))
+;; => [LOG] fetching 42 from postgres://prod
+;; => user-42
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS: encode Reader as a curried function `env -> a`
+type Reader<E, A> = (env: E) => A;
+
+const ask =
+  <E>(): Reader<E, E> =>
+  (env) =>
+    env;
+const bind =
+  <E, A, B>(m: Reader<E, A>, f: (a: A) => Reader<E, B>): Reader<E, B> =>
+  (env) =>
+    f(m(env))(env);
+
+type Env = { db: string; log: (msg: string) => void };
+
+const fetchUser = (id: number): Reader<Env, string> =>
+  bind(ask<Env>(), (env) => () => {
+    env.log(`fetching ${id} from ${env.db}`);
+    return `user-${id}`;
+  });
+
+const prodEnv: Env = { db: "postgres://prod", log: (m) => console.log("[LOG]", m) };
+console.log(fetchUser(42)(prodEnv));
+// => [LOG] fetching 42 from postgres://prod
+// => user-42
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- => Haskell mtl library: ReaderT is the canonical effect for read-only env
+import Control.Monad.Reader
+
+data Env = Env { db :: String, logger :: String -> IO () }
+
+-- => MonadReader Env m means "this computation can ask for an Env"
+fetchUser :: (MonadReader Env m, MonadIO m) => Int -> m String
+fetchUser uid = do
+  env <- ask
+  liftIO $ logger env ("fetching " ++ show uid ++ " from " ++ db env)
+  pure ("user-" ++ show uid)
+
+main :: IO ()
+main = do
+  let prodEnv = Env { db = "postgres://prod", logger = \m -> putStrLn ("[LOG] " ++ m) }
+  result <- runReaderT (fetchUser 42) prodEnv
+  putStrLn result
+-- => [LOG] fetching 42 from postgres://prod
+-- => user-42
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**Key Takeaway:** Reader threads a read-only environment through a computation as a single boundary parameter, not as a class field or per-call argument repeated everywhere.
+
+**Why It Matters:** Reader is the FP answer to OOP DI containers (Spring, Autofac, Dagger). No reflection, no XML wiring, no runtime resolution — just a typed function from environment to result. Switching environments (prod/test/dev) is a single substitution at the program entry point.
+
+---
+
+### Example 89: Kleisli Composition for Effectful Pipelines
+
+> **Paradigm Note**: The FP-native form of "Example 75: Chain of Responsibility" + middleware composition. Kleisli composition (`>=>`) lets you compose functions of shape `a -> m b` into longer pipelines without unwrapping the monad at every step.
+
+A Kleisli arrow is a function `a -> m b`. Two Kleisli arrows compose: `f : a -> m b` and `g : b -> m c` combine into `f >=> g : a -> m c`. This is function composition extended to effectful functions — the workhorse of pipeline architectures.
+
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
+
+{{< tab >}}
+
+```fsharp
+// => Kleisli composition operator: takes f and g returning Async/Result/Option,
+//   produces a single function chaining them
+let (>=>) (f: 'a -> Result<'b, 'e>) (g: 'b -> Result<'c, 'e>) : 'a -> Result<'c, 'e> =
+    fun a -> Result.bind g (f a)
+
+let parseInt (s: string) : Result<int, string> =
+    match System.Int32.TryParse s with
+    | true, n -> Ok n
+    | _ -> Error "not an int"
+
+let nonNegative (n: int) : Result<int, string> =
+    if n < 0 then Error "negative" else Ok n
+
+let double (n: int) : Result<int, string> = Ok (n * 2)
+
+// => pipeline as one composed Kleisli arrow — no per-step bind ceremony
+let pipeline = parseInt >=> nonNegative >=> double
+
+printfn "%A" (pipeline "21")  // => Ok 42
+printfn "%A" (pipeline "-3")  // => Error "negative"
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```clojure
+;; => Clojure: encode results as same Ok/Err map shape from Example 86
+(defn kleisli [& fs]
+  ;; => returns a single fn that threads through fs, short-circuiting on err
+  (fn [x]
+    (reduce (fn [acc f] (if (= :ok (:tag acc)) (f (:v acc)) acc))
+            {:tag :ok :v x} fs)))
+
+(defn parse-int [s]
+  (try {:tag :ok :v (Integer/parseInt s)}
+       (catch Exception _ {:tag :err :e "not an int"})))
+
+(defn non-negative [n]
+  (if (neg? n) {:tag :err :e "negative"} {:tag :ok :v n}))
+
+(defn doubled [n] {:tag :ok :v (* 2 n)})
+
+(def pipeline (kleisli parse-int non-negative doubled))
+
+(println (pipeline "21"))   ;; => {:tag :ok :v 42}
+(println (pipeline "-3"))   ;; => {:tag :err :e "negative"}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS: reuse Result type from Example 86. Kleisli compose chains effectful fns.
+type Result<T, E> = { kind: "ok"; value: T } | { kind: "err"; error: E };
+const ok = <T>(value: T): Result<T, never> => ({ kind: "ok", value });
+const err = <E>(error: E): Result<never, E> => ({ kind: "err", error });
+
+// => >=> composes two Kleisli arrows; bind on the first feeds into the second
+const kleisli =
+  <A, B, C, E>(f: (a: A) => Result<B, E>, g: (b: B) => Result<C, E>): ((a: A) => Result<C, E>) =>
+  (a) => {
+    const rb = f(a);
+    return rb.kind === "ok" ? g(rb.value) : rb;
+  };
+
+const parseInt2 = (s: string): Result<number, string> => {
+  const n = Number(s);
+  return Number.isInteger(n) ? ok(n) : err("not an int");
+};
+const nonNegative = (n: number): Result<number, string> => (n < 0 ? err("negative") : ok(n));
+const double = (n: number): Result<number, string> => ok(n * 2);
+
+// => compose all three into one pipeline
+const pipeline = kleisli(kleisli(parseInt2, nonNegative), double);
+
+console.log(pipeline("21")); // => { kind: 'ok', value: 42 }
+console.log(pipeline("-3")); // => { kind: 'err', error: 'negative' }
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- => Haskell: >=> from Control.Monad is exactly Kleisli composition
+import Control.Monad ((>=>))
+import Text.Read (readMaybe)
+
+parseInt :: String -> Either String Int
+parseInt s = case readMaybe s of
+  Just n -> Right n
+  Nothing -> Left "not an int"
+
+nonNegative :: Int -> Either String Int
+nonNegative n = if n < 0 then Left "negative" else Right n
+
+doubled :: Int -> Either String Int
+doubled n = Right (n * 2)
+
+-- => single composed pipeline; >=> is `\f g x -> f x >>= g`
+pipeline :: String -> Either String Int
+pipeline = parseInt >=> nonNegative >=> doubled
+
+main :: IO ()
+main = do
+  print (pipeline "21")  -- => Right 42
+  print (pipeline "-3")  -- => Left "negative"
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**Key Takeaway:** Kleisli composition (`>=>`) extends function composition to effectful functions, replacing manually-written `bind` chains with point-free pipelines.
+
+**Why It Matters:** Production HTTP middleware, validation pipelines, and ETL stages all have the shape `a -> m b`. Composing them with `>=>` makes the pipeline a single declarative expression — easy to reorder, easy to insert a logging stage, easy to reason about as a whole.
+
+---
+
+### Example 90: State Monad for Pure Stateful Computation
+
+> **Paradigm Note**: The FP-native form of stateful workflows that, in OOP, would be expressed as mutable field updates ("Example 18: Encapsulation with Private State", "Example 43: State Pattern", "Example 53: Unit of Work"). State monad threads `s -> (a, s)` through a chain — no mutation, no shared variable, but the ergonomics of imperative state.
+
+The State monad represents computations that read and write a state value `s` while producing a result `a`. `get` returns the current state; `put` replaces it; `modify` updates it via a function. `runState` executes the chain against an initial state.
+
+{{< tabs items="F#,Clojure,TypeScript,Haskell" >}}
+
+{{< tab >}}
+
+```fsharp
+// => State<'s,'a> = function from state to (result, new-state) tuple
+type State<'s, 'a> = 's -> 'a * 's
+
+let get : State<'s, 's> = fun s -> s, s
+let put (s: 's) : State<'s, unit> = fun _ -> (), s
+let bind (m: State<'s, 'a>) (f: 'a -> State<'s, 'b>) : State<'s, 'b> =
+    fun s ->
+        let a, s' = m s
+        f a s'
+
+// => Stack ops as State<int list, unit/int>
+let push (n: int) : State<int list, unit> =
+    bind get (fun stack -> put (n :: stack))
+
+let pop : State<int list, int option> =
+    bind get (fun stack ->
+        match stack with
+        | [] -> fun s -> None, s
+        | x :: rest -> bind (put rest) (fun () -> fun s -> Some x, s))
+
+// => Program: push 1, push 2, pop, pop
+let program : State<int list, int option * int option> =
+    bind (push 1) (fun () ->
+    bind (push 2) (fun () ->
+    bind pop (fun a ->
+    bind pop (fun b -> fun s -> (a, b), s))))
+
+let result, finalState = program []
+printfn "%A %A" result finalState
+// => Output: (Some 2, Some 1) []
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```clojure
+;; => Clojure: idiomatic stateful computation uses atom, but State monad can be expressed
+;; => as a thread of [result state] tuples. For brevity, atom-based equivalent shown.
+(defn make-stack [] (atom []))
+
+(defn push! [stack n] (swap! stack conj n))
+(defn pop! [stack]
+  ;; => atomic swap-and-return: peek + drop in one transaction
+  (let [[old _] (reset-vals! stack (vec (drop-last @stack)))]
+    (last old)))
+
+(let [s (make-stack)]
+  (push! s 1)
+  (push! s 2)
+  (let [a (pop! s) b (pop! s)]
+    (println a b @s)))
+;; => 2 1 []
+;; => Note: in Clojure, atom + swap-vals! is the idiomatic stateful primitive;
+;; => true State monad lives in libraries like algo.monads.
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS: State as (s) => [a, s] curried function
+type State<S, A> = (s: S) => [A, S];
+
+const sGet =
+  <S>(): State<S, S> =>
+  (s) => [s, s];
+const sPut =
+  <S>(s: S): State<S, undefined> =>
+  () => [undefined, s];
+const sBind =
+  <S, A, B>(m: State<S, A>, f: (a: A) => State<S, B>): State<S, B> =>
+  (s) => {
+    const [a, s1] = m(s);
+    return f(a)(s1);
+  };
+
+const push = (n: number): State<number[], undefined> => sBind(sGet<number[]>(), (stack) => sPut([n, ...stack]));
+
+const pop: State<number[], number | undefined> = (stack) =>
+  stack.length === 0 ? [undefined, stack] : [stack[0], stack.slice(1)];
+
+// => sequential chain via nested binds
+const program: State<number[], [number | undefined, number | undefined]> = sBind(push(1), () =>
+  sBind(push(2), () => sBind(pop, (a) => sBind(pop, (b) => (s) => [[a, b], s]))),
+);
+
+const [result, finalState] = program([]);
+console.log(result, finalState);
+// => [ 2, 1 ] []
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```haskell
+-- => Control.Monad.State: get, put, modify, runState are stdlib
+import Control.Monad.State
+
+-- => StateT [Int] Identity Int reads/writes an [Int] stack
+push :: Int -> State [Int] ()
+push n = modify (n:)
+
+pop :: State [Int] (Maybe Int)
+pop = do
+  s <- get
+  case s of
+    []     -> pure Nothing
+    (x:xs) -> put xs >> pure (Just x)
+
+program :: State [Int] (Maybe Int, Maybe Int)
+program = do
+  push 1
+  push 2
+  a <- pop
+  b <- pop
+  pure (a, b)
+
+main :: IO ()
+main = print (runState program [])
+-- => Output: ((Just 2, Just 1), [])
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**Key Takeaway:** State monad gives imperative-feeling stateful code without losing referential transparency — every step is still a pure function from `s` to `(a, s)`.
+
+**Why It Matters:** Compilers, parsers, simulation runners, and any workflow that threads accumulating state benefit from State monad — the state is _part of the type signature_, not a hidden field. This makes data-flow analysis trivial: looking at a function's type tells you exactly what state it reads and writes.
+
+---
+
+## OOP-Native Stubs (Examples 91–93)
+
+The following stubs preserve numbering parity with the [OOP track](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced). Each pattern is fundamentally OOP-shaped; the OOP track carries the full treatment.
+
+### Example 91: Active Record (OOP-Native)
+
+> **Paradigm Note**: Active Record (Fowler, [PEAA](https://martinfowler.com/eaaCatalog/activeRecord.html)) is a domain object that owns its persistence. The pattern requires mutable state, identity, and behavior on the same object — three properties FP intentionally separates. The FP equivalent is splitting the data (an immutable record) from the persistence functions (a Repository — see Examples 21, 22, 52). See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced#example-91-active-record).
+
+---
+
+### Example 92: GRASP Responsibility Assignment (OOP-Native)
+
+> **Paradigm Note**: GRASP (Larman, _Applying UML and Patterns_) — Information Expert, Creator, Controller, Low Coupling, High Cohesion, Polymorphism, Pure Fabrication, Indirection, Protected Variations — is a set of heuristics for assigning responsibilities to _classes_. In FP responsibilities are assigned to _functions_ and _modules_; the heuristics that survive are Low Coupling and High Cohesion (already covered as Examples 16 and 17). See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced#example-92-grasp-responsibility-assignment).
+
+---
+
+### Example 93: Singleton with FP Counterexample
+
+> **Paradigm Note**: Singleton (GoF) ensures a class has one instance with global access. In FP it is unnecessary — module-level definitions are already singletons, and immutability eliminates the "shared mutable global" motivation. The Haskell anti-patterns corpus explicitly names Singleton as a Haskell anti-pattern: "unnecessary due to immutability." For configuration/registry use cases the Reader monad (Example 88) is the FP-native answer. See the [OOP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced#example-93-singleton-with-fp-counterexample).

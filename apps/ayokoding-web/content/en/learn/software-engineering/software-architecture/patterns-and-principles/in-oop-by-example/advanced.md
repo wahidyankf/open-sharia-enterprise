@@ -3377,6 +3377,8 @@ requiring individual code deployments.
 
 ### Example 70: Event Sourcing Implementation
 
+> **Paradigm Note**: Same fold-over-immutable-log semantics as Example 55. The pure function `(state, event) -> state` is the heart of the pattern; OOP wraps it in aggregate-method ceremony. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-70-event-sourcing-implementation).
+
 Event sourcing stores state as an append-only sequence of domain events rather than as current
 mutable state. The current state is derived by replaying events. This enables complete audit trails,
 temporal queries ("what was the account balance at 3 PM yesterday?"), and event-driven integration.
@@ -6596,6 +6598,8 @@ code become infrastructure configuration changes that propagate automatically.
 
 ### Example 80: Interpreter Pattern for Configuration DSL
 
+> **Paradigm Note**: Norvig (1996) classifies Interpreter under "Macros" — absorbed by language features in Lisps. The FP-idiomatic form is free monads or tagless final encoding (Kiselyov; Haskell community). OOP Interpreter requires a class hierarchy per AST node. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-80-interpreter-pattern-for-configuration-dsl).
+
 The interpreter pattern defines a grammar for a language and an interpreter that evaluates sentences
 in that language. In architecture it enables policy engines, query filters, rule evaluators, and
 configuration DSLs where business logic is expressed in a structured mini-language rather than
@@ -6899,6 +6903,8 @@ infrastructure context, proving this pattern's applicability at production scale
 ## Expert-Level Synthesis
 
 ### Example 81: CQRS (Command Query Responsibility Segregation)
+
+> **Paradigm Note**: Same as Example 49 — read side is naturally a pure projection over immutable data. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-81-cqrs-command-query-responsibility-segregation).
 
 CQRS separates the model used for state-changing commands from the model used for read queries,
 enabling each side to be optimised independently. The write model enforces business rules and domain
@@ -8320,6 +8326,8 @@ changes precisely because it has no compile-time dependency on any specific tech
 
 ### Example 85: Reactive Architecture with Backpressure
 
+> **Paradigm Note**: FRP (Conal Elliott & Paul Hudak, [Functional Reactive Animation](https://conal.net/papers/icfp97/), 1997) is FP-native. OOP reactive frameworks (RxJava, Rx.NET) explicitly emulate the FP model — observables, operators, and backpressure are stream algebra. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-85-reactive-architecture-with-backpressure).
+
 Reactive architecture processes streams of data asynchronously using non-blocking I/O, with
 backpressure mechanisms that signal upstream producers to slow down when downstream consumers
 cannot keep up, preventing out-of-memory crashes from unbounded queues.
@@ -8592,3 +8600,565 @@ Stream processing systems implement backpressure to handle traffic spikes well a
 without OOM crashes. Systems that lack backpressure require over-provisioning by the spike ratio —
 expensive and wasteful compared to a properly backpressured reactive pipeline that signals producers
 to slow down rather than accumulating an unbounded backlog.
+
+---
+
+## FP-Native Stubs (Examples 86–90)
+
+The following stubs preserve numbering parity with the [FP track](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced). Each pattern is fundamentally FP-shaped; the FP track carries the full treatment.
+
+### Example 86: Railway-Oriented Programming (FP-Native)
+
+> **Paradigm Note**: Railway-Oriented Programming (Wlaschin) chains effectful steps via `Result`/`Either` monad bind — failure is a value on the error track, not an exception. The OOP equivalent is "Example 24: Service Layer with Error Handling" using sentinel results or exceptions, which approximates but does not capture the value-track property. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-86-railway-oriented-programming-resulteither-chains).
+
+---
+
+### Example 87: Free Monads / Tagless Final (FP-Native)
+
+> **Paradigm Note**: Free monads (Swierstra, 2008) and tagless final (Carette/Kiselyov/Shan, 2009) represent programs as data structures separate from interpreters that run them — multiple interpreters consume the same program. The OOP equivalent is the Interpreter pattern (Example 80), which Norvig (1996) classified as absorbed by language features in Lisps. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-87-free-monads--tagless-final-embedded-dsls).
+
+---
+
+### Example 88: Reader Monad for Dependency Injection (FP-Native)
+
+> **Paradigm Note**: Reader monad threads a read-only environment through a computation as a single boundary parameter — the FP answer to OOP DI containers (Spring, Autofac, Dagger). The OOP equivalent is constructor injection (Example 8), which carries the dependency on every instance instead of in the type signature. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-88-reader-monad-for-dependency-injection).
+
+---
+
+### Example 89: Kleisli Composition for Effectful Pipelines (FP-Native)
+
+> **Paradigm Note**: Kleisli composition (`>=>`) extends function composition to effectful functions — `a -> m b` and `b -> m c` combine into `a -> m c` without explicit bind ceremony. The OOP equivalent is Chain of Responsibility (Example 75) using mutable handler-class chains, which Norvig (1996) classified as absorbed by first-class types. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-89-kleisli-composition-for-effectful-pipelines).
+
+---
+
+### Example 90: State Monad for Pure Stateful Computation (FP-Native)
+
+> **Paradigm Note**: State monad threads `s -> (a, s)` through a chain — imperative-feeling stateful code without mutation, referentially transparent. The OOP equivalent is mutable field updates inside encapsulated objects (Examples 18, 43, 53). The state is _part of the type signature_ in FP, hidden inside an object in OOP. See the [FP framing](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced#example-90-state-monad-for-pure-stateful-computation).
+
+---
+
+## OOP-Native Extras (Examples 91–93)
+
+The following examples extend the canonical 85 with patterns that exist primarily in OOP because they assume mutable state, identity, and class hierarchies as first-class building blocks.
+
+### Example 91: Active Record
+
+> **Paradigm Note**: Active Record (Fowler, [PEAA](https://martinfowler.com/eaaCatalog/activeRecord.html)) is a domain object that owns its persistence — `user.save()` writes to the database. The pattern requires mutable state + identity + behavior on one object. The FP equivalent is the Repository pattern (Examples 21, 22, 52) — data and persistence functions are split.
+
+Active Record combines the in-memory representation of a row with the queries and operations that read or write it. A single class holds data, validation, persistence, and lifecycle callbacks.
+
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
+
+```java
+// => Active Record fuses persistence and domain object — `user.save()` writes to DB
+public class User {
+    private Long id;                  // => primary key managed by AR
+    private String email;
+    private String name;
+    private boolean dirty = false;    // => tracking flag for save decisions
+
+    private static final Map<Long, User> store = new HashMap<>(); // => simulated DB
+    private static long nextId = 1;
+
+    public User(String email, String name) {
+        this.email = email;
+        this.name = name;
+        this.dirty = true;            // => unsaved record
+    }
+
+    // => persistence concern lives ON the entity — defining feature of Active Record
+    public void save() {
+        if (!dirty) return;
+        if (id == null) id = nextId++; // => insert path
+        store.put(id, this);
+        dirty = false;
+        System.out.println("[DB] saved user " + id);
+    }
+
+    // => static "finder" methods are also part of the AR contract
+    public static Optional<User> findById(Long id) {
+        return Optional.ofNullable(store.get(id));
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+        this.dirty = true;             // => mutator marks dirty for next save
+    }
+
+    public Long getId() { return id; }
+    public String getEmail() { return email; }
+}
+
+// usage
+User u = new User("alice@example.com", "Alice");
+u.save();
+// => [DB] saved user 1
+u.setEmail("alice@new.com");
+u.save();
+// => [DB] saved user 1
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// => Kotlin Active Record: same shape, idiomatic with companion object for finders
+class User(var email: String, var name: String) {
+    var id: Long? = null
+    private var dirty = true       // => unsaved by default
+
+    fun save() {
+        if (!dirty) return
+        if (id == null) id = nextId++
+        store[id!!] = this
+        dirty = false
+        println("[DB] saved user $id")
+    }
+
+    fun updateEmail(newEmail: String) {
+        email = newEmail
+        dirty = true
+    }
+
+    companion object {
+        private val store = mutableMapOf<Long, User>()
+        private var nextId = 1L
+
+        // => static finder is the OOP idiom for "give me an AR by id"
+        fun findById(id: Long): User? = store[id]
+    }
+}
+
+val u = User("alice@example.com", "Alice").apply { save() }
+// => [DB] saved user 1
+u.updateEmail("alice@new.com"); u.save()
+// => [DB] saved user 1
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// => C# Active Record: similar shape; static collection as in-memory DB stand-in
+public class User
+{
+    private static readonly Dictionary<long, User> Store = new();
+    private static long _nextId = 1;
+
+    public long? Id { get; private set; }
+    public string Email { get; private set; } = "";
+    public string Name { get; private set; } = "";
+    private bool _dirty = true;     // => track unsaved changes
+
+    public User(string email, string name)
+    {
+        Email = email;
+        Name = name;
+    }
+
+    public void UpdateEmail(string email)
+    {
+        Email = email;
+        _dirty = true;
+    }
+
+    // => Save lives on the entity — AR defining feature
+    public void Save()
+    {
+        if (!_dirty) return;
+        Id ??= _nextId++;
+        Store[Id.Value] = this;
+        _dirty = false;
+        Console.WriteLine($"[DB] saved user {Id}");
+    }
+
+    public static User? FindById(long id) => Store.TryGetValue(id, out var u) ? u : null;
+}
+
+var u = new User("alice@example.com", "Alice");
+u.Save();
+// => [DB] saved user 1
+u.UpdateEmail("alice@new.com"); u.Save();
+// => [DB] saved user 1
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS Active Record: class holding row + save + static finder
+class User {
+  private static store = new Map<number, User>();
+  private static nextId = 1;
+  private dirty = true; // => unsaved by default
+
+  constructor(
+    public id: number | null,
+    public email: string,
+    public name: string,
+  ) {}
+
+  save(): void {
+    if (!this.dirty) return;
+    if (this.id === null) this.id = User.nextId++;
+    User.store.set(this.id, this);
+    this.dirty = false;
+    console.log(`[DB] saved user ${this.id}`);
+  }
+
+  updateEmail(newEmail: string): void {
+    this.email = newEmail;
+    this.dirty = true;
+  }
+
+  static findById(id: number): User | undefined {
+    return User.store.get(id);
+  }
+}
+
+const u = new User(null, "alice@example.com", "Alice");
+u.save();
+// => [DB] saved user 1
+u.updateEmail("alice@new.com");
+u.save();
+// => [DB] saved user 1
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**Key Takeaway:** Active Record collapses data + persistence + behavior into one class. The price is loss of separation: validation, persistence, and domain logic are all on the entity, making the class hard to test in isolation.
+
+**Why It Matters:** Rails, Django, Laravel, and Sequelize ship with Active Record as the default ORM pattern — it is the highest-velocity persistence pattern for small CRUD apps. The trade-off is rigorous: as the domain grows, lifecycle callbacks and entity-bound queries become hard to refactor. Mature codebases migrate to Repository + Domain Model (Fowler) once domain complexity exceeds CRUD.
+
+---
+
+### Example 92: GRASP Responsibility Assignment
+
+> **Paradigm Note**: GRASP (Larman, _Applying UML and Patterns_) is a set of nine heuristics for deciding which _class_ should hold which responsibility. The principles are OOP-shaped because they assume responsibilities live on objects. In FP, responsibilities live on functions and modules — the Low Coupling and High Cohesion principles still apply (Examples 16, 17), but Information Expert, Creator, and Controller dissolve into "the function that has the data it needs is the function that does the work".
+
+GRASP names nine patterns: Information Expert, Creator, Controller, Low Coupling, High Cohesion, Polymorphism, Pure Fabrication, Indirection, Protected Variations. Below is a sketch applying the first three.
+
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
+
+```java
+// => GRASP "Information Expert": assign responsibility to the class with the data
+public class Order {
+    private List<OrderLine> lines = new ArrayList<>();
+
+    // => Order owns the lines, so Order computes the total — Information Expert applied
+    public BigDecimal total() {
+        return lines.stream()
+            .map(OrderLine::subtotal)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void addLine(OrderLine line) { lines.add(line); }
+}
+
+public class OrderLine {
+    private BigDecimal price;
+    private int qty;
+
+    public OrderLine(BigDecimal price, int qty) { this.price = price; this.qty = qty; }
+
+    // => OrderLine owns price and qty; OrderLine computes its subtotal
+    public BigDecimal subtotal() { return price.multiply(BigDecimal.valueOf(qty)); }
+}
+
+// => GRASP "Creator": OrderFactory creates Order (and OrderLine via Order)
+public class OrderFactory {
+    public Order create(List<LineDto> dtos) {
+        Order order = new Order();              // => creator instantiates aggregate
+        for (LineDto d : dtos) order.addLine(new OrderLine(d.price, d.qty));
+        return order;
+    }
+}
+
+// => GRASP "Controller": HTTP controller routes the input to the use case
+public class OrderController {
+    private final OrderFactory factory;
+    public OrderController(OrderFactory f) { this.factory = f; }
+
+    public BigDecimal handleCreateOrder(List<LineDto> dtos) {
+        Order o = factory.create(dtos);          // => delegate creation to factory
+        return o.total();                        // => delegate calculation to expert
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// => Kotlin GRASP — Information Expert + Creator + Controller
+data class OrderLine(val price: BigDecimal, val qty: Int) {
+    // => OrderLine has the data → OrderLine knows the subtotal
+    fun subtotal(): BigDecimal = price.multiply(qty.toBigDecimal())
+}
+
+class Order(private val lines: MutableList<OrderLine> = mutableListOf()) {
+    // => Order has the lines → Order knows the total (Information Expert)
+    fun total(): BigDecimal = lines.fold(BigDecimal.ZERO) { acc, l -> acc + l.subtotal() }
+    fun addLine(line: OrderLine) { lines += line }
+}
+
+class OrderFactory {
+    // => Creator pattern: factory holds the construction responsibility
+    fun create(dtos: List<LineDto>): Order =
+        Order().apply { dtos.forEach { addLine(OrderLine(it.price, it.qty)) } }
+}
+
+class OrderController(private val factory: OrderFactory) {
+    // => Controller routes input to use case + collaborators
+    fun handleCreateOrder(dtos: List<LineDto>): BigDecimal =
+        factory.create(dtos).total()
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// => C# GRASP — same three principles
+public record OrderLine(decimal Price, int Qty)
+{
+    // => Information Expert: OrderLine has the data, OrderLine computes
+    public decimal Subtotal() => Price * Qty;
+}
+
+public class Order
+{
+    private readonly List<OrderLine> _lines = new();
+    public void AddLine(OrderLine l) => _lines.Add(l);
+
+    // => Information Expert: Order has lines, Order totals
+    public decimal Total() => _lines.Sum(l => l.Subtotal());
+}
+
+public class OrderFactory
+{
+    // => Creator: factory holds construction logic
+    public Order Create(IEnumerable<LineDto> dtos)
+    {
+        var o = new Order();
+        foreach (var d in dtos) o.AddLine(new OrderLine(d.Price, d.Qty));
+        return o;
+    }
+}
+
+public class OrderController(OrderFactory factory)
+{
+    // => Controller: route input to use case
+    public decimal HandleCreateOrder(IEnumerable<LineDto> dtos) =>
+        factory.Create(dtos).Total();
+}
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS GRASP — Information Expert + Creator + Controller
+class OrderLine {
+  // => Information Expert: OrderLine has price+qty, computes its own subtotal
+  constructor(
+    public price: number,
+    public qty: number,
+  ) {}
+  subtotal(): number {
+    return this.price * this.qty;
+  }
+}
+
+class Order {
+  private lines: OrderLine[] = [];
+  addLine(l: OrderLine): void {
+    this.lines.push(l);
+  }
+  // => Information Expert: Order has lines, Order totals
+  total(): number {
+    return this.lines.reduce((s, l) => s + l.subtotal(), 0);
+  }
+}
+
+class OrderFactory {
+  // => Creator pattern: factory creates aggregate
+  create(dtos: { price: number; qty: number }[]): Order {
+    const o = new Order();
+    dtos.forEach((d) => o.addLine(new OrderLine(d.price, d.qty)));
+    return o;
+  }
+}
+
+class OrderController {
+  constructor(private factory: OrderFactory) {}
+  // => Controller pattern: route HTTP-shaped input to use case
+  handleCreateOrder(dtos: { price: number; qty: number }[]): number {
+    return this.factory.create(dtos).total();
+  }
+}
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**Key Takeaway:** GRASP gives nine reusable answers to "which class should own this responsibility?". Information Expert + Creator + Controller cover the most common decisions; the rest fine-tune coupling and variation points.
+
+**Why It Matters:** Teams that follow GRASP produce classes with high cohesion and stable boundaries — refactors stay local because each responsibility lives where its data lives. Without an assignment heuristic, responsibilities drift onto whichever class is most convenient at the moment, and the codebase devolves into "manager" and "helper" classes with no clear ownership.
+
+---
+
+### Example 93: Singleton with FP Counterexample
+
+> **Paradigm Note**: Singleton (GoF) ensures a class has one instance with global access. In FP the pattern is unnecessary — module-level definitions are already singletons, immutability eliminates the "shared mutable global" motivation. The Haskell anti-patterns corpus explicitly names Singleton as a Haskell anti-pattern. The FP-native answer for configuration is the Reader monad (Example 88).
+
+{{< tabs items="Java,Kotlin,C#,TypeScript" >}}
+
+{{< tab >}}
+
+```java
+// => GoF Singleton: private constructor + static getInstance + volatile holder
+public class ConfigRegistry {
+    private static volatile ConfigRegistry instance;
+    private final Map<String, String> values = new ConcurrentHashMap<>();
+
+    private ConfigRegistry() {}  // => private blocks external instantiation
+
+    // => double-checked locking guards against duplicate construction under concurrency
+    public static ConfigRegistry getInstance() {
+        if (instance == null) {
+            synchronized (ConfigRegistry.class) {
+                if (instance == null) instance = new ConfigRegistry();
+            }
+        }
+        return instance;
+    }
+
+    public String get(String key) { return values.get(key); }
+    public void set(String key, String value) { values.put(key, value); }
+}
+
+// usage
+ConfigRegistry.getInstance().set("env", "prod");
+System.out.println(ConfigRegistry.getInstance().get("env"));
+// => "prod"
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```kotlin
+// => Kotlin: `object` keyword creates a true language-level singleton — no boilerplate
+object ConfigRegistry {
+    private val values = ConcurrentHashMap<String, String>()
+
+    fun get(key: String): String? = values[key]
+    fun set(key: String, value: String) { values[key] = value }
+}
+
+ConfigRegistry.set("env", "prod")
+println(ConfigRegistry.get("env"))
+// => "prod"
+// => Kotlin's `object` is conceptually the singleton instance + class; no GoF dance needed
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```csharp
+// => C# Singleton: Lazy<T> guards lazy thread-safe initialization
+public sealed class ConfigRegistry
+{
+    private static readonly Lazy<ConfigRegistry> _instance = new(() => new ConfigRegistry());
+    public static ConfigRegistry Instance => _instance.Value;
+
+    private readonly ConcurrentDictionary<string, string> _values = new();
+    private ConfigRegistry() {}            // => private constructor
+
+    public string? Get(string key) => _values.TryGetValue(key, out var v) ? v : null;
+    public void Set(string key, string value) => _values[key] = value;
+}
+
+ConfigRegistry.Instance.Set("env", "prod");
+Console.WriteLine(ConfigRegistry.Instance.Get("env"));
+// => "prod"
+```
+
+{{< /tab >}}
+
+{{< tab >}}
+
+```typescript
+// => TS Singleton: private constructor + static getInstance with cached field
+class ConfigRegistry {
+  private static instance: ConfigRegistry | null = null;
+  private values = new Map<string, string>();
+
+  private constructor() {} // => blocks external `new`
+
+  static getInstance(): ConfigRegistry {
+    if (!ConfigRegistry.instance) ConfigRegistry.instance = new ConfigRegistry();
+    return ConfigRegistry.instance;
+  }
+
+  get(key: string): string | undefined {
+    return this.values.get(key);
+  }
+  set(key: string, value: string): void {
+    this.values.set(key, value);
+  }
+}
+
+ConfigRegistry.getInstance().set("env", "prod");
+console.log(ConfigRegistry.getInstance().get("env"));
+// => "prod"
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+**FP counterexample (Haskell module-level value):**
+
+```haskell
+-- => In Haskell, module-level definitions are already singletons.
+-- => No private constructor, no double-checked locking, no anti-pattern.
+module ConfigRegistry (get, set) where
+
+import Data.IORef
+import qualified Data.Map.Strict as M
+import System.IO.Unsafe (unsafePerformIO)
+
+-- => Single shared IORef — module-private; only `get` and `set` exposed
+{-# NOINLINE store #-}
+store :: IORef (M.Map String String)
+store = unsafePerformIO (newIORef M.empty)
+
+get :: String -> IO (Maybe String)
+get k = M.lookup k <$> readIORef store
+
+set :: String -> String -> IO ()
+set k v = modifyIORef store (M.insert k v)
+-- => For pure configuration the Reader monad (see Example 88 in FP track) is preferred;
+-- => unsafePerformIO + IORef is shown here only to demonstrate that the GoF Singleton
+-- => pattern collapses to a module-level value.
+```
+
+**Key Takeaway:** Singleton is an OOP pattern compensating for the lack of module-level statefulness. Languages with first-class modules (Haskell, Clojure, Elixir, Kotlin `object`) make the pattern invisible.
+
+**Why It Matters:** Singletons accumulate hidden dependencies — every caller of `Foo.getInstance()` is coupled to that class. Modern OOP codebases prefer dependency injection over Singletons for exactly this reason; FP code reaches the same conclusion via Reader monad or module-scoped immutable values. Recognize Singleton as a legacy pattern: appropriate for some logging or configuration but increasingly replaced by DI.
